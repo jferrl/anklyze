@@ -1,4 +1,4 @@
-# AGENTS.md - Fratures Project
+# AGENTS.md - Anklyze
 
 ## Project Overview
 

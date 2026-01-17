@@ -1,4 +1,4 @@
-# Fratures - Ankle Fracture Classification
+# Anklyze - Ankle Fracture Classification
 
 A web application for classifying ankle fractures according to three international classification systems:
 
