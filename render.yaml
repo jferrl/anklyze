@@ -3,6 +3,7 @@ services:
   - type: web
     name: anklyze-api
     runtime: go
+    plan: free
     rootDir: backend
     buildCommand: go build -o bin/server ./cmd/server
     startCommand: ./bin/server
