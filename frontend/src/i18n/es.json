@@ -3,6 +3,59 @@
     "title": "Clasificación de Fracturas de Tobillo",
     "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek"
   },
+  "landing": {
+    "badge": "Herramienta de Apoyo a la Decisión Clínica",
+    "headline": "Clasifica Fracturas de Tobillo",
+    "headlineHighlight": "en Segundos",
+    "subheadline": "Obtén clasificaciones instantáneas de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek con nuestro algoritmo basado en evidencia. Utilizado por cirujanos ortopédicos en todo el mundo.",
+    "startClassifying": "Comenzar a Clasificar",
+    "learnMore": "Saber Más",
+    "features": {
+      "title": "¿Por qué Anklyze?",
+      "subtitle": "Diseñado para cirujanos ortopédicos que necesitan clasificación de fracturas precisa y rápida en el punto de atención.",
+      "accurate": {
+        "title": "Basado en Evidencia",
+        "description": "Clasificaciones derivadas de literatura revisada por pares y algoritmos clínicos validados."
+      },
+      "fast": {
+        "title": "Resultados Instantáneos",
+        "description": "Obtén clasificaciones completas en menos de 30 segundos con nuestro cuestionario guiado."
+      },
+      "comprehensive": {
+        "title": "Cuatro Sistemas",
+        "description": "Clasificaciones Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek en una sola herramienta."
+      },
+      "free": {
+        "title": "Siempre Gratis",
+        "description": "Sin suscripción, sin anuncios, sin recolección de datos. Solo una herramienta que funciona."
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "subtitle": "Tres simples pasos para una clasificación precisa de fracturas",
+      "step1": {
+        "title": "Selecciona la Ubicación",
+        "description": "Identifica qué maléolos están involucrados: medial, lateral o posterior."
+      },
+      "step2": {
+        "title": "Responde las Preguntas",
+        "description": "Nuestro algoritmo se adapta para mostrar solo preguntas relevantes según tus selecciones."
+      },
+      "step3": {
+        "title": "Obtén la Clasificación",
+        "description": "Recibe clasificaciones detalladas con notas clínicas y consideraciones de tratamiento."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Clasificar?",
+      "subtitle": "Comienza a usar Anklyze ahora. Sin registro requerido.",
+      "button": "Clasifica Tu Primera Fractura"
+    },
+    "footer": {
+      "disclaimer": "Solo para fines educativos. Siempre correlacionar con hallazgos clínicos.",
+      "copyright": "Anklyze"
+    }
+  },
   "form": {
     "loading": "Cargando...",
     "classifying": "Clasificando...",

@@ -3,6 +3,59 @@
     "title": "Ankle Fracture Classification",
     "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification"
   },
+  "landing": {
+    "badge": "Clinical Decision Support Tool",
+    "headline": "Classify Ankle Fractures",
+    "headlineHighlight": "in Seconds",
+    "subheadline": "Get instant Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications with our evidence-based algorithm. Trusted by orthopedic surgeons worldwide.",
+    "startClassifying": "Start Classifying",
+    "learnMore": "Learn More",
+    "features": {
+      "title": "Why Anklyze?",
+      "subtitle": "Built for orthopedic surgeons who need accurate, fast fracture classification at the point of care.",
+      "accurate": {
+        "title": "Evidence-Based",
+        "description": "Classifications derived from peer-reviewed literature and validated clinical algorithms."
+      },
+      "fast": {
+        "title": "Instant Results",
+        "description": "Get comprehensive classifications in under 30 seconds with our guided questionnaire."
+      },
+      "comprehensive": {
+        "title": "Four Systems",
+        "description": "Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications in one tool."
+      },
+      "free": {
+        "title": "Always Free",
+        "description": "No subscription, no ads, no data collection. Just a tool that works."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Three simple steps to accurate fracture classification",
+      "step1": {
+        "title": "Select Fracture Location",
+        "description": "Identify which malleoli are involved: medial, lateral, or posterior."
+      },
+      "step2": {
+        "title": "Answer Guided Questions",
+        "description": "Our algorithm adapts to show only relevant questions based on your selections."
+      },
+      "step3": {
+        "title": "Get Classification",
+        "description": "Receive detailed classifications with clinical notes and treatment considerations."
+      }
+    },
+    "cta": {
+      "title": "Ready to Classify?",
+      "subtitle": "Start using Anklyze now. No signup required.",
+      "button": "Classify Your First Fracture"
+    },
+    "footer": {
+      "disclaimer": "For educational purposes only. Always correlate with clinical findings.",
+      "copyright": "Anklyze"
+    }
+  },
   "form": {
     "loading": "Loading...",
     "classifying": "Classifying...",
