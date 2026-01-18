@@ -16,7 +16,7 @@ services:
 
   # Frontend static site
   - type: web
-    name: anklyze-frontend
+    name: anklyze
     runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build

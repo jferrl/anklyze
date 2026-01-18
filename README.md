@@ -5,6 +5,15 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/jferrl/anklyze/actions/workflows/backend.yml">
+    <img src="https://github.com/jferrl/anklyze/actions/workflows/backend.yml/badge.svg" alt="Backend CI">
+  </a>
+  <a href="https://github.com/jferrl/anklyze/actions/workflows/frontend.yml">
+    <img src="https://github.com/jferrl/anklyze/actions/workflows/frontend.yml/badge.svg" alt="Frontend CI">
+  </a>
+</p>
+
+<p align="center">
   <strong>Clinical Decision Support Tool</strong>
 </p>
 
