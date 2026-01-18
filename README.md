@@ -1,131 +1,193 @@
-# Anklyze - Ankle Fracture Classification
+# Anklyze
 
-A web application for classifying ankle fractures according to three international classification systems:
+<p align="center">
+  <img src="frontend/public/favicon.svg" alt="Anklyze Logo" width="80" height="80">
+</p>
 
-- **Danis-Weber** - Based on fibular fracture location
-- **Lauge-Hansen** - Based on injury mechanism
-- **AO/OTA** - Alphanumeric system (44-A/B/C)
+<p align="center">
+  <strong>Clinical Decision Support Tool</strong>
+</p>
 
-## Features
+<p align="center">
+  <b>Classify Ankle Fractures in Seconds</b>
+</p>
 
-- Dynamic form with 4 clinical questions
-- Rule engine that classifies fractures across all three systems
-- Clinical notes based on fracture morphology
-- Spanish language interface
+<p align="center">
+  Get instant Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications<br>
+  with our evidence-based algorithm. Trusted by orthopedic surgeons worldwide.
+</p>
 
-## Tech Stack
+<p align="center">
+  <a href="https://anklyze.onrender.com"><strong>Start Classifying</strong></a>
+  &nbsp;·&nbsp;
+  <a href="#how-it-works">Learn More</a>
+</p>
 
-- **Backend**: Go + Gin framework
-- **Frontend**: React + TypeScript + Vite
-- **UI**: shadcn/ui components + Tailwind CSS
+---
 
-## Quick Start
+## Why Anklyze?
 
-### Prerequisites
-- Go 1.21+
-- Node.js 18+
+Built for orthopedic surgeons who need accurate, fast fracture classification at the point of care.
 
-### Backend
-```bash
-cd backend
-go mod download
-make run
-```
-Server runs on http://localhost:8080
+| Feature | Description |
+| ------- | ----------- |
+| **Evidence-Based** | Classifications derived from peer-reviewed literature and validated clinical algorithms |
+| **Instant Results** | Get comprehensive classifications in under 30 seconds with our guided questionnaire |
+| **Four Systems** | Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications in one tool |
+| **Always Free** | No subscription, no ads, no data collection. Just a tool that works |
 
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-App runs on http://localhost:5173
+---
 
-## API
+## How It Works
 
-### POST /api/classify
-Classify a fracture based on clinical findings.
+Three simple steps to accurate fracture classification:
 
-**Request:**
-```json
-{
-  "fibular_level": "transindesmal",
-  "mechanism": "supination_external_rotation",
-  "involved_structures": ["lateral_malleolus", "medial_malleolus"],
-  "fracture_pattern": "spiral"
-}
-```
+### 1. Select Fracture Location
 
-**Response:**
-```json
-{
-  "danis_weber": {
-    "type": "Type B",
-    "description": "Fractura del peroné a nivel de la sindesmosis..."
-  },
-  "lauge_hansen": {
-    "type": "SER",
-    "full_name": "Supinación-Rotación Externa",
-    "stage": 4,
-    "max_stages": 4,
-    "description": "Estadio IV: Fractura del maléolo medial..."
-  },
-  "ao_ota": {
-    "code": "44-B2",
-    "description": "Transindesmal con lesión medial..."
-  },
-  "notes": ["Clinical morphology notes..."]
-}
-```
+Identify which malleoli are involved: medial, lateral, or posterior.
 
-### GET /api/options
-Get form options for the frontend.
+### 2. Answer Guided Questions
 
-### GET /health
-Health check endpoint.
+Our algorithm adapts to show only relevant questions based on your selections.
 
-## Classification Logic
+### 3. Get Classification
+
+Receive detailed classifications with clinical notes and treatment considerations.
+
+---
+
+## Classification Systems
 
 ### Danis-Weber
-| Fibular Level | Type | Stability |
-|---------------|------|-----------|
-| Infrasindesmal | A | Stable |
-| Transindesmal | B | Variable |
-| Suprasindesmal | C | Unstable |
+
+Based on fibular fracture location relative to the syndesmosis.
+
+| Level | Type | Stability |
+| ----- | ---- | --------- |
+| Infrasyndesmal | A | Stable |
+| Transsyndesmal | B | Variable |
+| Suprasyndesmal | C | Unstable |
 
 ### Lauge-Hansen
-| Mechanism | Abbreviation | Max Stages |
-|-----------|--------------|------------|
+
+Based on injury mechanism (foot position + deforming force).
+
+| Mechanism | Abbreviation | Stages |
+| --------- | ------------ | ------ |
 | Supination-Adduction | SA | 2 |
 | Supination-External Rotation | SER | 4 |
 | Pronation-External Rotation | PER | 4 |
 | Pronation-Abduction | PA | 3 |
 
 ### AO/OTA
-- **44-A**: Infrasindesmal (A1, A2, A3)
-- **44-B**: Transindesmal (B1, B2, B3)
-- **44-C**: Suprasindesmal (C1, C2, C3)
+
+International alphanumeric classification system for ankle fractures (44).
+
+- **44-A**: Infrasyndesmal (A1, A2, A3)
+- **44-B**: Transsyndesmal (B1, B2, B3)
+- **44-C**: Suprasyndesmal (C1, C2, C3)
+
+### Bartonicek
+
+Posterior malleolus classification based on fragment size and location.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+| ----- | ---------- |
+| **Backend** | Go + Gin |
+| **Frontend** | React 19 + TypeScript + Vite |
+| **UI** | shadcn/ui + Tailwind CSS v4 |
+| **i18n** | English & Spanish |
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Go 1.21+
+- Node.js 18+
+
+### Run Locally
+
+```bash
+# Backend
+cd backend && go run cmd/server/main.go
+# → http://localhost:8080
+
+# Frontend
+cd frontend && npm install && npm run dev
+# → http://localhost:5173
+```
+
+Or use Make:
+
+```bash
+make run-backend  # Start backend
+make run-frontend # Start frontend
+```
+
+---
+
+## API Reference
+
+### `POST /api/classify`
+
+Classify a fracture based on clinical findings.
+
+### `GET /api/options`
+
+Get form options for the frontend.
+
+### `GET /health`
+
+Health check endpoint.
+
+---
 
 ## Project Structure
 
-```
-fratures/
+```text
+anklyze/
 ├── backend/
-│   ├── cmd/server/          # Entry point
+│   ├── cmd/server/        # Entry point
 │   └── internal/
-│       ├── api/             # HTTP handlers
-│       ├── domain/          # Domain models
-│       ├── rules/           # Classification engine
-│       └── service/         # Business logic
+│       ├── api/           # HTTP handlers
+│       ├── domain/        # Domain models
+│       ├── i18n/          # Translations
+│       ├── rules/         # Classification engine
+│       └── service/       # Business logic
 │
 └── frontend/
     └── src/
-        ├── components/      # React components
-        ├── hooks/           # Custom hooks
-        ├── services/        # API client
-        └── types/           # TypeScript types
+        ├── components/    # React components
+        ├── i18n/          # Translations
+        └── ...
 ```
 
-## License
+---
 
-MIT
+<p align="center">
+  <strong>Ready to Classify?</strong>
+</p>
+
+<p align="center">
+  Start using Anklyze now. No signup required.
+</p>
+
+<p align="center">
+  <a href="https://anklyze.onrender.com"><strong>Classify Your First Fracture →</strong></a>
+</p>
+
+---
+
+<p align="center">
+  <em>For educational purposes only. Always correlate with clinical findings.</em>
+</p>
+
+<p align="center">
+  <strong>Anklyze</strong> © 2025
+</p>
