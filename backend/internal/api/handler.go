@@ -47,58 +47,67 @@ type SelectOption struct {
 
 // FormOptions represents all available form options
 type FormOptions struct {
-	// Question 1: Medial malleolus morphology
+	// Medial morphology options (for complex path with medial + lateral)
 	MedialMorphology []SelectOption `json:"medial_morphology"`
 
-	// Question 2: Fibular fracture level
+	// Fibular level options
 	FibularLevels []SelectOption `json:"fibular_levels"`
 
-	// Question 3: Fibular morphology
+	// Fibular morphology options
 	FibularMorphology []SelectOption `json:"fibular_morphology"`
 
-	// Question 4: SER fragments
-	SERFragments []SelectOption `json:"ser_fragments"`
-
-	// Question 5a: Fracture involvement (for Weber A/B)
-	FractureInvolvement []SelectOption `json:"fracture_involvement"`
-
-	// Question 5b: Weber C fracture type (for Weber C)
+	// Weber C fracture type options (for suprasindesmal)
 	WeberCFractureType []SelectOption `json:"weber_c_fracture_type"`
+
+	// Involved malleoli options (for SA/transverse pattern)
+	InvolvedMalleoliSA []SelectOption `json:"involved_malleoli_sa"`
+
+	// Involved malleoli options (for SER/spiral pattern)
+	InvolvedMalleoliSER []SelectOption `json:"involved_malleoli_ser"`
+
+	// Bartonicek type options (for posterior malleolus)
+	BartonicekTypes []SelectOption `json:"bartonicek_types"`
 }
 
 // GetOptions handles GET /api/options
 func (h *Handler) GetOptions(c *gin.Context) {
 	options := FormOptions{
 		MedialMorphology: []SelectOption{
-			{Value: "none", Label: "Sin fractura del maléolo medial"},
-			{Value: "oblique", Label: "Oblicua/Vertical"},
+			{Value: "oblique_vertical", Label: "Oblicua/Vertical"},
 			{Value: "transverse", Label: "Transversal"},
+			{Value: "doubtful", Label: "Dudosa"},
 		},
 		FibularLevels: []SelectOption{
-			{Value: "suprasindesmal_high", Label: "Suprasindesmal Alta (+6cm)"},
-			{Value: "transindesmal", Label: "Transindesmal"},
 			{Value: "infrasindesmal", Label: "Infrasindesmal"},
+			{Value: "transindesmal", Label: "Transindesmal (a nivel de sindesmosis)"},
+			{Value: "suprasindesmal_high", Label: "Suprasindesmal Alto (>6cm sobre sindesmosis)"},
 			{Value: "doubtful", Label: "Dudoso"},
 		},
 		FibularMorphology: []SelectOption{
-			{Value: "transverse", Label: "Transversa"},
-			{Value: "transverse_oblique", Label: "Transversa/Oblicua (baja medial, alta lateral)"},
-			{Value: "spiral", Label: "Espiroidea (baja anterior, alta posterior)"},
-		},
-		SERFragments: []SelectOption{
-			{Value: "none", Label: "Sin fragmentos adicionales"},
-			{Value: "wagstaffe", Label: "Fragmento de Wagstaffe"},
-			{Value: "tillaux_chaput", Label: "Fragmento de Tillaux-Chaput"},
-		},
-		FractureInvolvement: []SelectOption{
-			{Value: "lateral_only", Label: "Aislada lateral (solo peroné)"},
-			{Value: "lateral_medial", Label: "Lateral y medial (peroné y tibia)"},
-			{Value: "lateral_medial_posterior", Label: "Lateral, medial y posterior"},
+			{Value: "transverse", Label: "Transversal"},
+			{Value: "oblique", Label: "Oblicua (baja medial / alta lateral)"},
+			{Value: "spiral", Label: "Espiroidea (baja anterior / alta posterior)"},
 		},
 		WeberCFractureType: []SelectOption{
-			{Value: "simple", Label: "Simple diafisaria"},
+			{Value: "simple_diaphyseal", Label: "Diafisaria Simple"},
 			{Value: "multifragmentary", Label: "Multifragmentaria"},
 			{Value: "proximal", Label: "Proximal"},
+		},
+		InvolvedMalleoliSA: []SelectOption{
+			{Value: "unifocal", Label: "Unifocal (solo maléolo lateral)"},
+			{Value: "bifocal", Label: "Bifocal (maléolos lateral y medial)"},
+			{Value: "trifocal", Label: "Trifocal (maléolos lateral, medial y posterior)"},
+		},
+		InvolvedMalleoliSER: []SelectOption{
+			{Value: "lateral_only", Label: "Aislado maléolo lateral"},
+			{Value: "lateral_medial", Label: "Maléolos lateral y medial"},
+			{Value: "lateral_medial_posterior", Label: "Maléolos lateral, medial y posterior"},
+		},
+		BartonicekTypes: []SelectOption{
+			{Value: "type_1", Label: "Tipo 1: Fragmento extraincisural"},
+			{Value: "type_2", Label: "Tipo 2: Fragmento posterolateral"},
+			{Value: "type_3", Label: "Tipo 3: Fragmento posteromedial y posterolateral"},
+			{Value: "type_4", Label: "Tipo 4: Gran fragmento triangular posterolateral"},
 		},
 	}
 

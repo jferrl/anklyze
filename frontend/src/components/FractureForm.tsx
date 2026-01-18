@@ -5,9 +5,9 @@ import type {
   MedialMorphology,
   FibularLevel,
   FibularMorphology,
-  SERFragment,
-  FractureInvolvement,
   WeberCFractureType,
+  InvolvedMalleoli,
+  BartonicekType,
 } from '../types/fracture';
 import { getFormOptions } from '../services/api';
 import { useClassification } from '../hooks/useClassification';
@@ -16,102 +16,207 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function FractureForm() {
   const [options, setOptions] = useState<FormOptions | null>(null);
-  const [formData, setFormData] = useState<Partial<FractureInput>>({});
+  const [formData, setFormData] = useState<Partial<FractureInput>>({
+    has_medial_fracture: false,
+    has_lateral_fracture: false,
+    has_posterior_fracture: false,
+  });
   const { result, loading, error, classify, reset } = useClassification();
 
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
   }, []);
 
-  // Track if this is an isolated lateral fracture (no medial involvement)
-  const isIsolatedLateral = formData.medial_morphology === 'none';
+  // Determine the current path based on selected malleoli
+  const currentPath = useMemo(() => {
+    const { has_medial_fracture, has_lateral_fracture, has_posterior_fracture } = formData;
 
-  // Determine which questions to show based on previous answers
-  // Show Q2 for 'none' (isolated lateral) or 'transverse'
-  const showQuestion2 = formData.medial_morphology === 'transverse' || formData.medial_morphology === 'none';
-  const showQuestion3 =
-    showQuestion2 &&
-    formData.fibular_level !== undefined &&
-    formData.fibular_level !== 'suprasindesmal_high';
-
-  // Determine if classification will be SER to show question 4
-  // Only for transverse medial morphology (not for 'none')
-  const willBeSER = useMemo(() => {
-    if (formData.medial_morphology === 'transverse' &&
-        formData.fibular_level !== 'suprasindesmal_high' &&
-        formData.fibular_morphology === 'spiral') {
-      return true;
+    if (!has_medial_fracture && !has_lateral_fracture && has_posterior_fracture) {
+      return 'posterior_only';
     }
-    return false;
-  }, [formData.medial_morphology, formData.fibular_level, formData.fibular_morphology]);
-
-  // Q4 only shows for transverse with SER (not for isolated lateral)
-  const showQuestion4 = showQuestion3 && formData.fibular_morphology !== undefined && willBeSER && !isIsolatedLateral;
-
-  // Determine Weber type based on current answers (for Q5 display)
-  const weberType = useMemo(() => {
-    if (formData.medial_morphology === 'oblique') {
-      return 'A';
+    if (has_medial_fracture && !has_lateral_fracture && !has_posterior_fracture) {
+      return 'medial_only';
     }
-    // For 'none' (isolated lateral), determine Weber based on fibular level/morphology
-    if (formData.medial_morphology === 'none') {
-      if (formData.fibular_level === 'suprasindesmal_high') {
-        return 'C';
-      }
-      if (formData.fibular_morphology === 'transverse') {
-        return 'A';
-      }
-      if (formData.fibular_morphology === 'transverse_oblique' || formData.fibular_morphology === 'spiral') {
-        return 'B';
-      }
+    if (has_medial_fracture && !has_lateral_fracture && has_posterior_fracture) {
+      return 'medial_posterior';
     }
-    if (formData.medial_morphology === 'transverse') {
-      if (formData.fibular_level === 'suprasindesmal_high') {
-        return 'C';
-      }
-      if (formData.fibular_morphology === 'transverse') {
-        return 'A';
-      }
-      if (formData.fibular_morphology === 'transverse_oblique' || formData.fibular_morphology === 'spiral') {
-        return 'B';
-      }
+    if (!has_medial_fracture && has_lateral_fracture && !has_posterior_fracture) {
+      return 'lateral_only';
+    }
+    if (!has_medial_fracture && has_lateral_fracture && has_posterior_fracture) {
+      return 'lateral_posterior';
+    }
+    if (has_medial_fracture && has_lateral_fracture) {
+      return 'complex'; // medial + lateral (± posterior)
+    }
+    return 'none';
+  }, [formData]);
+
+  // Determine which questions to show based on the path and previous answers
+  const showLateralLevel = currentPath === 'lateral_only';
+
+  const showSuprasindesmalType = showLateralLevel &&
+    formData.lateral_fracture_level === 'suprasindesmal_high';
+
+  const showPosteriorType = currentPath === 'posterior_only';
+
+  const showMedialMorphology = currentPath === 'complex' || currentPath === 'lateral_posterior';
+
+  // For complex path: show fibula transverse question when medial is oblique/vertical
+  const showFibulaTransverse = currentPath === 'complex' &&
+    formData.medial_morphology === 'oblique_vertical';
+
+  // Show fibular level for complex paths (not when fibula is transverse with oblique medial)
+  const showFibularLevel = (currentPath === 'complex' || currentPath === 'lateral_posterior') &&
+    (formData.medial_morphology === 'transverse' ||
+     formData.medial_morphology === 'doubtful' ||
+     (formData.medial_morphology === 'oblique_vertical' && formData.fibula_transverse === false));
+
+  // Show fibular transverse question for infrasindesmal level
+  const showFibularTransverse = showFibularLevel &&
+    formData.fibular_level === 'infrasindesmal';
+
+  // Show fibular morphology when:
+  // - fibular level is transindesmal or doubtful, OR
+  // - fibular level is infrasindesmal and fibular is not transverse
+  const showFibularMorphology = showFibularLevel &&
+    ((formData.fibular_level === 'transindesmal' || formData.fibular_level === 'doubtful') ||
+     (formData.fibular_level === 'infrasindesmal' && formData.fibular_transverse === false));
+
+  // Show oblique fibular level when morphology is oblique
+  const showObliqueFibularLevel = showFibularMorphology &&
+    formData.fibular_morphology === 'oblique';
+
+  // Show Weber C type for suprasindesmal in complex path
+  const showComplexWeberCType = showFibularLevel &&
+    formData.fibular_level === 'suprasindesmal_high';
+
+  // Determine if we need to show involved malleoli question
+  const showInvolvedMalleoli = useMemo(() => {
+    // For SA (transverse fibula) path
+    if (currentPath === 'complex' && formData.medial_morphology === 'oblique_vertical' &&
+        formData.fibula_transverse === true) {
+      return 'sa';
+    }
+    // For SA (transverse morphology) path
+    if (showFibularMorphology && formData.fibular_morphology === 'transverse') {
+      return 'sa';
+    }
+    // For SA (infrasindesmal transverse) path
+    if (showFibularTransverse && formData.fibular_transverse === true) {
+      return 'sa';
+    }
+    // For SER (spiral morphology) path
+    if (showFibularMorphology && formData.fibular_morphology === 'spiral') {
+      return 'ser';
+    }
+    // For PA (oblique morphology) path - after level is selected
+    if (showObliqueFibularLevel && formData.oblique_fibular_level) {
+      return formData.oblique_fibular_level === 'infrasindesmal' ? 'sa' : 'ser';
     }
     return null;
-  }, [formData.medial_morphology, formData.fibular_level, formData.fibular_morphology]);
+  }, [currentPath, formData, showFibularMorphology, showFibularTransverse, showObliqueFibularLevel]);
 
-  // Show Q5 when we know the Weber type and previous questions are answered
-  // Q5 is NOT shown for isolated lateral ('none') - AO/OTA is always A1/B1/C1
-  const showQuestion5 = useMemo(() => {
-    if (!weberType) return false;
-
-    // Never show Q5 for isolated lateral - it's always "aislada lateral"
-    if (isIsolatedLateral) return false;
-
-    // For oblique (SA/Weber A), show Q5 immediately after Q1
-    if (formData.medial_morphology === 'oblique') {
+  // Show posterior type (Bartonicek) when posterior is involved and we need it
+  const showPosteriorTypeInComplex = useMemo(() => {
+    if (!formData.has_posterior_fracture) return false;
+    if (showInvolvedMalleoli &&
+        (formData.involved_malleoli === 'trifocal' ||
+         formData.involved_malleoli === 'lateral_medial_posterior')) {
       return true;
     }
+    return false;
+  }, [formData.has_posterior_fracture, formData.involved_malleoli, showInvolvedMalleoli]);
 
-    // For Weber C (suprasindesmal high), show Q5 after Q2
-    if (formData.fibular_level === 'suprasindesmal_high') {
-      return true;
+  const handleMalleoliChange = (malleolus: 'medial' | 'lateral' | 'posterior', checked: boolean) => {
+    const key = `has_${malleolus}_fracture` as keyof FractureInput;
+    setFormData({
+      has_medial_fracture: formData.has_medial_fracture,
+      has_lateral_fracture: formData.has_lateral_fracture,
+      has_posterior_fracture: formData.has_posterior_fracture,
+      [key]: checked,
+    });
+  };
+
+  const isFormComplete = () => {
+    if (currentPath === 'none') return false;
+
+    // Posterior only - need Bartonicek type
+    if (currentPath === 'posterior_only') {
+      return !!formData.posterior_fracture_type;
     }
 
-    // For other cases, show Q5 after Q3 (and Q4 if SER)
-    if (formData.fibular_morphology) {
-      // If SER, wait for Q4 to be answered
-      if (willBeSER) {
-        return formData.ser_fragment !== undefined;
+    // Medial only - complete
+    if (currentPath === 'medial_only') return true;
+
+    // Medial + posterior - complete
+    if (currentPath === 'medial_posterior') return true;
+
+    // Lateral only
+    if (currentPath === 'lateral_only') {
+      if (!formData.lateral_fracture_level) return false;
+      if (formData.lateral_fracture_level === 'suprasindesmal_high') {
+        return !!formData.suprasindesmal_type;
       }
       return true;
     }
 
+    // Complex paths
+    if (currentPath === 'complex' || currentPath === 'lateral_posterior') {
+      // Need medial morphology for complex path
+      if (currentPath === 'complex' && !formData.medial_morphology) return false;
+
+      // For oblique/vertical medial
+      if (formData.medial_morphology === 'oblique_vertical') {
+        if (formData.fibula_transverse === undefined) return false;
+        if (formData.fibula_transverse === true) {
+          return !!formData.involved_malleoli;
+        }
+      }
+
+      // Need fibular level
+      if (showFibularLevel && !formData.fibular_level) return false;
+
+      // Suprasindesmal high
+      if (formData.fibular_level === 'suprasindesmal_high') {
+        return !!formData.suprasindesmal_type;
+      }
+
+      // Infrasindesmal
+      if (formData.fibular_level === 'infrasindesmal') {
+        if (formData.fibular_transverse === undefined) return false;
+        if (formData.fibular_transverse === true) {
+          return !!formData.involved_malleoli;
+        }
+      }
+
+      // Need fibular morphology
+      if (showFibularMorphology && !formData.fibular_morphology) return false;
+
+      // Oblique morphology needs level
+      if (formData.fibular_morphology === 'oblique') {
+        if (!formData.oblique_fibular_level) return false;
+        if (formData.oblique_fibular_level === 'suprasindesmal_high') {
+          return !!formData.suprasindesmal_type;
+        }
+      }
+
+      // Need involved malleoli
+      if (showInvolvedMalleoli && !formData.involved_malleoli) return false;
+
+      // Need posterior type if posterior is involved
+      if (showPosteriorTypeInComplex && !formData.posterior_type) return false;
+
+      return true;
+    }
+
     return false;
-  }, [formData.medial_morphology, formData.fibular_level, formData.fibular_morphology, formData.ser_fragment, weberType, willBeSER, isIsolatedLateral]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,88 +225,13 @@ export function FractureForm() {
     }
   };
 
-  const isFormComplete = () => {
-    // Question 1 always required
-    if (!formData.medial_morphology) return false;
-
-    // If medial is oblique, classification is SA (Weber A) - need Q5 for AO/OTA
-    if (formData.medial_morphology === 'oblique') {
-      return formData.fracture_involvement !== undefined;
-    }
-
-    // If isolated lateral (no medial fracture)
-    if (isIsolatedLateral) {
-      // Q2 required
-      if (!formData.fibular_level) return false;
-
-      // If suprasindesmal high → Weber C/C1, complete
-      if (formData.fibular_level === 'suprasindesmal_high') return true;
-
-      // Q3 required for Weber A/B
-      if (!formData.fibular_morphology) return false;
-
-      // Complete - AO/OTA is automatically A1/B1
-      return true;
-    }
-
-    // Question 2 required (transverse)
-    if (!formData.fibular_level) return false;
-
-    // If suprasindesmal high, classification is PER (Weber C) - need Q5 for AO/OTA
-    if (formData.fibular_level === 'suprasindesmal_high') {
-      return formData.weber_c_fracture_type !== undefined;
-    }
-
-    // Question 3 required
-    if (!formData.fibular_morphology) return false;
-
-    // If will be SER, question 4 is required
-    if (willBeSER && !formData.ser_fragment) return false;
-
-    // Q5 required for AO/OTA classification
-    if (weberType === 'A' || weberType === 'B') {
-      return formData.fracture_involvement !== undefined;
-    }
-
-    return true;
-  };
-
   const handleReset = () => {
-    setFormData({});
+    setFormData({
+      has_medial_fracture: false,
+      has_lateral_fracture: false,
+      has_posterior_fracture: false,
+    });
     reset();
-  };
-
-  // Reset dependent fields when parent changes
-  const handleMedialMorphologyChange = (value: MedialMorphology) => {
-    setFormData({ medial_morphology: value });
-  };
-
-  const handleFibularLevelChange = (value: FibularLevel) => {
-    setFormData({
-      ...formData,
-      fibular_level: value,
-      fibular_morphology: undefined,
-      ser_fragment: undefined,
-      fracture_involvement: undefined,
-      weber_c_fracture_type: undefined,
-    });
-  };
-
-  const handleFibularMorphologyChange = (value: FibularMorphology) => {
-    setFormData({
-      ...formData,
-      fibular_morphology: value,
-      ser_fragment: undefined,
-      fracture_involvement: undefined,
-    });
-  };
-
-  const handleSERFragmentChange = (value: SERFragment) => {
-    setFormData({
-      ...formData,
-      ser_fragment: value,
-      fracture_involvement: undefined,
-    });
   };
 
   if (!options) {
@@ -228,77 +258,287 @@ export function FractureForm() {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">Clasificación de Fracturas de Tobillo</h1>
         <p className="text-muted-foreground">
-          Responda las preguntas para obtener la clasificación Danis-Weber, Lauge-Hansen y AO/OTA
+          Responda las preguntas para obtener la clasificación Danis-Weber, Lauge-Hansen, AO/OTA y Bartonicek
         </p>
       </div>
 
-      {/* Question 1: Medial Malleolus Morphology */}
+      {/* Question 1: Which malleoli are fractured? */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            1. ¿Cuál es la morfología del maléolo medial?
+            1. ¿Qué maléolos están fracturados?
           </CardTitle>
           <CardDescription>
-            La morfología indica el mecanismo de lesión
+            Seleccione todos los maléolos afectados
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={formData.medial_morphology || ''}
-            onValueChange={(value) => handleMedialMorphologyChange(value as MedialMorphology)}
-          >
-            {options.medial_morphology.map((option) => (
-              <div key={option.value} className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value={option.value} id={`medial-${option.value}`} />
-                <Label htmlFor={`medial-${option.value}`} className="cursor-pointer">
-                  {option.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-          {formData.medial_morphology === 'none' && (
-            <Alert className="mt-4 bg-blue-50 border-blue-200">
-              <AlertDescription>
-                Sin fractura del maléolo medial → <strong>Fractura aislada lateral</strong>
-                <br />
-                <span className="text-sm text-muted-foreground">La clasificación AO/OTA será A1, B1 o C1 según el nivel del peroné.</span>
-              </AlertDescription>
-            </Alert>
-          )}
-          {formData.medial_morphology === 'oblique' && (
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="medial"
+              checked={formData.has_medial_fracture}
+              onCheckedChange={(checked) => handleMalleoliChange('medial', checked as boolean)}
+            />
+            <Label htmlFor="medial" className="cursor-pointer">Maléolo Medial</Label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="lateral"
+              checked={formData.has_lateral_fracture}
+              onCheckedChange={(checked) => handleMalleoliChange('lateral', checked as boolean)}
+            />
+            <Label htmlFor="lateral" className="cursor-pointer">Maléolo Lateral (Peroné)</Label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="posterior"
+              checked={formData.has_posterior_fracture}
+              onCheckedChange={(checked) => handleMalleoliChange('posterior', checked as boolean)}
+            />
+            <Label htmlFor="posterior" className="cursor-pointer">Maléolo Posterior</Label>
+          </div>
+
+          {currentPath === 'medial_only' && (
             <Alert className="mt-4 bg-green-50 border-green-200">
               <AlertDescription>
-                Fractura oblicua/vertical indica mecanismo de "push-off" → <strong>SA / Weber A</strong>
-                <br />
-                <span className="text-sm text-muted-foreground">Responda la pregunta 5 para completar la clasificación AO/OTA.</span>
+                Fractura unimaleolar del maléolo medial → <strong>AO-44-A1, Lauge-Hansen PER/PA</strong>
               </AlertDescription>
             </Alert>
           )}
-          {formData.medial_morphology === 'transverse' && (
+          {currentPath === 'medial_posterior' && (
+            <Alert className="mt-4 bg-green-50 border-green-200">
+              <AlertDescription>
+                Fractura bimaleolar medial + posterior → <strong>AO-44-A2, Lauge-Hansen PA</strong>
+              </AlertDescription>
+            </Alert>
+          )}
+          {currentPath === 'none' && (formData.has_medial_fracture || formData.has_lateral_fracture || formData.has_posterior_fracture) === false && (
             <Alert className="mt-4">
               <AlertDescription>
-                Fractura transversal indica mecanismo de avulsión "pull-off" → <strong>SER/PER/PA</strong>
+                Seleccione al menos un maléolo fracturado
               </AlertDescription>
             </Alert>
           )}
         </CardContent>
       </Card>
 
-      {/* Question 2: Fibular Fracture Level */}
-      {showQuestion2 && (
+      {/* Posterior-only: Bartonicek type */}
+      {showPosteriorType && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. ¿Cuál es el nivel de la fractura del peroné?
+              2. ¿Qué tipo de fractura del maléolo posterior?
             </CardTitle>
             <CardDescription>
-              La altura de la fractura respecto a la sindesmosis
+              Clasificación de Bartonicek
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.posterior_fracture_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as BartonicekType })}
+            >
+              {options.bartonicek_types.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`posterior-${option.value}`} />
+                  <Label htmlFor={`posterior-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Lateral-only: Level */}
+      {showLateralLevel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              2. ¿A qué nivel está la fractura del peroné?
+            </CardTitle>
+            <CardDescription>
+              Nivel respecto a la sindesmosis
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.lateral_fracture_level || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                lateral_fracture_level: value as FibularLevel,
+                suprasindesmal_type: undefined,
+              })}
+            >
+              {options.fibular_levels.filter(o => o.value !== 'doubtful').map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lateral-level-${option.value}`} />
+                  <Label htmlFor={`lateral-level-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            {formData.lateral_fracture_level === 'infrasindesmal' && (
+              <Alert className="mt-4 bg-green-50 border-green-200">
+                <AlertDescription>
+                  Fractura infrasindesmal → <strong>Weber A, AO-44-A1, Lauge-Hansen SA</strong>
+                </AlertDescription>
+              </Alert>
+            )}
+            {formData.lateral_fracture_level === 'transindesmal' && (
+              <Alert className="mt-4 bg-blue-50 border-blue-200">
+                <AlertDescription>
+                  Fractura transindesmal → <strong>Weber B, AO-44-B1, Lauge-Hansen SER</strong>
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Lateral-only suprasindesmal: Type */}
+      {showSuprasindesmalType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              3. ¿De qué tipo es la fractura suprasindesmal?
+            </CardTitle>
+            <CardDescription>
+              Para clasificación AO/OTA (Weber C)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.suprasindesmal_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as WeberCFractureType })}
+            >
+              {options.weber_c_fracture_type.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`supra-type-${option.value}`} />
+                  <Label htmlFor={`supra-type-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complex path: Medial morphology */}
+      {showMedialMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              2. ¿Cuál es la morfología del maléolo medial?
+            </CardTitle>
+            <CardDescription>
+              La morfología indica el mecanismo de lesión
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.medial_morphology || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                medial_morphology: value as MedialMorphology,
+                fibula_transverse: undefined,
+                fibular_level: undefined,
+                fibular_transverse: undefined,
+                fibular_morphology: undefined,
+                oblique_fibular_level: undefined,
+                involved_malleoli: undefined,
+                suprasindesmal_type: undefined,
+                posterior_type: undefined,
+              })}
+            >
+              {options.medial_morphology.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`medial-morph-${option.value}`} />
+                  <Label htmlFor={`medial-morph-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            {formData.medial_morphology === 'oblique_vertical' && (
+              <Alert className="mt-4 bg-green-50 border-green-200">
+                <AlertDescription>
+                  Morfología oblicua/vertical indica mecanismo de "push-off" → <strong>SA</strong>
+                </AlertDescription>
+              </Alert>
+            )}
+            {formData.medial_morphology === 'transverse' && (
+              <Alert className="mt-4">
+                <AlertDescription>
+                  Morfología transversal indica mecanismo de avulsión "pull-off"
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complex path: Fibula transverse (for oblique/vertical medial) */}
+      {showFibulaTransverse && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              3. ¿Es la fractura del peroné transversa?
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibula_transverse === undefined ? '' : formData.fibula_transverse ? 'yes' : 'no'}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibula_transverse: value === 'yes',
+                fibular_level: undefined,
+                fibular_transverse: undefined,
+                fibular_morphology: undefined,
+                oblique_fibular_level: undefined,
+                involved_malleoli: undefined,
+                suprasindesmal_type: undefined,
+              })}
+            >
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="yes" id="fibula-trans-yes" />
+                <Label htmlFor="fibula-trans-yes" className="cursor-pointer">Sí</Label>
+              </div>
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="no" id="fibula-trans-no" />
+                <Label htmlFor="fibula-trans-no" className="cursor-pointer">No</Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complex path: Fibular level */}
+      {showFibularLevel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {showFibulaTransverse ? '4' : '3'}. ¿Cuál es el nivel de la fractura del peroné?
+            </CardTitle>
+            <CardDescription>
+              Nivel respecto a la sindesmosis
             </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
               value={formData.fibular_level || ''}
-              onValueChange={(value) => handleFibularLevelChange(value as FibularLevel)}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibular_level: value as FibularLevel,
+                fibular_transverse: undefined,
+                fibular_morphology: undefined,
+                oblique_fibular_level: undefined,
+                involved_malleoli: undefined,
+                suprasindesmal_type: undefined,
+              })}
             >
               {options.fibular_levels.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -312,7 +552,7 @@ export function FractureForm() {
             {formData.fibular_level === 'suprasindesmal_high' && (
               <Alert className="mt-4">
                 <AlertDescription>
-                  Fractura alta del peroné (+6cm) → <strong>PER / Weber C</strong>
+                  Fractura suprasindesmal alta → <strong>Weber C / PER</strong>
                 </AlertDescription>
               </Alert>
             )}
@@ -320,12 +560,73 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Question 3: Fibular Morphology */}
-      {showQuestion3 && (
+      {/* Complex path: Weber C type for suprasindesmal */}
+      {showComplexWeberCType && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              3. ¿Cuál es la morfología del maléolo peroneo?
+              ¿De qué tipo es la fractura suprasindesmal?
+            </CardTitle>
+            <CardDescription>
+              Para clasificación AO/OTA (Weber C)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.suprasindesmal_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as WeberCFractureType })}
+            >
+              {options.weber_c_fracture_type.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`complex-supra-${option.value}`} />
+                  <Label htmlFor={`complex-supra-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complex path: Fibular transverse (for infrasindesmal) */}
+      {showFibularTransverse && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              ¿Es la fractura del peroné transversa?
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibular_transverse === undefined ? '' : formData.fibular_transverse ? 'yes' : 'no'}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibular_transverse: value === 'yes',
+                fibular_morphology: undefined,
+                oblique_fibular_level: undefined,
+                involved_malleoli: undefined,
+              })}
+            >
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="yes" id="fibular-trans-yes" />
+                <Label htmlFor="fibular-trans-yes" className="cursor-pointer">Sí</Label>
+              </div>
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="no" id="fibular-trans-no" />
+                <Label htmlFor="fibular-trans-no" className="cursor-pointer">No</Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Complex path: Fibular morphology */}
+      {showFibularMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              ¿Cuál es la morfología de la fractura del peroné?
             </CardTitle>
             <CardDescription>
               El patrón de fractura ayuda a determinar el mecanismo
@@ -334,7 +635,13 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_morphology || ''}
-              onValueChange={(value) => handleFibularMorphologyChange(value as FibularMorphology)}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibular_morphology: value as FibularMorphology,
+                oblique_fibular_level: undefined,
+                involved_malleoli: undefined,
+                suprasindesmal_type: undefined,
+              })}
             >
               {options.fibular_morphology.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -346,23 +653,23 @@ export function FractureForm() {
               ))}
             </RadioGroup>
             {formData.fibular_morphology === 'transverse' && (
-              <Alert className="mt-4">
+              <Alert className="mt-4 bg-green-50 border-green-200">
                 <AlertDescription>
                   Fractura transversa → <strong>SA / Weber A</strong>
                 </AlertDescription>
               </Alert>
             )}
-            {formData.fibular_morphology === 'transverse_oblique' && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  Fractura transversa/oblicua (baja medial, alta lateral) → <strong>PA</strong>
-                </AlertDescription>
-              </Alert>
-            )}
             {formData.fibular_morphology === 'spiral' && (
-              <Alert className="mt-4">
+              <Alert className="mt-4 bg-blue-50 border-blue-200">
                 <AlertDescription>
-                  Fractura espiroidea (baja anterior, alta posterior) → <strong>SER / Weber B</strong>
+                  Fractura espiroidea → <strong>SER / Weber B</strong>
+                </AlertDescription>
+              </Alert>
+            )}
+            {formData.fibular_morphology === 'oblique' && (
+              <Alert className="mt-4 bg-purple-50 border-purple-200">
+                <AlertDescription>
+                  Fractura oblicua → <strong>PA</strong>
                 </AlertDescription>
               </Alert>
             )}
@@ -370,26 +677,28 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Question 4: SER Fragments (only for SER fractures) */}
-      {showQuestion4 && (
+      {/* Complex path: Oblique fibular level */}
+      {showObliqueFibularLevel && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              4. ¿Tiene otros fragmentos?
+              ¿A qué nivel está la fractura oblicua del peroné?
             </CardTitle>
-            <CardDescription>
-              Fragmentos adicionales asociados a fracturas SER
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.ser_fragment || ''}
-              onValueChange={(value) => handleSERFragmentChange(value as SERFragment)}
+              value={formData.oblique_fibular_level || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                oblique_fibular_level: value as FibularLevel,
+                involved_malleoli: undefined,
+                suprasindesmal_type: undefined,
+              })}
             >
-              {options.ser_fragments.map((option) => (
+              {options.fibular_levels.filter(o => o.value !== 'doubtful').map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`fragment-${option.value}`} />
-                  <Label htmlFor={`fragment-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`oblique-level-${option.value}`} />
+                  <Label htmlFor={`oblique-level-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -399,26 +708,30 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Question 5a: Fracture Involvement (for Weber A/B) */}
-      {showQuestion5 && weberType !== 'C' && (
+      {/* Complex path: Involved malleoli */}
+      {showInvolvedMalleoli && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              5. ¿Es una fractura...?
+              ¿Qué maléolos están afectados?
             </CardTitle>
             <CardDescription>
-              Para clasificación AO/OTA (Weber {weberType})
+              Para clasificación AO/OTA
             </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.fracture_involvement || ''}
-              onValueChange={(value) => setFormData({ ...formData, fracture_involvement: value as FractureInvolvement })}
+              value={formData.involved_malleoli || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                involved_malleoli: value as InvolvedMalleoli,
+                posterior_type: undefined,
+              })}
             >
-              {options.fracture_involvement.map((option) => (
+              {(showInvolvedMalleoli === 'sa' ? options.involved_malleoli_sa : options.involved_malleoli_ser).map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`involvement-${option.value}`} />
-                  <Label htmlFor={`involvement-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`involved-${option.value}`} />
+                  <Label htmlFor={`involved-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -428,26 +741,26 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Question 5b: Weber C Fracture Type (for Weber C) */}
-      {showQuestion5 && weberType === 'C' && (
+      {/* Complex path: Posterior type (Bartonicek) when posterior is involved */}
+      {showPosteriorTypeInComplex && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              5. ¿Es una fractura...?
+              ¿Qué tipo de fractura del maléolo posterior?
             </CardTitle>
             <CardDescription>
-              Para clasificación AO/OTA (Weber C)
+              Clasificación de Bartonicek
             </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.weber_c_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, weber_c_fracture_type: value as WeberCFractureType })}
+              value={formData.posterior_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, posterior_type: value as BartonicekType })}
             >
-              {options.weber_c_fracture_type.map((option) => (
+              {options.bartonicek_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`weber-c-${option.value}`} />
-                  <Label htmlFor={`weber-c-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`complex-posterior-${option.value}`} />
+                  <Label htmlFor={`complex-posterior-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>

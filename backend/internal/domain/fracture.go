@@ -1,77 +1,106 @@
 package domain
 
-// MedialMalleolusMorphology represents the morphology of the medial malleolus fracture
-type MedialMalleolusMorphology string
+// MedialMorphology represents the morphology of the medial malleolus fracture
+// Used when medial + lateral malleoli are fractured
+type MedialMorphology string
 
 const (
-	MedialMorphologyNone       MedialMalleolusMorphology = "none"       // Sin fractura del maléolo medial - fractura aislada lateral
-	MedialMorphologyOblique    MedialMalleolusMorphology = "oblique"    // Oblicua/vertical - indicates SA
-	MedialMorphologyTransverse MedialMalleolusMorphology = "transverse" // Transversal - indicates SER/PER/PA
+	MedialMorphologyObliqueVertical MedialMorphology = "oblique_vertical" // Oblicua/vertical → SA
+	MedialMorphologyTransverse      MedialMorphology = "transverse"       // Transversal
+	MedialMorphologyDoubtful        MedialMorphology = "doubtful"         // Dudoso
 )
 
-// FibularFractureLevel represents where the fibular fracture is located relative to syndesmosis
-type FibularFractureLevel string
+// FibularLevel represents where the fibular fracture is located relative to syndesmosis
+type FibularLevel string
 
 const (
-	FibularLevelSuprasindesmalHigh FibularFractureLevel = "suprasindesmal_high" // Above syndesmosis (>6cm) - PER/Weber C
-	FibularLevelTransindesmal      FibularFractureLevel = "transindesmal"       // At syndesmosis
-	FibularLevelInfrasindesmal     FibularFractureLevel = "infrasindesmal"      // Below syndesmosis
-	FibularLevelDoubtful           FibularFractureLevel = "doubtful"            // Dudoso
+	FibularLevelInfrasindesmal     FibularLevel = "infrasindesmal"      // Below syndesmosis
+	FibularLevelTransindesmal      FibularLevel = "transindesmal"       // At syndesmosis
+	FibularLevelSuprasindesmalHigh FibularLevel = "suprasindesmal_high" // Above syndesmosis (>6cm)
+	FibularLevelDoubtful           FibularLevel = "doubtful"            // Dudoso
 )
 
 // FibularMorphology represents the morphology of the fibular fracture
 type FibularMorphology string
 
 const (
-	FibularMorphologyTransverse       FibularMorphology = "transverse"        // Transversa - SA/Weber A
-	FibularMorphologyTransverseOblique FibularMorphology = "transverse_oblique" // Transversa/oblicua (baja medial, alta lateral) - PA
-	FibularMorphologySpiral           FibularMorphology = "spiral"            // Espiroidea (baja anterior, alta posterior) - SER/Weber B
-)
-
-// SERFragment represents additional fragments in SER fractures
-type SERFragment string
-
-const (
-	SERFragmentNone          SERFragment = "none"
-	SERFragmentWagstaffe     SERFragment = "wagstaffe"      // Fragmento de Wagstaffe
-	SERFragmentTillauxChaput SERFragment = "tillaux_chaput" // Fragmento de Tillaux-Chaput
-)
-
-// FractureInvolvement represents the structures involved in the fracture (for Weber A/B)
-type FractureInvolvement string
-
-const (
-	FractureInvolvementLateralOnly         FractureInvolvement = "lateral_only"           // Aislada lateral (solo peroné)
-	FractureInvolvementLateralMedial       FractureInvolvement = "lateral_medial"         // Lateral y medial (peroné y tibia)
-	FractureInvolvementLateralMedialPosterior FractureInvolvement = "lateral_medial_posterior" // Lateral, medial y posterior
+	FibularMorphologyTransverse FibularMorphology = "transverse" // Transversal
+	FibularMorphologyOblique    FibularMorphology = "oblique"    // Oblicua (baja medial / alta lateral)
+	FibularMorphologySpiral     FibularMorphology = "spiral"     // Espiroidea (baja anterior / alta posterior)
 )
 
 // WeberCFractureType represents the fracture type for Weber C (suprasindesmal high)
 type WeberCFractureType string
 
 const (
-	WeberCFractureSimple         WeberCFractureType = "simple"         // Simple diafisaria
-	WeberCFractureMultifragmentary WeberCFractureType = "multifragmentary" // Multifragmentaria
-	WeberCFractureProximal       WeberCFractureType = "proximal"       // Proximal
+	WeberCSimpleDiaphyseal WeberCFractureType = "simple_diaphyseal" // Diafisaria simple
+	WeberCMultifragmentary WeberCFractureType = "multifragmentary"  // Multifragmentaria
+	WeberCProximal         WeberCFractureType = "proximal"          // Proximal
+)
+
+// InvolvedMalleoli represents which malleoli are involved for AO classification
+type InvolvedMalleoli string
+
+const (
+	// For transverse pattern (SA classification)
+	InvolvedUnifocal InvolvedMalleoli = "unifocal" // Solo maléolo lateral
+	InvolvedBifocal  InvolvedMalleoli = "bifocal"  // Maléolos lateral y medial
+	InvolvedTrifocal InvolvedMalleoli = "trifocal" // Maléolos lateral, medial y posterior
+
+	// For spiral pattern (SER classification)
+	InvolvedLateralOnly            InvolvedMalleoli = "lateral_only"             // Maléolo lateral aislado
+	InvolvedLateralMedial          InvolvedMalleoli = "lateral_medial"           // Maléolos lateral y medial
+	InvolvedLateralMedialPosterior InvolvedMalleoli = "lateral_medial_posterior" // Maléolos lateral, medial y posterior
+)
+
+// BartonicekType represents the Bartonicek classification for posterior malleolus fractures
+type BartonicekType string
+
+const (
+	BartonicekType1 BartonicekType = "type_1" // Fragmento extraincisural
+	BartonicekType2 BartonicekType = "type_2" // Fragmento posterolateral
+	BartonicekType3 BartonicekType = "type_3" // Fragmento posteromedial y posterolateral
+	BartonicekType4 BartonicekType = "type_4" // Gran fragmento triangular posterolateral
 )
 
 // FractureInput represents the input data for classification
+// The form flow follows a decision tree based on which malleoli are fractured
 type FractureInput struct {
-	// Question 1: Medial malleolus morphology
-	MedialMorphology MedialMalleolusMorphology `json:"medial_morphology"`
+	// Step 1: Which malleoli are fractured?
+	HasMedialFracture    bool `json:"has_medial_fracture"`
+	HasLateralFracture   bool `json:"has_lateral_fracture"`
+	HasPosteriorFracture bool `json:"has_posterior_fracture"`
 
-	// Question 2: Fibular fracture level (only if medial morphology is transverse)
-	FibularLevel FibularFractureLevel `json:"fibular_level,omitempty"`
+	// For posterior-only path (no medial, no lateral)
+	PosteriorFractureType BartonicekType `json:"posterior_fracture_type,omitempty"`
 
-	// Question 3: Fibular morphology (only if fibular level is not suprasindesmal_high)
+	// For lateral-only path (no medial, has lateral, only lateral)
+	LateralFractureLevel FibularLevel `json:"lateral_fracture_level,omitempty"`
+
+	// For lateral-only suprasindesmal: fracture type
+	SuprasindesmalType WeberCFractureType `json:"suprasindesmal_type,omitempty"`
+
+	// For complex path (medial + lateral ± posterior): Medial morphology
+	MedialMorphology MedialMorphology `json:"medial_morphology,omitempty"`
+
+	// For oblique/vertical medial: Is fibula fracture transverse?
+	FibulaTransverse *bool `json:"fibula_transverse,omitempty"`
+
+	// Fibular level (for complex paths - transindesmal, infrasindesmal, suprasindesmal high, doubtful)
+	FibularLevel FibularLevel `json:"fibular_level,omitempty"`
+
+	// For infrasindesmal fibular level: Is it transverse?
+	FibularTransverse *bool `json:"fibular_transverse,omitempty"`
+
+	// Fibular morphology (transverse, oblique, spiral)
 	FibularMorphology FibularMorphology `json:"fibular_morphology,omitempty"`
 
-	// Question 4: SER fragments (only if classification is SER)
-	SERFragment SERFragment `json:"ser_fragment,omitempty"`
+	// For oblique fibular morphology: At what level?
+	ObliqueFibularLevel FibularLevel `json:"oblique_fibular_level,omitempty"`
 
-	// Question 5a: Fracture involvement (for Weber A/B - Type A or B)
-	FractureInvolvement FractureInvolvement `json:"fracture_involvement,omitempty"`
+	// Involved malleoli (for final AO classification)
+	InvolvedMalleoli InvolvedMalleoli `json:"involved_malleoli,omitempty"`
 
-	// Question 5b: Weber C fracture type (for Weber C - Type C)
-	WeberCFractureType WeberCFractureType `json:"weber_c_fracture_type,omitempty"`
+	// Posterior fracture type (Bartonicek) when posterior is involved in complex path
+	PosteriorType BartonicekType `json:"posterior_type,omitempty"`
 }

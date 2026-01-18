@@ -10,170 +10,295 @@ func NewEngine() *Engine {
 	return &Engine{}
 }
 
-// Classify applies the classification rules based on the decision tree:
-// 1. Medial malleolus morphology determines SA vs SER/PER/PA
-// 2. Fibular level determines PER/Weber C if suprasindesmal high
-// 3. Fibular morphology determines SA/PA/SER if not suprasindesmal high
-// 4. SER fragments (Wagstaffe/Tillaux-Chaput) for SER fractures
+// Classify applies the classification rules based on the decision tree from the flow diagram
+// The flow starts with: "¿Tiene fractura del maléolo medial?"
 func (e *Engine) Classify(input domain.FractureInput) (*domain.ClassificationResult, error) {
 	result := &domain.ClassificationResult{}
 	var notes []string
 
-	// Determine classification based on decision tree
-	var laugeHansenType domain.LaugeHansenType
-	var danisWeberType domain.DanisWeberType
+	// Determine which path to follow based on fractured malleoli
+	hasMedial := input.HasMedialFracture
+	hasLateral := input.HasLateralFracture
+	hasPosterior := input.HasPosteriorFracture
 
-	// Track if this is an isolated lateral fracture (no medial involvement)
-	isIsolatedLateral := input.MedialMorphology == domain.MedialMorphologyNone
-
-	// Step 1: Check medial malleolus morphology
-	if input.MedialMorphology == domain.MedialMorphologyOblique {
-		// Oblique/vertical medial malleolus = SA
-		laugeHansenType = domain.LaugeHansenSA
-		danisWeberType = domain.DanisWeberA
-		notes = append(notes, "Morfología oblicua/vertical del maléolo medial indica mecanismo de 'push-off' (SA)")
-	} else if input.MedialMorphology == domain.MedialMorphologyNone {
-		// No medial fracture - isolated lateral fracture
-		notes = append(notes, "Sin fractura del maléolo medial - fractura aislada lateral")
-
-		// Determine Weber type based on fibular level
-		if input.FibularLevel == domain.FibularLevelSuprasindesmalHigh {
-			// High fibular fracture (>6cm) = Weber C
-			danisWeberType = domain.DanisWeberC
-			laugeHansenType = domain.LaugeHansenPER
-			notes = append(notes, "Fractura alta del peroné (>6cm) - Weber C")
-		} else {
-			// Need to check fibular morphology for Weber A vs B
-			switch input.FibularMorphology {
-			case domain.FibularMorphologyTransverse:
-				danisWeberType = domain.DanisWeberA
-				laugeHansenType = domain.LaugeHansenSA
-				notes = append(notes, "Fractura transversa del peroné - Weber A")
-			case domain.FibularMorphologyTransverseOblique:
-				danisWeberType = domain.DanisWeberB
-				laugeHansenType = domain.LaugeHansenPA
-				notes = append(notes, "Fractura transversa/oblicua del peroné - Weber B")
-			case domain.FibularMorphologySpiral:
-				danisWeberType = domain.DanisWeberB
-				laugeHansenType = domain.LaugeHansenSER
-				notes = append(notes, "Fractura espiroidea del peroné - Weber B")
+	// PATH 1: No medial fracture
+	if !hasMedial {
+		// No medial → Check lateral
+		if !hasLateral {
+			// No medial, no lateral → Only posterior (Bartonicek classification)
+			if hasPosterior {
+				notes = append(notes, "Fractura aislada del maléolo posterior")
+				result.Bartonicek = getBartonicekClassification(input.PosteriorFractureType)
+				result.Notes = notes
+				return result, nil
 			}
+			// No fractures at all - shouldn't happen
+			notes = append(notes, "No se detectaron fracturas de maléolos")
+			result.Notes = notes
+			return result, nil
 		}
-	} else {
-		// Transverse medial malleolus = SER/PER/PA - need to check fibular level
-		notes = append(notes, "Morfología transversa del maléolo medial indica mecanismo de avulsión 'pull-off'")
 
-		// Step 2: Check fibular level
-		if input.FibularLevel == domain.FibularLevelSuprasindesmalHigh {
-			// High fibular fracture (>6cm) = PER/Weber C
-			laugeHansenType = domain.LaugeHansenPER
-			danisWeberType = domain.DanisWeberC
-			notes = append(notes, "Fractura alta del peroné (>6cm del pilón tibial) característica de PER")
-		} else {
-			// Need to check fibular morphology (Question 3)
-			switch input.FibularMorphology {
-			case domain.FibularMorphologyTransverse:
-				// Transverse fibular = SA/Weber A
-				laugeHansenType = domain.LaugeHansenSA
-				danisWeberType = domain.DanisWeberA
-				notes = append(notes, "Fractura transversa del peroné típica de SA/Weber A")
-
-			case domain.FibularMorphologyTransverseOblique:
-				// Transverse-oblique (low medial, high lateral) = PA
-				laugeHansenType = domain.LaugeHansenPA
-				danisWeberType = domain.DanisWeberB // PA is typically Weber B or C
-				notes = append(notes, "Fractura transversa/oblicua (baja medial, alta lateral) típica de PA")
-
-			case domain.FibularMorphologySpiral:
-				// Spiral (low anterior, high posterior) = SER/Weber B
-				laugeHansenType = domain.LaugeHansenSER
-				danisWeberType = domain.DanisWeberB
-				notes = append(notes, "Fractura espiroidea (baja anterior, alta posterior) típica de SER/Weber B")
-			}
+		// Has lateral, no medial → Check if only lateral
+		if !hasPosterior {
+			// Only lateral (no medial, no posterior)
+			return e.classifyLateralOnly(input, notes)
 		}
+
+		// Has lateral + posterior (no medial) → Complex path
+		return e.classifyComplexPath(input, notes)
 	}
 
-	// Build Lauge-Hansen classification
-	result.LaugeHansen = domain.LaugeHansenClassification{
-		Type:        laugeHansenType,
-		FullName:    getLaugeHansenFullName(laugeHansenType),
-		Description: getLaugeHansenDescription(laugeHansenType),
-	}
-
-	// Step 4: Check for SER fragments
-	if laugeHansenType == domain.LaugeHansenSER && input.SERFragment != "" && input.SERFragment != domain.SERFragmentNone {
-		switch input.SERFragment {
-		case domain.SERFragmentWagstaffe:
-			result.LaugeHansen.Fragment = "Fragmento de Wagstaffe"
-			notes = append(notes, "Fractura SER con fragmento de Wagstaffe (avulsión del ligamento tibioperoneal anteroinferior)")
-		case domain.SERFragmentTillauxChaput:
-			result.LaugeHansen.Fragment = "Fragmento de Tillaux-Chaput"
-			notes = append(notes, "Fractura SER con fragmento de Tillaux-Chaput (avulsión anterolateral de la tibia)")
+	// PATH 2: Has medial fracture
+	if !hasLateral && !hasPosterior {
+		// Only medial
+		notes = append(notes, "Fractura unimaleolar del maléolo medial")
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenPER,
+			FullName:    getLaugeHansenFullName(domain.LaugeHansenPER),
+			Description: "Fractura aislada del maléolo medial, típicamente asociada a mecanismo PER/PA",
 		}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code:        domain.AOOTAA1,
+			Description: getAOOTADescription(domain.AOOTAA1),
+		}
+		result.Notes = notes
+		return result, nil
 	}
 
-	// Build Danis-Weber classification
-	result.DanisWeber = domain.DanisWeberClassification{
-		Type:        danisWeberType,
-		Description: getDanisWeberDescription(danisWeberType),
+	if !hasLateral && hasPosterior {
+		// Medial + Posterior (no lateral)
+		notes = append(notes, "Fractura bimaleolar del maléolo medial y posterior")
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenPA,
+			FullName:    getLaugeHansenFullName(domain.LaugeHansenPA),
+			Description: "Fractura del maléolo medial con afectación posterior, mecanismo PA",
+		}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code:        domain.AOOTAA2,
+			Description: getAOOTADescription(domain.AOOTAA2),
+		}
+		result.Notes = notes
+		return result, nil
 	}
 
-	// Step 5: Calculate AO/OTA classification based on Weber type and involvement/fracture type
-	var aootaCode domain.AOOTACode
+	// PATH 3: Medial + Lateral (± Posterior) → Complex path with medial morphology
+	return e.classifyComplexPath(input, notes)
+}
 
-	// If isolated lateral (no medial fracture), always use variant 1 (aislada lateral)
-	if isIsolatedLateral {
-		switch danisWeberType {
-		case domain.DanisWeberA:
-			aootaCode = domain.AOOTAA1
-		case domain.DanisWeberB:
-			aootaCode = domain.AOOTAB1
-		case domain.DanisWeberC:
+// classifyLateralOnly handles the lateral-only fracture path
+func (e *Engine) classifyLateralOnly(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{}
+	notes = append(notes, "Fractura aislada del maléolo lateral")
+
+	level := input.LateralFractureLevel
+
+	switch level {
+	case domain.FibularLevelInfrasindesmal:
+		// Infrasindesmal → Weber A, AO-44-A1, LH SA
+		notes = append(notes, "Fractura infrasindesmal (por debajo de la sindesmosis)")
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type:        domain.DanisWeberA,
+			Description: getDanisWeberDescription(domain.DanisWeberA),
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenSA,
+			FullName:    getLaugeHansenFullName(domain.LaugeHansenSA),
+			Description: getLaugeHansenDescription(domain.LaugeHansenSA),
+		}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code:        domain.AOOTAA1,
+			Description: getAOOTADescription(domain.AOOTAA1),
+		}
+
+	case domain.FibularLevelTransindesmal:
+		// Transindesmal → Weber B, AO-44-B1, LH SER
+		notes = append(notes, "Fractura transindesmal (a nivel de la sindesmosis)")
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type:        domain.DanisWeberB,
+			Description: getDanisWeberDescription(domain.DanisWeberB),
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenSER,
+			FullName:    getLaugeHansenFullName(domain.LaugeHansenSER),
+			Description: getLaugeHansenDescription(domain.LaugeHansenSER),
+		}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code:        domain.AOOTAB1,
+			Description: getAOOTADescription(domain.AOOTAB1),
+		}
+
+	case domain.FibularLevelSuprasindesmalHigh:
+		// Suprasindesmal → Weber C, LH PER, AO based on type
+		notes = append(notes, "Fractura suprasindesmal alta (>6cm por encima de la sindesmosis)")
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type:        domain.DanisWeberC,
+			Description: getDanisWeberDescription(domain.DanisWeberC),
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenPER,
+			FullName:    getLaugeHansenFullName(domain.LaugeHansenPER),
+			Description: getLaugeHansenDescription(domain.LaugeHansenPER),
+		}
+
+		// AO classification based on fracture type
+		var aootaCode domain.AOOTACode
+		switch input.SuprasindesmalType {
+		case domain.WeberCSimpleDiaphyseal:
 			aootaCode = domain.AOOTAC1
-		}
-	} else if danisWeberType == domain.DanisWeberC {
-		// For Weber C with medial involvement, use the Weber C fracture type question
-		switch input.WeberCFractureType {
-		case domain.WeberCFractureSimple:
-			aootaCode = domain.AOOTAC1
-		case domain.WeberCFractureMultifragmentary:
+			notes = append(notes, "Fractura diafisaria simple")
+		case domain.WeberCMultifragmentary:
 			aootaCode = domain.AOOTAC2
-		case domain.WeberCFractureProximal:
+			notes = append(notes, "Fractura multifragmentaria")
+		case domain.WeberCProximal:
 			aootaCode = domain.AOOTAC3
+			notes = append(notes, "Fractura proximal (Maisonneuve)")
 		default:
-			aootaCode = domain.AOOTAC1 // Default to C1
+			aootaCode = domain.AOOTAC1
 		}
-	} else {
-		// For Weber A and B with medial involvement, use the fracture involvement question
-		switch input.FractureInvolvement {
-		case domain.FractureInvolvementLateralOnly:
-			if danisWeberType == domain.DanisWeberA {
-				aootaCode = domain.AOOTAA1
-			} else {
-				aootaCode = domain.AOOTAB1
-			}
-		case domain.FractureInvolvementLateralMedial:
-			if danisWeberType == domain.DanisWeberA {
-				aootaCode = domain.AOOTAA2
-			} else {
-				aootaCode = domain.AOOTAB2
-			}
-		case domain.FractureInvolvementLateralMedialPosterior:
-			if danisWeberType == domain.DanisWeberA {
-				aootaCode = domain.AOOTAA3
-			} else {
-				aootaCode = domain.AOOTAB3
-			}
-		default:
-			if danisWeberType == domain.DanisWeberA {
-				aootaCode = domain.AOOTAA1
-			} else {
-				aootaCode = domain.AOOTAB1
-			}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code:        aootaCode,
+			Description: getAOOTADescription(aootaCode),
 		}
 	}
 
-	result.AOOTA = domain.AOOTAClassification{
+	result.Notes = notes
+	return result, nil
+}
+
+// classifyComplexPath handles the complex path (medial+lateral or lateral+posterior)
+func (e *Engine) classifyComplexPath(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	// If has medial, start with medial morphology check
+	if input.HasMedialFracture {
+		return e.classifyWithMedialMorphology(input, notes)
+	}
+
+	// No medial, has lateral + posterior → Follow fibular level path
+	notes = append(notes, "Fractura del maléolo lateral con afectación posterior")
+	return e.classifyByFibularLevel(input, notes)
+}
+
+// classifyWithMedialMorphology handles cases where medial morphology determines the path
+func (e *Engine) classifyWithMedialMorphology(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	notes = append(notes, "Fractura con afectación del maléolo medial y lateral")
+
+	switch input.MedialMorphology {
+	case domain.MedialMorphologyObliqueVertical:
+		// Oblique/vertical medial → Check if fibula is transverse
+		notes = append(notes, "Morfología oblicua/vertical del maléolo medial (mecanismo push-off)")
+
+		if input.FibulaTransverse != nil && *input.FibulaTransverse {
+			// Transverse fibula → SA classification path
+			notes = append(notes, "Fractura transversa del peroné")
+			return e.classifySA(input, notes)
+		}
+		// Non-transverse fibula → Check fibular morphology
+		return e.classifyByFibularMorphology(input, notes)
+
+	case domain.MedialMorphologyTransverse, domain.MedialMorphologyDoubtful:
+		// Transverse or doubtful medial → Check fibular morphology
+		if input.MedialMorphology == domain.MedialMorphologyTransverse {
+			notes = append(notes, "Morfología transversal del maléolo medial (mecanismo pull-off)")
+		} else {
+			notes = append(notes, "Morfología dudosa del maléolo medial")
+		}
+		return e.classifyByFibularLevel(input, notes)
+	}
+
+	// Default: classify by fibular level
+	return e.classifyByFibularLevel(input, notes)
+}
+
+// classifyByFibularLevel handles classification based on fibular level
+func (e *Engine) classifyByFibularLevel(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	level := input.FibularLevel
+
+	switch level {
+	case domain.FibularLevelSuprasindesmalHigh:
+		// Suprasindesmal high → Weber C / PER
+		notes = append(notes, "Fractura suprasindesmal alta del peroné (>6cm)")
+		return e.classifyWeberC(input, notes, domain.LaugeHansenPER)
+
+	case domain.FibularLevelTransindesmal, domain.FibularLevelDoubtful:
+		// Transindesmal or doubtful → Check fibular morphology
+		if level == domain.FibularLevelTransindesmal {
+			notes = append(notes, "Fractura transindesmal del peroné")
+		} else {
+			notes = append(notes, "Nivel de fractura del peroné dudoso")
+		}
+		return e.classifyByFibularMorphology(input, notes)
+
+	case domain.FibularLevelInfrasindesmal:
+		// Infrasindesmal → Check if transverse
+		notes = append(notes, "Fractura infrasindesmal del peroné")
+		if input.FibularTransverse != nil && *input.FibularTransverse {
+			// Transverse → SA classification
+			notes = append(notes, "Fractura transversa del peroné")
+			return e.classifySA(input, notes)
+		}
+		// Not transverse → Check morphology
+		return e.classifyByFibularMorphology(input, notes)
+	}
+
+	// Default to morphology check
+	return e.classifyByFibularMorphology(input, notes)
+}
+
+// classifyByFibularMorphology handles classification based on fibular morphology
+func (e *Engine) classifyByFibularMorphology(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	morphology := input.FibularMorphology
+
+	switch morphology {
+	case domain.FibularMorphologyTransverse:
+		// Transverse → SA classification
+		notes = append(notes, "Morfología transversal del peroné")
+		return e.classifySA(input, notes)
+
+	case domain.FibularMorphologyOblique:
+		// Oblique → Check level for PA classification
+		notes = append(notes, "Morfología oblicua del peroné (baja medial / alta lateral)")
+		return e.classifyObliqueFibula(input, notes)
+
+	case domain.FibularMorphologySpiral:
+		// Spiral → SER classification
+		notes = append(notes, "Morfología espiroidea del peroné (baja anterior / alta posterior)")
+		return e.classifySER(input, notes)
+	}
+
+	// Default to SER
+	return e.classifySER(input, notes)
+}
+
+// classifySA handles SA (Supination-Adduction) classification
+func (e *Engine) classifySA(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{}
+
+	result.LaugeHansen = &domain.LaugeHansenClassification{
+		Type:        domain.LaugeHansenSA,
+		FullName:    getLaugeHansenFullName(domain.LaugeHansenSA),
+		Description: getLaugeHansenDescription(domain.LaugeHansenSA),
+	}
+	result.DanisWeber = &domain.DanisWeberClassification{
+		Type:        domain.DanisWeberA,
+		Description: getDanisWeberDescription(domain.DanisWeberA),
+	}
+
+	// AO classification based on involved malleoli
+	var aootaCode domain.AOOTACode
+	switch input.InvolvedMalleoli {
+	case domain.InvolvedUnifocal:
+		aootaCode = domain.AOOTAA1
+		notes = append(notes, "Fractura unifocal (solo maléolo lateral)")
+	case domain.InvolvedBifocal:
+		aootaCode = domain.AOOTAA2
+		notes = append(notes, "Fractura bifocal (maléolos lateral y medial)")
+	case domain.InvolvedTrifocal:
+		aootaCode = domain.AOOTAA3
+		notes = append(notes, "Fractura trifocal (maléolos lateral, medial y posterior)")
+	default:
+		aootaCode = domain.AOOTAA1
+	}
+
+	result.AOOTA = &domain.AOOTAClassification{
 		Code:        aootaCode,
 		Description: getAOOTADescription(aootaCode),
 	}
@@ -181,6 +306,211 @@ func (e *Engine) Classify(input domain.FractureInput) (*domain.ClassificationRes
 	result.Notes = notes
 	return result, nil
 }
+
+// classifySER handles SER (Supination-External Rotation) classification
+func (e *Engine) classifySER(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{}
+
+	result.LaugeHansen = &domain.LaugeHansenClassification{
+		Type:        domain.LaugeHansenSER,
+		FullName:    getLaugeHansenFullName(domain.LaugeHansenSER),
+		Description: getLaugeHansenDescription(domain.LaugeHansenSER),
+	}
+	result.DanisWeber = &domain.DanisWeberClassification{
+		Type:        domain.DanisWeberB,
+		Description: getDanisWeberDescription(domain.DanisWeberB),
+	}
+
+	// AO classification based on involved malleoli
+	var aootaCode domain.AOOTACode
+	switch input.InvolvedMalleoli {
+	case domain.InvolvedLateralOnly:
+		aootaCode = domain.AOOTAB1
+		notes = append(notes, "Fractura aislada del maléolo lateral")
+	case domain.InvolvedLateralMedial:
+		aootaCode = domain.AOOTAB2
+		notes = append(notes, "Fractura de maléolos lateral y medial")
+	case domain.InvolvedLateralMedialPosterior:
+		aootaCode = domain.AOOTAB3
+		notes = append(notes, "Fractura de maléolos lateral, medial y posterior")
+		// Add Bartonicek if posterior is involved
+		if input.PosteriorType != "" {
+			result.Bartonicek = getBartonicekClassification(input.PosteriorType)
+		}
+	default:
+		aootaCode = domain.AOOTAB1
+	}
+
+	result.AOOTA = &domain.AOOTAClassification{
+		Code:        aootaCode,
+		Description: getAOOTADescription(aootaCode),
+	}
+
+	result.Notes = notes
+	return result, nil
+}
+
+// classifyObliqueFibula handles oblique fibula morphology → PA classification
+func (e *Engine) classifyObliqueFibula(input domain.FractureInput, notes []string) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{}
+
+	level := input.ObliqueFibularLevel
+	if level == "" {
+		level = input.FibularLevel
+	}
+
+	result.LaugeHansen = &domain.LaugeHansenClassification{
+		Type:        domain.LaugeHansenPA,
+		FullName:    getLaugeHansenFullName(domain.LaugeHansenPA),
+		Description: getLaugeHansenDescription(domain.LaugeHansenPA),
+	}
+
+	switch level {
+	case domain.FibularLevelInfrasindesmal:
+		// Infrasindesmal oblique → Weber A
+		notes = append(notes, "Fractura oblicua infrasindesmal")
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type:        domain.DanisWeberA,
+			Description: getDanisWeberDescription(domain.DanisWeberA),
+		}
+		return e.classifyPAWeberA(input, notes, result)
+
+	case domain.FibularLevelTransindesmal:
+		// Transindesmal oblique → Weber B
+		notes = append(notes, "Fractura oblicua transindesmal")
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type:        domain.DanisWeberB,
+			Description: getDanisWeberDescription(domain.DanisWeberB),
+		}
+		return e.classifyPAWeberB(input, notes, result)
+
+	case domain.FibularLevelSuprasindesmalHigh:
+		// Suprasindesmal oblique → Weber C
+		notes = append(notes, "Fractura oblicua suprasindesmal")
+		return e.classifyWeberC(input, notes, domain.LaugeHansenPA)
+	}
+
+	// Default to Weber B
+	result.DanisWeber = &domain.DanisWeberClassification{
+		Type:        domain.DanisWeberB,
+		Description: getDanisWeberDescription(domain.DanisWeberB),
+	}
+	return e.classifyPAWeberB(input, notes, result)
+}
+
+// classifyPAWeberA handles PA classification with Weber A
+func (e *Engine) classifyPAWeberA(input domain.FractureInput, notes []string, result *domain.ClassificationResult) (*domain.ClassificationResult, error) {
+	var aootaCode domain.AOOTACode
+
+	switch input.InvolvedMalleoli {
+	case domain.InvolvedUnifocal, domain.InvolvedLateralOnly:
+		aootaCode = domain.AOOTAA1
+		notes = append(notes, "Fractura unifocal/aislada lateral")
+	case domain.InvolvedBifocal, domain.InvolvedLateralMedial:
+		aootaCode = domain.AOOTAA2
+		notes = append(notes, "Fractura bifocal (lateral y medial)")
+	case domain.InvolvedTrifocal, domain.InvolvedLateralMedialPosterior:
+		aootaCode = domain.AOOTAA3
+		notes = append(notes, "Fractura trifocal (lateral, medial y posterior)")
+		if input.PosteriorType != "" {
+			result.Bartonicek = getBartonicekClassification(input.PosteriorType)
+		}
+	default:
+		aootaCode = domain.AOOTAA1
+	}
+
+	result.AOOTA = &domain.AOOTAClassification{
+		Code:        aootaCode,
+		Description: getAOOTADescription(aootaCode),
+	}
+	result.Notes = notes
+	return result, nil
+}
+
+// classifyPAWeberB handles PA classification with Weber B
+func (e *Engine) classifyPAWeberB(input domain.FractureInput, notes []string, result *domain.ClassificationResult) (*domain.ClassificationResult, error) {
+	var aootaCode domain.AOOTACode
+
+	switch input.InvolvedMalleoli {
+	case domain.InvolvedUnifocal, domain.InvolvedLateralOnly:
+		aootaCode = domain.AOOTAB1
+		notes = append(notes, "Fractura aislada lateral")
+	case domain.InvolvedBifocal, domain.InvolvedLateralMedial:
+		aootaCode = domain.AOOTAB2
+		notes = append(notes, "Fractura de maléolos lateral y medial")
+	case domain.InvolvedTrifocal, domain.InvolvedLateralMedialPosterior:
+		aootaCode = domain.AOOTAB3
+		notes = append(notes, "Fractura de maléolos lateral, medial y posterior")
+		if input.PosteriorType != "" {
+			result.Bartonicek = getBartonicekClassification(input.PosteriorType)
+		}
+	default:
+		aootaCode = domain.AOOTAB1
+	}
+
+	result.AOOTA = &domain.AOOTAClassification{
+		Code:        aootaCode,
+		Description: getAOOTADescription(aootaCode),
+	}
+	result.Notes = notes
+	return result, nil
+}
+
+// classifyWeberC handles Weber C classifications
+func (e *Engine) classifyWeberC(input domain.FractureInput, notes []string, lhType domain.LaugeHansenType) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{}
+
+	result.DanisWeber = &domain.DanisWeberClassification{
+		Type:        domain.DanisWeberC,
+		Description: getDanisWeberDescription(domain.DanisWeberC),
+	}
+	result.LaugeHansen = &domain.LaugeHansenClassification{
+		Type:        lhType,
+		FullName:    getLaugeHansenFullName(lhType),
+		Description: getLaugeHansenDescription(lhType),
+	}
+
+	// AO classification based on fracture type
+	var aootaCode domain.AOOTACode
+	fractureType := input.SuprasindesmalType
+	if fractureType == "" {
+		// For complex path, check InvolvedMalleoli for type hint
+		switch input.InvolvedMalleoli {
+		case domain.InvolvedUnifocal, domain.InvolvedLateralOnly:
+			fractureType = domain.WeberCSimpleDiaphyseal
+		case domain.InvolvedBifocal, domain.InvolvedLateralMedial:
+			fractureType = domain.WeberCMultifragmentary
+		case domain.InvolvedTrifocal, domain.InvolvedLateralMedialPosterior:
+			fractureType = domain.WeberCProximal
+		default:
+			fractureType = domain.WeberCSimpleDiaphyseal
+		}
+	}
+
+	switch fractureType {
+	case domain.WeberCSimpleDiaphyseal:
+		aootaCode = domain.AOOTAC1
+		notes = append(notes, "Fractura diafisaria simple")
+	case domain.WeberCMultifragmentary:
+		aootaCode = domain.AOOTAC2
+		notes = append(notes, "Fractura multifragmentaria")
+	case domain.WeberCProximal:
+		aootaCode = domain.AOOTAC3
+		notes = append(notes, "Fractura proximal (Maisonneuve)")
+	default:
+		aootaCode = domain.AOOTAC1
+	}
+
+	result.AOOTA = &domain.AOOTAClassification{
+		Code:        aootaCode,
+		Description: getAOOTADescription(aootaCode),
+	}
+
+	result.Notes = notes
+	return result, nil
+}
+
+// Helper functions for descriptions
 
 func getLaugeHansenFullName(t domain.LaugeHansenType) string {
 	names := map[domain.LaugeHansenType]string{
@@ -214,9 +544,9 @@ func getDanisWeberDescription(t domain.DanisWeberType) string {
 func getAOOTADescription(code domain.AOOTACode) string {
 	descriptions := map[domain.AOOTACode]string{
 		// Type A
-		domain.AOOTAA1: "44-A1: Fractura infrasindesmal aislada del maléolo lateral (peroné)",
-		domain.AOOTAA2: "44-A2: Fractura infrasindesmal del maléolo lateral con afectación medial",
-		domain.AOOTAA3: "44-A3: Fractura infrasindesmal del maléolo lateral con afectación medial y posterior",
+		domain.AOOTAA1: "44-A1: Fractura infrasindesmal aislada/unifocal del maléolo lateral (peroné)",
+		domain.AOOTAA2: "44-A2: Fractura infrasindesmal bifocal del maléolo lateral con afectación medial",
+		domain.AOOTAA3: "44-A3: Fractura infrasindesmal trifocal del maléolo lateral con afectación medial y posterior",
 		// Type B
 		domain.AOOTAB1: "44-B1: Fractura transindesmal aislada del maléolo lateral (peroné)",
 		domain.AOOTAB2: "44-B2: Fractura transindesmal del maléolo lateral con afectación medial",
@@ -227,4 +557,17 @@ func getAOOTADescription(code domain.AOOTACode) string {
 		domain.AOOTAC3: "44-C3: Fractura suprasindesmal proximal del peroné (Maisonneuve)",
 	}
 	return descriptions[code]
+}
+
+func getBartonicekClassification(t domain.BartonicekType) *domain.BartonicekClassification {
+	descriptions := map[domain.BartonicekType]string{
+		domain.BartonicekType1: "Tipo 1: Fragmento extraincisural - pequeño fragmento fuera de la incisura peronea",
+		domain.BartonicekType2: "Tipo 2: Fragmento posterolateral - afecta la incisura peronea",
+		domain.BartonicekType3: "Tipo 3: Fragmento posteromedial y posterolateral - extensión medial adicional",
+		domain.BartonicekType4: "Tipo 4: Gran fragmento triangular posterolateral - compromete gran parte de la superficie articular",
+	}
+	return &domain.BartonicekClassification{
+		Type:        t,
+		Description: descriptions[t],
+	}
 }
