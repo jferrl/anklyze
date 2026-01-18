@@ -53,12 +53,13 @@ func (e *Engine) Classify(input domain.FractureInput, lang i18n.Language) (*doma
 
 	// PATH 2: Has medial fracture
 	if !hasLateral && !hasPosterior {
-		// Only medial
+		// Only medial - ambiguous between PER and PA mechanisms
 		notes = append(notes, i18n.T(lang, i18n.KeyNoteUnimaleolarMedial))
 		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPER,
-			FullName:    getLaugeHansenFullName(domain.LaugeHansenPER, lang),
-			Description: i18n.T(lang, i18n.KeyNoteIsolatedMedialDesc),
+			Type:          domain.LaugeHansenPERPA,
+			FullName:      i18n.T(lang, i18n.KeyLHAmbiguousName),
+			Description:   i18n.T(lang, i18n.KeyLHAmbiguousMedialDesc),
+			PossibleTypes: []domain.LaugeHansenType{domain.LaugeHansenPER, domain.LaugeHansenPA},
 		}
 		result.AOOTA = &domain.AOOTAClassification{
 			Code:        domain.AOOTAA1,

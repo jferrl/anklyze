@@ -121,14 +121,16 @@ const (
 	KeyLabelNo                 = "label.no"
 
 	// Lauge-Hansen names and descriptions
-	KeyLHSAName  = "lh.sa.name"
-	KeyLHSADesc  = "lh.sa.desc"
-	KeyLHSERName = "lh.ser.name"
-	KeyLHSERDesc = "lh.ser.desc"
-	KeyLHPERName = "lh.per.name"
-	KeyLHPERDesc = "lh.per.desc"
-	KeyLHPAName  = "lh.pa.name"
-	KeyLHPADesc  = "lh.pa.desc"
+	KeyLHSAName            = "lh.sa.name"
+	KeyLHSADesc            = "lh.sa.desc"
+	KeyLHSERName           = "lh.ser.name"
+	KeyLHSERDesc           = "lh.ser.desc"
+	KeyLHPERName           = "lh.per.name"
+	KeyLHPERDesc           = "lh.per.desc"
+	KeyLHPAName            = "lh.pa.name"
+	KeyLHPADesc            = "lh.pa.desc"
+	KeyLHAmbiguousName     = "lh.ambiguous.name"
+	KeyLHAmbiguousMedialDesc = "lh.ambiguous.medial_desc"
 
 	// Danis-Weber descriptions
 	KeyDWADesc = "dw.a.desc"

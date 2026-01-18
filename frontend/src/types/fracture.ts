@@ -69,11 +69,15 @@ export interface DanisWeberClassification {
   description: string;
 }
 
+// Lauge-Hansen type
+export type LaugeHansenType = 'SA' | 'SER' | 'PER' | 'PA' | 'PER or PA';
+
 // Lauge-Hansen classification result
 export interface LaugeHansenClassification {
   type: string;
   full_name: string;
   description: string;
+  possible_types?: LaugeHansenType[]; // Alternative types when classification is ambiguous
 }
 
 // AO/OTA classification result

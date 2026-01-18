@@ -16,7 +16,7 @@ var spanishTranslations = map[string]string{
 	KeyQuestionFibularLevelDesc:  "Nivel respecto a la sindesmosis",
 	KeyQuestionMedialMorphology:  "¿Cuál es la morfología del maléolo medial?",
 	KeyQuestionMedialMorphDesc:   "La morfología indica el mecanismo de lesión",
-	KeyQuestionFibulaTransverse:  "¿Es la fractura del peroné transversa?",
+	KeyQuestionFibulaTransverse:  "¿Es la fractura del peroné infrasindesmal y transversa (o una avulsión)?",
 	KeyQuestionFibularMorphology: "¿Cuál es la morfología del peroné?",
 	KeyQuestionWeberCType:        "¿Qué tipo de fractura suprasindesmal?",
 	KeyQuestionInvolvedMalleoli:  "¿Qué maléolos están afectados?",
@@ -66,14 +66,16 @@ var spanishTranslations = map[string]string{
 	KeyLabelNo:                 "No",
 
 	// Lauge-Hansen names and descriptions
-	KeyLHSAName:  "Supinación-Aducción",
-	KeyLHSADesc:  "Mecanismo de supinación con fuerza de aducción. Fractura del maléolo medial vertical/oblicua por 'push-off'.",
-	KeyLHSERName: "Supinación-Rotación Externa",
-	KeyLHSERDesc: "Mecanismo de supinación con rotación externa del astrágalo. Fractura espiroidea del peroné.",
-	KeyLHPERName: "Pronación-Rotación Externa",
-	KeyLHPERDesc: "Mecanismo de pronación con rotación externa. Fractura alta del peroné (>6cm suprasindesmal).",
-	KeyLHPAName:  "Pronación-Abducción",
-	KeyLHPADesc:  "Mecanismo de pronación con abducción. Fractura transversa/oblicua del peroné.",
+	KeyLHSAName:              "Supinación-Aducción",
+	KeyLHSADesc:              "Mecanismo de supinación con fuerza de aducción. Fractura del maléolo medial vertical/oblicua por 'push-off'.",
+	KeyLHSERName:             "Supinación-Rotación Externa",
+	KeyLHSERDesc:             "Mecanismo de supinación con rotación externa del astrágalo. Fractura espiroidea del peroné.",
+	KeyLHPERName:             "Pronación-Rotación Externa",
+	KeyLHPERDesc:             "Mecanismo de pronación con rotación externa. Fractura alta del peroné (>6cm suprasindesmal).",
+	KeyLHPAName:              "Pronación-Abducción",
+	KeyLHPADesc:              "Mecanismo de pronación con abducción. Fractura transversa/oblicua del peroné.",
+	KeyLHAmbiguousName:       "PER o PA (Incierto)",
+	KeyLHAmbiguousMedialDesc: "Fractura aislada del maléolo medial. El mecanismo no puede determinarse con certeza: podría ser Pronación-Rotación Externa (PER) o Pronación-Abducción (PA). Se recomienda correlación clínica adicional.",
 
 	// Danis-Weber descriptions
 	KeyDWADesc: "Tipo A: Fractura del peroné por debajo del nivel de la sindesmosis. Sindesmosis intacta. Lesión estable.",

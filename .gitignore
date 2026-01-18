@@ -30,3 +30,7 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Air (Go hot reload)
+backend/tmp/
+build-errors.log

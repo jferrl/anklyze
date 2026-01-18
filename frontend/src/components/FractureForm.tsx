@@ -98,8 +98,13 @@ export function FractureForm() {
   const showComplexWeberCType = showFibularLevel &&
     formData.fibular_level === 'suprasindesmal_high';
 
-  // Determine if we need to show involved malleoli question
-  const showInvolvedMalleoli = useMemo(() => {
+  // Check if all three malleoli are fractured
+  const allMalleoliFractured = formData.has_medial_fracture &&
+    formData.has_lateral_fracture &&
+    formData.has_posterior_fracture;
+
+  // Determine the involved malleoli classification type (sa or ser)
+  const involvedMalleoliType = useMemo(() => {
     // For SA (transverse fibula) path
     if (currentPath === 'complex' && formData.medial_morphology === 'oblique_vertical' &&
         formData.fibula_transverse === true) {
@@ -124,16 +129,32 @@ export function FractureForm() {
     return null;
   }, [currentPath, formData, showFibularMorphology, showFibularTransverse, showObliqueFibularLevel]);
 
+  // Auto-set involved_malleoli when all three malleoli are fractured
+  useEffect(() => {
+    if (allMalleoliFractured && involvedMalleoliType && !formData.involved_malleoli) {
+      const autoValue = involvedMalleoliType === 'sa' ? 'trifocal' : 'lateral_medial_posterior';
+      setFormData(prev => ({ ...prev, involved_malleoli: autoValue as InvolvedMalleoli }));
+    }
+  }, [allMalleoliFractured, involvedMalleoliType, formData.involved_malleoli]);
+
+  // Only show the question if not all malleoli are fractured
+  const showInvolvedMalleoli = involvedMalleoliType && !allMalleoliFractured ? involvedMalleoliType : null;
+
   // Show posterior type (Bartonicek) when posterior is involved and we need it
   const showPosteriorTypeInComplex = useMemo(() => {
     if (!formData.has_posterior_fracture) return false;
+    // Show when all malleoli are fractured (involved_malleoli is auto-set)
+    if (allMalleoliFractured && involvedMalleoliType) {
+      return true;
+    }
+    // Show when user manually selects trifocal or lateral_medial_posterior
     if (showInvolvedMalleoli &&
         (formData.involved_malleoli === 'trifocal' ||
          formData.involved_malleoli === 'lateral_medial_posterior')) {
       return true;
     }
     return false;
-  }, [formData.has_posterior_fracture, formData.involved_malleoli, showInvolvedMalleoli]);
+  }, [formData.has_posterior_fracture, formData.involved_malleoli, showInvolvedMalleoli, allMalleoliFractured, involvedMalleoliType]);
 
   const handleMalleoliChange = (malleolus: 'medial' | 'lateral' | 'posterior', checked: boolean) => {
     const key = `has_${malleolus}_fracture` as keyof FractureInput;

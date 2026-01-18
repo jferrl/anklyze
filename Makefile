@@ -8,10 +8,10 @@ run:
 	@echo "Starting backend and frontend..."
 	@make -j2 run-backend run-frontend
 
-# Run backend only
+# Run backend only (with hot reload using air)
 run-backend:
-	@echo "Starting backend on http://localhost:8080"
-	@cd backend && go run cmd/server/main.go
+	@echo "Starting backend on http://localhost:8080 (hot reload enabled)"
+	@cd backend && air
 
 # Run frontend only
 run-frontend:

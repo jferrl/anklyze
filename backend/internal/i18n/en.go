@@ -16,7 +16,7 @@ var englishTranslations = map[string]string{
 	KeyQuestionFibularLevelDesc:  "Level relative to syndesmosis",
 	KeyQuestionMedialMorphology:  "What is the medial malleolus morphology?",
 	KeyQuestionMedialMorphDesc:   "Morphology indicates injury mechanism",
-	KeyQuestionFibulaTransverse:  "Is the fibular fracture transverse?",
+	KeyQuestionFibulaTransverse:  "Is the fibular fracture infrasyndesmal and transverse (or an avulsion)?",
 	KeyQuestionFibularMorphology: "What is the fibular morphology?",
 	KeyQuestionWeberCType:        "What type of suprasyndesmal fracture?",
 	KeyQuestionInvolvedMalleoli:  "Which malleoli are involved?",
@@ -66,14 +66,16 @@ var englishTranslations = map[string]string{
 	KeyLabelNo:                 "No",
 
 	// Lauge-Hansen names and descriptions
-	KeyLHSAName:  "Supination-Adduction",
-	KeyLHSADesc:  "Supination mechanism with adduction force. Vertical/oblique medial malleolus fracture from 'push-off'.",
-	KeyLHSERName: "Supination-External Rotation",
-	KeyLHSERDesc: "Supination mechanism with external rotation of talus. Spiral fibular fracture.",
-	KeyLHPERName: "Pronation-External Rotation",
-	KeyLHPERDesc: "Pronation mechanism with external rotation. High fibular fracture (>6cm suprasyndesmal).",
-	KeyLHPAName:  "Pronation-Abduction",
-	KeyLHPADesc:  "Pronation mechanism with abduction. Transverse/oblique fibular fracture.",
+	KeyLHSAName:              "Supination-Adduction",
+	KeyLHSADesc:              "Supination mechanism with adduction force. Vertical/oblique medial malleolus fracture from 'push-off'.",
+	KeyLHSERName:             "Supination-External Rotation",
+	KeyLHSERDesc:             "Supination mechanism with external rotation of talus. Spiral fibular fracture.",
+	KeyLHPERName:             "Pronation-External Rotation",
+	KeyLHPERDesc:             "Pronation mechanism with external rotation. High fibular fracture (>6cm suprasyndesmal).",
+	KeyLHPAName:              "Pronation-Abduction",
+	KeyLHPADesc:              "Pronation mechanism with abduction. Transverse/oblique fibular fracture.",
+	KeyLHAmbiguousName:       "PER or PA (Uncertain)",
+	KeyLHAmbiguousMedialDesc: "Isolated medial malleolus fracture. The mechanism cannot be definitively determined: could be Pronation-External Rotation (PER) or Pronation-Abduction (PA). Additional clinical correlation recommended.",
 
 	// Danis-Weber descriptions
 	KeyDWADesc: "Type A: Fibular fracture below syndesmosis level. Intact syndesmosis. Stable injury.",

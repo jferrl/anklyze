@@ -13,10 +13,11 @@ const (
 type LaugeHansenType string
 
 const (
-	LaugeHansenSA  LaugeHansenType = "SA"
-	LaugeHansenSER LaugeHansenType = "SER"
-	LaugeHansenPER LaugeHansenType = "PER"
-	LaugeHansenPA  LaugeHansenType = "PA"
+	LaugeHansenSA    LaugeHansenType = "SA"
+	LaugeHansenSER   LaugeHansenType = "SER"
+	LaugeHansenPER   LaugeHansenType = "PER"
+	LaugeHansenPA    LaugeHansenType = "PA"
+	LaugeHansenPERPA LaugeHansenType = "PER or PA" // Ambiguous - could be either PER or PA
 )
 
 // DanisWeberClassification holds the Danis-Weber classification result
@@ -27,9 +28,10 @@ type DanisWeberClassification struct {
 
 // LaugeHansenClassification holds the Lauge-Hansen classification result
 type LaugeHansenClassification struct {
-	Type        LaugeHansenType `json:"type"`      // SA, SER, PER, PA
-	FullName    string          `json:"full_name"` // Full mechanism name
-	Description string          `json:"description"`
+	Type          LaugeHansenType   `json:"type"`                     // SA, SER, PER, PA (primary or first possible type)
+	FullName      string            `json:"full_name"`                // Full mechanism name
+	Description   string            `json:"description"`              // Description of the mechanism
+	PossibleTypes []LaugeHansenType `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
 }
 
 // AOOTACode represents the AO/OTA classification code
