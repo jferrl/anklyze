@@ -76,14 +76,22 @@
   "results": {
     "title": "Classification Results",
     "noClassification": "Could not determine classification with the provided data.",
-    "laugeHansen": "Lauge-Hansen Classification",
-    "laugeHansenDesc": "Based on injury mechanism",
-    "danisWeber": "Danis-Weber Classification",
-    "danisWeberDesc": "Based on fibular fracture location",
-    "aoota": "AO/OTA Classification",
-    "aootaDesc": "International alphanumeric classification system",
-    "bartonicek": "Bartonicek Classification",
-    "bartonicekDesc": "Posterior malleolus classification",
+    "laugeHansen": {
+      "title": "Lauge-Hansen Classification",
+      "description": "Based on injury mechanism"
+    },
+    "danisWeber": {
+      "title": "Danis-Weber Classification",
+      "description": "Based on fibular fracture location"
+    },
+    "aoota": {
+      "title": "AO/OTA Classification",
+      "description": "International alphanumeric classification system"
+    },
+    "bartonicek": {
+      "title": "Bartonicek Classification",
+      "description": "Posterior malleolus classification"
+    },
     "clinicalNotes": "Clinical Notes"
   },
   "language": {

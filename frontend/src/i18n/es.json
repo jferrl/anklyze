@@ -76,14 +76,22 @@
   "results": {
     "title": "Resultados de la Clasificación",
     "noClassification": "No se pudo determinar la clasificación con los datos proporcionados.",
-    "laugeHansen": "Clasificación Lauge-Hansen",
-    "laugeHansenDesc": "Basada en el mecanismo de lesión",
-    "danisWeber": "Clasificación Danis-Weber",
-    "danisWeberDesc": "Basada en la localización de la fractura del peroné",
-    "aoota": "Clasificación AO/OTA",
-    "aootaDesc": "Sistema de clasificación alfanumérico internacional",
-    "bartonicek": "Clasificación Bartonicek",
-    "bartonicekDesc": "Clasificación del maléolo posterior",
+    "laugeHansen": {
+      "title": "Clasificación Lauge-Hansen",
+      "description": "Basada en el mecanismo de lesión"
+    },
+    "danisWeber": {
+      "title": "Clasificación Danis-Weber",
+      "description": "Basada en la localización de la fractura del peroné"
+    },
+    "aoota": {
+      "title": "Clasificación AO/OTA",
+      "description": "Sistema de clasificación alfanumérico internacional"
+    },
+    "bartonicek": {
+      "title": "Clasificación Bartonicek",
+      "description": "Clasificación del maléolo posterior"
+    },
     "clinicalNotes": "Notas Clínicas"
   },
   "language": {
