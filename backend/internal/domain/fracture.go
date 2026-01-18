@@ -5,9 +5,9 @@ package domain
 type MedialMorphology string
 
 const (
-	MedialMorphologyObliqueVertical MedialMorphology = "oblique_vertical" // Oblicua/vertical → SA
-	MedialMorphologyTransverse      MedialMorphology = "transverse"       // Transversal
-	MedialMorphologyDoubtful        MedialMorphology = "doubtful"         // Dudoso
+	MedialMorphologyObliqueVertical MedialMorphology = "oblique_vertical" // Oblique/vertical → SA
+	MedialMorphologyTransverse      MedialMorphology = "transverse"       // Transverse
+	MedialMorphologyDoubtful        MedialMorphology = "doubtful"         // Doubtful
 )
 
 // FibularLevel represents where the fibular fracture is located relative to syndesmosis
@@ -15,27 +15,27 @@ type FibularLevel string
 
 const (
 	FibularLevelInfrasindesmal     FibularLevel = "infrasindesmal"      // Below syndesmosis
-	FibularLevelTransindesmal      FibularLevel = "transindesmal"       // At syndesmosis
+	FibularLevelTransindesmal      FibularLevel = "transindesmal"       // At syndesmosis level
 	FibularLevelSuprasindesmalHigh FibularLevel = "suprasindesmal_high" // Above syndesmosis (>6cm)
-	FibularLevelDoubtful           FibularLevel = "doubtful"            // Dudoso
+	FibularLevelDoubtful           FibularLevel = "doubtful"            // Doubtful
 )
 
 // FibularMorphology represents the morphology of the fibular fracture
 type FibularMorphology string
 
 const (
-	FibularMorphologyTransverse FibularMorphology = "transverse" // Transversal
-	FibularMorphologyOblique    FibularMorphology = "oblique"    // Oblicua (baja medial / alta lateral)
-	FibularMorphologySpiral     FibularMorphology = "spiral"     // Espiroidea (baja anterior / alta posterior)
+	FibularMorphologyTransverse FibularMorphology = "transverse" // Transverse
+	FibularMorphologyOblique    FibularMorphology = "oblique"    // Oblique (low medial / high lateral)
+	FibularMorphologySpiral     FibularMorphology = "spiral"     // Spiral (low anterior / high posterior)
 )
 
 // WeberCFractureType represents the fracture type for Weber C (suprasindesmal high)
 type WeberCFractureType string
 
 const (
-	WeberCSimpleDiaphyseal WeberCFractureType = "simple_diaphyseal" // Diafisaria simple
-	WeberCMultifragmentary WeberCFractureType = "multifragmentary"  // Multifragmentaria
-	WeberCProximal         WeberCFractureType = "proximal"          // Proximal
+	WeberCSimpleDiaphyseal WeberCFractureType = "simple_diaphyseal" // Simple diaphyseal
+	WeberCMultifragmentary WeberCFractureType = "multifragmentary"  // Multifragmentary
+	WeberCProximal         WeberCFractureType = "proximal"          // Proximal (Maisonneuve)
 )
 
 // InvolvedMalleoli represents which malleoli are involved for AO classification
@@ -43,24 +43,24 @@ type InvolvedMalleoli string
 
 const (
 	// For transverse pattern (SA classification)
-	InvolvedUnifocal InvolvedMalleoli = "unifocal" // Solo maléolo lateral
-	InvolvedBifocal  InvolvedMalleoli = "bifocal"  // Maléolos lateral y medial
-	InvolvedTrifocal InvolvedMalleoli = "trifocal" // Maléolos lateral, medial y posterior
+	InvolvedUnifocal InvolvedMalleoli = "unifocal" // Lateral malleolus only
+	InvolvedBifocal  InvolvedMalleoli = "bifocal"  // Lateral and medial malleoli
+	InvolvedTrifocal InvolvedMalleoli = "trifocal" // Lateral, medial and posterior malleoli
 
 	// For spiral pattern (SER classification)
-	InvolvedLateralOnly            InvolvedMalleoli = "lateral_only"             // Maléolo lateral aislado
-	InvolvedLateralMedial          InvolvedMalleoli = "lateral_medial"           // Maléolos lateral y medial
-	InvolvedLateralMedialPosterior InvolvedMalleoli = "lateral_medial_posterior" // Maléolos lateral, medial y posterior
+	InvolvedLateralOnly            InvolvedMalleoli = "lateral_only"             // Isolated lateral malleolus
+	InvolvedLateralMedial          InvolvedMalleoli = "lateral_medial"           // Lateral and medial malleoli
+	InvolvedLateralMedialPosterior InvolvedMalleoli = "lateral_medial_posterior" // Lateral, medial and posterior malleoli
 )
 
 // BartonicekType represents the Bartonicek classification for posterior malleolus fractures
 type BartonicekType string
 
 const (
-	BartonicekType1 BartonicekType = "type_1" // Fragmento extraincisural
-	BartonicekType2 BartonicekType = "type_2" // Fragmento posterolateral
-	BartonicekType3 BartonicekType = "type_3" // Fragmento posteromedial y posterolateral
-	BartonicekType4 BartonicekType = "type_4" // Gran fragmento triangular posterolateral
+	BartonicekType1 BartonicekType = "type_1" // Extraincisural fragment
+	BartonicekType2 BartonicekType = "type_2" // Posterolateral fragment
+	BartonicekType3 BartonicekType = "type_3" // Posteromedial and posterolateral fragment
+	BartonicekType4 BartonicekType = "type_4" // Large posterolateral triangular fragment
 )
 
 // FractureInput represents the input data for classification

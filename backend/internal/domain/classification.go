@@ -4,9 +4,9 @@ package domain
 type DanisWeberType string
 
 const (
-	DanisWeberA DanisWeberType = "Tipo A"
-	DanisWeberB DanisWeberType = "Tipo B"
-	DanisWeberC DanisWeberType = "Tipo C"
+	DanisWeberA DanisWeberType = "Type A"
+	DanisWeberB DanisWeberType = "Type B"
+	DanisWeberC DanisWeberType = "Type C"
 )
 
 // LaugeHansenType represents the Lauge-Hansen classification type
@@ -36,19 +36,19 @@ type LaugeHansenClassification struct {
 type AOOTACode string
 
 const (
-	// Type A (Weber A - Infrasindesmal)
-	AOOTAA1 AOOTACode = "44-A1" // Unifocal / Aislada lateral
-	AOOTAA2 AOOTACode = "44-A2" // Bifocal / Lateral y medial
-	AOOTAA3 AOOTACode = "44-A3" // Trifocal / Lateral, medial y posterior
+	// Type A (Weber A - Infrasyndesmal)
+	AOOTAA1 AOOTACode = "44-A1" // Unifocal / Isolated lateral
+	AOOTAA2 AOOTACode = "44-A2" // Bifocal / Lateral and medial
+	AOOTAA3 AOOTACode = "44-A3" // Trifocal / Lateral, medial and posterior
 
-	// Type B (Weber B - Transindesmal)
-	AOOTAB1 AOOTACode = "44-B1" // Aislada lateral
-	AOOTAB2 AOOTACode = "44-B2" // Lateral y medial
-	AOOTAB3 AOOTACode = "44-B3" // Lateral, medial y posterior
+	// Type B (Weber B - Transsyndesmal)
+	AOOTAB1 AOOTACode = "44-B1" // Isolated lateral
+	AOOTAB2 AOOTACode = "44-B2" // Lateral and medial
+	AOOTAB3 AOOTACode = "44-B3" // Lateral, medial and posterior
 
-	// Type C (Weber C - Suprasindesmal)
-	AOOTAC1 AOOTACode = "44-C1" // Simple diafisaria
-	AOOTAC2 AOOTACode = "44-C2" // Multifragmentaria
+	// Type C (Weber C - Suprasyndesmal)
+	AOOTAC1 AOOTACode = "44-C1" // Simple diaphyseal
+	AOOTAC2 AOOTACode = "44-C2" // Multifragmentary
 	AOOTAC3 AOOTACode = "44-C3" // Proximal (Maisonneuve)
 )
 

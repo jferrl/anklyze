@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type {
   FractureInput,
   FormOptions,
@@ -20,6 +21,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function FractureForm() {
+  const { t } = useTranslation();
   const [options, setOptions] = useState<FormOptions | null>(null);
   const [formData, setFormData] = useState<Partial<FractureInput>>({
     has_medial_fracture: false,
@@ -237,7 +239,7 @@ export function FractureForm() {
   if (!options) {
     return (
       <div className="flex justify-center items-center p-8">
-        <p className="text-muted-foreground">Cargando...</p>
+        <p className="text-muted-foreground">{t('form.loading')}</p>
       </div>
     );
   }
@@ -247,7 +249,7 @@ export function FractureForm() {
       <div className="max-w-4xl mx-auto p-6">
         <ClassificationResult result={result} />
         <Button onClick={handleReset} className="mt-6 w-full" size="lg">
-          Clasificar Otra Fractura
+          {t('form.classifyAnother')}
         </Button>
       </div>
     );
@@ -256,9 +258,9 @@ export function FractureForm() {
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Clasificación de Fracturas de Tobillo</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('app.title')}</h1>
         <p className="text-muted-foreground">
-          Responda las preguntas para obtener la clasificación Danis-Weber, Lauge-Hansen, AO/OTA y Bartonicek
+          {t('app.description')}
         </p>
       </div>
 
@@ -266,10 +268,10 @@ export function FractureForm() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            1. ¿Qué maléolos están fracturados?
+            1. {options.questions.malleoli?.title}
           </CardTitle>
           <CardDescription>
-            Seleccione todos los maléolos afectados
+            {options.questions.malleoli?.description}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -279,7 +281,7 @@ export function FractureForm() {
               checked={formData.has_medial_fracture}
               onCheckedChange={(checked) => handleMalleoliChange('medial', checked as boolean)}
             />
-            <Label htmlFor="medial" className="cursor-pointer">Maléolo Medial</Label>
+            <Label htmlFor="medial" className="cursor-pointer">{options.labels.medial_malleolus}</Label>
           </div>
           <div className="flex items-center space-x-3">
             <Checkbox
@@ -287,7 +289,7 @@ export function FractureForm() {
               checked={formData.has_lateral_fracture}
               onCheckedChange={(checked) => handleMalleoliChange('lateral', checked as boolean)}
             />
-            <Label htmlFor="lateral" className="cursor-pointer">Maléolo Lateral (Peroné)</Label>
+            <Label htmlFor="lateral" className="cursor-pointer">{options.labels.lateral_malleolus}</Label>
           </div>
           <div className="flex items-center space-x-3">
             <Checkbox
@@ -295,27 +297,27 @@ export function FractureForm() {
               checked={formData.has_posterior_fracture}
               onCheckedChange={(checked) => handleMalleoliChange('posterior', checked as boolean)}
             />
-            <Label htmlFor="posterior" className="cursor-pointer">Maléolo Posterior</Label>
+            <Label htmlFor="posterior" className="cursor-pointer">{options.labels.posterior_malleolus}</Label>
           </div>
 
           {currentPath === 'medial_only' && (
             <Alert className="mt-4 bg-green-50 border-green-200">
               <AlertDescription>
-                Fractura unimaleolar del maléolo medial → <strong>AO-44-A1, Lauge-Hansen PER/PA</strong>
+                {t('alerts.unimaleolarMedial')}
               </AlertDescription>
             </Alert>
           )}
           {currentPath === 'medial_posterior' && (
             <Alert className="mt-4 bg-green-50 border-green-200">
               <AlertDescription>
-                Fractura bimaleolar medial + posterior → <strong>AO-44-A2, Lauge-Hansen PA</strong>
+                {t('alerts.bimaleolarMedialPosterior')}
               </AlertDescription>
             </Alert>
           )}
           {currentPath === 'none' && (formData.has_medial_fracture || formData.has_lateral_fracture || formData.has_posterior_fracture) === false && (
             <Alert className="mt-4">
               <AlertDescription>
-                Seleccione al menos un maléolo fracturado
+                {t('form.selectAtLeastOne')}
               </AlertDescription>
             </Alert>
           )}
@@ -327,10 +329,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. ¿Qué tipo de fractura del maléolo posterior?
+              2. {options.questions.posterior_type?.title}
             </CardTitle>
             <CardDescription>
-              Clasificación de Bartonicek
+              {options.questions.posterior_type?.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -356,10 +358,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. ¿A qué nivel está la fractura del peroné?
+              2. {options.questions.fibular_level?.title}
             </CardTitle>
             <CardDescription>
-              Nivel respecto a la sindesmosis
+              {options.questions.fibular_level?.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -383,14 +385,14 @@ export function FractureForm() {
             {formData.lateral_fracture_level === 'infrasindesmal' && (
               <Alert className="mt-4 bg-green-50 border-green-200">
                 <AlertDescription>
-                  Fractura infrasindesmal → <strong>Weber A, AO-44-A1, Lauge-Hansen SA</strong>
+                  {t('alerts.infrasyndesmal')}
                 </AlertDescription>
               </Alert>
             )}
             {formData.lateral_fracture_level === 'transindesmal' && (
               <Alert className="mt-4 bg-blue-50 border-blue-200">
                 <AlertDescription>
-                  Fractura transindesmal → <strong>Weber B, AO-44-B1, Lauge-Hansen SER</strong>
+                  {t('alerts.transsyndesmal')}
                 </AlertDescription>
               </Alert>
             )}
@@ -403,10 +405,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              3. ¿De qué tipo es la fractura suprasindesmal?
+              3. {options.questions.weber_c_type?.title}
             </CardTitle>
             <CardDescription>
-              Para clasificación AO/OTA (Weber C)
+              AO/OTA (Weber C)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -432,10 +434,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. ¿Cuál es la morfología del maléolo medial?
+              2. {options.questions.medial_morphology?.title}
             </CardTitle>
             <CardDescription>
-              La morfología indica el mecanismo de lesión
+              {options.questions.medial_morphology?.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -466,14 +468,14 @@ export function FractureForm() {
             {formData.medial_morphology === 'oblique_vertical' && (
               <Alert className="mt-4 bg-green-50 border-green-200">
                 <AlertDescription>
-                  Morfología oblicua/vertical indica mecanismo de "push-off" → <strong>SA</strong>
+                  {t('alerts.obliqueVerticalMechanism')}
                 </AlertDescription>
               </Alert>
             )}
             {formData.medial_morphology === 'transverse' && (
               <Alert className="mt-4">
                 <AlertDescription>
-                  Morfología transversal indica mecanismo de avulsión "pull-off"
+                  {t('alerts.transverseMechanism')}
                 </AlertDescription>
               </Alert>
             )}
@@ -486,7 +488,7 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              3. ¿Es la fractura del peroné transversa?
+              3. {options.questions.fibula_transverse?.title}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -505,11 +507,11 @@ export function FractureForm() {
             >
               <div className="flex items-center space-x-3 py-2">
                 <RadioGroupItem value="yes" id="fibula-trans-yes" />
-                <Label htmlFor="fibula-trans-yes" className="cursor-pointer">Sí</Label>
+                <Label htmlFor="fibula-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
               </div>
               <div className="flex items-center space-x-3 py-2">
                 <RadioGroupItem value="no" id="fibula-trans-no" />
-                <Label htmlFor="fibula-trans-no" className="cursor-pointer">No</Label>
+                <Label htmlFor="fibula-trans-no" className="cursor-pointer">{options.labels.no}</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -521,10 +523,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {showFibulaTransverse ? '4' : '3'}. ¿Cuál es el nivel de la fractura del peroné?
+              {showFibulaTransverse ? '4' : '3'}. {options.questions.fibular_level?.title}
             </CardTitle>
             <CardDescription>
-              Nivel respecto a la sindesmosis
+              {options.questions.fibular_level?.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -552,7 +554,7 @@ export function FractureForm() {
             {formData.fibular_level === 'suprasindesmal_high' && (
               <Alert className="mt-4">
                 <AlertDescription>
-                  Fractura suprasindesmal alta → <strong>Weber C / PER</strong>
+                  {t('alerts.suprasyndesmalHigh')}
                 </AlertDescription>
               </Alert>
             )}
@@ -565,10 +567,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿De qué tipo es la fractura suprasindesmal?
+              {options.questions.weber_c_type?.title}
             </CardTitle>
             <CardDescription>
-              Para clasificación AO/OTA (Weber C)
+              AO/OTA (Weber C)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -594,7 +596,7 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿Es la fractura del peroné transversa?
+              {options.questions.fibula_transverse?.title}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -610,11 +612,11 @@ export function FractureForm() {
             >
               <div className="flex items-center space-x-3 py-2">
                 <RadioGroupItem value="yes" id="fibular-trans-yes" />
-                <Label htmlFor="fibular-trans-yes" className="cursor-pointer">Sí</Label>
+                <Label htmlFor="fibular-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
               </div>
               <div className="flex items-center space-x-3 py-2">
                 <RadioGroupItem value="no" id="fibular-trans-no" />
-                <Label htmlFor="fibular-trans-no" className="cursor-pointer">No</Label>
+                <Label htmlFor="fibular-trans-no" className="cursor-pointer">{options.labels.no}</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -626,11 +628,8 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿Cuál es la morfología de la fractura del peroné?
+              {options.questions.fibular_morphology?.title}
             </CardTitle>
-            <CardDescription>
-              El patrón de fractura ayuda a determinar el mecanismo
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
@@ -652,27 +651,6 @@ export function FractureForm() {
                 </div>
               ))}
             </RadioGroup>
-            {formData.fibular_morphology === 'transverse' && (
-              <Alert className="mt-4 bg-green-50 border-green-200">
-                <AlertDescription>
-                  Fractura transversa → <strong>SA / Weber A</strong>
-                </AlertDescription>
-              </Alert>
-            )}
-            {formData.fibular_morphology === 'spiral' && (
-              <Alert className="mt-4 bg-blue-50 border-blue-200">
-                <AlertDescription>
-                  Fractura espiroidea → <strong>SER / Weber B</strong>
-                </AlertDescription>
-              </Alert>
-            )}
-            {formData.fibular_morphology === 'oblique' && (
-              <Alert className="mt-4 bg-purple-50 border-purple-200">
-                <AlertDescription>
-                  Fractura oblicua → <strong>PA</strong>
-                </AlertDescription>
-              </Alert>
-            )}
           </CardContent>
         </Card>
       )}
@@ -682,7 +660,7 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿A qué nivel está la fractura oblicua del peroné?
+              {options.questions.fibular_level?.title}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -713,10 +691,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿Qué maléolos están afectados?
+              {options.questions.involved_malleoli?.title}
             </CardTitle>
             <CardDescription>
-              Para clasificación AO/OTA
+              AO/OTA
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -746,10 +724,10 @@ export function FractureForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              ¿Qué tipo de fractura del maléolo posterior?
+              {options.questions.posterior_type?.title}
             </CardTitle>
             <CardDescription>
-              Clasificación de Bartonicek
+              {options.questions.posterior_type?.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -777,7 +755,7 @@ export function FractureForm() {
       )}
 
       <Button type="submit" disabled={!isFormComplete() || loading} className="w-full" size="lg">
-        {loading ? 'Clasificando...' : 'Clasificar Fractura'}
+        {loading ? t('form.classifying') : t('form.classify')}
       </Button>
     </form>
   );

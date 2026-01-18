@@ -1,0 +1,41 @@
+{
+  "app": {
+    "title": "Ankle Fracture Classification",
+    "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification"
+  },
+  "form": {
+    "loading": "Loading...",
+    "classifying": "Classifying...",
+    "classify": "Classify Fracture",
+    "classifyAnother": "Classify Another Fracture",
+    "selectAtLeastOne": "Select at least one fractured malleolus",
+    "step": "Step"
+  },
+  "alerts": {
+    "unimaleolarMedial": "Unimalleolar medial malleolus fracture → **AO-44-A1, Lauge-Hansen PER/PA**",
+    "bimaleolarMedialPosterior": "Bimalleolar medial + posterior fracture → **AO-44-A2, Lauge-Hansen PA**",
+    "infrasyndesmal": "Infrasyndesmal fracture → **Weber A, AO-44-A1, Lauge-Hansen SA**",
+    "transsyndesmal": "Transsyndesmal fracture → **Weber B, AO-44-B1, Lauge-Hansen SER**",
+    "obliqueVerticalMechanism": "Oblique/vertical morphology indicates 'push-off' mechanism → **SA**",
+    "transverseMechanism": "Transverse morphology indicates 'pull-off' avulsion mechanism",
+    "suprasyndesmalHigh": "High suprasyndesmal fracture → **Weber C / PER**"
+  },
+  "results": {
+    "title": "Classification Results",
+    "noClassification": "Could not determine classification with the provided data.",
+    "laugeHansen": "Lauge-Hansen Classification",
+    "laugeHansenDesc": "Based on injury mechanism",
+    "danisWeber": "Danis-Weber Classification",
+    "danisWeberDesc": "Based on fibular fracture location",
+    "aoota": "AO/OTA Classification",
+    "aootaDesc": "International alphanumeric classification system",
+    "bartonicek": "Bartonicek Classification",
+    "bartonicekDesc": "Posterior malleolus classification",
+    "clinicalNotes": "Clinical Notes"
+  },
+  "language": {
+    "en": "English",
+    "es": "Spanish",
+    "select": "Language"
+  }
+}

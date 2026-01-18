@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/fratures/internal/domain"
+	"github.com/jferrl/fratures/internal/i18n"
 	"github.com/jferrl/fratures/internal/service"
 )
 
@@ -18,20 +19,32 @@ func NewHandler(classifier service.ClassifierService) *Handler {
 	return &Handler{classifier: classifier}
 }
 
+// getLanguage extracts the language from the request
+func getLanguage(c *gin.Context) i18n.Language {
+	// Query parameter takes precedence
+	if lang := c.Query("lang"); lang != "" {
+		return i18n.ParseLanguage(lang)
+	}
+	// Fall back to Accept-Language header
+	return i18n.ParseAcceptLanguage(c.GetHeader("Accept-Language"))
+}
+
 // ClassifyFracture handles POST /api/classify
 func (h *Handler) ClassifyFracture(c *gin.Context) {
+	lang := getLanguage(c)
+
 	var input domain.FractureInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Entrada inválida: " + err.Error(),
+			"error": i18n.T(lang, i18n.KeyErrorInvalidInput) + err.Error(),
 		})
 		return
 	}
 
-	result, err := h.classifier.Classify(input)
+	result, err := h.classifier.Classify(input, lang)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Error en la clasificación: " + err.Error(),
+			"error": i18n.T(lang, i18n.KeyErrorClassification) + err.Error(),
 		})
 		return
 	}
@@ -45,8 +58,21 @@ type SelectOption struct {
 	Label string `json:"label"`
 }
 
+// Question represents a form question
+type Question struct {
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
 // FormOptions represents all available form options
 type FormOptions struct {
+	// Questions
+	Questions map[string]Question `json:"questions"`
+
+	// Labels for checkboxes
+	Labels map[string]string `json:"labels"`
+
 	// Medial morphology options (for complex path with medial + lateral)
 	MedialMorphology []SelectOption `json:"medial_morphology"`
 
@@ -56,7 +82,7 @@ type FormOptions struct {
 	// Fibular morphology options
 	FibularMorphology []SelectOption `json:"fibular_morphology"`
 
-	// Weber C fracture type options (for suprasindesmal)
+	// Weber C fracture type options (for suprasyndesmal)
 	WeberCFractureType []SelectOption `json:"weber_c_fracture_type"`
 
 	// Involved malleoli options (for SA/transverse pattern)
@@ -71,43 +97,94 @@ type FormOptions struct {
 
 // GetOptions handles GET /api/options
 func (h *Handler) GetOptions(c *gin.Context) {
+	lang := getLanguage(c)
+
 	options := FormOptions{
+		Questions: map[string]Question{
+			"malleoli": {
+				ID:          "malleoli",
+				Title:       i18n.T(lang, i18n.KeyQuestionMalleoli),
+				Description: i18n.T(lang, i18n.KeyQuestionMalleoliDesc),
+			},
+			"posterior_type": {
+				ID:          "posterior_type",
+				Title:       i18n.T(lang, i18n.KeyQuestionPosteriorType),
+				Description: i18n.T(lang, i18n.KeyQuestionPosteriorTypeDesc),
+			},
+			"fibular_level": {
+				ID:          "fibular_level",
+				Title:       i18n.T(lang, i18n.KeyQuestionFibularLevel),
+				Description: i18n.T(lang, i18n.KeyQuestionFibularLevelDesc),
+			},
+			"medial_morphology": {
+				ID:          "medial_morphology",
+				Title:       i18n.T(lang, i18n.KeyQuestionMedialMorphology),
+				Description: i18n.T(lang, i18n.KeyQuestionMedialMorphDesc),
+			},
+			"fibula_transverse": {
+				ID:          "fibula_transverse",
+				Title:       i18n.T(lang, i18n.KeyQuestionFibulaTransverse),
+				Description: "",
+			},
+			"fibular_morphology": {
+				ID:          "fibular_morphology",
+				Title:       i18n.T(lang, i18n.KeyQuestionFibularMorphology),
+				Description: "",
+			},
+			"weber_c_type": {
+				ID:          "weber_c_type",
+				Title:       i18n.T(lang, i18n.KeyQuestionWeberCType),
+				Description: "",
+			},
+			"involved_malleoli": {
+				ID:          "involved_malleoli",
+				Title:       i18n.T(lang, i18n.KeyQuestionInvolvedMalleoli),
+				Description: "",
+			},
+		},
+		Labels: map[string]string{
+			"medial_malleolus":    i18n.T(lang, i18n.KeyLabelMedialMalleolus),
+			"lateral_malleolus":   i18n.T(lang, i18n.KeyLabelLateralMalleolus),
+			"posterior_malleolus": i18n.T(lang, i18n.KeyLabelPosteriorMalleolus),
+			"yes":                 i18n.T(lang, i18n.KeyLabelYes),
+			"no":                  i18n.T(lang, i18n.KeyLabelNo),
+		},
 		MedialMorphology: []SelectOption{
-			{Value: "oblique_vertical", Label: "Oblicua/Vertical"},
-			{Value: "transverse", Label: "Transversal"},
-			{Value: "doubtful", Label: "Dudosa"},
+			{Value: "oblique_vertical", Label: i18n.T(lang, i18n.KeyOptionMedialObliqueVertical)},
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionMedialTransverse)},
+			{Value: "doubtful", Label: i18n.T(lang, i18n.KeyOptionMedialDoubtful)},
 		},
 		FibularLevels: []SelectOption{
-			{Value: "infrasindesmal", Label: "Infrasindesmal"},
-			{Value: "transindesmal", Label: "Transindesmal (a nivel de sindesmosis)"},
-			{Value: "suprasindesmal_high", Label: "Suprasindesmal Alto (>6cm sobre sindesmosis)"},
-			{Value: "doubtful", Label: "Dudoso"},
+			{Value: "infrasindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularInfrasindesmal)},
+			{Value: "transindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularTransindesmal)},
+			{Value: "suprasindesmal_high", Label: i18n.T(lang, i18n.KeyOptionFibularSuprasindesmalHigh)},
+			{Value: "doubtful", Label: i18n.T(lang, i18n.KeyOptionFibularDoubtful)},
 		},
 		FibularMorphology: []SelectOption{
-			{Value: "transverse", Label: "Transversal"},
-			{Value: "oblique", Label: "Oblicua (baja medial / alta lateral)"},
-			{Value: "spiral", Label: "Espiroidea (baja anterior / alta posterior)"},
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionFibularMorphTransverse)},
+			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionFibularMorphOblique)},
+			{Value: "spiral", Label: i18n.T(lang, i18n.KeyOptionFibularMorphSpiral)},
 		},
 		WeberCFractureType: []SelectOption{
-			{Value: "simple_diaphyseal", Label: "Diafisaria Simple"},
-			{Value: "multifragmentary", Label: "Multifragmentaria"},
-			{Value: "proximal", Label: "Proximal"},
+			{Value: "simple_diaphyseal", Label: i18n.T(lang, i18n.KeyOptionWeberCSimple)},
+			{Value: "multifragmentary", Label: i18n.T(lang, i18n.KeyOptionWeberCMultifragment)},
+			{Value: "proximal", Label: i18n.T(lang, i18n.KeyOptionWeberCProximal)},
 		},
 		InvolvedMalleoliSA: []SelectOption{
-			{Value: "unifocal", Label: "Unifocal (solo maléolo lateral)"},
-			{Value: "bifocal", Label: "Bifocal (maléolos lateral y medial)"},
-			{Value: "trifocal", Label: "Trifocal (maléolos lateral, medial y posterior)"},
+			{Value: "unifocal", Label: i18n.T(lang, i18n.KeyOptionInvolvedUnifocal)},
+			{Value: "bifocal", Label: i18n.T(lang, i18n.KeyOptionInvolvedBifocal)},
+			{Value: "trifocal", Label: i18n.T(lang, i18n.KeyOptionInvolvedTrifocal)},
 		},
 		InvolvedMalleoliSER: []SelectOption{
-			{Value: "lateral_only", Label: "Aislado maléolo lateral"},
-			{Value: "lateral_medial", Label: "Maléolos lateral y medial"},
-			{Value: "lateral_medial_posterior", Label: "Maléolos lateral, medial y posterior"},
+			{Value: "lateral_only", Label: i18n.T(lang, i18n.KeyOptionInvolvedLateralOnly)},
+			{Value: "lateral_medial", Label: i18n.T(lang, i18n.KeyOptionInvolvedLateralMedial)},
+			{Value: "lateral_medial_posterior", Label: i18n.T(lang, i18n.KeyOptionInvolvedLateralMedialPost)},
 		},
 		BartonicekTypes: []SelectOption{
-			{Value: "type_1", Label: "Tipo 1: Fragmento extraincisural"},
-			{Value: "type_2", Label: "Tipo 2: Fragmento posterolateral"},
-			{Value: "type_3", Label: "Tipo 3: Fragmento posteromedial y posterolateral"},
-			{Value: "type_4", Label: "Tipo 4: Gran fragmento triangular posterolateral"},
+			{Value: "type_1", Label: i18n.T(lang, i18n.KeyOptionBartonicek1)},
+			{Value: "type_2", Label: i18n.T(lang, i18n.KeyOptionBartonicek2)},
+			{Value: "type_3", Label: i18n.T(lang, i18n.KeyOptionBartonicek3)},
+			{Value: "type_4", Label: i18n.T(lang, i18n.KeyOptionBartonicek4)},
 		},
 	}
 

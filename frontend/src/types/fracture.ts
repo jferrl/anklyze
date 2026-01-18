@@ -104,8 +104,17 @@ export interface SelectOption {
   label: string;
 }
 
+// Question from backend
+export interface Question {
+  id: string;
+  title: string;
+  description: string;
+}
+
 // All form options
 export interface FormOptions {
+  questions: Record<string, Question>;
+  labels: Record<string, string>;
   medial_morphology: SelectOption[];
   fibular_levels: SelectOption[];
   fibular_morphology: SelectOption[];

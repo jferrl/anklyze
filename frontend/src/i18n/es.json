@@ -1,0 +1,41 @@
+{
+  "app": {
+    "title": "Clasificación de Fracturas de Tobillo",
+    "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek"
+  },
+  "form": {
+    "loading": "Cargando...",
+    "classifying": "Clasificando...",
+    "classify": "Clasificar Fractura",
+    "classifyAnother": "Clasificar Otra Fractura",
+    "selectAtLeastOne": "Seleccione al menos un maléolo fracturado",
+    "step": "Paso"
+  },
+  "alerts": {
+    "unimaleolarMedial": "Fractura unimaleolar del maléolo medial → **AO-44-A1, Lauge-Hansen PER/PA**",
+    "bimaleolarMedialPosterior": "Fractura bimaleolar medial + posterior → **AO-44-A2, Lauge-Hansen PA**",
+    "infrasyndesmal": "Fractura infrasindesmal → **Weber A, AO-44-A1, Lauge-Hansen SA**",
+    "transsyndesmal": "Fractura transindesmal → **Weber B, AO-44-B1, Lauge-Hansen SER**",
+    "obliqueVerticalMechanism": "Morfología oblicua/vertical indica mecanismo de 'push-off' → **SA**",
+    "transverseMechanism": "Morfología transversal indica mecanismo de avulsión 'pull-off'",
+    "suprasyndesmalHigh": "Fractura suprasindesmal alta → **Weber C / PER**"
+  },
+  "results": {
+    "title": "Resultados de la Clasificación",
+    "noClassification": "No se pudo determinar la clasificación con los datos proporcionados.",
+    "laugeHansen": "Clasificación Lauge-Hansen",
+    "laugeHansenDesc": "Basada en el mecanismo de lesión",
+    "danisWeber": "Clasificación Danis-Weber",
+    "danisWeberDesc": "Basada en la localización de la fractura del peroné",
+    "aoota": "Clasificación AO/OTA",
+    "aootaDesc": "Sistema de clasificación alfanumérico internacional",
+    "bartonicek": "Clasificación Bartonicek",
+    "bartonicekDesc": "Clasificación del maléolo posterior",
+    "clinicalNotes": "Notas Clínicas"
+  },
+  "language": {
+    "en": "Inglés",
+    "es": "Español",
+    "select": "Idioma"
+  }
+}

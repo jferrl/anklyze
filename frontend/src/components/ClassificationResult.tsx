@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ClassificationResult as Result } from '../types/fracture';
 import {
   Card,
@@ -13,14 +14,15 @@ interface ClassificationResultProps {
 }
 
 export function ClassificationResult({ result }: ClassificationResultProps) {
+  const { t } = useTranslation();
   const hasAnyClassification = result.lauge_hansen || result.danis_weber || result.ao_ota || result.bartonicek;
 
   if (!hasAnyClassification) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-center">Resultados de la Clasificación</h2>
+        <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
         <Alert>
-          <AlertDescription>No se pudo determinar la clasificación con los datos proporcionados.</AlertDescription>
+          <AlertDescription>{t('results.noClassification')}</AlertDescription>
         </Alert>
       </div>
     );
@@ -28,14 +30,14 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center">Resultados de la Clasificación</h2>
+      <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
 
       {/* Lauge-Hansen */}
       {result.lauge_hansen && (
         <Card className="border-l-4 border-l-green-500">
           <CardHeader>
-            <CardTitle className="text-green-700">Clasificación Lauge-Hansen</CardTitle>
-            <CardDescription>Basada en el mecanismo de lesión</CardDescription>
+            <CardTitle className="text-green-700">{t('results.laugeHansen.title')}</CardTitle>
+            <CardDescription>{t('results.laugeHansen.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold mb-1">{result.lauge_hansen.type}</p>
@@ -49,8 +51,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       {result.danis_weber && (
         <Card className="border-l-4 border-l-blue-500">
           <CardHeader>
-            <CardTitle className="text-blue-700">Clasificación Danis-Weber</CardTitle>
-            <CardDescription>Basada en la localización de la fractura del peroné</CardDescription>
+            <CardTitle className="text-blue-700">{t('results.danisWeber.title')}</CardTitle>
+            <CardDescription>{t('results.danisWeber.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold mb-2">{result.danis_weber.type}</p>
@@ -63,8 +65,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       {result.ao_ota && (
         <Card className="border-l-4 border-l-purple-500">
           <CardHeader>
-            <CardTitle className="text-purple-700">Clasificación AO/OTA</CardTitle>
-            <CardDescription>Sistema de clasificación alfanumérico internacional</CardDescription>
+            <CardTitle className="text-purple-700">{t('results.aoota.title')}</CardTitle>
+            <CardDescription>{t('results.aoota.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold mb-2">{result.ao_ota.code}</p>
@@ -77,11 +79,11 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       {result.bartonicek && (
         <Card className="border-l-4 border-l-orange-500">
           <CardHeader>
-            <CardTitle className="text-orange-700">Clasificación Bartonicek</CardTitle>
-            <CardDescription>Clasificación del maléolo posterior</CardDescription>
+            <CardTitle className="text-orange-700">{t('results.bartonicek.title')}</CardTitle>
+            <CardDescription>{t('results.bartonicek.description')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold mb-2">{result.bartonicek.type.replace('type_', 'Tipo ')}</p>
+            <p className="text-3xl font-bold mb-2">{result.bartonicek.type}</p>
             <p className="text-muted-foreground">{result.bartonicek.description}</p>
           </CardContent>
         </Card>
@@ -90,7 +92,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       {/* Clinical Notes */}
       {result.notes && result.notes.length > 0 && (
         <Alert>
-          <AlertTitle>Notas Clínicas</AlertTitle>
+          <AlertTitle>{t('results.clinicalNotes')}</AlertTitle>
           <AlertDescription>
             <ul className="list-disc list-inside space-y-1 mt-2">
               {result.notes.map((note, index) => (

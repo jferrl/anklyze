@@ -17,8 +17,8 @@ func main() {
 	router := gin.Default()
 	api.SetupRoutes(router)
 
-	log.Printf("Servidor iniciando en el puerto %s", port)
+	log.Printf("Server starting on port %s", port)
 	if err := router.Run(":" + port); err != nil {
-		log.Fatalf("Error al iniciar el servidor: %v", err)
+		log.Fatalf("Error starting server: %v", err)
 	}
 }
