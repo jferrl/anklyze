@@ -14,17 +14,17 @@ export const flowchartEN = `flowchart TB
     n6 --> n8["Posterolateral fragment"]
     n6 --> n9["Posteromedial and posterolateral fragment"]
     n6 --> n10["Large posterolateral triangular fragment"]
-    n7 --> n11["Unimalleolar posterior malleolus\\nAO 44 B3\\nLauge-Hansen SER\\nBartonicek 1"]
-    n8 --> n12["Unimalleolar posterior malleolus\\nAO 44 B3\\nLauge-Hansen SER\\nBartonicek 2"]
-    n9 --> n13["Unimalleolar posterior malleolus\\nAO 44 B3\\nLauge-Hansen SER\\nBartonicek 3"]
-    n10 --> n14["Unimalleolar posterior malleolus\\nAO 44 B3\\nLauge-Hansen SER\\nBartonicek 4"]
+    n7 --> n11["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 1"]
+    n8 --> n12["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 2"]
+    n9 --> n13["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 3"]
+    n10 --> n14["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 4"]
 
     %% Medial malleolus branch
     D --> n15{"What morphology does it have?"}
     n15 --> n16["Oblique"]
     n15 --> n17["Transverse"]
-    n16 --> n18["Unimalleolar medial malleolus\\nAO 44 A1\\nLauge-Hansen SA"]
-    n17 --> n19["Unimalleolar medial malleolus\\nAO 44 A1\\nLauge-Hansen unclassifiable\\n(could be PA/SER/PER)"]
+    n16 --> n18["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA"]
+    n17 --> n19["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen unclassifiable<br/>(could be PA/SER/PER)"]
 
     %% Lateral malleolus branch
     n1 --> n20{"At what level is the fracture?"}
@@ -35,25 +35,25 @@ export const flowchartEN = `flowchart TB
     n21 --> n24{"What is the fracture morphology?"}
     n24 --> n25["Transverse"]
     n24 --> n26["Oblique (Low medial, high lateral)"]
-    n25 --> n27["Unimalleolar lateral malleolus\\nAO 44 A1\\nLauge-Hansen SA\\nWeber A"]
-    n26 --> n28["Unimalleolar lateral malleolus\\nAO 44 A1\\nLauge-Hansen PA\\nWeber A"]
+    n25 --> n27["Unimalleolar lateral malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA<br/>Weber A"]
+    n26 --> n28["Unimalleolar lateral malleolus<br/>AO 44 A1<br/>Lauge-Hansen PA<br/>Weber A"]
 
     n22 --> n29{"What is the fracture morphology?"}
     n29 --> n30["Spiral (Low anterior, high posterior)"]
     n29 --> n31["Oblique (Low medial, high lateral)"]
-    n30 --> n32["Unimalleolar lateral malleolus\\nAO 44 B1\\nLauge-Hansen SER\\nWeber B"]
-    n31 --> n33["Unimalleolar lateral malleolus\\nAO 44 B1\\nLauge-Hansen PA\\nWeber B"]
+    n30 --> n32["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
+    n31 --> n33["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
 
     n23 --> n34{"What type?"}
     n34 --> n35["Simple Diaphyseal"]
     n34 --> n36["Multifragmentary"]
     n34 --> n37["Proximal"]
-    n35 --> n39["Unimalleolar lateral malleolus\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C"]
-    n36 --> n40["Unimalleolar lateral malleolus\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C"]
-    n37 --> n41["Unimalleolar lateral malleolus\\nAO 44 C3\\nLauge-Hansen PER\\nWeber C"]
+    n35 --> n39["Unimalleolar lateral malleolus<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n36 --> n40["Unimalleolar lateral malleolus<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n37 --> n41["Unimalleolar lateral malleolus<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
     %% Medial + Posterior branch
-    n2 --> n42["Bimalleolar (Medial + Posterior)\\nAO 44 B3\\nLauge-Hansen SER"]
+    n2 --> n42["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen SER"]
 
     %% Lateral + Posterior branch
     n3 --> n43{"At what level is the fibula fracture?"}
@@ -86,60 +86,60 @@ export const flowchartEN = `flowchart TB
     n57 --> n59["Posterolateral fragment"]
     n57 --> n60["Posteromedial and posterolateral"]
     n57 --> n61["Large posterolateral triangular"]
-    n58 --> n62["Bimalleolar (lateral + posterior)\\nAO 44 A2\\nLauge-Hansen PA\\nWeber A\\nBartonicek 1"]
-    n59 --> n63["Bimalleolar (lateral + posterior)\\nAO 44 A2\\nLauge-Hansen PA\\nWeber A\\nBartonicek 2"]
-    n60 --> n64["Bimalleolar (lateral + posterior)\\nAO 44 A2\\nLauge-Hansen PA\\nWeber A\\nBartonicek 3"]
-    n61 --> n65["Bimalleolar (lateral + posterior)\\nAO 44 A2\\nLauge-Hansen PA\\nWeber A\\nBartonicek 4"]
+    n58 --> n62["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 1"]
+    n59 --> n63["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 2"]
+    n60 --> n64["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 3"]
+    n61 --> n65["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 4"]
 
     %% Transsyndesmotic + Spiral posterior fragments (SER Weber B)
     n67 --> n68["Extra-incisural fragment"]
     n67 --> n69["Posterolateral fragment"]
     n67 --> n70["Posteromedial and posterolateral"]
     n67 --> n71["Large posterolateral triangular"]
-    n68 --> n72["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen SER\\nWeber B\\nBartonicek 1"]
-    n69 --> n73["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen SER\\nWeber B\\nBartonicek 2"]
-    n70 --> n74["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen SER\\nWeber B\\nBartonicek 3"]
-    n71 --> n75["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen SER\\nWeber B\\nBartonicek 4"]
+    n68 --> n72["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Weber B<br/>Bartonicek 1"]
+    n69 --> n73["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Weber B<br/>Bartonicek 2"]
+    n70 --> n74["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Weber B<br/>Bartonicek 3"]
+    n71 --> n75["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Weber B<br/>Bartonicek 4"]
 
     %% Transsyndesmotic + Oblique posterior fragments (PA Weber B)
     n76 --> n77["Extra-incisural fragment"]
     n76 --> n78["Posterolateral fragment"]
     n76 --> n79["Posteromedial and posterolateral"]
     n76 --> n80["Large posterolateral triangular"]
-    n77 --> n81["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B\\nBartonicek 1"]
-    n78 --> n82["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B\\nBartonicek 2"]
-    n79 --> n83["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B\\nBartonicek 3"]
-    n80 --> n84["Bimalleolar (lateral + posterior)\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B\\nBartonicek 4"]
+    n77 --> n81["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B<br/>Bartonicek 1"]
+    n78 --> n82["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B<br/>Bartonicek 2"]
+    n79 --> n83["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B<br/>Bartonicek 3"]
+    n80 --> n84["Bimalleolar (lateral + posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B<br/>Bartonicek 4"]
 
     %% Suprasyndesmotic Simple Diaphyseal posterior fragments (PER Weber C C1)
     n85 --> n86["Extra-incisural fragment"]
     n85 --> n87["Posterolateral fragment"]
     n85 --> n88["Posteromedial and posterolateral"]
     n85 --> n89["Large posterolateral triangular"]
-    n86 --> n90["Bimalleolar (lateral + posterior)\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C\\nBartonicek 1"]
-    n87 --> n91["Bimalleolar (lateral + posterior)\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C\\nBartonicek 2"]
-    n88 --> n92["Bimalleolar (lateral + posterior)\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C\\nBartonicek 3"]
-    n89 --> n93["Bimalleolar (lateral + posterior)\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C\\nBartonicek 4"]
+    n86 --> n90["Bimalleolar (lateral + posterior)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 1"]
+    n87 --> n91["Bimalleolar (lateral + posterior)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 2"]
+    n88 --> n92["Bimalleolar (lateral + posterior)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 3"]
+    n89 --> n93["Bimalleolar (lateral + posterior)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 4"]
 
     %% Suprasyndesmotic Multifragmentary posterior fragments (PER Weber C C2)
     n94 --> n95["Extra-incisural fragment"]
     n94 --> n96["Posterolateral fragment"]
     n94 --> n97["Posteromedial and posterolateral"]
     n94 --> n98["Large posterolateral triangular"]
-    n95 --> n99["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 1"]
-    n96 --> n100["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 2"]
-    n97 --> n101["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 3"]
-    n98 --> n102["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 4"]
+    n95 --> n99["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 1"]
+    n96 --> n100["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 2"]
+    n97 --> n101["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 3"]
+    n98 --> n102["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 4"]
 
     %% Suprasyndesmotic Proximal posterior fragments (PER Weber C C3)
     n103 --> n104["Extra-incisural fragment"]
     n103 --> n105["Posterolateral fragment"]
     n103 --> n106["Posteromedial and posterolateral"]
     n103 --> n107["Large posterolateral triangular"]
-    n104 --> n108["Bimalleolar (lateral + posterior)\\nAO 44 C3\\nLauge-Hansen PER\\nWeber C\\nBartonicek 1"]
-    n105 --> n109["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 2"]
-    n106 --> n110["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 3"]
-    n107 --> n111["Bimalleolar (lateral + posterior)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C\\nBartonicek 4"]
+    n104 --> n108["Bimalleolar (lateral + posterior)<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 1"]
+    n105 --> n109["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 2"]
+    n106 --> n110["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 3"]
+    n107 --> n111["Bimalleolar (lateral + posterior)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C<br/>Bartonicek 4"]
 
     %% Lateral + Medial branch
     n4 --> n112{"What is the medial malleolus morphology?"}
@@ -149,7 +149,7 @@ export const flowchartEN = `flowchart TB
     n113 --> n115{"Is fibula fracture infrasyndesmotic and transverse?"}
     n115 --> n116["Yes"]
     n115 --> n117["No"]
-    n116 --> n118["Bimalleolar (lateral + medial)\\nAO 44 A2\\nLauge-Hansen SA\\nWeber A"]
+    n116 --> n118["Bimalleolar (lateral + medial)<br/>AO 44 A2<br/>Lauge-Hansen SA<br/>Weber A"]
     n114 --> n119{"At what level is the fibula fracture?"}
     n117 --> n119
 
@@ -160,9 +160,9 @@ export const flowchartEN = `flowchart TB
     n122 --> n123["Simple Diaphyseal"]
     n122 --> n124["Multifragmentary"]
     n122 --> n125["Proximal"]
-    n123 --> n126["Bimalleolar (lateral + medial)\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C"]
-    n124 --> n127["Bimalleolar (lateral + medial)\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C"]
-    n125 --> n128["Bimalleolar (lateral + medial)\\nAO 44 C3\\nLauge-Hansen PER\\nWeber C"]
+    n123 --> n126["Bimalleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n124 --> n127["Bimalleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n125 --> n128["Bimalleolar (lateral + medial)<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
     n121 --> n129{"What is the fibula fracture morphology?"}
     n129 --> n130["Transverse"]
@@ -172,10 +172,10 @@ export const flowchartEN = `flowchart TB
     n130 --> n133{"At what level is the fibula fracture?"}
     n133 --> n134["Infrasyndesmotic"]
     n133 --> n135["Transsyndesmotic"]
-    n134 --> n136["Bimalleolar (lateral + medial)\\nAO 44 A2\\nLauge-Hansen SA\\nWeber A"]
-    n135 --> n138["Bimalleolar (lateral + medial)\\nAO 44 B2\\nLauge-Hansen PA\\nWeber B"]
-    n131 --> n139["Bimalleolar (lateral + medial)\\nAO 44 B2\\nLauge-Hansen PA\\nWeber B"]
-    n132 --> n140["Bimalleolar (lateral + medial)\\nAO 44 B2\\nLauge-Hansen SER\\nWeber B"]
+    n134 --> n136["Bimalleolar (lateral + medial)<br/>AO 44 A2<br/>Lauge-Hansen SA<br/>Weber A"]
+    n135 --> n138["Bimalleolar (lateral + medial)<br/>AO 44 B2<br/>Lauge-Hansen PA<br/>Weber B"]
+    n131 --> n139["Bimalleolar (lateral + medial)<br/>AO 44 B2<br/>Lauge-Hansen PA<br/>Weber B"]
+    n132 --> n140["Bimalleolar (lateral + medial)<br/>AO 44 B2<br/>Lauge-Hansen SER<br/>Weber B"]
 
     %% Trimalleolar branch
     n5 --> n141{"At what level is the fibula fracture?"}
@@ -186,9 +186,9 @@ export const flowchartEN = `flowchart TB
     n145 --> n146["Simple Diaphyseal"]
     n145 --> n147["Multifragmentary"]
     n145 --> n148["Proximal"]
-    n146 --> n149["Trimalleolar fracture\\nAO 44 C1\\nLauge-Hansen PER\\nWeber C"]
-    n147 --> n150["Trimalleolar fracture\\nAO 44 C2\\nLauge-Hansen PER\\nWeber C"]
-    n148 --> n151["Trimalleolar fracture\\nAO 44 C3\\nLauge-Hansen PER\\nWeber C"]
+    n146 --> n149["Trimalleolar fracture<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n147 --> n150["Trimalleolar fracture<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n148 --> n151["Trimalleolar fracture<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
     n152 --> n153{"What is the fibula fracture morphology?"}
     n153 --> n154["Transverse"]
@@ -199,9 +199,9 @@ export const flowchartEN = `flowchart TB
     n157 --> n158["Infrasyndesmotic"]
     n157 --> n159["Transsyndesmotic"]
     n158 --> n160["Not possible: exceptional mechanism"]
-    n159 --> n161["Trimalleolar fracture\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B"]
-    n155 --> n162["Trimalleolar fracture\\nAO 44 B3\\nLauge-Hansen PA\\nWeber B"]
-    n156 --> n163["Trimalleolar fracture\\nAO 44 B3\\nLauge-Hansen SER\\nWeber B"]
+    n159 --> n161["Trimalleolar fracture<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B"]
+    n155 --> n162["Trimalleolar fracture<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Weber B"]
+    n156 --> n163["Trimalleolar fracture<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Weber B"]
 
     %% Styling for result nodes
     style n11 fill:#e8f5e9,stroke:#4caf50

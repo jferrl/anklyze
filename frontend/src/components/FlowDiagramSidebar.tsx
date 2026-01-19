@@ -28,20 +28,20 @@ export function FlowDiagramSidebar() {
     <>
       {/* Toggle Button - Always visible on right edge */}
       <Button
-        variant="outline"
-        size="sm"
+        variant="default"
+        size="lg"
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-1/2 -translate-y-1/2 z-50 h-auto py-4 px-2 rounded-l-lg rounded-r-none border-r-0 bg-background shadow-md transition-all duration-300"
+        className="fixed top-1/2 -translate-y-1/2 z-50 h-auto py-6 px-3 rounded-l-xl rounded-r-none border-r-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:px-4"
         aria-label={isOpen ? t('classify.flowDiagram.hide') : t('classify.flowDiagram.show')}
         style={{ right: isOpen ? 'min(90vw, 1200px)' : '0' }}
       >
-        <span className="flex flex-col items-center gap-2">
+        <span className="flex flex-col items-center gap-3">
           {isOpen ? (
-            <PanelRightClose className="h-5 w-5" />
+            <PanelRightClose className="h-6 w-6" />
           ) : (
-            <PanelRightOpen className="h-5 w-5" />
+            <PanelRightOpen className="h-6 w-6" />
           )}
-          <span className="text-xs writing-mode-vertical">
+          <span className="text-sm font-semibold writing-mode-vertical">
             {t('classify.flowDiagram.title')}
           </span>
         </span>
