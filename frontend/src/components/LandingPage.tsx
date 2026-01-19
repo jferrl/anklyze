@@ -14,6 +14,7 @@ import {
   ListChecks,
   FileCheck2,
   ArrowRight,
+  Github,
 } from 'lucide-react';
 
 export function LandingPage() {
@@ -78,6 +79,16 @@ export function LandingPage() {
             <LanguageSwitcher />
             <Button size="sm" asChild>
               <Link to="/classify">{t('landing.startClassifying')}</Link>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a
+                href="https://github.com/jferrl/anklyze"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
+                <Github className="h-5 w-5" />
+              </a>
             </Button>
           </div>
         </div>
