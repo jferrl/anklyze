@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Separator } from './ui/separator';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeSwitcher } from './ThemeSwitcher';
 import {
   Activity,
   Zap,
@@ -93,6 +94,7 @@ export function LandingPage() {
             <span className="font-semibold text-xl tracking-tight">Anklyze</span>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeSwitcher />
             <LanguageSwitcher />
             <Button size="sm" asChild>
               <Link to="/classify">{t('landing.startClassifying')}</Link>

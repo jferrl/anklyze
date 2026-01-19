@@ -4,6 +4,7 @@ import { Activity, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { FractureForm } from '../components/FractureForm';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { ThemeSwitcher } from '../components/ThemeSwitcher';
 import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
 
 export function ClassifyPage() {
@@ -21,6 +22,7 @@ export function ClassifyPage() {
             <span className="font-semibold text-xl tracking-tight">Anklyze</span>
           </Link>
           <div className="flex items-center gap-4">
+            <ThemeSwitcher />
             <LanguageSwitcher />
             <Button variant="outline" size="sm" asChild>
               <Link to="/">
