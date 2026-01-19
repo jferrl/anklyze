@@ -15,6 +15,8 @@ import {
   FileCheck2,
   ArrowRight,
   Github,
+  Stethoscope,
+  Code,
 } from 'lucide-react';
 
 export function LandingPage() {
@@ -61,6 +63,21 @@ export function LandingPage() {
       number: '3',
       title: t('landing.howItWorks.step3.title'),
       description: t('landing.howItWorks.step3.description'),
+    },
+  ];
+
+  const team = [
+    {
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=LauraFemale',
+      icon: Stethoscope,
+      name: t('landing.team.laura.name'),
+      role: t('landing.team.laura.role'),
+    },
+    {
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Jorge',
+      icon: Code,
+      name: t('landing.team.jorge.name'),
+      role: t('landing.team.jorge.role'),
     },
   ];
 
@@ -209,8 +226,50 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Team Section */}
       <section className="py-20 md:py-28 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              {t('landing.team.title')}
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              {t('landing.team.subtitle')}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {team.map((member, index) => (
+              <Card
+                key={index}
+                className="border-0 shadow-none bg-transparent hover:bg-muted/50 transition-colors"
+              >
+                <CardContent className="pt-6 text-center space-y-4">
+                  <div className="relative mx-auto w-fit">
+                    <img
+                      src={member.avatar}
+                      alt={member.name}
+                      className="h-20 w-20 rounded-full bg-primary/10"
+                    />
+                    <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                      <member.icon className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">{member.name}</h3>
+                    <p className="text-muted-foreground text-sm">{member.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* CTA Section */}
+      <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <Card className="max-w-3xl mx-auto border-0 bg-primary text-primary-foreground">
             <CardContent className="py-12 px-8 text-center space-y-6">

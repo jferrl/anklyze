@@ -51,6 +51,18 @@
       "subtitle": "Comienza a usar Anklyze ahora. Sin registro requerido.",
       "button": "Clasifica Tu Primera Fractura"
     },
+    "team": {
+      "title": "Conoce al Equipo",
+      "subtitle": "Las personas detrás de Anklyze",
+      "laura": {
+        "name": "Laura Paniagua Andrés",
+        "role": "Traumatóloga en el Hospital de León"
+      },
+      "jorge": {
+        "name": "Jorge Ferrero Linacero",
+        "role": "Ingeniero de Software"
+      }
+    },
     "footer": {
       "disclaimer": "Solo para fines educativos. Siempre correlacionar con hallazgos clínicos.",
       "copyright": "Anklyze"
