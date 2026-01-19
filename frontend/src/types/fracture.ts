@@ -1,66 +1,68 @@
-// Medial morphology (for complex path with medial + lateral)
-export type MedialMorphology = 'oblique_vertical' | 'transverse' | 'doubtful';
+// Maléolos fracturados (primera pregunta - selección única)
+export type InvolvedMalleoli =
+  | 'posterior_only'        // Maléolo posterior
+  | 'medial_only'           // Maléolo medial
+  | 'lateral_only'          // Maléolo lateral
+  | 'medial_posterior'      // Maléolos medial y posterior
+  | 'lateral_posterior'     // Maléolos lateral y posterior
+  | 'lateral_medial'        // Maléolos lateral y medial
+  | 'trimaleolar';          // Maléolos medial, lateral y posterior
 
-// Fibular level
-export type FibularLevel = 'infrasindesmal' | 'transindesmal' | 'suprasindesmal_high' | 'doubtful';
+// Tipo de fractura del maléolo posterior (Bartonicek)
+export type PosteriorFractureType =
+  | 'extraincisural'              // Fragmento extraincisural (Bartonicek 1)
+  | 'posterolateral'              // Fragmento posterolateral (Bartonicek 2)
+  | 'posteromedial_posterolateral' // Fragmento posteromedial y posterolateral (Bartonicek 3)
+  | 'large_posterolateral';       // Gran fragmento triangular posterolateral (Bartonicek 4)
 
-// Fibular morphology
-export type FibularMorphology = 'transverse' | 'oblique' | 'spiral';
+// Morfología del maléolo medial
+export type MedialMorphology =
+  | 'oblique'    // Oblicuo
+  | 'transverse'; // Transverso
 
-// Weber C fracture type (for suprasindesmal)
-export type WeberCFractureType = 'simple_diaphyseal' | 'multifragmentary' | 'proximal';
+// Nivel de fractura del peroné
+export type FibularLevel =
+  | 'infrasindesmal'  // Infrasindesmal
+  | 'transindesmal'   // Transindesmal
+  | 'suprasindesmal'; // Suprasindesmal
 
-// Involved malleoli (for SA/transverse pattern)
-export type InvolvedMalleoliSA = 'unifocal' | 'bifocal' | 'trifocal';
+// Morfología de fractura lateral/peroné
+export type LateralMorphology =
+  | 'transverse' // Transversa
+  | 'oblique'    // Oblicua (Baja medial, alta lateral)
+  | 'spiral';    // Espiroidea (Baja anterior, alta posterior)
 
-// Involved malleoli (for SER/spiral pattern)
-export type InvolvedMalleoliSER = 'lateral_only' | 'lateral_medial' | 'lateral_medial_posterior';
+// Tipo de fractura suprasindesmal (Weber C)
+export type SuprasindesmalType =
+  | 'simple_diaphyseal' // Diafisaria Simple
+  | 'multifragmentary'  // Multifragmentaria
+  | 'proximal';         // Proximal
 
-// Combined involved malleoli type
-export type InvolvedMalleoli = InvolvedMalleoliSA | InvolvedMalleoliSER;
-
-// Bartonicek type (for posterior malleolus)
-export type BartonicekType = 'type_1' | 'type_2' | 'type_3' | 'type_4';
-
-// Input for classification
+// Input para clasificación
 export interface FractureInput {
-  // Step 1: Which malleoli are fractured?
-  has_medial_fracture: boolean;
-  has_lateral_fracture: boolean;
-  has_posterior_fracture: boolean;
+  // Pregunta 1: ¿Qué maléolos tiene fracturados?
+  involved_malleoli: InvolvedMalleoli;
 
-  // For posterior-only path
-  posterior_fracture_type?: BartonicekType;
+  // Para maléolo posterior: tipo de fractura (Bartonicek)
+  posterior_fracture_type?: PosteriorFractureType;
 
-  // For lateral-only path
-  lateral_fracture_level?: FibularLevel;
-
-  // For lateral-only suprasindesmal
-  suprasindesmal_type?: WeberCFractureType;
-
-  // For complex path (medial + lateral)
+  // Para maléolo medial: morfología
   medial_morphology?: MedialMorphology;
 
-  // For oblique/vertical medial: Is fibula transverse?
-  fibula_transverse?: boolean;
-
-  // Fibular level (for complex paths)
+  // Para maléolo lateral: nivel de fractura
   fibular_level?: FibularLevel;
 
-  // For infrasindesmal: Is it transverse?
-  fibular_transverse?: boolean;
+  // Para maléolo lateral: morfología
+  lateral_morphology?: LateralMorphology;
 
-  // Fibular morphology
-  fibular_morphology?: FibularMorphology;
+  // Para suprasindesmal: tipo de fractura
+  suprasindesmal_type?: SuprasindesmalType;
 
-  // For oblique fibula: At what level?
-  oblique_fibular_level?: FibularLevel;
+  // Para bimaleolar lateral+medial: ¿fractura peroné infrasindesmal y transversa?
+  fibula_infrasindesmal_transverse?: boolean;
 
-  // Involved malleoli (for final AO classification)
-  involved_malleoli?: InvolvedMalleoli;
-
-  // Posterior fracture type (Bartonicek) when posterior is involved
-  posterior_type?: BartonicekType;
+  // Para bimaleolar lateral+medial con morfología transversa: nivel del peroné
+  fibular_level_for_transverse?: FibularLevel;
 }
 
 // Danis-Weber classification result
@@ -70,14 +72,15 @@ export interface DanisWeberClassification {
 }
 
 // Lauge-Hansen type
-export type LaugeHansenType = 'SA' | 'SER' | 'PER' | 'PA' | 'PER or PA';
+export type LaugeHansenType = 'SA' | 'SER' | 'PER' | 'PA';
 
 // Lauge-Hansen classification result
 export interface LaugeHansenClassification {
   type: string;
   full_name: string;
   description: string;
-  possible_types?: LaugeHansenType[]; // Alternative types when classification is ambiguous
+  ambiguous?: boolean;
+  possible_types?: string[];
 }
 
 // AO/OTA classification result
@@ -93,13 +96,15 @@ export interface BartonicekClassification {
 }
 
 // Combined classification result
-// Note: Some classifications may be undefined depending on fracture type
 export interface ClassificationResult {
+  fracture_description: string;
   danis_weber?: DanisWeberClassification;
   lauge_hansen?: LaugeHansenClassification;
   ao_ota?: AOOTAClassification;
   bartonicek?: BartonicekClassification;
   notes?: string[];
+  impossible?: boolean;
+  impossible_reason?: string;
 }
 
 // Form option
@@ -112,18 +117,17 @@ export interface SelectOption {
 export interface Question {
   id: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 // All form options
 export interface FormOptions {
   questions: Record<string, Question>;
-  labels: Record<string, string>;
+  involved_malleoli: SelectOption[];
+  posterior_fracture_types: SelectOption[];
   medial_morphology: SelectOption[];
   fibular_levels: SelectOption[];
-  fibular_morphology: SelectOption[];
-  weber_c_fracture_type: SelectOption[];
-  involved_malleoli_sa: SelectOption[];
-  involved_malleoli_ser: SelectOption[];
-  bartonicek_types: SelectOption[];
+  lateral_morphology: SelectOption[];
+  suprasindesmal_types: SelectOption[];
+  labels: Record<string, string>;
 }

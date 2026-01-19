@@ -4,20 +4,19 @@ package domain
 type DanisWeberType string
 
 const (
-	DanisWeberA DanisWeberType = "Type A"
-	DanisWeberB DanisWeberType = "Type B"
-	DanisWeberC DanisWeberType = "Type C"
+	DanisWeberA DanisWeberType = "Weber A"
+	DanisWeberB DanisWeberType = "Weber B"
+	DanisWeberC DanisWeberType = "Weber C"
 )
 
 // LaugeHansenType represents the Lauge-Hansen classification type
 type LaugeHansenType string
 
 const (
-	LaugeHansenSA    LaugeHansenType = "SA"
-	LaugeHansenSER   LaugeHansenType = "SER"
-	LaugeHansenPER   LaugeHansenType = "PER"
-	LaugeHansenPA    LaugeHansenType = "PA"
-	LaugeHansenPERPA LaugeHansenType = "PER or PA" // Ambiguous - could be either PER or PA
+	LaugeHansenSA  LaugeHansenType = "SA"
+	LaugeHansenSER LaugeHansenType = "SER"
+	LaugeHansenPER LaugeHansenType = "PER"
+	LaugeHansenPA  LaugeHansenType = "PA"
 )
 
 // DanisWeberClassification holds the Danis-Weber classification result
@@ -28,10 +27,11 @@ type DanisWeberClassification struct {
 
 // LaugeHansenClassification holds the Lauge-Hansen classification result
 type LaugeHansenClassification struct {
-	Type          LaugeHansenType   `json:"type"`                     // SA, SER, PER, PA (primary or first possible type)
+	Type          LaugeHansenType   `json:"type"`                     // SA, SER, PER, PA
 	FullName      string            `json:"full_name"`                // Full mechanism name
 	Description   string            `json:"description"`              // Description of the mechanism
-	PossibleTypes []LaugeHansenType `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
+	Ambiguous     bool              `json:"ambiguous,omitempty"`      // Whether classification is ambiguous
+	PossibleTypes []string          `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
 }
 
 // AOOTACode represents the AO/OTA classification code
@@ -41,7 +41,6 @@ const (
 	// Type A (Weber A - Infrasyndesmal)
 	AOOTAA1 AOOTACode = "44-A1" // Unifocal / Isolated lateral
 	AOOTAA2 AOOTACode = "44-A2" // Bifocal / Lateral and medial
-	AOOTAA3 AOOTACode = "44-A3" // Trifocal / Lateral, medial and posterior
 
 	// Type B (Weber B - Transsyndesmal)
 	AOOTAB1 AOOTACode = "44-B1" // Isolated lateral
@@ -60,6 +59,16 @@ type AOOTAClassification struct {
 	Description string    `json:"description"`
 }
 
+// BartonicekType represents the Bartonicek classification for posterior malleolus
+type BartonicekType string
+
+const (
+	BartonicekType1 BartonicekType = "Bartonicek 1"
+	BartonicekType2 BartonicekType = "Bartonicek 2"
+	BartonicekType3 BartonicekType = "Bartonicek 3"
+	BartonicekType4 BartonicekType = "Bartonicek 4"
+)
+
 // BartonicekClassification holds the Bartonicek classification for posterior malleolus
 type BartonicekClassification struct {
 	Type        BartonicekType `json:"type"`
@@ -67,12 +76,13 @@ type BartonicekClassification struct {
 }
 
 // ClassificationResult contains the classification result
-// Note: Some classifications may be nil depending on the fracture type
-// For example, posterior-only fractures only have Bartonicek classification
 type ClassificationResult struct {
-	DanisWeber  *DanisWeberClassification  `json:"danis_weber,omitempty"`
-	LaugeHansen *LaugeHansenClassification `json:"lauge_hansen,omitempty"`
-	AOOTA       *AOOTAClassification       `json:"ao_ota,omitempty"`
-	Bartonicek  *BartonicekClassification  `json:"bartonicek,omitempty"`
-	Notes       []string                   `json:"notes,omitempty"`
+	FractureDescription string                     `json:"fracture_description"`
+	DanisWeber          *DanisWeberClassification  `json:"danis_weber,omitempty"`
+	LaugeHansen         *LaugeHansenClassification `json:"lauge_hansen,omitempty"`
+	AOOTA               *AOOTAClassification       `json:"ao_ota,omitempty"`
+	Bartonicek          *BartonicekClassification  `json:"bartonicek,omitempty"`
+	Notes               []string                   `json:"notes,omitempty"`
+	Impossible          bool                       `json:"impossible,omitempty"`
+	ImpossibleReason    string                     `json:"impossible_reason,omitempty"`
 }

@@ -64,15 +64,6 @@
     "selectAtLeastOne": "Seleccione al menos un maléolo fracturado",
     "step": "Paso"
   },
-  "alerts": {
-    "unimaleolarMedial": "Fractura unimaleolar del maléolo medial → **AO-44-A1, Lauge-Hansen PER/PA**",
-    "bimaleolarMedialPosterior": "Fractura bimaleolar medial + posterior → **AO-44-A2, Lauge-Hansen PA**",
-    "infrasyndesmal": "Fractura infrasindesmal → **Weber A, AO-44-A1, Lauge-Hansen SA**",
-    "transsyndesmal": "Fractura transindesmal → **Weber B, AO-44-B1, Lauge-Hansen SER**",
-    "obliqueVerticalMechanism": "Morfología oblicua/vertical indica mecanismo de 'push-off' → **SA**",
-    "transverseMechanism": "Morfología transversal indica mecanismo de avulsión 'pull-off'",
-    "suprasyndesmalHigh": "Fractura suprasindesmal alta → **Weber C / PER**"
-  },
   "results": {
     "title": "Resultados de la Clasificación",
     "noClassification": "No se pudo determinar la clasificación con los datos proporcionados.",
@@ -92,7 +83,14 @@
       "title": "Clasificación Bartonicek",
       "description": "Clasificación del maléolo posterior"
     },
-    "clinicalNotes": "Notas Clínicas"
+    "clinicalNotes": "Notas Clínicas",
+    "notPossible": "No posible",
+    "possibleTypes": "Tipos posibles"
+  },
+  "alerts": {
+    "bimaleolarMedialPosterior": "Fractura bimaleolar (Medial + Posterior). Pulse clasificar para ver el resultado.",
+    "notPossibleSAMechanism": "No posible. El mecanismo SA no produce fractura de maléolo posterior.",
+    "notPossibleExceptional": "No posible (excepcional)"
   },
   "classify": {
     "backToHome": "Volver al Inicio"

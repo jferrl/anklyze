@@ -15,6 +15,23 @@ interface ClassificationResultProps {
 
 export function ClassificationResult({ result }: ClassificationResultProps) {
   const { t } = useTranslation();
+
+  // Handle impossible cases
+  if (result.impossible) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
+        {result.fracture_description && (
+          <p className="text-center text-lg text-muted-foreground">{result.fracture_description}</p>
+        )}
+        <Alert variant="destructive">
+          <AlertTitle>{t('results.notPossible')}</AlertTitle>
+          <AlertDescription>{result.impossible_reason}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   const hasAnyClassification = result.lauge_hansen || result.danis_weber || result.ao_ota || result.bartonicek;
 
   if (!hasAnyClassification) {
@@ -32,6 +49,11 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
 
+      {/* Fracture Description */}
+      {result.fracture_description && (
+        <p className="text-center text-lg font-medium">{result.fracture_description}</p>
+      )}
+
       {/* Lauge-Hansen */}
       {result.lauge_hansen && (
         <Card className="border-l-4 border-l-green-500">
@@ -43,6 +65,11 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <p className="text-3xl font-bold mb-1">{result.lauge_hansen.type}</p>
             <p className="text-lg mb-2">{result.lauge_hansen.full_name}</p>
             <p className="text-muted-foreground">{result.lauge_hansen.description}</p>
+            {result.lauge_hansen.ambiguous && result.lauge_hansen.possible_types && (
+              <p className="text-sm text-orange-600 mt-2">
+                {t('results.possibleTypes')}: {result.lauge_hansen.possible_types.join(', ')}
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

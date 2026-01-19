@@ -1,241 +1,201 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
   FractureInput,
   FormOptions,
+  InvolvedMalleoli,
+  PosteriorFractureType,
   MedialMorphology,
   FibularLevel,
-  FibularMorphology,
-  WeberCFractureType,
-  InvolvedMalleoli,
-  BartonicekType,
+  LateralMorphology,
+  SuprasindesmalType,
 } from '../types/fracture';
 import { getFormOptions } from '../services/api';
 import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function FractureForm() {
   const { t } = useTranslation();
   const [options, setOptions] = useState<FormOptions | null>(null);
-  const [formData, setFormData] = useState<Partial<FractureInput>>({
-    has_medial_fracture: false,
-    has_lateral_fracture: false,
-    has_posterior_fracture: false,
-  });
+  const [formData, setFormData] = useState<Partial<FractureInput>>({});
   const { result, loading, error, classify, reset } = useClassification();
 
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
   }, []);
 
-  // Determine the current path based on selected malleoli
-  const currentPath = useMemo(() => {
-    const { has_medial_fracture, has_lateral_fracture, has_posterior_fracture } = formData;
+  // Determinar qué preguntas mostrar según el path del diagrama de flujo
+  const involvedMalleoli = formData.involved_malleoli;
 
-    if (!has_medial_fracture && !has_lateral_fracture && has_posterior_fracture) {
-      return 'posterior_only';
-    }
-    if (has_medial_fracture && !has_lateral_fracture && !has_posterior_fracture) {
-      return 'medial_only';
-    }
-    if (has_medial_fracture && !has_lateral_fracture && has_posterior_fracture) {
-      return 'medial_posterior';
-    }
-    if (!has_medial_fracture && has_lateral_fracture && !has_posterior_fracture) {
-      return 'lateral_only';
-    }
-    if (!has_medial_fracture && has_lateral_fracture && has_posterior_fracture) {
-      return 'lateral_posterior';
-    }
-    if (has_medial_fracture && has_lateral_fracture) {
-      return 'complex'; // medial + lateral (± posterior)
-    }
-    return 'none';
-  }, [formData]);
+  // PATH: Maléolo posterior solo
+  const showPosteriorType = involvedMalleoli === 'posterior_only';
 
-  // Determine which questions to show based on the path and previous answers
-  const showLateralLevel = currentPath === 'lateral_only';
+  // PATH: Maléolo medial solo
+  const showMedialMorphology = involvedMalleoli === 'medial_only';
 
-  const showSuprasindesmalType = showLateralLevel &&
-    formData.lateral_fracture_level === 'suprasindesmal_high';
+  // PATH: Maléolo lateral solo
+  const showLateralLevel = involvedMalleoli === 'lateral_only';
 
-  const showPosteriorType = currentPath === 'posterior_only';
+  // PATH: Maléolo lateral solo - morfología para infrasindesmal
+  const showLateralMorphologyInfra = showLateralLevel && formData.fibular_level === 'infrasindesmal';
 
-  const showMedialMorphology = currentPath === 'complex' || currentPath === 'lateral_posterior';
+  // PATH: Maléolo lateral solo - morfología para transindesmal
+  const showLateralMorphologyTrans = showLateralLevel && formData.fibular_level === 'transindesmal';
 
-  // For complex path: show fibula transverse question when medial is oblique/vertical
-  const showFibulaTransverse = currentPath === 'complex' &&
-    formData.medial_morphology === 'oblique_vertical';
+  // PATH: Maléolo lateral solo - tipo para suprasindesmal
+  const showSuprasindesmalType = showLateralLevel && formData.fibular_level === 'suprasindesmal';
 
-  // Show fibular level for complex paths (not when fibula is transverse with oblique medial)
-  const showFibularLevel = (currentPath === 'complex' || currentPath === 'lateral_posterior') &&
-    (formData.medial_morphology === 'transverse' ||
-     formData.medial_morphology === 'doubtful' ||
-     (formData.medial_morphology === 'oblique_vertical' && formData.fibula_transverse === false));
+  // PATH: Maleolos lateral y posterior
+  const showLateralPosteriorLevel = involvedMalleoli === 'lateral_posterior';
 
-  // Show fibular transverse question for infrasindesmal level
-  const showFibularTransverse = showFibularLevel &&
-    formData.fibular_level === 'infrasindesmal';
+  // PATH: Maleolos lateral y posterior - morfología para infrasindesmal
+  const showLPMorphologyInfra = showLateralPosteriorLevel && formData.fibular_level === 'infrasindesmal';
 
-  // Show fibular morphology when:
-  // - fibular level is transindesmal or doubtful, OR
-  // - fibular level is infrasindesmal and fibular is not transverse
-  const showFibularMorphology = showFibularLevel &&
-    ((formData.fibular_level === 'transindesmal' || formData.fibular_level === 'doubtful') ||
-     (formData.fibular_level === 'infrasindesmal' && formData.fibular_transverse === false));
+  // PATH: Maleolos lateral y posterior - Transversa infrasindesmal lleva a "No posible"
+  const showLPNotPossible = showLPMorphologyInfra && formData.lateral_morphology === 'transverse';
 
-  // Show oblique fibular level when morphology is oblique
-  const showObliqueFibularLevel = showFibularMorphology &&
-    formData.fibular_morphology === 'oblique';
+  // PATH: Maleolos lateral y posterior - pregunta de tipo posterior para oblicua infrasindesmal
+  const showLPPosteriorTypeInfraOblique = showLPMorphologyInfra && formData.lateral_morphology === 'oblique';
 
-  // Show Weber C type for suprasindesmal in complex path
-  const showComplexWeberCType = showFibularLevel &&
-    formData.fibular_level === 'suprasindesmal_high';
+  // PATH: Maleolos lateral y posterior - morfología para transindesmal
+  const showLPMorphologyTrans = showLateralPosteriorLevel && formData.fibular_level === 'transindesmal';
 
-  // Check if all three malleoli are fractured
-  const allMalleoliFractured = formData.has_medial_fracture &&
-    formData.has_lateral_fracture &&
-    formData.has_posterior_fracture;
+  // PATH: Maleolos lateral y posterior - pregunta de tipo posterior para espiroidea transindesmal
+  const showLPPosteriorTypeTransSpiral = showLPMorphologyTrans && formData.lateral_morphology === 'spiral';
 
-  // Determine the involved malleoli classification type (sa or ser)
-  const involvedMalleoliType = useMemo(() => {
-    // For SA (transverse fibula) path
-    if (currentPath === 'complex' && formData.medial_morphology === 'oblique_vertical' &&
-        formData.fibula_transverse === true) {
-      return 'sa';
-    }
-    // For SA (transverse morphology) path
-    if (showFibularMorphology && formData.fibular_morphology === 'transverse') {
-      return 'sa';
-    }
-    // For SA (infrasindesmal transverse) path
-    if (showFibularTransverse && formData.fibular_transverse === true) {
-      return 'sa';
-    }
-    // For SER (spiral morphology) path
-    if (showFibularMorphology && formData.fibular_morphology === 'spiral') {
-      return 'ser';
-    }
-    // For PA (oblique morphology) path - after level is selected
-    if (showObliqueFibularLevel && formData.oblique_fibular_level) {
-      return formData.oblique_fibular_level === 'infrasindesmal' ? 'sa' : 'ser';
-    }
-    return null;
-  }, [currentPath, formData, showFibularMorphology, showFibularTransverse, showObliqueFibularLevel]);
+  // PATH: Maleolos lateral y posterior - pregunta de tipo posterior para oblicua transindesmal
+  const showLPPosteriorTypeTransOblique = showLPMorphologyTrans && formData.lateral_morphology === 'oblique';
 
-  // Auto-set involved_malleoli when all three malleoli are fractured
-  useEffect(() => {
-    if (allMalleoliFractured && involvedMalleoliType && !formData.involved_malleoli) {
-      const autoValue = involvedMalleoliType === 'sa' ? 'trifocal' : 'lateral_medial_posterior';
-      setFormData(prev => ({ ...prev, involved_malleoli: autoValue as InvolvedMalleoli }));
-    }
-  }, [allMalleoliFractured, involvedMalleoliType, formData.involved_malleoli]);
+  // PATH: Maleolos lateral y posterior - tipo para suprasindesmal
+  const showLPSuprasindesmalType = showLateralPosteriorLevel && formData.fibular_level === 'suprasindesmal';
 
-  // Only show the question if not all malleoli are fractured
-  const showInvolvedMalleoli = involvedMalleoliType && !allMalleoliFractured ? involvedMalleoliType : null;
+  // PATH: Maleolos lateral y posterior - pregunta de tipo posterior para suprasindesmal
+  const showLPPosteriorTypeSupra = showLPSuprasindesmalType && !!formData.suprasindesmal_type;
 
-  // Show posterior type (Bartonicek) when posterior is involved and we need it
-  const showPosteriorTypeInComplex = useMemo(() => {
-    if (!formData.has_posterior_fracture) return false;
-    // Show when all malleoli are fractured (involved_malleoli is auto-set)
-    if (allMalleoliFractured && involvedMalleoliType) {
-      return true;
-    }
-    // Show when user manually selects trifocal or lateral_medial_posterior
-    if (showInvolvedMalleoli &&
-        (formData.involved_malleoli === 'trifocal' ||
-         formData.involved_malleoli === 'lateral_medial_posterior')) {
-      return true;
-    }
-    return false;
-  }, [formData.has_posterior_fracture, formData.involved_malleoli, showInvolvedMalleoli, allMalleoliFractured, involvedMalleoliType]);
+  // PATH: Maleolos lateral y medial
+  const showLMMedialMorphology = involvedMalleoli === 'lateral_medial';
 
-  const handleMalleoliChange = (malleolus: 'medial' | 'lateral' | 'posterior', checked: boolean) => {
-    const key = `has_${malleolus}_fracture` as keyof FractureInput;
-    setFormData({
-      has_medial_fracture: formData.has_medial_fracture,
-      has_lateral_fracture: formData.has_lateral_fracture,
-      has_posterior_fracture: formData.has_posterior_fracture,
-      [key]: checked,
-    });
+  // PATH: Maleolos lateral y medial - oblicuo/vertical
+  const showLMFibulaInfraTransverse = showLMMedialMorphology && formData.medial_morphology === 'oblique';
+
+  // PATH: Maleolos lateral y medial - si No a infrasindesmal transversa, o si transverso
+  const showLMFibularLevel = showLMMedialMorphology && (
+    (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false) ||
+    formData.medial_morphology === 'transverse'
+  );
+
+  // PATH: Maleolos lateral y medial - nivel alto (suprasindesmal)
+  const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level_for_transverse === 'suprasindesmal';
+
+  // PATH: Maleolos lateral y medial - nivel bajo - morfología
+  const showLMFibularMorphology = showLMFibularLevel &&
+    (formData.fibular_level_for_transverse === 'infrasindesmal' || formData.fibular_level_for_transverse === 'transindesmal');
+
+  // PATH: Maleolos lateral y medial - nivel bajo - transversa - nivel del peroné
+  const showLMTransverseFibularLevel = showLMFibularMorphology && formData.lateral_morphology === 'transverse';
+
+  // PATH: Trimaleolar
+  const showTrimaleolarFibularHeight = involvedMalleoli === 'trimaleolar';
+
+  // PATH: Trimaleolar - alta (suprasindesmal)
+  const showTrimaleolarSupraType = showTrimaleolarFibularHeight && formData.fibular_level === 'suprasindesmal';
+
+  // PATH: Trimaleolar - baja - morfología
+  const showTrimaleolarMorphology = showTrimaleolarFibularHeight &&
+    (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal');
+
+  // PATH: Trimaleolar - baja - transversa - nivel
+  const showTrimaleolarTransverseLevel = showTrimaleolarMorphology && formData.lateral_morphology === 'transverse';
+
+  const handleInvolvedMalleoliChange = (value: string) => {
+    setFormData({ involved_malleoli: value as InvolvedMalleoli });
   };
 
-  const isFormComplete = () => {
-    if (currentPath === 'none') return false;
+  const isFormComplete = (): boolean => {
+    if (!involvedMalleoli) return false;
 
-    // Posterior only - need Bartonicek type
-    if (currentPath === 'posterior_only') {
+    // PATH: Maléolo posterior solo - necesita tipo
+    if (involvedMalleoli === 'posterior_only') {
       return !!formData.posterior_fracture_type;
     }
 
-    // Medial only - complete
-    if (currentPath === 'medial_only') return true;
+    // PATH: Maléolo medial solo - necesita morfología
+    if (involvedMalleoli === 'medial_only') {
+      return !!formData.medial_morphology;
+    }
 
-    // Medial + posterior - complete
-    if (currentPath === 'medial_posterior') return true;
-
-    // Lateral only
-    if (currentPath === 'lateral_only') {
-      if (!formData.lateral_fracture_level) return false;
-      if (formData.lateral_fracture_level === 'suprasindesmal_high') {
+    // PATH: Maléolo lateral solo
+    if (involvedMalleoli === 'lateral_only') {
+      if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal') {
+        return !!formData.lateral_morphology;
+      }
+      if (formData.fibular_level === 'suprasindesmal') {
         return !!formData.suprasindesmal_type;
       }
+    }
+
+    // PATH: Maleolos medial y posterior - resultado directo
+    if (involvedMalleoli === 'medial_posterior') {
       return true;
     }
 
-    // Complex paths
-    if (currentPath === 'complex' || currentPath === 'lateral_posterior') {
-      // Need medial morphology for complex path
-      if (currentPath === 'complex' && !formData.medial_morphology) return false;
-
-      // For oblique/vertical medial
-      if (formData.medial_morphology === 'oblique_vertical') {
-        if (formData.fibula_transverse === undefined) return false;
-        if (formData.fibula_transverse === true) {
-          return !!formData.involved_malleoli;
-        }
+    // PATH: Maleolos lateral y posterior
+    if (involvedMalleoli === 'lateral_posterior') {
+      if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'infrasindesmal') {
+        if (!formData.lateral_morphology) return false;
+        if (formData.lateral_morphology === 'transverse') return true; // No posible
+        return !!formData.posterior_fracture_type;
       }
+      if (formData.fibular_level === 'transindesmal') {
+        if (!formData.lateral_morphology) return false;
+        return !!formData.posterior_fracture_type;
+      }
+      if (formData.fibular_level === 'suprasindesmal') {
+        if (!formData.suprasindesmal_type) return false;
+        return !!formData.posterior_fracture_type;
+      }
+    }
 
-      // Need fibular level
-      if (showFibularLevel && !formData.fibular_level) return false;
-
-      // Suprasindesmal high
-      if (formData.fibular_level === 'suprasindesmal_high') {
+    // PATH: Maleolos lateral y medial
+    if (involvedMalleoli === 'lateral_medial') {
+      if (!formData.medial_morphology) return false;
+      if (formData.medial_morphology === 'oblique') {
+        if (formData.fibula_infrasindesmal_transverse === undefined) return false;
+        if (formData.fibula_infrasindesmal_transverse === true) return true;
+      }
+      // Transverso o No a infrasindesmal transversa
+      if (!formData.fibular_level_for_transverse) return false;
+      if (formData.fibular_level_for_transverse === 'suprasindesmal') {
         return !!formData.suprasindesmal_type;
       }
-
-      // Infrasindesmal
-      if (formData.fibular_level === 'infrasindesmal') {
-        if (formData.fibular_transverse === undefined) return false;
-        if (formData.fibular_transverse === true) {
-          return !!formData.involved_malleoli;
-        }
+      // Nivel bajo
+      if (!formData.lateral_morphology) return false;
+      if (formData.lateral_morphology === 'transverse') {
+        return !!formData.fibular_level;
       }
+      return true; // Oblicua o espiroidea
+    }
 
-      // Need fibular morphology
-      if (showFibularMorphology && !formData.fibular_morphology) return false;
-
-      // Oblique morphology needs level
-      if (formData.fibular_morphology === 'oblique') {
-        if (!formData.oblique_fibular_level) return false;
-        if (formData.oblique_fibular_level === 'suprasindesmal_high') {
-          return !!formData.suprasindesmal_type;
-        }
+    // PATH: Trimaleolar
+    if (involvedMalleoli === 'trimaleolar') {
+      if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'suprasindesmal') {
+        return !!formData.suprasindesmal_type;
       }
-
-      // Need involved malleoli
-      if (showInvolvedMalleoli && !formData.involved_malleoli) return false;
-
-      // Need posterior type if posterior is involved
-      if (showPosteriorTypeInComplex && !formData.posterior_type) return false;
-
-      return true;
+      // Nivel bajo
+      if (!formData.lateral_morphology) return false;
+      if (formData.lateral_morphology === 'transverse') {
+        if (!formData.fibular_level_for_transverse) return false;
+        return formData.fibular_level_for_transverse === 'infrasindesmal'; // No posible o resultado
+      }
+      return true; // Oblicua o espiroidea
     }
 
     return false;
@@ -249,11 +209,7 @@ export function FractureForm() {
   };
 
   const handleReset = () => {
-    setFormData({
-      has_medial_fracture: false,
-      has_lateral_fracture: false,
-      has_posterior_fracture: false,
-    });
+    setFormData({});
     reset();
   };
 
@@ -285,86 +241,47 @@ export function FractureForm() {
         </p>
       </div>
 
-      {/* Question 1: Which malleoli are fractured? */}
+      {/* Pregunta 1: ¿Qué maléolos tiene fracturados? */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            1. {options.questions.malleoli?.title}
+            {options.questions.involved_malleoli?.title}
           </CardTitle>
-          <CardDescription>
-            {options.questions.malleoli?.description}
-          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-3">
-            <Checkbox
-              id="medial"
-              checked={formData.has_medial_fracture}
-              onCheckedChange={(checked) => handleMalleoliChange('medial', checked as boolean)}
-            />
-            <Label htmlFor="medial" className="cursor-pointer">{options.labels.medial_malleolus}</Label>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Checkbox
-              id="lateral"
-              checked={formData.has_lateral_fracture}
-              onCheckedChange={(checked) => handleMalleoliChange('lateral', checked as boolean)}
-            />
-            <Label htmlFor="lateral" className="cursor-pointer">{options.labels.lateral_malleolus}</Label>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Checkbox
-              id="posterior"
-              checked={formData.has_posterior_fracture}
-              onCheckedChange={(checked) => handleMalleoliChange('posterior', checked as boolean)}
-            />
-            <Label htmlFor="posterior" className="cursor-pointer">{options.labels.posterior_malleolus}</Label>
-          </div>
-
-          {currentPath === 'medial_only' && (
-            <Alert className="mt-4 bg-green-50 border-green-200">
-              <AlertDescription>
-                {t('alerts.unimaleolarMedial')}
-              </AlertDescription>
-            </Alert>
-          )}
-          {currentPath === 'medial_posterior' && (
-            <Alert className="mt-4 bg-green-50 border-green-200">
-              <AlertDescription>
-                {t('alerts.bimaleolarMedialPosterior')}
-              </AlertDescription>
-            </Alert>
-          )}
-          {currentPath === 'none' && (formData.has_medial_fracture || formData.has_lateral_fracture || formData.has_posterior_fracture) === false && (
-            <Alert className="mt-4">
-              <AlertDescription>
-                {t('form.selectAtLeastOne')}
-              </AlertDescription>
-            </Alert>
-          )}
+        <CardContent>
+          <RadioGroup
+            value={formData.involved_malleoli || ''}
+            onValueChange={handleInvolvedMalleoliChange}
+          >
+            {options.involved_malleoli.map((option) => (
+              <div key={option.value} className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value={option.value} id={`malleoli-${option.value}`} />
+                <Label htmlFor={`malleoli-${option.value}`} className="cursor-pointer">
+                  {option.label}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
         </CardContent>
       </Card>
 
-      {/* Posterior-only: Bartonicek type */}
+      {/* PATH: Maléolo posterior - Tipo de fractura */}
       {showPosteriorType && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. {options.questions.posterior_type?.title}
+              {options.questions.posterior_fracture_type?.title}
             </CardTitle>
-            <CardDescription>
-              {options.questions.posterior_type?.description}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
               value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as BartonicekType })}
+              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
             >
-              {options.bartonicek_types.map((option) => (
+              {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`posterior-${option.value}`} />
-                  <Label htmlFor={`posterior-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`post-type-${option.value}`} />
+                  <Label htmlFor={`post-type-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -374,70 +291,133 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Lateral-only: Level */}
+      {/* PATH: Maléolo medial - Morfología */}
+      {showMedialMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.medial_morphology?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.medial_morphology || ''}
+              onValueChange={(value) => setFormData({ ...formData, medial_morphology: value as MedialMorphology })}
+            >
+              {options.medial_morphology.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`medial-morph-${option.value}`} />
+                  <Label htmlFor={`medial-morph-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maléolo lateral - Nivel */}
       {showLateralLevel && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              2. {options.questions.fibular_level?.title}
+              {options.questions.fibular_level?.title}
             </CardTitle>
-            <CardDescription>
-              {options.questions.fibular_level?.description}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.lateral_fracture_level || ''}
+              value={formData.fibular_level || ''}
               onValueChange={(value) => setFormData({
                 ...formData,
-                lateral_fracture_level: value as FibularLevel,
+                fibular_level: value as FibularLevel,
+                lateral_morphology: undefined,
                 suprasindesmal_type: undefined,
               })}
             >
-              {options.fibular_levels.filter(o => o.value !== 'doubtful').map((option) => (
+              {options.fibular_levels.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lateral-level-${option.value}`} />
-                  <Label htmlFor={`lateral-level-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`lat-level-${option.value}`} />
+                  <Label htmlFor={`lat-level-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
               ))}
             </RadioGroup>
-            {formData.lateral_fracture_level === 'infrasindesmal' && (
-              <Alert className="mt-4 bg-green-50 border-green-200">
-                <AlertDescription>
-                  {t('alerts.infrasyndesmal')}
-                </AlertDescription>
-              </Alert>
-            )}
-            {formData.lateral_fracture_level === 'transindesmal' && (
-              <Alert className="mt-4 bg-blue-50 border-blue-200">
-                <AlertDescription>
-                  {t('alerts.transsyndesmal')}
-                </AlertDescription>
-              </Alert>
-            )}
           </CardContent>
         </Card>
       )}
 
-      {/* Lateral-only suprasindesmal: Type */}
+      {/* PATH: Maléolo lateral - Morfología para infrasindesmal */}
+      {showLateralMorphologyInfra && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.lateral_morphology?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.lateral_morphology || ''}
+              onValueChange={(value) => setFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
+            >
+              {options.lateral_morphology
+                .filter(o => o.value === 'transverse' || o.value === 'oblique')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lat-morph-infra-${option.value}`} />
+                    <Label htmlFor={`lat-morph-infra-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maléolo lateral - Morfología para transindesmal */}
+      {showLateralMorphologyTrans && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.lateral_morphology?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.lateral_morphology || ''}
+              onValueChange={(value) => setFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
+            >
+              {options.lateral_morphology
+                .filter(o => o.value === 'spiral' || o.value === 'oblique')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lat-morph-trans-${option.value}`} />
+                    <Label htmlFor={`lat-morph-trans-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maléolo lateral - Tipo suprasindesmal */}
       {showSuprasindesmalType && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              3. {options.questions.weber_c_type?.title}
+              {options.questions.suprasindesmal_type?.title}
             </CardTitle>
-            <CardDescription>
-              AO/OTA (Weber C)
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
               value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as WeberCFractureType })}
+              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
             >
-              {options.weber_c_fracture_type.map((option) => (
+              {options.suprasindesmal_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
                   <RadioGroupItem value={option.value} id={`supra-type-${option.value}`} />
                   <Label htmlFor={`supra-type-${option.value}`} className="cursor-pointer">
@@ -450,234 +430,17 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Complex path: Medial morphology */}
-      {showMedialMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              2. {options.questions.medial_morphology?.title}
-            </CardTitle>
-            <CardDescription>
-              {options.questions.medial_morphology?.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.medial_morphology || ''}
-              onValueChange={(value) => setFormData({
-                ...formData,
-                medial_morphology: value as MedialMorphology,
-                fibula_transverse: undefined,
-                fibular_level: undefined,
-                fibular_transverse: undefined,
-                fibular_morphology: undefined,
-                oblique_fibular_level: undefined,
-                involved_malleoli: undefined,
-                suprasindesmal_type: undefined,
-                posterior_type: undefined,
-              })}
-            >
-              {options.medial_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`medial-morph-${option.value}`} />
-                  <Label htmlFor={`medial-morph-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-            {formData.medial_morphology === 'oblique_vertical' && (
-              <Alert className="mt-4 bg-green-50 border-green-200">
-                <AlertDescription>
-                  {t('alerts.obliqueVerticalMechanism')}
-                </AlertDescription>
-              </Alert>
-            )}
-            {formData.medial_morphology === 'transverse' && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  {t('alerts.transverseMechanism')}
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
+      {/* PATH: Maleolos medial y posterior - Resultado directo */}
+      {involvedMalleoli === 'medial_posterior' && (
+        <Alert className="bg-green-50 border-green-200">
+          <AlertDescription>
+            {t('alerts.bimaleolarMedialPosterior')}
+          </AlertDescription>
+        </Alert>
       )}
 
-      {/* Complex path: Fibula transverse (for oblique/vertical medial) */}
-      {showFibulaTransverse && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              3. {options.questions.fibula_transverse?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_transverse === undefined ? '' : formData.fibula_transverse ? 'yes' : 'no'}
-              onValueChange={(value) => setFormData({
-                ...formData,
-                fibula_transverse: value === 'yes',
-                fibular_level: undefined,
-                fibular_transverse: undefined,
-                fibular_morphology: undefined,
-                oblique_fibular_level: undefined,
-                involved_malleoli: undefined,
-                suprasindesmal_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="fibula-trans-yes" />
-                <Label htmlFor="fibula-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
-              </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="fibula-trans-no" />
-                <Label htmlFor="fibula-trans-no" className="cursor-pointer">{options.labels.no}</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Complex path: Fibular level */}
-      {showFibularLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {showFibulaTransverse ? '4' : '3'}. {options.questions.fibular_level?.title}
-            </CardTitle>
-            <CardDescription>
-              {options.questions.fibular_level?.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level || ''}
-              onValueChange={(value) => setFormData({
-                ...formData,
-                fibular_level: value as FibularLevel,
-                fibular_transverse: undefined,
-                fibular_morphology: undefined,
-                oblique_fibular_level: undefined,
-                involved_malleoli: undefined,
-                suprasindesmal_type: undefined,
-              })}
-            >
-              {options.fibular_levels.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`fibular-level-${option.value}`} />
-                  <Label htmlFor={`fibular-level-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-            {formData.fibular_level === 'suprasindesmal_high' && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  {t('alerts.suprasyndesmalHigh')}
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Complex path: Weber C type for suprasindesmal */}
-      {showComplexWeberCType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {options.questions.weber_c_type?.title}
-            </CardTitle>
-            <CardDescription>
-              AO/OTA (Weber C)
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as WeberCFractureType })}
-            >
-              {options.weber_c_fracture_type.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`complex-supra-${option.value}`} />
-                  <Label htmlFor={`complex-supra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Complex path: Fibular transverse (for infrasindesmal) */}
-      {showFibularTransverse && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {options.questions.fibula_transverse?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_transverse === undefined ? '' : formData.fibular_transverse ? 'yes' : 'no'}
-              onValueChange={(value) => setFormData({
-                ...formData,
-                fibular_transverse: value === 'yes',
-                fibular_morphology: undefined,
-                oblique_fibular_level: undefined,
-                involved_malleoli: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="fibular-trans-yes" />
-                <Label htmlFor="fibular-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
-              </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="fibular-trans-no" />
-                <Label htmlFor="fibular-trans-no" className="cursor-pointer">{options.labels.no}</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Complex path: Fibular morphology */}
-      {showFibularMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {options.questions.fibular_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_morphology || ''}
-              onValueChange={(value) => setFormData({
-                ...formData,
-                fibular_morphology: value as FibularMorphology,
-                oblique_fibular_level: undefined,
-                involved_malleoli: undefined,
-                suprasindesmal_type: undefined,
-              })}
-            >
-              {options.fibular_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`fibular-morph-${option.value}`} />
-                  <Label htmlFor={`fibular-morph-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Complex path: Oblique fibular level */}
-      {showObliqueFibularLevel && (
+      {/* PATH: Maleolos lateral y posterior - Nivel */}
+      {showLateralPosteriorLevel && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
@@ -686,18 +449,19 @@ export function FractureForm() {
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.oblique_fibular_level || ''}
+              value={formData.fibular_level || ''}
               onValueChange={(value) => setFormData({
                 ...formData,
-                oblique_fibular_level: value as FibularLevel,
-                involved_malleoli: undefined,
+                fibular_level: value as FibularLevel,
+                lateral_morphology: undefined,
                 suprasindesmal_type: undefined,
+                posterior_fracture_type: undefined,
               })}
             >
-              {options.fibular_levels.filter(o => o.value !== 'doubtful').map((option) => (
+              {options.fibular_levels.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`oblique-level-${option.value}`} />
-                  <Label htmlFor={`oblique-level-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`lp-level-${option.value}`} />
+                  <Label htmlFor={`lp-level-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -707,30 +471,64 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Complex path: Involved malleoli */}
-      {showInvolvedMalleoli && (
+      {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Morfología */}
+      {showLPMorphologyInfra && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {options.questions.involved_malleoli?.title}
+              {options.questions.lateral_morphology?.title}
             </CardTitle>
-            <CardDescription>
-              AO/OTA
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.involved_malleoli || ''}
+              value={formData.lateral_morphology || ''}
               onValueChange={(value) => setFormData({
                 ...formData,
-                involved_malleoli: value as InvolvedMalleoli,
-                posterior_type: undefined,
+                lateral_morphology: value as LateralMorphology,
+                posterior_fracture_type: undefined,
               })}
             >
-              {(showInvolvedMalleoli === 'sa' ? options.involved_malleoli_sa : options.involved_malleoli_ser).map((option) => (
+              {options.lateral_morphology
+                .filter(o => o.value === 'transverse' || o.value === 'oblique')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lp-morph-infra-${option.value}`} />
+                    <Label htmlFor={`lp-morph-infra-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Transversa - No posible */}
+      {showLPNotPossible && (
+        <Alert className="bg-yellow-50 border-yellow-200">
+          <AlertDescription>
+            {t('alerts.notPossibleSAMechanism')}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Oblicua - Tipo posterior */}
+      {showLPPosteriorTypeInfraOblique && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.posterior_fracture_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.posterior_fracture_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+            >
+              {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`involved-${option.value}`} />
-                  <Label htmlFor={`involved-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`lp-post-infra-${option.value}`} />
+                  <Label htmlFor={`lp-post-infra-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -740,26 +538,55 @@ export function FractureForm() {
         </Card>
       )}
 
-      {/* Complex path: Posterior type (Bartonicek) when posterior is involved */}
-      {showPosteriorTypeInComplex && (
+      {/* PATH: Maleolos lateral y posterior - Transindesmal - Morfología */}
+      {showLPMorphologyTrans && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {options.questions.posterior_type?.title}
+              {options.questions.lateral_morphology?.title}
             </CardTitle>
-            <CardDescription>
-              {options.questions.posterior_type?.description}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
-              value={formData.posterior_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_type: value as BartonicekType })}
+              value={formData.lateral_morphology || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                lateral_morphology: value as LateralMorphology,
+                posterior_fracture_type: undefined,
+              })}
             >
-              {options.bartonicek_types.map((option) => (
+              {options.lateral_morphology
+                .filter(o => o.value === 'spiral' || o.value === 'oblique')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lp-morph-trans-${option.value}`} />
+                    <Label htmlFor={`lp-morph-trans-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y posterior - Transindesmal - Espiroidea/Oblicua - Tipo posterior */}
+      {(showLPPosteriorTypeTransSpiral || showLPPosteriorTypeTransOblique) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.posterior_fracture_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.posterior_fracture_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+            >
+              {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`complex-posterior-${option.value}`} />
-                  <Label htmlFor={`complex-posterior-${option.value}`} className="cursor-pointer">
+                  <RadioGroupItem value={option.value} id={`lp-post-trans-${option.value}`} />
+                  <Label htmlFor={`lp-post-trans-${option.value}`} className="cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
@@ -767,6 +594,372 @@ export function FractureForm() {
             </RadioGroup>
           </CardContent>
         </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y posterior - Suprasindesmal - Tipo */}
+      {showLPSuprasindesmalType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.suprasindesmal_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.suprasindesmal_type || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                suprasindesmal_type: value as SuprasindesmalType,
+                posterior_fracture_type: undefined,
+              })}
+            >
+              {options.suprasindesmal_types.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lp-supra-${option.value}`} />
+                  <Label htmlFor={`lp-supra-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y posterior - Suprasindesmal - Tipo posterior */}
+      {showLPPosteriorTypeSupra && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.posterior_fracture_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.posterior_fracture_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+            >
+              {options.posterior_fracture_types.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lp-post-supra-${option.value}`} />
+                  <Label htmlFor={`lp-post-supra-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Morfología del medial */}
+      {showLMMedialMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.medial_morphology_lm?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.medial_morphology || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                medial_morphology: value as MedialMorphology,
+                fibula_infrasindesmal_transverse: undefined,
+                fibular_level_for_transverse: undefined,
+                suprasindesmal_type: undefined,
+                lateral_morphology: undefined,
+                fibular_level: undefined,
+              })}
+            >
+              {options.medial_morphology.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lm-medial-${option.value}`} />
+                  <Label htmlFor={`lm-medial-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Oblicuo - ¿Peroné infrasindesmal y transversa? */}
+      {showLMFibulaInfraTransverse && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.fibula_infrasindesmal_transverse?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibula_infrasindesmal_transverse === undefined ? '' : formData.fibula_infrasindesmal_transverse ? 'yes' : 'no'}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibula_infrasindesmal_transverse: value === 'yes',
+                fibular_level_for_transverse: undefined,
+                suprasindesmal_type: undefined,
+                lateral_morphology: undefined,
+                fibular_level: undefined,
+              })}
+            >
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="yes" id="lm-infra-trans-yes" />
+                <Label htmlFor="lm-infra-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
+              </div>
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="no" id="lm-infra-trans-no" />
+                <Label htmlFor="lm-infra-trans-no" className="cursor-pointer">{options.labels.no}</Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Nivel del peroné */}
+      {showLMFibularLevel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.fibular_level_lm?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibular_level_for_transverse || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibular_level_for_transverse: value as FibularLevel,
+                suprasindesmal_type: undefined,
+                lateral_morphology: undefined,
+                fibular_level: undefined,
+              })}
+            >
+              {options.fibular_levels
+                .filter(o => o.value === 'suprasindesmal' || o.value === 'infrasindesmal' || o.value === 'transindesmal')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lm-fib-level-${option.value}`} />
+                    <Label htmlFor={`lm-fib-level-${option.value}`} className="cursor-pointer">
+                      {option.value === 'suprasindesmal' ? options.labels.high : options.labels.low}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Suprasindesmal - Tipo */}
+      {showLMSuprasindesmalType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.suprasindesmal_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.suprasindesmal_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+            >
+              {options.suprasindesmal_types.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lm-supra-${option.value}`} />
+                  <Label htmlFor={`lm-supra-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Nivel bajo - Morfología */}
+      {showLMFibularMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.lateral_morphology?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.lateral_morphology || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                lateral_morphology: value as LateralMorphology,
+                fibular_level: undefined,
+              })}
+            >
+              {options.lateral_morphology.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`lm-morph-${option.value}`} />
+                  <Label htmlFor={`lm-morph-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Maleolos lateral y medial - Transversa - Nivel del peroné */}
+      {showLMTransverseFibularLevel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.fibular_level?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibular_level || ''}
+              onValueChange={(value) => setFormData({ ...formData, fibular_level: value as FibularLevel })}
+            >
+              {options.fibular_levels
+                .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`lm-trans-level-${option.value}`} />
+                    <Label htmlFor={`lm-trans-level-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Trimaleolar - Nivel del peroné (Alta/Baja) */}
+      {showTrimaleolarFibularHeight && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.fibular_level_tri?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibular_level || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                fibular_level: value as FibularLevel,
+                suprasindesmal_type: undefined,
+                lateral_morphology: undefined,
+                fibular_level_for_transverse: undefined,
+              })}
+            >
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="suprasindesmal" id="tri-level-high" />
+                <Label htmlFor="tri-level-high" className="cursor-pointer">{options.labels.high}</Label>
+              </div>
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="infrasindesmal" id="tri-level-low" />
+                <Label htmlFor="tri-level-low" className="cursor-pointer">{options.labels.low}</Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Trimaleolar - Suprasindesmal - Tipo */}
+      {showTrimaleolarSupraType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.suprasindesmal_type?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.suprasindesmal_type || ''}
+              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+            >
+              {options.suprasindesmal_types.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`tri-supra-${option.value}`} />
+                  <Label htmlFor={`tri-supra-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Trimaleolar - Baja - Morfología */}
+      {showTrimaleolarMorphology && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.lateral_morphology?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.lateral_morphology || ''}
+              onValueChange={(value) => setFormData({
+                ...formData,
+                lateral_morphology: value as LateralMorphology,
+                fibular_level_for_transverse: undefined,
+              })}
+            >
+              {options.lateral_morphology.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 py-2">
+                  <RadioGroupItem value={option.value} id={`tri-morph-${option.value}`} />
+                  <Label htmlFor={`tri-morph-${option.value}`} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Trimaleolar - Baja - Transversa - Nivel */}
+      {showTrimaleolarTransverseLevel && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.fibular_level?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.fibular_level_for_transverse || ''}
+              onValueChange={(value) => setFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
+            >
+              {options.fibular_levels
+                .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')
+                .map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 py-2">
+                    <RadioGroupItem value={option.value} id={`tri-trans-level-${option.value}`} />
+                    <Label htmlFor={`tri-trans-level-${option.value}`} className="cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Resultado: Trimaleolar - Baja - Transversa - Infrasindesmal - No posible */}
+      {showTrimaleolarTransverseLevel && formData.fibular_level_for_transverse === 'infrasindesmal' && (
+        <Alert className="bg-yellow-50 border-yellow-200">
+          <AlertDescription>
+            {t('alerts.notPossibleExceptional')}
+          </AlertDescription>
+        </Alert>
       )}
 
       {error && (

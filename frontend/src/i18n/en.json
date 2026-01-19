@@ -64,15 +64,6 @@
     "selectAtLeastOne": "Select at least one fractured malleolus",
     "step": "Step"
   },
-  "alerts": {
-    "unimaleolarMedial": "Unimalleolar medial malleolus fracture → **AO-44-A1, Lauge-Hansen PER/PA**",
-    "bimaleolarMedialPosterior": "Bimalleolar medial + posterior fracture → **AO-44-A2, Lauge-Hansen PA**",
-    "infrasyndesmal": "Infrasyndesmal fracture → **Weber A, AO-44-A1, Lauge-Hansen SA**",
-    "transsyndesmal": "Transsyndesmal fracture → **Weber B, AO-44-B1, Lauge-Hansen SER**",
-    "obliqueVerticalMechanism": "Oblique/vertical morphology indicates 'push-off' mechanism → **SA**",
-    "transverseMechanism": "Transverse morphology indicates 'pull-off' avulsion mechanism",
-    "suprasyndesmalHigh": "High suprasyndesmal fracture → **Weber C / PER**"
-  },
   "results": {
     "title": "Classification Results",
     "noClassification": "Could not determine classification with the provided data.",
@@ -92,7 +83,14 @@
       "title": "Bartonicek Classification",
       "description": "Posterior malleolus classification"
     },
-    "clinicalNotes": "Clinical Notes"
+    "clinicalNotes": "Clinical Notes",
+    "notPossible": "Not possible",
+    "possibleTypes": "Possible types"
+  },
+  "alerts": {
+    "bimaleolarMedialPosterior": "Bimalleolar fracture (Medial + Posterior). Press classify to see the result.",
+    "notPossibleSAMechanism": "Not possible. SA mechanism does not produce posterior malleolus fracture.",
+    "notPossibleExceptional": "Not possible (exceptional)"
   },
   "classify": {
     "backToHome": "Back to Home"

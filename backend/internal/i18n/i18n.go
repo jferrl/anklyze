@@ -57,80 +57,88 @@ func GetLanguageFromRequest(r *http.Request) Language {
 // Translation keys
 const (
 	// Error messages
-	KeyErrorInvalidInput       = "error.invalid_input"
-	KeyErrorClassification     = "error.classification"
-	KeyErrorNoFracturesFound   = "error.no_fractures"
-	KeyErrorIsolatedPosterior  = "error.isolated_posterior"
+	KeyErrorInvalidInput      = "error.invalid_input"
+	KeyErrorClassification    = "error.classification"
+	KeyErrorNoFracturesFound  = "error.no_fractures"
+	KeyErrorIsolatedPosterior = "error.isolated_posterior"
 
 	// Form questions
-	KeyQuestionMalleoli          = "question.malleoli"
-	KeyQuestionMalleoliDesc      = "question.malleoli_desc"
-	KeyQuestionPosteriorType     = "question.posterior_type"
-	KeyQuestionPosteriorTypeDesc = "question.posterior_type_desc"
-	KeyQuestionFibularLevel      = "question.fibular_level"
-	KeyQuestionFibularLevelDesc  = "question.fibular_level_desc"
-	KeyQuestionMedialMorphology  = "question.medial_morphology"
-	KeyQuestionMedialMorphDesc   = "question.medial_morph_desc"
-	KeyQuestionFibulaTransverse  = "question.fibula_transverse"
-	KeyQuestionFibularMorphology = "question.fibular_morphology"
-	KeyQuestionWeberCType        = "question.weber_c_type"
-	KeyQuestionInvolvedMalleoli  = "question.involved_malleoli"
+	KeyQuestionMalleoli              = "question.malleoli"
+	KeyQuestionPosteriorType         = "question.posterior_type"
+	KeyQuestionMedialMorphology      = "question.medial_morphology"
+	KeyQuestionMedialMorphologyLM    = "question.medial_morphology_lm"
+	KeyQuestionFibularLevel          = "question.fibular_level"
+	KeyQuestionFibularLevelLM        = "question.fibular_level_lm"
+	KeyQuestionFibularLevelTri       = "question.fibular_level_tri"
+	KeyQuestionLateralMorphology     = "question.lateral_morphology"
+	KeyQuestionSuprasindesmalType    = "question.suprasindesmal_type"
+	KeyQuestionFibulaInfraTransverse = "question.fibula_infra_transverse"
+
+	// Option labels - Involved malleoli (first question)
+	KeyOptionPosteriorOnly    = "option.malleoli.posterior_only"
+	KeyOptionMedialOnly       = "option.malleoli.medial_only"
+	KeyOptionLateralOnly      = "option.malleoli.lateral_only"
+	KeyOptionMedialPosterior  = "option.malleoli.medial_posterior"
+	KeyOptionLateralPosterior = "option.malleoli.lateral_posterior"
+	KeyOptionLateralMedial    = "option.malleoli.lateral_medial"
+	KeyOptionTrimaleolar      = "option.malleoli.trimaleolar"
+
+	// Option labels - Posterior fracture type (Bartonicek)
+	KeyOptionPosteriorExtraincisural            = "option.posterior.extraincisural"
+	KeyOptionPosteriorPosterolateral            = "option.posterior.posterolateral"
+	KeyOptionPosteriorPosteromedialPosterolateral = "option.posterior.posteromedial_posterolateral"
+	KeyOptionPosteriorLargePosterolateral       = "option.posterior.large_posterolateral"
 
 	// Option labels - Medial morphology
-	KeyOptionMedialObliqueVertical = "option.medial.oblique_vertical"
-	KeyOptionMedialTransverse      = "option.medial.transverse"
-	KeyOptionMedialDoubtful        = "option.medial.doubtful"
+	KeyOptionMedialOblique    = "option.medial.oblique"
+	KeyOptionMedialTransverse = "option.medial.transverse"
 
 	// Option labels - Fibular level
-	KeyOptionFibularInfrasindesmal     = "option.fibular.infrasindesmal"
-	KeyOptionFibularTransindesmal      = "option.fibular.transindesmal"
-	KeyOptionFibularSuprasindesmalHigh = "option.fibular.suprasindesmal_high"
-	KeyOptionFibularDoubtful           = "option.fibular.doubtful"
+	KeyOptionFibularInfrasindesmal  = "option.fibular.infrasindesmal"
+	KeyOptionFibularTransindesmal   = "option.fibular.transindesmal"
+	KeyOptionFibularSuprasindesmal  = "option.fibular.suprasindesmal"
 
-	// Option labels - Fibular morphology
-	KeyOptionFibularMorphTransverse = "option.fibular_morph.transverse"
-	KeyOptionFibularMorphOblique    = "option.fibular_morph.oblique"
-	KeyOptionFibularMorphSpiral     = "option.fibular_morph.spiral"
+	// Option labels - Lateral morphology
+	KeyOptionLateralTransverse = "option.lateral.transverse"
+	KeyOptionLateralOblique    = "option.lateral.oblique"
+	KeyOptionLateralSpiral     = "option.lateral.spiral"
 
-	// Option labels - Weber C fracture type
-	KeyOptionWeberCSimple        = "option.weber_c.simple"
-	KeyOptionWeberCMultifragment = "option.weber_c.multifragmentary"
-	KeyOptionWeberCProximal      = "option.weber_c.proximal"
+	// Option labels - Suprasindesmal type
+	KeyOptionSupraSimple         = "option.supra.simple"
+	KeyOptionSupraMultifragmentary = "option.supra.multifragmentary"
+	KeyOptionSupraProximal       = "option.supra.proximal"
 
-	// Option labels - Involved malleoli (SA)
-	KeyOptionInvolvedUnifocal = "option.involved_sa.unifocal"
-	KeyOptionInvolvedBifocal  = "option.involved_sa.bifocal"
-	KeyOptionInvolvedTrifocal = "option.involved_sa.trifocal"
+	// Labels
+	KeyLabelYes  = "label.yes"
+	KeyLabelNo   = "label.no"
+	KeyLabelHigh = "label.high"
+	KeyLabelLow  = "label.low"
 
-	// Option labels - Involved malleoli (SER)
-	KeyOptionInvolvedLateralOnly     = "option.involved_ser.lateral_only"
-	KeyOptionInvolvedLateralMedial   = "option.involved_ser.lateral_medial"
-	KeyOptionInvolvedLateralMedialPost = "option.involved_ser.lateral_medial_posterior"
+	// Fracture descriptions
+	KeyNoFractureSelected                 = "fracture.none_selected"
+	KeyFractureUnimaleolarPosterior       = "fracture.unimaleolar_posterior"
+	KeyFractureUnimaleolarMedial          = "fracture.unimaleolar_medial"
+	KeyFractureUnimaleolarLateral         = "fracture.unimaleolar_lateral"
+	KeyFractureBimaleolarMedialPosterior  = "fracture.bimaleolar_medial_posterior"
+	KeyFractureBimaleolarLateralPosterior = "fracture.bimaleolar_lateral_posterior"
+	KeyFractureBimaleolarLateralMedial    = "fracture.bimaleolar_lateral_medial"
+	KeyFractureTrimaleolar                = "fracture.trimaleolar"
 
-	// Option labels - Bartonicek
-	KeyOptionBartonicek1 = "option.bartonicek.type_1"
-	KeyOptionBartonicek2 = "option.bartonicek.type_2"
-	KeyOptionBartonicek3 = "option.bartonicek.type_3"
-	KeyOptionBartonicek4 = "option.bartonicek.type_4"
-
-	// Checkbox labels
-	KeyLabelMedialMalleolus    = "label.medial_malleolus"
-	KeyLabelLateralMalleolus   = "label.lateral_malleolus"
-	KeyLabelPosteriorMalleolus = "label.posterior_malleolus"
-	KeyLabelYes                = "label.yes"
-	KeyLabelNo                 = "label.no"
+	// Impossible scenarios
+	KeyNotPossibleSAMechanism = "impossible.sa_mechanism"
+	KeyNotPossibleExceptional = "impossible.exceptional"
 
 	// Lauge-Hansen names and descriptions
-	KeyLHSAName            = "lh.sa.name"
-	KeyLHSADesc            = "lh.sa.desc"
-	KeyLHSERName           = "lh.ser.name"
-	KeyLHSERDesc           = "lh.ser.desc"
-	KeyLHPERName           = "lh.per.name"
-	KeyLHPERDesc           = "lh.per.desc"
-	KeyLHPAName            = "lh.pa.name"
-	KeyLHPADesc            = "lh.pa.desc"
-	KeyLHAmbiguousName     = "lh.ambiguous.name"
-	KeyLHAmbiguousMedialDesc = "lh.ambiguous.medial_desc"
+	KeyLHSAName        = "lh.sa.name"
+	KeyLHSADesc        = "lh.sa.desc"
+	KeyLHSERName       = "lh.ser.name"
+	KeyLHSERDesc       = "lh.ser.desc"
+	KeyLHPERName       = "lh.per.name"
+	KeyLHPERDesc       = "lh.per.desc"
+	KeyLHPAName        = "lh.pa.name"
+	KeyLHPADesc        = "lh.pa.desc"
+	KeyLHAmbiguousName = "lh.ambiguous.name"
+	KeyLHAmbiguousDesc = "lh.ambiguous.desc"
 
 	// Danis-Weber descriptions
 	KeyDWADesc = "dw.a.desc"
@@ -140,7 +148,6 @@ const (
 	// AO/OTA descriptions
 	KeyAOA1Desc = "ao.a1.desc"
 	KeyAOA2Desc = "ao.a2.desc"
-	KeyAOA3Desc = "ao.a3.desc"
 	KeyAOB1Desc = "ao.b1.desc"
 	KeyAOB2Desc = "ao.b2.desc"
 	KeyAOB3Desc = "ao.b3.desc"
@@ -153,47 +160,6 @@ const (
 	KeyBart2Desc = "bartonicek.type_2.desc"
 	KeyBart3Desc = "bartonicek.type_3.desc"
 	KeyBart4Desc = "bartonicek.type_4.desc"
-
-	// Clinical notes
-	KeyNoteIsolatedPosterior       = "note.isolated_posterior"
-	KeyNoteNoFractures             = "note.no_fractures"
-	KeyNoteUnimaleolarMedial       = "note.unimaleolar_medial"
-	KeyNoteIsolatedMedialDesc      = "note.isolated_medial_desc"
-	KeyNoteBimaleolarMedialPost    = "note.bimaleolar_medial_posterior"
-	KeyNoteMedialPostDesc          = "note.medial_post_desc"
-	KeyNoteIsolatedLateral         = "note.isolated_lateral"
-	KeyNoteInfrasindesmal          = "note.infrasindesmal"
-	KeyNoteTransindesmal           = "note.transindesmal"
-	KeyNoteSuprasindesmalHigh      = "note.suprasindesmal_high"
-	KeyNoteSimpleDiaphyseal        = "note.simple_diaphyseal"
-	KeyNoteMultifragmentary        = "note.multifragmentary"
-	KeyNoteProximalMaisonneuve     = "note.proximal_maisonneuve"
-	KeyNoteLateralWithPosterior    = "note.lateral_with_posterior"
-	KeyNoteMedialLateralInvolved   = "note.medial_lateral_involved"
-	KeyNoteObliqueVerticalMedial   = "note.oblique_vertical_medial"
-	KeyNoteTransverseFibula        = "note.transverse_fibula"
-	KeyNoteTransverseMedial        = "note.transverse_medial"
-	KeyNoteDoubtfulMedial          = "note.doubtful_medial"
-	KeyNoteSuprasindesmalHighFib   = "note.suprasindesmal_high_fib"
-	KeyNoteTransindesmalFib        = "note.transindesmal_fib"
-	KeyNoteDoubtfulFibLevel        = "note.doubtful_fib_level"
-	KeyNoteInfrasindesmalFib       = "note.infrasindesmal_fib"
-	KeyNoteTransverseFibMorph      = "note.transverse_fib_morph"
-	KeyNoteObliqueFibMorph         = "note.oblique_fib_morph"
-	KeyNoteSpiralFibMorph          = "note.spiral_fib_morph"
-	KeyNoteUnifocalLateral         = "note.unifocal_lateral"
-	KeyNoteBifocalLateralMedial    = "note.bifocal_lateral_medial"
-	KeyNoteTrifocalAll             = "note.trifocal_all"
-	KeyNoteIsolatedLateralOnly     = "note.isolated_lateral_only"
-	KeyNoteLateralMedialMalleoli   = "note.lateral_medial_malleoli"
-	KeyNoteLateralMedialPosterior  = "note.lateral_medial_posterior"
-	KeyNoteObliqueInfrasindesmal   = "note.oblique_infrasindesmal"
-	KeyNoteObliqueTransindesmal    = "note.oblique_transindesmal"
-	KeyNoteObliqueSuprasindesmal   = "note.oblique_suprasindesmal"
-	KeyNoteUnifocalIsolatedLateral = "note.unifocal_isolated_lateral"
-	KeyNoteBifocalLatMed           = "note.bifocal_lat_med"
-	KeyNoteTrifocalLatMedPost      = "note.trifocal_lat_med_post"
-	KeyNoteIsolatedLateralFracture = "note.isolated_lateral_fracture"
 )
 
 // T returns the translation for the given key and language
