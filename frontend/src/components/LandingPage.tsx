@@ -15,8 +15,8 @@ import {
   FileCheck2,
   ArrowRight,
   Github,
-  Stethoscope,
-  Code,
+  // Stethoscope, // Uncomment when re-enabling Team Section
+  // Code, // Uncomment when re-enabling Team Section
 } from 'lucide-react';
 
 export function LandingPage() {
@@ -65,20 +65,21 @@ export function LandingPage() {
     },
   ];
 
-  const team = [
-    {
-      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=LauraFemale',
-      icon: Stethoscope,
-      name: t('landing.team.laura.name'),
-      role: t('landing.team.laura.role'),
-    },
-    {
-      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Jorge',
-      icon: Code,
-      name: t('landing.team.jorge.name'),
-      role: t('landing.team.jorge.role'),
-    },
-  ];
+  // Team data - Temporarily disabled, uncomment along with Team Section to re-enable
+  // const team = [
+  //   {
+  //     avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=LauraFemale',
+  //     icon: Stethoscope,
+  //     name: t('landing.team.laura.name'),
+  //     role: t('landing.team.laura.role'),
+  //   },
+  //   {
+  //     avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=Jorge',
+  //     icon: Code,
+  //     name: t('landing.team.jorge.name'),
+  //     role: t('landing.team.jorge.role'),
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -227,7 +228,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Team Section */}
+      {/* Team Section - Temporarily disabled, uncomment to re-enable
       <section className="py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
@@ -268,6 +269,7 @@ export function LandingPage() {
       </section>
 
       <Separator />
+      */}
 
       {/* CTA Section */}
       <section className="py-20 md:py-28">
