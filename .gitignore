@@ -36,3 +36,7 @@ go.work.sum
 # Air (Go hot reload)
 backend/tmp/
 build-errors.log
+test-results/
+node_modules/
+playwright-report/
+playwright-screenshots/

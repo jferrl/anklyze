@@ -192,8 +192,8 @@ export function FractureForm() {
       // Nivel bajo
       if (!formData.lateral_morphology) return false;
       if (formData.lateral_morphology === 'transverse') {
-        if (!formData.fibular_level_for_transverse) return false;
-        return formData.fibular_level_for_transverse === 'infrasindesmal'; // No posible o resultado
+        // infrasindesmal = "No posible", transindesmal = resultado
+        return !!formData.fibular_level_for_transverse;
       }
       return true; // Oblicua o espiroidea
     }

@@ -1,4 +1,5 @@
-.PHONY: all run run-backend run-frontend build build-backend build-frontend clean install
+.PHONY: all run run-backend run-frontend build build-backend build-frontend clean install \
+	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit
 
 # Default target - run both backend and frontend
 all: run
@@ -54,3 +55,50 @@ test-backend:
 test-frontend:
 	@echo "Running frontend build check..."
 	@cd frontend && npm run build
+
+# === E2E Testing Targets ===
+
+# Install E2E dependencies
+e2e-install:
+	@echo "Installing E2E dependencies..."
+	@cd e2e && npm install
+	@cd e2e && npx playwright install
+
+# Run E2E tests (requires services running)
+e2e:
+	@echo "Running E2E tests..."
+	@cd e2e && npm test
+
+# Run E2E tests with Playwright UI
+e2e-ui:
+	@echo "Opening Playwright UI..."
+	@cd e2e && npm run test:ui
+
+# Run E2E tests in headed mode (for debugging)
+e2e-headed:
+	@echo "Running E2E tests in headed mode..."
+	@cd e2e && npm run test:headed
+
+# Run E2E tests in debug mode
+e2e-debug:
+	@echo "Running E2E tests in debug mode..."
+	@cd e2e && npm run test:debug
+
+# Run E2E tests for specific browsers
+e2e-chromium:
+	@cd e2e && npm run test:chromium
+
+e2e-firefox:
+	@cd e2e && npm run test:firefox
+
+e2e-webkit:
+	@cd e2e && npm run test:webkit
+
+# Show E2E test report
+e2e-report:
+	@cd e2e && npm run report
+
+# Generate E2E test code with codegen
+e2e-codegen:
+	@echo "Starting Playwright codegen..."
+	@cd e2e && npm run codegen
