@@ -118,7 +118,7 @@ Posterior malleolus classification based on fragment size and location.
 ### Prerequisites
 
 - Go 1.21+
-- Node.js 18+
+- Node.js 20+
 
 ### Run Locally
 

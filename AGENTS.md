@@ -8,11 +8,16 @@ Ankle fracture classification web application using Go backend + React frontend.
 
 ```
 anklyze/
+├── .github/workflows/           # CI/CD pipelines
+│   ├── backend.yml              # Backend CI (test, vet, build)
+│   └── frontend.yml             # Frontend CI (lint, typecheck, build)
+│
 ├── backend/                     # Go API server (Gin framework)
 │   ├── cmd/server/main.go       # Entry point
 │   └── internal/
 │       ├── api/                 # HTTP handlers and routes
 │       ├── domain/              # Domain models and types
+│       ├── i18n/                # Translations (en.go, es.go)
 │       ├── rules/               # Classification rule engine
 │       └── service/             # Business logic services
 │
@@ -20,6 +25,7 @@ anklyze/
     └── src/
         ├── components/          # React components + shadcn ui/
         ├── hooks/               # Custom React hooks
+        ├── i18n/                # Translations (en.json, es.json)
         ├── services/            # API client
         └── types/               # TypeScript type definitions
 ```
@@ -31,6 +37,7 @@ anklyze/
 - `internal/domain/classification.go` - Output types: `ClassificationResult`, `DanisWeberClassification`, `LaugeHansenClassification`, `AOOTAClassification`, `BartonicekClassification`
 - `internal/rules/engine.go` - Decision tree rule engine for all four classification systems
 - `internal/api/handler.go` - HTTP handlers with form options
+- `internal/i18n/` - Internationalization: `en.go`, `es.go` for English/Spanish translations
 
 ### API Endpoints
 - `POST /api/classify` - Accepts `FractureInput`, returns `ClassificationResult`
@@ -52,6 +59,7 @@ Server runs on `http://localhost:8080`
 - `src/hooks/useClassification.ts` - Hook managing classification state
 - `src/components/FractureForm.tsx` - Main form with dynamic question flow
 - `src/components/ClassificationResult.tsx` - Displays classification results
+- `src/i18n/` - Internationalization: `en.json`, `es.json`, `config.ts`
 
 ### UI Components (shadcn/ui)
 - Card, Button, Label, RadioGroup, Checkbox, Alert
@@ -147,12 +155,15 @@ Based on selection, different paths are followed:
 
 ### Backend
 ```bash
-cd backend && go test ./...
+cd backend && go vet ./...           # Static analysis
+cd backend && go test -v -race ./... # Run tests with race detection
 ```
 
 ### Frontend
 ```bash
-cd frontend && npm run build
+cd frontend && npm run lint      # ESLint
+cd frontend && npx tsc --noEmit  # Type check
+cd frontend && npm run build     # Build
 ```
 
 ### E2E Verification
@@ -164,6 +175,31 @@ cd frontend && npm run build
    - Medial + lateral + spiral fibula + lateral+medial → Weber B, AO-44-B2, LH SER
    - Only posterior + type 2 → Bartonicek Type 2
 
+## CI/CD
+
+GitHub Actions workflows in `.github/workflows/`:
+
+### Backend CI (`backend.yml`)
+
+Triggers on push/PR to `main` when `backend/**` changes:
+
+1. Setup Go (version from `go.mod`)
+2. Download and verify dependencies
+3. Run `go vet ./...`
+4. Run `go test -v -race ./...`
+5. Build binary
+
+### Frontend CI (`frontend.yml`)
+
+Triggers on push/PR to `main` when `frontend/**` changes:
+
+1. Setup Node.js 20
+2. Install dependencies (`npm ci`)
+3. Run linter (`npm run lint`)
+4. Type check (`npx tsc --noEmit`)
+5. Build (`npm run build`)
+6. Upload build artifacts
+
 ## Language
 
-UI text is in Spanish. Backend clinical notes are in Spanish.
+UI supports English and Spanish (i18n). Backend clinical notes are localized.
