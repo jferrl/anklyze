@@ -4,6 +4,7 @@ import { Activity, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { FractureForm } from '../components/FractureForm';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
 
 export function ClassifyPage() {
   const { t } = useTranslation();
@@ -37,6 +38,9 @@ export function ClassifyPage() {
           <FractureForm />
         </div>
       </section>
+
+      {/* Flow Diagram Sidebar */}
+      <FlowDiagramSidebar />
     </div>
   );
 }

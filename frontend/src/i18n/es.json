@@ -93,7 +93,13 @@
     "notPossibleExceptional": "No posible (excepcional)"
   },
   "classify": {
-    "backToHome": "Volver al Inicio"
+    "backToHome": "Volver al Inicio",
+    "flowDiagram": {
+      "title": "Flujo de Clasificación",
+      "description": "Guía visual del proceso de decisión de clasificación",
+      "show": "Mostrar Flujo",
+      "hide": "Ocultar Flujo"
+    }
   },
   "language": {
     "en": "Inglés",
