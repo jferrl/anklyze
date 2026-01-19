@@ -22,14 +22,14 @@ export function ClassifyPage() {
             <span className="font-semibold text-xl tracking-tight">Anklyze</span>
           </Link>
           <div className="flex items-center gap-4">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
             <Button variant="outline" size="sm" asChild>
               <Link to="/">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('classify.backToHome')}
               </Link>
             </Button>
+            <ThemeSwitcher />
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>

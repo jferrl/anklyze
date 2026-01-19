@@ -116,7 +116,8 @@
   "language": {
     "en": "English",
     "es": "Spanish",
-    "select": "Language"
+    "select": "Language",
+    "toggle": "Toggle language"
   },
   "theme": {
     "toggle": "Toggle theme",

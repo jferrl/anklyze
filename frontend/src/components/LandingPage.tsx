@@ -94,11 +94,11 @@ export function LandingPage() {
             <span className="font-semibold text-xl tracking-tight">Anklyze</span>
           </div>
           <div className="flex items-center gap-4">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
             <Button size="sm" asChild>
               <Link to="/classify">{t('landing.startClassifying')}</Link>
             </Button>
+            <ThemeSwitcher />
+            <LanguageSwitcher />
             <Button variant="ghost" size="icon" asChild>
               <a
                 href="https://github.com/jferrl/anklyze"
