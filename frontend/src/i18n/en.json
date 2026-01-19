@@ -94,6 +94,9 @@
     },
     "clinicalNotes": "Clinical Notes"
   },
+  "classify": {
+    "backToHome": "Back to Home"
+  },
   "language": {
     "en": "English",
     "es": "Spanish",

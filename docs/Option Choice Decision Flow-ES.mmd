@@ -1,0 +1,239 @@
+---
+config:
+  theme: redux
+  layout: dagre
+---
+flowchart TB
+    A(["Danis-Weber AO/OTA Flow"]) --> B{"¿Qué maléolos tiene fracturados?"}
+    B --> C["Maleolo posterior"] & D["Maleolo medial"] & n1["Maleolo lateral"] & n2["Maleolos medial y posterior"] & n3["Maleolos lateral y posterior"] & n4["Maleolos lateral y medial"] & n5["Maleolos medial, lateral y posterior"]
+    C --> n6["¿Qué tipo de fractura es?"]
+    n6 --> n7@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n8@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n9@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n10@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n7 --> n11@{ label: "<span style=\"color:\">Fractura unimaleolar maleolo posterior</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen SER</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n8 --> n12@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Fractura unimaleolar maleolo posterior</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 2</span>" }
+    n9 --> n13@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Fractura unimaleolar maleolo posterior</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 3</span>" }
+    n10 --> n14@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Fractura unimaleolar maleolo posterior</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 4</span>" }
+    D --> n15["¿Qué morfología tiene?"]
+    n15 --> n16["Oblicuo"] & n17["Transverso"]
+    n16 --> n18@{ label: "<span style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo medial</span><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA</span><span style=\"--tw-scale-x:\"><br></span>" }
+    n17 --> n19@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo medial<br>AO 44 A1<br>Lauge-Hansen no clasificable (podría ser PA/SER/PER)<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\"><br></span>" }
+    n1 --> n20["¿A qué nivel está la fractura?"]
+    n20 --> n21@{ label: "<span style=\"--tw-scale-x:\">Infrasindesmal</span><br style=\"--tw-scale-x:\">" } & n22@{ label: "<span style=\"color:\">Transindesmal</span>" } & n23@{ label: "<span style=\"color:\">Suprasindesmal</span>" }
+    n21 --> n24["¿De qué morfología es la fractura?"]
+    n24 --> n25["Transversa"] & n26["Oblicua (Baja medial, alta lateral)"]
+    n25 --> n27@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br>" }
+    n26 --> n28@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span>" }
+    n22 --> n29["¿De qué morfología es la fractura?"]
+    n29 --> n30["Espiroidea (Baja anterior, alta posterior)"] & n31["Oblicua (Baja medial, alta lateral)"]
+    n30 --> n32@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n31 --> n33@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n23 --> n34@{ label: "<span style=\"color:\">¿De qué tipo?</span>" }
+    n34 --> n35@{ label: "<span style=\"color:\">Diafisaria Simple</span>" } & n36@{ label: "<span style=\"color:\">Multifragmentaria</span>" } & n37@{ label: "<span style=\"color:\">Proximal</span>" }
+    n35 --> n39@{ label: "<br><span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C1<br>Lauge-Hansen PER<span style=\"color:\"><br>Weber C</span><br>" }
+    n36 --> n40@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C2<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n37 --> n41@{ label: "<span style=\"--tw-scale-x:\">Fractura unimaleolar maleolo lateral</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C3<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n2 --> n42["Fractura bimaleolar (Medial + Posterior)<br>AO 44 B3<br>Lauge-Hansen SER<br>"]
+    n3 --> n43["¿A qué nivel está la fractura de peroné?"]
+    n43 --> n44["Infrasindesmal"] & n45["Transindesmal"] & n46["Suprasindesmal"]
+    n44 --> n47["¿De qué morfología es la fractura?"]
+    n45 --> n48["¿De qué morfología es la fractura?"]
+    n46 --> n49["¿De qué tipo?"]
+    n47 --> n50["Transversa"] & n51["Oblicua (Baja medial, alta lateral)"]
+    n48 --> n52["Espiroidea (Baja anterior, alta posterior)"] & n53["Oblicua (Baja medial, alta lateral)"]
+    n49 --> n54["Diafisaria Simple"] & n55["Multifragmentaria"] & n56["Proximal"]
+    n57["¿Qué tipo de fractura es el maléolo posterior?"] --> n58@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n59@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n60@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n61@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n58 --> n62@{ label: "<span style=\"color:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"color:\"><br>AO 44 A2<br></span><span style=\"color:\">Lauge-Hansen PA<br></span><span style=\"color:\">Weber A</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n59 --> n63@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n60 --> n64@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n61 --> n65@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n50 --> n66["No posible porque el mecanismo de SA no arranca el maleolo posterior"]
+    n51 --> n57
+    n67["¿Qué tipo de fractura es el maléolo posterior?"] --> n68@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n69@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n70@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n71@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n68 --> n72@{ label: "<span style=\"color:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen SER<br></span><span style=\"color:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n69 --> n73@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n70 --> n74@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n71 --> n75@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n76["¿Qué tipo de fractura es el maléolo posterior?"] --> n77@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n78@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n79@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n80@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n77 --> n81@{ label: "<span style=\"color:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen PA<br></span><span style=\"color:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n78 --> n82@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n79 --> n83@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n80 --> n84@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n52 --> n67
+    n53 --> n76
+    n85["¿Qué tipo de fractura es el maléolo posterior?"] --> n86@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n87@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n88@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n89@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n86 --> n90@{ label: "<span style=\"color:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"color:\"><br>AO 44 C1<br></span><span style=\"color:\">Lauge-Hansen PER<br></span><span style=\"color:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n87 --> n91@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n88 --> n92@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n89 --> n93@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n94["¿Qué tipo de fractura es el maléolo posterior?"] --> n95@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n96@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n97@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n98@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n95 --> n99@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 1</span>" }
+    n96 --> n100@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n97 --> n101@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n98 --> n102@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n103["¿Qué tipo de fractura es el maléolo posterior?"] --> n104@{ label: "<span style=\"color:\">Fragmento extraincisural</span>" } & n105@{ label: "<span style=\"color:\">Fragmento posterolateral</span>" } & n106@{ label: "<span style=\"color:\">Fragmento posteromedial y posterolateral</span>" } & n107@{ label: "<span style=\"color:\">Gran fragmento triangular posterolateral</span>" }
+    n104 --> n108@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 1</span>" }
+    n105 --> n109@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
+    n106 --> n110@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n107 --> n111@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y posterior)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
+    n54 --> n85
+    n55 --> n94
+    n56 --> n103
+    n4 --> n112["¿De qué morfología es la fractura del maléolo medial?"]
+    n112 --> n113["Oblicuo/vertical"] & n114["Transverso"]
+    n113 --> n115["¿La fractura del perone es infrasindesmal y transversa?"]
+    n115 --> n116["Si"] & n117["No"]
+    n116 --> n118@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br>" }
+    n114 --> n119["¿A qué nivel está la fractura de peroné?"]
+    n117 --> n119
+    n119 --> n120["Alta"] & n121["Baja (A nivel de pilon tibial o inferior)"]
+    n120 --> n122["¿De qué tipo?"]
+    n122 --> n123["Diafisaria Simple"] & n124["Multifragmentaria"] & n125["Proximal"]
+    n123 --> n126@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br>" }
+    n124 --> n127@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
+    n125 --> n128@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
+    n121 --> n129["¿De qué morfología es la fractura del peroné?"]
+    n129 --> n130["Transversa"] & n131["Oblicua (baja medial, alta lateral)"] & n132["Espiroidea (Baja anterior, alta posterior)"]
+    n130 --> n133["¿A qué nivel está la fractura de peroné?"]
+    n133 --> n134["Infrasindesmal"] & n135["Transindesmal"]
+    n134 --> n136@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span>" }
+    n135 --> n138@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n131 --> n139@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n132 --> n140@{ label: "<span style=\"--tw-scale-x:\">Fractura bimaleolar (maleolo lateral y medial)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n5 --> n141["¿De qué morfología es la fractura del peroné?"]
+    n141 --> n143["Alta"] & n152["Baja (A nivel de pilon tibial o inferior)"]
+    n145["¿De qué tipo?"] --> n146["Diafisaria Simple"] & n147["Multifragmentaria"] & n148["Proximal"]
+    n146 --> n149@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br>" }
+    n147 --> n150@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
+    n148 --> n151@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
+    n143 --> n145
+    n152 --> n153["¿De qué morfología es la fractura del peroné?"]
+    n153 --> n154["Transversa"] & n155["Oblicua (baja medial, alta lateral)"] & n156["Espiroidea (Baja anterior, alta posterior)"]
+    n154 --> n157["¿A qué nivel está la fractura de peroné?"]
+    n157 --> n158["Infrasindesmal"] & n159["Transindesmal"]
+    n158 --> n160@{ label: "<span style=\"--tw-scale-x:\">No posible, mecanismo excepcional</span>" }
+    n159 --> n161@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n155 --> n162@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n156 --> n163@{ label: "<span style=\"--tw-scale-x:\">Fractura trimaleolar</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+
+    n6@{ shape: diam}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
+    n9@{ shape: rect}
+    n10@{ shape: rect}
+    n11@{ shape: cyl}
+    n12@{ shape: cyl}
+    n13@{ shape: cyl}
+    n14@{ shape: cyl}
+    n15@{ shape: diam}
+    n18@{ shape: cyl}
+    n19@{ shape: cyl}
+    n20@{ shape: diam}
+    n21@{ shape: rect}
+    n22@{ shape: rect}
+    n23@{ shape: rect}
+    n24@{ shape: diam}
+    n27@{ shape: cyl}
+    n28@{ shape: cyl}
+    n29@{ shape: diam}
+    n32@{ shape: cyl}
+    n33@{ shape: cyl}
+    n34@{ shape: diam}
+    n35@{ shape: rect}
+    n36@{ shape: rect}
+    n37@{ shape: rect}
+    n39@{ shape: cyl}
+    n40@{ shape: cyl}
+    n41@{ shape: cyl}
+    n42@{ shape: cyl}
+    n43@{ shape: diam}
+    n47@{ shape: diam}
+    n48@{ shape: diam}
+    n49@{ shape: diam}
+    n57@{ shape: diam}
+    n58@{ shape: rect}
+    n59@{ shape: rect}
+    n60@{ shape: rect}
+    n61@{ shape: rect}
+    n62@{ shape: cyl}
+    n63@{ shape: cyl}
+    n64@{ shape: cyl}
+    n65@{ shape: cyl}
+    n66@{ shape: cyl}
+    n67@{ shape: diam}
+    n68@{ shape: rect}
+    n69@{ shape: rect}
+    n70@{ shape: rect}
+    n71@{ shape: rect}
+    n72@{ shape: cyl}
+    n73@{ shape: cyl}
+    n74@{ shape: cyl}
+    n75@{ shape: cyl}
+    n76@{ shape: diam}
+    n77@{ shape: rect}
+    n78@{ shape: rect}
+    n79@{ shape: rect}
+    n80@{ shape: rect}
+    n81@{ shape: cyl}
+    n82@{ shape: cyl}
+    n83@{ shape: cyl}
+    n84@{ shape: cyl}
+    n85@{ shape: diam}
+    n86@{ shape: rect}
+    n87@{ shape: rect}
+    n88@{ shape: rect}
+    n89@{ shape: rect}
+    n90@{ shape: cyl}
+    n91@{ shape: cyl}
+    n92@{ shape: cyl}
+    n93@{ shape: cyl}
+    n94@{ shape: diam}
+    n95@{ shape: rect}
+    n96@{ shape: rect}
+    n97@{ shape: rect}
+    n98@{ shape: rect}
+    n99@{ shape: cyl}
+    n100@{ shape: cyl}
+    n101@{ shape: cyl}
+    n102@{ shape: cyl}
+    n103@{ shape: diam}
+    n104@{ shape: rect}
+    n105@{ shape: rect}
+    n106@{ shape: rect}
+    n107@{ shape: rect}
+    n108@{ shape: cyl}
+    n109@{ shape: cyl}
+    n110@{ shape: cyl}
+    n111@{ shape: cyl}
+    n112@{ shape: diam}
+    n115@{ shape: diam}
+    n118@{ shape: cyl}
+    n119@{ shape: diam}
+    n122@{ shape: diam}
+    n126@{ shape: cyl}
+    n127@{ shape: cyl}
+    n128@{ shape: cyl}
+    n129@{ shape: diam}
+    n133@{ shape: diam}
+    n136@{ shape: cyl}
+    n138@{ shape: cyl}
+    n139@{ shape: cyl}
+    n140@{ shape: cyl}
+    n141@{ shape: diam}
+    n152@{ shape: rect}
+    n145@{ shape: diam}
+    n146@{ shape: rect}
+    n147@{ shape: rect}
+    n148@{ shape: rect}
+    n149@{ shape: cyl}
+    n150@{ shape: cyl}
+    n151@{ shape: cyl}
+    n153@{ shape: diam}
+    n154@{ shape: rect}
+    n155@{ shape: rect}
+    n156@{ shape: rect}
+    n157@{ shape: diam}
+    n158@{ shape: rect}
+    n159@{ shape: rect}
+    n160@{ shape: cyl}
+    n161@{ shape: cyl}
+    n162@{ shape: cyl}
+    n163@{ shape: cyl}

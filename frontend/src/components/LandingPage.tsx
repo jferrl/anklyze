@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Separator } from './ui/separator';
-import { FractureForm } from './FractureForm';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import {
   Activity,
@@ -13,17 +13,11 @@ import {
   MousePointerClick,
   ListChecks,
   FileCheck2,
-  ArrowDown,
+  ArrowRight,
 } from 'lucide-react';
-import { useRef } from 'react';
 
 export function LandingPage() {
   const { t } = useTranslation();
-  const formRef = useRef<HTMLDivElement>(null);
-
-  const scrollToForm = () => {
-    formRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const features = [
     {
@@ -82,8 +76,8 @@ export function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Button onClick={scrollToForm} size="sm">
-              {t('landing.startClassifying')}
+            <Button size="sm" asChild>
+              <Link to="/classify">{t('landing.startClassifying')}</Link>
             </Button>
           </div>
         </div>
@@ -115,9 +109,11 @@ export function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" onClick={scrollToForm} className="text-base px-8">
-                {t('landing.startClassifying')}
-                <ArrowDown className="ml-2 h-4 w-4" />
+              <Button size="lg" className="text-base px-8" asChild>
+                <Link to="/classify">
+                  {t('landing.startClassifying')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-base px-8" asChild>
                 <a href="#how-it-works">{t('landing.learnMore')}</a>
@@ -127,15 +123,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Form Section - Primary CTA */}
-      <section ref={formRef} className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <FractureForm />
-        </div>
-      </section>
-
       {/* Features Section */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -220,13 +209,8 @@ export function LandingPage() {
               <p className="text-primary-foreground/80 text-lg max-w-xl mx-auto">
                 {t('landing.cta.subtitle')}
               </p>
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={scrollToForm}
-                className="text-base px-8"
-              >
-                {t('landing.cta.button')}
+              <Button size="lg" variant="secondary" className="text-base px-8" asChild>
+                <Link to="/classify">{t('landing.cta.button')}</Link>
               </Button>
             </CardContent>
           </Card>
