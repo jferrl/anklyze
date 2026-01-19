@@ -60,7 +60,6 @@ export function LandingPage() {
     },
     {
       icon: FileCheck2,
-      number: '3',
       title: t('landing.howItWorks.step3.title'),
       description: t('landing.howItWorks.step3.description'),
     },
@@ -211,9 +210,11 @@ export function LandingPage() {
                     <div className="h-24 w-24 rounded-2xl bg-muted flex items-center justify-center mx-auto">
                       <step.icon className="h-10 w-10 text-primary" />
                     </div>
-                    <div className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                      {step.number}
-                    </div>
+                    {step.number && (
+                      <div className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                        {step.number}
+                      </div>
+                    )}
                   </div>
                   <h3 className="font-semibold text-xl">{step.title}</h3>
                   <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
