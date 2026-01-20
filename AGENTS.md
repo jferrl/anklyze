@@ -129,13 +129,43 @@ Query parameters:
 ### Key Files
 - `src/types/fracture.ts` - TypeScript types mirroring backend domain
 - `src/services/api.ts` - API client with `classifyFracture()` and `getFormOptions()`
-- `src/hooks/useClassification.ts` - Hook managing classification state
-- `src/components/FractureForm.tsx` - Main form with dynamic question flow
+- `src/hooks/useClassification.ts` - Hook managing classification state and comparison scenarios
+- `src/components/FractureForm.tsx` - Main form with dynamic question flow, keyboard navigation, and history
 - `src/components/ClassificationResult.tsx` - Displays classification results
+- `src/components/ComparisonView.tsx` - Side-by-side comparison of multiple classification scenarios
+- `src/utils/shareUrl.ts` - URL encoding/decoding for shareable classification links
 - `src/i18n/` - Internationalization: `en.json`, `es.json`, `config.ts`
 
 ### UI Components (shadcn/ui)
 - Card, Button, Label, RadioGroup, Checkbox, Alert
+
+### Frontend Features
+
+#### Keyboard Navigation
+
+- Number keys `1-9`: Select the corresponding option in the current question
+- `Backspace`: Go back to the previous question (undo last selection)
+- `Enter`: Submit the form when complete
+
+#### Back/Reset Navigation
+
+- Form maintains a history stack of previous states
+- Back button allows undoing the last selection
+- Reset button clears the form and starts over
+
+#### Shareable URLs
+
+- After classification, users can copy a shareable URL
+- URLs use compact parameter encoding (e.g., `?m=lateral_only&fl=infrasindesmal`)
+- Opening a shared URL auto-classifies and shows results directly
+- URL is cleaned after loading to avoid stale state
+
+#### Classification Comparison
+
+- Compare up to 3 different fracture scenarios side-by-side
+- After viewing a result, click "Compare" to start comparison mode
+- Differences between scenarios are highlighted with colored rings
+- Each classification system (Lauge-Hansen, Danis-Weber, AO/OTA, Bartonicek) shown in its own card
 
 ### Running Frontend
 ```bash
