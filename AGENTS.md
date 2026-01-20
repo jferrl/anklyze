@@ -16,8 +16,12 @@ anklyze/
 │   ├── cmd/server/main.go       # Entry point
 │   └── internal/
 │       ├── api/                 # HTTP handlers and routes
+│       ├── config/              # Configuration loading
+│       ├── database/            # Database connection (GORM)
 │       ├── domain/              # Domain models and types
 │       ├── i18n/                # Translations (en.go, es.go)
+│       ├── repository/          # Data access layer
+│       │   └── postgres/        # PostgreSQL implementation
 │       ├── rules/               # Classification rule engine
 │       └── service/             # Business logic services
 │
@@ -35,21 +39,54 @@ anklyze/
 ### Key Files
 - `internal/domain/fracture.go` - Input types: `FractureInput`, `MedialMorphology`, `FibularLevel`, `FibularMorphology`, `WeberCFractureType`, `InvolvedMalleoli`, `BartonicekType`
 - `internal/domain/classification.go` - Output types: `ClassificationResult`, `DanisWeberClassification`, `LaugeHansenClassification`, `AOOTAClassification`, `BartonicekClassification`
+- `internal/domain/audit.go` - Audit trail model: `AuditEntry` with GORM tags for PostgreSQL
 - `internal/rules/engine.go` - Decision tree rule engine for all four classification systems
-- `internal/api/handler.go` - HTTP handlers with form options
+- `internal/api/handler.go` - HTTP handlers with form options and audit logging
 - `internal/i18n/` - Internationalization: `en.go`, `es.go` for English/Spanish translations
+- `internal/config/config.go` - Configuration loading from environment variables
+- `internal/database/database.go` - GORM PostgreSQL connection setup
+- `internal/repository/audit.go` - `AuditRepository` interface and `NoOpAuditRepository`
+- `internal/repository/postgres/audit.go` - PostgreSQL implementation with async writes
 
 ### API Endpoints
 - `POST /api/classify` - Accepts `FractureInput`, returns `ClassificationResult`
 - `GET /api/options` - Returns form options for frontend
 - `GET /health` - Health check
 
+### Environment Variables
+
+| Variable       | Description                  | Default                  |
+|----------------|------------------------------|--------------------------|
+| `PORT`         | Server port                  | `8080`                   |
+| `DATABASE_URL` | PostgreSQL connection string | (none - audit disabled)  |
+
 ### Running Backend
 ```bash
 cd backend
-make run  # or: go run cmd/server/main.go
+make run          # Run without database (audit disabled)
+make run-with-db  # Run with local PostgreSQL (audit enabled)
 ```
 Server runs on `http://localhost:8080`
+
+### Database Commands
+
+```bash
+make db-start     # Start local PostgreSQL with Docker
+make db-stop      # Stop and remove local PostgreSQL
+make db-shell     # Open psql shell to local database
+make db-audit     # Show recent audit entries
+```
+
+### Audit Trail
+
+When `DATABASE_URL` is set, the backend logs every classification request to PostgreSQL:
+
+- Input parameters (JSONB)
+- Classification result (JSONB)
+- Denormalized fields for analytics (danis_weber_type, lauge_hansen_type, ao_ota_code)
+- Request metadata (client_ip, user_agent, language, duration_ms)
+
+Schema is auto-migrated on startup using GORM AutoMigrate.
 
 ## Frontend (React + TypeScript)
 
