@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/jferrl/fratures/internal/domain"
-	"github.com/jferrl/fratures/internal/i18n"
-	"github.com/jferrl/fratures/internal/rules"
+	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/i18n"
+	"github.com/jferrl/anklyze/internal/rules"
 )
 
 // ClassifierService defines the interface for fracture classification

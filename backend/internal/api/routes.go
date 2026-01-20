@@ -2,16 +2,17 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jferrl/fratures/internal/rules"
-	"github.com/jferrl/fratures/internal/service"
+	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/rules"
+	"github.com/jferrl/anklyze/internal/service"
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine) {
+func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier)
+	handler := NewHandler(classifier, auditRepo)
 
 	// CORS middleware
 	router.Use(CORSMiddleware())

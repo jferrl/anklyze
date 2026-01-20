@@ -2,21 +2,27 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jferrl/fratures/internal/domain"
-	"github.com/jferrl/fratures/internal/i18n"
-	"github.com/jferrl/fratures/internal/service"
+	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/i18n"
+	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/service"
 )
 
 // Handler handles HTTP requests
 type Handler struct {
 	classifier service.ClassifierService
+	auditRepo  repository.AuditRepository
 }
 
 // NewHandler creates a new Handler
-func NewHandler(classifier service.ClassifierService) *Handler {
-	return &Handler{classifier: classifier}
+func NewHandler(classifier service.ClassifierService, auditRepo repository.AuditRepository) *Handler {
+	return &Handler{
+		classifier: classifier,
+		auditRepo:  auditRepo,
+	}
 }
 
 // getLanguage extracts the language from the request
@@ -31,6 +37,7 @@ func getLanguage(c *gin.Context) i18n.Language {
 
 // ClassifyFracture handles POST /api/classify
 func (h *Handler) ClassifyFracture(c *gin.Context) {
+	startTime := time.Now()
 	lang := getLanguage(c)
 
 	var input domain.FractureInput
@@ -48,6 +55,20 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		})
 		return
 	}
+
+	// Non-blocking audit logging
+	durationMS := time.Since(startTime).Milliseconds()
+	auditEntry := domain.NewAuditEntry(
+		c.ClientIP(),
+		c.GetHeader("User-Agent"),
+		string(lang),
+		input,
+		*result,
+		durationMS,
+	)
+	go func() {
+		_ = h.auditRepo.Save(auditEntry)
+	}()
 
 	c.JSON(http.StatusOK, result)
 }

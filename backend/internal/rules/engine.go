@@ -1,8 +1,8 @@
 package rules
 
 import (
-	"github.com/jferrl/fratures/internal/domain"
-	"github.com/jferrl/fratures/internal/i18n"
+	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/i18n"
 )
 
 // Engine is the rule engine that classifies ankle fractures
