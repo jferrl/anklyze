@@ -130,7 +130,7 @@
     "system": "Sistema"
   },
   "comparison": {
-    "compare": "Comparar con Otro Hallazgo",
+    "compare": "Comparar Escenarios",
     "addAnother": "Añadir Otro Escenario",
     "clear": "Limpiar Comparación",
     "startOver": "Empezar de Nuevo",
@@ -142,5 +142,52 @@
     "button": "Compartir",
     "copied": "Enlace copiado al portapapeles",
     "failed": "Error al copiar el enlace"
+  },
+  "annotation": {
+    "title": "Imagen (Opcional)",
+    "description": "Suba una imagen para anotar. Las imágenes no se guardan ni se envían a ningún servidor.",
+    "show": "Mostrar Herramientas",
+    "hide": "Ocultar Herramientas",
+    "upload": {
+      "title": "Subir Imagen",
+      "dragDrop": "Arrastre y suelte una imagen aquí, o haga clic para seleccionar",
+      "formats": "Soportados: JPEG, PNG, WebP, BMP, GIF, TIFF",
+      "maxSize": "Tamaño máximo: 10MB"
+    },
+    "tools": {
+      "select": "Seleccionar",
+      "marker": "Marcador",
+      "circle": "Círculo",
+      "arrow": "Flecha",
+      "line": "Línea",
+      "measurement": "Medir",
+      "angle": "Ángulo",
+      "text": "Texto",
+      "pan": "Desplazar"
+    },
+    "actions": {
+      "clearAll": "Borrar Todo",
+      "clearImage": "Eliminar Imagen",
+      "delete": "Eliminar",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "zoomReset": "Restablecer Zoom",
+      "zoomFit": "Ajustar"
+    },
+    "labels": {
+      "distance": "Distancia",
+      "angle": "Ángulo",
+      "pixels": "px",
+      "degrees": "°"
+    },
+    "confirm": {
+      "clearAll": "¿Borrar todas las anotaciones?",
+      "clearImage": "¿Eliminar imagen y todas las anotaciones?"
+    },
+    "errors": {
+      "invalidFormat": "Formato inválido. Use JPEG, PNG, WebP, BMP, GIF o TIFF.",
+      "fileTooLarge": "Archivo muy grande. Máx 10MB.",
+      "loadFailed": "Error al cargar la imagen."
+    }
   }
 }

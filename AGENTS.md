@@ -28,6 +28,11 @@ anklyze/
 └── frontend/                    # React + TypeScript + shadcn/ui
     └── src/
         ├── components/          # React components + shadcn ui/
+        │   └── annotation/      # Image annotation components
+        │       ├── ImageAnnotator.tsx    # Main wrapper component
+        │       ├── AnnotationCanvas.tsx  # Konva canvas with tools
+        │       ├── AnnotationToolbar.tsx # Tool selection & controls
+        │       └── ImageUploader.tsx     # Drag-drop image upload
         ├── hooks/               # Custom React hooks
         ├── i18n/                # Translations (en.json, es.json)
         ├── services/            # API client
@@ -128,11 +133,17 @@ Query parameters:
 
 ### Key Files
 - `src/types/fracture.ts` - TypeScript types mirroring backend domain
+- `src/types/annotation.ts` - TypeScript types for image annotations
 - `src/services/api.ts` - API client with `classifyFracture()` and `getFormOptions()`
 - `src/hooks/useClassification.ts` - Hook managing classification state and comparison scenarios
+- `src/hooks/useAnnotations.ts` - Hook managing annotation state (useReducer-based)
 - `src/components/FractureForm.tsx` - Main form with dynamic question flow, keyboard navigation, and history
 - `src/components/ClassificationResult.tsx` - Displays classification results
 - `src/components/ComparisonView.tsx` - Side-by-side comparison of multiple classification scenarios
+- `src/components/annotation/ImageAnnotator.tsx` - Main image annotation wrapper component
+- `src/components/annotation/AnnotationCanvas.tsx` - Konva canvas with annotation rendering
+- `src/components/annotation/AnnotationToolbar.tsx` - Tool selection and controls
+- `src/components/annotation/ImageUploader.tsx` - Drag-drop image upload component
 - `src/utils/shareUrl.ts` - URL encoding/decoding for shareable classification links
 - `src/i18n/` - Internationalization: `en.json`, `es.json`, `config.ts`
 
@@ -166,6 +177,31 @@ Query parameters:
 - After viewing a result, click "Compare" to start comparison mode
 - Differences between scenarios are highlighted with colored rings
 - Each classification system (Lauge-Hansen, Danis-Weber, AO/OTA, Bartonicek) shown in its own card
+
+#### Image Annotation
+
+Optional collapsible section in the classification form for uploading and annotating images.
+
+**Tools available:**
+
+- `Select` (V) - Select and move annotations
+- `Marker` (M) - Place point markers
+- `Circle` (C) - Draw circles
+- `Arrow` (A) - Draw arrows
+- `Line` (L) - Draw lines
+- `Measurement` (R) - Measure distances in pixels
+- `Angle` (G) - Measure angles (3-point)
+- `Text` (T) - Add text labels
+- `Pan` (H) - Pan/drag the canvas
+
+**Features:**
+
+- Drag-drop or click to upload images (JPEG, PNG, max 10MB)
+- Zoom with scroll wheel or buttons (0.1x - 5x)
+- Color picker with 5 preset colors
+- Delete selected annotation with `Delete`/`Backspace`
+- Session-only persistence (annotations not saved to backend)
+- Built with Konva + react-konva for canvas rendering
 
 ### Running Frontend
 ```bash
