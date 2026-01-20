@@ -10,34 +10,23 @@ test.describe('Lateral + Posterior Classification Path', () => {
   });
 
   test.describe('Infrasindesmal Level', () => {
-    test('should show "not possible" alert for transverse morphology', async () => {
+    // NOTE: ALL infrasindesmal lateral+posterior cases are now impossible
+    // SA mechanism doesn't involve posterior malleolus
+    // PA mechanism is transsyndesmotic or suprasyndesmotic
+    test('should show "not possible" alert immediately (no morphology question)', async () => {
       await classifyPage.selectLateralPosterior();
       await classifyPage.selectLPLevelInfrasindesmal();
-      await classifyPage.selectLPMorphologyInfraTransverse();
 
       await classifyPage.expectNotPossibleAlert();
       await classifyPage.expectClassifyButtonEnabled();
     });
 
-    test('should classify transverse morphology as not possible', async () => {
+    test('should classify as not possible', async () => {
       await classifyPage.selectLateralPosterior();
       await classifyPage.selectLPLevelInfrasindesmal();
-      await classifyPage.selectLPMorphologyInfraTransverse();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
-    });
-
-    test('should classify oblique morphology with posterior type', async () => {
-      await classifyPage.selectLateralPosterior();
-      await classifyPage.selectLPLevelInfrasindesmal();
-      await classifyPage.selectLPMorphologyInfraOblique();
-      await classifyPage.selectLPPosteriorTypeInfra('posterolateral');
-      await classifyPage.submitClassification();
-
-      await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('SA');
-      await classifyPage.expectDanisWeberResult('A');
     });
   });
 
@@ -108,9 +97,9 @@ test.describe('Lateral + Posterior Classification Path', () => {
   test.describe('Field Reset Behavior', () => {
     test('should reset morphology and posterior type when changing fibular level', async () => {
       await classifyPage.selectLateralPosterior();
-      await classifyPage.selectLPLevelInfrasindesmal();
-      await classifyPage.selectLPMorphologyInfraOblique();
-      await classifyPage.selectLPPosteriorTypeInfra('posterolateral');
+      await classifyPage.selectLPLevelTransindesmal();
+      await classifyPage.selectLPMorphologyTransSpiral();
+      await classifyPage.selectLPPosteriorTypeTrans('posterolateral');
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change fibular level - should reset dependent fields

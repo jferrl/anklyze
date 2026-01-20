@@ -94,6 +94,7 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput, lang i18n.Langu
 
 	switch input.FibularLevel {
 	case domain.FibularLevelInfrasindesmal:
+		// Infrasindesmal lateral-only always results in SA (no morphology question needed)
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type:        domain.DanisWeberA,
 			Description: i18n.T(lang, i18n.KeyDWADesc),
@@ -102,19 +103,10 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput, lang i18n.Langu
 			Code:        domain.AOOTAA1,
 			Description: i18n.T(lang, i18n.KeyAOA1Desc),
 		}
-		if input.LateralMorphology == domain.LateralMorphologyTransverse {
-			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Type:        domain.LaugeHansenSA,
-				FullName:    i18n.T(lang, i18n.KeyLHSAName),
-				Description: i18n.T(lang, i18n.KeyLHSADesc),
-			}
-		} else {
-			// Oblique
-			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Type:        domain.LaugeHansenPA,
-				FullName:    i18n.T(lang, i18n.KeyLHPAName),
-				Description: i18n.T(lang, i18n.KeyLHPADesc),
-			}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:        domain.LaugeHansenSA,
+			FullName:    i18n.T(lang, i18n.KeyLHSAName),
+			Description: i18n.T(lang, i18n.KeyLHSADesc),
 		}
 
 	case domain.FibularLevelTransindesmal:
@@ -181,28 +173,14 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput, lang i18n.
 
 	switch input.FibularLevel {
 	case domain.FibularLevelInfrasindesmal:
-		if input.LateralMorphology == domain.LateralMorphologyTransverse {
-			return &domain.ClassificationResult{
-				FractureDescription: i18n.T(lang, i18n.KeyFractureBimaleolarLateralPosterior),
-				Impossible:          true,
-				ImpossibleReason:    i18n.T(lang, i18n.KeyNotPossibleSAMechanism),
-			}, nil
-		}
-		// Oblique
-		result.DanisWeber = &domain.DanisWeberClassification{
-			Type:        domain.DanisWeberA,
-			Description: i18n.T(lang, i18n.KeyDWADesc),
-		}
-		result.AOOTA = &domain.AOOTAClassification{
-			Code:        domain.AOOTAA2,
-			Description: i18n.T(lang, i18n.KeyAOA2Desc),
-		}
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPA,
-			FullName:    i18n.T(lang, i18n.KeyLHPAName),
-			Description: i18n.T(lang, i18n.KeyLHPADesc),
-		}
-		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		// All infrasindesmal lateral+posterior combinations are impossible
+		// SA mechanism does not involve posterior malleolus
+		// PA mechanism is transsyndesmotic or suprasyndesmotic
+		return &domain.ClassificationResult{
+			FractureDescription: i18n.T(lang, i18n.KeyFractureBimaleolarLateralPosterior),
+			Impossible:          true,
+			ImpossibleReason:    i18n.T(lang, i18n.KeyNotPossibleSAMechanism),
+		}, nil
 
 	case domain.FibularLevelTransindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{

@@ -10,21 +10,11 @@ test.describe('Lateral Only Classification Path', () => {
   });
 
   test.describe('Infrasindesmal Level', () => {
-    test('should classify with transverse morphology (SA II, Weber A)', async () => {
+    // NOTE: Infrasindesmal lateral-only no longer has morphology question
+    // It goes directly to result (SA, Weber A)
+    test('should classify directly as SA, Weber A (no morphology question)', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelInfrasindesmal();
-      await classifyPage.selectLateralMorphologyInfraTransverse();
-      await classifyPage.submitClassification();
-
-      await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('SA');
-      await classifyPage.expectDanisWeberResult('A');
-    });
-
-    test('should classify with oblique morphology (SA II, Weber A)', async () => {
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelInfrasindesmal();
-      await classifyPage.selectLateralMorphologyInfraOblique();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
@@ -93,13 +83,13 @@ test.describe('Lateral Only Classification Path', () => {
   });
 
   test.describe('Field Reset Behavior', () => {
-    test('should reset morphology when changing fibular level', async ({ page }) => {
+    test('should reset dependent fields when changing fibular level', async ({ page }) => {
       await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelInfrasindesmal();
-      await classifyPage.selectLateralMorphologyInfraTransverse();
+      await classifyPage.selectLateralLevelTransindesmal();
+      await classifyPage.selectLateralMorphologyTransSpiral();
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change fibular level - should reset morphology
+      // Change fibular level - should reset dependent fields
       await classifyPage.selectLateralLevelSuprasindesmal();
       await classifyPage.expectClassifyButtonDisabled();
     });

@@ -32,11 +32,7 @@ export const flowchartES = `flowchart TB
     n20 --> n22["Transindesmal"]
     n20 --> n23["Suprasindesmal"]
 
-    n21 --> n24{"¿De qué morfología es la fractura?"}
-    n24 --> n25["Transversa"]
-    n24 --> n26["Oblicua (Baja medial, alta lateral)"]
-    n25 --> n27["Unimaleolar maléolo lateral<br/>AO 44 A1<br/>Lauge-Hansen SA<br/>Weber A"]
-    n26 --> n28["Unimaleolar maléolo lateral<br/>AO 44 A1<br/>Lauge-Hansen PA<br/>Weber A"]
+    n21 --> n27["Unimaleolar maléolo lateral<br/>AO 44 A1<br/>Lauge-Hansen SA<br/>Weber A"]
 
     n22 --> n29{"¿De qué morfología es la fractura?"}
     n29 --> n30["Espiroidea (Baja anterior, alta posterior)"]
@@ -61,11 +57,7 @@ export const flowchartES = `flowchart TB
     n43 --> n45["Transindesmal"]
     n43 --> n46["Suprasindesmal"]
 
-    n44 --> n47{"¿De qué morfología es la fractura?"}
-    n47 --> n50["Transversa"]
-    n47 --> n51["Oblicua (Baja medial, alta lateral)"]
-    n50 --> n66["No posible: mecanismo SA no involucra maléolo posterior"]
-    n51 --> n57{"¿Qué tipo es el maléolo posterior?"}
+    n44 --> n66["No posible: El mecanismo SA no arranca el maléolo posterior.<br/>Mecanismo PA son transindesmales o suprasindesmales."]
 
     n45 --> n48{"¿De qué morfología es la fractura?"}
     n48 --> n52["Espiroidea (Baja anterior, alta posterior)"]

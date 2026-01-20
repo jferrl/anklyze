@@ -52,9 +52,9 @@ export const ExpectedResults = {
   },
 
   // Lateral only path - Multiple classification systems
+  // NOTE: Infrasindesmal no longer has morphology question - always results in SA
   lateralOnly: {
-    infraTransverse: { laugeHansen: 'SA', danisWeber: 'A' },
-    infraOblique: { laugeHansen: 'SA', danisWeber: 'A' },
+    infra: { laugeHansen: 'SA', danisWeber: 'A' },
     transSpiral: { laugeHansen: 'SER', danisWeber: 'B' },
     transOblique: { laugeHansen: 'PA', danisWeber: 'B' },
     supraSimple: { laugeHansen: 'PER', danisWeber: 'C' },
@@ -68,9 +68,9 @@ export const ExpectedResults = {
   },
 
   // Lateral + Posterior path
+  // NOTE: ALL infrasindesmal cases are now impossible (no morphology question)
   lateralPosterior: {
-    infraTransverse: { notPossible: true },
-    infraOblique: { laugeHansen: 'SA', danisWeber: 'A' },
+    infra: { notPossible: true },
     transSpiral: { laugeHansen: 'SER', danisWeber: 'B' },
     transOblique: { laugeHansen: 'PA', danisWeber: 'B' },
     supra: { laugeHansen: 'PER', danisWeber: 'C' },

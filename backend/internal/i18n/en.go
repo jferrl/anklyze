@@ -70,7 +70,7 @@ var englishTranslations = map[string]string{
 	KeyFractureTrimaleolar:                "Trimalleolar fracture",
 
 	// Impossible scenarios
-	KeyNotPossibleSAMechanism: "Not possible. SA mechanism does not produce posterior malleolus fracture.",
+	KeyNotPossibleSAMechanism: "Not possible. SA mechanism does not involve the posterior malleolus. PA mechanism is transsyndesmotic or suprasyndesmotic.",
 	KeyNotPossibleExceptional: "Not possible (exceptional)",
 
 	// Lauge-Hansen names and descriptions

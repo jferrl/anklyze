@@ -32,11 +32,7 @@ export const flowchartEN = `flowchart TB
     n20 --> n22["Transsyndesmotic"]
     n20 --> n23["Suprasyndesmotic"]
 
-    n21 --> n24{"What is the fracture morphology?"}
-    n24 --> n25["Transverse"]
-    n24 --> n26["Oblique (Low medial, high lateral)"]
-    n25 --> n27["Unimalleolar lateral malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA<br/>Weber A"]
-    n26 --> n28["Unimalleolar lateral malleolus<br/>AO 44 A1<br/>Lauge-Hansen PA<br/>Weber A"]
+    n21 --> n27["Unimalleolar lateral malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA<br/>Weber A"]
 
     n22 --> n29{"What is the fracture morphology?"}
     n29 --> n30["Spiral (Low anterior, high posterior)"]
@@ -61,11 +57,7 @@ export const flowchartEN = `flowchart TB
     n43 --> n45["Transsyndesmotic"]
     n43 --> n46["Suprasyndesmotic"]
 
-    n44 --> n47{"What is the fracture morphology?"}
-    n47 --> n50["Transverse"]
-    n47 --> n51["Oblique (Low medial, high lateral)"]
-    n50 --> n66["Not possible: SA mechanism does not involve posterior malleolus"]
-    n51 --> n57{"What type is the posterior malleolus?"}
+    n44 --> n66["Not possible: SA mechanism does not involve posterior malleolus.<br/>PA mechanism is transsyndesmotic or suprasyndesmotic."]
 
     n45 --> n48{"What is the fracture morphology?"}
     n48 --> n52["Spiral (Low anterior, high posterior)"]

@@ -256,24 +256,14 @@ func TestEngine_Classify_LateralOnly(t *testing.T) {
 		expectedAOOTA       domain.AOOTACode
 		expectedLaugeHansen domain.LaugeHansenType
 	}{
-		// Infrasindesmal cases
+		// Infrasindesmal case - no morphology question, always SA
 		{
-			name:                "infrasindesmal transverse lateral",
+			name:                "infrasindesmal lateral (no morphology question)",
 			fibularLevel:        domain.FibularLevelInfrasindesmal,
-			lateralMorphology:   domain.LateralMorphologyTransverse,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberA,
 			expectedAOOTA:       domain.AOOTAA1,
 			expectedLaugeHansen: domain.LaugeHansenSA,
-		},
-		{
-			name:                "infrasindesmal oblique lateral",
-			fibularLevel:        domain.FibularLevelInfrasindesmal,
-			lateralMorphology:   domain.LateralMorphologyOblique,
-			lang:                i18n.English,
-			expectedDanisWeber:  domain.DanisWeberA,
-			expectedAOOTA:       domain.AOOTAA1,
-			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		// Transindesmal cases
 		{
@@ -324,9 +314,8 @@ func TestEngine_Classify_LateralOnly(t *testing.T) {
 		},
 		// Spanish language test
 		{
-			name:                "lateral only in Spanish",
+			name:                "lateral only infrasindesmal in Spanish",
 			fibularLevel:        domain.FibularLevelInfrasindesmal,
-			lateralMorphology:   domain.LateralMorphologyTransverse,
 			lang:                i18n.Spanish,
 			expectedDanisWeber:  domain.DanisWeberA,
 			expectedAOOTA:       domain.AOOTAA1,
@@ -455,25 +444,14 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		expectedBartonicek  domain.BartonicekType
 		expectBartonicekNil bool
 	}{
-		// Impossible case
+		// ALL infrasindesmal cases are impossible
+		// SA mechanism doesn't involve posterior malleolus
+		// PA mechanism is transsyndesmotic or suprasyndesmotic
 		{
-			name:               "infrasindesmal transverse is impossible (SA mechanism)",
+			name:               "infrasindesmal is always impossible (no morphology question)",
 			fibularLevel:       domain.FibularLevelInfrasindesmal,
-			lateralMorphology:  domain.LateralMorphologyTransverse,
 			lang:               i18n.English,
 			expectedImpossible: true,
-		},
-		// Infrasindesmal oblique
-		{
-			name:                "infrasindesmal oblique lateral posterior",
-			fibularLevel:        domain.FibularLevelInfrasindesmal,
-			lateralMorphology:   domain.LateralMorphologyOblique,
-			posteriorType:       domain.PosteriorPosterolateral,
-			lang:                i18n.English,
-			expectedDanisWeber:  domain.DanisWeberA,
-			expectedAOOTA:       domain.AOOTAA2,
-			expectedLaugeHansen: domain.LaugeHansenPA,
-			expectedBartonicek:  domain.BartonicekType2,
 		},
 		// Transindesmal spiral
 		{

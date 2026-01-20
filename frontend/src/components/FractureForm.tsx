@@ -94,8 +94,9 @@ export function FractureForm() {
   // PATH: Maléolo lateral solo
   const showLateralLevel = involvedMalleoli === 'lateral_only';
 
-  // PATH: Maléolo lateral solo - morfología para infrasindesmal
-  const showLateralMorphologyInfra = showLateralLevel && formData.fibular_level === 'infrasindesmal';
+  // PATH: Maléolo lateral solo - infrasindesmal goes directly to result (no morphology question needed)
+  // Infrasindesmal lateral-only always results in SA - no morphology question
+  const showLateralMorphologyInfra = false;
 
   // PATH: Maléolo lateral solo - morfología para transindesmal
   const showLateralMorphologyTrans = showLateralLevel && formData.fibular_level === 'transindesmal';
@@ -106,14 +107,15 @@ export function FractureForm() {
   // PATH: Maleolos lateral y posterior
   const showLateralPosteriorLevel = involvedMalleoli === 'lateral_posterior';
 
-  // PATH: Maleolos lateral y posterior - morfología para infrasindesmal
-  const showLPMorphologyInfra = showLateralPosteriorLevel && formData.fibular_level === 'infrasindesmal';
+  // PATH: Maleolos lateral y posterior - ALL infrasindesmal cases are impossible
+  // No morphology question needed - SA mechanism doesn't involve posterior, PA is trans/supra
+  const showLPMorphologyInfra = false;
 
-  // PATH: Maleolos lateral y posterior - Transversa infrasindesmal lleva a "No posible"
-  const showLPNotPossible = showLPMorphologyInfra && formData.lateral_morphology === 'transverse';
+  // PATH: Maleolos lateral y posterior - Infrasindesmal always leads to "No posible"
+  const showLPNotPossible = showLateralPosteriorLevel && formData.fibular_level === 'infrasindesmal';
 
-  // PATH: Maleolos lateral y posterior - pregunta de tipo posterior para oblicua infrasindesmal
-  const showLPPosteriorTypeInfraOblique = showLPMorphologyInfra && formData.lateral_morphology === 'oblique';
+  // PATH: Maleolos lateral y posterior - no posterior type for infrasindesmal (all impossible)
+  const showLPPosteriorTypeInfraOblique = false;
 
   // PATH: Maleolos lateral y posterior - morfología para transindesmal
   const showLPMorphologyTrans = showLateralPosteriorLevel && formData.fibular_level === 'transindesmal';
@@ -191,7 +193,11 @@ export function FractureForm() {
     // PATH: Maléolo lateral solo
     if (involvedMalleoli === 'lateral_only') {
       if (!formData.fibular_level) return false;
-      if (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal') {
+      // Infrasindesmal goes directly to result (SA) - no morphology needed
+      if (formData.fibular_level === 'infrasindesmal') {
+        return true;
+      }
+      if (formData.fibular_level === 'transindesmal') {
         return !!formData.lateral_morphology;
       }
       if (formData.fibular_level === 'suprasindesmal') {
@@ -207,10 +213,9 @@ export function FractureForm() {
     // PATH: Maleolos lateral y posterior
     if (involvedMalleoli === 'lateral_posterior') {
       if (!formData.fibular_level) return false;
+      // All infrasindesmal cases are "not possible" - no additional questions needed
       if (formData.fibular_level === 'infrasindesmal') {
-        if (!formData.lateral_morphology) return false;
-        if (formData.lateral_morphology === 'transverse') return true; // No posible
-        return !!formData.posterior_fracture_type;
+        return true; // No posible - SA mechanism doesn't involve posterior, PA is trans/supra
       }
       if (formData.fibular_level === 'transindesmal') {
         if (!formData.lateral_morphology) return false;
