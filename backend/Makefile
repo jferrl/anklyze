@@ -1,4 +1,4 @@
-.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit
+.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit swagger
 
 # Run the server
 run:
@@ -47,3 +47,7 @@ db-shell:
 # Show audit entries
 db-audit:
 	docker exec anklyze-pg psql -U postgres -d anklyze -c "SELECT id, language, danis_weber_type, created_at FROM audit_entries ORDER BY created_at DESC LIMIT 10;"
+
+# Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
+swagger:
+	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/server/main.go -o docs

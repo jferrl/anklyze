@@ -23,10 +23,10 @@ type AuditEntry struct {
 	Result datatypes.JSON `gorm:"not null"`
 
 	// Denormalized for analytics queries
-	IsImpossible    bool    `gorm:"index"`
-	DanisWeberType  *string `gorm:"size:10;index"`
-	LaugeHansenType *string `gorm:"size:5;index"`
-	AOOTACode       *string `gorm:"size:10;index"`
+	IsImpossible    bool    `gorm:"column:is_impossible;index"`
+	DanisWeberType  *string `gorm:"column:danis_weber_type;size:10;index"`
+	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:5;index"`
+	AOOTACode       *string `gorm:"column:ao_ota_code;size:10;index"`
 
 	// Processing time
 	DurationMS int64

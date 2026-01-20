@@ -13,15 +13,17 @@ import (
 
 // Handler handles HTTP requests
 type Handler struct {
-	classifier service.ClassifierService
-	auditRepo  repository.AuditRepository
+	classifier    service.ClassifierService
+	auditRepo     repository.AuditRepository
+	analyticsRepo repository.AnalyticsRepository
 }
 
 // NewHandler creates a new Handler
-func NewHandler(classifier service.ClassifierService, auditRepo repository.AuditRepository) *Handler {
+func NewHandler(classifier service.ClassifierService, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) *Handler {
 	return &Handler{
-		classifier: classifier,
-		auditRepo:  auditRepo,
+		classifier:    classifier,
+		auditRepo:     auditRepo,
+		analyticsRepo: analyticsRepo,
 	}
 }
 
@@ -36,6 +38,17 @@ func getLanguage(c *gin.Context) i18n.Language {
 }
 
 // ClassifyFracture handles POST /api/classify
+// @Summary Classify an ankle fracture
+// @Description Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems
+// @Tags Classification
+// @Accept json
+// @Produce json
+// @Param lang query string false "Language (en, es)" default(en)
+// @Param input body domain.FractureInput true "Fracture input parameters"
+// @Success 200 {object} domain.ClassificationResult "Classification result"
+// @Failure 400 {object} map[string]string "Invalid input"
+// @Failure 500 {object} map[string]string "Classification error"
+// @Router /api/classify [post]
 func (h *Handler) ClassifyFracture(c *gin.Context) {
 	startTime := time.Now()
 	lang := getLanguage(c)
@@ -114,6 +127,13 @@ type FormOptions struct {
 }
 
 // GetOptions handles GET /api/options
+// @Summary Get form options
+// @Description Returns localized form options for the classification form
+// @Tags Classification
+// @Produce json
+// @Param lang query string false "Language (en, es)" default(en)
+// @Success 200 {object} FormOptions "Form options"
+// @Router /api/options [get]
 func (h *Handler) GetOptions(c *gin.Context) {
 	lang := getLanguage(c)
 
@@ -206,6 +226,107 @@ func (h *Handler) GetOptions(c *gin.Context) {
 }
 
 // HealthCheck handles GET /health
+// @Summary Health check
+// @Description Returns the health status of the API
+// @Tags System
+// @Produce json
+// @Success 200 {object} map[string]string "Health status"
+// @Router /health [get]
 func (h *Handler) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+// parseDateRange parses from/to query parameters with defaults.
+func parseDateRange(c *gin.Context) (time.Time, time.Time) {
+	now := time.Now()
+	defaultFrom := now.AddDate(0, 0, -30) // 30 days ago
+	defaultTo := now
+
+	from := defaultFrom
+	to := defaultTo
+
+	if fromStr := c.Query("from"); fromStr != "" {
+		if parsed, err := time.Parse("2006-01-02", fromStr); err == nil {
+			from = parsed
+		}
+	}
+
+	if toStr := c.Query("to"); toStr != "" {
+		if parsed, err := time.Parse("2006-01-02", toStr); err == nil {
+			// Set to end of day
+			to = parsed.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+		}
+	}
+
+	return from, to
+}
+
+// GetAnalyticsSummary handles GET /api/analytics/summary
+// @Summary Get analytics summary
+// @Description Returns aggregated classification statistics for a time period
+// @Tags Analytics
+// @Produce json
+// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
+// @Param to query string false "End date (YYYY-MM-DD)" default(today)
+// @Success 200 {object} domain.AnalyticsSummary "Analytics summary"
+// @Failure 500 {object} map[string]string "Server error"
+// @Router /api/analytics/summary [get]
+func (h *Handler) GetAnalyticsSummary(c *gin.Context) {
+	from, to := parseDateRange(c)
+
+	summary, err := h.analyticsRepo.GetSummary(from, to)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics summary"})
+		return
+	}
+
+	c.JSON(http.StatusOK, summary)
+}
+
+// GetAnalyticsTrends handles GET /api/analytics/trends
+// @Summary Get classification trends
+// @Description Returns time-series classification data with configurable granularity
+// @Tags Analytics
+// @Produce json
+// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
+// @Param to query string false "End date (YYYY-MM-DD)" default(today)
+// @Param granularity query string false "Time granularity (day, week, month)" default(day)
+// @Success 200 {object} domain.TrendData "Trend data"
+// @Failure 500 {object} map[string]string "Server error"
+// @Router /api/analytics/trends [get]
+func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
+	from, to := parseDateRange(c)
+	granularity := domain.ParseGranularity(c.Query("granularity"))
+
+	trends, err := h.analyticsRepo.GetTrends(from, to, granularity)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics trends"})
+		return
+	}
+
+	c.JSON(http.StatusOK, trends)
+}
+
+// GetAnalyticsDistribution handles GET /api/analytics/distribution/:system
+// @Summary Get classification distribution
+// @Description Returns detailed distribution for a specific classification system
+// @Tags Analytics
+// @Produce json
+// @Param system path string true "Classification system (danis-weber, lauge-hansen, ao-ota)"
+// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
+// @Param to query string false "End date (YYYY-MM-DD)" default(today)
+// @Success 200 {object} domain.ClassificationDistribution "Distribution data"
+// @Failure 500 {object} map[string]string "Server error"
+// @Router /api/analytics/distribution/{system} [get]
+func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
+	system := c.Param("system")
+	from, to := parseDateRange(c)
+
+	distribution, err := h.analyticsRepo.GetDistribution(system, from, to)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get distribution"})
+		return
+	}
+
+	c.JSON(http.StatusOK, distribution)
 }

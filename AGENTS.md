@@ -40,18 +40,24 @@ anklyze/
 - `internal/domain/fracture.go` - Input types: `FractureInput`, `MedialMorphology`, `FibularLevel`, `FibularMorphology`, `WeberCFractureType`, `InvolvedMalleoli`, `BartonicekType`
 - `internal/domain/classification.go` - Output types: `ClassificationResult`, `DanisWeberClassification`, `LaugeHansenClassification`, `AOOTAClassification`, `BartonicekClassification`
 - `internal/domain/audit.go` - Audit trail model: `AuditEntry` with GORM tags for PostgreSQL
+- `internal/domain/analytics.go` - Analytics models: `AnalyticsSummary`, `TrendData`, `ClassificationDistribution`
 - `internal/rules/engine.go` - Decision tree rule engine for all four classification systems
-- `internal/api/handler.go` - HTTP handlers with form options and audit logging
+- `internal/api/handler.go` - HTTP handlers with form options, audit logging, and analytics
 - `internal/i18n/` - Internationalization: `en.go`, `es.go` for English/Spanish translations
 - `internal/config/config.go` - Configuration loading from environment variables
 - `internal/database/database.go` - GORM PostgreSQL connection setup
-- `internal/repository/audit.go` - `AuditRepository` interface and `NoOpAuditRepository`
-- `internal/repository/postgres/audit.go` - PostgreSQL implementation with async writes
+- `internal/repository/audit.go` - `AuditRepository` and `AnalyticsRepository` interfaces with NoOp implementations
+- `internal/repository/postgres/audit.go` - PostgreSQL audit implementation with async writes
+- `internal/repository/postgres/analytics.go` - PostgreSQL analytics implementation with aggregation queries
 
 ### API Endpoints
 - `POST /api/classify` - Accepts `FractureInput`, returns `ClassificationResult`
 - `GET /api/options` - Returns form options for frontend
+- `GET /api/analytics/summary` - Returns aggregated statistics for a time period
+- `GET /api/analytics/trends` - Returns time-series classification data
+- `GET /api/analytics/distribution/:system` - Returns distribution for a classification system
 - `GET /health` - Health check
+- `GET /swagger/*` - OpenAPI documentation (Swagger UI)
 
 ### Environment Variables
 
@@ -65,8 +71,11 @@ anklyze/
 cd backend
 make run          # Run without database (audit disabled)
 make run-with-db  # Run with local PostgreSQL (audit enabled)
+make swagger      # Regenerate OpenAPI docs after changing handlers
 ```
 Server runs on `http://localhost:8080`
+
+Swagger UI available at `http://localhost:8080/swagger/index.html`
 
 ### Database Commands
 
@@ -87,6 +96,33 @@ When `DATABASE_URL` is set, the backend logs every classification request to Pos
 - Request metadata (client_ip, user_agent, language, duration_ms)
 
 Schema is auto-migrated on startup using GORM AutoMigrate.
+
+### Analytics
+
+Analytics endpoints provide aggregated statistics from audit entries:
+
+**Summary** (`GET /api/analytics/summary?from=2024-01-01&to=2024-01-31`):
+
+- Total classifications count
+- Impossible classifications count and percentage
+- Average processing time
+- Distribution by language, Danis-Weber, Lauge-Hansen, and AO/OTA
+
+**Trends** (`GET /api/analytics/trends?from=2024-01-01&to=2024-01-31&granularity=day`):
+
+- Time-series data with configurable granularity (day, week, month)
+- Count and impossible count per period
+
+**Distribution** (`GET /api/analytics/distribution/:system`):
+
+- Detailed distribution for a specific system (danis-weber, lauge-hansen, ao-ota)
+- Counts and percentages per classification type
+
+Query parameters:
+
+- `from` - Start date (YYYY-MM-DD), defaults to 30 days ago
+- `to` - End date (YYYY-MM-DD), defaults to today
+- `granularity` - Time aggregation (day, week, month), defaults to day
 
 ## Frontend (React + TypeScript)
 

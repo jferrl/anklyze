@@ -1,0 +1,630 @@
+basePath: /
+definitions:
+  api.FormOptions:
+    properties:
+      fibular_levels:
+        description: Fibular level options
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+      involved_malleoli:
+        description: Involved malleoli options (first question)
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+      labels:
+        additionalProperties:
+          type: string
+        description: Labels
+        type: object
+      lateral_morphology:
+        description: Lateral morphology options
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+      medial_morphology:
+        description: Medial morphology options
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+      posterior_fracture_types:
+        description: Posterior fracture type options (Bartonicek)
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+      questions:
+        additionalProperties:
+          $ref: '#/definitions/api.Question'
+        description: Questions
+        type: object
+      suprasindesmal_types:
+        description: Suprasindesmal type options
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
+    type: object
+  api.Question:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  api.SelectOption:
+    properties:
+      label:
+        type: string
+      value:
+        type: string
+    type: object
+  domain.AOOTAClassification:
+    properties:
+      code:
+        $ref: '#/definitions/domain.AOOTACode'
+      description:
+        type: string
+    type: object
+  domain.AOOTACode:
+    enum:
+    - 44-A1
+    - 44-A2
+    - 44-B1
+    - 44-B2
+    - 44-B3
+    - 44-C1
+    - 44-C2
+    - 44-C3
+    type: string
+    x-enum-comments:
+      AOOTAA1: Unifocal / Isolated lateral
+      AOOTAA2: Bifocal / Lateral and medial
+      AOOTAB1: Isolated lateral
+      AOOTAB2: Lateral and medial
+      AOOTAB3: Lateral, medial and posterior
+      AOOTAC1: Simple diaphyseal
+      AOOTAC2: Multifragmentary
+      AOOTAC3: Proximal (Maisonneuve)
+    x-enum-descriptions:
+    - Unifocal / Isolated lateral
+    - Bifocal / Lateral and medial
+    - Isolated lateral
+    - Lateral and medial
+    - Lateral, medial and posterior
+    - Simple diaphyseal
+    - Multifragmentary
+    - Proximal (Maisonneuve)
+    x-enum-varnames:
+    - AOOTAA1
+    - AOOTAA2
+    - AOOTAB1
+    - AOOTAB2
+    - AOOTAB3
+    - AOOTAC1
+    - AOOTAC2
+    - AOOTAC3
+  domain.AnalyticsSummary:
+    properties:
+      ao_ota_distribution:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      avg_processing_time_ms:
+        type: number
+      classifications_by_language:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      danis_weber_distribution:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      impossible_count:
+        type: integer
+      impossible_percentage:
+        type: number
+      lauge_hansen_distribution:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+      total_classifications:
+        type: integer
+    type: object
+  domain.BartonicekClassification:
+    properties:
+      description:
+        type: string
+      type:
+        $ref: '#/definitions/domain.BartonicekType'
+    type: object
+  domain.BartonicekType:
+    enum:
+    - Bartonicek 1
+    - Bartonicek 2
+    - Bartonicek 3
+    - Bartonicek 4
+    type: string
+    x-enum-varnames:
+    - BartonicekType1
+    - BartonicekType2
+    - BartonicekType3
+    - BartonicekType4
+  domain.ClassificationDistribution:
+    properties:
+      distribution:
+        items:
+          $ref: '#/definitions/domain.DistributionItem'
+        type: array
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+      system:
+        type: string
+      total:
+        type: integer
+    type: object
+  domain.ClassificationResult:
+    properties:
+      ao_ota:
+        $ref: '#/definitions/domain.AOOTAClassification'
+      bartonicek:
+        $ref: '#/definitions/domain.BartonicekClassification'
+      danis_weber:
+        $ref: '#/definitions/domain.DanisWeberClassification'
+      fracture_description:
+        type: string
+      impossible:
+        type: boolean
+      impossible_reason:
+        type: string
+      lauge_hansen:
+        $ref: '#/definitions/domain.LaugeHansenClassification'
+      notes:
+        items:
+          type: string
+        type: array
+    type: object
+  domain.DanisWeberClassification:
+    properties:
+      description:
+        type: string
+      type:
+        $ref: '#/definitions/domain.DanisWeberType'
+    type: object
+  domain.DanisWeberType:
+    enum:
+    - Weber A
+    - Weber B
+    - Weber C
+    type: string
+    x-enum-varnames:
+    - DanisWeberA
+    - DanisWeberB
+    - DanisWeberC
+  domain.DistributionItem:
+    properties:
+      count:
+        type: integer
+      percentage:
+        type: number
+      value:
+        type: string
+    type: object
+  domain.FibularLevel:
+    enum:
+    - infrasindesmal
+    - transindesmal
+    - suprasindesmal
+    type: string
+    x-enum-comments:
+      FibularLevelInfrasindesmal: Infrasindesmal
+      FibularLevelSuprasindesmal: Suprasindesmal
+      FibularLevelTransindesmal: Transindesmal
+    x-enum-descriptions:
+    - Infrasindesmal
+    - Transindesmal
+    - Suprasindesmal
+    x-enum-varnames:
+    - FibularLevelInfrasindesmal
+    - FibularLevelTransindesmal
+    - FibularLevelSuprasindesmal
+  domain.FractureInput:
+    properties:
+      fibula_infrasindesmal_transverse:
+        description: 'For bimaleolar lateral+medial: is fibula fracture infrasindesmal
+          and transverse?'
+        type: boolean
+      fibular_level:
+        allOf:
+        - $ref: '#/definitions/domain.FibularLevel'
+        description: 'For lateral malleolus: fracture level'
+      fibular_level_for_transverse:
+        allOf:
+        - $ref: '#/definitions/domain.FibularLevel'
+        description: 'For bimaleolar lateral+medial with transverse morphology: fibular
+          level'
+      involved_malleoli:
+        allOf:
+        - $ref: '#/definitions/domain.InvolvedMalleoli'
+        description: 'Question 1: Which malleoli are fractured?'
+      lateral_morphology:
+        allOf:
+        - $ref: '#/definitions/domain.LateralMorphology'
+        description: 'For lateral malleolus: morphology'
+      medial_morphology:
+        allOf:
+        - $ref: '#/definitions/domain.MedialMorphology'
+        description: 'For medial malleolus: morphology'
+      posterior_fracture_type:
+        allOf:
+        - $ref: '#/definitions/domain.PosteriorFractureType'
+        description: 'For posterior malleolus: fracture type (Bartonicek)'
+      suprasindesmal_type:
+        allOf:
+        - $ref: '#/definitions/domain.SuprasindesmalType'
+        description: 'For suprasindesmal: fracture type'
+    type: object
+  domain.InvolvedMalleoli:
+    enum:
+    - posterior_only
+    - medial_only
+    - lateral_only
+    - medial_posterior
+    - lateral_posterior
+    - lateral_medial
+    - trimaleolar
+    type: string
+    x-enum-comments:
+      InvolvedLateralMedial: Maléolos lateral y medial
+      InvolvedLateralOnly: Maléolo lateral
+      InvolvedLateralPosterior: Maléolos lateral y posterior
+      InvolvedMedialOnly: Maléolo medial
+      InvolvedMedialPosterior: Maléolos medial y posterior
+      InvolvedPosteriorOnly: Maléolo posterior
+      InvolvedTrimaleolar: Maléolos medial, lateral y posterior
+    x-enum-descriptions:
+    - Maléolo posterior
+    - Maléolo medial
+    - Maléolo lateral
+    - Maléolos medial y posterior
+    - Maléolos lateral y posterior
+    - Maléolos lateral y medial
+    - Maléolos medial, lateral y posterior
+    x-enum-varnames:
+    - InvolvedPosteriorOnly
+    - InvolvedMedialOnly
+    - InvolvedLateralOnly
+    - InvolvedMedialPosterior
+    - InvolvedLateralPosterior
+    - InvolvedLateralMedial
+    - InvolvedTrimaleolar
+  domain.LateralMorphology:
+    enum:
+    - transverse
+    - oblique
+    - spiral
+    type: string
+    x-enum-comments:
+      LateralMorphologyOblique: Oblicua (Baja medial, alta lateral)
+      LateralMorphologySpiral: Espiroidea (Baja anterior, alta posterior)
+      LateralMorphologyTransverse: Transversa
+    x-enum-descriptions:
+    - Transversa
+    - Oblicua (Baja medial, alta lateral)
+    - Espiroidea (Baja anterior, alta posterior)
+    x-enum-varnames:
+    - LateralMorphologyTransverse
+    - LateralMorphologyOblique
+    - LateralMorphologySpiral
+  domain.LaugeHansenClassification:
+    properties:
+      ambiguous:
+        description: Whether classification is ambiguous
+        type: boolean
+      description:
+        description: Description of the mechanism
+        type: string
+      full_name:
+        description: Full mechanism name
+        type: string
+      possible_types:
+        description: Alternative types when classification is ambiguous
+        items:
+          type: string
+        type: array
+      type:
+        allOf:
+        - $ref: '#/definitions/domain.LaugeHansenType'
+        description: SA, SER, PER, PA
+    type: object
+  domain.LaugeHansenType:
+    enum:
+    - SA
+    - SER
+    - PER
+    - PA
+    type: string
+    x-enum-varnames:
+    - LaugeHansenSA
+    - LaugeHansenSER
+    - LaugeHansenPER
+    - LaugeHansenPA
+  domain.MedialMorphology:
+    enum:
+    - oblique
+    - transverse
+    type: string
+    x-enum-comments:
+      MedialMorphologyOblique: Oblicuo
+      MedialMorphologyTransverse: Transverso
+    x-enum-descriptions:
+    - Oblicuo
+    - Transverso
+    x-enum-varnames:
+    - MedialMorphologyOblique
+    - MedialMorphologyTransverse
+  domain.PosteriorFractureType:
+    enum:
+    - extraincisural
+    - posterolateral
+    - posteromedial_posterolateral
+    - large_posterolateral
+    type: string
+    x-enum-comments:
+      PosteriorExtraincisural: Fragmento extraincisural (Bartonicek 1)
+      PosteriorLargePosterolateral: Gran fragmento triangular posterolateral (Bartonicek
+        4)
+      PosteriorPosterolateral: Fragmento posterolateral (Bartonicek 2)
+      PosteriorPosteromedialPosterolateral: Fragmento posteromedial y posterolateral
+        (Bartonicek 3)
+    x-enum-descriptions:
+    - Fragmento extraincisural (Bartonicek 1)
+    - Fragmento posterolateral (Bartonicek 2)
+    - Fragmento posteromedial y posterolateral (Bartonicek 3)
+    - Gran fragmento triangular posterolateral (Bartonicek 4)
+    x-enum-varnames:
+    - PosteriorExtraincisural
+    - PosteriorPosterolateral
+    - PosteriorPosteromedialPosterolateral
+    - PosteriorLargePosterolateral
+  domain.SuprasindesmalType:
+    enum:
+    - simple_diaphyseal
+    - multifragmentary
+    - proximal
+    type: string
+    x-enum-comments:
+      SuprasindesmalMultifragmentary: Multifragmentaria
+      SuprasindesmalProximal: Proximal
+      SuprasindesmalSimpleDiaphyseal: Diafisaria Simple
+    x-enum-descriptions:
+    - Diafisaria Simple
+    - Multifragmentaria
+    - Proximal
+    x-enum-varnames:
+    - SuprasindesmalSimpleDiaphyseal
+    - SuprasindesmalMultifragmentary
+    - SuprasindesmalProximal
+  domain.TimePeriod:
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+    type: object
+  domain.TrendData:
+    properties:
+      data_points:
+        items:
+          $ref: '#/definitions/domain.TrendDataPoint'
+        type: array
+      granularity:
+        type: string
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+    type: object
+  domain.TrendDataPoint:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+      impossible_count:
+        type: integer
+    type: object
+host: api.anklyze.com
+info:
+  contact:
+    name: API Support
+    url: https://github.com/jferrl/anklyze
+  description: Ankle fracture classification API. Classifies fractures according to
+    Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems.
+  license:
+    name: Apache 2.0
+    url: https://opensource.org/licenses/MIT
+  title: Anklyze API
+  version: "1.0"
+paths:
+  /api/analytics/distribution/{system}:
+    get:
+      description: Returns detailed distribution for a specific classification system
+      parameters:
+      - description: Classification system (danis-weber, lauge-hansen, ao-ota)
+        in: path
+        name: system
+        required: true
+        type: string
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Distribution data
+          schema:
+            $ref: '#/definitions/domain.ClassificationDistribution'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get classification distribution
+      tags:
+      - Analytics
+  /api/analytics/summary:
+    get:
+      description: Returns aggregated classification statistics for a time period
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Analytics summary
+          schema:
+            $ref: '#/definitions/domain.AnalyticsSummary'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get analytics summary
+      tags:
+      - Analytics
+  /api/analytics/trends:
+    get:
+      description: Returns time-series classification data with configurable granularity
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      - default: day
+        description: Time granularity (day, week, month)
+        in: query
+        name: granularity
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Trend data
+          schema:
+            $ref: '#/definitions/domain.TrendData'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get classification trends
+      tags:
+      - Analytics
+  /api/classify:
+    post:
+      consumes:
+      - application/json
+      description: Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen,
+        AO/OTA, and Bartonicek systems
+      parameters:
+      - default: en
+        description: Language (en, es)
+        in: query
+        name: lang
+        type: string
+      - description: Fracture input parameters
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FractureInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Classification result
+          schema:
+            $ref: '#/definitions/domain.ClassificationResult'
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Classification error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Classify an ankle fracture
+      tags:
+      - Classification
+  /api/options:
+    get:
+      description: Returns localized form options for the classification form
+      parameters:
+      - default: en
+        description: Language (en, es)
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Form options
+          schema:
+            $ref: '#/definitions/api.FormOptions'
+      summary: Get form options
+      tags:
+      - Classification
+  /health:
+    get:
+      description: Returns the health status of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health status
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - System
+schemes:
+- https
+swagger: "2.0"

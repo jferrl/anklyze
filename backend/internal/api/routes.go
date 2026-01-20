@@ -5,14 +5,16 @@ import (
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository) {
+func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier, auditRepo)
+	handler := NewHandler(classifier, auditRepo, analyticsRepo)
 
 	// CORS middleware
 	router.Use(CORSMiddleware())
@@ -26,6 +28,17 @@ func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository) {
 		api.POST("/classify", handler.ClassifyFracture)
 		api.GET("/options", handler.GetOptions)
 	}
+
+	// Analytics routes
+	analytics := api.Group("/analytics")
+	{
+		analytics.GET("/summary", handler.GetAnalyticsSummary)
+		analytics.GET("/trends", handler.GetAnalyticsTrends)
+		analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
+	}
+
+	// Swagger documentation
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 // CORSMiddleware handles Cross-Origin Resource Sharing

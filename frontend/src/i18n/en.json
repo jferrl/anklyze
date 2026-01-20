@@ -65,7 +65,8 @@
     },
     "footer": {
       "disclaimer": "For educational purposes only. Always correlate with clinical findings.",
-      "copyright": "Anklyze"
+      "copyright": "Anklyze",
+      "apiDocs": "API Docs"
     }
   },
   "form": {

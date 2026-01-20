@@ -1,0 +1,897 @@
+{
+    "schemes": [
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Ankle fracture classification API. Classifies fractures according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems.",
+        "title": "Anklyze API",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/jferrl/anklyze"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "api.anklyze.com",
+    "basePath": "/",
+    "paths": {
+        "/api/analytics/distribution/{system}": {
+            "get": {
+                "description": "Returns detailed distribution for a specific classification system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get classification distribution",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Classification system (danis-weber, lauge-hansen, ao-ota)",
+                        "name": "system",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Distribution data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ClassificationDistribution"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analytics/summary": {
+            "get": {
+                "description": "Returns aggregated classification statistics for a time period",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get analytics summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analytics summary",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AnalyticsSummary"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analytics/trends": {
+            "get": {
+                "description": "Returns time-series classification data with configurable granularity",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get classification trends",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "day",
+                        "description": "Time granularity (day, week, month)",
+                        "name": "granularity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trend data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.TrendData"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classify": {
+            "post": {
+                "description": "Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Classification"
+                ],
+                "summary": "Classify an ankle fracture",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en",
+                        "description": "Language (en, es)",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Fracture input parameters",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FractureInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Classification result",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ClassificationResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Classification error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/options": {
+            "get": {
+                "description": "Returns localized form options for the classification form",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Classification"
+                ],
+                "summary": "Get form options",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en",
+                        "description": "Language (en, es)",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form options",
+                        "schema": {
+                            "$ref": "#/definitions/api.FormOptions"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Returns the health status of the API",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health status",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.FormOptions": {
+            "type": "object",
+            "properties": {
+                "fibular_levels": {
+                    "description": "Fibular level options",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
+                "involved_malleoli": {
+                    "description": "Involved malleoli options (first question)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
+                "labels": {
+                    "description": "Labels",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "lateral_morphology": {
+                    "description": "Lateral morphology options",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
+                "medial_morphology": {
+                    "description": "Medial morphology options",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
+                "posterior_fracture_types": {
+                    "description": "Posterior fracture type options (Bartonicek)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
+                "questions": {
+                    "description": "Questions",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.Question"
+                    }
+                },
+                "suprasindesmal_types": {
+                    "description": "Suprasindesmal type options",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                }
+            }
+        },
+        "api.Question": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.SelectOption": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AOOTAClassification": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/domain.AOOTACode"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AOOTACode": {
+            "type": "string",
+            "enum": [
+                "44-A1",
+                "44-A2",
+                "44-B1",
+                "44-B2",
+                "44-B3",
+                "44-C1",
+                "44-C2",
+                "44-C3"
+            ],
+            "x-enum-comments": {
+                "AOOTAA1": "Unifocal / Isolated lateral",
+                "AOOTAA2": "Bifocal / Lateral and medial",
+                "AOOTAB1": "Isolated lateral",
+                "AOOTAB2": "Lateral and medial",
+                "AOOTAB3": "Lateral, medial and posterior",
+                "AOOTAC1": "Simple diaphyseal",
+                "AOOTAC2": "Multifragmentary",
+                "AOOTAC3": "Proximal (Maisonneuve)"
+            },
+            "x-enum-descriptions": [
+                "Unifocal / Isolated lateral",
+                "Bifocal / Lateral and medial",
+                "Isolated lateral",
+                "Lateral and medial",
+                "Lateral, medial and posterior",
+                "Simple diaphyseal",
+                "Multifragmentary",
+                "Proximal (Maisonneuve)"
+            ],
+            "x-enum-varnames": [
+                "AOOTAA1",
+                "AOOTAA2",
+                "AOOTAB1",
+                "AOOTAB2",
+                "AOOTAB3",
+                "AOOTAC1",
+                "AOOTAC2",
+                "AOOTAC3"
+            ]
+        },
+        "domain.AnalyticsSummary": {
+            "type": "object",
+            "properties": {
+                "ao_ota_distribution": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "avg_processing_time_ms": {
+                    "type": "number"
+                },
+                "classifications_by_language": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "danis_weber_distribution": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "impossible_count": {
+                    "type": "integer"
+                },
+                "impossible_percentage": {
+                    "type": "number"
+                },
+                "lauge_hansen_distribution": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                },
+                "total_classifications": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.BartonicekClassification": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.BartonicekType"
+                }
+            }
+        },
+        "domain.BartonicekType": {
+            "type": "string",
+            "enum": [
+                "Bartonicek 1",
+                "Bartonicek 2",
+                "Bartonicek 3",
+                "Bartonicek 4"
+            ],
+            "x-enum-varnames": [
+                "BartonicekType1",
+                "BartonicekType2",
+                "BartonicekType3",
+                "BartonicekType4"
+            ]
+        },
+        "domain.ClassificationDistribution": {
+            "type": "object",
+            "properties": {
+                "distribution": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.DistributionItem"
+                    }
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ClassificationResult": {
+            "type": "object",
+            "properties": {
+                "ao_ota": {
+                    "$ref": "#/definitions/domain.AOOTAClassification"
+                },
+                "bartonicek": {
+                    "$ref": "#/definitions/domain.BartonicekClassification"
+                },
+                "danis_weber": {
+                    "$ref": "#/definitions/domain.DanisWeberClassification"
+                },
+                "fracture_description": {
+                    "type": "string"
+                },
+                "impossible": {
+                    "type": "boolean"
+                },
+                "impossible_reason": {
+                    "type": "string"
+                },
+                "lauge_hansen": {
+                    "$ref": "#/definitions/domain.LaugeHansenClassification"
+                },
+                "notes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "domain.DanisWeberClassification": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.DanisWeberType"
+                }
+            }
+        },
+        "domain.DanisWeberType": {
+            "type": "string",
+            "enum": [
+                "Weber A",
+                "Weber B",
+                "Weber C"
+            ],
+            "x-enum-varnames": [
+                "DanisWeberA",
+                "DanisWeberB",
+                "DanisWeberC"
+            ]
+        },
+        "domain.DistributionItem": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FibularLevel": {
+            "type": "string",
+            "enum": [
+                "infrasindesmal",
+                "transindesmal",
+                "suprasindesmal"
+            ],
+            "x-enum-comments": {
+                "FibularLevelInfrasindesmal": "Infrasindesmal",
+                "FibularLevelSuprasindesmal": "Suprasindesmal",
+                "FibularLevelTransindesmal": "Transindesmal"
+            },
+            "x-enum-descriptions": [
+                "Infrasindesmal",
+                "Transindesmal",
+                "Suprasindesmal"
+            ],
+            "x-enum-varnames": [
+                "FibularLevelInfrasindesmal",
+                "FibularLevelTransindesmal",
+                "FibularLevelSuprasindesmal"
+            ]
+        },
+        "domain.FractureInput": {
+            "type": "object",
+            "properties": {
+                "fibula_infrasindesmal_transverse": {
+                    "description": "For bimaleolar lateral+medial: is fibula fracture infrasindesmal and transverse?",
+                    "type": "boolean"
+                },
+                "fibular_level": {
+                    "description": "For lateral malleolus: fracture level",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FibularLevel"
+                        }
+                    ]
+                },
+                "fibular_level_for_transverse": {
+                    "description": "For bimaleolar lateral+medial with transverse morphology: fibular level",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FibularLevel"
+                        }
+                    ]
+                },
+                "involved_malleoli": {
+                    "description": "Question 1: Which malleoli are fractured?",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.InvolvedMalleoli"
+                        }
+                    ]
+                },
+                "lateral_morphology": {
+                    "description": "For lateral malleolus: morphology",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.LateralMorphology"
+                        }
+                    ]
+                },
+                "medial_morphology": {
+                    "description": "For medial malleolus: morphology",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.MedialMorphology"
+                        }
+                    ]
+                },
+                "posterior_fracture_type": {
+                    "description": "For posterior malleolus: fracture type (Bartonicek)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.PosteriorFractureType"
+                        }
+                    ]
+                },
+                "suprasindesmal_type": {
+                    "description": "For suprasindesmal: fracture type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.SuprasindesmalType"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.InvolvedMalleoli": {
+            "type": "string",
+            "enum": [
+                "posterior_only",
+                "medial_only",
+                "lateral_only",
+                "medial_posterior",
+                "lateral_posterior",
+                "lateral_medial",
+                "trimaleolar"
+            ],
+            "x-enum-comments": {
+                "InvolvedLateralMedial": "Maléolos lateral y medial",
+                "InvolvedLateralOnly": "Maléolo lateral",
+                "InvolvedLateralPosterior": "Maléolos lateral y posterior",
+                "InvolvedMedialOnly": "Maléolo medial",
+                "InvolvedMedialPosterior": "Maléolos medial y posterior",
+                "InvolvedPosteriorOnly": "Maléolo posterior",
+                "InvolvedTrimaleolar": "Maléolos medial, lateral y posterior"
+            },
+            "x-enum-descriptions": [
+                "Maléolo posterior",
+                "Maléolo medial",
+                "Maléolo lateral",
+                "Maléolos medial y posterior",
+                "Maléolos lateral y posterior",
+                "Maléolos lateral y medial",
+                "Maléolos medial, lateral y posterior"
+            ],
+            "x-enum-varnames": [
+                "InvolvedPosteriorOnly",
+                "InvolvedMedialOnly",
+                "InvolvedLateralOnly",
+                "InvolvedMedialPosterior",
+                "InvolvedLateralPosterior",
+                "InvolvedLateralMedial",
+                "InvolvedTrimaleolar"
+            ]
+        },
+        "domain.LateralMorphology": {
+            "type": "string",
+            "enum": [
+                "transverse",
+                "oblique",
+                "spiral"
+            ],
+            "x-enum-comments": {
+                "LateralMorphologyOblique": "Oblicua (Baja medial, alta lateral)",
+                "LateralMorphologySpiral": "Espiroidea (Baja anterior, alta posterior)",
+                "LateralMorphologyTransverse": "Transversa"
+            },
+            "x-enum-descriptions": [
+                "Transversa",
+                "Oblicua (Baja medial, alta lateral)",
+                "Espiroidea (Baja anterior, alta posterior)"
+            ],
+            "x-enum-varnames": [
+                "LateralMorphologyTransverse",
+                "LateralMorphologyOblique",
+                "LateralMorphologySpiral"
+            ]
+        },
+        "domain.LaugeHansenClassification": {
+            "type": "object",
+            "properties": {
+                "ambiguous": {
+                    "description": "Whether classification is ambiguous",
+                    "type": "boolean"
+                },
+                "description": {
+                    "description": "Description of the mechanism",
+                    "type": "string"
+                },
+                "full_name": {
+                    "description": "Full mechanism name",
+                    "type": "string"
+                },
+                "possible_types": {
+                    "description": "Alternative types when classification is ambiguous",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "description": "SA, SER, PER, PA",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.LaugeHansenType"
+                        }
+                    ]
+                }
+            }
+        },
+        "domain.LaugeHansenType": {
+            "type": "string",
+            "enum": [
+                "SA",
+                "SER",
+                "PER",
+                "PA"
+            ],
+            "x-enum-varnames": [
+                "LaugeHansenSA",
+                "LaugeHansenSER",
+                "LaugeHansenPER",
+                "LaugeHansenPA"
+            ]
+        },
+        "domain.MedialMorphology": {
+            "type": "string",
+            "enum": [
+                "oblique",
+                "transverse"
+            ],
+            "x-enum-comments": {
+                "MedialMorphologyOblique": "Oblicuo",
+                "MedialMorphologyTransverse": "Transverso"
+            },
+            "x-enum-descriptions": [
+                "Oblicuo",
+                "Transverso"
+            ],
+            "x-enum-varnames": [
+                "MedialMorphologyOblique",
+                "MedialMorphologyTransverse"
+            ]
+        },
+        "domain.PosteriorFractureType": {
+            "type": "string",
+            "enum": [
+                "extraincisural",
+                "posterolateral",
+                "posteromedial_posterolateral",
+                "large_posterolateral"
+            ],
+            "x-enum-comments": {
+                "PosteriorExtraincisural": "Fragmento extraincisural (Bartonicek 1)",
+                "PosteriorLargePosterolateral": "Gran fragmento triangular posterolateral (Bartonicek 4)",
+                "PosteriorPosterolateral": "Fragmento posterolateral (Bartonicek 2)",
+                "PosteriorPosteromedialPosterolateral": "Fragmento posteromedial y posterolateral (Bartonicek 3)"
+            },
+            "x-enum-descriptions": [
+                "Fragmento extraincisural (Bartonicek 1)",
+                "Fragmento posterolateral (Bartonicek 2)",
+                "Fragmento posteromedial y posterolateral (Bartonicek 3)",
+                "Gran fragmento triangular posterolateral (Bartonicek 4)"
+            ],
+            "x-enum-varnames": [
+                "PosteriorExtraincisural",
+                "PosteriorPosterolateral",
+                "PosteriorPosteromedialPosterolateral",
+                "PosteriorLargePosterolateral"
+            ]
+        },
+        "domain.SuprasindesmalType": {
+            "type": "string",
+            "enum": [
+                "simple_diaphyseal",
+                "multifragmentary",
+                "proximal"
+            ],
+            "x-enum-comments": {
+                "SuprasindesmalMultifragmentary": "Multifragmentaria",
+                "SuprasindesmalProximal": "Proximal",
+                "SuprasindesmalSimpleDiaphyseal": "Diafisaria Simple"
+            },
+            "x-enum-descriptions": [
+                "Diafisaria Simple",
+                "Multifragmentaria",
+                "Proximal"
+            ],
+            "x-enum-varnames": [
+                "SuprasindesmalSimpleDiaphyseal",
+                "SuprasindesmalMultifragmentary",
+                "SuprasindesmalProximal"
+            ]
+        },
+        "domain.TimePeriod": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TrendData": {
+            "type": "object",
+            "properties": {
+                "data_points": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.TrendDataPoint"
+                    }
+                },
+                "granularity": {
+                    "type": "string"
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                }
+            }
+        },
+        "domain.TrendDataPoint": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "impossible_count": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

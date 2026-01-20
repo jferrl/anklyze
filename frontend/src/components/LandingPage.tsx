@@ -304,6 +304,15 @@ export function LandingPage() {
                 {t('landing.footer.copyright')}
               </span>
               <span>© {new Date().getFullYear()}</span>
+              <span className="mx-2">·</span>
+              <a
+                href="https://api.anklyze.com/swagger/index.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                {t('landing.footer.apiDocs')}
+              </a>
             </div>
             <p className="text-center md:text-right">{t('landing.footer.disclaimer')}</p>
           </div>
