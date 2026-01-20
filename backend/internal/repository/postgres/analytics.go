@@ -4,17 +4,16 @@ import (
 	"time"
 
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
 
-// AnalyticsRepository implements repository.AnalyticsRepository with PostgreSQL.
+// AnalyticsRepository implements analytics queries with PostgreSQL.
 type AnalyticsRepository struct {
 	db *gorm.DB
 }
 
 // NewAnalyticsRepository creates a new PostgreSQL analytics repository.
-func NewAnalyticsRepository(db *gorm.DB) repository.AnalyticsRepository {
+func NewAnalyticsRepository(db *gorm.DB) *AnalyticsRepository {
 	return &AnalyticsRepository{db: db}
 }
 
@@ -22,10 +21,10 @@ func NewAnalyticsRepository(db *gorm.DB) repository.AnalyticsRepository {
 func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsSummary, error) {
 	summary := &domain.AnalyticsSummary{
 		Period:                  domain.TimePeriod{From: from, To: to},
-		LanguageDistribution:    make(map[string]int64),
-		DanisWeberDistribution:  make(map[string]int64),
-		LaugeHansenDistribution: make(map[string]int64),
-		AOOTADistribution:       make(map[string]int64),
+		LanguageDistribution:    make(map[string]int64, 4),  // en, es, etc.
+		DanisWeberDistribution:  make(map[string]int64, 4),  // Weber A, B, C variants
+		LaugeHansenDistribution: make(map[string]int64, 8),  // SA, SER, PA, PER stages
+		AOOTADistribution:       make(map[string]int64, 16), // AO/OTA codes
 	}
 
 	// Total count, impossible count, and avg processing time

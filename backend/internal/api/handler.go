@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"time"
@@ -8,19 +9,31 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
-	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/service"
 )
+
+// AuditRepository defines the audit persistence interface needed by the handler.
+type AuditRepository interface {
+	Save(ctx context.Context, entry *domain.AuditEntry) error
+	Close() error
+}
+
+// AnalyticsRepository defines the analytics query interface needed by the handler.
+type AnalyticsRepository interface {
+	GetSummary(from, to time.Time) (*domain.AnalyticsSummary, error)
+	GetTrends(from, to time.Time, granularity domain.Granularity) (*domain.TrendData, error)
+	GetDistribution(system string, from, to time.Time) (*domain.ClassificationDistribution, error)
+}
 
 // Handler handles HTTP requests
 type Handler struct {
 	classifier    service.ClassifierService
-	auditRepo     repository.AuditRepository
-	analyticsRepo repository.AnalyticsRepository
+	auditRepo     AuditRepository
+	analyticsRepo AnalyticsRepository
 }
 
 // NewHandler creates a new Handler
-func NewHandler(classifier service.ClassifierService, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) *Handler {
+func NewHandler(classifier service.ClassifierService, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) *Handler {
 	return &Handler{
 		classifier:    classifier,
 		auditRepo:     auditRepo,
@@ -57,7 +70,8 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	var input domain.FractureInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": i18n.T(lang, i18n.KeyErrorInvalidInput) + err.Error(),
+			"error":   i18n.T(lang, i18n.KeyErrorInvalidInput),
+			"details": err.Error(),
 		})
 		return
 	}
@@ -65,7 +79,8 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	result, err := h.classifier.Classify(input, lang)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": i18n.T(lang, i18n.KeyErrorClassification) + err.Error(),
+			"error":   i18n.T(lang, i18n.KeyErrorClassification),
+			"details": err.Error(),
 		})
 		return
 	}
@@ -83,11 +98,10 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	if err != nil {
 		log.Printf("WARN: failed to create audit entry: %v", err)
 	} else {
-		go func() {
-			if err := h.auditRepo.Save(auditEntry); err != nil {
-				log.Printf("WARN: failed to save audit entry: %v", err)
-			}
-		}()
+		// Use request context for audit save - non-blocking due to buffered channel
+		if err := h.auditRepo.Save(c.Request.Context(), auditEntry); err != nil {
+			log.Printf("WARN: failed to save audit entry: %v", err)
+		}
 	}
 
 	c.JSON(http.StatusOK, result)

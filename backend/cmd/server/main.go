@@ -1,7 +1,14 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/api"
@@ -31,8 +38,8 @@ import (
 func main() {
 	cfg := config.Load()
 
-	var auditRepo repository.AuditRepository
-	var analyticsRepo repository.AnalyticsRepository
+	var auditRepo api.AuditRepository
+	var analyticsRepo api.AnalyticsRepository
 
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
@@ -57,8 +64,37 @@ func main() {
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo)
 
-	log.Printf("Server starting on port %s", cfg.Port)
-	if err := router.Run(":" + cfg.Port); err != nil {
-		log.Fatalf("Error starting server: %v", err)
+	srv := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: router,
 	}
+
+	// Start server in goroutine
+	go func() {
+		log.Printf("Server starting on port %s", cfg.Port)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}()
+
+	// Wait for interrupt signal for graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	// Give outstanding requests 5 seconds to complete
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Printf("Server forced to shutdown: %v", err)
+	}
+
+	// Close audit repository to flush pending writes
+	if err := auditRepo.Close(); err != nil {
+		log.Printf("Error closing audit repository: %v", err)
+	}
+
+	log.Println("Server exited")
 }

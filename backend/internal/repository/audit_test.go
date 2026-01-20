@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -44,7 +45,7 @@ func TestNoOpAuditRepository_Save(t *testing.T) {
 
 			repo := NewNoOpAuditRepository()
 
-			if err := repo.Save(tt.entry); err != nil {
+			if err := repo.Save(context.Background(), tt.entry); err != nil {
 				t.Errorf("Save() error = %v, want nil", err)
 			}
 		})
@@ -58,9 +59,5 @@ func TestNewNoOpAuditRepository(t *testing.T) {
 
 	if repo == nil {
 		t.Error("NewNoOpAuditRepository() returned nil")
-	}
-
-	if _, ok := repo.(*NoOpAuditRepository); !ok {
-		t.Error("NewNoOpAuditRepository() did not return *NoOpAuditRepository")
 	}
 }

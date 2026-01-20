@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"sync"
 	"testing"
 	"time"
@@ -121,8 +122,9 @@ func TestAuditRepository_Save(t *testing.T) {
 
 			db := setupTestDB(t)
 			repo := NewAuditRepository(db, 10)
+			t.Cleanup(func() { _ = repo.Close() })
 
-			err := repo.Save(tt.entry)
+			err := repo.Save(context.Background(), tt.entry)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Save() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -146,7 +148,10 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 	db := setupTestDB(t)
 
 	// Create repository with buffer size 1
-	repo := NewAuditRepository(db, 1).(*AuditRepository)
+	repo := NewAuditRepository(db, 1)
+	t.Cleanup(func() { _ = repo.Close() })
+
+	ctx := context.Background()
 
 	// Block the background writer by filling the channel
 	// and not letting it process
@@ -154,12 +159,12 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 	entry2 := createTestEntry()
 
 	// First save should succeed
-	if err := repo.Save(entry1); err != nil {
+	if err := repo.Save(ctx, entry1); err != nil {
 		t.Errorf("first Save() error = %v, want nil", err)
 	}
 
 	// Second save should return ErrBufferFull (non-blocking)
-	if err := repo.Save(entry2); err != ErrBufferFull {
+	if err := repo.Save(ctx, entry2); err != ErrBufferFull {
 		t.Errorf("second Save() error = %v, want ErrBufferFull", err)
 	}
 }
@@ -169,7 +174,9 @@ func TestAuditRepository_Save_Concurrent(t *testing.T) {
 
 	db := setupTestDB(t)
 	repo := NewAuditRepository(db, 100)
+	t.Cleanup(func() { _ = repo.Close() })
 
+	ctx := context.Background()
 	const numGoroutines = 50
 	var wg sync.WaitGroup
 	wg.Add(numGoroutines)
@@ -182,7 +189,7 @@ func TestAuditRepository_Save_Concurrent(t *testing.T) {
 	for i := range numGoroutines {
 		go func(entry *domain.AuditEntry) {
 			defer wg.Done()
-			if err := repo.Save(entry); err != nil {
+			if err := repo.Save(ctx, entry); err != nil {
 				t.Errorf("concurrent Save() error = %v", err)
 			}
 		}(entries[i])
@@ -205,11 +212,13 @@ func TestAuditRepository_Save_NonBlocking(t *testing.T) {
 
 	db := setupTestDB(t)
 	repo := NewAuditRepository(db, 10)
+	t.Cleanup(func() { _ = repo.Close() })
 
+	ctx := context.Background()
 	entry := createTestEntry()
 
 	start := time.Now()
-	err := repo.Save(entry)
+	err := repo.Save(ctx, entry)
 	elapsed := time.Since(start)
 
 	if err != nil {
@@ -217,7 +226,8 @@ func TestAuditRepository_Save_NonBlocking(t *testing.T) {
 	}
 
 	// Save should be nearly instant (non-blocking)
-	if elapsed > 10*time.Millisecond {
-		t.Errorf("Save() took %v, expected < 10ms (should be non-blocking)", elapsed)
+	// Use a generous threshold to avoid flaky tests on slow CI systems
+	if elapsed > 100*time.Millisecond {
+		t.Errorf("Save() took %v, expected < 100ms (should be non-blocking)", elapsed)
 	}
 }

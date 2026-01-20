@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/config"
-	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 	swaggerFiles "github.com/swaggo/files"
@@ -11,7 +10,7 @@ import (
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) {
+func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
