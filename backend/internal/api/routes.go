@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
@@ -10,14 +11,14 @@ import (
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) {
+func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo repository.AuditRepository, analyticsRepo repository.AnalyticsRepository) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
 	handler := NewHandler(classifier, auditRepo, analyticsRepo)
 
 	// CORS middleware
-	router.Use(CORSMiddleware())
+	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
 
 	// Health check
 	router.GET("/health", handler.HealthCheck)
@@ -42,9 +43,9 @@ func SetupRoutes(router *gin.Engine, auditRepo repository.AuditRepository, analy
 }
 
 // CORSMiddleware handles Cross-Origin Resource Sharing
-func CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 

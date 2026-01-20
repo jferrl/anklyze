@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -71,7 +72,7 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 
 	// Non-blocking audit logging
 	durationMS := time.Since(startTime).Milliseconds()
-	auditEntry := domain.NewAuditEntry(
+	auditEntry, err := domain.NewAuditEntry(
 		c.ClientIP(),
 		c.GetHeader("User-Agent"),
 		string(lang),
@@ -79,9 +80,15 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		*result,
 		durationMS,
 	)
-	go func() {
-		_ = h.auditRepo.Save(auditEntry)
-	}()
+	if err != nil {
+		log.Printf("WARN: failed to create audit entry: %v", err)
+	} else {
+		go func() {
+			if err := h.auditRepo.Save(auditEntry); err != nil {
+				log.Printf("WARN: failed to save audit entry: %v", err)
+			}
+		}()
+	}
 
 	c.JSON(http.StatusOK, result)
 }

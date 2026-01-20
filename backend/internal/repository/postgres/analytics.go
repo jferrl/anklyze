@@ -57,11 +57,13 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Language string
 		Count    int64
 	}
-	r.db.Model(&domain.AuditEntry{}).
+	if err := r.db.Model(&domain.AuditEntry{}).
 		Select("language, COUNT(*) as count").
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Group("language").
-		Scan(&langRows)
+		Scan(&langRows).Error; err != nil {
+		return nil, err
+	}
 	for _, row := range langRows {
 		summary.LanguageDistribution[row.Language] = row.Count
 	}
@@ -71,11 +73,13 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Type  string
 		Count int64
 	}
-	r.db.Model(&domain.AuditEntry{}).
+	if err := r.db.Model(&domain.AuditEntry{}).
 		Select("danis_weber_type as type, COUNT(*) as count").
 		Where("created_at >= ? AND created_at <= ? AND danis_weber_type IS NOT NULL", from, to).
 		Group("danis_weber_type").
-		Scan(&dwRows)
+		Scan(&dwRows).Error; err != nil {
+		return nil, err
+	}
 	for _, row := range dwRows {
 		summary.DanisWeberDistribution[row.Type] = row.Count
 	}
@@ -85,11 +89,13 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Type  string
 		Count int64
 	}
-	r.db.Model(&domain.AuditEntry{}).
+	if err := r.db.Model(&domain.AuditEntry{}).
 		Select("lauge_hansen_type as type, COUNT(*) as count").
 		Where("created_at >= ? AND created_at <= ? AND lauge_hansen_type IS NOT NULL", from, to).
 		Group("lauge_hansen_type").
-		Scan(&lhRows)
+		Scan(&lhRows).Error; err != nil {
+		return nil, err
+	}
 	for _, row := range lhRows {
 		summary.LaugeHansenDistribution[row.Type] = row.Count
 	}
@@ -99,11 +105,13 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Code  string
 		Count int64
 	}
-	r.db.Model(&domain.AuditEntry{}).
+	if err := r.db.Model(&domain.AuditEntry{}).
 		Select("ao_ota_code as code, COUNT(*) as count").
 		Where("created_at >= ? AND created_at <= ? AND ao_ota_code IS NOT NULL", from, to).
 		Group("ao_ota_code").
-		Scan(&aoRows)
+		Scan(&aoRows).Error; err != nil {
+		return nil, err
+	}
 	for _, row := range aoRows {
 		summary.AOOTADistribution[row.Code] = row.Count
 	}

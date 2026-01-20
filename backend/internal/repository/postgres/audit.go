@@ -1,12 +1,16 @@
 package postgres
 
 import (
+	"errors"
 	"log"
 
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
+
+// ErrBufferFull is returned when the audit buffer is full and cannot accept more entries.
+var ErrBufferFull = errors.New("audit buffer full")
 
 // AuditRepository implements repository.AuditRepository with PostgreSQL.
 type AuditRepository struct {
@@ -29,13 +33,14 @@ func NewAuditRepository(db *gorm.DB, bufferSize int) repository.AuditRepository 
 
 // Save queues an audit entry for async persistence.
 // This is non-blocking - entries are written in background.
+// Returns ErrBufferFull if the write channel is full.
 func (r *AuditRepository) Save(entry *domain.AuditEntry) error {
 	select {
 	case r.writeCh <- entry:
 		return nil
 	default:
 		log.Printf("WARN: audit buffer full, dropping entry %s", entry.ID)
-		return nil
+		return ErrBufferFull
 	}
 }
 

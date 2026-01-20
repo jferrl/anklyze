@@ -158,9 +158,9 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 		t.Errorf("first Save() error = %v, want nil", err)
 	}
 
-	// Second save should also succeed (non-blocking, drops entry if buffer full)
-	if err := repo.Save(entry2); err != nil {
-		t.Errorf("second Save() error = %v, want nil (should not block)", err)
+	// Second save should return ErrBufferFull (non-blocking)
+	if err := repo.Save(entry2); err != ErrBufferFull {
+		t.Errorf("second Save() error = %v, want ErrBufferFull", err)
 	}
 }
 

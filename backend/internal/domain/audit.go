@@ -38,14 +38,21 @@ func (AuditEntry) TableName() string {
 }
 
 // NewAuditEntry creates a new audit entry from a classification.
+// Returns an error if JSON marshaling fails.
 func NewAuditEntry(
 	clientIP, userAgent, language string,
 	input FractureInput,
 	result ClassificationResult,
 	durationMS int64,
-) *AuditEntry {
-	inputJSON, _ := json.Marshal(input)
-	resultJSON, _ := json.Marshal(result)
+) (*AuditEntry, error) {
+	inputJSON, err := json.Marshal(input)
+	if err != nil {
+		return nil, err
+	}
+	resultJSON, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
 
 	entry := &AuditEntry{
 		ID:           uuid.New(),
@@ -73,5 +80,5 @@ func NewAuditEntry(
 		entry.AOOTACode = &t
 	}
 
-	return entry
+	return entry, nil
 }

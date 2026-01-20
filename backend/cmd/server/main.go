@@ -45,7 +45,7 @@ func main() {
 				log.Printf("WARN: database migration failed: %v", err)
 			}
 			log.Println("Database connected, audit trail and analytics enabled")
-			auditRepo = postgres.NewAuditRepository(db, 100)
+			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
 		}
 	} else {
@@ -55,7 +55,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	api.SetupRoutes(router, auditRepo, analyticsRepo)
+	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo)
 
 	log.Printf("Server starting on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
