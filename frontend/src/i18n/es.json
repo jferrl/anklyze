@@ -75,7 +75,9 @@
     "classify": "Clasificar Fractura",
     "classifyAnother": "Clasificar Otra Fractura",
     "selectAtLeastOne": "Seleccione al menos un maléolo fracturado",
-    "step": "Paso"
+    "step": "Paso",
+    "back": "Atrás",
+    "reset": "Empezar de Nuevo"
   },
   "results": {
     "title": "Resultados de la Clasificación",

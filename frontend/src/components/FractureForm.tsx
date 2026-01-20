@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChevronLeft } from 'lucide-react';
 import type {
   FractureInput,
   FormOptions,
@@ -23,11 +24,44 @@ export function FractureForm() {
   const { t } = useTranslation();
   const [options, setOptions] = useState<FormOptions | null>(null);
   const [formData, setFormData] = useState<Partial<FractureInput>>({});
+  const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
   const { result, loading, error, classify, reset } = useClassification();
 
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
   }, []);
+
+  // Push current state to history before making changes
+  const pushToHistory = useCallback(() => {
+    setFormHistory(prev => [...prev, { ...formData }]);
+  }, [formData]);
+
+  // Go back to previous state
+  const goBack = useCallback(() => {
+    if (formHistory.length === 0) return;
+    const previousState = formHistory[formHistory.length - 1];
+    setFormHistory(prev => prev.slice(0, -1));
+    setFormData(previousState);
+  }, [formHistory]);
+
+  // Check if we can go back
+  const canGoBack = formHistory.length > 0;
+
+  // Keyboard navigation: Backspace to go back
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle Backspace if not typing in an input
+      if (e.key === 'Backspace' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
+        e.preventDefault();
+        if (formHistory.length > 0) {
+          goBack();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [formHistory.length, goBack]);
 
   // Determinar qué preguntas mostrar según el path del diagrama de flujo
   const involvedMalleoli = formData.involved_malleoli;
@@ -112,8 +146,14 @@ export function FractureForm() {
   // PATH: Trimaleolar - baja - transversa - nivel
   const showTrimaleolarTransverseLevel = showTrimaleolarMorphology && formData.lateral_morphology === 'transverse';
 
+  // Helper to update form data with history tracking
+  const updateFormData = useCallback((newData: Partial<FractureInput>) => {
+    pushToHistory();
+    setFormData(newData);
+  }, [pushToHistory]);
+
   const handleInvolvedMalleoliChange = (value: string) => {
-    setFormData({ involved_malleoli: value as InvolvedMalleoli });
+    updateFormData({ involved_malleoli: value as InvolvedMalleoli });
   };
 
   const isFormComplete = (): boolean => {
@@ -210,6 +250,7 @@ export function FractureForm() {
 
   const handleReset = () => {
     setFormData({});
+    setFormHistory([]);
     reset();
   };
 
@@ -240,6 +281,30 @@ export function FractureForm() {
           {t('app.description')}
         </p>
       </div>
+
+      {/* Navigation buttons */}
+      {canGoBack && (
+        <div className="flex justify-between items-center">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={goBack}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            {t('form.back')}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleReset}
+          >
+            {t('form.reset')}
+          </Button>
+        </div>
+      )}
 
       {/* Pregunta 1: ¿Qué maléolos tiene fracturados? */}
       <Card>
@@ -276,7 +341,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
             >
               {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -302,7 +367,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.medial_morphology || ''}
-              onValueChange={(value) => setFormData({ ...formData, medial_morphology: value as MedialMorphology })}
+              onValueChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
             >
               {options.medial_morphology.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -328,7 +393,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 fibular_level: value as FibularLevel,
                 lateral_morphology: undefined,
@@ -359,7 +424,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
+              onValueChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
             >
               {options.lateral_morphology
                 .filter(o => o.value === 'transverse' || o.value === 'oblique')
@@ -387,7 +452,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
+              onValueChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
             >
               {options.lateral_morphology
                 .filter(o => o.value === 'spiral' || o.value === 'oblique')
@@ -415,7 +480,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+              onValueChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
             >
               {options.suprasindesmal_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -450,7 +515,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 fibular_level: value as FibularLevel,
                 lateral_morphology: undefined,
@@ -482,7 +547,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 lateral_morphology: value as LateralMorphology,
                 posterior_fracture_type: undefined,
@@ -523,7 +588,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
             >
               {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -549,7 +614,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 lateral_morphology: value as LateralMorphology,
                 posterior_fracture_type: undefined,
@@ -581,7 +646,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
             >
               {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -607,7 +672,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 suprasindesmal_type: value as SuprasindesmalType,
                 posterior_fracture_type: undefined,
@@ -637,7 +702,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
             >
               {options.posterior_fracture_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -663,7 +728,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.medial_morphology || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 medial_morphology: value as MedialMorphology,
                 fibula_infrasindesmal_transverse: undefined,
@@ -697,7 +762,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibula_infrasindesmal_transverse === undefined ? '' : formData.fibula_infrasindesmal_transverse ? 'yes' : 'no'}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 fibula_infrasindesmal_transverse: value === 'yes',
                 fibular_level_for_transverse: undefined,
@@ -730,7 +795,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level_for_transverse || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 fibular_level_for_transverse: value as FibularLevel,
                 suprasindesmal_type: undefined,
@@ -764,7 +829,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+              onValueChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
             >
               {options.suprasindesmal_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -790,7 +855,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 lateral_morphology: value as LateralMorphology,
                 fibular_level: undefined,
@@ -820,7 +885,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level || ''}
-              onValueChange={(value) => setFormData({ ...formData, fibular_level: value as FibularLevel })}
+              onValueChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
             >
               {options.fibular_levels
                 .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')
@@ -848,7 +913,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 fibular_level: value as FibularLevel,
                 suprasindesmal_type: undefined,
@@ -880,7 +945,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => setFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+              onValueChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
             >
               {options.suprasindesmal_types.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3 py-2">
@@ -906,7 +971,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.lateral_morphology || ''}
-              onValueChange={(value) => setFormData({
+              onValueChange={(value) => updateFormData({
                 ...formData,
                 lateral_morphology: value as LateralMorphology,
                 fibular_level_for_transverse: undefined,
@@ -936,7 +1001,7 @@ export function FractureForm() {
           <CardContent>
             <RadioGroup
               value={formData.fibular_level_for_transverse || ''}
-              onValueChange={(value) => setFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
+              onValueChange={(value) => updateFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
             >
               {options.fibular_levels
                 .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')

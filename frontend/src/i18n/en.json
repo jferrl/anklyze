@@ -75,7 +75,9 @@
     "classify": "Classify Fracture",
     "classifyAnother": "Classify Another Fracture",
     "selectAtLeastOne": "Select at least one fractured malleolus",
-    "step": "Step"
+    "step": "Step",
+    "back": "Back",
+    "reset": "Start Over"
   },
   "results": {
     "title": "Classification Results",
