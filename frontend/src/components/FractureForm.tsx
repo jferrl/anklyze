@@ -29,7 +29,12 @@ export function FractureForm() {
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
   const [isComparing, setIsComparing] = useState(false);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const [loadingFromUrl, setLoadingFromUrl] = useState(false);
+  // Check if URL has params on initial render to avoid flash
+  const [loadingFromUrl, setLoadingFromUrl] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const inputFromUrl = decodeParamsToInput(params);
+    return !!(inputFromUrl && inputFromUrl.involved_malleoli);
+  });
   const lastInputRef = useRef<FractureInput | null>(null);
   const hasLoadedFromUrl = useRef(false);
   const { result, loading, error, scenarios, classify, addScenario, clearScenarios, reset, resetAll } = useClassification();
@@ -40,14 +45,13 @@ export function FractureForm() {
 
   // Load from URL params on mount
   useEffect(() => {
-    if (hasLoadedFromUrl.current || !options) return;
+    if (hasLoadedFromUrl.current || !options || !loadingFromUrl) return;
 
     const params = new URLSearchParams(window.location.search);
     const inputFromUrl = decodeParamsToInput(params);
 
     if (inputFromUrl && inputFromUrl.involved_malleoli) {
       hasLoadedFromUrl.current = true;
-      setLoadingFromUrl(true);
       lastInputRef.current = inputFromUrl as FractureInput;
       // Auto-classify without showing form
       classify(inputFromUrl as FractureInput).finally(() => {
@@ -56,7 +60,7 @@ export function FractureForm() {
         window.history.replaceState({}, '', window.location.pathname);
       });
     }
-  }, [options, classify]);
+  }, [options, classify, loadingFromUrl]);
 
   // Push current state to history before making changes
   const pushToHistory = useCallback(() => {
@@ -163,11 +167,11 @@ export function FractureForm() {
     setFormData(newData);
   }, [pushToHistory]);
 
-  const handleInvolvedMalleoliChange = (value: string) => {
+  const handleInvolvedMalleoliChange = useCallback((value: string) => {
     updateFormData({ involved_malleoli: value as InvolvedMalleoli });
-  };
+  }, [updateFormData]);
 
-  const isFormComplete = (): boolean => {
+  const isFormComplete = useCallback((): boolean => {
     if (!involvedMalleoli) return false;
 
     // PATH: Maléolo posterior solo - necesita tipo
@@ -250,7 +254,7 @@ export function FractureForm() {
     }
 
     return false;
-  };
+  }, [involvedMalleoli, formData]);
 
   // Get the current active question and its options for keyboard navigation
   const getCurrentQuestionContext = useCallback(() => {
