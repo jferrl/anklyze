@@ -77,7 +77,8 @@
     "selectAtLeastOne": "Seleccione al menos un maléolo fracturado",
     "step": "Paso",
     "back": "Atrás",
-    "reset": "Empezar de Nuevo"
+    "reset": "Empezar de Nuevo",
+    "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás"
   },
   "results": {
     "title": "Resultados de la Clasificación",

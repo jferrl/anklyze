@@ -77,7 +77,8 @@
     "selectAtLeastOne": "Select at least one fractured malleolus",
     "step": "Step",
     "back": "Back",
-    "reset": "Start Over"
+    "reset": "Start Over",
+    "keyboardHint": "Keyboard: 1-9 select, Enter submit, Backspace back"
   },
   "results": {
     "title": "Classification Results",

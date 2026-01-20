@@ -47,22 +47,6 @@ export function FractureForm() {
   // Check if we can go back
   const canGoBack = formHistory.length > 0;
 
-  // Keyboard navigation: Backspace to go back
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle Backspace if not typing in an input
-      if (e.key === 'Backspace' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
-        e.preventDefault();
-        if (formHistory.length > 0) {
-          goBack();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [formHistory.length, goBack]);
-
   // Determinar qué preguntas mostrar según el path del diagrama de flujo
   const involvedMalleoli = formData.involved_malleoli;
 
@@ -240,6 +224,321 @@ export function FractureForm() {
 
     return false;
   };
+
+  // Get the current active question and its options for keyboard navigation
+  const getCurrentQuestionContext = useCallback(() => {
+    if (!options) return null;
+
+    // Determine which question is currently active (last visible unanswered question)
+    if (!involvedMalleoli) {
+      return {
+        options: options.involved_malleoli,
+        onSelect: (value: string) => handleInvolvedMalleoliChange(value),
+      };
+    }
+
+    // PATH: Maléolo posterior solo
+    if (showPosteriorType && !formData.posterior_fracture_type) {
+      return {
+        options: options.posterior_fracture_types,
+        onSelect: (value: string) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType }),
+      };
+    }
+
+    // PATH: Maléolo medial solo
+    if (showMedialMorphology && !formData.medial_morphology) {
+      return {
+        options: options.medial_morphology,
+        onSelect: (value: string) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology }),
+      };
+    }
+
+    // PATH: Maléolo lateral solo - nivel
+    if (showLateralLevel && !formData.fibular_level) {
+      return {
+        options: options.fibular_levels,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          fibular_level: value as FibularLevel,
+          lateral_morphology: undefined,
+          suprasindesmal_type: undefined,
+        }),
+      };
+    }
+
+    // PATH: Maléolo lateral solo - morfología infrasindesmal
+    if (showLateralMorphologyInfra && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology.filter(o => o.value === 'transverse' || o.value === 'oblique'),
+        onSelect: (value: string) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology }),
+      };
+    }
+
+    // PATH: Maléolo lateral solo - morfología transindesmal
+    if (showLateralMorphologyTrans && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology.filter(o => o.value === 'spiral' || o.value === 'oblique'),
+        onSelect: (value: string) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology }),
+      };
+    }
+
+    // PATH: Maléolo lateral solo - tipo suprasindesmal
+    if (showSuprasindesmalType && !formData.suprasindesmal_type) {
+      return {
+        options: options.suprasindesmal_types,
+        onSelect: (value: string) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType }),
+      };
+    }
+
+    // PATH: Lateral y posterior - nivel
+    if (showLateralPosteriorLevel && !formData.fibular_level) {
+      return {
+        options: options.fibular_levels,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          fibular_level: value as FibularLevel,
+          lateral_morphology: undefined,
+          suprasindesmal_type: undefined,
+          posterior_fracture_type: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y posterior - morfología infrasindesmal
+    if (showLPMorphologyInfra && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology.filter(o => o.value === 'transverse' || o.value === 'oblique'),
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          lateral_morphology: value as LateralMorphology,
+          posterior_fracture_type: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y posterior - tipo posterior (infrasindesmal oblicua)
+    if (showLPPosteriorTypeInfraOblique && !formData.posterior_fracture_type) {
+      return {
+        options: options.posterior_fracture_types,
+        onSelect: (value: string) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType }),
+      };
+    }
+
+    // PATH: Lateral y posterior - morfología transindesmal
+    if (showLPMorphologyTrans && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology.filter(o => o.value === 'spiral' || o.value === 'oblique'),
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          lateral_morphology: value as LateralMorphology,
+          posterior_fracture_type: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y posterior - tipo posterior (transindesmal)
+    if ((showLPPosteriorTypeTransSpiral || showLPPosteriorTypeTransOblique) && !formData.posterior_fracture_type) {
+      return {
+        options: options.posterior_fracture_types,
+        onSelect: (value: string) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType }),
+      };
+    }
+
+    // PATH: Lateral y posterior - tipo suprasindesmal
+    if (showLPSuprasindesmalType && !formData.suprasindesmal_type) {
+      return {
+        options: options.suprasindesmal_types,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          suprasindesmal_type: value as SuprasindesmalType,
+          posterior_fracture_type: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y posterior - tipo posterior (suprasindesmal)
+    if (showLPPosteriorTypeSupra && !formData.posterior_fracture_type) {
+      return {
+        options: options.posterior_fracture_types,
+        onSelect: (value: string) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType }),
+      };
+    }
+
+    // PATH: Lateral y medial - morfología medial
+    if (showLMMedialMorphology && !formData.medial_morphology) {
+      return {
+        options: options.medial_morphology,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          medial_morphology: value as MedialMorphology,
+          fibula_infrasindesmal_transverse: undefined,
+          fibular_level_for_transverse: undefined,
+          suprasindesmal_type: undefined,
+          lateral_morphology: undefined,
+          fibular_level: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y medial - pregunta infrasindesmal transversa
+    if (showLMFibulaInfraTransverse && formData.fibula_infrasindesmal_transverse === undefined) {
+      return {
+        options: [
+          { value: 'yes', label: options.labels.yes },
+          { value: 'no', label: options.labels.no },
+        ],
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          fibula_infrasindesmal_transverse: value === 'yes',
+          fibular_level_for_transverse: undefined,
+          suprasindesmal_type: undefined,
+          lateral_morphology: undefined,
+          fibular_level: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y medial - nivel fibular
+    if (showLMFibularLevel && !formData.fibular_level_for_transverse) {
+      return {
+        options: [
+          { value: 'suprasindesmal', label: options.labels.high },
+          { value: 'infrasindesmal', label: options.labels.low },
+        ],
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          fibular_level_for_transverse: value as FibularLevel,
+          suprasindesmal_type: undefined,
+          lateral_morphology: undefined,
+          fibular_level: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y medial - tipo suprasindesmal
+    if (showLMSuprasindesmalType && !formData.suprasindesmal_type) {
+      return {
+        options: options.suprasindesmal_types,
+        onSelect: (value: string) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType }),
+      };
+    }
+
+    // PATH: Lateral y medial - morfología fibular
+    if (showLMFibularMorphology && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          lateral_morphology: value as LateralMorphology,
+          fibular_level: undefined,
+        }),
+      };
+    }
+
+    // PATH: Lateral y medial - nivel fibular para transversa
+    if (showLMTransverseFibularLevel && !formData.fibular_level) {
+      return {
+        options: options.fibular_levels.filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal'),
+        onSelect: (value: string) => updateFormData({ ...formData, fibular_level: value as FibularLevel }),
+      };
+    }
+
+    // PATH: Trimaleolar - nivel
+    if (showTrimaleolarFibularHeight && !formData.fibular_level) {
+      return {
+        options: [
+          { value: 'suprasindesmal', label: options.labels.high },
+          { value: 'infrasindesmal', label: options.labels.low },
+        ],
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          fibular_level: value as FibularLevel,
+          suprasindesmal_type: undefined,
+          lateral_morphology: undefined,
+          fibular_level_for_transverse: undefined,
+        }),
+      };
+    }
+
+    // PATH: Trimaleolar - tipo suprasindesmal
+    if (showTrimaleolarSupraType && !formData.suprasindesmal_type) {
+      return {
+        options: options.suprasindesmal_types,
+        onSelect: (value: string) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType }),
+      };
+    }
+
+    // PATH: Trimaleolar - morfología
+    if (showTrimaleolarMorphology && !formData.lateral_morphology) {
+      return {
+        options: options.lateral_morphology,
+        onSelect: (value: string) => updateFormData({
+          ...formData,
+          lateral_morphology: value as LateralMorphology,
+          fibular_level_for_transverse: undefined,
+        }),
+      };
+    }
+
+    // PATH: Trimaleolar - nivel para transversa
+    if (showTrimaleolarTransverseLevel && !formData.fibular_level_for_transverse) {
+      return {
+        options: options.fibular_levels.filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal'),
+        onSelect: (value: string) => updateFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel }),
+      };
+    }
+
+    return null;
+  }, [
+    options, involvedMalleoli, formData, handleInvolvedMalleoliChange, updateFormData,
+    showPosteriorType, showMedialMorphology, showLateralLevel, showLateralMorphologyInfra,
+    showLateralMorphologyTrans, showSuprasindesmalType, showLateralPosteriorLevel,
+    showLPMorphologyInfra, showLPPosteriorTypeInfraOblique, showLPMorphologyTrans,
+    showLPPosteriorTypeTransSpiral, showLPPosteriorTypeTransOblique, showLPSuprasindesmalType,
+    showLPPosteriorTypeSupra, showLMMedialMorphology, showLMFibulaInfraTransverse,
+    showLMFibularLevel, showLMSuprasindesmalType, showLMFibularMorphology,
+    showLMTransverseFibularLevel, showTrimaleolarFibularHeight, showTrimaleolarSupraType,
+    showTrimaleolarMorphology, showTrimaleolarTransverseLevel,
+  ]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if typing in an input
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+      // Don't handle if showing results
+      if (result) return;
+
+      // Backspace to go back
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (formHistory.length > 0) {
+          goBack();
+        }
+        return;
+      }
+
+      // Enter to submit
+      if (e.key === 'Enter' && isFormComplete() && !loading) {
+        e.preventDefault();
+        classify(formData as FractureInput);
+        return;
+      }
+
+      // Number keys (1-9) to select options
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= 9) {
+        const context = getCurrentQuestionContext();
+        if (context && context.options[num - 1]) {
+          e.preventDefault();
+          context.onSelect(context.options[num - 1].value);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [formHistory.length, goBack, result, isFormComplete, loading, classify, formData, getCurrentQuestionContext]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1036,6 +1335,11 @@ export function FractureForm() {
       <Button type="submit" disabled={!isFormComplete() || loading} className="w-full" size="lg">
         {loading ? t('form.classifying') : t('form.classify')}
       </Button>
+
+      {/* Keyboard shortcuts hint */}
+      <p className="text-xs text-muted-foreground text-center">
+        {t('form.keyboardHint')}
+      </p>
     </form>
   );
 }
