@@ -64,7 +64,7 @@
       }
     },
     "footer": {
-      "disclaimer": "Solo para fines educativos. Siempre correlacionar con hallazgos clínicos.",
+      "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos.",
       "copyright": "Anklyze",
       "apiDocs": "API Docs"
     }
