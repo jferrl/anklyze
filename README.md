@@ -204,5 +204,5 @@ anklyze/
 </p>
 
 <p align="center">
-  <strong>Anklyze</strong> © 2025
+  <strong>Anklyze</strong> © 2026
 </p>
