@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft } from 'lucide-react';
 import type {
@@ -14,6 +14,7 @@ import type {
 import { getFormOptions } from '../services/api';
 import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';
+import { ComparisonView } from './ComparisonView';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -25,7 +26,9 @@ export function FractureForm() {
   const [options, setOptions] = useState<FormOptions | null>(null);
   const [formData, setFormData] = useState<Partial<FractureInput>>({});
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
-  const { result, loading, error, classify, reset } = useClassification();
+  const [isComparing, setIsComparing] = useState(false);
+  const lastInputRef = useRef<FractureInput | null>(null);
+  const { result, loading, error, scenarios, classify, addScenario, clearScenarios, reset, resetAll } = useClassification();
 
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
@@ -543,7 +546,15 @@ export function FractureForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormComplete()) {
-      await classify(formData as FractureInput);
+      const input = formData as FractureInput;
+      lastInputRef.current = input;
+      const classificationResult = await classify(input);
+
+      // If comparing and we got a result, add it as a scenario
+      if (isComparing && classificationResult) {
+        addScenario(input, classificationResult);
+        setIsComparing(false);
+      }
     }
   };
 
@@ -551,6 +562,30 @@ export function FractureForm() {
     setFormData({});
     setFormHistory([]);
     reset();
+  };
+
+  const handleStartComparison = () => {
+    // Add current result as first scenario if not already added
+    if (result && lastInputRef.current && scenarios.length === 0) {
+      addScenario(lastInputRef.current, result);
+    }
+    // Reset form but keep scenarios
+    setFormData({});
+    setFormHistory([]);
+    reset();
+    setIsComparing(true);
+  };
+
+  const handleClearComparison = () => {
+    clearScenarios();
+    setIsComparing(false);
+  };
+
+  const handleStartOver = () => {
+    setFormData({});
+    setFormHistory([]);
+    resetAll();
+    setIsComparing(false);
   };
 
   if (!options) {
@@ -561,13 +596,41 @@ export function FractureForm() {
     );
   }
 
+  // Show comparison view when we have 2+ scenarios and NOT currently adding another
+  if (scenarios.length >= 2 && !isComparing) {
+    return (
+      <div className="max-w-5xl mx-auto p-6">
+        <ComparisonView scenarios={scenarios} />
+        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          {scenarios.length < 3 && (
+            <Button onClick={handleStartComparison} variant="outline" className="flex-1">
+              {t('comparison.addAnother')}
+            </Button>
+          )}
+          <Button onClick={handleClearComparison} variant="outline" className="flex-1">
+            {t('comparison.clear')}
+          </Button>
+          <Button onClick={handleStartOver} className="flex-1">
+            {t('comparison.startOver')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show single result with compare option
   if (result) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <ClassificationResult result={result} />
-        <Button onClick={handleReset} className="mt-6 w-full" size="lg">
-          {t('form.classifyAnother')}
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          <Button onClick={handleReset} className="flex-1" size="lg">
+            {t('form.classifyAnother')}
+          </Button>
+          <Button onClick={handleStartComparison} variant="outline" className="flex-1" size="lg">
+            {t('comparison.compare')}
+          </Button>
+        </div>
       </div>
     );
   }

@@ -128,5 +128,14 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "comparison": {
+    "compare": "Compare with Different Finding",
+    "addAnother": "Add Another Scenario",
+    "clear": "Clear Comparison",
+    "startOver": "Start Over",
+    "scenario": "Scenario",
+    "inputDifferences": "Input Differences",
+    "maxScenarios": "Maximum 3 scenarios allowed"
   }
 }

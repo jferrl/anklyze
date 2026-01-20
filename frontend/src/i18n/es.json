@@ -128,5 +128,14 @@
     "light": "Claro",
     "dark": "Oscuro",
     "system": "Sistema"
+  },
+  "comparison": {
+    "compare": "Comparar con Otro Hallazgo",
+    "addAnother": "Añadir Otro Escenario",
+    "clear": "Limpiar Comparación",
+    "startOver": "Empezar de Nuevo",
+    "scenario": "Escenario",
+    "inputDifferences": "Diferencias en los Datos",
+    "maxScenarios": "Máximo 3 escenarios permitidos"
   }
 }

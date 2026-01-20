@@ -107,6 +107,13 @@ export interface ClassificationResult {
   impossible_reason?: string;
 }
 
+// Comparison scenario for side-by-side comparison
+export interface ComparisonScenario {
+  id: string;
+  input: FractureInput;
+  result: ClassificationResult;
+}
+
 // Form option
 export interface SelectOption {
   value: string;
