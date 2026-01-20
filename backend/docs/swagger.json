@@ -16,7 +16,7 @@
         },
         "version": "1.0"
     },
-    "host": "api.anklyze.com",
+    "host": "api.anklyze.es",
     "basePath": "/",
     "paths": {
         "/api/analytics/distribution/{system}": {

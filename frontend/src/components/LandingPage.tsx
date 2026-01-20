@@ -306,7 +306,7 @@ export function LandingPage() {
               <span>© {new Date().getFullYear()}</span>
               <span className="mx-2">·</span>
               <a
-                href="https://api.anklyze.com/swagger/index.html"
+                href="https://api.anklyze.es/swagger/index.html"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"

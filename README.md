@@ -27,7 +27,9 @@
 </p>
 
 <p align="center">
-  <a href="https://anklyze.onrender.com"><strong>Start Classifying</strong></a>
+  <a href="https://www.anklyze.es"><strong>Start Classifying</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://api.anklyze.es/swagger/index.html">API Docs</a>
   &nbsp;·&nbsp;
   <a href="#how-it-works">Learn More</a>
 </p>
@@ -143,17 +145,21 @@ make run-frontend # Start frontend
 
 ## API Reference
 
-### `POST /api/classify`
+**Base URL:** `https://api.anklyze.es`
 
-Classify a fracture based on clinical findings.
+**Documentation:** [Swagger UI](https://api.anklyze.es/swagger/index.html)
 
-### `GET /api/options`
+### Endpoints
 
-Get form options for the frontend.
-
-### `GET /health`
-
-Health check endpoint.
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| `POST` | `/api/classify` | Classify a fracture based on clinical findings |
+| `GET` | `/api/options` | Get form options for the frontend |
+| `GET` | `/api/analytics/summary` | Get classification statistics |
+| `GET` | `/api/analytics/trends` | Get time-series classification data |
+| `GET` | `/api/analytics/distribution/:system` | Get distribution for a classification system |
+| `GET` | `/health` | Health check endpoint |
+| `GET` | `/swagger/*` | OpenAPI documentation |
 
 ---
 
@@ -188,7 +194,7 @@ anklyze/
 </p>
 
 <p align="center">
-  <a href="https://anklyze.onrender.com"><strong>Classify Your First Fracture →</strong></a>
+  <a href="https://www.anklyze.es"><strong>Classify Your First Fracture →</strong></a>
 </p>
 
 ---

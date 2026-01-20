@@ -438,7 +438,7 @@ definitions:
       impossible_count:
         type: integer
     type: object
-host: api.anklyze.com
+host: api.anklyze.es
 info:
   contact:
     name: API Support

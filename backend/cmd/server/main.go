@@ -24,7 +24,7 @@ import (
 // @license.name Apache 2.0
 // @license.url https://opensource.org/licenses/MIT
 
-// @host api.anklyze.com
+// @host api.anklyze.es
 // @BasePath /
 // @schemes https
 
