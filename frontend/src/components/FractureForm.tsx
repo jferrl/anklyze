@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Share2, Check } from 'lucide-react';
+import { generateShareUrl, copyToClipboard, decodeParamsToInput } from '../utils/shareUrl';
 import type {
   FractureInput,
   FormOptions,
@@ -27,12 +28,35 @@ export function FractureForm() {
   const [formData, setFormData] = useState<Partial<FractureInput>>({});
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
   const [isComparing, setIsComparing] = useState(false);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [loadingFromUrl, setLoadingFromUrl] = useState(false);
   const lastInputRef = useRef<FractureInput | null>(null);
+  const hasLoadedFromUrl = useRef(false);
   const { result, loading, error, scenarios, classify, addScenario, clearScenarios, reset, resetAll } = useClassification();
 
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
   }, []);
+
+  // Load from URL params on mount
+  useEffect(() => {
+    if (hasLoadedFromUrl.current || !options) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const inputFromUrl = decodeParamsToInput(params);
+
+    if (inputFromUrl && inputFromUrl.involved_malleoli) {
+      hasLoadedFromUrl.current = true;
+      setLoadingFromUrl(true);
+      lastInputRef.current = inputFromUrl as FractureInput;
+      // Auto-classify without showing form
+      classify(inputFromUrl as FractureInput).finally(() => {
+        setLoadingFromUrl(false);
+        // Clean URL without reload
+        window.history.replaceState({}, '', window.location.pathname);
+      });
+    }
+  }, [options, classify]);
 
   // Push current state to history before making changes
   const pushToHistory = useCallback(() => {
@@ -588,10 +612,29 @@ export function FractureForm() {
     setIsComparing(false);
   };
 
+  const handleShare = async () => {
+    if (!lastInputRef.current) return;
+
+    const url = generateShareUrl(lastInputRef.current);
+    const success = await copyToClipboard(url);
+
+    setShareStatus(success ? 'copied' : 'failed');
+    setTimeout(() => setShareStatus('idle'), 2000);
+  };
+
   if (!options) {
     return (
       <div className="flex justify-center items-center p-8">
         <p className="text-muted-foreground">{t('form.loading')}</p>
+      </div>
+    );
+  }
+
+  // Show loading state when auto-classifying from URL params
+  if (loadingFromUrl) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <p className="text-muted-foreground">{t('form.classifying')}</p>
       </div>
     );
   }
@@ -629,6 +672,14 @@ export function FractureForm() {
           </Button>
           <Button onClick={handleStartComparison} variant="outline" className="flex-1" size="lg">
             {t('comparison.compare')}
+          </Button>
+          <Button onClick={handleShare} variant="outline" size="lg" className="gap-2">
+            {shareStatus === 'copied' ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Share2 className="h-4 w-4" />
+            )}
+            {shareStatus === 'copied' ? t('share.copied') : t('share.button')}
           </Button>
         </div>
       </div>

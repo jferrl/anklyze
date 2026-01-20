@@ -137,5 +137,10 @@
     "scenario": "Escenario",
     "inputDifferences": "Diferencias en los Datos",
     "maxScenarios": "Máximo 3 escenarios permitidos"
+  },
+  "share": {
+    "button": "Compartir",
+    "copied": "Enlace copiado al portapapeles",
+    "failed": "Error al copiar el enlace"
   }
 }

@@ -137,5 +137,10 @@
     "scenario": "Scenario",
     "inputDifferences": "Input Differences",
     "maxScenarios": "Maximum 3 scenarios allowed"
+  },
+  "share": {
+    "button": "Share",
+    "copied": "Link copied to clipboard",
+    "failed": "Failed to copy link"
   }
 }
