@@ -45,6 +45,8 @@ func main() {
 
 	var auditRepo api.AuditRepository
 	var analyticsRepo api.AnalyticsRepository
+	var chatAuditRepo api.ChatAuditRepository
+	var chatAnalyticsRepo api.ChatAnalyticsRepository
 
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
@@ -52,18 +54,29 @@ func main() {
 			log.Printf("WARN: database connection failed, audit disabled: %v", err)
 			auditRepo = repository.NewNoOpAuditRepository()
 			analyticsRepo = repository.NewNoOpAnalyticsRepository()
+			chatAuditRepo = repository.NewNoOpChatAuditRepository()
+			chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 		} else {
-			if err := db.AutoMigrate(&domain.AuditEntry{}); err != nil {
+			if err := db.AutoMigrate(
+				&domain.AuditEntry{},
+				&domain.ChatSession{},
+				&domain.ChatMessage{},
+				&domain.ChatFeedback{},
+			); err != nil {
 				log.Printf("WARN: database migration failed: %v", err)
 			}
 			log.Println("Database connected, audit trail and analytics enabled")
 			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
+			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
+			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
 		}
 	} else {
 		log.Println("No DATABASE_URL configured, audit trail disabled")
 		auditRepo = repository.NewNoOpAuditRepository()
 		analyticsRepo = repository.NewNoOpAnalyticsRepository()
+		chatAuditRepo = repository.NewNoOpChatAuditRepository()
+		chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 	}
 
 	// Initialize chat service if Gemini is configured
@@ -83,7 +96,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo, chatService)
+	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
@@ -112,9 +125,12 @@ func main() {
 		log.Printf("Server forced to shutdown: %v", err)
 	}
 
-	// Close audit repository to flush pending writes
+	// Close audit repositories to flush pending writes
 	if err := auditRepo.Close(); err != nil {
 		log.Printf("Error closing audit repository: %v", err)
+	}
+	if err := chatAuditRepo.Close(); err != nil {
+		log.Printf("Error closing chat audit repository: %v", err)
 	}
 
 	log.Println("Server exited")

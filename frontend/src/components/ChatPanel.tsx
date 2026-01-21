@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { useChat, type ChatMessage } from '../hooks/useChat';
 import { ClassificationResult as ClassificationResultComponent } from './ClassificationResult';
+import { ChatFeedback } from './ChatFeedback';
 import type { FractureInput, ClassificationResult, Clarification } from '../types/fracture';
 
 interface ChatPanelProps {
@@ -24,9 +25,11 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
     extractedInput,
     classification,
     clarifications,
+    feedbackSubmitted,
     sendMessage,
     confirmAndClassify,
     answerClarification,
+    submitFeedback,
     reset,
   } = useChat();
 
@@ -128,8 +131,9 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
 
       {/* Classification Result */}
       {classification && (
-        <div className="p-4 border-t bg-gradient-to-b from-background to-muted/20">
+        <div className="p-4 border-t bg-gradient-to-b from-background to-muted/20 space-y-4">
           <ClassificationResultComponent result={classification} />
+          <ChatFeedback onSubmit={submitFeedback} submitted={feedbackSubmitted} />
         </div>
       )}
 

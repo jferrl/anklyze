@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/service"
@@ -25,21 +26,51 @@ type AnalyticsRepository interface {
 	GetDistribution(system string, from, to time.Time) (*domain.ClassificationDistribution, error)
 }
 
+// ChatAuditRepository defines the chat audit persistence interface.
+type ChatAuditRepository interface {
+	CreateSession(ctx context.Context, session *domain.ChatSession) error
+	UpdateSession(ctx context.Context, session *domain.ChatSession) error
+	GetSession(ctx context.Context, sessionID uuid.UUID) (*domain.ChatSession, error)
+	SaveMessage(ctx context.Context, message *domain.ChatMessage) error
+	SaveFeedback(ctx context.Context, feedback *domain.ChatFeedback) error
+	GetFeedbackBySession(ctx context.Context, sessionID uuid.UUID) (*domain.ChatFeedback, error)
+	Close() error
+}
+
+// ChatAnalyticsRepository defines the chat analytics query interface.
+type ChatAnalyticsRepository interface {
+	GetSummary(from, to time.Time) (*domain.ChatAnalyticsSummary, error)
+	GetFeedbackSummary(from, to time.Time) (*domain.ChatFeedbackSummary, error)
+	GetConfidenceDistribution(from, to time.Time) (*domain.ConfidenceDistribution, error)
+	GetTrends(from, to time.Time, granularity domain.Granularity) (*domain.ChatTrendData, error)
+}
+
 // Handler handles HTTP requests
 type Handler struct {
-	classifier    service.ClassifierService
-	chatService   service.ChatService
-	auditRepo     AuditRepository
-	analyticsRepo AnalyticsRepository
+	classifier         service.ClassifierService
+	chatService        service.ChatService
+	auditRepo          AuditRepository
+	analyticsRepo      AnalyticsRepository
+	chatAuditRepo      ChatAuditRepository
+	chatAnalyticsRepo  ChatAnalyticsRepository
 }
 
 // NewHandler creates a new Handler
-func NewHandler(classifier service.ClassifierService, chatService service.ChatService, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) *Handler {
+func NewHandler(
+	classifier service.ClassifierService,
+	chatService service.ChatService,
+	auditRepo AuditRepository,
+	analyticsRepo AnalyticsRepository,
+	chatAuditRepo ChatAuditRepository,
+	chatAnalyticsRepo ChatAnalyticsRepository,
+) *Handler {
 	return &Handler{
-		classifier:    classifier,
-		chatService:   chatService,
-		auditRepo:     auditRepo,
-		analyticsRepo: analyticsRepo,
+		classifier:         classifier,
+		chatService:        chatService,
+		auditRepo:          auditRepo,
+		analyticsRepo:      analyticsRepo,
+		chatAuditRepo:      chatAuditRepo,
+		chatAnalyticsRepo:  chatAnalyticsRepo,
 	}
 }
 

@@ -19,6 +19,193 @@
     "host": "api.anklyze.es",
     "basePath": "/",
     "paths": {
+        "/api/analytics/chat/confidence": {
+            "get": {
+                "description": "Returns distribution of extraction confidence levels",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get confidence distribution",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Confidence distribution",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ConfidenceDistribution"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analytics/chat/feedback": {
+            "get": {
+                "description": "Returns feedback statistics for a time period",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get feedback summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Feedback summary",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatFeedbackSummary"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analytics/chat/summary": {
+            "get": {
+                "description": "Returns aggregated chat session statistics for a time period",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get chat analytics summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat analytics summary",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatAnalyticsSummary"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analytics/chat/trends": {
+            "get": {
+                "description": "Returns time-series chat analytics data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get chat trends",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "30 days ago",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "today",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "day",
+                        "description": "Time granularity (day, week, month)",
+                        "name": "granularity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat trend data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatTrendData"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/analytics/distribution/{system}": {
             "get": {
                 "description": "Returns detailed distribution for a specific classification system",
@@ -220,6 +407,236 @@
                 }
             }
         },
+        "/api/chat/session": {
+            "post": {
+                "description": "Creates a new chat session for tracking conversations",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Create a new chat session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en",
+                        "description": "Language (en, es)",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session created",
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateChatSessionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chat/session/{id}/abandon": {
+            "put": {
+                "description": "Marks a chat session as abandoned (user left before completion)",
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Mark a chat session as abandoned",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session abandoned",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid session ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Session not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chat/session/{id}/complete": {
+            "put": {
+                "description": "Marks a chat session as successfully completed",
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Mark a chat session as complete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session completed",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid session ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Session not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chat/session/{id}/feedback": {
+            "get": {
+                "description": "Retrieves the feedback submitted for a session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Get feedback for a chat session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Feedback data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChatFeedback"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid session ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Feedback not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Allows users to rate the chat classification accuracy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Submit feedback for a chat session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Feedback data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.FeedbackRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Feedback submitted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Feedback already submitted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/classify": {
             "post": {
                 "description": "Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems",
@@ -333,6 +750,32 @@
         }
     },
     "definitions": {
+        "api.CreateChatSessionResponse": {
+            "type": "object",
+            "properties": {
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.FeedbackRequest": {
+            "type": "object",
+            "required": [
+                "rating"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "string",
+                    "enum": [
+                        "positive",
+                        "negative"
+                    ]
+                }
+            }
+        },
         "api.FormOptions": {
             "type": "object",
             "properties": {
@@ -547,6 +990,147 @@
                 "BartonicekType4"
             ]
         },
+        "domain.ChatAnalyticsSummary": {
+            "type": "object",
+            "properties": {
+                "abandoned_sessions": {
+                    "type": "integer"
+                },
+                "avg_clarifications_per_session": {
+                    "type": "number"
+                },
+                "avg_confidence": {
+                    "type": "number"
+                },
+                "avg_messages_per_session": {
+                    "type": "number"
+                },
+                "avg_session_duration_ms": {
+                    "type": "number"
+                },
+                "classification_distribution": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "completed_sessions": {
+                    "type": "integer"
+                },
+                "completion_rate": {
+                    "type": "number"
+                },
+                "language_distribution": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                },
+                "total_sessions": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ChatFeedback": {
+            "type": "object",
+            "properties": {
+                "clientIP": {
+                    "description": "Client metadata",
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rating": {
+                    "description": "Feedback data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FeedbackRating"
+                        }
+                    ]
+                },
+                "sessionID": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChatFeedbackSummary": {
+            "type": "object",
+            "properties": {
+                "feedback_with_comment": {
+                    "type": "integer"
+                },
+                "negative_count": {
+                    "type": "integer"
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                },
+                "positive_count": {
+                    "type": "integer"
+                },
+                "positive_rate": {
+                    "type": "number"
+                },
+                "total_feedback": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ChatTrendData": {
+            "type": "object",
+            "properties": {
+                "data_points": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ChatTrendDataPoint"
+                    }
+                },
+                "granularity": {
+                    "type": "string"
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                }
+            }
+        },
+        "domain.ChatTrendDataPoint": {
+            "type": "object",
+            "properties": {
+                "abandoned_count": {
+                    "type": "integer"
+                },
+                "avg_confidence": {
+                    "type": "number"
+                },
+                "completed_count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "feedback_count": {
+                    "type": "integer"
+                },
+                "positive_feedback": {
+                    "type": "integer"
+                },
+                "session_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.ClassificationDistribution": {
             "type": "object",
             "properties": {
@@ -599,6 +1183,37 @@
                 }
             }
         },
+        "domain.ConfidenceBucket": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "range": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ConfidenceDistribution": {
+            "type": "object",
+            "properties": {
+                "distribution": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ConfidenceBucket"
+                    }
+                },
+                "period": {
+                    "$ref": "#/definitions/domain.TimePeriod"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.DanisWeberClassification": {
             "type": "object",
             "properties": {
@@ -636,6 +1251,17 @@
                     "type": "string"
                 }
             }
+        },
+        "domain.FeedbackRating": {
+            "type": "string",
+            "enum": [
+                "positive",
+                "negative"
+            ],
+            "x-enum-varnames": [
+                "FeedbackRatingPositive",
+                "FeedbackRatingNegative"
+            ]
         },
         "domain.FibularLevel": {
             "type": "string",

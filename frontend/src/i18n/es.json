@@ -159,6 +159,14 @@
       "unavailable": "La clasificación por chat no está disponible temporalmente."
     }
   },
+  "feedback": {
+    "title": "¿Fue útil esta clasificación?",
+    "helpful": "Útil",
+    "notHelpful": "No útil",
+    "commentPlaceholder": "¿Algún comentario adicional? (opcional)",
+    "submit": "Enviar Opinión",
+    "thankYou": "¡Gracias por tu opinión!"
+  },
   "language": {
     "en": "Inglés",
     "es": "Español",

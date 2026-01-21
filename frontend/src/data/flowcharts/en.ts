@@ -73,16 +73,6 @@ export const flowchartEN = `flowchart TB
     n55 --> n94{"What type is the posterior malleolus?"}
     n56 --> n103{"What type is the posterior malleolus?"}
 
-    %% Infrasyndesmotic + Oblique posterior fragments (PA Weber A)
-    n57 --> n58["Extra-incisural fragment"]
-    n57 --> n59["Posterolateral fragment"]
-    n57 --> n60["Posteromedial and posterolateral"]
-    n57 --> n61["Large posterolateral triangular"]
-    n58 --> n62["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 1"]
-    n59 --> n63["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 2"]
-    n60 --> n64["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 3"]
-    n61 --> n65["Bimalleolar (lateral + posterior)<br/>AO 44 A2<br/>Lauge-Hansen PA<br/>Weber A<br/>Bartonicek 4"]
-
     %% Transsyndesmotic + Spiral posterior fragments (SER Weber B)
     n67 --> n68["Extra-incisural fragment"]
     n67 --> n69["Posterolateral fragment"]
@@ -203,17 +193,12 @@ export const flowchartEN = `flowchart TB
     style n18 fill:#e8f5e9,stroke:#4caf50
     style n19 fill:#e8f5e9,stroke:#4caf50
     style n27 fill:#e8f5e9,stroke:#4caf50
-    style n28 fill:#e8f5e9,stroke:#4caf50
     style n32 fill:#e8f5e9,stroke:#4caf50
     style n33 fill:#e8f5e9,stroke:#4caf50
     style n39 fill:#e8f5e9,stroke:#4caf50
     style n40 fill:#e8f5e9,stroke:#4caf50
     style n41 fill:#e8f5e9,stroke:#4caf50
     style n42 fill:#e8f5e9,stroke:#4caf50
-    style n62 fill:#e8f5e9,stroke:#4caf50
-    style n63 fill:#e8f5e9,stroke:#4caf50
-    style n64 fill:#e8f5e9,stroke:#4caf50
-    style n65 fill:#e8f5e9,stroke:#4caf50
     style n66 fill:#ffebee,stroke:#f44336
     style n72 fill:#e8f5e9,stroke:#4caf50
     style n73 fill:#e8f5e9,stroke:#4caf50

@@ -10,11 +10,19 @@ import (
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditRepository, analyticsRepo AnalyticsRepository, chatService service.ChatService) {
+func SetupRoutes(
+	router *gin.Engine,
+	cfg *config.Config,
+	auditRepo AuditRepository,
+	analyticsRepo AnalyticsRepository,
+	chatService service.ChatService,
+	chatAuditRepo ChatAuditRepository,
+	chatAnalyticsRepo ChatAnalyticsRepository,
+) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo)
+	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo)
 
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
@@ -30,12 +38,31 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditReposito
 		api.POST("/chat", handler.ChatMessage)
 	}
 
+	// Chat session routes
+	chat := api.Group("/chat")
+	{
+		chat.POST("/session", handler.CreateChatSession)
+		chat.PUT("/session/:id/complete", handler.CompleteChatSession)
+		chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
+		chat.POST("/session/:id/feedback", handler.SubmitFeedback)
+		chat.GET("/session/:id/feedback", handler.GetFeedback)
+	}
+
 	// Analytics routes
 	analytics := api.Group("/analytics")
 	{
 		analytics.GET("/summary", handler.GetAnalyticsSummary)
 		analytics.GET("/trends", handler.GetAnalyticsTrends)
 		analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
+	}
+
+	// Chat analytics routes
+	chatAnalytics := analytics.Group("/chat")
+	{
+		chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
+		chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
+		chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
+		chatAnalytics.GET("/trends", handler.GetChatTrends)
 	}
 
 	// Swagger documentation
@@ -46,7 +73,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditReposito
 func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if c.Request.Method == "OPTIONS" {

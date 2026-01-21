@@ -1,5 +1,22 @@
 basePath: /
 definitions:
+  api.CreateChatSessionResponse:
+    properties:
+      session_id:
+        type: string
+    type: object
+  api.FeedbackRequest:
+    properties:
+      comment:
+        type: string
+      rating:
+        enum:
+        - positive
+        - negative
+        type: string
+    required:
+    - rating
+    type: object
   api.FormOptions:
     properties:
       fibular_levels:
@@ -156,6 +173,98 @@ definitions:
     - BartonicekType2
     - BartonicekType3
     - BartonicekType4
+  domain.ChatAnalyticsSummary:
+    properties:
+      abandoned_sessions:
+        type: integer
+      avg_clarifications_per_session:
+        type: number
+      avg_confidence:
+        type: number
+      avg_messages_per_session:
+        type: number
+      avg_session_duration_ms:
+        type: number
+      classification_distribution:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      completed_sessions:
+        type: integer
+      completion_rate:
+        type: number
+      language_distribution:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+      total_sessions:
+        type: integer
+    type: object
+  domain.ChatFeedback:
+    properties:
+      clientIP:
+        description: Client metadata
+        type: string
+      comment:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      rating:
+        allOf:
+        - $ref: '#/definitions/domain.FeedbackRating'
+        description: Feedback data
+      sessionID:
+        type: string
+    type: object
+  domain.ChatFeedbackSummary:
+    properties:
+      feedback_with_comment:
+        type: integer
+      negative_count:
+        type: integer
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+      positive_count:
+        type: integer
+      positive_rate:
+        type: number
+      total_feedback:
+        type: integer
+    type: object
+  domain.ChatTrendData:
+    properties:
+      data_points:
+        items:
+          $ref: '#/definitions/domain.ChatTrendDataPoint'
+        type: array
+      granularity:
+        type: string
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+    type: object
+  domain.ChatTrendDataPoint:
+    properties:
+      abandoned_count:
+        type: integer
+      avg_confidence:
+        type: number
+      completed_count:
+        type: integer
+      date:
+        type: string
+      feedback_count:
+        type: integer
+      positive_feedback:
+        type: integer
+      session_count:
+        type: integer
+    type: object
   domain.ClassificationDistribution:
     properties:
       distribution:
@@ -190,6 +299,26 @@ definitions:
           type: string
         type: array
     type: object
+  domain.ConfidenceBucket:
+    properties:
+      count:
+        type: integer
+      percentage:
+        type: number
+      range:
+        type: string
+    type: object
+  domain.ConfidenceDistribution:
+    properties:
+      distribution:
+        items:
+          $ref: '#/definitions/domain.ConfidenceBucket'
+        type: array
+      period:
+        $ref: '#/definitions/domain.TimePeriod'
+      total:
+        type: integer
+    type: object
   domain.DanisWeberClassification:
     properties:
       description:
@@ -216,6 +345,14 @@ definitions:
       value:
         type: string
     type: object
+  domain.FeedbackRating:
+    enum:
+    - positive
+    - negative
+    type: string
+    x-enum-varnames:
+    - FeedbackRatingPositive
+    - FeedbackRatingNegative
   domain.FibularLevel:
     enum:
     - infrasindesmal
@@ -500,6 +637,131 @@ info:
   title: Anklyze API
   version: "1.0"
 paths:
+  /api/analytics/chat/confidence:
+    get:
+      description: Returns distribution of extraction confidence levels
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Confidence distribution
+          schema:
+            $ref: '#/definitions/domain.ConfidenceDistribution'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get confidence distribution
+      tags:
+      - Analytics
+  /api/analytics/chat/feedback:
+    get:
+      description: Returns feedback statistics for a time period
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Feedback summary
+          schema:
+            $ref: '#/definitions/domain.ChatFeedbackSummary'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feedback summary
+      tags:
+      - Analytics
+  /api/analytics/chat/summary:
+    get:
+      description: Returns aggregated chat session statistics for a time period
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Chat analytics summary
+          schema:
+            $ref: '#/definitions/domain.ChatAnalyticsSummary'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get chat analytics summary
+      tags:
+      - Analytics
+  /api/analytics/chat/trends:
+    get:
+      description: Returns time-series chat analytics data
+      parameters:
+      - default: 30 days ago
+        description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - default: today
+        description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      - default: day
+        description: Time granularity (day, week, month)
+        in: query
+        name: granularity
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Chat trend data
+          schema:
+            $ref: '#/definitions/domain.ChatTrendData'
+        "500":
+          description: Server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get chat trends
+      tags:
+      - Analytics
   /api/analytics/distribution/{system}:
     get:
       description: Returns detailed distribution for a specific classification system
@@ -632,6 +894,158 @@ paths:
               type: string
             type: object
       summary: Chat-based fracture classification
+      tags:
+      - Chat
+  /api/chat/session:
+    post:
+      description: Creates a new chat session for tracking conversations
+      parameters:
+      - default: en
+        description: Language (en, es)
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Session created
+          schema:
+            $ref: '#/definitions/api.CreateChatSessionResponse'
+      summary: Create a new chat session
+      tags:
+      - Chat
+  /api/chat/session/{id}/abandon:
+    put:
+      description: Marks a chat session as abandoned (user left before completion)
+      parameters:
+      - description: Session ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Session abandoned
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid session ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Session not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Mark a chat session as abandoned
+      tags:
+      - Chat
+  /api/chat/session/{id}/complete:
+    put:
+      description: Marks a chat session as successfully completed
+      parameters:
+      - description: Session ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Session completed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid session ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Session not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Mark a chat session as complete
+      tags:
+      - Chat
+  /api/chat/session/{id}/feedback:
+    get:
+      description: Retrieves the feedback submitted for a session
+      parameters:
+      - description: Session ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Feedback data
+          schema:
+            $ref: '#/definitions/domain.ChatFeedback'
+        "400":
+          description: Invalid session ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Feedback not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feedback for a chat session
+      tags:
+      - Chat
+    post:
+      consumes:
+      - application/json
+      description: Allows users to rate the chat classification accuracy
+      parameters:
+      - description: Session ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Feedback data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.FeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Feedback submitted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Feedback already submitted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Submit feedback for a chat session
       tags:
       - Chat
   /api/classify:

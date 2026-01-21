@@ -159,6 +159,14 @@
       "unavailable": "Chat classification is temporarily unavailable."
     }
   },
+  "feedback": {
+    "title": "Was this classification helpful?",
+    "helpful": "Helpful",
+    "notHelpful": "Not helpful",
+    "commentPlaceholder": "Any additional comments? (optional)",
+    "submit": "Submit Feedback",
+    "thankYou": "Thank you for your feedback!"
+  },
   "language": {
     "en": "English",
     "es": "Spanish",

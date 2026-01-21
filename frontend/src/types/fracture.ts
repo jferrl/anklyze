@@ -162,3 +162,57 @@ export interface ChatResponse {
   clarifications?: Clarification[];
   message: string;
 }
+
+// Chat session types
+export interface ChatSessionResponse {
+  session_id: string;
+}
+
+// Feedback types
+export type FeedbackRating = 'positive' | 'negative';
+
+export interface FeedbackRequest {
+  rating: FeedbackRating;
+  comment?: string;
+}
+
+// Analytics types
+export interface TimePeriod {
+  from: string;
+  to: string;
+}
+
+export interface ChatAnalyticsSummary {
+  period: TimePeriod;
+  total_sessions: number;
+  completed_sessions: number;
+  abandoned_sessions: number;
+  completion_rate: number;
+  avg_messages_per_session: number;
+  avg_clarifications_per_session: number;
+  avg_confidence: number;
+  avg_session_duration_ms: number;
+  language_distribution: Record<string, number>;
+  classification_distribution: Record<string, number>;
+}
+
+export interface ChatFeedbackSummary {
+  period: TimePeriod;
+  total_feedback: number;
+  positive_count: number;
+  negative_count: number;
+  positive_rate: number;
+  feedback_with_comment: number;
+}
+
+export interface ConfidenceBucket {
+  range: string;
+  count: number;
+  percentage: number;
+}
+
+export interface ConfidenceDistribution {
+  period: TimePeriod;
+  total: number;
+  distribution: ConfidenceBucket[];
+}
