@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"sync"
 
 	"github.com/google/uuid"
@@ -58,7 +58,7 @@ func (r *ChatAuditRepository) CreateSession(ctx context.Context, session *domain
 	case r.sessionCh <- session:
 		return nil
 	default:
-		log.Printf("WARN: chat session buffer full, dropping session %s", session.ID)
+		slog.Warn("chat session buffer full, dropping session", "session_id", session.ID)
 		return ErrBufferFull
 	}
 }
@@ -93,7 +93,7 @@ func (r *ChatAuditRepository) SaveMessage(ctx context.Context, message *domain.C
 	case r.messageCh <- message:
 		return nil
 	default:
-		log.Printf("WARN: chat message buffer full, dropping message %s", message.ID)
+		slog.Warn("chat message buffer full, dropping message", "message_id", message.ID)
 		return ErrBufferFull
 	}
 }
@@ -113,7 +113,7 @@ func (r *ChatAuditRepository) SaveFeedback(ctx context.Context, feedback *domain
 	case r.feedbackCh <- feedback:
 		return nil
 	default:
-		log.Printf("WARN: chat feedback buffer full, dropping feedback %s", feedback.ID)
+		slog.Warn("chat feedback buffer full, dropping feedback", "feedback_id", feedback.ID)
 		return ErrBufferFull
 	}
 }
@@ -150,7 +150,7 @@ func (r *ChatAuditRepository) sessionWriter() {
 	defer r.wg.Done()
 	for session := range r.sessionCh {
 		if err := r.db.Create(session).Error; err != nil {
-			log.Printf("ERROR: failed to save chat session %s: %v", session.ID, err)
+			slog.Error("failed to save chat session", "session_id", session.ID, "error", err)
 		}
 	}
 }
@@ -159,7 +159,7 @@ func (r *ChatAuditRepository) messageWriter() {
 	defer r.wg.Done()
 	for message := range r.messageCh {
 		if err := r.db.Create(message).Error; err != nil {
-			log.Printf("ERROR: failed to save chat message %s: %v", message.ID, err)
+			slog.Error("failed to save chat message", "message_id", message.ID, "error", err)
 		}
 	}
 }
@@ -168,7 +168,7 @@ func (r *ChatAuditRepository) feedbackWriter() {
 	defer r.wg.Done()
 	for feedback := range r.feedbackCh {
 		if err := r.db.Create(feedback).Error; err != nil {
-			log.Printf("ERROR: failed to save chat feedback %s: %v", feedback.ID, err)
+			slog.Error("failed to save chat feedback", "feedback_id", feedback.ID, "error", err)
 		}
 	}
 }

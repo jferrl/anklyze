@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"log"
+	"log/slog"
 
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
@@ -62,7 +62,7 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	// Extract fracture input from natural language
 	extraction, err := s.llmClient.ExtractFractureInput(ctx, req.Message, lang)
 	if err != nil {
-		log.Printf("LLM extraction error: %v", err)
+		slog.Error("LLM extraction failed", "error", err)
 		return &ChatResponse{
 			Status:  ChatStatusError,
 			Message: getErrorMessage(lang),

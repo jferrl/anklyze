@@ -1,7 +1,7 @@
 package api
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func (h *Handler) CreateChatSession(c *gin.Context) {
 	)
 
 	if err := h.chatAuditRepo.CreateSession(c.Request.Context(), session); err != nil {
-		log.Printf("WARN: failed to create chat session: %v", err)
+		slog.Warn("failed to create chat session", "error", err)
 	}
 
 	c.JSON(http.StatusOK, CreateChatSessionResponse{
@@ -70,7 +70,7 @@ func (h *Handler) CompleteChatSession(c *gin.Context) {
 		session.Complete(0, nil)
 
 		if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
-			log.Printf("WARN: failed to update chat session: %v", err)
+			slog.Warn("failed to update chat session", "error", err, "session_id", sessionID)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update session"})
 			return
 		}
@@ -104,7 +104,7 @@ func (h *Handler) AbandonChatSession(c *gin.Context) {
 	session.Abandon()
 
 	if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
-		log.Printf("WARN: failed to update chat session: %v", err)
+		slog.Warn("failed to update chat session", "error", err, "session_id", sessionID)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update session"})
 		return
 	}
@@ -163,7 +163,7 @@ func (h *Handler) SubmitFeedback(c *gin.Context) {
 	)
 
 	if err := h.chatAuditRepo.SaveFeedback(c.Request.Context(), feedback); err != nil {
-		log.Printf("WARN: failed to save feedback: %v", err)
+		slog.Warn("failed to save feedback", "error", err, "session_id", sessionID)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save feedback"})
 		return
 	}

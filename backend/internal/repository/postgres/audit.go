@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
-	"log"
+	"log/slog"
 	"sync"
 
 	"github.com/jferrl/anklyze/internal/domain"
@@ -60,7 +60,7 @@ func (r *AuditRepository) Save(ctx context.Context, entry *domain.AuditEntry) er
 	case r.writeCh <- entry:
 		return nil
 	default:
-		log.Printf("WARN: audit buffer full, dropping entry %s", entry.ID)
+		slog.Warn("audit buffer full, dropping entry", "entry_id", entry.ID)
 		return ErrBufferFull
 	}
 }
@@ -86,7 +86,7 @@ func (r *AuditRepository) backgroundWriter() {
 	defer r.wg.Done()
 	for entry := range r.writeCh {
 		if err := r.db.Create(entry).Error; err != nil {
-			log.Printf("ERROR: failed to save audit entry %s: %v", entry.ID, err)
+			slog.Error("failed to save audit entry", "entry_id", entry.ID, "error", err)
 		}
 	}
 }

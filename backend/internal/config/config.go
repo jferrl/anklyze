@@ -13,6 +13,8 @@ type Config struct {
 	CORSAllowOrigin string
 	GeminiAPIKey    string
 	GeminiModel     string
+	LogLevel        string
+	LogFormat       string
 }
 
 // Load loads configuration from environment variables.
@@ -24,6 +26,8 @@ func Load() *Config {
 		CORSAllowOrigin: getEnv("CORS_ALLOW_ORIGIN", "*"),
 		GeminiAPIKey:    os.Getenv("GEMINI_API_KEY"),
 		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-3-flash-preview"),
+		LogLevel:        getEnv("LOG_LEVEL", "info"),
+		LogFormat:       getEnv("LOG_FORMAT", "text"),
 	}
 }
 

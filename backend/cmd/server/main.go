@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +16,7 @@ import (
 	"github.com/jferrl/anklyze/internal/database"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/llm"
+	"github.com/jferrl/anklyze/internal/logger"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/repository/postgres"
 	"github.com/jferrl/anklyze/internal/rules"
@@ -41,6 +42,12 @@ import (
 func main() {
 	cfg := config.Load()
 
+	// Initialize logger
+	logger.Setup(logger.Config{
+		Level:  cfg.LogLevel,
+		Format: cfg.LogFormat,
+	})
+
 	ctx := context.Background()
 
 	var auditRepo api.AuditRepository
@@ -51,7 +58,7 @@ func main() {
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
 		if err != nil {
-			log.Printf("WARN: database connection failed, audit disabled: %v", err)
+			slog.Warn("database connection failed, audit disabled", "error", err)
 			auditRepo = repository.NewNoOpAuditRepository()
 			analyticsRepo = repository.NewNoOpAnalyticsRepository()
 			chatAuditRepo = repository.NewNoOpChatAuditRepository()
@@ -63,16 +70,16 @@ func main() {
 				&domain.ChatMessage{},
 				&domain.ChatFeedback{},
 			); err != nil {
-				log.Printf("WARN: database migration failed: %v", err)
+				slog.Warn("database migration failed", "error", err)
 			}
-			log.Println("Database connected, audit trail and analytics enabled")
+			slog.Info("database connected, audit trail and analytics enabled")
 			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
 			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
 			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
 		}
 	} else {
-		log.Println("No DATABASE_URL configured, audit trail disabled")
+		slog.Info("no DATABASE_URL configured, audit trail disabled")
 		auditRepo = repository.NewNoOpAuditRepository()
 		analyticsRepo = repository.NewNoOpAnalyticsRepository()
 		chatAuditRepo = repository.NewNoOpChatAuditRepository()
@@ -84,15 +91,15 @@ func main() {
 	if cfg.HasGemini() {
 		llmClient, err := llm.NewClient(ctx, cfg.GeminiAPIKey, cfg.GeminiModel)
 		if err != nil {
-			log.Printf("WARN: Gemini client creation failed, chat disabled: %v", err)
+			slog.Warn("Gemini client creation failed, chat disabled", "error", err)
 		} else {
 			ruleEngine := rules.NewEngine()
 			classifier := service.NewClassifierService(ruleEngine)
 			chatService = service.NewChatService(llmClient, classifier)
-			log.Println("Gemini configured, chat classification enabled")
+			slog.Info("Gemini configured, chat classification enabled")
 		}
 	} else {
-		log.Println("No GEMINI_API_KEY configured, chat classification disabled")
+		slog.Info("no GEMINI_API_KEY configured, chat classification disabled")
 	}
 
 	router := gin.Default()
@@ -105,9 +112,10 @@ func main() {
 
 	// Start server in goroutine
 	go func() {
-		log.Printf("Server starting on port %s", cfg.Port)
+		slog.Info("server starting", "port", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("Error starting server: %v", err)
+			slog.Error("server failed to start", "error", err)
+			os.Exit(1)
 		}
 	}()
 
@@ -115,23 +123,23 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down server...")
+	slog.Info("shutting down server...")
 
 	// Give outstanding requests 5 seconds to complete
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("Server forced to shutdown: %v", err)
+		slog.Error("server forced to shutdown", "error", err)
 	}
 
 	// Close audit repositories to flush pending writes
 	if err := auditRepo.Close(); err != nil {
-		log.Printf("Error closing audit repository: %v", err)
+		slog.Error("failed to close audit repository", "error", err)
 	}
 	if err := chatAuditRepo.Close(); err != nil {
-		log.Printf("Error closing chat audit repository: %v", err)
+		slog.Error("failed to close chat audit repository", "error", err)
 	}
 
-	log.Println("Server exited")
+	slog.Info("server exited")
 }

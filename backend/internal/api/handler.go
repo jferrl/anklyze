@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -129,11 +129,11 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		durationMS,
 	)
 	if err != nil {
-		log.Printf("WARN: failed to create audit entry: %v", err)
+		slog.Warn("failed to create audit entry", "error", err)
 	} else {
 		// Use request context for audit save - non-blocking due to buffered channel
 		if err := h.auditRepo.Save(c.Request.Context(), auditEntry); err != nil {
-			log.Printf("WARN: failed to save audit entry: %v", err)
+			slog.Warn("failed to save audit entry", "error", err)
 		}
 	}
 
@@ -445,7 +445,7 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 	if sessionID != nil {
 		userMsg := domain.NewUserMessage(*sessionID, req.Message, userMsgType)
 		if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), userMsg); err != nil {
-			log.Printf("WARN: failed to save user message: %v", err)
+			slog.Warn("failed to save user message", "error", err)
 		}
 	}
 
@@ -478,10 +478,10 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 			processingMS,
 		)
 		if err != nil {
-			log.Printf("WARN: failed to create assistant message: %v", err)
+			slog.Warn("failed to create assistant message", "error", err)
 		} else {
 			if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), assistantMsg); err != nil {
-				log.Printf("WARN: failed to save assistant message: %v", err)
+				slog.Warn("failed to save assistant message", "error", err)
 			}
 		}
 
@@ -503,7 +503,7 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 			}
 
 			if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
-				log.Printf("WARN: failed to update session: %v", err)
+				slog.Warn("failed to update session", "error", err, "session_id", sessionID)
 			}
 		}
 	}
