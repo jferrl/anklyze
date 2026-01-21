@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Activity, ArrowLeft, FormInput, MessageSquare } from 'lucide-react';
+import { Activity, Home, FormInput, MessageSquare } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { FractureForm } from '../components/FractureForm';
 import { ChatPanel } from '../components/ChatPanel';
@@ -24,13 +24,13 @@ export function ClassifyPage() {
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-xl tracking-tight">Anklyze</span>
+            <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button variant="outline" size="sm" asChild>
               <Link to="/">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t('classify.backToHome')}
+                <Home className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('classify.backToHome')}</span>
               </Link>
             </Button>
             <ThemeSwitcher />

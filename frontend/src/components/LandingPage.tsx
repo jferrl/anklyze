@@ -14,7 +14,7 @@ import {
   MousePointerClick,
   ListChecks,
   FileCheck2,
-  ArrowRight,
+  Sparkles,
   Github,
   MessageCircle,
   // Stethoscope, // Uncomment when re-enabling Team Section
@@ -98,11 +98,14 @@ export function LandingPage() {
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-xl tracking-tight">Anklyze</span>
+            <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button size="sm" asChild>
-              <Link to="/classify">{t('landing.startClassifying')}</Link>
+              <Link to="/classify">
+                <Sparkles className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('landing.startClassifying')}</span>
+              </Link>
             </Button>
             <ThemeSwitcher />
             <LanguageSwitcher />
@@ -149,7 +152,7 @@ export function LandingPage() {
               <Button size="lg" className="text-base px-8" asChild>
                 <Link to="/classify">
                   {t('landing.startClassifying')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <Sparkles className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-base px-8" asChild>
