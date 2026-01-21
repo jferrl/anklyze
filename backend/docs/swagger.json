@@ -168,6 +168,58 @@
                 }
             }
         },
+        "/api/chat": {
+            "post": {
+                "description": "Processes natural language fracture descriptions and returns classification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Chat-based fracture classification",
+                "parameters": [
+                    {
+                        "description": "Chat message",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.ChatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat response with classification",
+                        "schema": {
+                            "$ref": "#/definitions/service.ChatResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Chat service unavailable",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/classify": {
             "post": {
                 "description": "Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems",
@@ -892,6 +944,79 @@
                     "type": "integer"
                 }
             }
+        },
+        "llm.Clarification": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.ChatRequest": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.ChatResponse": {
+            "type": "object",
+            "properties": {
+                "clarifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/llm.Clarification"
+                    }
+                },
+                "classification": {
+                    "$ref": "#/definitions/domain.ClassificationResult"
+                },
+                "confidence": {
+                    "type": "number"
+                },
+                "extracted_input": {
+                    "$ref": "#/definitions/domain.FractureInput"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "missing_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/service.ChatStatus"
+                }
+            }
+        },
+        "service.ChatStatus": {
+            "type": "string",
+            "enum": [
+                "complete",
+                "needs_clarification",
+                "error"
+            ],
+            "x-enum-varnames": [
+                "ChatStatusComplete",
+                "ChatStatusNeedsClarification",
+                "ChatStatusError"
+            ]
         }
     }
 }

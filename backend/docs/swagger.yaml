@@ -438,6 +438,55 @@ definitions:
       impossible_count:
         type: integer
     type: object
+  llm.Clarification:
+    properties:
+      field:
+        type: string
+      options:
+        items:
+          type: string
+        type: array
+      question:
+        type: string
+    type: object
+  service.ChatRequest:
+    properties:
+      language:
+        type: string
+      message:
+        type: string
+    type: object
+  service.ChatResponse:
+    properties:
+      clarifications:
+        items:
+          $ref: '#/definitions/llm.Clarification'
+        type: array
+      classification:
+        $ref: '#/definitions/domain.ClassificationResult'
+      confidence:
+        type: number
+      extracted_input:
+        $ref: '#/definitions/domain.FractureInput'
+      message:
+        type: string
+      missing_fields:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/service.ChatStatus'
+    type: object
+  service.ChatStatus:
+    enum:
+    - complete
+    - needs_clarification
+    - error
+    type: string
+    x-enum-varnames:
+    - ChatStatusComplete
+    - ChatStatusNeedsClarification
+    - ChatStatusError
 host: api.anklyze.es
 info:
   contact:
@@ -551,6 +600,40 @@ paths:
       summary: Get classification trends
       tags:
       - Analytics
+  /api/chat:
+    post:
+      consumes:
+      - application/json
+      description: Processes natural language fracture descriptions and returns classification
+      parameters:
+      - description: Chat message
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/service.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Chat response with classification
+          schema:
+            $ref: '#/definitions/service.ChatResponse'
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "503":
+          description: Chat service unavailable
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Chat-based fracture classification
+      tags:
+      - Chat
   /api/classify:
     post:
       consumes:
