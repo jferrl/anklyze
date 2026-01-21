@@ -74,9 +74,9 @@ export class LandingPage {
 
   async expectFeaturesVisible() {
     await expect(this.featuresSection).toBeVisible();
-    // Check all 4 feature cards
+    // Check all 5 feature cards
     const featureCards = this.page.locator('section').filter({ hasText: /why anklyze|por qué/i }).locator('[class*="card"]');
-    await expect(featureCards).toHaveCount(4);
+    await expect(featureCards).toHaveCount(5);
   }
 
   async expectHowItWorksVisible() {
