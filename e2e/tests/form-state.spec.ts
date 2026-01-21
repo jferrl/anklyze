@@ -40,12 +40,12 @@ test.describe('Form State Management', () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select fibular level
-      await classifyPage.selectLateralLevelInfrasindesmal();
+      // Select fibular level (transindesmal requires morphology selection)
+      await classifyPage.selectLateralLevelTransindesmal();
       await classifyPage.expectClassifyButtonDisabled();
 
       // Select morphology - should be enabled
-      await classifyPage.selectLateralMorphologyInfraTransverse();
+      await classifyPage.selectLateralMorphologyTransSpiral();
       await classifyPage.expectClassifyButtonEnabled();
     });
 
@@ -57,17 +57,17 @@ test.describe('Form State Management', () => {
 
   test.describe('Field Reset on Parent Change', () => {
     test('should reset all fields when changing malleoli selection', async ({ page }) => {
-      // Complete a path
+      // Complete a path (use transindesmal which requires morphology)
       await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelInfrasindesmal();
-      await classifyPage.selectLateralMorphologyInfraTransverse();
+      await classifyPage.selectLateralLevelTransindesmal();
+      await classifyPage.selectLateralMorphologyTransSpiral();
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change malleoli selection
       await classifyPage.selectMedialOnly();
 
       // Verify the lateral morphology card is no longer visible
-      const lateralMorphCard = page.locator('#lat-morph-infra-transverse');
+      const lateralMorphCard = page.locator('#lat-morph-trans-spiral');
       await expect(lateralMorphCard).not.toBeVisible();
 
       // Button should be disabled again
@@ -75,9 +75,10 @@ test.describe('Form State Management', () => {
     });
 
     test('should reset dependent fields when changing fibular level in lateral only', async ({ page }) => {
+      // Use transindesmal which requires morphology selection
       await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelInfrasindesmal();
-      await classifyPage.selectLateralMorphologyInfraTransverse();
+      await classifyPage.selectLateralLevelTransindesmal();
+      await classifyPage.selectLateralMorphologyTransSpiral();
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change fibular level
@@ -91,10 +92,11 @@ test.describe('Form State Management', () => {
     });
 
     test('should reset dependent fields when changing fibular level in lateral posterior', async ({ page }) => {
+      // Use transindesmal which requires morphology and posterior type
       await classifyPage.selectLateralPosterior();
-      await classifyPage.selectLPLevelInfrasindesmal();
-      await classifyPage.selectLPMorphologyInfraOblique();
-      await classifyPage.selectLPPosteriorTypeInfra('posterolateral');
+      await classifyPage.selectLPLevelTransindesmal();
+      await classifyPage.selectLPMorphologyTransSpiral();
+      await classifyPage.selectLPPosteriorTypeTrans('posterolateral');
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change fibular level
