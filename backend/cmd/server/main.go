@@ -15,8 +15,11 @@ import (
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/database"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/llm"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/repository/postgres"
+	"github.com/jferrl/anklyze/internal/rules"
+	"github.com/jferrl/anklyze/internal/service"
 
 	_ "github.com/jferrl/anklyze/docs"
 )
@@ -37,6 +40,8 @@ import (
 
 func main() {
 	cfg := config.Load()
+
+	ctx := context.Background()
 
 	var auditRepo api.AuditRepository
 	var analyticsRepo api.AnalyticsRepository
@@ -61,8 +66,24 @@ func main() {
 		analyticsRepo = repository.NewNoOpAnalyticsRepository()
 	}
 
+	// Initialize chat service if Gemini is configured
+	var chatService service.ChatService
+	if cfg.HasGemini() {
+		llmClient, err := llm.NewClient(ctx, cfg.GeminiAPIKey, cfg.GeminiModel)
+		if err != nil {
+			log.Printf("WARN: Gemini client creation failed, chat disabled: %v", err)
+		} else {
+			ruleEngine := rules.NewEngine()
+			classifier := service.NewClassifierService(ruleEngine)
+			chatService = service.NewChatService(llmClient, classifier)
+			log.Println("Gemini configured, chat classification enabled")
+		}
+	} else {
+		log.Println("No GEMINI_API_KEY configured, chat classification disabled")
+	}
+
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo)
+	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo, chatService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,

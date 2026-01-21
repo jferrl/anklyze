@@ -21,7 +21,8 @@ func setupTestHandler() *Handler {
 	classifier := service.NewClassifierService(ruleEngine)
 	auditRepo := repository.NewNoOpAuditRepository()
 	analyticsRepo := repository.NewNoOpAnalyticsRepository()
-	return NewHandler(classifier, auditRepo, analyticsRepo)
+	// chatService is nil for tests - chat endpoint will return 503
+	return NewHandler(classifier, nil, auditRepo, analyticsRepo)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.

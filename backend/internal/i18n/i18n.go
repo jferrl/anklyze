@@ -61,6 +61,7 @@ const (
 	KeyErrorClassification    = "error.classification"
 	KeyErrorNoFracturesFound  = "error.no_fractures"
 	KeyErrorIsolatedPosterior = "error.isolated_posterior"
+	KeyErrorChatUnavailable   = "error.chat_unavailable"
 
 	// Form questions
 	KeyQuestionMalleoli              = "question.malleoli"

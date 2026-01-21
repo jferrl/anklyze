@@ -6,6 +6,7 @@ var spanishTranslations = map[string]string{
 	KeyErrorClassification:    "Error en la clasificación: ",
 	KeyErrorNoFracturesFound:  "No se detectaron fracturas de maléolos",
 	KeyErrorIsolatedPosterior: "Fractura aislada del maléolo posterior",
+	KeyErrorChatUnavailable:   "La clasificación por chat no está disponible temporalmente",
 
 	// Form questions
 	KeyQuestionMalleoli:              "¿Qué maléolos tiene fracturados?",

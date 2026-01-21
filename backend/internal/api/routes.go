@@ -10,11 +10,11 @@ import (
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) {
+func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditRepository, analyticsRepo AnalyticsRepository, chatService service.ChatService) {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier, auditRepo, analyticsRepo)
+	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo)
 
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
@@ -27,6 +27,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config, auditRepo AuditReposito
 	{
 		api.POST("/classify", handler.ClassifyFracture)
 		api.GET("/options", handler.GetOptions)
+		api.POST("/chat", handler.ChatMessage)
 	}
 
 	// Analytics routes

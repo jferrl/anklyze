@@ -28,14 +28,16 @@ type AnalyticsRepository interface {
 // Handler handles HTTP requests
 type Handler struct {
 	classifier    service.ClassifierService
+	chatService   service.ChatService
 	auditRepo     AuditRepository
 	analyticsRepo AnalyticsRepository
 }
 
 // NewHandler creates a new Handler
-func NewHandler(classifier service.ClassifierService, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) *Handler {
+func NewHandler(classifier service.ClassifierService, chatService service.ChatService, auditRepo AuditRepository, analyticsRepo AnalyticsRepository) *Handler {
 	return &Handler{
 		classifier:    classifier,
+		chatService:   chatService,
 		auditRepo:     auditRepo,
 		analyticsRepo: analyticsRepo,
 	}
@@ -350,4 +352,51 @@ func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, distribution)
+}
+
+// ChatMessage handles POST /api/chat
+// @Summary Chat-based fracture classification
+// @Description Processes natural language fracture descriptions and returns classification
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param input body service.ChatRequest true "Chat message"
+// @Success 200 {object} service.ChatResponse "Chat response with classification"
+// @Failure 400 {object} map[string]string "Invalid input"
+// @Failure 503 {object} map[string]string "Chat service unavailable"
+// @Router /api/chat [post]
+func (h *Handler) ChatMessage(c *gin.Context) {
+	if h.chatService == nil {
+		lang := getLanguage(c)
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"error": i18n.T(lang, i18n.KeyErrorChatUnavailable),
+		})
+		return
+	}
+
+	var req service.ChatRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		lang := getLanguage(c)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   i18n.T(lang, i18n.KeyErrorInvalidInput),
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Use query param language if not specified in body
+	if req.Language == "" {
+		req.Language = string(getLanguage(c))
+	}
+
+	resp, err := h.chatService.ProcessMessage(c.Request.Context(), req)
+	if err != nil {
+		lang := i18n.ParseLanguage(req.Language)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": i18n.T(lang, i18n.KeyErrorClassification),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

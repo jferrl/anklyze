@@ -6,6 +6,7 @@ var englishTranslations = map[string]string{
 	KeyErrorClassification:    "Classification error: ",
 	KeyErrorNoFracturesFound:  "No malleolus fractures detected",
 	KeyErrorIsolatedPosterior: "Isolated posterior malleolus fracture",
+	KeyErrorChatUnavailable:   "Chat classification is temporarily unavailable",
 
 	// Form questions
 	KeyQuestionMalleoli:              "Which malleoli are fractured?",

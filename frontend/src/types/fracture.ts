@@ -138,3 +138,27 @@ export interface FormOptions {
   suprasindesmal_types: SelectOption[];
   labels: Record<string, string>;
 }
+
+// Chat types
+export type ChatStatus = 'complete' | 'needs_clarification' | 'error';
+
+export interface Clarification {
+  field: string;
+  question: string;
+  options?: string[];
+}
+
+export interface ChatRequest {
+  message: string;
+  language: string;
+}
+
+export interface ChatResponse {
+  status: ChatStatus;
+  extracted_input?: FractureInput;
+  classification?: ClassificationResult;
+  confidence: number;
+  missing_fields?: string[];
+  clarifications?: Clarification[];
+  message: string;
+}

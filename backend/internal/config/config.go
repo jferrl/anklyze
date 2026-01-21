@@ -11,6 +11,8 @@ type Config struct {
 	DatabaseURL     string
 	AuditBufferSize int
 	CORSAllowOrigin string
+	GeminiAPIKey    string
+	GeminiModel     string
 }
 
 // Load loads configuration from environment variables.
@@ -20,12 +22,19 @@ func Load() *Config {
 		DatabaseURL:     os.Getenv("DATABASE_URL"),
 		AuditBufferSize: getEnvInt("AUDIT_BUFFER_SIZE", 100),
 		CORSAllowOrigin: getEnv("CORS_ALLOW_ORIGIN", "*"),
+		GeminiAPIKey:    os.Getenv("GEMINI_API_KEY"),
+		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-3-flash-preview"),
 	}
 }
 
 // HasDatabase returns true if database is configured.
 func (c *Config) HasDatabase() bool {
 	return c.DatabaseURL != ""
+}
+
+// HasGemini returns true if Gemini API is configured.
+func (c *Config) HasGemini() bool {
+	return c.GeminiAPIKey != ""
 }
 
 func getEnv(key, defaultValue string) string {

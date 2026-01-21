@@ -110,11 +110,40 @@
   },
   "classify": {
     "backToHome": "Volver al Inicio",
+    "modeForm": "Formulario",
+    "modeChat": "Chat",
     "flowDiagram": {
       "title": "Flujo de Clasificación",
       "description": "Guía visual del proceso de decisión de clasificación",
       "show": "Mostrar Flujo",
       "hide": "Ocultar Flujo"
+    }
+  },
+  "chat": {
+    "placeholder": "Describe la fractura de tobillo que quieres clasificar...",
+    "inputPlaceholder": "Describe la fractura...",
+    "thinking": "Analizando...",
+    "extractedParams": "Parámetros Extraídos",
+    "confirmClassify": "Confirmar y Clasificar",
+    "yes": "Sí",
+    "no": "No",
+    "examples": {
+      "title": "Ejemplos de descripciones:",
+      "ex1": "Fractura trimaleolar con peroné suprasindesmal",
+      "ex2": "Fractura de maléolo lateral a nivel de sindesmosis, patrón espiroideo",
+      "ex3": "Bimaleolar: medial transverso, peroné espiroideo"
+    },
+    "fields": {
+      "involvedMalleoli": "Maléolos involucrados",
+      "posteriorType": "Tipo posterior",
+      "medialMorphology": "Morfología medial",
+      "fibularLevel": "Nivel del peroné",
+      "lateralMorphology": "Morfología lateral",
+      "suprasindesmalType": "Tipo suprasindesmal"
+    },
+    "errors": {
+      "generic": "Lo siento, no pude procesar eso. Por favor intenta de nuevo.",
+      "unavailable": "La clasificación por chat no está disponible temporalmente."
     }
   },
   "language": {
