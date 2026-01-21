@@ -151,6 +151,7 @@ export interface Clarification {
 export interface ChatRequest {
   message: string;
   language: string;
+  session_id?: string;
 }
 
 export interface ChatResponse {

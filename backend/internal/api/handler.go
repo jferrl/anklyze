@@ -405,6 +405,8 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		return
 	}
 
+	startTime := time.Now()
+
 	var req service.ChatRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		lang := getLanguage(c)
@@ -420,6 +422,33 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		req.Language = string(getLanguage(c))
 	}
 
+	// Parse session ID if provided
+	var sessionID *uuid.UUID
+	if req.SessionID != "" {
+		id, err := uuid.Parse(req.SessionID)
+		if err == nil {
+			sessionID = &id
+		}
+	}
+
+	// Determine message type for user message
+	userMsgType := domain.ChatMessageTypeInitial
+	if sessionID != nil {
+		// Check if session has messages already (this would be a follow-up)
+		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
+		if err == nil && session != nil && session.TotalMessages > 0 {
+			userMsgType = domain.ChatMessageTypeClarificationAnswer
+		}
+	}
+
+	// Save user message if session exists
+	if sessionID != nil {
+		userMsg := domain.NewUserMessage(*sessionID, req.Message, userMsgType)
+		if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), userMsg); err != nil {
+			log.Printf("WARN: failed to save user message: %v", err)
+		}
+	}
+
 	resp, err := h.chatService.ProcessMessage(c.Request.Context(), req)
 	if err != nil {
 		lang := i18n.ParseLanguage(req.Language)
@@ -427,6 +456,56 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 			"error": i18n.T(lang, i18n.KeyErrorClassification),
 		})
 		return
+	}
+
+	processingMS := time.Since(startTime).Milliseconds()
+
+	// Save assistant message and update session if session exists
+	if sessionID != nil {
+		// Determine assistant message type
+		assistantMsgType := domain.ChatMessageTypeClassification
+		if resp.Status == service.ChatStatusNeedsClarification {
+			assistantMsgType = domain.ChatMessageTypeClarificationRequest
+		}
+
+		// Create and save assistant message
+		assistantMsg, err := domain.NewAssistantMessage(
+			*sessionID,
+			resp.Message,
+			assistantMsgType,
+			resp.ExtractedInput,
+			&resp.Confidence,
+			processingMS,
+		)
+		if err != nil {
+			log.Printf("WARN: failed to create assistant message: %v", err)
+		} else {
+			if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), assistantMsg); err != nil {
+				log.Printf("WARN: failed to save assistant message: %v", err)
+			}
+		}
+
+		// Update session counts and state
+		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
+		if err == nil && session != nil {
+			// Increment message count (2 messages: user + assistant)
+			session.IncrementMessages()
+			session.IncrementMessages()
+
+			// Increment clarification count if needed
+			if resp.Status == service.ChatStatusNeedsClarification {
+				session.IncrementClarifications()
+			}
+
+			// If classification is complete, update session with final results
+			if resp.Status == service.ChatStatusComplete && resp.Classification != nil {
+				session.Complete(resp.Confidence, resp.Classification)
+			}
+
+			if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
+				log.Printf("WARN: failed to update session: %v", err)
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, resp)

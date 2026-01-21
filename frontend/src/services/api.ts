@@ -48,11 +48,12 @@ export async function getFormOptions(): Promise<FormOptions> {
   return response.json();
 }
 
-export async function sendChatMessage(message: string): Promise<ChatResponse> {
+export async function sendChatMessage(message: string, sessionId?: string): Promise<ChatResponse> {
   const lang = getCurrentLanguage();
   const request: ChatRequest = {
     message,
     language: lang,
+    session_id: sessionId,
   };
 
   const response = await fetch(`${API_BASE_URL}/api/chat?lang=${lang}`, {

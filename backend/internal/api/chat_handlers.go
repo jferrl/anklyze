@@ -63,13 +63,17 @@ func (h *Handler) CompleteChatSession(c *gin.Context) {
 		return
 	}
 
-	session.Status = domain.ChatSessionStatusComplete
-	session.UpdatedAt = session.CreatedAt // Will be updated properly in domain method
+	// Only update if not already complete (chat handler may have already completed it)
+	if session.Status != domain.ChatSessionStatusComplete {
+		// Use Complete with nil result if we don't have classification data
+		// This will still set status, duration, and timestamp correctly
+		session.Complete(0, nil)
 
-	if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
-		log.Printf("WARN: failed to update chat session: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update session"})
-		return
+		if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
+			log.Printf("WARN: failed to update chat session: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update session"})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "completed"})

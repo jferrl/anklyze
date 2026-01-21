@@ -20,8 +20,9 @@ const (
 
 // ChatRequest represents a chat message request.
 type ChatRequest struct {
-	Message  string `json:"message"`
-	Language string `json:"language"`
+	Message   string `json:"message"`
+	Language  string `json:"language"`
+	SessionID string `json:"session_id,omitempty"`
 }
 
 // ChatResponse represents the response from chat classification.

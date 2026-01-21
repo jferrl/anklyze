@@ -70,7 +70,7 @@ export function useChat() {
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      const response: ChatResponse = await sendChatMessage(text);
+      const response: ChatResponse = await sendChatMessage(text, sessionIdRef.current || undefined);
 
       // Add assistant response
       const assistantMessage: ChatMessage = {
