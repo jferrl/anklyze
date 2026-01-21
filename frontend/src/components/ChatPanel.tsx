@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Loader2, Check, RotateCcw, Bot, User, Sparkles, MessageSquare } from 'lucide-react';
+import { Send, Loader2, Check, RotateCcw, Bot, User, Sparkles, MessageSquare, HelpCircle, FlaskConical } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { useChat, type ChatMessage } from '../hooks/useChat';
 import { ClassificationResult as ClassificationResultComponent } from './ClassificationResult';
-import type { FractureInput, ClassificationResult } from '../types/fracture';
+import type { FractureInput, ClassificationResult, Clarification } from '../types/fracture';
 
 interface ChatPanelProps {
   onClassificationComplete?: (result: ClassificationResult, input: FractureInput) => void;
@@ -23,8 +23,10 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
     isLoading,
     extractedInput,
     classification,
+    clarifications,
     sendMessage,
     confirmAndClassify,
+    answerClarification,
     reset,
   } = useChat();
 
@@ -70,6 +72,23 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
 
   return (
     <div className="flex flex-col h-full max-w-2xl mx-auto">
+      {/* Experimental Notice */}
+      <div className="mx-4 mt-4 mb-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+        <div className="flex items-start gap-2">
+          <FlaskConical className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant="outline" className="text-xs bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700">
+                {t('chat.experimental.badge')}
+              </Badge>
+            </div>
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              {t('chat.experimental.notice')}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto space-y-4 p-4 min-h-[400px] max-h-[600px]">
         {messages.length === 0 ? (
@@ -88,8 +107,17 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Clarification Questions Card */}
+      {clarifications && clarifications.length > 0 && !classification && (
+        <ClarificationCard
+          clarifications={clarifications}
+          onAnswer={answerClarification}
+          isLoading={isLoading}
+        />
+      )}
+
       {/* Extracted Parameters Card */}
-      {extractedInput && !classification && (
+      {extractedInput && !classification && (!clarifications || clarifications.length === 0) && (
         <ExtractedParamsCard
           input={extractedInput}
           confidence={messages[messages.length - 1]?.confidence}
@@ -340,6 +368,71 @@ function ExtractedParamsCard({ input, confidence, onConfirm, isLoading }: Extrac
           )}
           {t('chat.confirmClassify')}
         </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface ClarificationCardProps {
+  clarifications: Clarification[];
+  onAnswer: (field: string, value: string) => void;
+  isLoading: boolean;
+}
+
+function ClarificationCard({ clarifications, onAnswer, isLoading }: ClarificationCardProps) {
+  const { t } = useTranslation();
+
+  const handleOptionClick = (field: string, option: string) => {
+    if (isLoading) return;
+    onAnswer(field, option);
+  };
+
+  return (
+    <Card className="mx-4 mb-4 overflow-hidden shadow-lg border-0">
+      {/* Gradient accent bar */}
+      <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
+
+      <CardHeader className="pb-3 pt-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <HelpCircle className="w-4 h-4 text-amber-600" />
+          </div>
+          <CardTitle className="text-base font-semibold">{t('chat.clarification.title')}</CardTitle>
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">
+          {t('chat.clarification.subtitle')}
+        </p>
+      </CardHeader>
+
+      <CardContent className="pt-0 space-y-4">
+        {clarifications.map((clarification, index) => (
+          <div key={`${clarification.field}-${index}`} className="space-y-2">
+            <p className="text-sm font-medium text-foreground">
+              {clarification.question}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {clarification.options?.map((option, optionIndex) => (
+                <Button
+                  key={optionIndex}
+                  variant="outline"
+                  size="sm"
+                  disabled={isLoading}
+                  onClick={() => handleOptionClick(clarification.field, option)}
+                  className="text-xs h-auto py-2 px-3 whitespace-normal text-left justify-start hover:bg-primary/10 hover:border-primary/50 transition-colors"
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-2">
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <span className="text-sm text-muted-foreground ml-2">{t('chat.thinking')}</span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

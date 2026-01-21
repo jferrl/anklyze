@@ -23,6 +23,15 @@ Update translations in:
 - `backend/internal/i18n/en.go`
 - `backend/internal/i18n/es.go`
 
+## 3.1 Update LLM Prompts
+
+Update the LLM prompts in `backend/internal/llm/prompts.go`:
+
+- Update the "Classification Algorithm - Required Fields by Fracture Type" section in both English (`systemPromptEN`) and Spanish (`systemPromptES`) to match the new flow
+- Update the "Decision Tree Questions" section to reflect any new decision points or changed logic
+- Update the few-shot examples in `fewShotExamplesEN` and `fewShotExamplesES` to reflect new classification paths
+- Ensure clarification questions match the updated flow diagram logic
+
 ## 4. Update Backend Tests
 Update tests in `backend/internal/rules/engine_test.go` to match the new rules.
 
@@ -62,12 +71,14 @@ cd e2e && npm run test
 - `docs/Option Choice Decision Flow-EN.mmd` - English translation
 
 ### Backend
+
 - `backend/internal/rules/engine.go` - Classification logic
 - `backend/internal/rules/engine_test.go` - Backend tests
 - `backend/internal/domain/fracture.go` - Domain types
 - `backend/internal/domain/classification.go` - Classification types
 - `backend/internal/i18n/en.go` - English translations
 - `backend/internal/i18n/es.go` - Spanish translations
+- `backend/internal/llm/prompts.go` - LLM prompts for chat classification (decision tree questions and few-shot examples)
 
 ### Frontend
 - `frontend/src/components/FractureForm.tsx` - Form component

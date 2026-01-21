@@ -127,6 +127,10 @@
     "confirmClassify": "Confirm & Classify",
     "yes": "Yes",
     "no": "No",
+    "experimental": {
+      "badge": "Experimental",
+      "notice": "Chat classification is in experimental phase. For maximum accuracy, use the form-based classification."
+    },
     "examples": {
       "title": "Example descriptions:",
       "ex1": "Trimaleolar fracture with suprasindesmal fibula",
@@ -140,6 +144,10 @@
       "fibularLevel": "Fibular level",
       "lateralMorphology": "Lateral morphology",
       "suprasindesmalType": "Suprasindesmal type"
+    },
+    "clarification": {
+      "title": "Additional Information Needed",
+      "subtitle": "Please select an option to help classify the fracture"
     },
     "errors": {
       "generic": "Sorry, I couldn't process that. Please try again.",

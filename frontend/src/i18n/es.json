@@ -127,6 +127,10 @@
     "confirmClassify": "Confirmar y Clasificar",
     "yes": "Sí",
     "no": "No",
+    "experimental": {
+      "badge": "Experimental",
+      "notice": "La clasificación por chat está en fase experimental. Para mayor precisión, usa la clasificación por formulario."
+    },
     "examples": {
       "title": "Ejemplos de descripciones:",
       "ex1": "Fractura trimaleolar con peroné suprasindesmal",
@@ -140,6 +144,10 @@
       "fibularLevel": "Nivel del peroné",
       "lateralMorphology": "Morfología lateral",
       "suprasindesmalType": "Tipo suprasindesmal"
+    },
+    "clarification": {
+      "title": "Información Adicional Necesaria",
+      "subtitle": "Por favor selecciona una opción para ayudar a clasificar la fractura"
     },
     "errors": {
       "generic": "Lo siento, no pude procesar eso. Por favor intenta de nuevo.",

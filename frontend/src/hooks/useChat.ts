@@ -19,6 +19,7 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null);
   const [extractedInput, setExtractedInput] = useState<FractureInput | null>(null);
   const [classification, setClassification] = useState<ClassificationResult | null>(null);
+  const [clarifications, setClarifications] = useState<Clarification[] | null>(null);
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim()) return;
@@ -57,6 +58,13 @@ export function useChat() {
       }
       if (response.classification) {
         setClassification(response.classification);
+        setClarifications(null); // Clear clarifications when we have a classification
+      }
+      // Update clarifications state
+      if (response.clarifications && response.clarifications.length > 0) {
+        setClarifications(response.clarifications);
+      } else {
+        setClarifications(null);
       }
 
       return response;
@@ -114,10 +122,23 @@ export function useChat() {
     });
   }, []);
 
+  const answerClarification = useCallback(async (field: string, answer: string) => {
+    // Build a message that includes the answer to the clarification
+    // This helps the LLM understand the context and continue the classification
+    const answerMessage = `For ${field}: ${answer}`;
+
+    // Clear the current clarification since we're answering it
+    setClarifications(null);
+
+    // Send the answer as a new message to continue the conversation
+    await sendMessage(answerMessage);
+  }, [sendMessage]);
+
   const reset = useCallback(() => {
     setMessages([]);
     setExtractedInput(null);
     setClassification(null);
+    setClarifications(null);
     setError(null);
   }, []);
 
@@ -127,9 +148,11 @@ export function useChat() {
     error,
     extractedInput,
     classification,
+    clarifications,
     sendMessage,
     confirmAndClassify,
     editExtractedInput,
+    answerClarification,
     reset,
   };
 }

@@ -101,7 +101,86 @@ You MUST respond with valid JSON matching this exact schema:
 4. The "involved_malleoli" field is always required - infer from context if possible
 5. For lateral/fibula fractures, try to determine the level relative to syndesmosis
 6. For bimalleolar fractures (lateral_medial), determine if additional fields are needed
-7. Use the Classification Algorithm above to determine which fields are required`
+7. Use the Classification Algorithm above to determine which fields are required
+
+## Decision Tree Questions (CRITICAL - Ask when information is missing)
+
+When you cannot determine required fields from the description, you MUST generate clarifications following this decision tree. Ask ONLY the questions needed for the next step in the classification - do not ask all questions at once.
+
+### Step 1: Determine involved malleoli (ALWAYS REQUIRED FIRST)
+If unclear which malleoli are fractured:
+- field: "involved_malleoli"
+- question: "Which malleoli are fractured?"
+- options: ["Posterior only", "Medial only", "Lateral/Fibula only", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimalleolar)", "All three (trimaleolar)"]
+
+### Step 2: Based on involved_malleoli, ask the NEXT required question
+
+#### For "posterior_only":
+- field: "posterior_fracture_type"
+- question: "What type of posterior malleolus fracture? (Bartonicek classification)"
+- options: ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]
+
+#### For "medial_only":
+- field: "medial_morphology"
+- question: "What is the fracture line orientation of the medial malleolus?"
+- options: ["Oblique (diagonal line)", "Transverse (horizontal line)"]
+
+#### For "lateral_only":
+First ask fibular level:
+- field: "fibular_level"
+- question: "Where is the fibular fracture relative to the syndesmosis?"
+- options: ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]
+
+If transindesmal, then ask:
+- field: "lateral_morphology"
+- question: "What is the fracture pattern of the fibula?"
+- options: ["Spiral (twisting pattern)", "Oblique (diagonal line)"]
+
+If suprasindesmal, then ask:
+- field: "suprasindesmal_type"
+- question: "What type of suprasindesmal fracture?"
+- options: ["Simple diaphyseal", "Multifragmentary", "Proximal (Maisonneuve)"]
+
+#### For "lateral_posterior":
+First ask fibular level:
+- field: "fibular_level"
+- question: "Where is the fibular fracture relative to the syndesmosis?"
+- options: ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]
+
+If transindesmal, ask lateral morphology then posterior type.
+If suprasindesmal, ask suprasindesmal type then posterior type.
+
+#### For "lateral_medial" (bimalleolar without posterior):
+Ask medial morphology:
+- field: "medial_morphology"
+- question: "What is the medial malleolus fracture orientation?"
+- options: ["Oblique (diagonal line)", "Transverse (horizontal line)"]
+
+If medial is oblique, ask:
+- field: "fibula_infrasindesmal_transverse"
+- question: "Is the fibula fracture below the syndesmosis (infrasindesmal) AND transverse?"
+- options: ["Yes", "No"]
+
+If not infrasindesmal transverse, ask fibular level and then lateral morphology based on level.
+
+#### For "trimaleolar":
+First ask fibular level:
+- field: "fibular_level"
+- question: "Is the fibular fracture above the syndesmosis (high/suprasindesmal) or at/below (low)?"
+- options: ["High (suprasindesmal/Weber C)", "Low (transindesmal or infrasindesmal/Weber B or A)"]
+
+If suprasindesmal, ask suprasindesmal type.
+If low, ask lateral morphology:
+- field: "lateral_morphology"
+- question: "What is the fibular fracture pattern?"
+- options: ["Spiral (twisting pattern)", "Oblique (diagonal line)", "Transverse (horizontal line)"]
+
+## Important Clarification Guidelines
+1. Ask ONE question at a time when possible - the most important missing field first
+2. If multiple fields are equally important, include up to 2-3 clarifications maximum
+3. Provide clear, medically accurate options
+4. Always include the field name that the answer will populate
+5. When confidence is low (<0.7) due to missing information, ALWAYS include clarifications`
 
 const systemPromptES = `Eres un asistente de extracción de datos médicos especializado en clasificación de fracturas de tobillo.
 Tu tarea es extraer información estructurada de fracturas a partir de descripciones en lenguaje natural.
@@ -198,7 +277,86 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 4. El campo "involved_malleoli" siempre es requerido - infiere del contexto si es posible
 5. Para fracturas laterales/peroné, intenta determinar el nivel relativo a la sindesmosis
 6. Para fracturas bimaleolares (lateral_medial), determina si se necesitan campos adicionales
-7. Usa el Algoritmo de Clasificación anterior para determinar qué campos son requeridos`
+7. Usa el Algoritmo de Clasificación anterior para determinar qué campos son requeridos
+
+## Árbol de Decisión para Preguntas (CRÍTICO - Preguntar cuando falta información)
+
+Cuando no puedas determinar los campos requeridos de la descripción, DEBES generar clarificaciones siguiendo este árbol de decisión. Pregunta SOLO las preguntas necesarias para el siguiente paso en la clasificación - no preguntes todo de una vez.
+
+### Paso 1: Determinar maléolos involucrados (SIEMPRE REQUERIDO PRIMERO)
+Si no está claro qué maléolos están fracturados:
+- field: "involved_malleoli"
+- question: "¿Qué maléolos están fracturados?"
+- options: ["Solo posterior", "Solo medial", "Solo lateral/Peroné", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimaleolar)", "Los tres (trimaleolar)"]
+
+### Paso 2: Según involved_malleoli, preguntar la SIGUIENTE pregunta requerida
+
+#### Para "posterior_only":
+- field: "posterior_fracture_type"
+- question: "¿Qué tipo de fractura del maléolo posterior? (clasificación de Bartonicek)"
+- options: ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]
+
+#### Para "medial_only":
+- field: "medial_morphology"
+- question: "¿Cuál es la orientación de la línea de fractura del maléolo medial?"
+- options: ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]
+
+#### Para "lateral_only":
+Primero preguntar nivel del peroné:
+- field: "fibular_level"
+- question: "¿Dónde está la fractura del peroné respecto a la sindesmosis?"
+- options: ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]
+
+Si transindesmal, entonces preguntar:
+- field: "lateral_morphology"
+- question: "¿Cuál es el patrón de fractura del peroné?"
+- options: ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)"]
+
+Si suprasindesmal, entonces preguntar:
+- field: "suprasindesmal_type"
+- question: "¿Qué tipo de fractura suprasindesmal?"
+- options: ["Diafisaria simple", "Multifragmentaria", "Proximal (Maisonneuve)"]
+
+#### Para "lateral_posterior":
+Primero preguntar nivel del peroné:
+- field: "fibular_level"
+- question: "¿Dónde está la fractura del peroné respecto a la sindesmosis?"
+- options: ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]
+
+Si transindesmal, preguntar morfología lateral y luego tipo posterior.
+Si suprasindesmal, preguntar tipo suprasindesmal y luego tipo posterior.
+
+#### Para "lateral_medial" (bimaleolar sin posterior):
+Preguntar morfología medial:
+- field: "medial_morphology"
+- question: "¿Cuál es la orientación de la fractura del maléolo medial?"
+- options: ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]
+
+Si medial es oblicua, preguntar:
+- field: "fibula_infrasindesmal_transverse"
+- question: "¿La fractura del peroné está por debajo de la sindesmosis (infrasindesmal) Y es transversa?"
+- options: ["Sí", "No"]
+
+Si no es infrasindesmal transversa, preguntar nivel del peroné y luego morfología lateral según el nivel.
+
+#### Para "trimaleolar":
+Primero preguntar nivel del peroné:
+- field: "fibular_level"
+- question: "¿La fractura del peroné está por encima de la sindesmosis (alta/suprasindesmal) o a nivel/por debajo (baja)?"
+- options: ["Alta (suprasindesmal/Weber C)", "Baja (transindesmal o infrasindesmal/Weber B o A)"]
+
+Si suprasindesmal, preguntar tipo suprasindesmal.
+Si baja, preguntar morfología lateral:
+- field: "lateral_morphology"
+- question: "¿Cuál es el patrón de fractura del peroné?"
+- options: ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)", "Transversa (línea horizontal)"]
+
+## Directrices Importantes para Clarificaciones
+1. Pregunta UNA pregunta a la vez cuando sea posible - el campo faltante más importante primero
+2. Si múltiples campos son igualmente importantes, incluye máximo 2-3 clarificaciones
+3. Proporciona opciones claras y médicamente precisas
+4. Siempre incluye el nombre del campo que la respuesta completará
+5. Cuando la confianza es baja (<0.7) debido a información faltante, SIEMPRE incluye clarificaciones`
 
 const fewShotExamplesEN = `
 ## Examples
@@ -217,19 +375,19 @@ Output:
   "clarifications": []
 }
 
-Example 2 - Incomplete description:
+Example 2 - Incomplete lateral fracture (needs fibular level):
 Input: "Lateral malleolus fracture"
 Output:
 {
   "extracted_input": {
     "involved_malleoli": "lateral_only"
   },
-  "confidence": 0.6,
+  "confidence": 0.5,
   "missing_fields": ["fibular_level"],
   "clarifications": [{"field": "fibular_level", "question": "Where is the fibular fracture located relative to the syndesmosis?", "options": ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]}]
 }
 
-Example 3 - Bimalleolar with details:
+Example 3 - Bimalleolar with complete details:
 Input: "Bimalleolar fracture: transverse medial malleolus, spiral fibula at syndesmosis level"
 Output:
 {
@@ -244,7 +402,7 @@ Output:
   "clarifications": []
 }
 
-Example 4 - Posterior only:
+Example 4 - Posterior only complete:
 Input: "Isolated posterior malleolus fracture, Bartonicek type 2"
 Output:
 {
@@ -255,6 +413,82 @@ Output:
   "confidence": 0.95,
   "missing_fields": [],
   "clarifications": []
+}
+
+Example 5 - Incomplete bimalleolar (needs multiple fields):
+Input: "Bimalleolar fracture involving lateral and medial malleoli"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["medial_morphology", "fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "medial_morphology", "question": "What is the medial malleolus fracture orientation?", "options": ["Oblique (diagonal line)", "Transverse (horizontal line)"]},
+    {"field": "fibular_level", "question": "Where is the fibular fracture relative to the syndesmosis?", "options": ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]}
+  ]
+}
+
+Example 6 - Trimaleolar incomplete (needs fibular level and morphology):
+Input: "Trimaleolar ankle fracture"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "fibular_level", "question": "Is the fibular fracture above the syndesmosis (high) or at/below (low)?", "options": ["High (suprasindesmal/Weber C)", "Low (transindesmal or infrasindesmal)"]}
+  ]
+}
+
+Example 7 - Lateral with transindesmal (needs morphology):
+Input: "Weber B fibula fracture at syndesmosis level"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal"
+  },
+  "confidence": 0.6,
+  "missing_fields": ["lateral_morphology"],
+  "clarifications": [{"field": "lateral_morphology", "question": "What is the fracture pattern of the fibula?", "options": ["Spiral (twisting pattern)", "Oblique (diagonal line)"]}]
+}
+
+Example 8 - Medial only incomplete:
+Input: "Fracture of the medial malleolus"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["medial_morphology"],
+  "clarifications": [{"field": "medial_morphology", "question": "What is the fracture line orientation of the medial malleolus?", "options": ["Oblique (diagonal line)", "Transverse (horizontal line)"]}]
+}
+
+Example 9 - Vague description (needs involved malleoli first):
+Input: "Ankle fracture after twisting injury"
+Output:
+{
+  "extracted_input": {},
+  "confidence": 0.2,
+  "missing_fields": ["involved_malleoli"],
+  "clarifications": [{"field": "involved_malleoli", "question": "Which malleoli are fractured?", "options": ["Posterior only", "Medial only", "Lateral/Fibula only", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimalleolar)", "All three (trimaleolar)"]}]
+}
+
+Example 10 - Posterior only incomplete:
+Input: "Isolated posterior malleolar fracture"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["posterior_fracture_type"],
+  "clarifications": [{"field": "posterior_fracture_type", "question": "What type of posterior malleolus fracture? (Bartonicek classification)", "options": ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]}]
 }`
 
 const fewShotExamplesES = `
@@ -274,19 +508,19 @@ Salida:
   "clarifications": []
 }
 
-Ejemplo 2 - Descripción incompleta:
+Ejemplo 2 - Fractura lateral incompleta (necesita nivel del peroné):
 Entrada: "Fractura de maléolo lateral"
 Salida:
 {
   "extracted_input": {
     "involved_malleoli": "lateral_only"
   },
-  "confidence": 0.6,
+  "confidence": 0.5,
   "missing_fields": ["fibular_level"],
   "clarifications": [{"field": "fibular_level", "question": "¿Dónde está ubicada la fractura de peroné respecto a la sindesmosis?", "options": ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]}]
 }
 
-Ejemplo 3 - Bimaleolar con detalles:
+Ejemplo 3 - Bimaleolar con detalles completos:
 Entrada: "Fractura bimaleolar: maléolo medial transverso, peroné espirodeo a nivel de sindesmosis"
 Salida:
 {
@@ -301,7 +535,7 @@ Salida:
   "clarifications": []
 }
 
-Ejemplo 4 - Solo posterior:
+Ejemplo 4 - Solo posterior completo:
 Entrada: "Fractura aislada de maléolo posterior, Bartonicek tipo 2"
 Salida:
 {
@@ -312,6 +546,82 @@ Salida:
   "confidence": 0.95,
   "missing_fields": [],
   "clarifications": []
+}
+
+Ejemplo 5 - Bimaleolar incompleta (necesita múltiples campos):
+Entrada: "Fractura bimaleolar que involucra maléolos lateral y medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["medial_morphology", "fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "medial_morphology", "question": "¿Cuál es la orientación de la fractura del maléolo medial?", "options": ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]},
+    {"field": "fibular_level", "question": "¿Dónde está la fractura del peroné respecto a la sindesmosis?", "options": ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]}
+  ]
+}
+
+Ejemplo 6 - Trimaleolar incompleta (necesita nivel y morfología):
+Entrada: "Fractura trimaleolar de tobillo"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "fibular_level", "question": "¿La fractura del peroné está por encima de la sindesmosis (alta) o a nivel/por debajo (baja)?", "options": ["Alta (suprasindesmal/Weber C)", "Baja (transindesmal o infrasindesmal)"]}
+  ]
+}
+
+Ejemplo 7 - Lateral con transindesmal (necesita morfología):
+Entrada: "Fractura Weber B de peroné a nivel de sindesmosis"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal"
+  },
+  "confidence": 0.6,
+  "missing_fields": ["lateral_morphology"],
+  "clarifications": [{"field": "lateral_morphology", "question": "¿Cuál es el patrón de fractura del peroné?", "options": ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)"]}]
+}
+
+Ejemplo 8 - Solo medial incompleta:
+Entrada: "Fractura del maléolo medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["medial_morphology"],
+  "clarifications": [{"field": "medial_morphology", "question": "¿Cuál es la orientación de la línea de fractura del maléolo medial?", "options": ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]}]
+}
+
+Ejemplo 9 - Descripción vaga (necesita maléolos involucrados primero):
+Entrada: "Fractura de tobillo después de torcedura"
+Salida:
+{
+  "extracted_input": {},
+  "confidence": 0.2,
+  "missing_fields": ["involved_malleoli"],
+  "clarifications": [{"field": "involved_malleoli", "question": "¿Qué maléolos están fracturados?", "options": ["Solo posterior", "Solo medial", "Solo lateral/Peroné", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimaleolar)", "Los tres (trimaleolar)"]}]
+}
+
+Ejemplo 10 - Solo posterior incompleta:
+Entrada: "Fractura aislada del maléolo posterior"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["posterior_fracture_type"],
+  "clarifications": [{"field": "posterior_fracture_type", "question": "¿Qué tipo de fractura del maléolo posterior? (clasificación de Bartonicek)", "options": ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]}]
 }`
 
 // GetSystemPrompt returns the system prompt for the given language.
