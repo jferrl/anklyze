@@ -7,7 +7,7 @@
     "badge": "Herramienta de Apoyo a la Decisión Clínica",
     "headline": "Clasifica Fracturas de Tobillo",
     "headlineHighlight": "en Segundos",
-    "subheadline": "Obtén clasificaciones instantáneas de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek con nuestro algoritmo basado en evidencia. Utilizado por cirujanos ortopédicos en todo el mundo.",
+    "subheadline": "Obtén clasificaciones instantáneas de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek con nuestro algoritmo basado en evidencia.",
     "startClassifying": "Comenzar a Clasificar",
     "learnMore": "Saber Más",
     "features": {
@@ -28,6 +28,11 @@
       "free": {
         "title": "Siempre Gratis",
         "description": "Sin suscripción, sin anuncios, sin recolección de datos. Solo una herramienta que funciona."
+      },
+      "chat": {
+        "title": "Chat IA",
+        "description": "Describe la fractura en lenguaje natural y deja que la IA extraiga los parámetros de clasificación.",
+        "badge": "Experimental"
       }
     },
     "howItWorks": {

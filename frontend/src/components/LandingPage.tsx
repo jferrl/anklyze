@@ -16,6 +16,7 @@ import {
   FileCheck2,
   ArrowRight,
   Github,
+  MessageCircle,
   // Stethoscope, // Uncomment when re-enabling Team Section
   // Code, // Uncomment when re-enabling Team Section
 } from 'lucide-react';
@@ -43,6 +44,12 @@ export function LandingPage() {
       icon: Heart,
       title: t('landing.features.free.title'),
       description: t('landing.features.free.description'),
+    },
+    {
+      icon: MessageCircle,
+      title: t('landing.features.chat.title'),
+      description: t('landing.features.chat.description'),
+      badge: t('landing.features.chat.badge'),
     },
   ];
 
@@ -165,7 +172,7 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {features.map((feature, index) => (
               <Card
                 key={index}
@@ -175,7 +182,14 @@ export function LandingPage() {
                   <div className="mx-auto h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg">{feature.title}</h3>
+                  <div className="flex items-center justify-center gap-2">
+                    <h3 className="font-semibold text-lg">{feature.title}</h3>
+                    {feature.badge && (
+                      <Badge variant="secondary" className="text-xs">
+                        {feature.badge}
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {feature.description}
                   </p>

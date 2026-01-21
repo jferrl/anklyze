@@ -7,7 +7,7 @@
     "badge": "Clinical Decision Support Tool",
     "headline": "Classify Ankle Fractures",
     "headlineHighlight": "in Seconds",
-    "subheadline": "Get instant Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications with our evidence-based algorithm. Trusted by orthopedic surgeons worldwide.",
+    "subheadline": "Get instant Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classifications with our evidence-based algorithm.",
     "startClassifying": "Start Classifying",
     "learnMore": "Learn More",
     "features": {
@@ -28,6 +28,11 @@
       "free": {
         "title": "Always Free",
         "description": "No subscription, no ads, no data collection. Just a tool that works."
+      },
+      "chat": {
+        "title": "AI Chat",
+        "description": "Describe the fracture in natural language and let AI extract the classification parameters.",
+        "badge": "Experimental"
       }
     },
     "howItWorks": {
