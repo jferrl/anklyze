@@ -20,6 +20,7 @@ anklyze/
 │       ├── database/            # Database connection (GORM)
 │       ├── domain/              # Domain models and types
 │       ├── i18n/                # Translations (en.go, es.go)
+│       ├── llm/                 # LLM integration (Gemini API)
 │       ├── repository/          # Data access layer
 │       │   └── postgres/        # PostgreSQL implementation
 │       ├── rules/               # Classification rule engine
@@ -54,9 +55,12 @@ anklyze/
 - `internal/repository/audit.go` - `AuditRepository` and `AnalyticsRepository` interfaces with NoOp implementations
 - `internal/repository/postgres/audit.go` - PostgreSQL audit implementation with async writes
 - `internal/repository/postgres/analytics.go` - PostgreSQL analytics implementation with aggregation queries
+- `internal/llm/client.go` - Gemini API client for natural language fracture extraction
+- `internal/service/chat.go` - Chat service for processing natural language fracture descriptions
 
 ### API Endpoints
 - `POST /api/classify` - Accepts `FractureInput`, returns `ClassificationResult`
+- `POST /api/chat` - Chat-based classification from natural language descriptions
 - `GET /api/options` - Returns form options for frontend
 - `GET /api/analytics/summary` - Returns aggregated statistics for a time period
 - `GET /api/analytics/trends` - Returns time-series classification data
@@ -66,10 +70,12 @@ anklyze/
 
 ### Environment Variables
 
-| Variable       | Description                  | Default                  |
-|----------------|------------------------------|--------------------------|
-| `PORT`         | Server port                  | `8080`                   |
-| `DATABASE_URL` | PostgreSQL connection string | (none - audit disabled)  |
+| Variable        | Description                   | Default                     |
+|-----------------|-------------------------------|-----------------------------|
+| `PORT`          | Server port                   | `8080`                      |
+| `DATABASE_URL`  | PostgreSQL connection string  | (none - audit disabled)     |
+| `GEMINI_API_KEY`| Google Gemini API key         | (none - chat disabled)      |
+| `GEMINI_MODEL`  | Gemini model to use           | `gemini-3-flash-preview`    |
 
 ### Running Backend
 ```bash
@@ -128,6 +134,46 @@ Query parameters:
 - `from` - Start date (YYYY-MM-DD), defaults to 30 days ago
 - `to` - End date (YYYY-MM-DD), defaults to today
 - `granularity` - Time aggregation (day, week, month), defaults to day
+
+### Chat-Based Classification
+
+The chat endpoint (`POST /api/chat`) allows users to describe fractures in natural language and receive classifications.
+
+**Request:**
+
+```json
+{
+  "message": "Patient has a lateral malleolus fracture at the level of the syndesmosis with spiral morphology",
+  "language": "en"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "complete",
+  "extracted_input": { ... },
+  "classification": { ... },
+  "confidence": 0.85,
+  "message": "Fracture classified successfully."
+}
+```
+
+**Status values:**
+
+- `complete` - Classification successful
+- `needs_clarification` - More information needed (includes `clarifications` array with questions)
+- `error` - Processing failed
+
+**How it works:**
+
+1. User sends natural language fracture description
+2. Gemini LLM extracts structured `FractureInput` parameters
+3. If confidence < 0.7 or fields are ambiguous, returns clarification questions
+4. Otherwise, runs the rules engine and returns full classification
+
+**Note:** Requires `GEMINI_API_KEY` environment variable. Returns 503 if chat service is unavailable.
 
 ## Frontend (React + TypeScript)
 
