@@ -19,6 +19,8 @@ var spanishTranslations = map[string]string{
 	KeyQuestionLateralMorphology:     "¿De qué morfología es la fractura?",
 	KeyQuestionSuprasindesmalType:    "¿De qué tipo?",
 	KeyQuestionFibulaInfraTransverse: "¿La fractura del peroné es infrasindesmal y transversa?",
+	KeyQuestionHasCTScan:             "¿Tiene TAC?",
+	KeyQuestionFibulaTracePattern:    "¿Cómo es el trazo del peroné?",
 
 	// Option labels - Involved malleoli
 	KeyOptionPosteriorOnly:    "Maléolo posterior",
@@ -50,9 +52,13 @@ var spanishTranslations = map[string]string{
 	KeyOptionLateralSpiral:     "Espiroidea (Baja anterior, alta posterior)",
 
 	// Option labels - Suprasindesmal type
-	KeyOptionSupraSimple:         "Diafisaria Simple",
+	KeyOptionSupraSimple:           "Diafisaria Simple",
 	KeyOptionSupraMultifragmentary: "Multifragmentaria",
-	KeyOptionSupraProximal:       "Proximal",
+	KeyOptionSupraProximal:         "Proximal",
+
+	// Option labels - Fibula trace pattern
+	KeyOptionFibulaTraceShort: "Parasindesmal de trazo oblicuo corto/transverso/conminuto",
+	KeyOptionFibulaTraceLong:  "Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo",
 
 	// Labels
 	KeyLabelYes:  "Sí",

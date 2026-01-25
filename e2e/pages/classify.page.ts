@@ -250,6 +250,45 @@ export class ClassifyPage {
     await this.page.locator('#tri-trans-level-transindesmal').click();
   }
 
+  async selectTrimaleolarPosteriorType(type: string) {
+    await this.page.locator(`#tri-post-${type}`).click();
+  }
+
+  // ==================== FIBULA TRACE PATTERN ====================
+  // Values are: parasindesmotic_short and parasindesmotic_long
+
+  async selectLateralFibulaTracePatternShort() {
+    await this.page.locator('#lat-trace-parasindesmotic_short').click();
+  }
+
+  async selectLateralFibulaTracePatternLong() {
+    await this.page.locator('#lat-trace-parasindesmotic_long').click();
+  }
+
+  async selectLPFibulaTracePatternShort() {
+    await this.page.locator('#lp-trace-parasindesmotic_short').click();
+  }
+
+  async selectLPFibulaTracePatternLong() {
+    await this.page.locator('#lp-trace-parasindesmotic_long').click();
+  }
+
+  async selectLMFibulaTracePatternShort() {
+    await this.page.locator('#lm-trace-parasindesmotic_short').click();
+  }
+
+  async selectLMFibulaTracePatternLong() {
+    await this.page.locator('#lm-trace-parasindesmotic_long').click();
+  }
+
+  async selectTriFibulaTracePatternShort() {
+    await this.page.locator('#tri-trace-parasindesmotic_short').click();
+  }
+
+  async selectTriFibulaTracePatternLong() {
+    await this.page.locator('#tri-trace-parasindesmotic_long').click();
+  }
+
   // ==================== FORM SUBMISSION ====================
 
   async submitClassification() {

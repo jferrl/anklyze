@@ -23,7 +23,7 @@ func (e *Engine) Classify(input domain.FractureInput, lang i18n.Language) (*doma
 	case domain.InvolvedLateralOnly:
 		return e.classifyLateralOnly(input, lang)
 	case domain.InvolvedMedialPosterior:
-		return e.classifyMedialPosterior(lang)
+		return e.classifyMedialPosterior(input, lang)
 	case domain.InvolvedLateralPosterior:
 		return e.classifyLateralPosterior(input, lang)
 	case domain.InvolvedLateralMedial:
@@ -39,9 +39,7 @@ func (e *Engine) Classify(input domain.FractureInput, lang i18n.Language) (*doma
 
 // classifyPosteriorOnly handles posterior malleolus only fractures
 func (e *Engine) classifyPosteriorOnly(input domain.FractureInput, lang i18n.Language) (*domain.ClassificationResult, error) {
-	bartonicek := getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
-
-	return &domain.ClassificationResult{
+	result := &domain.ClassificationResult{
 		FractureDescription: i18n.T(lang, i18n.KeyFractureUnimaleolarPosterior),
 		AOOTA: &domain.AOOTAClassification{
 			Code:        domain.AOOTAB3,
@@ -52,8 +50,14 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput, lang i18n.Lan
 			FullName:    i18n.T(lang, i18n.KeyLHSERName),
 			Description: i18n.T(lang, i18n.KeyLHSERDesc),
 		},
-		Bartonicek: bartonicek,
-	}, nil
+	}
+
+	// Bartonicek classification requires CT scan
+	if input.HasCTScan != nil && *input.HasCTScan {
+		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+	}
+
+	return result, nil
 }
 
 // classifyMedialOnly handles medial malleolus only fractures
@@ -138,10 +142,29 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput, lang i18n.Langu
 			Type:        domain.DanisWeberC,
 			Description: i18n.T(lang, i18n.KeyDWCDesc),
 		}
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPER,
-			FullName:    i18n.T(lang, i18n.KeyLHPERName),
-			Description: i18n.T(lang, i18n.KeyLHPERDesc),
+
+		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
+		// Proximal is always PER
+		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+			// Parasyndesmotic short oblique/transverse/comminuted → PA
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPA,
+				FullName:    i18n.T(lang, i18n.KeyLHPAName),
+				Description: i18n.T(lang, i18n.KeyLHPADesc),
+			}
+		} else {
+			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
 		}
 		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType, lang)
 	}
@@ -150,19 +173,36 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput, lang i18n.Langu
 }
 
 // classifyMedialPosterior handles medial + posterior fractures
-func (e *Engine) classifyMedialPosterior(lang i18n.Language) (*domain.ClassificationResult, error) {
-	return &domain.ClassificationResult{
+func (e *Engine) classifyMedialPosterior(input domain.FractureInput, lang i18n.Language) (*domain.ClassificationResult, error) {
+	result := &domain.ClassificationResult{
 		FractureDescription: i18n.T(lang, i18n.KeyFractureBimaleolarMedialPosterior),
 		AOOTA: &domain.AOOTAClassification{
 			Code:        domain.AOOTAB3,
 			Description: i18n.T(lang, i18n.KeyAOB3Desc),
 		},
-		LaugeHansen: &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenSER,
-			FullName:    i18n.T(lang, i18n.KeyLHSERName),
-			Description: i18n.T(lang, i18n.KeyLHSERDesc),
-		},
-	}, nil
+	}
+
+	// Lauge-Hansen is unclassifiable without CT scan to determine the mechanism
+	if input.HasCTScan != nil && *input.HasCTScan {
+		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:          domain.LaugeHansenSER,
+			FullName:      i18n.T(lang, i18n.KeyLHAmbiguousName),
+			Description:   i18n.T(lang, i18n.KeyLHAmbiguousDesc),
+			Ambiguous:     true,
+			PossibleTypes: []string{"SER", "PA"},
+		}
+	} else {
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type:          domain.LaugeHansenSER,
+			FullName:      i18n.T(lang, i18n.KeyLHAmbiguousName),
+			Description:   i18n.T(lang, i18n.KeyLHAmbiguousDesc),
+			Ambiguous:     true,
+			PossibleTypes: []string{"SER", "PA"},
+		}
+	}
+
+	return result, nil
 }
 
 // classifyLateralPosterior handles lateral + posterior fractures
@@ -205,20 +245,53 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput, lang i18n.
 				Description: i18n.T(lang, i18n.KeyLHPADesc),
 			}
 		}
-		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		}
 
 	case domain.FibularLevelSuprasindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type:        domain.DanisWeberC,
 			Description: i18n.T(lang, i18n.KeyDWCDesc),
 		}
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPER,
-			FullName:    i18n.T(lang, i18n.KeyLHPERName),
-			Description: i18n.T(lang, i18n.KeyLHPERDesc),
+
+		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
+		// Proximal is always PER
+		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
+		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+			// Parasyndesmotic short oblique/transverse/comminuted → PA
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPA,
+				FullName:    i18n.T(lang, i18n.KeyLHPAName),
+				Description: i18n.T(lang, i18n.KeyLHPADesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
+		} else {
+			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
 		}
 		result.AOOTA = getAOOTAForSuprasindesmalBimaleolar(input.SuprasindesmalType, lang)
-		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
 	}
 
 	return result, nil
@@ -255,10 +328,29 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput, lang i18n.Lan
 			Type:        domain.DanisWeberC,
 			Description: i18n.T(lang, i18n.KeyDWCDesc),
 		}
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPER,
-			FullName:    i18n.T(lang, i18n.KeyLHPERName),
-			Description: i18n.T(lang, i18n.KeyLHPERDesc),
+
+		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
+		// Proximal is always PER
+		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+			// Parasyndesmotic short oblique/transverse/comminuted → PA
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPA,
+				FullName:    i18n.T(lang, i18n.KeyLHPAName),
+				Description: i18n.T(lang, i18n.KeyLHPADesc),
+			}
+		} else {
+			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
 		}
 		result.AOOTA = getAOOTAForSuprasindesmalBimaleolar(input.SuprasindesmalType, lang)
 		return result, nil
@@ -345,10 +437,41 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput, lang i18n.Langu
 			Type:        domain.DanisWeberC,
 			Description: i18n.T(lang, i18n.KeyDWCDesc),
 		}
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenPER,
-			FullName:    i18n.T(lang, i18n.KeyLHPERName),
-			Description: i18n.T(lang, i18n.KeyLHPERDesc),
+
+		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
+		// Proximal is always PER
+		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
+		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+			// Parasyndesmotic short oblique/transverse/comminuted → PA
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPA,
+				FullName:    i18n.T(lang, i18n.KeyLHPAName),
+				Description: i18n.T(lang, i18n.KeyLHPADesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
+		} else {
+			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Type:        domain.LaugeHansenPER,
+				FullName:    i18n.T(lang, i18n.KeyLHPERName),
+				Description: i18n.T(lang, i18n.KeyLHPERDesc),
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+			}
 		}
 		result.AOOTA = getAOOTAForSuprasindesmalTrimaleolar(input.SuprasindesmalType, lang)
 		return result, nil
@@ -379,6 +502,10 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput, lang i18n.Langu
 			FullName:    i18n.T(lang, i18n.KeyLHPAName),
 			Description: i18n.T(lang, i18n.KeyLHPADesc),
 		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		}
 
 	case domain.LateralMorphologyOblique:
 		result.DanisWeber = &domain.DanisWeberClassification{
@@ -394,6 +521,10 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput, lang i18n.Langu
 			FullName:    i18n.T(lang, i18n.KeyLHPAName),
 			Description: i18n.T(lang, i18n.KeyLHPADesc),
 		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
+		}
 
 	case domain.LateralMorphologySpiral:
 		result.DanisWeber = &domain.DanisWeberClassification{
@@ -408,6 +539,10 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput, lang i18n.Langu
 			Type:        domain.LaugeHansenSER,
 			FullName:    i18n.T(lang, i18n.KeyLHSERName),
 			Description: i18n.T(lang, i18n.KeyLHSERDesc),
+		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType, lang)
 		}
 	}
 

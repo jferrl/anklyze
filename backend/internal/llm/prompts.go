@@ -20,7 +20,9 @@ You MUST respond with valid JSON matching this exact schema:
     "lateral_morphology": "transverse" | "oblique" | "spiral" | null,
     "suprasindesmal_type": "simple_diaphyseal" | "multifragmentary" | "proximal" | null,
     "fibula_infrasindesmal_transverse": true | false | null,
-    "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null
+    "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
+    "has_ct_scan": true | false | null,
+    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | null
   },
   "confidence": 0.0-1.0,
   "missing_fields": ["field_name"],
@@ -59,39 +61,63 @@ You MUST respond with valid JSON matching this exact schema:
 ## Classification Algorithm - Required Fields by Fracture Type
 
 ### posterior_only
-- Required: posterior_fracture_type (Bartonicek 1-4)
-- Classification: Always SER mechanism, Weber B, AO-44-B3
+- Required: has_ct_scan (CT scan availability)
+- If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
+- Classification: Always SER mechanism, AO-44-B3
 
 ### medial_only
 - Required: medial_morphology (oblique or transverse)
 - oblique → SA mechanism, Weber A, AO-44-A1
-- transverse → PA mechanism (ambiguous), Weber A, AO-44-A1
+- transverse → Lauge-Hansen not classifiable (could be PA/SER/PER), Weber A, AO-44-A1
 
 ### lateral_only
 - Required: fibular_level
 - If infrasindesmal → SA mechanism, Weber A, AO-44-A1
 - If transindesmal → Required: lateral_morphology (spiral=SER, oblique=PA)
-- If suprasindesmal → Required: suprasindesmal_type (simple/multifragmentary/proximal) → PER mechanism, Weber C
+- If suprasindesmal:
+  - Required: suprasindesmal_type (simple/multifragmentary/proximal)
+  - If proximal → PER mechanism, Weber C, AO-44-C3
+  - If simple_diaphyseal or multifragmentary → Required: fibula_trace_pattern
+    - parasindesmotic_short (short oblique/transverse/comminuted) → PA mechanism
+    - parasindesmotic_long (long oblique/spiral) → PER mechanism
 
 ### medial_posterior
-- No additional fields needed (bimalleolar medial+posterior is a specific pattern)
-- Classification depends on mechanism inference
+- Required: has_ct_scan (CT scan availability)
+- If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
+- Classification: Lauge-Hansen unclassifiable (SER/PA), AO-44-B3
 
 ### lateral_posterior
 - Required: fibular_level
-- If suprasindesmal → Required: suprasindesmal_type
-- Classification: PER mechanism typically
+- If infrasindesmal → IMPOSSIBLE (SA mechanism does not involve posterior malleolus)
+- If transindesmal:
+  - Required: lateral_morphology (spiral=SER, oblique=PA)
+  - Required: has_ct_scan for Bartonicek classification
+  - If has_ct_scan=true → Required: posterior_fracture_type
+- If suprasindesmal:
+  - Required: suprasindesmal_type
+  - If proximal → PER mechanism, requires has_ct_scan for Bartonicek
+  - If simple_diaphyseal or multifragmentary → Required: fibula_trace_pattern
+    - parasindesmotic_short → PA mechanism
+    - parasindesmotic_long → PER mechanism
+  - Required: has_ct_scan for Bartonicek classification
 
 ### lateral_medial (bimalleolar without posterior)
 - Required: fibular_level, medial_morphology
 - If transindesmal → Required: lateral_morphology
-- If suprasindesmal → Required: suprasindesmal_type
+- If suprasindesmal:
+  - Required: suprasindesmal_type
+  - If simple_diaphyseal or multifragmentary → Required: fibula_trace_pattern
 - Special case: If lateral_morphology is transverse, need fibular_level_for_transverse
 
 ### trimaleolar
 - Required: fibular_level (or infer from lateral_morphology)
-- If suprasindesmal → Required: suprasindesmal_type
-- If not suprasindesmal → Required: lateral_morphology (spiral/oblique/transverse)
+- If suprasindesmal:
+  - Required: suprasindesmal_type
+  - If proximal → PER mechanism, requires has_ct_scan for Bartonicek
+  - If simple_diaphyseal or multifragmentary → Required: fibula_trace_pattern
+- If not suprasindesmal:
+  - Required: lateral_morphology (spiral/oblique/transverse)
+  - Required: has_ct_scan for Bartonicek classification
 - Note: Transverse lateral at infrasindesmal level is IMPOSSIBLE for trimaleolar
 
 ## Rules
@@ -116,6 +142,12 @@ If unclear which malleoli are fractured:
 ### Step 2: Based on involved_malleoli, ask the NEXT required question
 
 #### For "posterior_only":
+First ask about CT scan:
+- field: "has_ct_scan"
+- question: "Do you have a CT scan?"
+- options: ["Yes", "No"]
+
+If has_ct_scan=true, then ask:
 - field: "posterior_fracture_type"
 - question: "What type of posterior malleolus fracture? (Bartonicek classification)"
 - options: ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]
@@ -141,14 +173,32 @@ If suprasindesmal, then ask:
 - question: "What type of suprasindesmal fracture?"
 - options: ["Simple diaphyseal", "Multifragmentary", "Proximal (Maisonneuve)"]
 
+If suprasindesmal and simple_diaphyseal or multifragmentary, then ask:
+- field: "fibula_trace_pattern"
+- question: "What is the fibula trace pattern?"
+- options: ["Parasyndesmotic short oblique/transverse/comminuted trace", "Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+
 #### For "lateral_posterior":
 First ask fibular level:
 - field: "fibular_level"
 - question: "Where is the fibular fracture relative to the syndesmosis?"
 - options: ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]
 
-If transindesmal, ask lateral morphology then posterior type.
-If suprasindesmal, ask suprasindesmal type then posterior type.
+If infrasindesmal → IMPOSSIBLE (SA mechanism does not involve posterior malleolus)
+
+If transindesmal:
+1. Ask lateral morphology (spiral=SER, oblique=PA)
+2. Ask CT scan availability for Bartonicek:
+   - field: "has_ct_scan"
+   - question: "Do you have a CT scan?"
+   - options: ["Yes", "No"]
+3. If has_ct_scan=true, ask posterior type
+
+If suprasindesmal:
+1. Ask suprasindesmal type
+2. If simple_diaphyseal or multifragmentary, ask fibula_trace_pattern
+3. Ask CT scan availability for Bartonicek
+4. If has_ct_scan=true, ask posterior type
 
 #### For "lateral_medial" (bimalleolar without posterior):
 Ask medial morphology:
@@ -196,7 +246,9 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
     "lateral_morphology": "transverse" | "oblique" | "spiral" | null,
     "suprasindesmal_type": "simple_diaphyseal" | "multifragmentary" | "proximal" | null,
     "fibula_infrasindesmal_transverse": true | false | null,
-    "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null
+    "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
+    "has_ct_scan": true | false | null,
+    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | null
   },
   "confidence": 0.0-1.0,
   "missing_fields": ["nombre_campo"],
@@ -235,39 +287,63 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 ## Algoritmo de Clasificación - Campos Requeridos por Tipo de Fractura
 
 ### posterior_only
-- Requerido: posterior_fracture_type (Bartonicek 1-4)
-- Clasificación: Siempre mecanismo SER, Weber B, AO-44-B3
+- Requerido: has_ct_scan (disponibilidad de TAC)
+- Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
+- Clasificación: Siempre mecanismo SER, AO-44-B3
 
 ### medial_only
 - Requerido: medial_morphology (oblicua o transversa)
 - oblicua → mecanismo SA, Weber A, AO-44-A1
-- transversa → mecanismo PA (ambiguo), Weber A, AO-44-A1
+- transversa → Lauge-Hansen no clasificable (podría ser PA/SER/PER), Weber A, AO-44-A1
 
 ### lateral_only
 - Requerido: fibular_level
 - Si infrasindesmal → mecanismo SA, Weber A, AO-44-A1
 - Si transindesmal → Requerido: lateral_morphology (espiral=SER, oblicua=PA)
-- Si suprasindesmal → Requerido: suprasindesmal_type → mecanismo PER, Weber C
+- Si suprasindesmal:
+  - Requerido: suprasindesmal_type (simple/multifragmentaria/proximal)
+  - Si proximal → mecanismo PER, Weber C, AO-44-C3
+  - Si simple_diaphyseal o multifragmentary → Requerido: fibula_trace_pattern
+    - parasindesmotic_short (trazo oblicuo corto/transverso/conminuto) → mecanismo PA
+    - parasindesmotic_long (trazo oblicuo largo/espiroideo) → mecanismo PER
 
 ### medial_posterior
-- No se necesitan campos adicionales
-- Clasificación depende de inferencia del mecanismo
+- Requerido: has_ct_scan (disponibilidad de TAC)
+- Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
+- Clasificación: Lauge-Hansen no clasificable (SER/PA), AO-44-B3
 
 ### lateral_posterior
 - Requerido: fibular_level
-- Si suprasindesmal → Requerido: suprasindesmal_type
-- Clasificación: típicamente mecanismo PER
+- Si infrasindesmal → IMPOSIBLE (mecanismo SA no involucra maléolo posterior)
+- Si transindesmal:
+  - Requerido: lateral_morphology (espiral=SER, oblicua=PA)
+  - Requerido: has_ct_scan para clasificación Bartonicek
+  - Si has_ct_scan=true → Requerido: posterior_fracture_type
+- Si suprasindesmal:
+  - Requerido: suprasindesmal_type
+  - Si proximal → mecanismo PER, requiere has_ct_scan para Bartonicek
+  - Si simple_diaphyseal o multifragmentary → Requerido: fibula_trace_pattern
+    - parasindesmotic_short → mecanismo PA
+    - parasindesmotic_long → mecanismo PER
+  - Requerido: has_ct_scan para clasificación Bartonicek
 
 ### lateral_medial (bimaleolar sin posterior)
 - Requerido: fibular_level, medial_morphology
 - Si transindesmal → Requerido: lateral_morphology
-- Si suprasindesmal → Requerido: suprasindesmal_type
+- Si suprasindesmal:
+  - Requerido: suprasindesmal_type
+  - Si simple_diaphyseal o multifragmentary → Requerido: fibula_trace_pattern
 - Caso especial: Si lateral_morphology es transversa, necesita fibular_level_for_transverse
 
 ### trimaleolar
 - Requerido: fibular_level (o inferir de lateral_morphology)
-- Si suprasindesmal → Requerido: suprasindesmal_type
-- Si no suprasindesmal → Requerido: lateral_morphology (espiral/oblicua/transversa)
+- Si suprasindesmal:
+  - Requerido: suprasindesmal_type
+  - Si proximal → mecanismo PER, requiere has_ct_scan para Bartonicek
+  - Si simple_diaphyseal o multifragmentary → Requerido: fibula_trace_pattern
+- Si no suprasindesmal:
+  - Requerido: lateral_morphology (espiral/oblicua/transversa)
+  - Requerido: has_ct_scan para clasificación Bartonicek
 - Nota: Lateral transversa a nivel infrasindesmal es IMPOSIBLE para trimaleolar
 
 ## Reglas
@@ -292,6 +368,12 @@ Si no está claro qué maléolos están fracturados:
 ### Paso 2: Según involved_malleoli, preguntar la SIGUIENTE pregunta requerida
 
 #### Para "posterior_only":
+Primero preguntar sobre TAC:
+- field: "has_ct_scan"
+- question: "¿Tiene TAC?"
+- options: ["Sí", "No"]
+
+Si has_ct_scan=true, entonces preguntar:
 - field: "posterior_fracture_type"
 - question: "¿Qué tipo de fractura del maléolo posterior? (clasificación de Bartonicek)"
 - options: ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]
@@ -317,14 +399,32 @@ Si suprasindesmal, entonces preguntar:
 - question: "¿Qué tipo de fractura suprasindesmal?"
 - options: ["Diafisaria simple", "Multifragmentaria", "Proximal (Maisonneuve)"]
 
+Si suprasindesmal y diafisaria simple o multifragmentaria, entonces preguntar:
+- field: "fibula_trace_pattern"
+- question: "¿Cómo es el trazo del peroné?"
+- options: ["Parasindesmal de trazo oblicuo corto/transverso/conminuto", "Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+
 #### Para "lateral_posterior":
 Primero preguntar nivel del peroné:
 - field: "fibular_level"
 - question: "¿Dónde está la fractura del peroné respecto a la sindesmosis?"
 - options: ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]
 
-Si transindesmal, preguntar morfología lateral y luego tipo posterior.
-Si suprasindesmal, preguntar tipo suprasindesmal y luego tipo posterior.
+Si infrasindesmal → IMPOSIBLE (mecanismo SA no involucra maléolo posterior)
+
+Si transindesmal:
+1. Preguntar morfología lateral (espiral=SER, oblicua=PA)
+2. Preguntar disponibilidad de TAC para Bartonicek:
+   - field: "has_ct_scan"
+   - question: "¿Tiene TAC?"
+   - options: ["Sí", "No"]
+3. Si has_ct_scan=true, preguntar tipo posterior
+
+Si suprasindesmal:
+1. Preguntar tipo suprasindesmal
+2. Si diafisaria simple o multifragmentaria, preguntar fibula_trace_pattern
+3. Preguntar disponibilidad de TAC para Bartonicek
+4. Si has_ct_scan=true, preguntar tipo posterior
 
 #### Para "lateral_medial" (bimaleolar sin posterior):
 Preguntar morfología medial:

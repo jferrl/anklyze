@@ -178,6 +178,9 @@ type FormOptions struct {
 
 	// Suprasindesmal type options
 	SuprasindesmalTypes []SelectOption `json:"suprasindesmal_types"`
+
+	// Fibula trace pattern options
+	FibulaTracePatterns []SelectOption `json:"fibula_trace_patterns"`
 }
 
 // GetOptions handles GET /api/options
@@ -233,6 +236,14 @@ func (h *Handler) GetOptions(c *gin.Context) {
 				ID:    "fibula_infrasindesmal_transverse",
 				Title: i18n.T(lang, i18n.KeyQuestionFibulaInfraTransverse),
 			},
+			"has_ct_scan": {
+				ID:    "has_ct_scan",
+				Title: i18n.T(lang, i18n.KeyQuestionHasCTScan),
+			},
+			"fibula_trace_pattern": {
+				ID:    "fibula_trace_pattern",
+				Title: i18n.T(lang, i18n.KeyQuestionFibulaTracePattern),
+			},
 		},
 		Labels: map[string]string{
 			"yes":  i18n.T(lang, i18n.KeyLabelYes),
@@ -273,6 +284,10 @@ func (h *Handler) GetOptions(c *gin.Context) {
 			{Value: "simple_diaphyseal", Label: i18n.T(lang, i18n.KeyOptionSupraSimple)},
 			{Value: "multifragmentary", Label: i18n.T(lang, i18n.KeyOptionSupraMultifragmentary)},
 			{Value: "proximal", Label: i18n.T(lang, i18n.KeyOptionSupraProximal)},
+		},
+		FibulaTracePatterns: []SelectOption{
+			{Value: "parasindesmotic_short", Label: i18n.T(lang, i18n.KeyOptionFibulaTraceShort)},
+			{Value: "parasindesmotic_long", Label: i18n.T(lang, i18n.KeyOptionFibulaTraceLong)},
 		},
 	}
 

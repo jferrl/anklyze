@@ -19,6 +19,8 @@ var englishTranslations = map[string]string{
 	KeyQuestionLateralMorphology:     "What is the morphology of the fracture?",
 	KeyQuestionSuprasindesmalType:    "What type?",
 	KeyQuestionFibulaInfraTransverse: "Is the fibular fracture infrasyndesmal and transverse?",
+	KeyQuestionHasCTScan:             "Do you have a CT scan?",
+	KeyQuestionFibulaTracePattern:    "What is the fibula trace pattern?",
 
 	// Option labels - Involved malleoli
 	KeyOptionPosteriorOnly:    "Posterior malleolus",
@@ -50,9 +52,13 @@ var englishTranslations = map[string]string{
 	KeyOptionLateralSpiral:     "Spiral (Low anterior, high posterior)",
 
 	// Option labels - Suprasindesmal type
-	KeyOptionSupraSimple:         "Simple Diaphyseal",
+	KeyOptionSupraSimple:           "Simple Diaphyseal",
 	KeyOptionSupraMultifragmentary: "Multifragmentary",
-	KeyOptionSupraProximal:       "Proximal",
+	KeyOptionSupraProximal:         "Proximal",
+
+	// Option labels - Fibula trace pattern
+	KeyOptionFibulaTraceShort: "Parasyndesmotic short oblique/transverse/comminuted trace",
+	KeyOptionFibulaTraceLong:  "Parasyndesmotic or suprasyndesmotic long oblique/spiral trace",
 
 	// Labels
 	KeyLabelYes:  "Yes",

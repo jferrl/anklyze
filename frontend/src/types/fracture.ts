@@ -38,6 +38,11 @@ export type SuprasindesmalType =
   | 'multifragmentary'  // Multifragmentaria
   | 'proximal';         // Proximal
 
+// Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
+export type FibulaTracePattern =
+  | 'parasindesmotic_short' // Parasindesmal de trazo oblicuo corto/transverso/conminuto
+  | 'parasindesmotic_long'; // Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo
+
 // Input para clasificación
 export interface FractureInput {
   // Pregunta 1: ¿Qué maléolos tiene fracturados?
@@ -63,6 +68,12 @@ export interface FractureInput {
 
   // Para bimaleolar lateral+medial con morfología transversa: nivel del peroné
   fibular_level_for_transverse?: FibularLevel;
+
+  // ¿Tiene TAC? (para clasificación Bartonicek)
+  has_ct_scan?: boolean;
+
+  // Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
+  fibula_trace_pattern?: FibulaTracePattern;
 }
 
 // Danis-Weber classification result
@@ -136,6 +147,7 @@ export interface FormOptions {
   fibular_levels: SelectOption[];
   lateral_morphology: SelectOption[];
   suprasindesmal_types: SelectOption[];
+  fibula_trace_patterns: SelectOption[];
   labels: Record<string, string>;
 }
 

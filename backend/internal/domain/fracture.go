@@ -58,6 +58,17 @@ const (
 	SuprasindesmalProximal         SuprasindesmalType = "proximal"          // Proximal
 )
 
+// FibulaTracePattern represents the fibula trace pattern for suprasyndesmotic fractures
+// Used to differentiate between PA and PER mechanisms
+type FibulaTracePattern string
+
+const (
+	// FibulaTraceParasindesmoticShort - Parasyndesmotic short oblique/transverse/comminuted trace → PA mechanism
+	FibulaTraceParasindesmoticShort FibulaTracePattern = "parasindesmotic_short"
+	// FibulaTraceParasindesmoticLong - Parasyndesmotic or suprasyndesmotic long oblique/spiral trace → PER mechanism
+	FibulaTraceParasindesmoticLong FibulaTracePattern = "parasindesmotic_long"
+)
+
 // FractureInput represents the input data for classification
 type FractureInput struct {
 	// Question 1: Which malleoli are fractured?
@@ -83,4 +94,10 @@ type FractureInput struct {
 
 	// For bimaleolar lateral+medial with transverse morphology: fibular level
 	FibularLevelForTransverse FibularLevel `json:"fibular_level_for_transverse,omitempty"`
+
+	// CT scan availability - determines if Bartonicek can be classified
+	HasCTScan *bool `json:"has_ct_scan,omitempty"`
+
+	// Fibula trace pattern for suprasyndesmotic fractures (PA vs PER differentiation)
+	FibulaTracePattern FibulaTracePattern `json:"fibula_trace_pattern,omitempty"`
 }
