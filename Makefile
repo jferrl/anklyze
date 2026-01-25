@@ -1,5 +1,6 @@
 .PHONY: all run run-backend run-frontend build build-backend build-frontend clean install \
-	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit
+	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
+	e2e-classification
 
 # Default target - run both backend and frontend
 all: run
@@ -102,3 +103,8 @@ e2e-report:
 e2e-codegen:
 	@echo "Starting Playwright codegen..."
 	@cd e2e && npm run codegen
+
+# Run classification E2E tests only (tests based on flowchart decision tree)
+e2e-classification:
+	@echo "Running classification E2E tests..."
+	@cd e2e && npx playwright test tests/classification/ --project=chromium

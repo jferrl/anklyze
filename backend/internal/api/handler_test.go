@@ -203,7 +203,7 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 			name:                "transverse medial morphology - ambiguous",
 			medialMorphology:    domain.MedialMorphologyTransverse,
 			expectedAOOTA:       domain.AOOTAA1,
-			expectedLaugeHansen: domain.LaugeHansenPA,
+			expectedLaugeHansen: "", // No specific type when ambiguous
 			expectedAmbiguous:   true,
 		},
 	}

@@ -211,7 +211,7 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 			medialMorphology:      domain.MedialMorphologyTransverse,
 			lang:                  i18n.English,
 			expectedAOOTA:         domain.AOOTAA1,
-			expectedLaugeHansen:   domain.LaugeHansenPA,
+			expectedLaugeHansen:   "", // No specific type when ambiguous
 			expectedAmbiguous:     true,
 			expectedPossibleTypes: []string{"PA", "SER", "PER"},
 		},

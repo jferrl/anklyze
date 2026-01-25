@@ -28,17 +28,34 @@ test.describe('Lateral + Medial Classification Path', () => {
       await classifyPage.expectClassifyButtonDisabled();
     });
 
-    test('should classify with suprasindesmal level after No', async () => {
+    test('should classify with suprasindesmal level after No (short trace)', async () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialOblique();
       await classifyPage.selectLMInfraTransverseNo();
       await classifyPage.selectLMFibularLevelSuprasindesmal();
       await classifyPage.selectLMSuprasindesmalType('simple_diaphyseal');
+      await classifyPage.selectLMFibulaTracePatternShort();
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
+      await classifyPage.expectLaugeHansenResult('PA');
+      await classifyPage.expectDanisWeberResult('C');
+      await classifyPage.expectAOOTAResult('C1');
+    });
+
+    test('should classify with suprasindesmal level after No (long trace)', async () => {
+      await classifyPage.selectLateralMedial();
+      await classifyPage.selectLMMedialOblique();
+      await classifyPage.selectLMInfraTransverseNo();
+      await classifyPage.selectLMFibularLevelSuprasindesmal();
+      await classifyPage.selectLMSuprasindesmalType('simple_diaphyseal');
+      await classifyPage.selectLMFibulaTracePatternLong();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('PER');
       await classifyPage.expectDanisWeberResult('C');
+      await classifyPage.expectAOOTAResult('C1');
     });
 
     test('should classify with low fibular level and oblique morphology', async () => {
@@ -67,16 +84,32 @@ test.describe('Lateral + Medial Classification Path', () => {
   });
 
   test.describe('Transverse Medial Morphology', () => {
-    test('should classify with suprasindesmal level', async () => {
+    test('should classify with suprasindesmal level (short trace)', async () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialTransverse();
       await classifyPage.selectLMFibularLevelSuprasindesmal();
       await classifyPage.selectLMSuprasindesmalType('simple_diaphyseal');
+      await classifyPage.selectLMFibulaTracePatternShort();
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
+      await classifyPage.expectLaugeHansenResult('PA');
+      await classifyPage.expectDanisWeberResult('C');
+      await classifyPage.expectAOOTAResult('C1');
+    });
+
+    test('should classify with suprasindesmal level (long trace)', async () => {
+      await classifyPage.selectLateralMedial();
+      await classifyPage.selectLMMedialTransverse();
+      await classifyPage.selectLMFibularLevelSuprasindesmal();
+      await classifyPage.selectLMSuprasindesmalType('simple_diaphyseal');
+      await classifyPage.selectLMFibulaTracePatternLong();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('PER');
       await classifyPage.expectDanisWeberResult('C');
+      await classifyPage.expectAOOTAResult('C1');
     });
 
     test('should classify with low fibular level and oblique morphology', async () => {

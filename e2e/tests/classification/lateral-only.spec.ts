@@ -11,8 +11,8 @@ test.describe('Lateral Only Classification Path', () => {
 
   test.describe('Infrasindesmal Level', () => {
     // NOTE: Infrasindesmal lateral-only no longer has morphology question
-    // It goes directly to result (SA, Weber A)
-    test('should classify directly as SA, Weber A (no morphology question)', async () => {
+    // It goes directly to result (SA, Weber A, AO 44 A1)
+    test('should classify directly as SA, Weber A, AO 44 A1 (no morphology question)', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelInfrasindesmal();
       await classifyPage.submitClassification();
@@ -20,11 +20,12 @@ test.describe('Lateral Only Classification Path', () => {
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('SA');
       await classifyPage.expectDanisWeberResult('A');
+      await classifyPage.expectAOOTAResult('A1');
     });
   });
 
   test.describe('Transindesmal Level', () => {
-    test('should classify with spiral morphology (SER II, Weber B)', async () => {
+    test('should classify spiral morphology as SER, Weber B, AO 44 B1', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelTransindesmal();
       await classifyPage.selectLateralMorphologyTransSpiral();
@@ -33,9 +34,10 @@ test.describe('Lateral Only Classification Path', () => {
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('SER');
       await classifyPage.expectDanisWeberResult('B');
+      await classifyPage.expectAOOTAResult('B1');
     });
 
-    test('should classify with oblique morphology (PA II, Weber B)', async () => {
+    test('should classify oblique morphology as PA, Weber B, AO 44 B1', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelTransindesmal();
       await classifyPage.selectLateralMorphologyTransOblique();
@@ -44,41 +46,79 @@ test.describe('Lateral Only Classification Path', () => {
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('PA');
       await classifyPage.expectDanisWeberResult('B');
+      await classifyPage.expectAOOTAResult('B1');
     });
   });
 
   test.describe('Suprasindesmal Level', () => {
-    test('should classify with simple diaphyseal type (PER II, Weber C)', async () => {
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelSuprasindesmal();
-      await classifyPage.selectSuprasindesmalTypeSimple();
-      await classifyPage.submitClassification();
+    test.describe('Simple Diaphyseal Type with Fibula Trace Pattern', () => {
+      test('should classify with short trace pattern as PA, Weber C, AO 44 C1', async () => {
+        await classifyPage.selectLateralOnly();
+        await classifyPage.selectLateralLevelSuprasindesmal();
+        await classifyPage.selectSuprasindesmalTypeSimple();
+        await classifyPage.selectLateralFibulaTracePatternShort();
+        await classifyPage.submitClassification();
 
-      await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('PER');
-      await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PA');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C1');
+      });
+
+      test('should classify with long trace pattern as PER, Weber C, AO 44 C1', async () => {
+        await classifyPage.selectLateralOnly();
+        await classifyPage.selectLateralLevelSuprasindesmal();
+        await classifyPage.selectSuprasindesmalTypeSimple();
+        await classifyPage.selectLateralFibulaTracePatternLong();
+        await classifyPage.submitClassification();
+
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PER');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C1');
+      });
     });
 
-    test('should classify with multifragmentary type (PER II, Weber C)', async () => {
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelSuprasindesmal();
-      await classifyPage.selectSuprasindesmalTypeMultifragmentary();
-      await classifyPage.submitClassification();
+    test.describe('Multifragmentary Type with Fibula Trace Pattern', () => {
+      test('should classify with short trace pattern as PA, Weber C, AO 44 C2', async () => {
+        await classifyPage.selectLateralOnly();
+        await classifyPage.selectLateralLevelSuprasindesmal();
+        await classifyPage.selectSuprasindesmalTypeMultifragmentary();
+        await classifyPage.selectLateralFibulaTracePatternShort();
+        await classifyPage.submitClassification();
 
-      await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('PER');
-      await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PA');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C2');
+      });
+
+      test('should classify with long trace pattern as PER, Weber C, AO 44 C2', async () => {
+        await classifyPage.selectLateralOnly();
+        await classifyPage.selectLateralLevelSuprasindesmal();
+        await classifyPage.selectSuprasindesmalTypeMultifragmentary();
+        await classifyPage.selectLateralFibulaTracePatternLong();
+        await classifyPage.submitClassification();
+
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PER');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C2');
+      });
     });
 
-    test('should classify with proximal type (PER II, Weber C)', async () => {
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelSuprasindesmal();
-      await classifyPage.selectSuprasindesmalTypeProximal();
-      await classifyPage.submitClassification();
+    test.describe('Proximal Type (Maisonneuve)', () => {
+      test('should classify with proximal type as PER, Weber C, AO 44 C3 (no trace pattern needed)', async () => {
+        await classifyPage.selectLateralOnly();
+        await classifyPage.selectLateralLevelSuprasindesmal();
+        await classifyPage.selectSuprasindesmalTypeProximal();
+        await classifyPage.submitClassification();
 
-      await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('PER');
-      await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PER');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C3');
+      });
     });
   });
 

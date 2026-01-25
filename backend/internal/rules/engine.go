@@ -77,9 +77,8 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput, lang i18n.Langua
 			Description: i18n.T(lang, i18n.KeyLHSADesc),
 		}
 	} else {
-		// Transverse
+		// Transverse - ambiguous, could be PA, SER, or PER
 		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:          domain.LaugeHansenPA,
 			FullName:      i18n.T(lang, i18n.KeyLHAmbiguousName),
 			Description:   i18n.T(lang, i18n.KeyLHAmbiguousDesc),
 			Ambiguous:     true,

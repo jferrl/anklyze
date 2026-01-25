@@ -213,14 +213,17 @@ export function FractureForm() {
   // PATH: Trimaleolar - baja - transversa - nivel
   const showTrimaleolarTransverseLevel = showTrimaleolarMorphology && formData.lateral_morphology === 'transverse';
 
+  // PATH: Trimaleolar - baja - transversa - transindesmal - pregunta TAC
+  const showTriHasCTScanTransverse = showTrimaleolarTransverseLevel && formData.fibular_level_for_transverse === 'transindesmal';
+
   // PATH: Trimaleolar - baja - transindesmal - oblicua - pregunta TAC
   const showTriHasCTScanOblique = showTrimaleolarMorphology && formData.lateral_morphology === 'oblique';
 
   // PATH: Trimaleolar - baja - transindesmal - espiroidea - pregunta TAC
   const showTriHasCTScanSpiral = showTrimaleolarMorphology && formData.lateral_morphology === 'spiral';
 
-  // PATH: Trimaleolar - baja - tipo posterior (solo si tiene TAC y tiene morfología oblicua o espiroidea)
-  const showTriPosteriorTypeLow = (showTriHasCTScanOblique || showTriHasCTScanSpiral) && formData.has_ct_scan === true;
+  // PATH: Trimaleolar - baja - tipo posterior (solo si tiene TAC y tiene morfología oblicua, espiroidea, o transversa+transindesmal)
+  const showTriPosteriorTypeLow = (showTriHasCTScanOblique || showTriHasCTScanSpiral || showTriHasCTScanTransverse) && formData.has_ct_scan === true;
 
   // Helper to update form data with history tracking
   const updateFormData = useCallback((newData: Partial<FractureInput>) => {
@@ -1726,7 +1729,7 @@ export function FractureForm() {
               })}
             >
               {options.fibular_levels
-                .filter(o => o.value === 'suprasindesmal' || o.value === 'infrasindesmal' || o.value === 'transindesmal')
+                .filter(o => o.value === 'suprasindesmal' || o.value === 'transindesmal')
                 .map((option) => (
                   <div key={option.value} className="flex items-center space-x-3 py-2">
                     <RadioGroupItem value={option.value} id={`lm-fib-level-${option.value}`} />
@@ -2032,6 +2035,36 @@ export function FractureForm() {
                   </Label>
                 </div>
               ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* PATH: Trimaleolar - Baja - Transversa - Transindesmal - ¿Tiene TAC? */}
+      {showTriHasCTScanTransverse && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {options.questions.has_ct_scan?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
+              onValueChange={(value) => updateFormData({
+                ...formData,
+                has_ct_scan: value === 'yes',
+                posterior_fracture_type: undefined,
+              })}
+            >
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="yes" id="tri-trans-ct-yes" />
+                <Label htmlFor="tri-trans-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+              </div>
+              <div className="flex items-center space-x-3 py-2">
+                <RadioGroupItem value="no" id="tri-trans-ct-no" />
+                <Label htmlFor="tri-trans-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              </div>
             </RadioGroup>
           </CardContent>
         </Card>
