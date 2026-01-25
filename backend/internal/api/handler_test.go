@@ -67,6 +67,11 @@ func TestHandler_HealthCheck(t *testing.T) {
 	}
 }
 
+// boolPtr returns a pointer to a bool value for test inputs
+func boolPtr(b bool) *bool {
+	return &b
+}
+
 func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 	t.Parallel()
 
@@ -130,6 +135,7 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 			input := domain.FractureInput{
 				InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
 				PosteriorFractureType: tt.posteriorType,
+				HasCTScan:             boolPtr(true), // CT scan required for Bartonicek classification
 			}
 
 			body, err := json.Marshal(input)
@@ -197,7 +203,7 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 			name:                "transverse medial morphology - ambiguous",
 			medialMorphology:    domain.MedialMorphologyTransverse,
 			expectedAOOTA:       domain.AOOTAA1,
-			expectedLaugeHansen: domain.LaugeHansenPA,
+			expectedLaugeHansen: "", // No specific type when ambiguous
 			expectedAmbiguous:   true,
 		},
 	}

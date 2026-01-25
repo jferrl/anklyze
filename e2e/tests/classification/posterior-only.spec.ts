@@ -19,16 +19,34 @@ test.describe('Posterior Only Classification Path', () => {
       await classifyPage.expectClassifyButtonDisabled();
     });
 
-    test('should enable button after selecting posterior type', async () => {
+    test('should enable button after answering CT scan No', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanNo();
+      await classifyPage.expectClassifyButtonEnabled();
+    });
+
+    test('should enable button after selecting CT scan Yes and posterior type', async () => {
+      await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.expectClassifyButtonEnabled();
+    });
+  });
+
+  test.describe('Without CT Scan', () => {
+    test('should classify posterior only without Bartonicek when CT scan is No', async () => {
+      await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanNo();
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
     });
   });
 
   test.describe('Extraincisural (Bartonicek 1)', () => {
     test('should classify posterior only with extraincisural fragment', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
 
@@ -40,6 +58,7 @@ test.describe('Posterior Only Classification Path', () => {
   test.describe('Posterolateral (Bartonicek 2)', () => {
     test('should classify posterior only with posterolateral fragment', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypePosterolateral();
       await classifyPage.submitClassification();
 
@@ -51,6 +70,7 @@ test.describe('Posterior Only Classification Path', () => {
   test.describe('Posteromedial + Posterolateral (Bartonicek 3)', () => {
     test('should classify posterior only with both fragments', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypePosteromedialPosterolateral();
       await classifyPage.submitClassification();
 
@@ -62,6 +82,7 @@ test.describe('Posterior Only Classification Path', () => {
   test.describe('Large Posterolateral (Bartonicek 4)', () => {
     test('should classify posterior only with large posterolateral fragment', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeLargePosterolateral();
       await classifyPage.submitClassification();
 
@@ -73,6 +94,7 @@ test.describe('Posterior Only Classification Path', () => {
   test.describe('Form Reset', () => {
     test('should reset form after clicking Classify Another', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();

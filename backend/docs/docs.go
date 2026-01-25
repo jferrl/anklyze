@@ -782,6 +782,13 @@ const docTemplate = `{
         "api.FormOptions": {
             "type": "object",
             "properties": {
+                "fibula_trace_patterns": {
+                    "description": "Fibula trace pattern options",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SelectOption"
+                    }
+                },
                 "fibular_levels": {
                     "description": "Fibular level options",
                     "type": "array",
@@ -1266,6 +1273,17 @@ const docTemplate = `{
                 "FeedbackRatingNegative"
             ]
         },
+        "domain.FibulaTracePattern": {
+            "type": "string",
+            "enum": [
+                "parasindesmotic_short",
+                "parasindesmotic_long"
+            ],
+            "x-enum-varnames": [
+                "FibulaTraceParasindesmoticShort",
+                "FibulaTraceParasindesmoticLong"
+            ]
+        },
         "domain.FibularLevel": {
             "type": "string",
             "enum": [
@@ -1296,6 +1314,14 @@ const docTemplate = `{
                     "description": "For bimaleolar lateral+medial: is fibula fracture infrasindesmal and transverse?",
                     "type": "boolean"
                 },
+                "fibula_trace_pattern": {
+                    "description": "Fibula trace pattern for suprasyndesmotic fractures (PA vs PER differentiation)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FibulaTracePattern"
+                        }
+                    ]
+                },
                 "fibular_level": {
                     "description": "For lateral malleolus: fracture level",
                     "allOf": [
@@ -1311,6 +1337,10 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.FibularLevel"
                         }
                     ]
+                },
+                "has_ct_scan": {
+                    "description": "CT scan availability - determines if Bartonicek can be classified",
+                    "type": "boolean"
                 },
                 "involved_malleoli": {
                     "description": "Question 1: Which malleoli are fractured?",
@@ -1598,6 +1628,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                },
+                "session_id": {
                     "type": "string"
                 }
             }

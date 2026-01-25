@@ -143,6 +143,9 @@ test.describe('Theme Switching', () => {
       await classifyPage.selectPosteriorOnly();
       await expect(html).toHaveClass(/dark/);
 
+      await classifyPage.selectPosteriorCTScanYes();
+      await expect(html).toHaveClass(/dark/);
+
       await classifyPage.selectPosteriorTypeExtraincisural();
       await expect(html).toHaveClass(/dark/);
 

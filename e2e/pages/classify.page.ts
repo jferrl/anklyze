@@ -58,6 +58,26 @@ export class ClassifyPage {
     await this.page.locator('#malleoli-trimaleolar').click();
   }
 
+  // ==================== CT SCAN QUESTIONS ====================
+
+  // Posterior only CT scan question
+  async selectPosteriorCTScanYes() {
+    await this.page.locator('#post-ct-yes').click();
+  }
+
+  async selectPosteriorCTScanNo() {
+    await this.page.locator('#post-ct-no').click();
+  }
+
+  // Medial + Posterior CT scan question
+  async selectMPCTScanYes() {
+    await this.page.locator('#mp-ct-yes').click();
+  }
+
+  async selectMPCTScanNo() {
+    await this.page.locator('#mp-ct-no').click();
+  }
+
   // ==================== POSTERIOR FRACTURE TYPE ====================
 
   async selectPosteriorTypeExtraincisural() {
@@ -74,6 +94,11 @@ export class ClassifyPage {
 
   async selectPosteriorTypeLargePosterolateral() {
     await this.page.locator('#post-type-large_posterolateral').click();
+  }
+
+  // Medial + Posterior posterior type (uses mp- prefix)
+  async selectMPPosteriorType(type: string) {
+    await this.page.locator(`#mp-post-type-${type}`).click();
   }
 
   // ==================== MEDIAL MORPHOLOGY ====================
@@ -166,10 +191,30 @@ export class ClassifyPage {
     await this.page.locator(`#lp-post-infra-${type}`).click();
   }
 
+  // LP transindesmal CT scan question (shown after morphology selection)
+  async selectLPTransCTScanYes() {
+    await this.page.locator('#lp-trans-ct-yes').click();
+  }
+
+  async selectLPTransCTScanNo() {
+    await this.page.locator('#lp-trans-ct-no').click();
+  }
+
+  // LP transindesmal posterior type (only shown if CT scan = yes)
   async selectLPPosteriorTypeTrans(type: string) {
     await this.page.locator(`#lp-post-trans-${type}`).click();
   }
 
+  // LP suprasindesmal CT scan question (shown after trace pattern or proximal type)
+  async selectLPSupraCTScanYes() {
+    await this.page.locator('#lp-supra-ct-yes').click();
+  }
+
+  async selectLPSupraCTScanNo() {
+    await this.page.locator('#lp-supra-ct-no').click();
+  }
+
+  // LP suprasindesmal posterior type (only shown if CT scan = yes)
   async selectLPPosteriorTypeSupra(type: string) {
     await this.page.locator(`#lp-post-supra-${type}`).click();
   }
@@ -248,6 +293,83 @@ export class ClassifyPage {
 
   async selectTrimaleolarTransverseLevelTransindesmal() {
     await this.page.locator('#tri-trans-level-transindesmal').click();
+  }
+
+  // Trimaleolar suprasindesmal CT scan question
+  async selectTriSupraCTScanYes() {
+    await this.page.locator('#tri-supra-ct-yes').click();
+  }
+
+  async selectTriSupraCTScanNo() {
+    await this.page.locator('#tri-supra-ct-no').click();
+  }
+
+  // Trimaleolar suprasindesmal posterior type (only shown if CT scan = yes)
+  async selectTriSupraPosteriorType(type: string) {
+    await this.page.locator(`#tri-supra-post-${type}`).click();
+  }
+
+  // Trimaleolar low (oblique/spiral) CT scan question
+  async selectTriLowCTScanYes() {
+    await this.page.locator('#tri-low-ct-yes').click();
+  }
+
+  async selectTriLowCTScanNo() {
+    await this.page.locator('#tri-low-ct-no').click();
+  }
+
+  // Trimaleolar transverse + transindesmal CT scan question
+  async selectTriTransCTScanYes() {
+    await this.page.locator('#tri-trans-ct-yes').click();
+  }
+
+  async selectTriTransCTScanNo() {
+    await this.page.locator('#tri-trans-ct-no').click();
+  }
+
+  // Trimaleolar low posterior type (only shown if CT scan = yes)
+  async selectTriLowPosteriorType(type: string) {
+    await this.page.locator(`#tri-low-post-${type}`).click();
+  }
+
+  // Legacy method for backward compatibility - routes to appropriate CT + posterior type
+  async selectTrimaleolarPosteriorType(type: string) {
+    await this.page.locator(`#tri-post-${type}`).click();
+  }
+
+  // ==================== FIBULA TRACE PATTERN ====================
+  // Values are: parasindesmotic_short and parasindesmotic_long
+
+  async selectLateralFibulaTracePatternShort() {
+    await this.page.locator('#lat-trace-parasindesmotic_short').click();
+  }
+
+  async selectLateralFibulaTracePatternLong() {
+    await this.page.locator('#lat-trace-parasindesmotic_long').click();
+  }
+
+  async selectLPFibulaTracePatternShort() {
+    await this.page.locator('#lp-trace-parasindesmotic_short').click();
+  }
+
+  async selectLPFibulaTracePatternLong() {
+    await this.page.locator('#lp-trace-parasindesmotic_long').click();
+  }
+
+  async selectLMFibulaTracePatternShort() {
+    await this.page.locator('#lm-trace-parasindesmotic_short').click();
+  }
+
+  async selectLMFibulaTracePatternLong() {
+    await this.page.locator('#lm-trace-parasindesmotic_long').click();
+  }
+
+  async selectTriFibulaTracePatternShort() {
+    await this.page.locator('#tri-trace-parasindesmotic_short').click();
+  }
+
+  async selectTriFibulaTracePatternLong() {
+    await this.page.locator('#tri-trace-parasindesmotic_long').click();
   }
 
   // ==================== FORM SUBMISSION ====================

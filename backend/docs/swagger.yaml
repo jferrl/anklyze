@@ -19,6 +19,11 @@ definitions:
     type: object
   api.FormOptions:
     properties:
+      fibula_trace_patterns:
+        description: Fibula trace pattern options
+        items:
+          $ref: '#/definitions/api.SelectOption'
+        type: array
       fibular_levels:
         description: Fibular level options
         items:
@@ -353,6 +358,14 @@ definitions:
     x-enum-varnames:
     - FeedbackRatingPositive
     - FeedbackRatingNegative
+  domain.FibulaTracePattern:
+    enum:
+    - parasindesmotic_short
+    - parasindesmotic_long
+    type: string
+    x-enum-varnames:
+    - FibulaTraceParasindesmoticShort
+    - FibulaTraceParasindesmoticLong
   domain.FibularLevel:
     enum:
     - infrasindesmal
@@ -377,6 +390,11 @@ definitions:
         description: 'For bimaleolar lateral+medial: is fibula fracture infrasindesmal
           and transverse?'
         type: boolean
+      fibula_trace_pattern:
+        allOf:
+        - $ref: '#/definitions/domain.FibulaTracePattern'
+        description: Fibula trace pattern for suprasyndesmotic fractures (PA vs PER
+          differentiation)
       fibular_level:
         allOf:
         - $ref: '#/definitions/domain.FibularLevel'
@@ -386,6 +404,9 @@ definitions:
         - $ref: '#/definitions/domain.FibularLevel'
         description: 'For bimaleolar lateral+medial with transverse morphology: fibular
           level'
+      has_ct_scan:
+        description: CT scan availability - determines if Bartonicek can be classified
+        type: boolean
       involved_malleoli:
         allOf:
         - $ref: '#/definitions/domain.InvolvedMalleoli'
@@ -591,6 +612,8 @@ definitions:
       language:
         type: string
       message:
+        type: string
+      session_id:
         type: string
     type: object
   service.ChatResponse:

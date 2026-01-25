@@ -74,6 +74,8 @@ const (
 	KeyQuestionLateralMorphology     = "question.lateral_morphology"
 	KeyQuestionSuprasindesmalType    = "question.suprasindesmal_type"
 	KeyQuestionFibulaInfraTransverse = "question.fibula_infra_transverse"
+	KeyQuestionHasCTScan             = "question.has_ct_scan"
+	KeyQuestionFibulaTracePattern    = "question.fibula_trace_pattern"
 
 	// Option labels - Involved malleoli (first question)
 	KeyOptionPosteriorOnly    = "option.malleoli.posterior_only"
@@ -105,9 +107,13 @@ const (
 	KeyOptionLateralSpiral     = "option.lateral.spiral"
 
 	// Option labels - Suprasindesmal type
-	KeyOptionSupraSimple         = "option.supra.simple"
+	KeyOptionSupraSimple           = "option.supra.simple"
 	KeyOptionSupraMultifragmentary = "option.supra.multifragmentary"
-	KeyOptionSupraProximal       = "option.supra.proximal"
+	KeyOptionSupraProximal         = "option.supra.proximal"
+
+	// Option labels - Fibula trace pattern
+	KeyOptionFibulaTraceShort = "option.fibula_trace.short"
+	KeyOptionFibulaTraceLong  = "option.fibula_trace.long"
 
 	// Labels
 	KeyLabelYes  = "label.yes"
