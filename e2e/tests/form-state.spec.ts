@@ -30,6 +30,10 @@ test.describe('Form State Management', () => {
       await classifyPage.selectPosteriorOnly();
       await classifyPage.expectClassifyButtonDisabled();
 
+      // Select CT scan Yes - should still be disabled (need posterior type)
+      await classifyPage.selectPosteriorCTScanYes();
+      await classifyPage.expectClassifyButtonDisabled();
+
       // Select posterior type - should be enabled
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.expectClassifyButtonEnabled();
@@ -49,8 +53,12 @@ test.describe('Form State Management', () => {
       await classifyPage.expectClassifyButtonEnabled();
     });
 
-    test('should enable button immediately for medial_posterior path', async () => {
+    test('should enable button when CT scan is No for medial_posterior path', async () => {
       await classifyPage.selectMedialPosterior();
+      await classifyPage.expectClassifyButtonDisabled();
+
+      // Select CT scan No - should enable button (no Bartonicek needed)
+      await classifyPage.selectMPCTScanNo();
       await classifyPage.expectClassifyButtonEnabled();
     });
   });
@@ -92,10 +100,11 @@ test.describe('Form State Management', () => {
     });
 
     test('should reset dependent fields when changing fibular level in lateral posterior', async ({ page }) => {
-      // Use transindesmal which requires morphology and posterior type
+      // Use transindesmal which requires morphology, CT scan, and posterior type
       await classifyPage.selectLateralPosterior();
       await classifyPage.selectLPLevelTransindesmal();
       await classifyPage.selectLPMorphologyTransSpiral();
+      await classifyPage.selectLPTransCTScanYes();
       await classifyPage.selectLPPosteriorTypeTrans('posterolateral');
       await classifyPage.expectClassifyButtonEnabled();
 
@@ -123,6 +132,7 @@ test.describe('Form State Management', () => {
       await classifyPage.selectTrimaleolar();
       await classifyPage.selectTrimaleolarLevelLow();
       await classifyPage.selectTrimaleolarMorphology('spiral');
+      await classifyPage.selectTriLowCTScanNo();
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change fibular level
@@ -136,6 +146,7 @@ test.describe('Form State Management', () => {
   test.describe('Result State', () => {
     test('should show results after successful classification', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
 
@@ -145,6 +156,7 @@ test.describe('Form State Management', () => {
 
     test('should show classify another button after classification', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
 
@@ -155,6 +167,7 @@ test.describe('Form State Management', () => {
   test.describe('Form Reset', () => {
     test('should completely reset form when clicking Classify Another', async () => {
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();
@@ -168,6 +181,7 @@ test.describe('Form State Management', () => {
     test('should allow starting a new classification after reset', async () => {
       // First classification
       await classifyPage.selectPosteriorOnly();
+      await classifyPage.selectPosteriorCTScanYes();
       await classifyPage.selectPosteriorTypeExtraincisural();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();
@@ -180,7 +194,7 @@ test.describe('Form State Management', () => {
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
-      await classifyPage.expectLaugeHansenResult('PA');
+      await classifyPage.expectLaugeHansenResult('SA');
     });
   });
 

@@ -62,7 +62,7 @@ test.describe('Lateral + Medial Classification Path', () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialOblique();
       await classifyPage.selectLMInfraTransverseNo();
-      await classifyPage.selectLMFibularLevelInfrasindesmal();
+      await classifyPage.selectLMFibularLevelTransindesmal();
       await classifyPage.selectLMMorphology('oblique');
       await classifyPage.submitClassification();
 
@@ -115,7 +115,7 @@ test.describe('Lateral + Medial Classification Path', () => {
     test('should classify with low fibular level and oblique morphology', async () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialTransverse();
-      await classifyPage.selectLMFibularLevelInfrasindesmal();
+      await classifyPage.selectLMFibularLevelTransindesmal();
       await classifyPage.selectLMMorphology('oblique');
       await classifyPage.submitClassification();
 
@@ -137,7 +137,7 @@ test.describe('Lateral + Medial Classification Path', () => {
     test('should classify transverse morphology with additional fibular level', async () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialTransverse();
-      await classifyPage.selectLMFibularLevelInfrasindesmal();
+      await classifyPage.selectLMFibularLevelTransindesmal();
       await classifyPage.selectLMMorphology('transverse');
       await classifyPage.selectLMTransverseLevelInfrasindesmal();
       await classifyPage.submitClassification();

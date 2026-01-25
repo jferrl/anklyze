@@ -180,6 +180,7 @@ test.describe('Lateral + Posterior Classification Path', () => {
       await classifyPage.selectLateralPosterior();
       await classifyPage.selectLPLevelTransindesmal();
       await classifyPage.selectLPMorphologyTransSpiral();
+      await classifyPage.selectLPTransCTScanYes();
       await classifyPage.selectLPPosteriorTypeTrans('posterolateral');
       await classifyPage.expectClassifyButtonEnabled();
 
