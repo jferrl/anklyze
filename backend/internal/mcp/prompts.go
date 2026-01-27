@@ -26,7 +26,7 @@ func clinicalClassificationPrompt() mcp.Prompt {
 	)
 }
 
-func clinicalClassificationHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+func clinicalClassificationHandler(_ context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 	args := request.Params.Arguments
 	caseDesc := args["case_description"]
 	imaging := args["imaging_available"]
@@ -115,7 +115,7 @@ func educationalGuidePrompt() mcp.Prompt {
 	)
 }
 
-func educationalGuideHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+func educationalGuideHandler(_ context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 	args := request.Params.Arguments
 	system := args["system"]
 	level := args["level"]
@@ -204,7 +204,7 @@ func researchAnalysisPrompt() mcp.Prompt {
 	)
 }
 
-func researchAnalysisHandler(ctx context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+func researchAnalysisHandler(_ context.Context, request mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 	args := request.Params.Arguments
 	analysisType := args["analysis_type"]
 	dateRange := args["date_range"]

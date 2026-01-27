@@ -19,7 +19,7 @@ func classificationSystemsOverviewResource() mcp.Resource {
 	)
 }
 
-func classificationSystemsOverviewHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func classificationSystemsOverviewHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# Ankle Fracture Classification Systems
 
 Anklyze supports four internationally recognized classification systems for ankle fractures:
@@ -82,7 +82,7 @@ func danisWeberResource() mcp.Resource {
 	)
 }
 
-func danisWeberHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func danisWeberHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# Danis-Weber Classification
 
 ## Overview
@@ -144,7 +144,7 @@ func laugeHansenResource() mcp.Resource {
 	)
 }
 
-func laugeHansenHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func laugeHansenHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# Lauge-Hansen Classification
 
 ## Overview
@@ -232,7 +232,7 @@ func aootaResource() mcp.Resource {
 	)
 }
 
-func aootaHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func aootaHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# AO/OTA Classification
 
 ## Overview
@@ -309,7 +309,7 @@ func bartonicekResource() mcp.Resource {
 	)
 }
 
-func bartonicekHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func bartonicekHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# Bartonicek Classification
 
 ## Overview
@@ -386,7 +386,7 @@ func decisionFlowchartResource() mcp.Resource {
 	)
 }
 
-func decisionFlowchartHandler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+func decisionFlowchartHandler(_ context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	content := `# Ankle Fracture Classification Decision Tree
 
 ## Step 1: Identify Involved Malleoli

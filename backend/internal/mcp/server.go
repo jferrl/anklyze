@@ -31,6 +31,7 @@ func NewServer(cfg Config) *server.MCPServer {
 	s := server.NewMCPServer(
 		cfg.Name,
 		cfg.Version,
+		server.WithRecovery(),
 		server.WithToolCapabilities(true),
 		server.WithResourceCapabilities(true, true), // static and templates
 		server.WithPromptCapabilities(true),

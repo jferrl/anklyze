@@ -94,7 +94,7 @@ func newClassifyFractureTool() mcp.Tool {
 }
 
 func classifyFractureHandler(classifier service.ClassifierService) server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		// Build FractureInput from arguments using SDK helper methods
 		hasCTScan := request.GetBool("has_ct_scan", false)
 		fibulaInfraTransverse := request.GetBool("fibula_infrasindesmal_transverse", false)
@@ -167,7 +167,7 @@ type FormOptions struct {
 }
 
 func getOptionsHandler() server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		lang := i18n.ParseLanguage(request.GetString("language", "en"))
 		category := request.GetString("category", "")
 
@@ -300,7 +300,7 @@ type ValidationResult struct {
 }
 
 func validateCombinationHandler(classifier service.ClassifierService) server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		input := domain.FractureInput{
 			InvolvedMalleoli:  domain.InvolvedMalleoli(request.GetString("involved_malleoli", "")),
 			FibularLevel:      domain.FibularLevel(request.GetString("fibular_level", "")),
@@ -350,7 +350,7 @@ func newExplainClassificationTool() mcp.Tool {
 }
 
 func explainClassificationHandler() server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		topic := request.GetString("topic", "")
 		lang := i18n.ParseLanguage(request.GetString("language", "en"))
 
@@ -515,7 +515,7 @@ func newGetAnalyticsSummaryTool() mcp.Tool {
 }
 
 func getAnalyticsSummaryHandler(analytics AnalyticsRepository) server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		from, to := parseDateRangeFromRequest(request)
 
 		summary, err := analytics.GetSummary(from, to)
@@ -544,7 +544,7 @@ func newGetAnalyticsTrendsTool() mcp.Tool {
 }
 
 func getAnalyticsTrendsHandler(analytics AnalyticsRepository) server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		from, to := parseDateRangeFromRequest(request)
 		granularity := domain.ParseGranularity(request.GetString("granularity", "day"))
 
@@ -575,7 +575,7 @@ func newGetClassificationDistributionTool() mcp.Tool {
 }
 
 func getClassificationDistributionHandler(analytics AnalyticsRepository) server.ToolHandlerFunc {
-	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		system := request.GetString("system", "")
 		from, to := parseDateRangeFromRequest(request)
 
