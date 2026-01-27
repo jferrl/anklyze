@@ -199,52 +199,5 @@
     "button": "Share",
     "copied": "Link copied to clipboard",
     "failed": "Failed to copy link"
-  },
-  "annotation": {
-    "title": "Image (Optional)",
-    "description": "Upload an image to annotate. Images are not saved or sent to any server.",
-    "show": "Show Image Tools",
-    "hide": "Hide Image Tools",
-    "upload": {
-      "title": "Upload Image",
-      "dragDrop": "Drag and drop an image here, or click to select",
-      "formats": "Supported: JPEG, PNG, WebP, BMP, GIF, TIFF",
-      "maxSize": "Maximum size: 10MB"
-    },
-    "tools": {
-      "select": "Select",
-      "marker": "Marker",
-      "circle": "Circle",
-      "arrow": "Arrow",
-      "line": "Line",
-      "measurement": "Measure",
-      "angle": "Angle",
-      "text": "Text",
-      "pan": "Pan"
-    },
-    "actions": {
-      "clearAll": "Clear All",
-      "clearImage": "Remove Image",
-      "delete": "Delete",
-      "zoomIn": "Zoom In",
-      "zoomOut": "Zoom Out",
-      "zoomReset": "Reset Zoom",
-      "zoomFit": "Fit"
-    },
-    "labels": {
-      "distance": "Distance",
-      "angle": "Angle",
-      "pixels": "px",
-      "degrees": "°"
-    },
-    "confirm": {
-      "clearAll": "Clear all annotations?",
-      "clearImage": "Remove image and all annotations?"
-    },
-    "errors": {
-      "invalidFormat": "Invalid format. Use JPEG, PNG, WebP, BMP, GIF, or TIFF.",
-      "fileTooLarge": "File too large. Max 10MB.",
-      "loadFailed": "Failed to load image."
-    }
   }
 }

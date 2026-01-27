@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Share2, Check, ChevronDown, ImageIcon } from 'lucide-react';
+import { ChevronLeft, Share2, Check } from 'lucide-react';
 import { generateShareUrl, copyToClipboard, decodeParamsToInput } from '../utils/shareUrl';
 import type {
   FractureInput,
@@ -17,14 +17,11 @@ import { getFormOptions } from '../services/api';
 import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';
 import { ComparisonView } from './ComparisonView';
-import { ImageAnnotator } from './annotation/ImageAnnotator';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { cn } from '@/lib/utils';
 
 export function FractureForm() {
   const { t } = useTranslation();
@@ -33,7 +30,6 @@ export function FractureForm() {
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
   const [isComparing, setIsComparing] = useState(false);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const [showAnnotator, setShowAnnotator] = useState(false);
   // Check if URL has params on initial render to avoid flash
   const [loadingFromUrl, setLoadingFromUrl] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -975,36 +971,6 @@ export function FractureForm() {
         </p>
       </div>
 
-      {/* Image Annotation Section */}
-      <Collapsible open={showAnnotator} onOpenChange={setShowAnnotator}>
-        <Card className="mb-2">
-          <CardHeader className="py-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ImageIcon className="h-4 w-4" />
-                {t('annotation.title')}
-              </CardTitle>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 px-2">
-                  {showAnnotator ? t('annotation.hide') : t('annotation.show')}
-                  <ChevronDown className={cn(
-                    "ml-1 h-4 w-4 transition-transform",
-                    showAnnotator && "rotate-180"
-                  )} />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-            <CardDescription className="text-xs">
-              {t('annotation.description')}
-            </CardDescription>
-          </CardHeader>
-          <CollapsibleContent>
-            <CardContent className="pt-0">
-              <ImageAnnotator />
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
 
       {/* Navigation buttons */}
       {canGoBack && (
