@@ -32,6 +32,13 @@ Update the LLM prompts in `backend/internal/llm/prompts.go`:
 - Update the few-shot examples in `fewShotExamplesEN` and `fewShotExamplesES` to reflect new classification paths
 - Ensure clarification questions match the updated flow diagram logic
 
+## 3.2 Update MCP Server Resources
+
+Update the MCP server resources in `backend/internal/mcp/resources.go`:
+
+- Update `decisionFlowchartHandler` with the new decision tree steps
+- Review classification system documentation if clinical notes changed
+
 ## 4. Update Backend Tests
 Update tests in `backend/internal/rules/engine_test.go` to match the new rules.
 
@@ -79,6 +86,7 @@ cd e2e && npm run test
 - `backend/internal/i18n/en.go` - English translations
 - `backend/internal/i18n/es.go` - Spanish translations
 - `backend/internal/llm/prompts.go` - LLM prompts for chat classification (decision tree questions and few-shot examples)
+- `backend/internal/mcp/resources.go` - MCP server resources (decision flowchart, classification docs)
 
 ### Frontend
 - `frontend/src/components/FractureForm.tsx` - Form component

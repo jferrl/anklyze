@@ -13,7 +13,9 @@ anklyze/
 │   └── frontend.yml             # Frontend CI (lint, typecheck, build)
 │
 ├── backend/                     # Go API server (Gin framework)
-│   ├── cmd/server/main.go       # Entry point
+│   ├── cmd/
+│   │   ├── server/main.go       # HTTP API entry point
+│   │   └── mcpserver/main.go    # MCP server entry point
 │   └── internal/
 │       ├── api/                 # HTTP handlers and routes
 │       ├── config/              # Configuration loading
@@ -21,6 +23,7 @@ anklyze/
 │       ├── domain/              # Domain models and types
 │       ├── i18n/                # Translations (en.go, es.go)
 │       ├── llm/                 # LLM integration (Gemini API)
+│       ├── mcp/                 # MCP server (tools, resources, prompts)
 │       ├── repository/          # Data access layer
 │       │   └── postgres/        # PostgreSQL implementation
 │       ├── rules/               # Classification rule engine
@@ -78,15 +81,98 @@ anklyze/
 | `GEMINI_MODEL`  | Gemini model to use           | `gemini-3-flash-preview`    |
 
 ### Running Backend
+
 ```bash
 cd backend
 make run          # Run without database (audit disabled)
 make run-with-db  # Run with local PostgreSQL (audit enabled)
 make swagger      # Regenerate OpenAPI docs after changing handlers
 ```
+
 Server runs on `http://localhost:8080`
 
 Swagger UI available at `http://localhost:8080/swagger/index.html`
+
+### MCP Server (Model Context Protocol)
+
+The MCP server exposes classification functionality to LLMs like Claude and ChatGPT.
+
+**Key Files:**
+
+- `cmd/mcpserver/main.go` - Entry point with stdio/SSE transport support
+- `internal/mcp/server.go` - Server initialization and configuration
+- `internal/mcp/tools.go` - Tool definitions (classify_fracture, get_options, etc.)
+- `internal/mcp/resources.go` - Classification system documentation resources
+- `internal/mcp/prompts.go` - Prompt templates (clinical, educational, research)
+
+**MCP Tools:**
+
+| Tool | Purpose |
+|------|---------|
+| `classify_fracture` | Classify ankle fracture from structured input |
+| `get_options` | Get localized form options for parameters |
+| `validate_combination` | Check if fracture combination is anatomically possible |
+| `explain_classification` | Explain classification systems or results |
+| `get_analytics_summary` | Get aggregated statistics (requires DB) |
+| `get_analytics_trends` | Get time-series data (requires DB) |
+| `get_classification_distribution` | Get distribution for a system (requires DB) |
+
+**MCP Resources:**
+
+| URI | Content |
+|-----|---------|
+| `anklyze://systems/overview` | Overview of all 4 classification systems |
+| `anklyze://systems/danis-weber` | Danis-Weber classification details |
+| `anklyze://systems/lauge-hansen` | Lauge-Hansen classification details |
+| `anklyze://systems/ao-ota` | AO/OTA classification details |
+| `anklyze://systems/bartonicek` | Bartonicek classification details |
+| `anklyze://flowchart/decision-tree` | Classification decision flowchart |
+
+**MCP Prompts:**
+
+| Prompt | Use Case |
+|--------|----------|
+| `clinical_classification` | Guide clinicians through structured classification |
+| `educational_guide` | Learning ankle fracture classification |
+| `research_analysis` | Research-focused analysis of patterns |
+
+**Running MCP Server:**
+
+```bash
+cd backend
+make run-mcp              # stdio transport (for Claude Desktop/Code)
+make run-mcp-sse          # SSE transport (for HTTP deployment)
+make run-mcp-with-db      # stdio with database (analytics enabled)
+make run-mcp-sse-with-db  # SSE with database
+make build-mcp            # Build binary to bin/mcpserver
+```
+
+**Environment Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MCP_TRANSPORT` | Transport mode: `stdio` or `sse` | `stdio` |
+| `PORT` | HTTP port for SSE mode | `8080` |
+| `DATABASE_URL` | PostgreSQL connection (optional) | (none) |
+
+**SSE Endpoints (when deployed):**
+
+- SSE: `/mcp/sse`
+- Message: `/mcp/message`
+
+**Claude Desktop Configuration:**
+
+Add to `~/.config/claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "anklyze": {
+      "command": "/path/to/anklyze/backend/bin/mcpserver"
+    }
+  }
+}
+```
 
 ### Database Commands
 

@@ -1,4 +1,4 @@
-.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit swagger build-mcp run-mcp run-mcp-with-db run-mcp-sse run-mcp-sse-with-db docker-build-mcp docker-run-mcp
+.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit swagger build-mcp run-mcp run-mcp-with-db run-mcp-sse run-mcp-sse-with-db
 
 # Run the server
 run:
@@ -71,11 +71,3 @@ run-mcp-sse:
 # Run MCP server with SSE transport and local database
 run-mcp-sse-with-db:
 	MCP_TRANSPORT=sse DATABASE_URL="postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable" go run cmd/mcpserver/main.go
-
-# Build MCP server Docker image
-docker-build-mcp:
-	docker build -f Dockerfile.mcp -t anklyze-mcp .
-
-# Run MCP server Docker container
-docker-run-mcp:
-	docker run -p 8080:8080 anklyze-mcp
