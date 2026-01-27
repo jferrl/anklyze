@@ -253,6 +253,8 @@ function TypingIndicator() {
 
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
+  // Use displayContent for user-friendly display, fallback to content
+  const displayText = message.displayContent || message.content;
 
   return (
     <div className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
@@ -277,7 +279,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             : 'bg-muted rounded-2xl rounded-tl-md'
         }`}
       >
-        <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+        <p className="text-sm whitespace-pre-wrap leading-relaxed">{displayText}</p>
         {message.confidence !== undefined && message.confidence > 0 && (
           <div className="mt-2 flex items-center gap-2">
             <Badge

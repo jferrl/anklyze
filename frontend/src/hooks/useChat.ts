@@ -13,6 +13,7 @@ export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  displayContent?: string; // User-friendly content for display (optional)
   extractedInput?: FractureInput;
   classification?: ClassificationResult;
   confidence?: number;
@@ -51,7 +52,7 @@ export function useChat() {
     }
   }, []);
 
-  const sendMessage = useCallback(async (text: string) => {
+  const sendMessage = useCallback(async (text: string, displayContent?: string) => {
     if (!text.trim()) return;
 
     setIsLoading(true);
@@ -65,6 +66,7 @@ export function useChat() {
       id: crypto.randomUUID(),
       role: 'user',
       content: text,
+      displayContent, // User-friendly display content (optional)
       timestamp: new Date(),
     };
     setMessages(prev => [...prev, userMessage]);
@@ -161,15 +163,16 @@ export function useChat() {
   }, []);
 
   const answerClarification = useCallback(async (field: string, answer: string) => {
-    // Build a message that includes the answer to the clarification
-    // This helps the LLM understand the context and continue the classification
-    const answerMessage = `For ${field}: ${answer}`;
+    // Build a technical message that includes the field context for the LLM
+    // This helps the LLM understand which field the answer relates to
+    const technicalMessage = `For ${field}: ${answer}`;
 
     // Clear the current clarification since we're answering it
     setClarifications(null);
 
     // Send the answer as a new message to continue the conversation
-    await sendMessage(answerMessage);
+    // Display the user-friendly answer, but send the technical message to the API
+    await sendMessage(technicalMessage, answer);
   }, [sendMessage]);
 
   const submitFeedback = useCallback(async (rating: FeedbackRating, comment?: string) => {
