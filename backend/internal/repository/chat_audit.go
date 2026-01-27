@@ -41,6 +41,11 @@ func (r *NoOpChatAuditRepository) GetFeedbackBySession(_ context.Context, _ uuid
 	return nil, nil
 }
 
+// GetLastAssistantMessage returns nil message (not found).
+func (r *NoOpChatAuditRepository) GetLastAssistantMessage(_ context.Context, _ uuid.UUID) (*domain.ChatMessage, error) {
+	return nil, nil
+}
+
 // Close does nothing and returns nil.
 func (r *NoOpChatAuditRepository) Close() error {
 	return nil

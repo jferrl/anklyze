@@ -34,6 +34,7 @@ type ChatAuditRepository interface {
 	SaveMessage(ctx context.Context, message *domain.ChatMessage) error
 	SaveFeedback(ctx context.Context, feedback *domain.ChatFeedback) error
 	GetFeedbackBySession(ctx context.Context, sessionID uuid.UUID) (*domain.ChatFeedback, error)
+	GetLastAssistantMessage(ctx context.Context, sessionID uuid.UUID) (*domain.ChatMessage, error)
 	Close() error
 }
 
@@ -446,13 +447,23 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		}
 	}
 
-	// Determine message type for user message
+	// Determine message type for user message and get previous context
 	userMsgType := domain.ChatMessageTypeInitial
 	if sessionID != nil {
 		// Check if session has messages already (this would be a follow-up)
 		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
 		if err == nil && session != nil && session.TotalMessages > 0 {
 			userMsgType = domain.ChatMessageTypeClarificationAnswer
+
+			// Get the last assistant message to retrieve previous extracted input
+			lastMsg, err := h.chatAuditRepo.GetLastAssistantMessage(c.Request.Context(), *sessionID)
+			if err == nil && lastMsg != nil {
+				// Parse the extracted input from the last message
+				previousInput, err := lastMsg.GetExtractedInput()
+				if err == nil && previousInput != nil {
+					req.PreviousInput = previousInput
+				}
+			}
 		}
 	}
 

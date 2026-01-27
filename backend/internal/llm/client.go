@@ -56,8 +56,9 @@ func NewClient(ctx context.Context, apiKey, model string) (*Client, error) {
 }
 
 // ExtractFractureInput extracts structured FractureInput from a natural language description.
-func (c *Client) ExtractFractureInput(ctx context.Context, description string, lang i18n.Language) (*ExtractionResult, error) {
-	prompt := BuildExtractionPrompt(description, lang)
+// If previousInput is provided, it will be included as context for multi-turn conversations.
+func (c *Client) ExtractFractureInput(ctx context.Context, description string, lang i18n.Language, previousInput *domain.FractureInput) (*ExtractionResult, error) {
+	prompt := BuildExtractionPromptWithContext(description, lang, previousInput)
 
 	config := &genai.GenerateContentConfig{
 		Temperature:      genai.Ptr(float32(0.1)),

@@ -1,8 +1,10 @@
 package llm
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 )
 
@@ -226,11 +228,13 @@ If low, ask lateral morphology:
 - options: ["Spiral (twisting pattern)", "Oblique (diagonal line)", "Transverse (horizontal line)"]
 
 ## Important Clarification Guidelines
-1. Ask ONE question at a time when possible - the most important missing field first
-2. If multiple fields are equally important, include up to 2-3 clarifications maximum
-3. Provide clear, medically accurate options
-4. Always include the field name that the answer will populate
-5. When confidence is low (<0.7) due to missing information, ALWAYS include clarifications`
+1. CRITICAL: Ask ONLY ONE question at a time - follow the decision tree strictly in order
+2. For posterior_only: First ask has_ct_scan, then ONLY if true ask posterior_fracture_type
+3. For lateral_only suprasindesmal: First ask suprasindesmal_type, then fibula_trace_pattern if needed
+4. NEVER ask multiple questions simultaneously - this breaks the classification flow
+5. Provide clear, medically accurate options
+6. Always include the field name that the answer will populate
+7. When confidence is low (<0.7) due to missing information, ALWAYS include exactly ONE clarification`
 
 const systemPromptES = `Eres un asistente de extracción de datos médicos especializado en clasificación de fracturas de tobillo.
 Tu tarea es extraer información estructurada de fracturas a partir de descripciones en lenguaje natural.
@@ -452,11 +456,13 @@ Si baja, preguntar morfología lateral:
 - options: ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)", "Transversa (línea horizontal)"]
 
 ## Directrices Importantes para Clarificaciones
-1. Pregunta UNA pregunta a la vez cuando sea posible - el campo faltante más importante primero
-2. Si múltiples campos son igualmente importantes, incluye máximo 2-3 clarificaciones
-3. Proporciona opciones claras y médicamente precisas
-4. Siempre incluye el nombre del campo que la respuesta completará
-5. Cuando la confianza es baja (<0.7) debido a información faltante, SIEMPRE incluye clarificaciones`
+1. CRÍTICO: Pregunta SOLO UNA pregunta a la vez - sigue el árbol de decisión estrictamente en orden
+2. Para posterior_only: Primero pregunta has_ct_scan, luego SOLO si es true pregunta posterior_fracture_type
+3. Para lateral_only suprasindesmal: Primero pregunta suprasindesmal_type, luego fibula_trace_pattern si es necesario
+4. NUNCA preguntes múltiples preguntas simultáneamente - esto rompe el flujo de clasificación
+5. Proporciona opciones claras y médicamente precisas
+6. Siempre incluye el nombre del campo que la respuesta completará
+7. Cuando la confianza es baja (<0.7) debido a información faltante, SIEMPRE incluye exactamente UNA clarificación`
 
 const fewShotExamplesEN = `
 ## Examples
@@ -579,7 +585,7 @@ Output:
   "clarifications": [{"field": "involved_malleoli", "question": "Which malleoli are fractured?", "options": ["Posterior only", "Medial only", "Lateral/Fibula only", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimalleolar)", "All three (trimaleolar)"]}]
 }
 
-Example 10 - Posterior only incomplete:
+Example 10 - Posterior only incomplete (needs CT scan first):
 Input: "Isolated posterior malleolar fracture"
 Output:
 {
@@ -587,8 +593,34 @@ Output:
     "involved_malleoli": "posterior_only"
   },
   "confidence": 0.5,
+  "missing_fields": ["has_ct_scan"],
+  "clarifications": [{"field": "has_ct_scan", "question": "Do you have a CT scan?", "options": ["Yes", "No"]}]
+}
+
+Example 11 - Posterior only with CT scan (needs Bartonicek):
+Input: "Isolated posterior malleolar fracture with CT scan available"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "has_ct_scan": true
+  },
+  "confidence": 0.6,
   "missing_fields": ["posterior_fracture_type"],
   "clarifications": [{"field": "posterior_fracture_type", "question": "What type of posterior malleolus fracture? (Bartonicek classification)", "options": ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]}]
+}
+
+Example 12 - Posterior only without CT (complete classification):
+Input: "Isolated posterior malleolar fracture, no CT available"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "has_ct_scan": false
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
 }`
 
 const fewShotExamplesES = `
@@ -712,7 +744,7 @@ Salida:
   "clarifications": [{"field": "involved_malleoli", "question": "¿Qué maléolos están fracturados?", "options": ["Solo posterior", "Solo medial", "Solo lateral/Peroné", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimaleolar)", "Los tres (trimaleolar)"]}]
 }
 
-Ejemplo 10 - Solo posterior incompleta:
+Ejemplo 10 - Solo posterior incompleta (necesita TAC primero):
 Entrada: "Fractura aislada del maléolo posterior"
 Salida:
 {
@@ -720,8 +752,34 @@ Salida:
     "involved_malleoli": "posterior_only"
   },
   "confidence": 0.5,
+  "missing_fields": ["has_ct_scan"],
+  "clarifications": [{"field": "has_ct_scan", "question": "¿Tiene TAC?", "options": ["Sí", "No"]}]
+}
+
+Ejemplo 11 - Solo posterior con TAC (necesita Bartonicek):
+Entrada: "Fractura aislada del maléolo posterior con TAC disponible"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "has_ct_scan": true
+  },
+  "confidence": 0.6,
   "missing_fields": ["posterior_fracture_type"],
   "clarifications": [{"field": "posterior_fracture_type", "question": "¿Qué tipo de fractura del maléolo posterior? (clasificación de Bartonicek)", "options": ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]}]
+}
+
+Ejemplo 12 - Solo posterior sin TAC (clasificación completa):
+Entrada: "Fractura aislada del maléolo posterior, sin TAC disponible"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "has_ct_scan": false
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
 }`
 
 // GetSystemPrompt returns the system prompt for the given language.
@@ -738,4 +796,41 @@ func BuildExtractionPrompt(description string, lang i18n.Language) string {
 		return fmt.Sprintf("Extrae la información de fractura de la siguiente descripción:\n\n%s", description)
 	}
 	return fmt.Sprintf("Extract the fracture information from the following description:\n\n%s", description)
+}
+
+// BuildExtractionPromptWithContext builds the user prompt including previous context for multi-turn conversations.
+func BuildExtractionPromptWithContext(description string, lang i18n.Language, previousInput *domain.FractureInput) string {
+	if previousInput == nil {
+		return BuildExtractionPrompt(description, lang)
+	}
+
+	// Serialize previous input to JSON for context
+	previousJSON, err := json.Marshal(previousInput)
+	if err != nil {
+		return BuildExtractionPrompt(description, lang)
+	}
+
+	if lang == i18n.Spanish {
+		return fmt.Sprintf(`CONTEXTO IMPORTANTE: Esta es una conversación continua. Los siguientes campos ya fueron extraídos de mensajes anteriores:
+
+%s
+
+El usuario ahora proporciona información adicional. DEBES mantener TODOS los campos previamente extraídos y solo agregar/actualizar con la nueva información.
+
+Nueva información del usuario:
+%s
+
+Responde con el JSON completo incluyendo TODOS los campos previos más cualquier información nueva.`, string(previousJSON), description)
+	}
+
+	return fmt.Sprintf(`IMPORTANT CONTEXT: This is a continuing conversation. The following fields were already extracted from previous messages:
+
+%s
+
+The user is now providing additional information. You MUST keep ALL previously extracted fields and only add/update with new information.
+
+New information from user:
+%s
+
+Respond with the complete JSON including ALL previous fields plus any new information.`, string(previousJSON), description)
 }

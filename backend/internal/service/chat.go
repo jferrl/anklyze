@@ -20,9 +20,10 @@ const (
 
 // ChatRequest represents a chat message request.
 type ChatRequest struct {
-	Message   string `json:"message"`
-	Language  string `json:"language"`
-	SessionID string `json:"session_id,omitempty"`
+	Message       string               `json:"message"`
+	Language      string               `json:"language"`
+	SessionID     string               `json:"session_id,omitempty"`
+	PreviousInput *domain.FractureInput `json:"-"` // Previous extracted input for context continuity
 }
 
 // ChatResponse represents the response from chat classification.
@@ -59,8 +60,8 @@ func NewChatService(llmClient *llm.Client, classifier ClassifierService) ChatSer
 func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
 	lang := i18n.ParseLanguage(req.Language)
 
-	// Extract fracture input from natural language
-	extraction, err := s.llmClient.ExtractFractureInput(ctx, req.Message, lang)
+	// Extract fracture input from natural language, including previous context
+	extraction, err := s.llmClient.ExtractFractureInput(ctx, req.Message, lang, req.PreviousInput)
 	if err != nil {
 		slog.Error("LLM extraction failed", "error", err)
 		return &ChatResponse{

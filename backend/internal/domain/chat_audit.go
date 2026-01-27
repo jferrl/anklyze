@@ -193,6 +193,19 @@ func NewAssistantMessage(
 	return msg, nil
 }
 
+// GetExtractedInput parses and returns the extracted input from the message.
+func (m *ChatMessage) GetExtractedInput() (*FractureInput, error) {
+	if m.ExtractedInput == nil || len(m.ExtractedInput) == 0 {
+		return nil, nil
+	}
+
+	var input FractureInput
+	if err := json.Unmarshal(m.ExtractedInput, &input); err != nil {
+		return nil, err
+	}
+	return &input, nil
+}
+
 // FeedbackRating represents the type of feedback.
 type FeedbackRating string
 

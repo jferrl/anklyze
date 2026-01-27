@@ -128,6 +128,19 @@ func (r *ChatAuditRepository) GetFeedbackBySession(ctx context.Context, sessionI
 	return &feedback, nil
 }
 
+// GetLastAssistantMessage retrieves the most recent assistant message for a session.
+func (r *ChatAuditRepository) GetLastAssistantMessage(ctx context.Context, sessionID uuid.UUID) (*domain.ChatMessage, error) {
+	var message domain.ChatMessage
+	err := r.db.WithContext(ctx).
+		Where("session_id = ? AND role = ?", sessionID, "assistant").
+		Order("created_at DESC").
+		First(&message).Error
+	if err != nil {
+		return nil, err
+	}
+	return &message, nil
+}
+
 // Close gracefully shuts down the background writers.
 // It waits for all pending entries to be written before returning.
 func (r *ChatAuditRepository) Close() error {
