@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Loader2, Check, RotateCcw, Bot, User, Sparkles, MessageSquare, HelpCircle, FlaskConical } from 'lucide-react';
+import { Send, Loader2, Check, RotateCcw, Bot, User, Sparkles, MessageSquare, HelpCircle, FlaskConical, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -13,11 +13,18 @@ interface ChatPanelProps {
   onClassificationComplete?: (result: ClassificationResult, input: FractureInput) => void;
 }
 
+// Minimum characters required for a message
+const MIN_INPUT_LENGTH = 10;
+// Debounce delay in milliseconds
+const DEBOUNCE_DELAY_MS = 1000;
+
 export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
+  const [isDebouncing, setIsDebouncing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const lastSubmitTimeRef = useRef<number>(0);
 
   const {
     messages,
@@ -33,6 +40,10 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
     reset,
   } = useChat();
 
+  // Check if input meets minimum length requirement
+  const inputTooShort = inputValue.trim().length > 0 && inputValue.trim().length < MIN_INPUT_LENGTH;
+  const canSubmit = inputValue.trim().length >= MIN_INPUT_LENGTH && !isLoading && !isDebouncing;
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -43,14 +54,25 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
+    if (!canSubmit) return;
 
+    // Check debounce timing
+    const now = Date.now();
+    const timeSinceLastSubmit = now - lastSubmitTimeRef.current;
+    if (timeSinceLastSubmit < DEBOUNCE_DELAY_MS) {
+      // Show debouncing state briefly
+      setIsDebouncing(true);
+      setTimeout(() => setIsDebouncing(false), DEBOUNCE_DELAY_MS - timeSinceLastSubmit);
+      return;
+    }
+
+    lastSubmitTimeRef.current = now;
     const text = inputValue;
     setInputValue('');
     await sendMessage(text);
-  };
+  }, [canSubmit, inputValue, sendMessage]);
 
   const handleConfirm = async () => {
     if (!extractedInput) return;
@@ -152,10 +174,12 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
           />
           <Button
             type="submit"
-            disabled={isLoading || !inputValue.trim()}
+            disabled={!canSubmit}
             className="h-[44px] px-4 rounded-xl shadow-sm"
           >
             {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isDebouncing ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Send className="h-4 w-4" />
@@ -172,6 +196,18 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
             </Button>
           )}
         </div>
+        {/* Input validation hints */}
+        {(inputTooShort || isDebouncing) && (
+          <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
+            <AlertCircle className="h-3 w-3" />
+            {inputTooShort && (
+              <span>{t('chat.validation.minLength', { min: MIN_INPUT_LENGTH, current: inputValue.trim().length })}</span>
+            )}
+            {isDebouncing && !inputTooShort && (
+              <span>{t('chat.validation.pleaseWait')}</span>
+            )}
+          </div>
+        )}
       </form>
     </div>
   );

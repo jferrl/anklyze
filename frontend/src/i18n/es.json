@@ -156,7 +156,14 @@
     },
     "errors": {
       "generic": "Lo siento, no pude procesar eso. Por favor intenta de nuevo.",
-      "unavailable": "La clasificación por chat no está disponible temporalmente."
+      "unavailable": "La clasificación por chat no está disponible temporalmente.",
+      "rateLimit": "Estás enviando mensajes demasiado rápido. Por favor espera un momento antes de intentar de nuevo.",
+      "sessionLimit": "Has alcanzado el límite de mensajes para esta sesión. Por favor inicia una nueva conversación.",
+      "dailyQuota": "Has alcanzado tu límite diario. Por favor intenta de nuevo mañana."
+    },
+    "validation": {
+      "minLength": "Por favor ingresa al menos {{min}} caracteres ({{current}}/{{min}})",
+      "pleaseWait": "Por favor espera un momento antes de enviar otro mensaje"
     }
   },
   "feedback": {

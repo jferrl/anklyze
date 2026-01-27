@@ -156,7 +156,14 @@
     },
     "errors": {
       "generic": "Sorry, I couldn't process that. Please try again.",
-      "unavailable": "Chat classification is temporarily unavailable."
+      "unavailable": "Chat classification is temporarily unavailable.",
+      "rateLimit": "You're sending messages too quickly. Please wait a moment before trying again.",
+      "sessionLimit": "You've reached the message limit for this session. Please start a new conversation.",
+      "dailyQuota": "You've reached your daily limit. Please try again tomorrow."
+    },
+    "validation": {
+      "minLength": "Please enter at least {{min}} characters ({{current}}/{{min}})",
+      "pleaseWait": "Please wait a moment before sending another message"
     }
   },
   "feedback": {

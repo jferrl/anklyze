@@ -15,6 +15,12 @@ type Config struct {
 	GeminiModel     string
 	LogLevel        string
 	LogFormat       string
+	// Rate limiting configuration
+	RateLimitRate  float64 // Requests per second (e.g., 0.5 = 1 request per 2 seconds)
+	RateLimitBurst int     // Maximum burst size
+	// Usage limits
+	SessionMessageLimit int // Maximum messages per chat session
+	DailyQuotaPerIP     int // Maximum requests per IP per day
 }
 
 // Load loads configuration from environment variables.
@@ -28,6 +34,10 @@ func Load() *Config {
 		GeminiModel:     getEnv("GEMINI_MODEL", "gemini-3-flash-preview"),
 		LogLevel:        getEnv("LOG_LEVEL", "info"),
 		LogFormat:       getEnv("LOG_FORMAT", "text"),
+		RateLimitRate:       getEnvFloat("RATE_LIMIT_RATE", 0.5),    // 1 request per 2 seconds
+		RateLimitBurst:      getEnvInt("RATE_LIMIT_BURST", 5),      // Allow burst of 5
+		SessionMessageLimit: getEnvInt("SESSION_MESSAGE_LIMIT", 20), // Max messages per session
+		DailyQuotaPerIP:     getEnvInt("DAILY_QUOTA_PER_IP", 100),   // Max requests per IP per day
 	}
 }
 
@@ -52,6 +62,15 @@ func getEnvInt(key string, defaultValue int) int {
 	if value := os.Getenv(key); value != "" {
 		if intVal, err := strconv.Atoi(value); err == nil {
 			return intVal
+		}
+	}
+	return defaultValue
+}
+
+func getEnvFloat(key string, defaultValue float64) float64 {
+	if value := os.Getenv(key); value != "" {
+		if floatVal, err := strconv.ParseFloat(value, 64); err == nil {
+			return floatVal
 		}
 	}
 	return defaultValue

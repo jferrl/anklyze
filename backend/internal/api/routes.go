@@ -22,10 +22,17 @@ func SetupRoutes(
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo)
+	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo).
+		WithSessionMessageLimit(cfg.SessionMessageLimit)
 
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
+
+	// Rate limiter for chat endpoints (protects against excessive API costs)
+	_, chatRateLimiter := RateLimitMiddlewareWithConfig(cfg.RateLimitRate, cfg.RateLimitBurst)
+
+	// Daily quota limiter per IP
+	_, dailyQuota := DailyQuotaMiddleware(cfg.DailyQuotaPerIP)
 
 	// Health check
 	router.GET("/health", handler.HealthCheck)
@@ -35,7 +42,7 @@ func SetupRoutes(
 	{
 		api.POST("/classify", handler.ClassifyFracture)
 		api.GET("/options", handler.GetOptions)
-		api.POST("/chat", handler.ChatMessage)
+		api.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
 	}
 
 	// Chat session routes

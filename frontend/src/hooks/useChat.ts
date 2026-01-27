@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FractureInput, ClassificationResult, ChatResponse, Clarification, FeedbackRating } from '../types/fracture';
 import {
   sendChatMessage,
@@ -7,6 +8,10 @@ import {
   completeChatSession,
   abandonChatSession,
   submitFeedback as submitFeedbackAPI,
+  RateLimitError,
+  SessionLimitError,
+  DailyQuotaError,
+  InputValidationError,
 } from '../services/api';
 
 export interface ChatMessage {
@@ -22,6 +27,7 @@ export interface ChatMessage {
 }
 
 export function useChat() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +115,21 @@ export function useChat() {
 
       return response;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      let errorMessage: string;
+      if (err instanceof RateLimitError) {
+        errorMessage = t('chat.errors.rateLimit');
+      } else if (err instanceof SessionLimitError) {
+        errorMessage = t('chat.errors.sessionLimit');
+      } else if (err instanceof DailyQuotaError) {
+        errorMessage = t('chat.errors.dailyQuota');
+      } else if (err instanceof InputValidationError) {
+        // Use the server-provided message which is already localized
+        errorMessage = err.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      } else {
+        errorMessage = t('chat.errors.generic');
+      }
       setError(errorMessage);
 
       // Add error message
@@ -125,7 +145,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [ensureSession]);
+  }, [ensureSession, t]);
 
   const confirmAndClassify = useCallback(async (input: FractureInput) => {
     setIsLoading(true);

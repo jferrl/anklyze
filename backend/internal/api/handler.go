@@ -48,12 +48,14 @@ type ChatAnalyticsRepository interface {
 
 // Handler handles HTTP requests
 type Handler struct {
-	classifier         service.ClassifierService
-	chatService        service.ChatService
-	auditRepo          AuditRepository
-	analyticsRepo      AnalyticsRepository
-	chatAuditRepo      ChatAuditRepository
-	chatAnalyticsRepo  ChatAnalyticsRepository
+	classifier          service.ClassifierService
+	chatService         service.ChatService
+	auditRepo           AuditRepository
+	analyticsRepo       AnalyticsRepository
+	chatAuditRepo       ChatAuditRepository
+	chatAnalyticsRepo   ChatAnalyticsRepository
+	sessionMessageLimit int
+	inputValidator      *InputValidator
 }
 
 // NewHandler creates a new Handler
@@ -66,13 +68,21 @@ func NewHandler(
 	chatAnalyticsRepo ChatAnalyticsRepository,
 ) *Handler {
 	return &Handler{
-		classifier:         classifier,
-		chatService:        chatService,
-		auditRepo:          auditRepo,
-		analyticsRepo:      analyticsRepo,
-		chatAuditRepo:      chatAuditRepo,
-		chatAnalyticsRepo:  chatAnalyticsRepo,
+		classifier:          classifier,
+		chatService:         chatService,
+		auditRepo:           auditRepo,
+		analyticsRepo:       analyticsRepo,
+		chatAuditRepo:       chatAuditRepo,
+		chatAnalyticsRepo:   chatAnalyticsRepo,
+		sessionMessageLimit: 20, // Default limit
+		inputValidator:      NewInputValidator(),
 	}
+}
+
+// WithSessionMessageLimit sets the session message limit
+func (h *Handler) WithSessionMessageLimit(limit int) *Handler {
+	h.sessionMessageLimit = limit
+	return h
 }
 
 // getLanguage extracts the language from the request
@@ -438,6 +448,31 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		req.Language = string(getLanguage(c))
 	}
 
+	// Validate input for gibberish/spam
+	if h.inputValidator != nil {
+		lang := i18n.ParseLanguage(req.Language)
+
+		// Check for gibberish/invalid input
+		validationResult := h.inputValidator.Validate(req.Message)
+		if !validationResult.Valid {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   validationResult.Code,
+				"message": getValidationErrorMessage(lang, validationResult.Code),
+			})
+			return
+		}
+
+		// Check language is supported
+		langResult := h.inputValidator.ValidateLanguage(req.Message)
+		if !langResult.Valid {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   langResult.Code,
+				"message": getValidationErrorMessage(lang, langResult.Code),
+			})
+			return
+		}
+	}
+
 	// Parse session ID if provided
 	var sessionID *uuid.UUID
 	if req.SessionID != "" {
@@ -452,16 +487,28 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 	if sessionID != nil {
 		// Check if session has messages already (this would be a follow-up)
 		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
-		if err == nil && session != nil && session.TotalMessages > 0 {
-			userMsgType = domain.ChatMessageTypeClarificationAnswer
+		if err == nil && session != nil {
+			// Check session message limit
+			if h.sessionMessageLimit > 0 && session.TotalMessages >= h.sessionMessageLimit {
+				lang := i18n.ParseLanguage(req.Language)
+				c.JSON(http.StatusTooManyRequests, gin.H{
+					"error":   "session_limit_exceeded",
+					"message": getSessionLimitMessage(lang),
+				})
+				return
+			}
 
-			// Get the last assistant message to retrieve previous extracted input
-			lastMsg, err := h.chatAuditRepo.GetLastAssistantMessage(c.Request.Context(), *sessionID)
-			if err == nil && lastMsg != nil {
-				// Parse the extracted input from the last message
-				previousInput, err := lastMsg.GetExtractedInput()
-				if err == nil && previousInput != nil {
-					req.PreviousInput = previousInput
+			if session.TotalMessages > 0 {
+				userMsgType = domain.ChatMessageTypeClarificationAnswer
+
+				// Get the last assistant message to retrieve previous extracted input
+				lastMsg, err := h.chatAuditRepo.GetLastAssistantMessage(c.Request.Context(), *sessionID)
+				if err == nil && lastMsg != nil {
+					// Parse the extracted input from the last message
+					previousInput, err := lastMsg.GetExtractedInput()
+					if err == nil && previousInput != nil {
+						req.PreviousInput = previousInput
+					}
 				}
 			}
 		}
@@ -535,4 +582,66 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+// getSessionLimitMessage returns the session limit exceeded message in the given language
+func getSessionLimitMessage(lang i18n.Language) string {
+	if lang == i18n.Spanish {
+		return "Has alcanzado el límite de mensajes para esta sesión. Por favor, inicia una nueva conversación."
+	}
+	return "You have reached the message limit for this session. Please start a new conversation."
+}
+
+// getValidationErrorMessage returns validation error messages in the given language
+func getValidationErrorMessage(lang i18n.Language, code string) string {
+	messages := map[string]map[i18n.Language]string{
+		"input_too_short": {
+			i18n.English: "Please provide a more detailed description of the fracture.",
+			i18n.Spanish: "Por favor proporciona una descripción más detallada de la fractura.",
+		},
+		"repeated_characters": {
+			i18n.English: "Your message contains invalid repeated characters. Please describe the fracture clearly.",
+			i18n.Spanish: "Tu mensaje contiene caracteres repetidos inválidos. Por favor describe la fractura claramente.",
+		},
+		"too_many_special_chars": {
+			i18n.English: "Your message contains too many special characters. Please use normal text.",
+			i18n.Spanish: "Tu mensaje contiene demasiados caracteres especiales. Por favor usa texto normal.",
+		},
+		"too_few_words": {
+			i18n.English: "Please provide a more complete description of the fracture.",
+			i18n.Spanish: "Por favor proporciona una descripción más completa de la fractura.",
+		},
+		"keyboard_smash": {
+			i18n.English: "Your message appears to contain random characters. Please describe the fracture properly.",
+			i18n.Spanish: "Tu mensaje parece contener caracteres aleatorios. Por favor describe la fractura correctamente.",
+		},
+		"no_medical_context": {
+			i18n.English: "Your message doesn't appear to describe an ankle fracture. Please include relevant medical details.",
+			i18n.Spanish: "Tu mensaje no parece describir una fractura de tobillo. Por favor incluye detalles médicos relevantes.",
+		},
+		"unsupported_language": {
+			i18n.English: "Please use English or Spanish to describe the fracture.",
+			i18n.Spanish: "Por favor usa inglés o español para describir la fractura.",
+		},
+		"no_words": {
+			i18n.English: "Please enter a valid fracture description.",
+			i18n.Spanish: "Por favor ingresa una descripción válida de la fractura.",
+		},
+	}
+
+	if langMessages, ok := messages[code]; ok {
+		if msg, ok := langMessages[lang]; ok {
+			return msg
+		}
+		// Fallback to English
+		if msg, ok := langMessages[i18n.English]; ok {
+			return msg
+		}
+	}
+
+	// Default message
+	if lang == i18n.Spanish {
+		return "Entrada inválida. Por favor intenta de nuevo."
+	}
+	return "Invalid input. Please try again."
 }
