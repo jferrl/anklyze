@@ -8,6 +8,7 @@ import { ChatPanel } from '../components/ChatPanel';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { ThemeSwitcher } from '../components/ThemeSwitcher';
 import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
+import { UserMenu } from '../components/auth/UserMenu';
 
 type InputMode = 'form' | 'chat';
 
@@ -35,6 +36,7 @@ export function ClassifyPage() {
             </Button>
             <ThemeSwitcher />
             <LanguageSwitcher />
+            <UserMenu />
           </div>
         </div>
       </nav>

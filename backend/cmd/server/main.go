@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/api"
+	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/database"
 	"github.com/jferrl/anklyze/internal/domain"
@@ -21,6 +22,7 @@ import (
 	"github.com/jferrl/anklyze/internal/repository/postgres"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
+	"github.com/joho/godotenv"
 
 	_ "github.com/jferrl/anklyze/docs"
 )
@@ -40,6 +42,9 @@ import (
 // @schemes https
 
 func main() {
+	// Load .env file if present (for local development)
+	_ = godotenv.Load()
+
 	cfg := config.Load()
 
 	// Initialize logger
@@ -54,6 +59,7 @@ func main() {
 	var analyticsRepo api.AnalyticsRepository
 	var chatAuditRepo api.ChatAuditRepository
 	var chatAnalyticsRepo api.ChatAnalyticsRepository
+	var userRepo auth.UserRepository
 
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
@@ -63,12 +69,14 @@ func main() {
 			analyticsRepo = repository.NewNoOpAnalyticsRepository()
 			chatAuditRepo = repository.NewNoOpChatAuditRepository()
 			chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
+			userRepo = repository.NewNoOpUserRepository()
 		} else {
 			if err := db.AutoMigrate(
 				&domain.AuditEntry{},
 				&domain.ChatSession{},
 				&domain.ChatMessage{},
 				&domain.ChatFeedback{},
+				&domain.User{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
@@ -77,6 +85,7 @@ func main() {
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
 			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
 			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
+			userRepo = postgres.NewUserRepository(db)
 		}
 	} else {
 		slog.Info("no DATABASE_URL configured, audit trail disabled")
@@ -84,6 +93,7 @@ func main() {
 		analyticsRepo = repository.NewNoOpAnalyticsRepository()
 		chatAuditRepo = repository.NewNoOpChatAuditRepository()
 		chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
+		userRepo = repository.NewNoOpUserRepository()
 	}
 
 	// Initialize chat service if Gemini is configured
@@ -102,8 +112,27 @@ func main() {
 		slog.Info("no GEMINI_API_KEY configured, chat classification disabled")
 	}
 
+	// Initialize Supabase Auth validator if configured
+	var authValidator *auth.Validator
+	if cfg.HasSupabase() {
+		var opts []auth.ValidatorOption
+		if cfg.SupabaseJWTSecret != "" {
+			opts = append(opts, auth.WithJWTSecret(cfg.SupabaseJWTSecret))
+		}
+
+		validator, err := auth.NewValidator(ctx, cfg.SupabaseURL, opts...)
+		if err != nil {
+			slog.Warn("Supabase auth initialization failed, authentication disabled", "error", err)
+		} else {
+			authValidator = validator
+			slog.Info("Supabase authentication enabled", "url", cfg.SupabaseURL)
+		}
+	} else {
+		slog.Info("no SUPABASE_URL configured, authentication disabled (all routes public)")
+	}
+
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
+	api.SetupRoutes(router, cfg, authValidator, userRepo, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
@@ -139,6 +168,13 @@ func main() {
 	}
 	if err := chatAuditRepo.Close(); err != nil {
 		slog.Error("failed to close chat audit repository", "error", err)
+	}
+
+	// Close auth validator
+	if authValidator != nil {
+		if err := authValidator.Close(); err != nil {
+			slog.Error("failed to close auth validator", "error", err)
+		}
 	}
 
 	slog.Info("server exited")

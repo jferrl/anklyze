@@ -13,7 +13,11 @@ services:
       - key: GIN_MODE
         value: release
       - key: DATABASE_URL
-        sync: false  # Set manually in Render dashboard with Neon connection string
+        sync: false  # Set manually in Render dashboard
+      - key: SUPABASE_URL
+        value: https://vrrnobbbvvarnidfnegf.supabase.co
+      - key: GEMINI_API_KEY
+        sync: false  # Set manually in Render dashboard
     healthCheckPath: /health
 
   # MCP Server (Model Context Protocol for LLM integration)
@@ -54,8 +58,9 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: anklyze-api
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://api.anklyze.es
+      - key: VITE_SUPABASE_URL
+        value: https://vrrnobbbvvarnidfnegf.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false  # Set manually in Render dashboard (sensitive)
 

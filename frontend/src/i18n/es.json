@@ -199,5 +199,24 @@
     "button": "Compartir",
     "copied": "Enlace copiado al portapapeles",
     "failed": "Error al copiar el enlace"
+  },
+  "auth": {
+    "signIn": "Inicia sesión para continuar",
+    "createAccount": "Crear una cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signUp": "Registrarse",
+    "signInButton": "Iniciar sesión",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "noAccount": "¿No tienes una cuenta?",
+    "signInLink": "Iniciar sesión",
+    "signUpLink": "Registrarse",
+    "checkEmail": "Revisa tu correo para el enlace de confirmación",
+    "notConfigured": "Autenticación no configurada",
+    "contactAdmin": "Por favor contacta al administrador para configurar la autenticación.",
+    "backToHome": "Volver al Inicio",
+    "signOut": "Cerrar sesión",
+    "admin": "Admin",
+    "adminRole": "Administrador"
   }
 }

@@ -199,5 +199,24 @@
     "button": "Share",
     "copied": "Link copied to clipboard",
     "failed": "Failed to copy link"
+  },
+  "auth": {
+    "signIn": "Sign in to continue",
+    "createAccount": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "signUp": "Sign up",
+    "signInButton": "Sign in",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "signInLink": "Sign in",
+    "signUpLink": "Sign up",
+    "checkEmail": "Check your email for a confirmation link",
+    "notConfigured": "Authentication not configured",
+    "contactAdmin": "Please contact the administrator to configure authentication.",
+    "backToHome": "Back to Home",
+    "signOut": "Sign out",
+    "admin": "Admin",
+    "adminRole": "Administrator"
   }
 }

@@ -11,6 +11,7 @@ import type {
   ConfidenceDistribution,
 } from '../types/fracture';
 import { getCurrentLanguage } from '../i18n/config';
+import { supabase } from '../lib/supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -48,16 +49,60 @@ export class InputValidationError extends Error {
   }
 }
 
+// Custom error for authentication required
+export class AuthRequiredError extends Error {
+  constructor(message: string = 'Authentication required') {
+    super(message);
+    this.name = 'AuthRequiredError';
+  }
+}
+
+// Custom error for forbidden access
+export class ForbiddenError extends Error {
+  constructor(message: string = 'Access denied') {
+    super(message);
+    this.name = 'ForbiddenError';
+  }
+}
+
+// Helper to get auth headers
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (supabase) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  }
+
+  return headers;
+}
+
+// Helper to handle auth errors
+function handleAuthError(status: number): void {
+  if (status === 401) {
+    throw new AuthRequiredError();
+  }
+  if (status === 403) {
+    throw new ForbiddenError();
+  }
+}
+
 export async function classifyFracture(input: FractureInput): Promise<ClassificationResult> {
   const lang = getCurrentLanguage();
+  const headers = await getAuthHeaders();
+  headers['Accept-Language'] = lang;
+
   const response = await fetch(`${API_BASE_URL}/api/classify?lang=${lang}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept-Language': lang,
-    },
+    headers,
     body: JSON.stringify(input),
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     const error = await response.json();
@@ -69,11 +114,14 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
 
 export async function getFormOptions(): Promise<FormOptions> {
   const lang = getCurrentLanguage();
+  const headers = await getAuthHeaders();
+  headers['Accept-Language'] = lang;
+
   const response = await fetch(`${API_BASE_URL}/api/options?lang=${lang}`, {
-    headers: {
-      'Accept-Language': lang,
-    },
+    headers,
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Error loading form options');
@@ -84,6 +132,9 @@ export async function getFormOptions(): Promise<FormOptions> {
 
 export async function sendChatMessage(message: string, sessionId?: string): Promise<ChatResponse> {
   const lang = getCurrentLanguage();
+  const headers = await getAuthHeaders();
+  headers['Accept-Language'] = lang;
+
   const request: ChatRequest = {
     message,
     language: lang,
@@ -92,12 +143,11 @@ export async function sendChatMessage(message: string, sessionId?: string): Prom
 
   const response = await fetch(`${API_BASE_URL}/api/chat?lang=${lang}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept-Language': lang,
-    },
+    headers,
     body: JSON.stringify(request),
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     if (response.status === 429) {
@@ -137,13 +187,15 @@ export async function sendChatMessage(message: string, sessionId?: string): Prom
 // Chat session management
 export async function createChatSession(): Promise<ChatSessionResponse> {
   const lang = getCurrentLanguage();
+  const headers = await getAuthHeaders();
+  headers['Accept-Language'] = lang;
+
   const response = await fetch(`${API_BASE_URL}/api/chat/session?lang=${lang}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept-Language': lang,
-    },
+    headers,
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to create chat session');
@@ -153,9 +205,14 @@ export async function createChatSession(): Promise<ChatSessionResponse> {
 }
 
 export async function completeChatSession(sessionId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+
   const response = await fetch(`${API_BASE_URL}/api/chat/session/${sessionId}/complete`, {
     method: 'PUT',
+    headers,
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to complete chat session');
@@ -163,9 +220,14 @@ export async function completeChatSession(sessionId: string): Promise<void> {
 }
 
 export async function abandonChatSession(sessionId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+
   const response = await fetch(`${API_BASE_URL}/api/chat/session/${sessionId}/abandon`, {
     method: 'PUT',
+    headers,
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to abandon chat session');
@@ -176,13 +238,15 @@ export async function submitFeedback(
   sessionId: string,
   feedback: FeedbackRequest
 ): Promise<void> {
+  const headers = await getAuthHeaders();
+
   const response = await fetch(`${API_BASE_URL}/api/chat/session/${sessionId}/feedback`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(feedback),
   });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     if (response.status === 409) {
@@ -193,7 +257,7 @@ export async function submitFeedback(
   }
 }
 
-// Chat analytics
+// Chat analytics (admin only)
 export async function getChatAnalyticsSummary(
   from?: string,
   to?: string
@@ -202,7 +266,13 @@ export async function getChatAnalyticsSummary(
   if (from) params.append('from', from);
   if (to) params.append('to', to);
 
-  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/summary?${params}`);
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/summary?${params}`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to get chat analytics');
@@ -219,7 +289,13 @@ export async function getChatFeedbackSummary(
   if (from) params.append('from', from);
   if (to) params.append('to', to);
 
-  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/feedback?${params}`);
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/feedback?${params}`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to get feedback summary');
@@ -236,7 +312,13 @@ export async function getChatConfidenceDistribution(
   if (from) params.append('from', from);
   if (to) params.append('to', to);
 
-  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/confidence?${params}`);
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/api/analytics/chat/confidence?${params}`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
 
   if (!response.ok) {
     throw new Error('Failed to get confidence distribution');

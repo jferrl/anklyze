@@ -173,7 +173,7 @@ func NewAssistantMessage(
 ) (*ChatMessage, error) {
 	msg := &ChatMessage{
 		ID:           uuid.New(),
-		SessionID:   sessionID,
+		SessionID:    sessionID,
 		CreatedAt:    time.Now(),
 		Role:         ChatRoleAssistant,
 		Content:      content,
@@ -195,7 +195,7 @@ func NewAssistantMessage(
 
 // GetExtractedInput parses and returns the extracted input from the message.
 func (m *ChatMessage) GetExtractedInput() (*FractureInput, error) {
-	if m.ExtractedInput == nil || len(m.ExtractedInput) == 0 {
+	if len(m.ExtractedInput) == 0 {
 		return nil, nil
 	}
 
