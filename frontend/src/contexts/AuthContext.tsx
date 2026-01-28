@@ -21,11 +21,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function extractProfile(user: User): UserProfile {
   const metadata = user.app_metadata || {};
+  const email = user.email || '';
+  // Try full_name, name, or derive from email (part before @)
+  const displayName = user.user_metadata?.full_name
+    || user.user_metadata?.name
+    || email.split('@')[0];
   return {
     id: user.id,
-    email: user.email || '',
+    email,
     role: (metadata.role as UserRole) || 'user',
-    displayName: user.user_metadata?.full_name || user.user_metadata?.name,
+    displayName,
     avatarUrl: user.user_metadata?.avatar_url,
   };
 }
