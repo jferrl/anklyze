@@ -261,6 +261,91 @@ The chat endpoint (`POST /api/chat`) allows users to describe fractures in natur
 
 **Note:** Requires `GEMINI_API_KEY` environment variable. Returns 503 if chat service is unavailable.
 
+### Authentication & Authorization
+
+The application uses Supabase Auth for authentication with JWT validation and role-based access control.
+
+**Architecture:**
+
+```text
+Frontend (React)                    Supabase Auth                    Backend (Go/Gin)
+     |                                   |                                |
+     |--- Login (Email/Password) ------->|                                |
+     |<-- JWT Access Token --------------|                                |
+     |                                   |                                |
+     |--- API Request + JWT Bearer ------------------------------------>|
+     |                                   |                     JWT Validation (JWKS)
+     |                                   |                     User Sync to DB
+     |                                   |                     Role Check
+     |<------------------- Response ------------------------------------|
+```
+
+**Key Files:**
+
+- `internal/auth/auth.go` - JWT validator using JWKS (ES256 signing)
+- `internal/auth/middleware.go` - AuthMiddleware, UserSyncMiddleware, RequireRole
+- `internal/domain/user.go` - User model with role field
+- `internal/repository/user.go` - UserRepository interface
+- `internal/repository/postgres/user.go` - PostgreSQL implementation with upsert
+
+**User Sync on Login:**
+
+On each authenticated request, `UserSyncMiddleware`:
+
+1. Extracts user ID and email from JWT claims
+2. Upserts user to local `users` table (creates on first login, updates `last_login_at` on subsequent)
+3. Retrieves user with DB role (takes precedence over JWT claims)
+4. Stores user in request context for handlers
+
+**Roles:**
+
+| Role | Access |
+|------|--------|
+| `user` | Classification endpoints, chat, form options |
+| `admin` | All user endpoints + analytics |
+
+**Access Control Matrix:**
+
+| Endpoint | Public | User | Admin |
+|----------|--------|------|-------|
+| `/health` | ✅ | ✅ | ✅ |
+| `/swagger/*` | ✅ | ✅ | ✅ |
+| `/api/classify` | ❌ | ✅ | ✅ |
+| `/api/options` | ❌ | ✅ | ✅ |
+| `/api/chat/*` | ❌ | ✅ | ✅ |
+| `/api/analytics/*` | ❌ | ❌ | ✅ |
+
+**Environment Variables:**
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `SUPABASE_URL` | Supabase project URL | Yes (for auth) |
+| `SUPABASE_JWT_SECRET` | JWT secret (optional, uses JWKS if not set) | No |
+
+**Making a User Admin:**
+
+After first login, run in Supabase SQL Editor:
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
+```
+
+**Frontend Auth:**
+
+- `src/lib/supabase.ts` - Supabase client initialization
+- `src/contexts/AuthContext.tsx` - Auth state management, profile extraction
+- `src/components/auth/LoginPage.tsx` - Login form (sign-up disabled)
+- `src/components/auth/ProtectedRoute.tsx` - Route guard for authenticated routes
+- `src/components/auth/UserMenu.tsx` - User dropdown with role badge
+
+**Profile Display:**
+
+User display name is extracted in this priority:
+
+1. `user_metadata.full_name` (if set in Supabase)
+2. `user_metadata.name` (if set)
+3. Email username (part before `@`)
+
 ## Frontend (React + TypeScript)
 
 ### Key Files
