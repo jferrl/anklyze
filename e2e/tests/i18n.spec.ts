@@ -49,8 +49,8 @@ test.describe('Internationalization (i18n)', () => {
       const classifyPage = new ClassifyPage(page);
       await classifyPage.goto();
 
-      // Switch to Spanish using the language switcher in nav
-      const languageSwitcher = page.locator('nav button').filter({ has: page.locator('svg.lucide-globe') });
+      // Switch to Spanish using the language switcher in sidebar
+      const languageSwitcher = page.locator('button').filter({ has: page.locator('svg.lucide-globe') });
       await languageSwitcher.click();
 
       // Wait for page reload after language change

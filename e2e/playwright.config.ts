@@ -43,12 +43,24 @@ export default defineConfig({
       url: 'http://localhost:8080/health',
       reuseExistingServer: true,
       timeout: 120000,
+      // Disable Supabase auth for e2e tests - backend uses public routes when SUPABASE_URL is not set
+      env: {
+        ...process.env,
+        SUPABASE_URL: '',
+        SUPABASE_JWT_SECRET: '',
+      },
     },
     {
       command: 'cd ../frontend && npm run dev',
       url: 'http://localhost:5173',
       reuseExistingServer: true,
       timeout: 120000,
+      // Disable Supabase auth for e2e tests - frontend bypasses auth when these are not set
+      env: {
+        ...process.env,
+        VITE_SUPABASE_URL: '',
+        VITE_SUPABASE_ANON_KEY: '',
+      },
     },
   ],
 });
