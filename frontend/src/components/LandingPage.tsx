@@ -16,7 +16,6 @@ import {
   Sparkles,
   Github,
   MessageCircle,
-  BookOpen,
   // Stethoscope, // Uncomment when re-enabling Team Section
   // Code, // Uncomment when re-enabling Team Section
 } from 'lucide-react';
@@ -96,12 +95,6 @@ export function LandingPage() {
             <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/studies">
-                <BookOpen className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">{t('nav.studies')}</span>
-              </Link>
-            </Button>
             <Button size="sm" asChild>
               <Link to="/classify">
                 <Sparkles className="h-4 w-4 sm:mr-2" />
@@ -176,7 +169,7 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {features.map((feature, index) => (
               <Card
                 key={index}

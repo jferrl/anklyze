@@ -83,7 +83,7 @@ export function LoginPage() {
 
         <div className="relative z-10 max-w-lg">
           {/* Logo and tagline */}
-          <div className="flex items-center gap-3 mb-8">
+          <Link to="/" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
               <Activity className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -91,7 +91,7 @@ export function LoginPage() {
               <h1 className="text-2xl font-bold">Anklyze</h1>
               <p className="text-sm text-muted-foreground">{t('app.tagline')}</p>
             </div>
-          </div>
+          </Link>
 
           {/* Features list */}
           <div className="space-y-6">
