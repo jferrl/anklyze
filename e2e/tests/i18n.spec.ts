@@ -52,17 +52,9 @@ test.describe('Internationalization (i18n)', () => {
       // Switch to Spanish using the language switcher in sidebar
       const languageSwitcher = page.locator('button').filter({ has: page.locator('svg.lucide-globe') });
       await languageSwitcher.click();
+      await page.getByRole('menuitem', { name: /español/i }).click();
 
-      // Wait for page reload after language change
-      await Promise.all([
-        page.waitForEvent('load'),
-        page.getByRole('menuitem', { name: /español/i }).click(),
-      ]);
-
-      // Wait for the form to load
-      await page.waitForResponse(
-        (resp) => resp.url().includes('/api/options') && resp.status() === 200
-      );
+      // Wait for UI to update with new language (no page reload)
 
       await expect(classifyPage.formTitle).toContainText(/clasificación de fracturas de tobillo/i);
       await expect(classifyPage.classifyButton).toContainText(/clasificar fractura/i);
