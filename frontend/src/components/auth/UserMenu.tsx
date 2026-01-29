@@ -1,4 +1,4 @@
-import { LogOut, User, Shield } from 'lucide-react';
+import { LogOut, User, Shield, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
@@ -64,6 +64,10 @@ export function UserMenu() {
             <DropdownMenuItem className="text-xs text-muted-foreground cursor-default">
               <Shield className="h-3 w-3 mr-2" />
               {t('auth.adminRole', 'Administrator')}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/admin/studies')}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              {t('admin.studies.title', 'Studies Management')}
             </DropdownMenuItem>
           </>
         )}

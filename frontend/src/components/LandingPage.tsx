@@ -10,13 +10,13 @@ import {
   Activity,
   Zap,
   Layers,
-  Heart,
   MousePointerClick,
   ListChecks,
   FileCheck2,
   Sparkles,
   Github,
   MessageCircle,
+  BookOpen,
   // Stethoscope, // Uncomment when re-enabling Team Section
   // Code, // Uncomment when re-enabling Team Section
 } from 'lucide-react';
@@ -39,11 +39,6 @@ export function LandingPage() {
       icon: Layers,
       title: t('landing.features.comprehensive.title'),
       description: t('landing.features.comprehensive.description'),
-    },
-    {
-      icon: Heart,
-      title: t('landing.features.free.title'),
-      description: t('landing.features.free.description'),
     },
     {
       icon: MessageCircle,
@@ -101,6 +96,12 @@ export function LandingPage() {
             <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/studies">
+                <BookOpen className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('nav.studies')}</span>
+              </Link>
+            </Button>
             <Button size="sm" asChild>
               <Link to="/classify">
                 <Sparkles className="h-4 w-4 sm:mr-2" />

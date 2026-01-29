@@ -24,6 +24,9 @@ type Config struct {
 	// Supabase Auth configuration
 	SupabaseURL       string // Supabase project URL (e.g., https://xxx.supabase.co)
 	SupabaseJWTSecret string // Supabase JWT secret for token validation
+	// Supabase Storage configuration
+	SupabaseServiceRoleKey string // Service role key for storage operations
+	StudyBucketName        string // Bucket name for study images
 }
 
 // Load loads configuration from environment variables.
@@ -41,8 +44,10 @@ func Load() *Config {
 		RateLimitBurst:      getEnvInt("RATE_LIMIT_BURST", 5),       // Allow burst of 5
 		SessionMessageLimit: getEnvInt("SESSION_MESSAGE_LIMIT", 20), // Max messages per session
 		DailyQuotaPerIP:     getEnvInt("DAILY_QUOTA_PER_IP", 100),   // Max requests per IP per day
-		SupabaseURL:         os.Getenv("SUPABASE_URL"),
-		SupabaseJWTSecret:   os.Getenv("SUPABASE_JWT_SECRET"),
+		SupabaseURL:            os.Getenv("SUPABASE_URL"),
+		SupabaseJWTSecret:      os.Getenv("SUPABASE_JWT_SECRET"),
+		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
+		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
 	}
 }
 
@@ -59,6 +64,11 @@ func (c *Config) HasGemini() bool {
 // HasSupabase returns true if Supabase Auth is configured.
 func (c *Config) HasSupabase() bool {
 	return c.SupabaseURL != ""
+}
+
+// HasSupabaseStorage returns true if Supabase Storage is configured.
+func (c *Config) HasSupabaseStorage() bool {
+	return c.SupabaseURL != "" && c.SupabaseServiceRoleKey != ""
 }
 
 func getEnv(key, defaultValue string) string {

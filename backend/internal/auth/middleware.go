@@ -80,11 +80,11 @@ func AuthMiddleware(validator *Validator) gin.HandlerFunc {
 }
 
 // RequireRole creates a Gin middleware that checks if the user has one of the allowed roles.
-// It must be used after AuthMiddleware.
+// It must be used after AuthMiddleware and UserSyncMiddleware.
+// It checks the database role (via synced user) first, falling back to JWT claims.
 func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims := GetClaims(c)
-		if claims == nil {
+		if !IsAuthenticated(c) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error":   "unauthorized",
 				"message": "authentication required",
@@ -93,7 +93,8 @@ func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 			return
 		}
 
-		userRole := claims.GetRole()
+		// Use GetUserRole which prioritizes database role over JWT claims
+		userRole := GetUserRole(c)
 		for _, role := range allowedRoles {
 			if userRole == role {
 				c.Next()

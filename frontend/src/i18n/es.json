@@ -1,4 +1,7 @@
 {
+  "nav": {
+    "studies": "Estudios"
+  },
   "app": {
     "title": "Clasificación de Fracturas de Tobillo",
     "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek"
@@ -218,5 +221,132 @@
     "signOut": "Cerrar sesión",
     "admin": "Admin",
     "adminRole": "Administrador"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "optional": "opcional",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "loading": "Cargando...",
+    "home": "Inicio",
+    "classify": "Clasificar",
+    "back": "Volver"
+  },
+  "studies": {
+    "title": "Título",
+    "description": "Descripción",
+    "deadline": "Fecha límite",
+    "noDeadline": "Sin fecha límite",
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "closed": "Cerrado"
+    },
+    "images": {
+      "xray": "Radiografía",
+      "tac": "TAC"
+    },
+    "noStudies": "No hay estudios disponibles",
+    "noStudiesDescription": "No hay estudios publicados en este momento. Vuelve más tarde.",
+    "viewStudy": "Ver Estudio",
+    "responses": "respuestas",
+    "responded": "Respondido",
+    "notResponded": "Sin responder",
+    "notFound": "Estudio no encontrado",
+    "backToList": "Volver a Estudios",
+    "includesTAC": "Incluye TAC",
+    "expired": "Expirado",
+    "response": "Respuesta",
+    "imageGallery": "Galería de Imágenes",
+    "noImages": "No hay imágenes disponibles",
+    "noImagesInCategory": "No hay imágenes en esta categoría",
+    "classifyCase": "Clasificar Este Caso",
+    "ctScanDetected": "TAC detectado - has_ct_scan configurado automáticamente",
+    "ctScanAutoDetected": "Imágenes de TAC detectadas - pregunta de TAC respondida automáticamente",
+    "submitClassification": "Enviar Clasificación",
+    "classificationSubmitted": "¡Clasificación enviada con éxito!",
+    "submitAnother": "Enviar Otra Respuesta",
+    "myResponses": "Mis Respuestas",
+    "noResponses": "Aún no has enviado ninguna respuesta.",
+    "previousResponses": "Respuestas Anteriores",
+    "viewResponse": "Ver Respuesta",
+    "studyExpired": "Estudio Expirado",
+    "studyExpiredDescription": "Este estudio ha pasado su fecha límite y ya no acepta respuestas.",
+    "responseSubmitted": "Respuesta Enviada",
+    "responseSubmittedDescription": "Tu clasificación ha sido registrada. Puedes enviar otra respuesta si deseas cambiar tu respuesta.",
+    "classificationResult": "Resultado de la Clasificación",
+    "reviewAndSubmit": "Revisa tu clasificación a continuación y envía tu respuesta.",
+    "changeAnswer": "Cambiar Respuesta",
+    "submitResponse": "Enviar Respuesta",
+    "classifyFracture": "Clasificar Fractura",
+    "classifyFractureDescription": "Responde las preguntas a continuación para clasificar este caso de fractura de tobillo.",
+    "pageTitle": "Estudios Clínicos",
+    "pageSubtitle": "Clasifica casos de fracturas de tobillo y compara tu evaluación con otros clínicos.",
+    "answered": "Respondido",
+    "imagesCount": "imágenes",
+    "viewOrReanswer": "Ver o Responder de Nuevo",
+    "startClassification": "Iniciar Clasificación"
+  },
+  "admin": {
+    "studies": {
+      "title": "Gestión de Estudios",
+      "subtitle": "Crear y gestionar estudios de casos clínicos",
+      "create": "Crear Estudio",
+      "createFirst": "Crea Tu Primer Estudio",
+      "createStudy": "Crear Nuevo Estudio",
+      "editStudy": "Editar Estudio",
+      "search": "Buscar estudios...",
+      "filterStatus": "Filtrar por estado",
+      "allStatuses": "Todos los estados",
+      "noStudies": "No se encontraron estudios",
+      "noStudiesDesc": "Crea tu primer estudio para comenzar.",
+      "responses": "respuestas",
+      "analytics": "Analíticas",
+      "publish": "Publicar",
+      "close": "Cerrar Estudio",
+      "exportCSV": "Exportar CSV",
+      "backToList": "Volver a Estudios",
+      "notFound": "Estudio no encontrado",
+      "details": "Detalles del Estudio",
+      "detailsDescription": "Información básica sobre el caso clínico",
+      "titlePlaceholder": "Introduce el título del estudio...",
+      "descriptionPlaceholder": "Introduce una descripción del caso clínico...",
+      "images": "Imágenes",
+      "imagesDescription": "Sube imágenes de radiografía y TAC para este estudio",
+      "uploadCategory": "Subir como",
+      "dragOrClick": "Arrastra y suelta imágenes aquí, o haz clic para seleccionar",
+      "dropHere": "Suelta los archivos aquí...",
+      "maxFileSize": "Tamaño máximo: 10MB",
+      "noImages": "No hay imágenes subidas",
+      "pending": "Pendiente",
+      "captionPlaceholder": "Añadir descripción...",
+      "deleteConfirm": {
+        "title": "Eliminar Estudio",
+        "description": "¿Estás seguro de que quieres eliminar este estudio? Esta acción no se puede deshacer."
+      },
+      "publishConfirm": {
+        "title": "Publicar Estudio",
+        "description": "Una vez publicado, los usuarios podrán ver y responder a este estudio. El estudio no se puede editar después de publicar. ¿Estás seguro?"
+      },
+      "errors": {
+        "titleRequired": "El título es obligatorio",
+        "imagesRequired": "Se requiere al menos una imagen para publicar"
+      }
+    },
+    "analytics": {
+      "totalResponses": "Total de Respuestas",
+      "uniqueRespondents": "Participantes Únicos",
+      "avgResponseTime": "Tiempo Promedio",
+      "responsesPerUser": "Respuestas/Usuario",
+      "classificationDistribution": "Distribución de Clasificaciones",
+      "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
+      "noData": "No hay datos de respuestas disponibles",
+      "unspecified": "No especificado",
+      "summary": "{{system}}: {{types}} clasificaciones diferentes de {{total}} respuestas"
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured, type UserRole, type UserProfile } from '../lib/supabase';
+import { getCurrentUser } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -19,10 +20,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function extractProfile(user: User): UserProfile {
+// Extract basic profile from Supabase user (fallback if backend unavailable)
+function extractProfileFromSupabase(user: User): UserProfile {
   const metadata = user.app_metadata || {};
   const email = user.email || '';
-  // Try full_name, name, or derive from email (part before @)
   const displayName = user.user_metadata?.full_name
     || user.user_metadata?.name
     || email.split('@')[0];
@@ -35,6 +36,33 @@ function extractProfile(user: User): UserProfile {
   };
 }
 
+// Fetch profile from backend API with timeout (has authoritative role from database)
+async function fetchBackendProfile(user: User): Promise<UserProfile> {
+  try {
+    // Add timeout to prevent hanging if backend is slow/unavailable
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Backend timeout')), 5000);
+    });
+
+    const backendProfile = await Promise.race([
+      getCurrentUser(),
+      timeoutPromise,
+    ]);
+
+    return {
+      id: backendProfile.id,
+      email: backendProfile.email,
+      role: backendProfile.role,
+      displayName: backendProfile.display_name || user.user_metadata?.full_name || user.user_metadata?.name,
+      avatarUrl: backendProfile.avatar_url || user.user_metadata?.avatar_url,
+    };
+  } catch (error) {
+    // Fallback to Supabase profile if backend is unavailable
+    console.warn('Failed to fetch profile from backend, using Supabase fallback:', error);
+    return extractProfileFromSupabase(user);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -43,34 +71,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isConfigured = isSupabaseConfigured();
 
+  // Initialize auth state
   useEffect(() => {
     if (!supabase) {
       setLoading(false);
       return;
     }
 
+    let mounted = true;
+    const supabaseClient = supabase; // Capture for closure
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        setProfile(extractProfile(session.user));
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+
+        if (!mounted) return;
+
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          // Fetch profile from backend (has authoritative role)
+          const userProfile = await fetchBackendProfile(session.user);
+          if (mounted) {
+            setProfile(userProfile);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to initialize auth:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    });
+    };
+
+    initAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        setProfile(extractProfile(session.user));
-      } else {
-        setProfile(null);
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+
+      try {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          // Fetch profile from backend (has authoritative role)
+          const userProfile = await fetchBackendProfile(session.user);
+          if (mounted) {
+            setProfile(userProfile);
+          }
+        } else {
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error('Failed to handle auth state change:', error);
+        // Set basic profile from session if backend fails
+        if (session?.user && mounted) {
+          setProfile(extractProfileFromSupabase(session.user));
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -134,6 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

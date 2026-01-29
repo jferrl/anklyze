@@ -1,4 +1,7 @@
 {
+  "nav": {
+    "studies": "Studies"
+  },
   "app": {
     "title": "Ankle Fracture Classification",
     "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification"
@@ -218,5 +221,132 @@
     "signOut": "Sign out",
     "admin": "Admin",
     "adminRole": "Administrator"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "optional": "optional",
+    "previous": "Previous",
+    "next": "Next",
+    "loading": "Loading...",
+    "home": "Home",
+    "classify": "Classify",
+    "back": "Back"
+  },
+  "studies": {
+    "title": "Title",
+    "description": "Description",
+    "deadline": "Deadline",
+    "noDeadline": "No deadline",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "closed": "Closed"
+    },
+    "images": {
+      "xray": "X-ray",
+      "tac": "CT Scan"
+    },
+    "noStudies": "No studies available",
+    "noStudiesDescription": "There are no published studies at the moment. Check back later.",
+    "viewStudy": "View Study",
+    "responses": "responses",
+    "responded": "Responded",
+    "notResponded": "Not responded",
+    "notFound": "Study not found",
+    "backToList": "Back to Studies",
+    "includesTAC": "Includes CT Scan",
+    "expired": "Expired",
+    "response": "Response",
+    "imageGallery": "Image Gallery",
+    "noImages": "No images available",
+    "noImagesInCategory": "No images in this category",
+    "classifyCase": "Classify This Case",
+    "ctScanDetected": "CT scan detected - has_ct_scan set automatically",
+    "ctScanAutoDetected": "CT scan images detected - CT scan question answered automatically",
+    "submitClassification": "Submit Classification",
+    "classificationSubmitted": "Classification submitted successfully!",
+    "submitAnother": "Submit Another Response",
+    "myResponses": "My Responses",
+    "noResponses": "You haven't submitted any responses yet.",
+    "previousResponses": "Previous Responses",
+    "viewResponse": "View Response",
+    "studyExpired": "Study Expired",
+    "studyExpiredDescription": "This study has passed its deadline and is no longer accepting responses.",
+    "responseSubmitted": "Response Submitted",
+    "responseSubmittedDescription": "Your classification has been recorded. You can submit another response if you'd like to change your answer.",
+    "classificationResult": "Classification Result",
+    "reviewAndSubmit": "Review your classification below and submit your response.",
+    "changeAnswer": "Change Answer",
+    "submitResponse": "Submit Response",
+    "classifyFracture": "Classify Fracture",
+    "classifyFractureDescription": "Answer the questions below to classify this ankle fracture case.",
+    "pageTitle": "Clinical Studies",
+    "pageSubtitle": "Classify ankle fracture cases and compare your assessment with other clinicians.",
+    "answered": "Answered",
+    "imagesCount": "images",
+    "viewOrReanswer": "View or Re-answer",
+    "startClassification": "Start Classification"
+  },
+  "admin": {
+    "studies": {
+      "title": "Studies Management",
+      "subtitle": "Create and manage patient case studies",
+      "create": "Create Study",
+      "createFirst": "Create Your First Study",
+      "createStudy": "Create New Study",
+      "editStudy": "Edit Study",
+      "search": "Search studies...",
+      "filterStatus": "Filter by status",
+      "allStatuses": "All statuses",
+      "noStudies": "No studies found",
+      "noStudiesDesc": "Create your first study to get started.",
+      "responses": "responses",
+      "analytics": "Analytics",
+      "publish": "Publish",
+      "close": "Close Study",
+      "exportCSV": "Export CSV",
+      "backToList": "Back to Studies",
+      "notFound": "Study not found",
+      "details": "Study Details",
+      "detailsDescription": "Basic information about the study case",
+      "titlePlaceholder": "Enter study title...",
+      "descriptionPlaceholder": "Enter a description of the patient case...",
+      "images": "Images",
+      "imagesDescription": "Upload X-ray and CT scan images for this study",
+      "uploadCategory": "Upload as",
+      "dragOrClick": "Drag and drop images here, or click to select files",
+      "dropHere": "Drop files here...",
+      "maxFileSize": "Max file size: 10MB",
+      "noImages": "No images uploaded",
+      "pending": "Pending",
+      "captionPlaceholder": "Add caption...",
+      "deleteConfirm": {
+        "title": "Delete Study",
+        "description": "Are you sure you want to delete this study? This action cannot be undone."
+      },
+      "publishConfirm": {
+        "title": "Publish Study",
+        "description": "Once published, users will be able to view and respond to this study. The study cannot be edited after publishing. Are you sure?"
+      },
+      "errors": {
+        "titleRequired": "Title is required",
+        "imagesRequired": "At least one image is required to publish"
+      }
+    },
+    "analytics": {
+      "totalResponses": "Total Responses",
+      "uniqueRespondents": "Unique Respondents",
+      "avgResponseTime": "Avg. Response Time",
+      "responsesPerUser": "Responses/User",
+      "classificationDistribution": "Classification Distribution",
+      "distributionDescription": "How respondents classified this case across different systems",
+      "noData": "No response data available",
+      "unspecified": "Not specified",
+      "summary": "{{system}}: {{types}} different classifications from {{total}} responses"
+    }
   }
 }

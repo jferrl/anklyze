@@ -326,3 +326,29 @@ export async function getChatConfidenceDistribution(
 
   return response.json();
 }
+
+// User profile types and API
+export interface UserProfileResponse {
+  id: string;
+  email: string;
+  role: 'user' | 'admin';
+  display_name?: string;
+  avatar_url?: string;
+  provider?: string;
+}
+
+export async function getCurrentUser(): Promise<UserProfileResponse> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/api/me`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    throw new Error('Failed to get user profile');
+  }
+
+  return response.json();
+}

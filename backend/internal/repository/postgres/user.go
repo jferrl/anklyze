@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 // UserRepository implements user persistence with PostgreSQL.
@@ -25,31 +24,25 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 // On subsequent logins, updates last_login_at timestamp.
 func (r *UserRepository) UpsertFromAuth(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
 	now := time.Now()
-	user := &domain.User{
-		ID:          userID,
-		Email:       email,
-		Role:        domain.UserRoleUser,
-		Provider:    provider,
-		LastLoginAt: &now,
-	}
 
-	// Upsert: insert if not exists, update last_login_at if exists
-	result := r.db.WithContext(ctx).Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"last_login_at", "email", "provider"}),
-	}).Create(user)
+	// Use raw SQL with RETURNING to do upsert + fetch in a single query
+	var user domain.User
+	err := r.db.WithContext(ctx).Raw(`
+		INSERT INTO users (id, email, role, provider, last_login_at, created_at, updated_at)
+		VALUES (?, ?, 'user', ?, ?, NOW(), NOW())
+		ON CONFLICT (id) DO UPDATE SET
+			last_login_at = EXCLUDED.last_login_at,
+			email = EXCLUDED.email,
+			provider = EXCLUDED.provider,
+			updated_at = NOW()
+		RETURNING id, email, role, display_name, avatar_url, provider, last_login_at, created_at, updated_at
+	`, userID, email, provider, now).Scan(&user).Error
 
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	// Fetch the user to get the actual role (might have been set to admin previously)
-	var savedUser domain.User
-	if err := r.db.WithContext(ctx).First(&savedUser, "id = ?", userID).Error; err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return &savedUser, nil
+	return &user, nil
 }
 
 // GetByID retrieves a user by their ID.

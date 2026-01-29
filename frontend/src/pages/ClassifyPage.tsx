@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Activity, Home, FormInput, MessageSquare } from 'lucide-react';
+import { Activity, Home, FormInput, MessageSquare, BookOpen } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { FractureForm } from '../components/FractureForm';
 import { ChatPanel } from '../components/ChatPanel';
@@ -32,6 +32,12 @@ export function ClassifyPage() {
               <Link to="/">
                 <Home className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">{t('classify.backToHome')}</span>
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/studies">
+                <BookOpen className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{t('nav.studies')}</span>
               </Link>
             </Button>
             <ThemeSwitcher />

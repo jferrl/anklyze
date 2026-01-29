@@ -4,8 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
+	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
+	"github.com/jferrl/anklyze/internal/storage"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -67,6 +69,7 @@ func setupProtectedRoutes(
 	protected.Use(auth.AuthMiddleware(authValidator))
 	protected.Use(auth.UserSyncMiddleware(userRepo))
 	{
+		protected.GET("/me", GetCurrentUser)
 		protected.POST("/classify", handler.ClassifyFracture)
 		protected.GET("/options", handler.GetOptions)
 		protected.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
@@ -110,6 +113,14 @@ func setupPublicRoutes(
 	dailyQuota gin.HandlerFunc,
 	chatRateLimiter gin.HandlerFunc,
 ) {
+	// In development mode, /me returns a mock admin user
+	api.GET("/me", func(c *gin.Context) {
+		c.JSON(200, UserProfileResponse{
+			ID:    "dev-user",
+			Email: "dev@localhost",
+			Role:  "admin",
+		})
+	})
 	api.POST("/classify", handler.ClassifyFracture)
 	api.GET("/options", handler.GetOptions)
 	api.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
@@ -142,11 +153,112 @@ func setupPublicRoutes(
 	}
 }
 
+// SetupStudyRoutes configures study-related routes.
+// This should be called after SetupRoutes.
+func SetupStudyRoutes(
+	router *gin.Engine,
+	authValidator *auth.Validator,
+	userRepo auth.UserRepository,
+	studyRepo repository.StudyRepository,
+	responseRepo repository.StudyResponseRepository,
+	analyticsRepo repository.StudyAnalyticsRepository,
+	storage storage.Storage,
+) {
+	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, storage)
+
+	api := router.Group("/api")
+
+	if authValidator != nil {
+		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler)
+	} else {
+		setupPublicStudyRoutes(api, studyHandler)
+	}
+}
+
+// setupProtectedStudyRoutes configures study routes with authentication.
+func setupProtectedStudyRoutes(
+	api *gin.RouterGroup,
+	authValidator *auth.Validator,
+	userRepo auth.UserRepository,
+	studyHandler *StudyHandler,
+) {
+	// User study routes - require authentication
+	studies := api.Group("/studies")
+	studies.Use(auth.AuthMiddleware(authValidator))
+	studies.Use(auth.UserSyncMiddleware(userRepo))
+	{
+		studies.GET("", studyHandler.ListPublishedStudies)
+		studies.GET("/:id", studyHandler.GetPublishedStudy)
+		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
+		studies.POST("/:id/responses", studyHandler.SubmitResponse)
+		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+	}
+
+	// Admin study routes - require admin role
+	adminStudies := api.Group("/admin/studies")
+	adminStudies.Use(auth.AuthMiddleware(authValidator))
+	adminStudies.Use(auth.UserSyncMiddleware(userRepo))
+	adminStudies.Use(auth.RequireRole(auth.RoleAdmin))
+	{
+		adminStudies.POST("", studyHandler.CreateStudy)
+		adminStudies.GET("", studyHandler.ListStudies)
+		adminStudies.GET("/:id", studyHandler.GetStudy)
+		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
+		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
+		adminStudies.POST("/:id/images", studyHandler.UploadImage)
+		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
+		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
+		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
+		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
+		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
+		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
+		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
+		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
+		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+	}
+}
+
+// setupPublicStudyRoutes configures study routes without authentication (development mode).
+func setupPublicStudyRoutes(
+	api *gin.RouterGroup,
+	studyHandler *StudyHandler,
+) {
+	// User study routes
+	studies := api.Group("/studies")
+	{
+		studies.GET("", studyHandler.ListPublishedStudies)
+		studies.GET("/:id", studyHandler.GetPublishedStudy)
+		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
+		studies.POST("/:id/responses", studyHandler.SubmitResponse)
+		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+	}
+
+	// Admin study routes
+	adminStudies := api.Group("/admin/studies")
+	{
+		adminStudies.POST("", studyHandler.CreateStudy)
+		adminStudies.GET("", studyHandler.ListStudies)
+		adminStudies.GET("/:id", studyHandler.GetStudy)
+		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
+		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
+		adminStudies.POST("/:id/images", studyHandler.UploadImage)
+		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
+		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
+		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
+		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
+		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
+		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
+		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
+		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
+		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+	}
+}
+
 // CORSMiddleware handles Cross-Origin Resource Sharing
 func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Expose-Headers", "X-Quota-Remaining")
 

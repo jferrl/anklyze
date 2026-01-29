@@ -22,6 +22,7 @@ import (
 	"github.com/jferrl/anklyze/internal/repository/postgres"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
+	"github.com/jferrl/anklyze/internal/storage"
 	"github.com/joho/godotenv"
 
 	_ "github.com/jferrl/anklyze/docs"
@@ -60,6 +61,9 @@ func main() {
 	var chatAuditRepo api.ChatAuditRepository
 	var chatAnalyticsRepo api.ChatAnalyticsRepository
 	var userRepo auth.UserRepository
+	var studyRepo repository.StudyRepository
+	var studyResponseRepo repository.StudyResponseRepository
+	var studyAnalyticsRepo repository.StudyAnalyticsRepository
 
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
@@ -70,6 +74,9 @@ func main() {
 			chatAuditRepo = repository.NewNoOpChatAuditRepository()
 			chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 			userRepo = repository.NewNoOpUserRepository()
+			studyRepo = repository.NewNoOpStudyRepository()
+			studyResponseRepo = repository.NewNoOpStudyResponseRepository()
+			studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
 		} else {
 			if err := db.AutoMigrate(
 				&domain.AuditEntry{},
@@ -77,6 +84,9 @@ func main() {
 				&domain.ChatMessage{},
 				&domain.ChatFeedback{},
 				&domain.User{},
+				&domain.Study{},
+				&domain.StudyImage{},
+				&domain.StudyResponse{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
@@ -86,6 +96,9 @@ func main() {
 			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
 			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
 			userRepo = postgres.NewUserRepository(db)
+			studyRepo = postgres.NewStudyRepository(db)
+			studyResponseRepo = postgres.NewStudyResponseRepository(db, cfg.AuditBufferSize)
+			studyAnalyticsRepo = postgres.NewStudyAnalyticsRepository(db)
 		}
 	} else {
 		slog.Info("no DATABASE_URL configured, audit trail disabled")
@@ -94,6 +107,9 @@ func main() {
 		chatAuditRepo = repository.NewNoOpChatAuditRepository()
 		chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 		userRepo = repository.NewNoOpUserRepository()
+		studyRepo = repository.NewNoOpStudyRepository()
+		studyResponseRepo = repository.NewNoOpStudyResponseRepository()
+		studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
 	}
 
 	// Initialize chat service if Gemini is configured
@@ -131,8 +147,19 @@ func main() {
 		slog.Info("no SUPABASE_URL configured, authentication disabled (all routes public)")
 	}
 
+	// Initialize storage
+	var studyStorage storage.Storage
+	if cfg.HasSupabaseStorage() {
+		studyStorage = storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey, cfg.StudyBucketName)
+		slog.Info("Supabase storage enabled", "bucket", cfg.StudyBucketName)
+	} else {
+		studyStorage = storage.NewNoOpStorage()
+		slog.Info("no SUPABASE_SERVICE_ROLE_KEY configured, study image storage disabled")
+	}
+
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, authValidator, userRepo, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
+	api.SetupStudyRoutes(router, authValidator, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
@@ -168,6 +195,9 @@ func main() {
 	}
 	if err := chatAuditRepo.Close(); err != nil {
 		slog.Error("failed to close chat audit repository", "error", err)
+	}
+	if err := studyResponseRepo.Close(); err != nil {
+		slog.Error("failed to close study response repository", "error", err)
 	}
 
 	// Close auth validator
