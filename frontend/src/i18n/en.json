@@ -9,6 +9,16 @@
     "analytics": "Analytics",
     "settings": "Settings"
   },
+  "breadcrumbs": {
+    "classify": "Classify",
+    "studies": "Studies",
+    "studyDetail": "Study Detail",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "newStudy": "New Study",
+    "editStudy": "Edit Study",
+    "analytics": "Analytics"
+  },
   "app": {
     "title": "Ankle Fracture Classification",
     "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification",

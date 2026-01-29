@@ -61,6 +61,14 @@ export function StudyEditorPage() {
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id && id !== 'new';
 
+  // Fetch existing study if editing - must be before state that depends on it
+  const { data: existingStudy, isLoading: isLoadingStudy } = useQuery({
+    queryKey: ['study', id],
+    queryFn: () => studyApi.getStudy(id!),
+    enabled: isEditing,
+  });
+
+  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -70,26 +78,21 @@ export function StudyEditorPage() {
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Track previous study ID to reset form when switching studies
+  // This pattern is recommended by React for syncing state with props during render
+  const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
+  if (existingStudy && existingStudy.id !== prevStudyId) {
+    setPrevStudyId(existingStudy.id);
+    setTitle(existingStudy.title);
+    setDescription(existingStudy.description || '');
+    setDeadline(existingStudy.deadline?.split('T')[0] || '');
+  }
+
   // Keep ref in sync with state
   useEffect(() => {
     uploadCategoryRef.current = uploadCategory;
   }, [uploadCategory]);
 
-  // Fetch existing study if editing
-  const { data: existingStudy, isLoading: isLoadingStudy } = useQuery({
-    queryKey: ['study', id],
-    queryFn: () => studyApi.getStudy(id!),
-    enabled: isEditing,
-  });
-
-  // Populate form when editing
-  useEffect(() => {
-    if (existingStudy) {
-      setTitle(existingStudy.title);
-      setDescription(existingStudy.description || '');
-      setDeadline(existingStudy.deadline?.split('T')[0] || '');
-    }
-  }, [existingStudy]);
 
   // Create study mutation
   const createMutation = useMutation({

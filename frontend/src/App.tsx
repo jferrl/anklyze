@@ -41,7 +41,7 @@ function App() {
                 path="/classify"
                 element={
                   <ProtectedRoute>
-                    <AppShell breadcrumbs={[{ label: 'Classify' }]}>
+                    <AppShell breadcrumbs={[{ labelKey: 'classify' }]}>
                       <ClassifyPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -51,7 +51,7 @@ function App() {
                 path="/studies"
                 element={
                   <ProtectedRoute>
-                    <AppShell breadcrumbs={[{ label: 'Studies' }]}>
+                    <AppShell breadcrumbs={[{ labelKey: 'studies' }]}>
                       <StudiesPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -63,8 +63,8 @@ function App() {
                   <ProtectedRoute>
                     <AppShell
                       breadcrumbs={[
-                        { label: 'Studies', href: '/studies' },
-                        { label: 'Study Detail' },
+                        { labelKey: 'studies', href: '/studies' },
+                        { labelKey: 'studyDetail' },
                       ]}
                     >
                       <StudyDetailPage />
@@ -78,7 +78,7 @@ function App() {
                 path="/admin"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell breadcrumbs={[{ label: 'Admin' }, { label: 'Dashboard' }]}>
+                    <AppShell breadcrumbs={[{ labelKey: 'admin' }, { labelKey: 'dashboard' }]}>
                       <AdminDashboardPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -90,8 +90,8 @@ function App() {
                   <ProtectedRoute requireAdmin>
                     <AppShell
                       breadcrumbs={[
-                        { label: 'Admin', href: '/admin' },
-                        { label: 'Studies' },
+                        { labelKey: 'admin', href: '/admin' },
+                        { labelKey: 'studies' },
                       ]}
                     >
                       <AdminStudiesPage />
@@ -105,9 +105,9 @@ function App() {
                   <ProtectedRoute requireAdmin>
                     <AppShell
                       breadcrumbs={[
-                        { label: 'Admin' },
-                        { label: 'Studies', href: '/admin/studies' },
-                        { label: 'New Study' },
+                        { labelKey: 'admin' },
+                        { labelKey: 'studies', href: '/admin/studies' },
+                        { labelKey: 'newStudy' },
                       ]}
                     >
                       <StudyEditorPage />
@@ -121,9 +121,9 @@ function App() {
                   <ProtectedRoute requireAdmin>
                     <AppShell
                       breadcrumbs={[
-                        { label: 'Admin' },
-                        { label: 'Studies', href: '/admin/studies' },
-                        { label: 'Edit Study' },
+                        { labelKey: 'admin' },
+                        { labelKey: 'studies', href: '/admin/studies' },
+                        { labelKey: 'editStudy' },
                       ]}
                     >
                       <StudyEditorPage />
@@ -137,9 +137,9 @@ function App() {
                   <ProtectedRoute requireAdmin>
                     <AppShell
                       breadcrumbs={[
-                        { label: 'Admin' },
-                        { label: 'Studies', href: '/admin/studies' },
-                        { label: 'Analytics' },
+                        { labelKey: 'admin' },
+                        { labelKey: 'studies', href: '/admin/studies' },
+                        { labelKey: 'analytics' },
                       ]}
                     >
                       <StudyAnalyticsPage />

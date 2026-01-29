@@ -20,7 +20,6 @@ export function LanguageSwitcher() {
   const handleLanguageChange = (langCode: string) => {
     if (langCode !== i18n.language) {
       changeLanguage(langCode);
-      window.location.reload();
     }
   };
 

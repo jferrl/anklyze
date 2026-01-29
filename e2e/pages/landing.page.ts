@@ -59,12 +59,10 @@ export class LandingPage {
     const menuItem = this.page.getByRole('menuitem', {
       name: lang === 'en' ? /english/i : /español/i
     });
-    // Language change triggers page reload
-    await Promise.all([
-      this.page.waitForEvent('load'),
-      menuItem.click(),
-    ]);
-    await this.waitForPageLoad();
+    await menuItem.click();
+    // Wait for UI to update with new language (no page reload)
+    const expectedText = lang === 'en' ? /classify ankle fractures/i : /clasifica fracturas/i;
+    await expect(this.heroTitle).toContainText(expectedText);
   }
 
   async expectVisible() {

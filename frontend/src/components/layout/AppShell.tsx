@@ -1,4 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '../ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { Separator } from '../ui/separator';
@@ -12,7 +14,8 @@ import {
 } from '../ui/breadcrumb';
 
 interface BreadcrumbItemData {
-  label: string;
+  /** Translation key under 'breadcrumbs' namespace (e.g., 'classify', 'studies') */
+  labelKey: string;
   href?: string;
 }
 
@@ -23,6 +26,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
+  const { t } = useTranslation();
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -37,10 +41,14 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
                 {breadcrumbs.map((item, index) => (
                   <Fragment key={index}>
                     <BreadcrumbItem>
-                      {index < breadcrumbs.length - 1 ? (
-                        <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                      {index < breadcrumbs.length - 1 && item.href ? (
+                        <BreadcrumbLink asChild>
+                          <Link to={item.href}>{t(`breadcrumbs.${item.labelKey}`)}</Link>
+                        </BreadcrumbLink>
+                      ) : index < breadcrumbs.length - 1 ? (
+                        <span className="text-muted-foreground">{t(`breadcrumbs.${item.labelKey}`)}</span>
                       ) : (
-                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                        <BreadcrumbPage>{t(`breadcrumbs.${item.labelKey}`)}</BreadcrumbPage>
                       )}
                     </BreadcrumbItem>
                     {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}

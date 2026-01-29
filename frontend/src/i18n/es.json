@@ -9,6 +9,16 @@
     "analytics": "Analíticas",
     "settings": "Configuración"
   },
+  "breadcrumbs": {
+    "classify": "Clasificar",
+    "studies": "Estudios",
+    "studyDetail": "Detalle del Estudio",
+    "admin": "Admin",
+    "dashboard": "Panel",
+    "newStudy": "Nuevo Estudio",
+    "editStudy": "Editar Estudio",
+    "analytics": "Analíticas"
+  },
   "app": {
     "title": "Clasificación de Fracturas de Tobillo",
     "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek",
