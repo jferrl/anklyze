@@ -1,10 +1,18 @@
 {
   "nav": {
-    "studies": "Estudios"
+    "main": "Principal",
+    "classify": "Clasificar",
+    "studies": "Estudios",
+    "admin": "Admin",
+    "dashboard": "Panel",
+    "manageStudies": "Gestionar Estudios",
+    "analytics": "Analíticas",
+    "settings": "Configuración"
   },
   "app": {
     "title": "Clasificación de Fracturas de Tobillo",
-    "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek"
+    "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek",
+    "tagline": "Clasificación de Fracturas"
   },
   "landing": {
     "badge": "Herramienta de Apoyo a la Decisión Clínica",
@@ -203,6 +211,17 @@
     "copied": "Enlace copiado al portapapeles",
     "failed": "Error al copiar el enlace"
   },
+  "login": {
+    "title": "Iniciar sesión",
+    "welcome": "Bienvenido de nuevo",
+    "subtitle": "Inicia sesión para acceder a estudios clínicos y herramientas de clasificación de fracturas.",
+    "feature1Title": "Clasificación Instantánea",
+    "feature1Desc": "Obtén clasificaciones Lauge-Hansen, Danis-Weber, AO/OTA en segundos.",
+    "feature2Title": "Estudios Clínicos",
+    "feature2Desc": "Participa en estudios de clasificación de fracturas y compara resultados.",
+    "feature3Title": "Seguimiento de Progreso",
+    "feature3Desc": "Monitorea tu historial de clasificaciones y mejora con el tiempo."
+  },
   "auth": {
     "signIn": "Inicia sesión para continuar",
     "createAccount": "Crear una cuenta",
@@ -289,7 +308,19 @@
     "answered": "Respondido",
     "imagesCount": "imágenes",
     "viewOrReanswer": "Ver o Responder de Nuevo",
-    "startClassification": "Iniciar Clasificación"
+    "startClassification": "Iniciar Clasificación",
+    "yourProgress": "Tu Progreso",
+    "completedCount": "completados",
+    "pendingCount": "pendientes",
+    "searchPlaceholder": "Buscar estudios...",
+    "filterAll": "Todos",
+    "filterPending": "Pendientes",
+    "filterCompleted": "Completados",
+    "noMatchingStudies": "No hay estudios que coincidan",
+    "tryDifferentFilter": "Intenta ajustar tu búsqueda o criterios de filtro.",
+    "clearFilters": "Limpiar Filtros",
+    "daysLeft": "{{count}} días restantes",
+    "yourResponses": "{{count}} respuesta(s) enviada(s)"
   },
   "admin": {
     "studies": {
@@ -335,6 +366,14 @@
       "errors": {
         "titleRequired": "El título es obligatorio",
         "imagesRequired": "Se requiere al menos una imagen para publicar"
+      },
+      "table": {
+        "title": "Título",
+        "status": "Estado",
+        "responses": "Respuestas",
+        "created": "Creado",
+        "deadline": "Fecha límite",
+        "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"
       }
     },
     "analytics": {
@@ -346,7 +385,34 @@
       "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
       "noData": "No hay datos de respuestas disponibles",
       "unspecified": "No especificado",
-      "summary": "{{system}}: {{types}} clasificaciones diferentes de {{total}} respuestas"
+      "summary": "{{system}}: {{types}} clasificaciones diferentes de {{total}} respuestas",
+      "distributionPie": "Visión General de Distribución",
+      "distributionBar": "Cantidad de Respuestas por Tipo",
+      "andMore": "+ {{count}} tipos más"
+    },
+    "dashboard": {
+      "title": "Panel de Administración",
+      "subtitle": "Resumen de todos los estudios y respuestas",
+      "totalStudies": "Total de Estudios",
+      "totalResponses": "Total de Respuestas",
+      "uniqueParticipants": "Participantes Únicos",
+      "completedStudies": "Estudios Completados",
+      "drafts": "borradores",
+      "active": "activos",
+      "avgPerStudy": "~{{count}} promedio por estudio",
+      "acrossAllStudies": "en todos los estudios",
+      "stillActive": "aún activos",
+      "recentActivity": "Actividad Reciente",
+      "recentActivityDesc": "Estudios con respuestas recientes",
+      "noRecentActivity": "Sin actividad reciente",
+      "responses": "respuestas",
+      "needsAttention": "Requiere Atención",
+      "needsAttentionDesc": "Estudios que pueden necesitar tu atención",
+      "allGood": "¡Todos los estudios van bien!",
+      "pastDeadline": "Fecha límite pasada",
+      "noResponses": "Sin respuestas aún",
+      "statusBreakdown": "Distribución por Estado",
+      "statusBreakdownDesc": "Distribución de estudios por estado"
     }
   }
 }

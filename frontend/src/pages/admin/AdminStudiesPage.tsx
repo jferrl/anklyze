@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  Activity,
-  Home,
   Plus,
   Search,
   MoreHorizontal,
@@ -14,20 +12,22 @@ import {
   BarChart3,
   Send,
   Lock,
-  Users,
-  Clock,
   FileText,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
+import { Card, CardContent } from '../../components/ui/card';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,22 +52,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { LanguageSwitcher } from '../../components/LanguageSwitcher';
-import { ThemeSwitcher } from '../../components/ThemeSwitcher';
-import { UserMenu } from '../../components/auth/UserMenu';
 import { studyApi } from '../../services/studyApi';
 import type { Study, StudyStatus } from '../../types/study';
 
-const statusColors: Record<StudyStatus, string> = {
-  draft: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  published: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  closed: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-};
-
-const statusIcons: Record<StudyStatus, React.ReactNode> = {
-  draft: <FileText className="h-3 w-3" />,
-  published: <Send className="h-3 w-3" />,
-  closed: <Lock className="h-3 w-3" />,
+const statusVariants: Record<StudyStatus, 'default' | 'secondary' | 'outline'> = {
+  draft: 'secondary',
+  published: 'default',
+  closed: 'outline',
 };
 
 export function AdminStudiesPage() {
@@ -129,36 +120,15 @@ export function AdminStudiesPage() {
     });
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Activity className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
-            <Badge variant="secondary" className="ml-2">
-              Admin
-            </Badge>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/">
-                <Home className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">{t('classify.backToHome')}</span>
-              </Link>
-            </Button>
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-            <UserMenu />
-          </div>
-        </div>
-      </nav>
+  const isDeadlinePassed = (deadline?: string) => {
+    if (!deadline) return false;
+    return new Date(deadline) < new Date();
+  };
 
-      {/* Content */}
+  return (
+    <div className="h-full">
       <div className="container mx-auto px-4 py-8">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{t('admin.studies.title')}</h1>
@@ -201,7 +171,7 @@ export function AdminStudiesPage() {
           </CardContent>
         </Card>
 
-        {/* Studies List */}
+        {/* Studies Table */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -219,45 +189,71 @@ export function AdminStudiesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {filteredStudies.map((study) => (
-              <StudyCard
-                key={study.id}
-                study={study}
-                onView={() => navigate(`/studies/${study.id}`)}
-                onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
-                onDelete={() => setDeleteId(study.id)}
-                onPublish={() => publishMutation.mutate(study.id)}
-                onClose={() => closeMutation.mutate(study.id)}
-                onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
-                formatDate={formatDate}
-              />
-            ))}
-          </div>
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[40%]">{t('admin.studies.table.title')}</TableHead>
+                  <TableHead>{t('admin.studies.table.status')}</TableHead>
+                  <TableHead className="text-center">{t('admin.studies.table.responses')}</TableHead>
+                  <TableHead>{t('admin.studies.table.created')}</TableHead>
+                  <TableHead>{t('admin.studies.table.deadline')}</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudies.map((study) => (
+                  <StudyRow
+                    key={study.id}
+                    study={study}
+                    formatDate={formatDate}
+                    isDeadlinePassed={isDeadlinePassed}
+                    statusVariant={statusVariants[study.status]}
+                    onView={() => navigate(`/studies/${study.id}`)}
+                    onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
+                    onDelete={() => setDeleteId(study.id)}
+                    onPublish={() => publishMutation.mutate(study.id)}
+                    onClose={() => closeMutation.mutate(study.id)}
+                    onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                    t={t}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         )}
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-6">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-            >
-              {t('common.previous')}
-            </Button>
-            <span className="flex items-center px-4 text-sm text-muted-foreground">
-              {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page === totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              {t('common.next')}
-            </Button>
+          <div className="flex items-center justify-between mt-6">
+            <p className="text-sm text-muted-foreground">
+              {t('admin.studies.table.showing', {
+                from: (page - 1) * limit + 1,
+                to: Math.min(page * limit, total),
+                total,
+              })}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm text-muted-foreground px-2">
+                {page} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -286,114 +282,113 @@ export function AdminStudiesPage() {
   );
 }
 
-interface StudyCardProps {
+interface StudyRowProps {
   study: Study;
+  formatDate: (date?: string) => string;
+  isDeadlinePassed: (deadline?: string) => boolean;
+  statusVariant: 'default' | 'secondary' | 'outline';
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onPublish: () => void;
   onClose: () => void;
   onViewAnalytics: () => void;
-  formatDate: (date?: string) => string;
+  t: (key: string) => string;
 }
 
-function StudyCard({
+function StudyRow({
   study,
+  formatDate,
+  isDeadlinePassed,
+  statusVariant,
   onView,
   onEdit,
   onDelete,
   onPublish,
   onClose,
   onViewAnalytics,
-  formatDate,
-}: StudyCardProps) {
-  const { t } = useTranslation();
-
+  t,
+}: StudyRowProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <Badge className={statusColors[study.status]}>
-                {statusIcons[study.status]}
-                <span className="ml-1">{t(`studies.status.${study.status}`)}</span>
-              </Badge>
-              {study.has_tac_images && (
-                <Badge variant="outline" className="text-xs">
-                  TAC
-                </Badge>
-              )}
-            </div>
-            <CardTitle className="text-lg truncate">{study.title}</CardTitle>
-            {study.description && (
-              <CardDescription className="line-clamp-2 mt-1">{study.description}</CardDescription>
-            )}
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onView}>
-                <Eye className="h-4 w-4 mr-2" />
-                {t('common.view')}
-              </DropdownMenuItem>
-              {study.status === 'draft' && (
-                <DropdownMenuItem onClick={onEdit}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  {t('common.edit')}
-                </DropdownMenuItem>
-              )}
-              {study.status !== 'draft' && (
-                <DropdownMenuItem onClick={onViewAnalytics}>
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  {t('admin.studies.analytics')}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              {study.status === 'draft' && (
-                <DropdownMenuItem onClick={onPublish}>
-                  <Send className="h-4 w-4 mr-2" />
-                  {t('admin.studies.publish')}
-                </DropdownMenuItem>
-              )}
-              {study.status === 'published' && (
-                <DropdownMenuItem onClick={onClose}>
-                  <Lock className="h-4 w-4 mr-2" />
-                  {t('admin.studies.close')}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onDelete} className="text-destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
-                {t('common.delete')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
-            <span>
-              {study.response_count} {t('admin.studies.responses')}
+    <TableRow className="cursor-pointer" onClick={onView}>
+      <TableCell>
+        <div className="flex flex-col gap-1">
+          <span className="font-medium">{study.title}</span>
+          {study.description && (
+            <span className="text-sm text-muted-foreground line-clamp-1">
+              {study.description}
             </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>{formatDate(study.created_at)}</span>
-          </div>
-          {study.deadline && (
-            <Badge variant="outline" className="text-xs">
-              {t('studies.deadline')}: {formatDate(study.deadline)}
-            </Badge>
+          )}
+          {study.has_tac_images && (
+            <Badge variant="outline" className="w-fit text-xs">TAC</Badge>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </TableCell>
+      <TableCell>
+        <Badge variant={statusVariant}>
+          {t(`studies.status.${study.status}`)}
+        </Badge>
+      </TableCell>
+      <TableCell className="text-center">
+        <span className="font-medium">{study.response_count}</span>
+      </TableCell>
+      <TableCell className="text-muted-foreground">
+        {formatDate(study.created_at)}
+      </TableCell>
+      <TableCell>
+        {study.deadline ? (
+          <span className={isDeadlinePassed(study.deadline) ? 'text-destructive' : 'text-muted-foreground'}>
+            {formatDate(study.deadline)}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        )}
+      </TableCell>
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem onClick={onView}>
+              <Eye className="h-4 w-4 mr-2" />
+              {t('common.view')}
+            </DropdownMenuItem>
+            {study.status === 'draft' && (
+              <DropdownMenuItem onClick={onEdit}>
+                <Pencil className="h-4 w-4 mr-2" />
+                {t('common.edit')}
+              </DropdownMenuItem>
+            )}
+            {study.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewAnalytics}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                {t('admin.studies.analytics')}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            {study.status === 'draft' && (
+              <DropdownMenuItem onClick={onPublish}>
+                <Send className="h-4 w-4 mr-2" />
+                {t('admin.studies.publish')}
+              </DropdownMenuItem>
+            )}
+            {study.status === 'published' && (
+              <DropdownMenuItem onClick={onClose}>
+                <Lock className="h-4 w-4 mr-2" />
+                {t('admin.studies.close')}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onDelete} className="text-destructive">
+              <Trash2 className="h-4 w-4 mr-2" />
+              {t('common.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
   );
 }

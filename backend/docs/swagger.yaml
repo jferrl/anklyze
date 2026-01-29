@@ -81,6 +81,21 @@ definitions:
       value:
         type: string
     type: object
+  api.UserProfileResponse:
+    properties:
+      avatar_url:
+        type: string
+      display_name:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      provider:
+        type: string
+      role:
+        type: string
+    type: object
   domain.AOOTAClassification:
     properties:
       code:
@@ -1111,6 +1126,27 @@ paths:
       summary: Classify an ankle fracture
       tags:
       - Classification
+  /api/me:
+    get:
+      description: Returns the authenticated user's profile including their role
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile
+          schema:
+            $ref: '#/definitions/api.UserProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get current user profile
+      tags:
+      - User
   /api/options:
     get:
       description: Returns localized form options for the classification form

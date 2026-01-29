@@ -1,11 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
 import {
-  Activity,
-  ArrowLeft,
   Upload,
   X,
   Image as ImageIcon,
@@ -45,9 +43,6 @@ import {
 } from '../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { LanguageSwitcher } from '../../components/LanguageSwitcher';
-import { ThemeSwitcher } from '../../components/ThemeSwitcher';
-import { UserMenu } from '../../components/auth/UserMenu';
 import { studyApi } from '../../services/studyApi';
 import type { ImageCategory, StudyImage } from '../../types/study';
 
@@ -210,8 +205,14 @@ export function StudyEditorPage() {
 
     if (isEditing) {
       await updateMutation.mutateAsync({ studyId: id!, data });
-      // Upload any pending images
-      for (const upload of pendingUploads) {
+      // Copy pending uploads and clear state immediately to prevent duplicates
+      // (query invalidation after each upload would otherwise show both pending and uploaded)
+      const uploadsToProcess = [...pendingUploads];
+      // Revoke object URLs to prevent memory leaks
+      uploadsToProcess.forEach((upload) => URL.revokeObjectURL(upload.preview));
+      setPendingUploads([]);
+      // Upload the copied images
+      for (const upload of uploadsToProcess) {
         await uploadImageMutation.mutateAsync({
           studyId: id!,
           file: upload.file,
@@ -219,7 +220,6 @@ export function StudyEditorPage() {
           caption: upload.caption,
         });
       }
-      setPendingUploads([]);
     } else {
       await createMutation.mutateAsync(data);
     }
@@ -252,41 +252,18 @@ export function StudyEditorPage() {
 
   if (isEditing && isLoadingStudy) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Activity className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
-            <Badge variant="secondary" className="ml-2">
-              Admin
-            </Badge>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-            <UserMenu />
-          </div>
-        </div>
-      </nav>
-
+    <div className="h-full">
       {/* Content */}
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/admin/studies')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold tracking-tight">
               {isEditing ? t('admin.studies.editStudy') : t('admin.studies.createStudy')}

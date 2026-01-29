@@ -1,15 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
-  Activity,
-  ArrowLeft,
   Download,
   Users,
   Clock,
   BarChart3,
-  PieChart,
   TrendingUp,
   Loader2,
   FileText,
@@ -24,9 +22,14 @@ import {
   CardTitle,
 } from '../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { LanguageSwitcher } from '../../components/LanguageSwitcher';
-import { ThemeSwitcher } from '../../components/ThemeSwitcher';
-import { UserMenu } from '../../components/auth/UserMenu';
+import type { ChartConfig } from '../../components/ui/chart';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '../../components/ui/chart';
 import { studyApi, downloadStudyResponsesCSV } from '../../services/studyApi';
 
 const CLASSIFICATION_SYSTEMS = [
@@ -37,14 +40,14 @@ const CLASSIFICATION_SYSTEMS = [
 ];
 
 const CHART_COLORS = [
-  'bg-blue-500',
-  'bg-green-500',
-  'bg-yellow-500',
-  'bg-purple-500',
-  'bg-pink-500',
-  'bg-indigo-500',
-  'bg-orange-500',
-  'bg-teal-500',
+  'hsl(var(--chart-1))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
+  'hsl(221, 83%, 53%)',
+  'hsl(262, 83%, 58%)',
+  'hsl(316, 73%, 52%)',
 ];
 
 export function StudyAnalyticsPage() {
@@ -79,7 +82,7 @@ export function StudyAnalyticsPage() {
     return `${minutes}m ${remainingSeconds}s`;
   };
 
-  const getDistributionData = () => {
+  const getDistributionData = useMemo(() => {
     if (!analytics) return {};
     switch (activeSystem) {
       case 'danis_weber':
@@ -93,14 +96,34 @@ export function StudyAnalyticsPage() {
       default:
         return {};
     }
-  };
+  }, [analytics, activeSystem]);
 
-  const distribution = getDistributionData();
-  const totalResponses = Object.values(distribution).reduce<number>((sum, count) => sum + (count as number), 0);
+  const chartData = useMemo(() => {
+    return Object.entries(getDistributionData)
+      .map(([name, value], index) => ({
+        name: name || t('admin.analytics.unspecified'),
+        value: value as number,
+        fill: CHART_COLORS[index % CHART_COLORS.length],
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [getDistributionData, t]);
+
+  const chartConfig = useMemo(() => {
+    const config: ChartConfig = {};
+    chartData.forEach((item, index) => {
+      config[item.name] = {
+        label: item.name,
+        color: CHART_COLORS[index % CHART_COLORS.length],
+      };
+    });
+    return config;
+  }, [chartData]);
+
+  const totalResponses = chartData.reduce((sum, item) => sum + item.value, 0);
 
   if (isLoadingStudy || isLoadingAnalytics) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -108,7 +131,7 @@ export function StudyAnalyticsPage() {
 
   if (!study || !analytics) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <Card className="p-8 text-center">
           <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-muted-foreground">{t('admin.studies.notFound')}</p>
@@ -121,35 +144,11 @@ export function StudyAnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Activity className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="hidden sm:inline font-semibold text-xl tracking-tight">Anklyze</span>
-            <Badge variant="secondary" className="ml-2">
-              Admin
-            </Badge>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-            <UserMenu />
-          </div>
-        </div>
-      </nav>
-
-      {/* Content */}
+    <div className="h-full">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/admin/studies')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
             <h1 className="text-2xl font-bold tracking-tight">{study.title}</h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline">{t(`studies.status.${study.status}`)}</Badge>
@@ -165,7 +164,7 @@ export function StudyAnalyticsPage() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -224,10 +223,7 @@ export function StudyAnalyticsPage() {
         {/* Classification Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5" />
-              {t('admin.analytics.classificationDistribution')}
-            </CardTitle>
+            <CardTitle>{t('admin.analytics.classificationDistribution')}</CardTitle>
             <CardDescription>
               {t('admin.analytics.distributionDescription')}
             </CardDescription>
@@ -244,92 +240,113 @@ export function StudyAnalyticsPage() {
 
               {CLASSIFICATION_SYSTEMS.map((system) => (
                 <TabsContent key={system.key} value={system.key}>
-                  <DistributionChart
-                    distribution={getDistributionData()}
-                    total={totalResponses}
-                    systemLabel={system.label}
-                  />
+                  {chartData.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>{t('admin.analytics.noData')}</p>
+                    </div>
+                  ) : (
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      {/* Pie Chart */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-4 text-center">
+                          {t('admin.analytics.distributionPie')}
+                        </h4>
+                        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
+                          <PieChart>
+                            <ChartTooltip
+                              cursor={false}
+                              content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                              data={chartData}
+                              dataKey="value"
+                              nameKey="name"
+                              innerRadius={60}
+                              strokeWidth={5}
+                            >
+                              {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <ChartLegend
+                              content={<ChartLegendContent nameKey="name" />}
+                              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                            />
+                          </PieChart>
+                        </ChartContainer>
+                      </div>
+
+                      {/* Bar Chart */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-4 text-center">
+                          {t('admin.analytics.distributionBar')}
+                        </h4>
+                        <ChartContainer config={chartConfig} className="h-[300px]">
+                          <BarChart
+                            accessibilityLayer
+                            data={chartData}
+                            layout="vertical"
+                            margin={{ left: 0 }}
+                          >
+                            <CartesianGrid horizontal={false} />
+                            <YAxis
+                              dataKey="name"
+                              type="category"
+                              tickLine={false}
+                              tickMargin={10}
+                              axisLine={false}
+                              width={100}
+                              tick={{ fontSize: 12 }}
+                            />
+                            <XAxis type="number" hide />
+                            <ChartTooltip
+                              cursor={false}
+                              content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Bar dataKey="value" radius={5}>
+                              {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ChartContainer>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Summary Stats */}
+                  {chartData.length > 0 && (
+                    <div className="mt-6 pt-4 border-t">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        {chartData.slice(0, 4).map((item) => (
+                          <div key={item.name} className="text-center">
+                            <div
+                              className="h-2 w-full rounded mb-2"
+                              style={{ backgroundColor: item.fill }}
+                            />
+                            <p className="text-sm font-medium truncate">{item.name}</p>
+                            <p className="text-2xl font-bold">{item.value}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {totalResponses > 0
+                                ? `${((item.value / totalResponses) * 100).toFixed(1)}%`
+                                : '0%'}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                      {chartData.length > 4 && (
+                        <p className="text-sm text-muted-foreground text-center mt-4">
+                          {t('admin.analytics.andMore', { count: chartData.length - 4 })}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </TabsContent>
               ))}
             </Tabs>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
-}
-
-interface DistributionChartProps {
-  distribution: Record<string, number>;
-  total: number;
-  systemLabel: string;
-}
-
-function DistributionChart({ distribution, total, systemLabel }: DistributionChartProps) {
-  const { t } = useTranslation();
-  const entries = Object.entries(distribution).sort((a, b) => b[1] - a[1]);
-
-  if (entries.length === 0) {
-    return (
-      <div className="text-center py-12 text-muted-foreground">
-        <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-        <p>{t('admin.analytics.noData')}</p>
-      </div>
-    );
-  }
-
-  const maxCount = Math.max(...entries.map(([, count]) => count));
-
-  return (
-    <div className="space-y-4">
-      {entries.map(([type, count], index) => {
-        const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-        const barWidth = maxCount > 0 ? (count / maxCount) * 100 : 0;
-        const colorClass = CHART_COLORS[index % CHART_COLORS.length];
-
-        return (
-          <div key={type} className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">{type || t('admin.analytics.unspecified')}</span>
-              <span className="text-muted-foreground">
-                {count} ({percentage}%)
-              </span>
-            </div>
-            <div className="h-8 bg-muted rounded-lg overflow-hidden">
-              <div
-                className={`h-full ${colorClass} transition-all duration-500 ease-out rounded-lg flex items-center`}
-                style={{ width: `${barWidth}%` }}
-              >
-                {barWidth > 15 && (
-                  <span className="px-2 text-xs font-medium text-white truncate">
-                    {type}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t">
-        {entries.map(([type], index) => (
-          <div key={type} className="flex items-center gap-2 text-sm">
-            <div className={`w-3 h-3 rounded ${CHART_COLORS[index % CHART_COLORS.length]}`} />
-            <span>{type || t('admin.analytics.unspecified')}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Summary */}
-      <div className="mt-6 pt-4 border-t">
-        <p className="text-sm text-muted-foreground">
-          {t('admin.analytics.summary', {
-            system: systemLabel,
-            types: entries.length,
-            total,
-          })}
-        </p>
       </div>
     </div>
   );

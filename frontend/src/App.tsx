@@ -12,15 +12,18 @@ const queryClient = new QueryClient({
     },
   },
 });
-import { LandingPage } from './components/LandingPage';
+
+import { HomeRedirect } from './components/auth/HomeRedirect';
 import { ClassifyPage } from './pages/ClassifyPage';
 import { StudiesPage } from './pages/StudiesPage';
 import { StudyDetailPage } from './pages/StudyDetailPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyAnalyticsPage } from './pages/admin/StudyAnalyticsPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AppShell } from './components/layout';
 
 function App() {
   return (
@@ -28,66 +31,122 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/classify"
-              element={
-                <ProtectedRoute>
-                  <ClassifyPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/studies"
-              element={
-                <ProtectedRoute>
-                  <StudiesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/studies/:id"
-              element={
-                <ProtectedRoute>
-                  <StudyDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            {/* Admin Routes */}
-            <Route
-              path="/admin/studies"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <AdminStudiesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/studies/new"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <StudyEditorPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/studies/:id/edit"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <StudyEditorPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/studies/:id/analytics"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <StudyAnalyticsPage />
-                </ProtectedRoute>
-              }
-            />
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<HomeRedirect />} />
+              <Route path="/login" element={<LoginPage />} />
+
+              {/* Protected routes with AppShell */}
+              <Route
+                path="/classify"
+                element={
+                  <ProtectedRoute>
+                    <AppShell breadcrumbs={[{ label: 'Classify' }]}>
+                      <ClassifyPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/studies"
+                element={
+                  <ProtectedRoute>
+                    <AppShell breadcrumbs={[{ label: 'Studies' }]}>
+                      <StudiesPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/studies/:id"
+                element={
+                  <ProtectedRoute>
+                    <AppShell
+                      breadcrumbs={[
+                        { label: 'Studies', href: '/studies' },
+                        { label: 'Study Detail' },
+                      ]}
+                    >
+                      <StudyDetailPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell breadcrumbs={[{ label: 'Admin' }, { label: 'Dashboard' }]}>
+                      <AdminDashboardPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { label: 'Admin', href: '/admin' },
+                        { label: 'Studies' },
+                      ]}
+                    >
+                      <AdminStudiesPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies/new"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { label: 'Admin' },
+                        { label: 'Studies', href: '/admin/studies' },
+                        { label: 'New Study' },
+                      ]}
+                    >
+                      <StudyEditorPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies/:id/edit"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { label: 'Admin' },
+                        { label: 'Studies', href: '/admin/studies' },
+                        { label: 'Edit Study' },
+                      ]}
+                    >
+                      <StudyEditorPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies/:id/analytics"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { label: 'Admin' },
+                        { label: 'Studies', href: '/admin/studies' },
+                        { label: 'Analytics' },
+                      ]}
+                    >
+                      <StudyAnalyticsPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

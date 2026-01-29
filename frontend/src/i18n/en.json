@@ -1,10 +1,18 @@
 {
   "nav": {
-    "studies": "Studies"
+    "main": "Main",
+    "classify": "Classify",
+    "studies": "Studies",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "manageStudies": "Manage Studies",
+    "analytics": "Analytics",
+    "settings": "Settings"
   },
   "app": {
     "title": "Ankle Fracture Classification",
-    "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification"
+    "description": "Answer the questions to obtain the Lauge-Hansen, Danis-Weber, AO/OTA, and Bartonicek classification",
+    "tagline": "Fracture Classification"
   },
   "landing": {
     "badge": "Clinical Decision Support Tool",
@@ -203,6 +211,17 @@
     "copied": "Link copied to clipboard",
     "failed": "Failed to copy link"
   },
+  "login": {
+    "title": "Sign in",
+    "welcome": "Welcome back",
+    "subtitle": "Sign in to access clinical studies and fracture classification tools.",
+    "feature1Title": "Instant Classification",
+    "feature1Desc": "Get Lauge-Hansen, Danis-Weber, AO/OTA classifications in seconds.",
+    "feature2Title": "Clinical Studies",
+    "feature2Desc": "Participate in fracture classification studies and compare results.",
+    "feature3Title": "Track Progress",
+    "feature3Desc": "Monitor your classification history and improve over time."
+  },
   "auth": {
     "signIn": "Sign in to continue",
     "createAccount": "Create an account",
@@ -289,7 +308,19 @@
     "answered": "Answered",
     "imagesCount": "images",
     "viewOrReanswer": "View or Re-answer",
-    "startClassification": "Start Classification"
+    "startClassification": "Start Classification",
+    "yourProgress": "Your Progress",
+    "completedCount": "completed",
+    "pendingCount": "pending",
+    "searchPlaceholder": "Search studies...",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterCompleted": "Completed",
+    "noMatchingStudies": "No matching studies",
+    "tryDifferentFilter": "Try adjusting your search or filter criteria.",
+    "clearFilters": "Clear Filters",
+    "daysLeft": "{{count}} days left",
+    "yourResponses": "{{count}} response(s) submitted"
   },
   "admin": {
     "studies": {
@@ -335,6 +366,14 @@
       "errors": {
         "titleRequired": "Title is required",
         "imagesRequired": "At least one image is required to publish"
+      },
+      "table": {
+        "title": "Title",
+        "status": "Status",
+        "responses": "Responses",
+        "created": "Created",
+        "deadline": "Deadline",
+        "showing": "Showing {{from}}-{{to}} of {{total}} studies"
       }
     },
     "analytics": {
@@ -346,7 +385,34 @@
       "distributionDescription": "How respondents classified this case across different systems",
       "noData": "No response data available",
       "unspecified": "Not specified",
-      "summary": "{{system}}: {{types}} different classifications from {{total}} responses"
+      "summary": "{{system}}: {{types}} different classifications from {{total}} responses",
+      "distributionPie": "Distribution Overview",
+      "distributionBar": "Response Count by Type",
+      "andMore": "+ {{count}} more types"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Overview of all studies and responses",
+      "totalStudies": "Total Studies",
+      "totalResponses": "Total Responses",
+      "uniqueParticipants": "Unique Participants",
+      "completedStudies": "Completed Studies",
+      "drafts": "drafts",
+      "active": "active",
+      "avgPerStudy": "~{{count}} per study average",
+      "acrossAllStudies": "across all studies",
+      "stillActive": "still active",
+      "recentActivity": "Recent Activity",
+      "recentActivityDesc": "Studies with recent responses",
+      "noRecentActivity": "No recent activity",
+      "responses": "responses",
+      "needsAttention": "Needs Attention",
+      "needsAttentionDesc": "Studies that may need your attention",
+      "allGood": "All studies are on track!",
+      "pastDeadline": "Past deadline",
+      "noResponses": "No responses yet",
+      "statusBreakdown": "Study Status Breakdown",
+      "statusBreakdownDesc": "Distribution of studies by status"
     }
   }
 }
