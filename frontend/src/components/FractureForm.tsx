@@ -18,10 +18,11 @@ import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';
 import { ComparisonView } from './ComparisonView';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { QuestionCard, QuestionCardHeader, QuestionCardTitle, QuestionCardContent } from '@/components/ui/question-card';
+import { SelectionCard } from '@/components/ui/selection-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
 export function FractureForm() {
   const { t } = useTranslation();
@@ -962,6 +963,32 @@ export function FractureForm() {
     );
   }
 
+  // Calculate progress based on the current path
+  const progressValue = (() => {
+    if (!formData.involved_malleoli) return 0;
+
+    // Define expected questions per path (approximate max)
+    const pathQuestions: Record<string, number> = {
+      'posterior_only': 3,      // malleoli -> CT? -> type (if CT)
+      'medial_only': 2,         // malleoli -> morphology
+      'lateral_only': 4,        // malleoli -> level -> morphology/type -> trace
+      'medial_posterior': 3,    // malleoli -> CT? -> type (if CT)
+      'lateral_posterior': 6,   // malleoli -> level -> morphology -> CT? -> type
+      'lateral_medial': 5,      // malleoli -> medial morph -> infra? -> level -> morph
+      'trimaleolar': 6,         // malleoli -> level -> type -> trace -> CT? -> type
+    };
+
+    const totalForPath = pathQuestions[formData.involved_malleoli] || 4;
+    const answered = Object.keys(formData).filter(
+      key => formData[key as keyof typeof formData] !== undefined
+    ).length;
+
+    // Calculate percentage, cap at 95% until form is complete
+    const formComplete = isFormComplete();
+    const progress = Math.min((answered / totalForPath) * 100, formComplete ? 100 : 95);
+    return Math.round(progress);
+  })();
+
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="text-center mb-8">
@@ -971,6 +998,20 @@ export function FractureForm() {
         </p>
       </div>
 
+      {/* Progress indicator */}
+      {formData.involved_malleoli && (
+        <div className="space-y-3 animate-in fade-in duration-300">
+          <div className="flex justify-between items-center text-sm">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-primary/10 border-primary/30 text-xs">
+                {options.involved_malleoli.find(o => o.value === formData.involved_malleoli)?.label}
+              </Badge>
+            </div>
+            <span className="text-muted-foreground">{Math.round(progressValue)}%</span>
+          </div>
+          <Progress value={progressValue} className="h-1.5" />
+        </div>
+      )}
 
       {/* Navigation buttons */}
       {canGoBack && (
@@ -997,372 +1038,394 @@ export function FractureForm() {
       )}
 
       {/* Pregunta 1: ¿Qué maléolos tiene fracturados? */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
+      <QuestionCard questionKey="involved_malleoli">
+        <QuestionCardHeader>
+          <QuestionCardTitle>
             {options.questions.involved_malleoli?.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={formData.involved_malleoli || ''}
-            onValueChange={handleInvolvedMalleoliChange}
-          >
-            {options.involved_malleoli.map((option) => (
-              <div key={option.value} className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value={option.value} id={`malleoli-${option.value}`} />
-                <Label htmlFor={`malleoli-${option.value}`} className="cursor-pointer">
-                  {option.label}
-                </Label>
+          </QuestionCardTitle>
+        </QuestionCardHeader>
+        <QuestionCardContent>
+          <div className="flex flex-col gap-2">
+            {options.involved_malleoli.map((option, index) => (
+              <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                <SelectionCard
+                  value={option.value}
+                  label={option.label}
+                  selected={formData.involved_malleoli === option.value}
+                  onSelect={() => handleInvolvedMalleoliChange(option.value)}
+                  keyboardHint={String(index + 1)}
+                />
               </div>
             ))}
-          </RadioGroup>
-        </CardContent>
-      </Card>
+          </div>
+        </QuestionCardContent>
+      </QuestionCard>
 
       {/* PATH: Maléolo posterior - ¿Tiene TAC? */}
       {showPosteriorHasCTScan && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="posterior-ct-scan">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="post-ct-yes" />
-                <Label htmlFor="post-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="post-ct-no" />
-                <Label htmlFor="post-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo posterior - Tipo de fractura (solo si tiene TAC) */}
       {showPosteriorType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="posterior-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`post-type-${option.value}`} />
-                  <Label htmlFor={`post-type-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo medial - Morfología */}
       {showMedialMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="medial-morphology">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.medial_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.medial_morphology || ''}
-              onValueChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
-            >
-              {options.medial_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`medial-morph-${option.value}`} />
-                  <Label htmlFor={`medial-morph-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.medial_morphology.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.medial_morphology === option.value}
+                    onSelect={() => updateFormData({ ...formData, medial_morphology: option.value as MedialMorphology })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo lateral - Nivel */}
       {showLateralLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lateral-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibular_level: value as FibularLevel,
-                lateral_morphology: undefined,
-                suprasindesmal_type: undefined,
-              })}
-            >
-              {options.fibular_levels.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lat-level-${option.value}`} />
-                  <Label htmlFor={`lat-level-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibular_levels.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibular_level === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      fibular_level: option.value as FibularLevel,
+                      lateral_morphology: undefined,
+                      suprasindesmal_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo lateral - Morfología para infrasindesmal */}
       {showLateralMorphologyInfra && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lateral-morph-infra">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.lateral_morphology
                 .filter(o => o.value === 'transverse' || o.value === 'oblique')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lat-morph-infra-${option.value}`} />
-                    <Label htmlFor={`lat-morph-infra-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.lateral_morphology === option.value}
+                      onSelect={() => updateFormData({ ...formData, lateral_morphology: option.value as LateralMorphology })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo lateral - Morfología para transindesmal */}
       {showLateralMorphologyTrans && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lateral-morph-trans">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.lateral_morphology
                 .filter(o => o.value === 'spiral' || o.value === 'oblique')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lat-morph-trans-${option.value}`} />
-                    <Label htmlFor={`lat-morph-trans-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.lateral_morphology === option.value}
+                      onSelect={() => updateFormData({ ...formData, lateral_morphology: option.value as LateralMorphology })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo lateral - Tipo suprasindesmal */}
       {showSuprasindesmalType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="suprasindesmal-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.suprasindesmal_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                suprasindesmal_type: value as SuprasindesmalType,
-                fibula_trace_pattern: undefined,
-              })}
-            >
-              {options.suprasindesmal_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`supra-type-${option.value}`} />
-                  <Label htmlFor={`supra-type-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.suprasindesmal_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.suprasindesmal_type === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      suprasindesmal_type: option.value as SuprasindesmalType,
+                      fibula_trace_pattern: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maléolo lateral - Trazo del peroné para suprasindesmal simple/multifragmentaria */}
       {showLateralFibulaTracePattern && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lateral-trace-pattern">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibula_trace_pattern?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_trace_pattern || ''}
-              onValueChange={(value) => updateFormData({ ...formData, fibula_trace_pattern: value as FibulaTracePattern })}
-            >
-              {options.fibula_trace_patterns.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lat-trace-${option.value}`} />
-                  <Label htmlFor={`lat-trace-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibula_trace_patterns.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibula_trace_pattern === option.value}
+                    onSelect={() => updateFormData({ ...formData, fibula_trace_pattern: option.value as FibulaTracePattern })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos medial y posterior - ¿Tiene TAC? */}
       {involvedMalleoli === 'medial_posterior' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="mp-ct-scan">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="mp-ct-yes" />
-                <Label htmlFor="mp-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="mp-ct-no" />
-                <Label htmlFor="mp-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos medial y posterior - Tipo de fractura posterior (solo si tiene TAC) */}
       {involvedMalleoli === 'medial_posterior' && formData.has_ct_scan === true && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="mp-posterior-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`mp-post-type-${option.value}`} />
-                  <Label htmlFor={`mp-post-type-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Nivel */}
       {showLateralPosteriorLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibular_level: value as FibularLevel,
-                lateral_morphology: undefined,
-                suprasindesmal_type: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.fibular_levels.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-level-${option.value}`} />
-                  <Label htmlFor={`lp-level-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibular_levels.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibular_level === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      fibular_level: option.value as FibularLevel,
+                      lateral_morphology: undefined,
+                      suprasindesmal_type: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Morfología */}
       {showLPMorphologyInfra && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-morph-infra">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                lateral_morphology: value as LateralMorphology,
-                posterior_fracture_type: undefined,
-              })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.lateral_morphology
                 .filter(o => o.value === 'transverse' || o.value === 'oblique')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lp-morph-infra-${option.value}`} />
-                    <Label htmlFor={`lp-morph-infra-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.lateral_morphology === option.value}
+                      onSelect={() => updateFormData({
+                        ...formData,
+                        lateral_morphology: option.value as LateralMorphology,
+                        posterior_fracture_type: undefined,
+                      })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Transversa - No posible */}
@@ -1376,753 +1439,835 @@ export function FractureForm() {
 
       {/* PATH: Maleolos lateral y posterior - Infrasindesmal - Oblicua - Tipo posterior */}
       {showLPPosteriorTypeInfraOblique && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-post-infra">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-post-infra-${option.value}`} />
-                  <Label htmlFor={`lp-post-infra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Transindesmal - Morfología */}
       {showLPMorphologyTrans && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-morph-trans">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                lateral_morphology: value as LateralMorphology,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.lateral_morphology
                 .filter(o => o.value === 'spiral' || o.value === 'oblique')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lp-morph-trans-${option.value}`} />
-                    <Label htmlFor={`lp-morph-trans-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.lateral_morphology === option.value}
+                      onSelect={() => updateFormData({
+                        ...formData,
+                        lateral_morphology: option.value as LateralMorphology,
+                        has_ct_scan: undefined,
+                        posterior_fracture_type: undefined,
+                      })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Transindesmal - ¿Tiene TAC? */}
       {(showLPHasCTScanTransSpiral || showLPHasCTScanTransOblique) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-trans-ct">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="lp-trans-ct-yes" />
-                <Label htmlFor="lp-trans-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="lp-trans-ct-no" />
-                <Label htmlFor="lp-trans-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Transindesmal - Espiroidea/Oblicua - Tipo posterior (solo si tiene TAC) */}
       {(showLPPosteriorTypeTransSpiral || showLPPosteriorTypeTransOblique) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-post-trans">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-post-trans-${option.value}`} />
-                  <Label htmlFor={`lp-post-trans-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Suprasindesmal - Tipo */}
       {showLPSuprasindesmalType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-supra-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.suprasindesmal_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                suprasindesmal_type: value as SuprasindesmalType,
-                fibula_trace_pattern: undefined,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.suprasindesmal_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-supra-${option.value}`} />
-                  <Label htmlFor={`lp-supra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.suprasindesmal_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.suprasindesmal_type === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      suprasindesmal_type: option.value as SuprasindesmalType,
+                      fibula_trace_pattern: undefined,
+                      has_ct_scan: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Suprasindesmal - Trazo del peroné */}
       {showLPFibulaTracePattern && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-trace">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibula_trace_pattern?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_trace_pattern || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibula_trace_pattern: value as FibulaTracePattern,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.fibula_trace_patterns.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-trace-${option.value}`} />
-                  <Label htmlFor={`lp-trace-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibula_trace_patterns.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibula_trace_pattern === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      fibula_trace_pattern: option.value as FibulaTracePattern,
+                      has_ct_scan: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Suprasindesmal - ¿Tiene TAC? */}
       {(showLPHasCTScanSupraShort || showLPHasCTScanSupraLong || showLPHasCTScanSupraProximal) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-supra-ct">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="lp-supra-ct-yes" />
-                <Label htmlFor="lp-supra-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="lp-supra-ct-no" />
-                <Label htmlFor="lp-supra-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y posterior - Suprasindesmal - Tipo posterior (solo si tiene TAC) */}
       {showLPPosteriorTypeSupra && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lp-post-supra">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lp-post-supra-${option.value}`} />
-                  <Label htmlFor={`lp-post-supra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Morfología del medial */}
       {showLMMedialMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-medial-morph">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.medial_morphology_lm?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.medial_morphology || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                medial_morphology: value as MedialMorphology,
-                fibula_infrasindesmal_transverse: undefined,
-                fibular_level_for_transverse: undefined,
-                suprasindesmal_type: undefined,
-                lateral_morphology: undefined,
-                fibular_level: undefined,
-              })}
-            >
-              {options.medial_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lm-medial-${option.value}`} />
-                  <Label htmlFor={`lm-medial-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.medial_morphology.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.medial_morphology === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      medial_morphology: option.value as MedialMorphology,
+                      fibula_infrasindesmal_transverse: undefined,
+                      fibular_level_for_transverse: undefined,
+                      suprasindesmal_type: undefined,
+                      lateral_morphology: undefined,
+                      fibular_level: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Oblicuo - ¿Peroné infrasindesmal y transversa? */}
       {showLMFibulaInfraTransverse && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-infra-trans">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibula_infrasindesmal_transverse?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_infrasindesmal_transverse === undefined ? '' : formData.fibula_infrasindesmal_transverse ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibula_infrasindesmal_transverse: value === 'yes',
-                fibular_level_for_transverse: undefined,
-                suprasindesmal_type: undefined,
-                lateral_morphology: undefined,
-                fibular_level: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="lm-infra-trans-yes" />
-                <Label htmlFor="lm-infra-trans-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.fibula_infrasindesmal_transverse === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    fibula_infrasindesmal_transverse: true,
+                    fibular_level_for_transverse: undefined,
+                    suprasindesmal_type: undefined,
+                    lateral_morphology: undefined,
+                    fibular_level: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="lm-infra-trans-no" />
-                <Label htmlFor="lm-infra-trans-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.fibula_infrasindesmal_transverse === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    fibula_infrasindesmal_transverse: false,
+                    fibular_level_for_transverse: undefined,
+                    suprasindesmal_type: undefined,
+                    lateral_morphology: undefined,
+                    fibular_level: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Nivel del peroné */}
       {showLMFibularLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-fib-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level_lm?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level_for_transverse || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibular_level_for_transverse: value as FibularLevel,
-                suprasindesmal_type: undefined,
-                lateral_morphology: undefined,
-                fibular_level: undefined,
-              })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.fibular_levels
                 .filter(o => o.value === 'suprasindesmal' || o.value === 'transindesmal')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lm-fib-level-${option.value}`} />
-                    <Label htmlFor={`lm-fib-level-${option.value}`} className="cursor-pointer">
-                      {option.value === 'suprasindesmal' ? options.labels.high : options.labels.low}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.value === 'suprasindesmal' ? options.labels.high : options.labels.low}
+                      selected={formData.fibular_level_for_transverse === option.value}
+                      onSelect={() => updateFormData({
+                        ...formData,
+                        fibular_level_for_transverse: option.value as FibularLevel,
+                        suprasindesmal_type: undefined,
+                        lateral_morphology: undefined,
+                        fibular_level: undefined,
+                      })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Suprasindesmal - Tipo */}
       {showLMSuprasindesmalType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-supra-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.suprasindesmal_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                suprasindesmal_type: value as SuprasindesmalType,
-                fibula_trace_pattern: undefined,
-              })}
-            >
-              {options.suprasindesmal_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lm-supra-${option.value}`} />
-                  <Label htmlFor={`lm-supra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.suprasindesmal_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.suprasindesmal_type === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      suprasindesmal_type: option.value as SuprasindesmalType,
+                      fibula_trace_pattern: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Suprasindesmal - Trazo del peroné */}
       {showLMFibulaTracePattern && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-trace">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibula_trace_pattern?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_trace_pattern || ''}
-              onValueChange={(value) => updateFormData({ ...formData, fibula_trace_pattern: value as FibulaTracePattern })}
-            >
-              {options.fibula_trace_patterns.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lm-trace-${option.value}`} />
-                  <Label htmlFor={`lm-trace-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibula_trace_patterns.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibula_trace_pattern === option.value}
+                    onSelect={() => updateFormData({ ...formData, fibula_trace_pattern: option.value as FibulaTracePattern })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Nivel bajo - Morfología */}
       {showLMFibularMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-morph">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                lateral_morphology: value as LateralMorphology,
-                fibular_level: undefined,
-              })}
-            >
-              {options.lateral_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`lm-morph-${option.value}`} />
-                  <Label htmlFor={`lm-morph-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.lateral_morphology.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.lateral_morphology === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      lateral_morphology: option.value as LateralMorphology,
+                      fibular_level: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Maleolos lateral y medial - Transversa - Nivel del peroné */}
       {showLMTransverseFibularLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="lm-trans-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level || ''}
-              onValueChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.fibular_levels
                 .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`lm-trans-level-${option.value}`} />
-                    <Label htmlFor={`lm-trans-level-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.fibular_level === option.value}
+                      onSelect={() => updateFormData({ ...formData, fibular_level: option.value as FibularLevel })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Nivel del peroné (Alta/Baja) */}
       {showTrimaleolarFibularHeight && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level_tri?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibular_level: value as FibularLevel,
-                suprasindesmal_type: undefined,
-                lateral_morphology: undefined,
-                fibular_level_for_transverse: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="suprasindesmal" id="tri-level-high" />
-                <Label htmlFor="tri-level-high" className="cursor-pointer">{options.labels.high}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="suprasindesmal"
+                  label={options.labels.high}
+                  selected={formData.fibular_level === 'suprasindesmal'}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    fibular_level: 'suprasindesmal' as FibularLevel,
+                    suprasindesmal_type: undefined,
+                    lateral_morphology: undefined,
+                    fibular_level_for_transverse: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="infrasindesmal" id="tri-level-low" />
-                <Label htmlFor="tri-level-low" className="cursor-pointer">{options.labels.low}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="infrasindesmal"
+                  label={options.labels.low}
+                  selected={formData.fibular_level === 'infrasindesmal'}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    fibular_level: 'infrasindesmal' as FibularLevel,
+                    suprasindesmal_type: undefined,
+                    lateral_morphology: undefined,
+                    fibular_level_for_transverse: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Suprasindesmal - Tipo */}
       {showTrimaleolarSupraType && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-supra-type">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.suprasindesmal_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.suprasindesmal_type || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                suprasindesmal_type: value as SuprasindesmalType,
-                fibula_trace_pattern: undefined,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.suprasindesmal_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`tri-supra-${option.value}`} />
-                  <Label htmlFor={`tri-supra-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.suprasindesmal_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.suprasindesmal_type === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      suprasindesmal_type: option.value as SuprasindesmalType,
+                      fibula_trace_pattern: undefined,
+                      has_ct_scan: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Suprasindesmal - Trazo del peroné */}
       {showTriFibulaTracePattern && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-trace">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibula_trace_pattern?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibula_trace_pattern || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibula_trace_pattern: value as FibulaTracePattern,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.fibula_trace_patterns.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`tri-trace-${option.value}`} />
-                  <Label htmlFor={`tri-trace-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.fibula_trace_patterns.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.fibula_trace_pattern === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      fibula_trace_pattern: option.value as FibulaTracePattern,
+                      has_ct_scan: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Suprasindesmal - ¿Tiene TAC? */}
       {(showTriHasCTScanSupraShort || showTriHasCTScanSupraLong || showTriHasCTScanSupraProximal) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-supra-ct">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="tri-supra-ct-yes" />
-                <Label htmlFor="tri-supra-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="tri-supra-ct-no" />
-                <Label htmlFor="tri-supra-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Suprasindesmal - Tipo posterior (solo si tiene TAC) */}
       {showTriPosteriorTypeSupra && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-supra-post">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`tri-supra-post-${option.value}`} />
-                  <Label htmlFor={`tri-supra-post-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Baja - Morfología */}
       {showTrimaleolarMorphology && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-morph">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.lateral_morphology?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.lateral_morphology || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                lateral_morphology: value as LateralMorphology,
-                fibular_level_for_transverse: undefined,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
-              {options.lateral_morphology.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`tri-morph-${option.value}`} />
-                  <Label htmlFor={`tri-morph-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.lateral_morphology.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.lateral_morphology === option.value}
+                    onSelect={() => updateFormData({
+                      ...formData,
+                      lateral_morphology: option.value as LateralMorphology,
+                      fibular_level_for_transverse: undefined,
+                      has_ct_scan: undefined,
+                      posterior_fracture_type: undefined,
+                    })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Baja - Transversa - Transindesmal - ¿Tiene TAC? */}
       {showTriHasCTScanTransverse && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-trans-ct">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="tri-trans-ct-yes" />
-                <Label htmlFor="tri-trans-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="tri-trans-ct-no" />
-                <Label htmlFor="tri-trans-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Baja - Oblicua/Espiroidea - ¿Tiene TAC? */}
       {(showTriHasCTScanOblique || showTriHasCTScanSpiral) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-low-ct">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.has_ct_scan?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.has_ct_scan === undefined ? '' : formData.has_ct_scan ? 'yes' : 'no'}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                has_ct_scan: value === 'yes',
-                posterior_fracture_type: undefined,
-              })}
-            >
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="yes" id="tri-low-ct-yes" />
-                <Label htmlFor="tri-low-ct-yes" className="cursor-pointer">{options.labels.yes}</Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="selection-option-enter stagger-1">
+                <SelectionCard
+                  value="yes"
+                  label={options.labels.yes}
+                  selected={formData.has_ct_scan === true}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: true,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="1"
+                />
               </div>
-              <div className="flex items-center space-x-3 py-2">
-                <RadioGroupItem value="no" id="tri-low-ct-no" />
-                <Label htmlFor="tri-low-ct-no" className="cursor-pointer">{options.labels.no}</Label>
+              <div className="selection-option-enter stagger-2">
+                <SelectionCard
+                  value="no"
+                  label={options.labels.no}
+                  selected={formData.has_ct_scan === false}
+                  onSelect={() => updateFormData({
+                    ...formData,
+                    has_ct_scan: false,
+                    posterior_fracture_type: undefined,
+                  })}
+                  keyboardHint="2"
+                />
               </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Baja - Tipo posterior (solo si tiene TAC) */}
       {showTriPosteriorTypeLow && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-low-post">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.posterior_fracture_type?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.posterior_fracture_type || ''}
-              onValueChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-            >
-              {options.posterior_fracture_types.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 py-2">
-                  <RadioGroupItem value={option.value} id={`tri-low-post-${option.value}`} />
-                  <Label htmlFor={`tri-low-post-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </Label>
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
+              {options.posterior_fracture_types.map((option, index) => (
+                <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                  <SelectionCard
+                    value={option.value}
+                    label={option.label}
+                    selected={formData.posterior_fracture_type === option.value}
+                    onSelect={() => updateFormData({ ...formData, posterior_fracture_type: option.value as PosteriorFractureType })}
+                    keyboardHint={String(index + 1)}
+                  />
                 </div>
               ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* PATH: Trimaleolar - Baja - Transversa - Nivel */}
       {showTrimaleolarTransverseLevel && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <QuestionCard questionKey="tri-trans-level">
+          <QuestionCardHeader>
+            <QuestionCardTitle>
               {options.questions.fibular_level?.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={formData.fibular_level_for_transverse || ''}
-              onValueChange={(value) => updateFormData({
-                ...formData,
-                fibular_level_for_transverse: value as FibularLevel,
-                has_ct_scan: undefined,
-                posterior_fracture_type: undefined,
-              })}
-            >
+            </QuestionCardTitle>
+          </QuestionCardHeader>
+          <QuestionCardContent>
+            <div className="flex flex-col gap-2">
               {options.fibular_levels
                 .filter(o => o.value === 'infrasindesmal' || o.value === 'transindesmal')
-                .map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 py-2">
-                    <RadioGroupItem value={option.value} id={`tri-trans-level-${option.value}`} />
-                    <Label htmlFor={`tri-trans-level-${option.value}`} className="cursor-pointer">
-                      {option.label}
-                    </Label>
+                .map((option, index) => (
+                  <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
+                    <SelectionCard
+                      value={option.value}
+                      label={option.label}
+                      selected={formData.fibular_level_for_transverse === option.value}
+                      onSelect={() => updateFormData({
+                        ...formData,
+                        fibular_level_for_transverse: option.value as FibularLevel,
+                        has_ct_scan: undefined,
+                        posterior_fracture_type: undefined,
+                      })}
+                      keyboardHint={String(index + 1)}
+                    />
                   </div>
                 ))}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+            </div>
+          </QuestionCardContent>
+        </QuestionCard>
       )}
 
       {/* Resultado: Trimaleolar - Baja - Transversa - Infrasindesmal - No posible */}
@@ -2140,7 +2285,12 @@ export function FractureForm() {
         </Alert>
       )}
 
-      <Button type="submit" disabled={!isFormComplete() || loading} className="w-full" size="lg">
+      <Button
+        type="submit"
+        disabled={!isFormComplete() || loading}
+        className="w-full relative overflow-hidden bg-gradient-to-r from-primary to-primary/90 hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
+        size="lg"
+      >
         {loading ? t('form.classifying') : t('form.classify')}
       </Button>
 

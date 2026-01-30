@@ -159,6 +159,34 @@
   }
 }
 
+@keyframes question-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes selection-option-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes selection-pulse {
+  0% { box-shadow: 0 0 0 0 oklch(0.55 0.18 220 / 0.4); }
+  70% { box-shadow: 0 0 0 8px oklch(0.55 0.18 220 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.55 0.18 220 / 0); }
+}
+
 @layer utilities {
   .writing-mode-vertical {
     writing-mode: vertical-rl;
@@ -339,6 +367,21 @@
     animation: form-card-slide-up 0.4s ease-out forwards;
   }
 
+  /* Question card animations */
+  .question-card-enter {
+    animation: question-card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Selection option animations */
+  .selection-option-enter {
+    opacity: 0;
+    animation: selection-option-enter 0.3s ease-out forwards;
+  }
+
+  .selection-pulse {
+    animation: selection-pulse 0.4s ease-out;
+  }
+
   /* Option card styles */
   .option-card {
     @apply relative flex items-center gap-3 p-4 rounded-xl border-2 border-transparent
@@ -368,4 +411,22 @@
   .stagger-5 { animation-delay: 0.25s; }
   .stagger-6 { animation-delay: 0.3s; }
   .stagger-7 { animation-delay: 0.35s; }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .form-card-enter,
+  .question-card-enter,
+  .selection-option-enter,
+  .selection-pulse,
+  .animate-float,
+  .animate-float-slow,
+  .animate-float-delayed,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+
+  .card-hover {
+    transition: none !important;
+  }
 }
