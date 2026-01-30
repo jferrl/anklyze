@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormInput, MessageSquare } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
 import { FractureForm } from '../components/FractureForm';
 import { ChatPanel } from '../components/ChatPanel';
 import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
@@ -17,26 +17,29 @@ export function ClassifyPage() {
       {/* Mode Toggle */}
       <div className="px-4 pt-6">
         <div className="flex justify-center">
-          <div className="inline-flex rounded-lg border bg-muted p-1">
-            <Button
-              variant={mode === 'form' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setMode('form')}
-              className="gap-2"
+          <ToggleGroup
+            type="single"
+            value={mode}
+            onValueChange={(value) => value && setMode(value as InputMode)}
+            className="bg-muted p-1 rounded-lg"
+          >
+            <ToggleGroupItem
+              value="form"
+              aria-label={t('classify.modeForm')}
+              className="gap-2 data-[state=on]:bg-background data-[state=on]:shadow-sm"
             >
               <FormInput className="h-4 w-4" />
               {t('classify.modeForm')}
-            </Button>
-            <Button
-              variant={mode === 'chat' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setMode('chat')}
-              className="gap-2"
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="chat"
+              aria-label={t('classify.modeChat')}
+              className="gap-2 data-[state=on]:bg-background data-[state=on]:shadow-sm"
             >
               <MessageSquare className="h-4 w-4" />
               {t('classify.modeChat')}
-            </Button>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 

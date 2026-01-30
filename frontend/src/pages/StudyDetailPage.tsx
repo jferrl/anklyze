@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { ImageIcon, Loader2 } from 'lucide-react';
+import { ImageIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { Spinner } from '../components/ui/spinner';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
@@ -143,16 +145,23 @@ export function StudyDetailPage() {
       });
 
       setSubmitSuccess(true);
+      toast.success(t('studies.submitSuccess'), {
+        description: t('studies.submitSuccessDescription'),
+      });
 
       // Refresh study data to update response counts
       const updatedStudy = await getPublishedStudy(id);
       setStudy(updatedStudy);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Failed to submit response');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
+      setSubmitError(errorMessage);
+      toast.error(t('studies.submitError'), {
+        description: errorMessage,
+      });
     } finally {
       setSubmitting(false);
     }
-  }, [classificationResult, id]);
+  }, [classificationResult, id, t]);
 
   // Reset for re-answer
   const handleReanswer = useCallback(() => {
@@ -179,7 +188,7 @@ export function StudyDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Spinner size="lg" />
       </div>
     );
   }

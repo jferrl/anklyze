@@ -8,8 +8,8 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Loader2,
 } from 'lucide-react';
+import { Spinner } from '../../components/ui/spinner';
 import {
   Card,
   CardContent,
@@ -64,7 +64,7 @@ export function AdminDashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Spinner size="lg" />
       </div>
     );
   }

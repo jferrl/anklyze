@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Activity, Mail, Lock, Loader2, AlertCircle, Sparkles, BookOpen, BarChart3 } from 'lucide-react';
+import { Activity, Mail, Lock, AlertCircle, Sparkles, BookOpen, BarChart3 } from 'lucide-react';
+import { Spinner } from '../ui/spinner';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -187,7 +188,7 @@ export function LoginPage() {
               </div>
 
               <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {loading && <Spinner size="sm" className="mr-2" />}
                 {t('auth.signInButton', 'Sign in')}
               </Button>
             </form>

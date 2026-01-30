@@ -1,6 +1,15 @@
-import { useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
+import { useEffect, useCallback } from 'react';
+import { X } from 'lucide-react';
 import type { StudyImageInfo } from '../../types/study';
+import { Spinner } from '../ui/spinner';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '../ui/carousel';
 
 interface ImageLightboxProps {
   images: StudyImageInfo[];
@@ -19,8 +28,6 @@ export function ImageLightbox({
   onNext,
   onPrev,
 }: ImageLightboxProps) {
-  const currentImage = images[currentIndex];
-
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,6 +40,22 @@ export function ImageLightbox({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose, onNext, onPrev]);
 
+  const handleCarouselChange = useCallback(
+    (api: CarouselApi) => {
+      if (!api) return;
+
+      api.on('select', () => {
+        const newIndex = api.selectedScrollSnap();
+        if (newIndex > currentIndex) {
+          onNext();
+        } else if (newIndex < currentIndex) {
+          onPrev();
+        }
+      });
+    },
+    [currentIndex, onNext, onPrev]
+  );
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
@@ -40,60 +63,59 @@ export function ImageLightbox({
     >
       {/* Close button */}
       <button
-        className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
+        className="absolute top-4 right-4 z-10 text-white/70 hover:text-white p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
         onClick={onClose}
+        aria-label="Close lightbox"
       >
         <X className="h-6 w-6" />
       </button>
 
-      {/* Navigation buttons */}
-      {currentIndex > 0 && (
-        <button
-          className="absolute left-4 text-white/70 hover:text-white p-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            onPrev();
-          }}
-        >
-          <ChevronLeft className="h-8 w-8" />
-        </button>
-      )}
-      {currentIndex < images.length - 1 && (
-        <button
-          className="absolute right-4 text-white/70 hover:text-white p-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            onNext();
-          }}
-        >
-          <ChevronRight className="h-8 w-8" />
-        </button>
-      )}
-
-      {/* Image */}
+      {/* Carousel */}
       <div
-        className="max-w-[90vw] max-h-[90vh] flex flex-col items-center"
+        className="w-full max-w-5xl px-12"
         onClick={(e) => e.stopPropagation()}
       >
-        {imageUrls[currentImage.id] ? (
-          <img
-            src={imageUrls[currentImage.id]}
-            alt={currentImage.caption || currentImage.filename}
-            className="max-w-full max-h-[85vh] object-contain"
-          />
-        ) : (
-          <div className="w-64 h-64 flex items-center justify-center bg-muted rounded-lg">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        )}
+        <Carousel
+          opts={{
+            startIndex: currentIndex,
+            loop: false,
+          }}
+          setApi={handleCarouselChange}
+          className="w-full"
+        >
+          <CarouselContent>
+            {images.map((image) => (
+              <CarouselItem key={image.id}>
+                <div className="flex flex-col items-center justify-center h-[85vh]">
+                  {imageUrls[image.id] ? (
+                    <img
+                      src={imageUrls[image.id]}
+                      alt={image.caption || image.filename}
+                      className="max-w-full max-h-[75vh] object-contain rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-64 h-64 flex items-center justify-center bg-muted/20 rounded-lg">
+                      <Spinner size="lg" className="text-white/60" />
+                    </div>
+                  )}
 
-        {/* Caption */}
-        {currentImage.caption && (
-          <p className="text-white/80 mt-4 text-center">{currentImage.caption}</p>
-        )}
+                  {/* Caption */}
+                  {image.caption && (
+                    <p className="text-white/80 mt-4 text-center max-w-2xl">
+                      {image.caption}
+                    </p>
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          <CarouselPrevious className="left-0 bg-white/10 hover:bg-white/20 border-white/20 text-white" />
+          <CarouselNext className="right-0 bg-white/10 hover:bg-white/20 border-white/20 text-white" />
+        </Carousel>
 
         {/* Counter */}
-        <p className="text-white/60 mt-2 text-sm">
+        <p className="text-white/60 mt-4 text-sm text-center">
           {currentIndex + 1} / {images.length}
         </p>
       </div>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '../ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { Separator } from '../ui/separator';
+import { ScrollArea } from '../ui/scroll-area';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -63,8 +64,10 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto">
-          {children}
+        <main className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            {children}
+          </ScrollArea>
         </main>
       </SidebarInset>
     </SidebarProvider>

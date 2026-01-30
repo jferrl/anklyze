@@ -7,13 +7,14 @@ import {
   Users,
   CheckCircle2,
   ImageIcon,
-  Loader2,
   Search,
   Filter,
   ArrowRight,
   CalendarDays,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { Spinner } from '../components/ui/spinner';
+import { EmptyState } from '../components/ui/empty-state';
 import {
   Card,
   CardContent,
@@ -100,8 +101,9 @@ export function StudiesPage() {
   return (
     <div className="h-full">
       {/* Header Section */}
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
+      <div className="border-b bg-muted/30 relative overflow-hidden">
+        <div className="absolute inset-0 bg-mesh opacity-30" />
+        <div className="container mx-auto px-4 py-8 relative">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">{t('studies.pageTitle')}</h1>
@@ -110,7 +112,7 @@ export function StudiesPage() {
 
             {/* Progress Overview */}
             {!loading && studies.length > 0 && (
-              <div className="flex items-center gap-6 p-4 rounded-lg bg-card border">
+              <div className="flex items-center gap-6 p-4 rounded-xl glass-card">
                 <div className="flex-1 min-w-[200px]">
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="text-muted-foreground">{t('studies.yourProgress')}</span>
@@ -120,11 +122,11 @@ export function StudiesPage() {
                 </div>
                 <div className="hidden sm:flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
                     <span className="text-muted-foreground">{stats.completed} {t('studies.completedCount')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-orange-500" />
+                    <div className="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.5)]" />
                     <span className="text-muted-foreground">{stats.pending} {t('studies.pendingCount')}</span>
                   </div>
                 </div>
@@ -188,7 +190,7 @@ export function StudiesPage() {
       <div className="container mx-auto px-4 py-8">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Spinner size="lg" />
           </div>
         ) : error ? (
           <Card>
@@ -198,32 +200,33 @@ export function StudiesPage() {
           </Card>
         ) : filteredStudies.length === 0 ? (
           <Card>
-            <CardContent className="py-12 text-center">
-              <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                {searchQuery || filterStatus !== 'all'
-                  ? t('studies.noMatchingStudies')
-                  : t('studies.noStudies')
+            <CardContent>
+              <EmptyState
+                icon={FileText}
+                title={
+                  searchQuery || filterStatus !== 'all'
+                    ? t('studies.noMatchingStudies')
+                    : t('studies.noStudies')
                 }
-              </h3>
-              <p className="text-muted-foreground">
-                {searchQuery || filterStatus !== 'all'
-                  ? t('studies.tryDifferentFilter')
-                  : t('studies.noStudiesDescription')
+                description={
+                  searchQuery || filterStatus !== 'all'
+                    ? t('studies.tryDifferentFilter')
+                    : t('studies.noStudiesDescription')
                 }
-              </p>
-              {(searchQuery || filterStatus !== 'all') && (
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilterStatus('all');
-                  }}
-                >
-                  {t('studies.clearFilters')}
-                </Button>
-              )}
+                action={
+                  (searchQuery || filterStatus !== 'all') && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setFilterStatus('all');
+                      }}
+                    >
+                      {t('studies.clearFilters')}
+                    </Button>
+                  )
+                }
+              />
             </CardContent>
           </Card>
         ) : (
@@ -253,53 +256,60 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
   const deadline = formatDeadline(study.deadline);
 
   return (
-    <Card className={`group relative overflow-hidden transition-all hover:shadow-lg ${
-      study.has_responded ? 'border-green-200 dark:border-green-900' : ''
+    <Card className={`group relative overflow-hidden glass-card card-hover spotlight ${
+      study.has_responded
+        ? 'border-green-500/30 dark:border-green-500/20'
+        : 'border-border/50 hover:border-primary/30'
     }`}>
-      {/* Status indicator bar */}
+      {/* Animated gradient border on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-[-1px] bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-xl" />
+      </div>
+
+      {/* Status indicator bar with glow */}
       <div className={`absolute top-0 left-0 right-0 h-1 ${
         study.has_responded
-          ? 'bg-green-500'
+          ? 'bg-gradient-to-r from-green-400 to-green-600 shadow-[0_0_10px_rgba(34,197,94,0.5)]'
           : deadline?.isExpired
-          ? 'bg-destructive'
+          ? 'bg-gradient-to-r from-red-400 to-red-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
           : deadline?.isUrgent
-          ? 'bg-orange-500'
-          : 'bg-primary'
+          ? 'bg-gradient-to-r from-orange-400 to-orange-600 shadow-[0_0_10px_rgba(249,115,22,0.5)]'
+          : 'bg-gradient-to-r from-primary/80 to-primary shadow-[0_0_10px_oklch(0.55_0.2_195/0.5)]'
       }`} />
 
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 relative">
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-all duration-300">
             {study.title}
           </CardTitle>
           {study.has_responded && (
-            <Badge variant="secondary" className="shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+            <Badge variant="secondary" className="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 shadow-sm">
               <CheckCircle2 className="h-3 w-3 mr-1" />
               {t('studies.responded')}
             </Badge>
           )}
         </div>
         {study.description && (
-          <CardDescription className="line-clamp-2 mt-1.5">
+          <CardDescription className="line-clamp-2 mt-1.5 text-muted-foreground/80">
             {study.description}
           </CardDescription>
         )}
       </CardHeader>
 
-      <CardContent className="pb-3">
+      <CardContent className="pb-3 relative">
         {/* Metadata badges */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <Badge variant="outline" className="gap-1">
-            <ImageIcon className="h-3 w-3" />
+          <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
+            <ImageIcon className="h-3 w-3 text-primary/70" />
             {study.image_count} {t('studies.imagesCount')}
           </Badge>
           {study.has_tac_images && (
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+            <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 shadow-sm">
               TAC
             </Badge>
           )}
-          <Badge variant="outline" className="gap-1">
-            <Users className="h-3 w-3" />
+          <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
+            <Users className="h-3 w-3 text-primary/70" />
             {study.response_count} {t('studies.responses')}
           </Badge>
         </div>
@@ -342,7 +352,7 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
       </CardContent>
 
       <CardFooter className="pt-0">
-        <Button asChild className="w-full group/btn">
+        <Button asChild className="w-full group/btn hover-glow">
           <Link to={`/studies/${study.id}`}>
             {study.has_responded
               ? t('studies.viewOrReanswer')
