@@ -18,9 +18,13 @@ const (
 	ContextKeyUser   = "auth_user"
 )
 
-// UserRepository defines the interface for syncing users on login.
+// UserRepository defines the interface for user operations in auth middleware.
 type UserRepository interface {
-	UpsertFromAuth(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
+	// GetByID retrieves a user by their ID. Returns nil if not found.
+	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
+	// SyncOnLogin creates or updates a user from authentication claims.
+	// Should only be called on first login (when user doesn't exist in DB).
+	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 }
 
@@ -177,9 +181,9 @@ func IsAdmin(c *gin.Context) bool {
 	return HasRole(c, RoleAdmin)
 }
 
-// UserSyncMiddleware creates a middleware that syncs the authenticated user to the database.
-// It must be used after AuthMiddleware. On each authenticated request, it upserts the user
-// to track logins and ensure the user exists in the local database.
+// UserSyncMiddleware creates a middleware that loads the authenticated user from the database.
+// It must be used after AuthMiddleware. On each authenticated request, it fetches the user.
+// If the user doesn't exist (first login), it creates them via SyncOnLogin.
 func UserSyncMiddleware(userRepo UserRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims := GetClaims(c)
@@ -201,23 +205,33 @@ func UserSyncMiddleware(userRepo UserRepository) gin.HandlerFunc {
 			return
 		}
 
-		// Determine provider from JWT (Supabase stores this in app_metadata)
-		provider := "email"
-		if claims.AppMetadata != nil {
-			if p, ok := claims.AppMetadata["provider"].(string); ok && p != "" {
-				provider = p
-			}
-		}
-
-		user, err := userRepo.UpsertFromAuth(c.Request.Context(), userID, claims.GetEmail(), provider)
+		// First, try to get the user from the database (read-only operation)
+		user, err := userRepo.GetByID(c.Request.Context(), userID)
 		if err != nil {
-			slog.Error("failed to sync user", "user_id", userIDStr, "error", err)
-			// Don't block the request, just log the error
+			slog.Error("failed to get user", "user_id", userIDStr, "error", err)
 			c.Next()
 			return
 		}
 
-		// Store the synced user in context (includes the actual role from DB)
+		// If user doesn't exist, this is their first login - sync them
+		if user == nil {
+			provider := "email"
+			if claims.AppMetadata != nil {
+				if p, ok := claims.AppMetadata["provider"].(string); ok && p != "" {
+					provider = p
+				}
+			}
+
+			user, err = userRepo.SyncOnLogin(c.Request.Context(), userID, claims.GetEmail(), provider)
+			if err != nil {
+				slog.Error("failed to sync user on first login", "user_id", userIDStr, "error", err)
+				c.Next()
+				return
+			}
+			slog.Info("user synced on first login", "user_id", userIDStr, "email", claims.GetEmail())
+		}
+
+		// Store the user in context (includes the actual role from DB)
 		c.Set(ContextKeyUser, user)
 
 		c.Next()

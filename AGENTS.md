@@ -286,16 +286,19 @@ Frontend (React)                    Supabase Auth                    Backend (Go
 - `internal/auth/middleware.go` - AuthMiddleware, UserSyncMiddleware, RequireRole
 - `internal/domain/user.go` - User model with role field
 - `internal/repository/user.go` - UserRepository interface
-- `internal/repository/postgres/user.go` - PostgreSQL implementation with upsert
+- `internal/repository/postgres/user.go` - PostgreSQL implementation with SyncOnLogin
 
 **User Sync on Login:**
 
 On each authenticated request, `UserSyncMiddleware`:
 
-1. Extracts user ID and email from JWT claims
-2. Upserts user to local `users` table (creates on first login, updates `last_login_at` on subsequent)
-3. Retrieves user with DB role (takes precedence over JWT claims)
-4. Stores user in request context for handlers
+1. Extracts user ID from JWT claims
+2. Fetches user from local `users` table (read-only SELECT)
+3. If user doesn't exist (first login), calls `SyncOnLogin` to create them with `last_login_at`
+4. Retrieves user with DB role (takes precedence over JWT claims)
+5. Stores user in request context for handlers
+
+This approach avoids unnecessary database writes on every request - only first logins trigger an INSERT.
 
 **Roles:**
 

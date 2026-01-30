@@ -9,9 +9,10 @@ import (
 
 // UserRepository defines the interface for user persistence operations.
 type UserRepository interface {
-	// UpsertFromAuth creates or updates a user from authentication claims.
+	// SyncOnLogin creates or updates a user from authentication claims.
+	// Should only be called on actual login events, not on every request.
 	// On first login, creates a new user. On subsequent logins, updates last_login_at.
-	UpsertFromAuth(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
+	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
 	// GetByID retrieves a user by their ID.
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
 	// UpdateRole updates a user's role.
@@ -21,8 +22,8 @@ type UserRepository interface {
 // NoOpUserRepository is a no-op implementation for when DB is not configured.
 type NoOpUserRepository struct{}
 
-// UpsertFromAuth does nothing and returns a temporary user.
-func (r *NoOpUserRepository) UpsertFromAuth(_ context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
+// SyncOnLogin does nothing and returns a temporary user.
+func (r *NoOpUserRepository) SyncOnLogin(_ context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
 	return &domain.User{
 		ID:       userID,
 		Email:    email,

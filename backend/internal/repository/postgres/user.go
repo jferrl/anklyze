@@ -19,10 +19,11 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-// UpsertFromAuth creates or updates a user from authentication claims.
+// SyncOnLogin creates or updates a user from authentication claims.
+// Should only be called on actual login events, not on every request.
 // On first login, creates a new user with default role.
 // On subsequent logins, updates last_login_at timestamp.
-func (r *UserRepository) UpsertFromAuth(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
+func (r *UserRepository) SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
 	now := time.Now()
 
 	// Use raw SQL with RETURNING to do upsert + fetch in a single query
