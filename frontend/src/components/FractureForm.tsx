@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight, Share2, Check, Loader2, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Loader2, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import { generateShareUrl, copyToClipboard, decodeParamsToInput } from '../utils/shareUrl';
 import type {
   FractureInput,
@@ -20,10 +21,13 @@ import { ComparisonView } from './ComparisonView';
 import { Button } from '@/components/ui/button';
 import { QuestionCard, QuestionCardHeader, QuestionCardTitle, QuestionCardContent } from '@/components/ui/question-card';
 import { SelectionCard } from '@/components/ui/selection-card';
+import { FormSkeleton } from '@/components/ui/form-skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+
+const FORM_STORAGE_KEY = 'anklyze-form-draft';
 
 export function FractureForm() {
   const { t, i18n } = useTranslation();
@@ -31,7 +35,6 @@ export function FractureForm() {
   const [formData, setFormData] = useState<Partial<FractureInput>>({});
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
   const [isComparing, setIsComparing] = useState(false);
-  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   // Check if URL has params on initial render to avoid flash
   const [loadingFromUrl, setLoadingFromUrl] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -78,6 +81,54 @@ export function FractureForm() {
       return () => clearTimeout(timer);
     }
   }, [formData]);
+
+  // Restore form state from localStorage on mount
+  useEffect(() => {
+    // Don't restore if loading from URL
+    if (loadingFromUrl) return;
+
+    try {
+      const saved = localStorage.getItem(FORM_STORAGE_KEY);
+      if (saved) {
+        const { data, history, timestamp } = JSON.parse(saved);
+        // Only restore if saved within last 24 hours
+        if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+          if (data && Object.keys(data).length > 0) {
+            setFormData(data);
+            setFormHistory(history || []);
+            toast.info(t('form.draftRestored'), { duration: 3000 });
+          }
+        } else {
+          // Clear expired draft
+          localStorage.removeItem(FORM_STORAGE_KEY);
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Save form state to localStorage when it changes
+  useEffect(() => {
+    // Only save if there's actual data
+    if (Object.keys(formData).length > 0) {
+      try {
+        localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify({
+          data: formData,
+          history: formHistory,
+          timestamp: Date.now(),
+        }));
+      } catch {
+        // Ignore storage errors (quota exceeded, etc.)
+      }
+    }
+  }, [formData, formHistory]);
+
+  // Clear saved draft when classification is complete
+  const clearSavedDraft = useCallback(() => {
+    localStorage.removeItem(FORM_STORAGE_KEY);
+  }, []);
 
   // Push current state to history before making changes
   const pushToHistory = useCallback(() => {
@@ -866,6 +917,11 @@ export function FractureForm() {
       lastInputRef.current = input;
       const classificationResult = await classify(input);
 
+      // Clear saved draft on successful classification
+      if (classificationResult) {
+        clearSavedDraft();
+      }
+
       // If comparing and we got a result, add it as a scenario
       if (isComparing && classificationResult) {
         addScenario(input, classificationResult);
@@ -877,6 +933,7 @@ export function FractureForm() {
   const handleReset = () => {
     setFormData({});
     setFormHistory([]);
+    clearSavedDraft();
     reset();
   };
 
@@ -900,6 +957,7 @@ export function FractureForm() {
   const handleStartOver = () => {
     setFormData({});
     setFormHistory([]);
+    clearSavedDraft();
     resetAll();
     setIsComparing(false);
   };
@@ -910,16 +968,15 @@ export function FractureForm() {
     const url = generateShareUrl(lastInputRef.current);
     const success = await copyToClipboard(url);
 
-    setShareStatus(success ? 'copied' : 'failed');
-    setTimeout(() => setShareStatus('idle'), 2000);
+    if (success) {
+      toast.success(t('form.linkCopied'));
+    } else {
+      toast.error(t('form.copyFailed'));
+    }
   };
 
   if (!options) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <p className="text-muted-foreground">{t('form.loading')}</p>
-      </div>
-    );
+    return <FormSkeleton className="max-w-2xl mx-auto p-6" />;
   }
 
   // Show loading state when auto-classifying from URL params
@@ -966,12 +1023,8 @@ export function FractureForm() {
             {t('comparison.compare')}
           </Button>
           <Button onClick={handleShare} variant="outline" size="lg" className="gap-2">
-            {shareStatus === 'copied' ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Share2 className="h-4 w-4" />
-            )}
-            {shareStatus === 'copied' ? t('share.copied') : t('share.button')}
+            <Share2 className="h-4 w-4" />
+            {t('share.button')}
           </Button>
         </div>
       </div>

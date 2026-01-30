@@ -14,10 +14,39 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
+import { cn } from '@/lib/utils';
 
 interface ClassificationResultProps {
   result: Result;
 }
+
+// Consistent colors with ComparisonView
+const classificationStyles = {
+  laugeHansen: {
+    border: 'border-l-emerald-500 dark:border-l-emerald-400',
+    title: 'text-emerald-600 dark:text-emerald-400',
+    hover: 'hover:text-emerald-500',
+    glow: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+  },
+  danisWeber: {
+    border: 'border-l-blue-500 dark:border-l-blue-400',
+    title: 'text-blue-600 dark:text-blue-400',
+    hover: 'hover:text-blue-500',
+    glow: 'bg-blue-500/10 group-hover:bg-blue-500/20',
+  },
+  aoota: {
+    border: 'border-l-violet-500 dark:border-l-violet-400',
+    title: 'text-violet-600 dark:text-violet-400',
+    hover: 'hover:text-violet-500',
+    glow: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+  },
+  bartonicek: {
+    border: 'border-l-amber-500 dark:border-l-amber-400',
+    title: 'text-amber-600 dark:text-amber-400',
+    hover: 'hover:text-amber-500',
+    glow: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+  },
+};
 
 export function ClassificationResult({ result }: ClassificationResultProps) {
   const { t } = useTranslation();
@@ -30,7 +59,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
         {result.fracture_description && (
           <p className="text-center text-lg text-muted-foreground">{result.fracture_description}</p>
         )}
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="question-card-enter">
           <AlertTitle>{t('results.notPossible')}</AlertTitle>
           <AlertDescription>{result.impossible_reason}</AlertDescription>
         </Alert>
@@ -44,7 +73,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
     return (
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
-        <Alert>
+        <Alert className="question-card-enter">
           <AlertDescription>{t('results.noClassification')}</AlertDescription>
         </Alert>
       </div>
@@ -57,21 +86,33 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* Fracture Description */}
       {result.fracture_description && (
-        <p className="text-center text-lg font-medium">{result.fracture_description}</p>
+        <p className="text-center text-lg font-medium question-card-enter">{result.fracture_description}</p>
       )}
 
       {/* Lauge-Hansen */}
       {result.lauge_hansen && (
-        <Card className="group relative overflow-hidden border-l-4 border-l-green-500 glass-card card-hover">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-green-500/20 transition-colors duration-500" />
+        <Card
+          className={cn(
+            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter",
+            classificationStyles.laugeHansen.border
+          )}
+          style={{ animationDelay: '0.1s' }}
+        >
+          <div className={cn(
+            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+            classificationStyles.laugeHansen.glow
+          )} />
           <CardHeader className="relative">
-            <CardTitle className="text-green-600 dark:text-green-400">{t('results.laugeHansen.title')}</CardTitle>
+            <CardTitle className={classificationStyles.laugeHansen.title}>{t('results.laugeHansen.title')}</CardTitle>
             <CardDescription>{t('results.laugeHansen.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="text-3xl font-bold mb-1 cursor-help inline-flex items-center gap-2 hover:text-green-500 transition-colors">
+                <p className={cn(
+                  "text-3xl font-bold mb-1 cursor-help inline-flex items-center gap-2 transition-colors",
+                  classificationStyles.laugeHansen.hover
+                )}>
                   {result.lauge_hansen.type}
                   <Info className="h-4 w-4 text-muted-foreground" />
                 </p>
@@ -96,16 +137,28 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* Danis-Weber */}
       {result.danis_weber && (
-        <Card className="group relative overflow-hidden border-l-4 border-l-blue-500 glass-card card-hover">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/20 transition-colors duration-500" />
+        <Card
+          className={cn(
+            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter",
+            classificationStyles.danisWeber.border
+          )}
+          style={{ animationDelay: '0.2s' }}
+        >
+          <div className={cn(
+            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+            classificationStyles.danisWeber.glow
+          )} />
           <CardHeader className="relative">
-            <CardTitle className="text-blue-600 dark:text-blue-400">{t('results.danisWeber.title')}</CardTitle>
+            <CardTitle className={classificationStyles.danisWeber.title}>{t('results.danisWeber.title')}</CardTitle>
             <CardDescription>{t('results.danisWeber.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 hover:text-blue-500 transition-colors">
+                <p className={cn(
+                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
+                  classificationStyles.danisWeber.hover
+                )}>
                   {result.danis_weber.type}
                   <Info className="h-4 w-4 text-muted-foreground" />
                 </p>
@@ -124,16 +177,28 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* AO/OTA */}
       {result.ao_ota && (
-        <Card className="group relative overflow-hidden border-l-4 border-l-purple-500 glass-card card-hover">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-purple-500/20 transition-colors duration-500" />
+        <Card
+          className={cn(
+            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter",
+            classificationStyles.aoota.border
+          )}
+          style={{ animationDelay: '0.3s' }}
+        >
+          <div className={cn(
+            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+            classificationStyles.aoota.glow
+          )} />
           <CardHeader className="relative">
-            <CardTitle className="text-purple-600 dark:text-purple-400">{t('results.aoota.title')}</CardTitle>
+            <CardTitle className={classificationStyles.aoota.title}>{t('results.aoota.title')}</CardTitle>
             <CardDescription>{t('results.aoota.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 hover:text-purple-500 transition-colors">
+                <p className={cn(
+                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
+                  classificationStyles.aoota.hover
+                )}>
                   {result.ao_ota.code}
                   <Info className="h-4 w-4 text-muted-foreground" />
                 </p>
@@ -152,16 +217,28 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* Bartonicek */}
       {result.bartonicek && (
-        <Card className="group relative overflow-hidden border-l-4 border-l-orange-500 glass-card card-hover">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-orange-500/20 transition-colors duration-500" />
+        <Card
+          className={cn(
+            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter",
+            classificationStyles.bartonicek.border
+          )}
+          style={{ animationDelay: '0.4s' }}
+        >
+          <div className={cn(
+            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+            classificationStyles.bartonicek.glow
+          )} />
           <CardHeader className="relative">
-            <CardTitle className="text-orange-600 dark:text-orange-400">{t('results.bartonicek.title')}</CardTitle>
+            <CardTitle className={classificationStyles.bartonicek.title}>{t('results.bartonicek.title')}</CardTitle>
             <CardDescription>{t('results.bartonicek.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <p className="text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 hover:text-orange-500 transition-colors">
+                <p className={cn(
+                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
+                  classificationStyles.bartonicek.hover
+                )}>
                   {result.bartonicek.type}
                   <Info className="h-4 w-4 text-muted-foreground" />
                 </p>
@@ -180,7 +257,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* Clinical Notes */}
       {result.notes && result.notes.length > 0 && (
-        <Alert>
+        <Alert className="question-card-enter" style={{ animationDelay: '0.5s' }}>
           <AlertTitle>{t('results.clinicalNotes')}</AlertTitle>
           <AlertDescription>
             <ul className="list-disc list-inside space-y-1 mt-2">

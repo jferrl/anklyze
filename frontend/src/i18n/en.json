@@ -104,7 +104,10 @@
     "step": "Step",
     "back": "Back",
     "reset": "Start Over",
-    "keyboardHint": "Keyboard: 1-9 select, Enter submit, Backspace back"
+    "keyboardHint": "Keyboard: 1-9 select, Enter submit, Backspace back",
+    "draftRestored": "Previous progress restored",
+    "linkCopied": "Link copied to clipboard",
+    "copyFailed": "Failed to copy link"
   },
   "results": {
     "title": "Classification Results",

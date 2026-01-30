@@ -104,7 +104,10 @@
     "step": "Paso",
     "back": "Atrás",
     "reset": "Empezar de Nuevo",
-    "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás"
+    "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás",
+    "draftRestored": "Progreso anterior restaurado",
+    "linkCopied": "Enlace copiado al portapapeles",
+    "copyFailed": "Error al copiar el enlace"
   },
   "results": {
     "title": "Resultados de la Clasificación",
