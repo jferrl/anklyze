@@ -182,9 +182,16 @@
 }
 
 @keyframes selection-pulse {
-  0% { box-shadow: 0 0 0 0 oklch(0.55 0.18 220 / 0.4); }
-  70% { box-shadow: 0 0 0 8px oklch(0.55 0.18 220 / 0); }
-  100% { box-shadow: 0 0 0 0 oklch(0.55 0.18 220 / 0); }
+  0% { box-shadow: 0 0 0 0 var(--primary, oklch(0.55 0.18 220)) / 0.4; }
+  70% { box-shadow: 0 0 0 8px var(--primary, oklch(0.55 0.18 220)) / 0; }
+  100% { box-shadow: 0 0 0 0 var(--primary, oklch(0.55 0.18 220)) / 0; }
+}
+
+/* Dark mode selection pulse with brighter glow */
+@keyframes selection-pulse-dark {
+  0% { box-shadow: 0 0 0 0 oklch(0.7 0.18 220 / 0.5); }
+  70% { box-shadow: 0 0 0 10px oklch(0.7 0.18 220 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.7 0.18 220 / 0); }
 }
 
 @layer utilities {
@@ -193,13 +200,29 @@
     text-orientation: mixed;
   }
 
-  /* Glassmorphism effects */
+  /* Glassmorphism effects - Light mode */
   .glass {
-    @apply bg-background/70 backdrop-blur-xl border border-sky-300/20 shadow-xl;
+    @apply bg-background/70 backdrop-blur-xl border border-primary/10 shadow-xl;
   }
 
   .glass-card {
-    @apply bg-card/70 backdrop-blur-xl border border-sky-300/20 shadow-xl shadow-sky-500/5;
+    @apply bg-card/70 backdrop-blur-xl border border-primary/10 shadow-xl shadow-primary/5;
+  }
+
+  /* Glassmorphism effects - Dark mode overrides */
+  .dark .glass {
+    @apply bg-background/50 border-primary/20 shadow-2xl;
+    box-shadow:
+      0 4px 30px oklch(0 0 0 / 0.3),
+      inset 0 1px 0 oklch(1 0 0 / 0.05);
+  }
+
+  .dark .glass-card {
+    @apply bg-card/60 border-primary/15;
+    box-shadow:
+      0 8px 32px oklch(0 0 0 / 0.4),
+      0 0 80px oklch(0.7 0.18 220 / 0.05),
+      inset 0 1px 0 oklch(1 0 0 / 0.05);
   }
 
   /* Card hover lift effect */
@@ -226,7 +249,7 @@
     animation: gradient-shift 8s ease infinite;
   }
 
-  /* Glow effects */
+  /* Glow effects - Light mode */
   .glow {
     box-shadow: 0 0 20px oklch(0.55 0.18 220 / 0.3), 0 0 40px oklch(0.55 0.18 220 / 0.2);
   }
@@ -244,6 +267,23 @@
   }
   .hover-glow:hover {
     box-shadow: 0 0 25px oklch(0.55 0.18 220 / 0.35), 0 0 50px oklch(0.55 0.18 220 / 0.15);
+  }
+
+  /* Glow effects - Dark mode (brighter, more visible) */
+  .dark .glow {
+    box-shadow: 0 0 25px oklch(0.7 0.18 220 / 0.4), 0 0 50px oklch(0.7 0.18 220 / 0.25);
+  }
+
+  .dark .glow-sm {
+    box-shadow: 0 0 15px oklch(0.7 0.18 220 / 0.3), 0 0 25px oklch(0.7 0.18 220 / 0.15);
+  }
+
+  .dark .glow-lg {
+    box-shadow: 0 0 40px oklch(0.7 0.18 220 / 0.5), 0 0 80px oklch(0.7 0.18 220 / 0.3);
+  }
+
+  .dark .hover-glow:hover {
+    box-shadow: 0 0 30px oklch(0.7 0.18 220 / 0.45), 0 0 60px oklch(0.7 0.18 220 / 0.2);
   }
 
   /* Floating animation */
@@ -310,7 +350,7 @@
     mix-blend-mode: overlay;
   }
 
-  /* Mesh gradient background */
+  /* Mesh gradient background - Light mode */
   .bg-mesh {
     background-color: var(--background);
     background-image:
@@ -319,6 +359,16 @@
       radial-gradient(at 0% 50%, oklch(0.6 0.16 225 / 0.1) 0px, transparent 50%),
       radial-gradient(at 80% 50%, oklch(0.7 0.16 220 / 0.1) 0px, transparent 50%),
       radial-gradient(at 0% 100%, oklch(0.55 0.18 220 / 0.1) 0px, transparent 50%);
+  }
+
+  /* Mesh gradient background - Dark mode (more subtle, deeper colors) */
+  .dark .bg-mesh {
+    background-image:
+      radial-gradient(at 40% 20%, oklch(0.4 0.12 220 / 0.2) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, oklch(0.45 0.1 215 / 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, oklch(0.35 0.1 225 / 0.12) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, oklch(0.5 0.12 220 / 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, oklch(0.4 0.12 220 / 0.15) 0px, transparent 50%);
   }
 
   /* Spotlight effect */
@@ -382,7 +432,11 @@
     animation: selection-pulse 0.4s ease-out;
   }
 
-  /* Option card styles */
+  .dark .selection-pulse {
+    animation: selection-pulse-dark 0.4s ease-out;
+  }
+
+  /* Option card styles - Light mode */
   .option-card {
     @apply relative flex items-center gap-3 p-4 rounded-xl border-2 border-transparent
            bg-muted/30 cursor-pointer transition-all duration-200;
@@ -396,11 +450,36 @@
     @apply bg-primary/10 border-primary/50;
   }
 
+  /* Option card styles - Dark mode enhancements */
+  .dark .option-card {
+    @apply bg-muted/20;
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.03);
+  }
+
+  .dark .option-card:hover {
+    @apply bg-muted/40 border-primary/20;
+    box-shadow:
+      0 4px 12px oklch(0 0 0 / 0.2),
+      inset 0 1px 0 oklch(1 0 0 / 0.05);
+  }
+
+  .dark .option-card[data-selected="true"] {
+    @apply bg-primary/15 border-primary/40;
+    box-shadow:
+      0 4px 20px oklch(0.7 0.18 220 / 0.15),
+      inset 0 1px 0 oklch(1 0 0 / 0.05);
+  }
+
   /* Keyboard hint badge */
   .kbd-hint {
     @apply inline-flex items-center justify-center h-5 min-w-5 px-1.5
            text-[10px] font-medium text-muted-foreground/70
            bg-muted/50 border border-border/50 rounded;
+  }
+
+  .dark .kbd-hint {
+    @apply bg-muted/30 border-border/30 text-muted-foreground/60;
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.03);
   }
 
   /* Stagger animation delays */

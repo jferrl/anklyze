@@ -33,8 +33,8 @@ function QuestionCard({
         className
       )}
     >
-      {/* Gradient accent bar at top */}
-      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-primary/40 via-primary/60 to-primary/40" />
+      {/* Gradient accent bar at top - adapts to light/dark mode */}
+      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-primary/40 via-primary/60 to-primary/40 dark:from-primary/30 dark:via-primary/50 dark:to-primary/30" />
 
       {/* Content */}
       {children}

@@ -98,9 +98,9 @@ function SelectionCard({
         </span>
       )}
 
-      {/* Selection glow effect */}
+      {/* Selection glow effect - enhanced for dark mode */}
       {selected && (
-        <div className="absolute inset-0 rounded-xl bg-primary/5 animate-in fade-in duration-300 pointer-events-none" />
+        <div className="absolute inset-0 rounded-xl bg-primary/5 dark:bg-primary/10 animate-in fade-in duration-300 pointer-events-none" />
       )}
     </button>
   )

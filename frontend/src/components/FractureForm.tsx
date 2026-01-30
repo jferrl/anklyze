@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Share2, Check, Loader2, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Check, Loader2, Sparkles } from 'lucide-react';
 import { generateShareUrl, copyToClipboard, decodeParamsToInput } from '../utils/shareUrl';
 import type {
   FractureInput,
@@ -26,7 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export function FractureForm() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [options, setOptions] = useState<FormOptions | null>(null);
   const [formData, setFormData] = useState<Partial<FractureInput>>({});
   const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
@@ -40,11 +40,13 @@ export function FractureForm() {
   });
   const lastInputRef = useRef<FractureInput | null>(null);
   const hasLoadedFromUrl = useRef(false);
+  const formEndRef = useRef<HTMLDivElement>(null);
   const { result, loading, error, scenarios, classify, addScenario, clearScenarios, reset, resetAll } = useClassification();
 
+  // Re-fetch options when language changes
   useEffect(() => {
     getFormOptions().then(setOptions).catch(console.error);
-  }, []);
+  }, [i18n.language]);
 
   // Load from URL params on mount
   useEffect(() => {
@@ -64,6 +66,18 @@ export function FractureForm() {
       });
     }
   }, [options, classify, loadingFromUrl]);
+
+  // Smooth scroll to new question when form advances
+  useEffect(() => {
+    // Only scroll if there's at least one answer (not on initial render)
+    if (Object.keys(formData).length > 0 && formEndRef.current) {
+      // Small delay to allow animation to start
+      const timer = setTimeout(() => {
+        formEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [formData]);
 
   // Push current state to history before making changes
   const pushToHistory = useCallback(() => {
@@ -999,18 +1013,85 @@ export function FractureForm() {
         </p>
       </div>
 
-      {/* Progress indicator */}
+      {/* Progress indicator with breadcrumb */}
       {formData.involved_malleoli && (
         <div className="space-y-3 animate-in fade-in duration-300">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-primary/10 border-primary/30 text-xs">
-                {options.involved_malleoli.find(o => o.value === formData.involved_malleoli)?.label}
-              </Badge>
-            </div>
-            <span className="text-muted-foreground">{Math.round(progressValue)}%</span>
+          {/* Breadcrumb showing classification path */}
+          <div className="flex items-center gap-1 flex-wrap text-xs">
+            <Badge variant="outline" className="bg-primary/10 border-primary/30">
+              {options.involved_malleoli.find(o => o.value === formData.involved_malleoli)?.label}
+            </Badge>
+            {formData.fibular_level && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.fibular_levels.find(o => o.value === formData.fibular_level)?.label}
+                </Badge>
+              </>
+            )}
+            {formData.fibular_level_for_transverse && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {formData.fibular_level_for_transverse === 'suprasindesmal' ? options.labels.high : options.labels.low}
+                </Badge>
+              </>
+            )}
+            {formData.lateral_morphology && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.lateral_morphology.find(o => o.value === formData.lateral_morphology)?.label}
+                </Badge>
+              </>
+            )}
+            {formData.medial_morphology && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.medial_morphology.find(o => o.value === formData.medial_morphology)?.label}
+                </Badge>
+              </>
+            )}
+            {formData.suprasindesmal_type && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.suprasindesmal_types.find(o => o.value === formData.suprasindesmal_type)?.label}
+                </Badge>
+              </>
+            )}
+            {formData.fibula_trace_pattern && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.fibula_trace_patterns.find(o => o.value === formData.fibula_trace_pattern)?.label}
+                </Badge>
+              </>
+            )}
+            {formData.has_ct_scan !== undefined && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  CT: {formData.has_ct_scan ? options.labels.yes : options.labels.no}
+                </Badge>
+              </>
+            )}
+            {formData.posterior_fracture_type && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                <Badge variant="outline" className="bg-muted/50">
+                  {options.posterior_fracture_types.find(o => o.value === formData.posterior_fracture_type)?.label}
+                </Badge>
+              </>
+            )}
           </div>
-          <Progress value={progressValue} className="h-1.5" />
+
+          {/* Progress bar */}
+          <div className="flex items-center gap-3">
+            <Progress value={progressValue} className="h-1.5 flex-1" />
+            <span className="text-xs text-muted-foreground tabular-nums">{progressValue}%</span>
+          </div>
         </div>
       )}
 
@@ -2285,6 +2366,9 @@ export function FractureForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
+      {/* Scroll anchor for smooth scroll to new questions */}
+      <div ref={formEndRef} />
 
       <Button
         type="submit"
