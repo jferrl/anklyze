@@ -172,7 +172,12 @@ func IsAuthenticated(c *gin.Context) bool {
 
 // HasRole returns true if the authenticated user has the specified role.
 // It checks the database user role first, then falls back to JWT claims.
+// Returns false if the user is not authenticated.
 func HasRole(c *gin.Context, role Role) bool {
+	// If not authenticated and no synced user, user has no role
+	if GetClaims(c) == nil && GetUser(c) == nil {
+		return false
+	}
 	return GetUserRole(c) == role
 }
 
