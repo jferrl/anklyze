@@ -120,9 +120,6 @@ type StudyImage struct {
 
 	// Supabase Storage path (bucket/study_id/category/filename)
 	StoragePath string `gorm:"size:500;not null" json:"-"`
-
-	// Optional caption/description
-	Caption string `gorm:"size:500" json:"caption,omitempty"`
 }
 
 // TableName returns the table name for GORM.
@@ -138,7 +135,6 @@ func NewStudyImage(
 	filename, contentType string,
 	sizeBytes int64,
 	storagePath string,
-	caption string,
 ) *StudyImage {
 	return &StudyImage{
 		ID:           uuid.New(),
@@ -150,7 +146,6 @@ func NewStudyImage(
 		ContentType:  contentType,
 		SizeBytes:    sizeBytes,
 		StoragePath:  storagePath,
-		Caption:      caption,
 	}
 }
 

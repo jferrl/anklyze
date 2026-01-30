@@ -124,13 +124,12 @@ func (r *StudyRepository) GetImageByID(ctx context.Context, imageID uuid.UUID) (
 	return &image, nil
 }
 
-// UpdateImage updates an image's mutable fields (caption, display_order).
+// UpdateImage updates an image's mutable fields (display_order).
 func (r *StudyRepository) UpdateImage(ctx context.Context, image *domain.StudyImage) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.StudyImage{}).
 		Where("id = ?", image.ID).
 		Updates(map[string]interface{}{
-			"caption":       image.Caption,
 			"display_order": image.DisplayOrder,
 		}).Error
 }

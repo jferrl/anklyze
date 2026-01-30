@@ -32,7 +32,6 @@ export interface StudyImage {
   filename: string;
   content_type: string;
   size_bytes: number;
-  caption?: string;
 }
 
 // Study image for user view (no storage path)
@@ -41,7 +40,6 @@ export interface StudyImageInfo {
   category: ImageCategory;
   display_order: number;
   filename: string;
-  caption?: string;
 }
 
 // Study with images (admin view)
@@ -189,6 +187,5 @@ export interface AddStudyUserRequest {
 // --- Image update types ---
 
 export interface UpdateImageRequest {
-  caption?: string;
   display_order?: number;
 }

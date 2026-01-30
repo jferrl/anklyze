@@ -340,7 +340,6 @@ export async function uploadStudyImage(
   studyId: string,
   file: File,
   category: ImageCategory,
-  caption?: string,
   displayOrder?: number
 ): Promise<ImageUploadResponse> {
   const headers = await getAuthHeadersMultipart();
@@ -348,7 +347,6 @@ export async function uploadStudyImage(
   const formData = new FormData();
   formData.append('file', file);
   formData.append('category', category);
-  if (caption) formData.append('caption', caption);
   if (displayOrder !== undefined) formData.append('display_order', displayOrder.toString());
 
   const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/images`, {
@@ -408,7 +406,7 @@ export async function deleteStudyImage(studyId: string, imageId: string): Promis
 }
 
 /**
- * Update an image's caption or display order (admin only)
+ * Update an image's display order (admin only)
  */
 export async function updateStudyImage(
   studyId: string,

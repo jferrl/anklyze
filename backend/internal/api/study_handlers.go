@@ -127,7 +127,6 @@ type StudyImageResponse struct {
 	Category     domain.ImageCategory `json:"category"`
 	DisplayOrder int                  `json:"display_order"`
 	Filename     string               `json:"filename"`
-	Caption      string               `json:"caption,omitempty"`
 }
 
 // AddStudyUserRequest is the request body for adding a user to a study.
@@ -376,9 +375,6 @@ func (h *StudyHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	// Get caption (optional)
-	caption := c.PostForm("caption")
-
 	// Get display order (optional)
 	displayOrder := 0
 	if do := c.PostForm("display_order"); do != "" {
@@ -422,7 +418,6 @@ func (h *StudyHandler) UploadImage(c *gin.Context) {
 		contentType,
 		header.Size,
 		storagePath,
-		caption,
 	)
 	image.ID = imageID // Use the same ID we used for the path
 
@@ -505,8 +500,7 @@ func (h *StudyHandler) DeleteImage(c *gin.Context) {
 
 // UpdateImageRequest is the request body for updating an image.
 type UpdateImageRequest struct {
-	Caption      *string `json:"caption,omitempty"`
-	DisplayOrder *int    `json:"display_order,omitempty"`
+	DisplayOrder *int `json:"display_order,omitempty"`
 }
 
 // UpdateImage handles PATCH /api/admin/studies/:id/images/:imageId
@@ -557,9 +551,6 @@ func (h *StudyHandler) UpdateImage(c *gin.Context) {
 	}
 
 	// Apply updates
-	if req.Caption != nil {
-		image.Caption = *req.Caption
-	}
 	if req.DisplayOrder != nil {
 		image.DisplayOrder = *req.DisplayOrder
 	}
@@ -822,7 +813,6 @@ func (h *StudyHandler) GetPublishedStudy(c *gin.Context) {
 			Category:     img.Category,
 			DisplayOrder: img.DisplayOrder,
 			Filename:     img.Filename,
-			Caption:      img.Caption,
 		}
 	}
 

@@ -90,20 +90,13 @@ export function ImageLightbox({
                   {imageUrls[image.id] ? (
                     <img
                       src={imageUrls[image.id]}
-                      alt={image.caption || image.filename}
+                      alt={image.filename}
                       className="max-w-full max-h-[75vh] object-contain rounded-lg"
                     />
                   ) : (
                     <div className="w-64 h-64 flex items-center justify-center bg-muted/20 rounded-lg">
                       <Spinner size="lg" className="text-white/60" />
                     </div>
-                  )}
-
-                  {/* Caption */}
-                  {image.caption && (
-                    <p className="text-white/80 mt-4 text-center max-w-2xl">
-                      {image.caption}
-                    </p>
                   )}
                 </div>
               </CarouselItem>

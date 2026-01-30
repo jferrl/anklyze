@@ -39,7 +39,7 @@ export function ImageGrid({ images, imageUrls, loading, onImageClick }: ImageGri
           {imageUrls[image.id] ? (
             <img
               src={imageUrls[image.id]}
-              alt={image.caption || image.filename}
+              alt={image.filename}
               className="w-full h-full object-cover"
             />
           ) : (

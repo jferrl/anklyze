@@ -51,7 +51,6 @@ interface PendingUpload {
   id: string;
   file: File;
   category: ImageCategory;
-  caption: string;
   preview: string;
 }
 
@@ -108,7 +107,7 @@ export function StudyEditorPage() {
       setPendingUploads([]);
       // Upload the copied images
       for (const upload of uploadsToProcess) {
-        await studyApi.uploadImage(study.id, upload.file, upload.category, upload.caption);
+        await studyApi.uploadImage(study.id, upload.file, upload.category);
       }
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
       queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
@@ -135,8 +134,8 @@ export function StudyEditorPage() {
 
   // Upload image mutation
   const uploadImageMutation = useMutation({
-    mutationFn: ({ studyId, file, category, caption }: { studyId: string; file: File; category: ImageCategory; caption: string }) =>
-      studyApi.uploadImage(studyId, file, category, caption),
+    mutationFn: ({ studyId, file, category }: { studyId: string; file: File; category: ImageCategory }) =>
+      studyApi.uploadImage(studyId, file, category),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['study', id] });
     },
@@ -172,7 +171,6 @@ export function StudyEditorPage() {
         id: Math.random().toString(36).substring(7),
         file,
         category: currentCategory,
-        caption: '',
         preview: URL.createObjectURL(file),
       }));
       setPendingUploads((prev) => [...prev, ...newUploads]);
@@ -196,12 +194,6 @@ export function StudyEditorPage() {
       }
       return prev.filter((u) => u.id !== uploadId);
     });
-  };
-
-  const updatePendingCaption = (uploadId: string, caption: string) => {
-    setPendingUploads((prev) =>
-      prev.map((u) => (u.id === uploadId ? { ...u, caption } : u))
-    );
   };
 
   const handleSave = async () => {
@@ -232,7 +224,6 @@ export function StudyEditorPage() {
           studyId: id!,
           file: upload.file,
           category: upload.category,
-          caption: upload.caption,
         });
       }
     } else {
@@ -419,7 +410,6 @@ export function StudyEditorPage() {
                   existingImages={xrayImages}
                   pendingUploads={pendingXray}
                   onRemovePending={removePendingUpload}
-                  onUpdateCaption={updatePendingCaption}
                   onDeleteExisting={(imageId) =>
                     deleteImageMutation.mutate({ studyId: id!, imageId })
                   }
@@ -433,7 +423,6 @@ export function StudyEditorPage() {
                   existingImages={tacImages}
                   pendingUploads={pendingTac}
                   onRemovePending={removePendingUpload}
-                  onUpdateCaption={updatePendingCaption}
                   onDeleteExisting={(imageId) =>
                     deleteImageMutation.mutate({ studyId: id!, imageId })
                   }
@@ -486,7 +475,6 @@ interface ImageGridProps {
   existingImages: StudyImage[];
   pendingUploads: PendingUpload[];
   onRemovePending: (id: string) => void;
-  onUpdateCaption: (id: string, caption: string) => void;
   onDeleteExisting: (imageId: string) => void;
   canEdit: boolean;
   studyId?: string;
@@ -496,45 +484,12 @@ function ImageGrid({
   existingImages,
   pendingUploads,
   onRemovePending,
-  onUpdateCaption,
   onDeleteExisting,
   canEdit,
   studyId,
 }: ImageGridProps) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-  const [editingCaptions, setEditingCaptions] = useState<Record<string, string>>({});
-
-  // Update image mutation
-  const updateImageMutation = useMutation({
-    mutationFn: ({ imageId, caption }: { imageId: string; caption: string }) =>
-      studyApi.updateImage(studyId!, imageId, { caption }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', studyId] });
-    },
-  });
-
-  // Initialize editing captions from existing images
-  useEffect(() => {
-    const captions: Record<string, string> = {};
-    existingImages.forEach((img) => {
-      captions[img.id] = img.caption || '';
-    });
-    setEditingCaptions(captions);
-  }, [existingImages]);
-
-  const handleCaptionChange = (imageId: string, caption: string) => {
-    setEditingCaptions((prev) => ({ ...prev, [imageId]: caption }));
-  };
-
-  const handleCaptionBlur = (imageId: string) => {
-    const originalCaption = existingImages.find((img) => img.id === imageId)?.caption || '';
-    const newCaption = editingCaptions[imageId] || '';
-    if (newCaption !== originalCaption) {
-      updateImageMutation.mutate({ imageId, caption: newCaption });
-    }
-  };
 
   // Fetch signed URLs for existing images (using admin endpoint for draft studies)
   const fetchImageUrl = async (image: StudyImage) => {
@@ -569,7 +524,7 @@ function ImageGrid({
               {imageUrls[image.id] ? (
                 <img
                   src={imageUrls[image.id]}
-                  alt={image.caption || 'Study image'}
+                  alt={image.filename}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -587,20 +542,6 @@ function ImageGrid({
               >
                 <X className="h-4 w-4" />
               </Button>
-            )}
-            {canEdit ? (
-              <Input
-                className="mt-2 text-xs"
-                placeholder={t('admin.studies.captionPlaceholder')}
-                value={editingCaptions[image.id] || ''}
-                onChange={(e) => handleCaptionChange(image.id, e.target.value)}
-                onBlur={() => handleCaptionBlur(image.id)}
-                disabled={updateImageMutation.isPending}
-              />
-            ) : (
-              image.caption && (
-                <p className="text-xs text-muted-foreground mt-1 truncate">{image.caption}</p>
-              )
             )}
           </div>
         );
@@ -627,12 +568,6 @@ function ImageGrid({
           >
             <X className="h-4 w-4" />
           </Button>
-          <Input
-            className="mt-2 text-xs"
-            placeholder={t('admin.studies.captionPlaceholder')}
-            value={upload.caption}
-            onChange={(e) => onUpdateCaption(upload.id, e.target.value)}
-          />
         </div>
       ))}
     </div>

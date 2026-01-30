@@ -28,7 +28,7 @@ type StudyRepository interface {
 	GetImages(ctx context.Context, studyID uuid.UUID) ([]domain.StudyImage, error)
 	// GetImageByID retrieves an image by its ID.
 	GetImageByID(ctx context.Context, imageID uuid.UUID) (*domain.StudyImage, error)
-	// UpdateImage updates an image's mutable fields (caption, display_order).
+	// UpdateImage updates an image's mutable fields (display_order).
 	UpdateImage(ctx context.Context, image *domain.StudyImage) error
 	// DeleteImage deletes an image by its ID.
 	DeleteImage(ctx context.Context, imageID uuid.UUID) error
