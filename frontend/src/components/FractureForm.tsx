@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Share2, Check } from 'lucide-react';
+import { ChevronLeft, Share2, Check, Loader2, Sparkles } from 'lucide-react';
 import { generateShareUrl, copyToClipboard, decodeParamsToInput } from '../utils/shareUrl';
 import type {
   FractureInput,
@@ -23,6 +23,7 @@ import { SelectionCard } from '@/components/ui/selection-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export function FractureForm() {
   const { t } = useTranslation();
@@ -2288,10 +2289,27 @@ export function FractureForm() {
       <Button
         type="submit"
         disabled={!isFormComplete() || loading}
-        className="w-full relative overflow-hidden bg-gradient-to-r from-primary to-primary/90 hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
+        className={cn(
+          "w-full relative overflow-hidden transition-all duration-300",
+          isFormComplete() && !loading
+            ? "bg-gradient-to-r from-primary to-primary/90 hover:shadow-lg hover:shadow-primary/25"
+            : ""
+        )}
         size="lg"
       >
-        {loading ? t('form.classifying') : t('form.classify')}
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {t('form.classifying')}
+          </span>
+        ) : isFormComplete() ? (
+          <span className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            {t('form.classify')}
+          </span>
+        ) : (
+          t('form.classify')
+        )}
       </Button>
 
       {/* Keyboard shortcuts hint */}

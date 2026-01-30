@@ -430,3 +430,10 @@
     transition: none !important;
   }
 }
+
+/* Hide keyboard hints on touch devices */
+@media (pointer: coarse) {
+  .kbd-hint {
+    display: none !important;
+  }
+}

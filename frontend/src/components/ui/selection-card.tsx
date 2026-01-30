@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -22,6 +23,17 @@ function SelectionCard({
   className,
   disabled = false,
 }: SelectionCardProps) {
+  const [showPulse, setShowPulse] = useState(false)
+
+  // Trigger pulse animation when selected
+  useEffect(() => {
+    if (selected) {
+      setShowPulse(true)
+      const timer = setTimeout(() => setShowPulse(false), 400)
+      return () => clearTimeout(timer)
+    }
+  }, [selected])
+
   return (
     <button
       type="button"
@@ -46,6 +58,8 @@ function SelectionCard({
           "shadow-lg shadow-primary/10",
           "hover:border-primary/70",
         ],
+        // Pulse animation on selection
+        showPulse && "selection-pulse",
         // Active press effect
         "active:scale-[0.98]",
         // Focus visible
@@ -77,9 +91,9 @@ function SelectionCard({
         {label}
       </span>
 
-      {/* Keyboard hint badge */}
+      {/* Keyboard hint badge - hidden on touch devices */}
       {keyboardHint && (
-        <span className="kbd-hint opacity-60 group-hover:opacity-100 transition-opacity">
+        <span className="kbd-hint opacity-60 transition-opacity hidden sm:inline-flex touch-device:hidden">
           {keyboardHint}
         </span>
       )}
