@@ -21,6 +21,7 @@ const (
 // UserRepository defines the interface for syncing users on login.
 type UserRepository interface {
 	UpsertFromAuth(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
+	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 }
 
 // AuthMiddleware creates a Gin middleware that validates JWT tokens.
@@ -166,12 +167,9 @@ func IsAuthenticated(c *gin.Context) bool {
 }
 
 // HasRole returns true if the authenticated user has the specified role.
+// It checks the database user role first, then falls back to JWT claims.
 func HasRole(c *gin.Context, role Role) bool {
-	claims := GetClaims(c)
-	if claims == nil {
-		return false
-	}
-	return claims.GetRole() == role
+	return GetUserRole(c) == role
 }
 
 // IsAdmin returns true if the authenticated user has the admin role.

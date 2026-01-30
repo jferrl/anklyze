@@ -28,6 +28,8 @@ type StudyRepository interface {
 	GetImages(ctx context.Context, studyID uuid.UUID) ([]domain.StudyImage, error)
 	// GetImageByID retrieves an image by its ID.
 	GetImageByID(ctx context.Context, imageID uuid.UUID) (*domain.StudyImage, error)
+	// UpdateImage updates an image's mutable fields (caption, display_order).
+	UpdateImage(ctx context.Context, image *domain.StudyImage) error
 	// DeleteImage deletes an image by its ID.
 	DeleteImage(ctx context.Context, imageID uuid.UUID) error
 	// UpdateHasTACImages recalculates and updates the has_tac_images flag for a study.
@@ -42,6 +44,18 @@ type StudyRepository interface {
 	IncrementResponseCount(ctx context.Context, studyID uuid.UUID) error
 	// UpdateUniqueUsers recalculates and updates the unique users count.
 	UpdateUniqueUsers(ctx context.Context, studyID uuid.UUID, count int) error
+
+	// User access management
+	// AddUser adds a user to a study (grants access).
+	AddUser(ctx context.Context, studyID, userID uuid.UUID, email string) error
+	// RemoveUser removes a user from a study (revokes access).
+	RemoveUser(ctx context.Context, studyID, userID uuid.UUID) error
+	// GetUsers retrieves all users who have access to a study.
+	GetUsers(ctx context.Context, studyID uuid.UUID) ([]domain.StudyUser, error)
+	// HasAccess checks if a user has access to a study.
+	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
+	// ListForUser retrieves published studies accessible to a specific user with pagination.
+	ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Study, int64, error)
 }
 
 // StudyResponseRepository defines the interface for study response persistence.
@@ -111,6 +125,10 @@ func (r *NoOpStudyRepository) GetImageByID(_ context.Context, _ uuid.UUID) (*dom
 	return nil, nil
 }
 
+func (r *NoOpStudyRepository) UpdateImage(_ context.Context, _ *domain.StudyImage) error {
+	return nil
+}
+
 func (r *NoOpStudyRepository) DeleteImage(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
@@ -133,6 +151,26 @@ func (r *NoOpStudyRepository) IncrementResponseCount(_ context.Context, _ uuid.U
 
 func (r *NoOpStudyRepository) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
 	return nil
+}
+
+func (r *NoOpStudyRepository) AddUser(_ context.Context, _, _ uuid.UUID, _ string) error {
+	return nil
+}
+
+func (r *NoOpStudyRepository) RemoveUser(_ context.Context, _, _ uuid.UUID) error {
+	return nil
+}
+
+func (r *NoOpStudyRepository) GetUsers(_ context.Context, _ uuid.UUID) ([]domain.StudyUser, error) {
+	return []domain.StudyUser{}, nil
+}
+
+func (r *NoOpStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
+	return false, nil
+}
+
+func (r *NoOpStudyRepository) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Study, int64, error) {
+	return []domain.Study{}, 0, nil
 }
 
 // NoOpStudyResponseRepository is a no-op implementation.

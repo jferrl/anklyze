@@ -377,6 +377,15 @@
         "titleRequired": "Title is required",
         "imagesRequired": "At least one image is required to publish"
       },
+      "users": {
+        "title": "Study Access",
+        "description": "Manage which users can access this study",
+        "emailPlaceholder": "Enter user email address",
+        "add": "Add User",
+        "email": "Email",
+        "addedAt": "Added",
+        "empty": "No users have been added to this study yet"
+      },
       "table": {
         "title": "Title",
         "status": "Status",

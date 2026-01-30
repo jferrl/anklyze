@@ -20,6 +20,7 @@ type StudyHandler struct {
 	studyRepo         repository.StudyRepository
 	responseRepo      repository.StudyResponseRepository
 	analyticsRepo     repository.StudyAnalyticsRepository
+	userRepo          auth.UserRepository
 	storage           storage.Storage
 	signedURLDuration time.Duration
 }
@@ -29,12 +30,14 @@ func NewStudyHandler(
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
+	userRepo auth.UserRepository,
 	storage storage.Storage,
 ) *StudyHandler {
 	return &StudyHandler{
 		studyRepo:         studyRepo,
 		responseRepo:      responseRepo,
 		analyticsRepo:     analyticsRepo,
+		userRepo:          userRepo,
 		storage:           storage,
 		signedURLDuration: 15 * time.Minute,
 	}
@@ -120,11 +123,30 @@ type UserStudyDetailResponse struct {
 
 // StudyImageResponse is the image info in responses (no storage path).
 type StudyImageResponse struct {
-	ID           uuid.UUID             `json:"id"`
-	Category     domain.ImageCategory  `json:"category"`
-	DisplayOrder int                   `json:"display_order"`
-	Filename     string                `json:"filename"`
-	Caption      string                `json:"caption,omitempty"`
+	ID           uuid.UUID            `json:"id"`
+	Category     domain.ImageCategory `json:"category"`
+	DisplayOrder int                  `json:"display_order"`
+	Filename     string               `json:"filename"`
+	Caption      string               `json:"caption,omitempty"`
+}
+
+// AddStudyUserRequest is the request body for adding a user to a study.
+type AddStudyUserRequest struct {
+	UserEmail string `json:"user_email" binding:"required,email"`
+}
+
+// StudyUserResponse represents a user in a study's access list.
+type StudyUserResponse struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	UserEmail string    `json:"user_email"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// StudyUsersListResponse is the response for listing study users.
+type StudyUsersListResponse struct {
+	Users []StudyUserResponse `json:"users"`
+	Total int                 `json:"total"`
 }
 
 // --- Pagination Helpers ---
@@ -481,6 +503,76 @@ func (h *StudyHandler) DeleteImage(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// UpdateImageRequest is the request body for updating an image.
+type UpdateImageRequest struct {
+	Caption      *string `json:"caption,omitempty"`
+	DisplayOrder *int    `json:"display_order,omitempty"`
+}
+
+// UpdateImage handles PATCH /api/admin/studies/:id/images/:imageId
+func (h *StudyHandler) UpdateImage(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	imageID, err := uuid.Parse(c.Param("imageId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
+		return
+	}
+
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get study"})
+		return
+	}
+	if study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "study not found"})
+		return
+	}
+
+	if !study.CanBeEdited() {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot update images of non-draft study"})
+		return
+	}
+
+	image, err := h.studyRepo.GetImageByID(c.Request.Context(), imageID)
+	if err != nil {
+		slog.Error("failed to get image", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get image"})
+		return
+	}
+	if image == nil || image.StudyID != studyID {
+		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
+		return
+	}
+
+	var req UpdateImageRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		return
+	}
+
+	// Apply updates
+	if req.Caption != nil {
+		image.Caption = *req.Caption
+	}
+	if req.DisplayOrder != nil {
+		image.DisplayOrder = *req.DisplayOrder
+	}
+
+	if err := h.studyRepo.UpdateImage(c.Request.Context(), image); err != nil {
+		slog.Error("failed to update image", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update image"})
+		return
+	}
+
+	c.JSON(http.StatusOK, image)
+}
+
 // PublishStudy handles PUT /api/admin/studies/:id/publish
 func (h *StudyHandler) PublishStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
@@ -604,18 +696,31 @@ func (h *StudyHandler) ListStudyResponses(c *gin.Context) {
 // --- User Endpoints ---
 
 // ListPublishedStudies handles GET /api/studies
+// Returns studies the user has been granted access to, or all published studies for admins.
 func (h *StudyHandler) ListPublishedStudies(c *gin.Context) {
 	page, limit, offset := getPagination(c)
 
-	userID, _ := c.Get(auth.ContextKeyUserID)
-	var uid uuid.UUID
-	if userID != nil {
-		if userIDStr, ok := userID.(string); ok {
-			uid, _ = uuid.Parse(userIDStr)
-		}
+	userIDStr, exists := c.Get(auth.ContextKeyUserID)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		return
+	}
+	uid, err := uuid.Parse(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		return
 	}
 
-	studies, total, err := h.studyRepo.ListPublished(c.Request.Context(), limit, offset)
+	var studies []domain.Study
+	var total int64
+
+	// Admins can see all published studies
+	if auth.IsAdmin(c) {
+		studies, total, err = h.studyRepo.ListPublished(c.Request.Context(), limit, offset)
+	} else {
+		// Regular users only see studies they have access to
+		studies, total, err = h.studyRepo.ListForUser(c.Request.Context(), uid, limit, offset)
+	}
 	if err != nil {
 		slog.Error("failed to list studies", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list studies"})
@@ -629,13 +734,9 @@ func (h *StudyHandler) ListPublishedStudies(c *gin.Context) {
 		images, _ := h.studyRepo.GetImages(c.Request.Context(), study.ID)
 
 		// Get user's responses
-		var hasResponded bool
-		var myResponseCount int
-		if uid != uuid.Nil {
-			responses, _ := h.responseRepo.GetByUserAndStudy(c.Request.Context(), uid, study.ID)
-			hasResponded = len(responses) > 0
-			myResponseCount = len(responses)
-		}
+		responses, _ := h.responseRepo.GetByUserAndStudy(c.Request.Context(), uid, study.ID)
+		hasResponded := len(responses) > 0
+		myResponseCount := len(responses)
 
 		items[i] = UserStudyItem{
 			ID:              study.ID,
@@ -661,11 +762,38 @@ func (h *StudyHandler) ListPublishedStudies(c *gin.Context) {
 }
 
 // GetPublishedStudy handles GET /api/studies/:id
+// Requires user to have access to the study, or be an admin.
 func (h *StudyHandler) GetPublishedStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
 		return
+	}
+
+	// Get user ID
+	userIDStr, exists := c.Get(auth.ContextKeyUserID)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		return
+	}
+	uid, err := uuid.Parse(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	// Check access (admins bypass this check)
+	if !auth.IsAdmin(c) {
+		hasAccess, err := h.studyRepo.HasAccess(c.Request.Context(), id, uid)
+		if err != nil {
+			slog.Error("failed to check access", "error", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check access"})
+			return
+		}
+		if !hasAccess {
+			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this study"})
+			return
+		}
 	}
 
 	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
@@ -682,18 +810,9 @@ func (h *StudyHandler) GetPublishedStudy(c *gin.Context) {
 	images, _ := h.studyRepo.GetImages(c.Request.Context(), id)
 
 	// Get user's responses
-	userIDStr, _ := c.Get(auth.ContextKeyUserID)
-	var hasResponded bool
-	var myResponseCount int
-	if userIDStr != nil {
-		if uidStr, ok := userIDStr.(string); ok {
-			if uid, err := uuid.Parse(uidStr); err == nil {
-				responses, _ := h.responseRepo.GetByUserAndStudy(c.Request.Context(), uid, id)
-				hasResponded = len(responses) > 0
-				myResponseCount = len(responses)
-			}
-		}
-	}
+	responses, _ := h.responseRepo.GetByUserAndStudy(c.Request.Context(), uid, id)
+	hasResponded := len(responses) > 0
+	myResponseCount := len(responses)
 
 	// Build image responses (without storage path)
 	imageResponses := make([]StudyImageResponse, len(images))
@@ -722,6 +841,7 @@ func (h *StudyHandler) GetPublishedStudy(c *gin.Context) {
 }
 
 // GetImageSignedURL handles GET /api/studies/:id/images/:imageId/url
+// Requires user to have access to the study, or be an admin.
 func (h *StudyHandler) GetImageSignedURL(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -733,6 +853,26 @@ func (h *StudyHandler) GetImageSignedURL(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
 		return
+	}
+
+	// Get user ID and check access (admins bypass this check)
+	userIDStr, exists := c.Get(auth.ContextKeyUserID)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		return
+	}
+	uid, err := uuid.Parse(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	if !auth.IsAdmin(c) {
+		hasAccess, _ := h.studyRepo.HasAccess(c.Request.Context(), studyID, uid)
+		if !hasAccess {
+			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this study"})
+			return
+		}
 	}
 
 	// Verify study is published
@@ -807,6 +947,7 @@ func (h *StudyHandler) GetAdminImageSignedURL(c *gin.Context) {
 }
 
 // SubmitResponse handles POST /api/studies/:id/responses
+// Requires user to have access to the study.
 func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -823,6 +964,15 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
 		return
+	}
+
+	// Check access (admins bypass this check)
+	if !auth.IsAdmin(c) {
+		hasAccess, _ := h.studyRepo.HasAccess(c.Request.Context(), studyID, userID)
+		if !hasAccess {
+			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this study"})
+			return
+		}
 	}
 
 	// Verify study can accept responses
@@ -878,6 +1028,7 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 }
 
 // GetMyResponses handles GET /api/studies/:id/my-responses
+// Requires user to have access to the study.
 func (h *StudyHandler) GetMyResponses(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -894,6 +1045,15 @@ func (h *StudyHandler) GetMyResponses(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
 		return
+	}
+
+	// Check access (admins bypass this check)
+	if !auth.IsAdmin(c) {
+		hasAccess, _ := h.studyRepo.HasAccess(c.Request.Context(), studyID, userID)
+		if !hasAccess {
+			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this study"})
+			return
+		}
 	}
 
 	responses, err := h.responseRepo.GetByUserAndStudy(c.Request.Context(), userID, studyID)
@@ -1058,4 +1218,109 @@ func (h *StudyHandler) ExportResponses(c *gin.Context) {
 		)
 		c.Writer.WriteString(line)
 	}
+}
+
+// --- Study User Management (Admin) ---
+
+// ListStudyUsers handles GET /api/admin/studies/:id/users
+func (h *StudyHandler) ListStudyUsers(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	users, err := h.studyRepo.GetUsers(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to list study users", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list users"})
+		return
+	}
+
+	response := make([]StudyUserResponse, len(users))
+	for i, u := range users {
+		response[i] = StudyUserResponse{
+			ID:        u.ID,
+			UserID:    u.UserID,
+			UserEmail: u.UserEmail,
+			CreatedAt: u.CreatedAt,
+		}
+	}
+
+	c.JSON(http.StatusOK, StudyUsersListResponse{
+		Users: response,
+		Total: len(response),
+	})
+}
+
+// AddStudyUser handles POST /api/admin/studies/:id/users
+func (h *StudyHandler) AddStudyUser(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	var req AddStudyUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		return
+	}
+
+	// Verify study exists
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil || study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "study not found"})
+		return
+	}
+
+	// Lookup user by email
+	user, err := h.userRepo.GetByEmail(c.Request.Context(), req.UserEmail)
+	if err != nil {
+		slog.Error("failed to lookup user", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to lookup user"})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	// Check if user is already added
+	hasAccess, _ := h.studyRepo.HasAccess(c.Request.Context(), studyID, user.ID)
+	if hasAccess {
+		c.JSON(http.StatusConflict, gin.H{"error": "user already has access"})
+		return
+	}
+
+	if err := h.studyRepo.AddUser(c.Request.Context(), studyID, user.ID, user.Email); err != nil {
+		slog.Error("failed to add user to study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to add user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "user added successfully"})
+}
+
+// RemoveStudyUser handles DELETE /api/admin/studies/:id/users/:userId
+func (h *StudyHandler) RemoveStudyUser(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	userID, err := uuid.Parse(c.Param("userId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	if err := h.studyRepo.RemoveUser(c.Request.Context(), studyID, userID); err != nil {
+		slog.Error("failed to remove user from study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to remove user"})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }

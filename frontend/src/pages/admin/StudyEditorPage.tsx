@@ -44,6 +44,7 @@ import {
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { studyApi } from '../../services/studyApi';
+import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
 import type { ImageCategory, StudyImage } from '../../types/study';
 
 interface PendingUpload {
@@ -436,6 +437,16 @@ export function StudyEditorPage() {
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Study Users Section - only show for existing studies */}
+        {isEditing && (
+          <div className="mt-6">
+            <StudyUsersManager
+              studyId={id!}
+              disabled={existingStudy?.status !== 'draft'}
+            />
+          </div>
+        )}
       </div>
 
       {/* Publish Confirmation Dialog */}
@@ -484,7 +495,39 @@ function ImageGrid({
   studyId,
 }: ImageGridProps) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [editingCaptions, setEditingCaptions] = useState<Record<string, string>>({});
+
+  // Update image mutation
+  const updateImageMutation = useMutation({
+    mutationFn: ({ imageId, caption }: { imageId: string; caption: string }) =>
+      studyApi.updateImage(studyId!, imageId, { caption }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['study', studyId] });
+    },
+  });
+
+  // Initialize editing captions from existing images
+  useEffect(() => {
+    const captions: Record<string, string> = {};
+    existingImages.forEach((img) => {
+      captions[img.id] = img.caption || '';
+    });
+    setEditingCaptions(captions);
+  }, [existingImages]);
+
+  const handleCaptionChange = (imageId: string, caption: string) => {
+    setEditingCaptions((prev) => ({ ...prev, [imageId]: caption }));
+  };
+
+  const handleCaptionBlur = (imageId: string) => {
+    const originalCaption = existingImages.find((img) => img.id === imageId)?.caption || '';
+    const newCaption = editingCaptions[imageId] || '';
+    if (newCaption !== originalCaption) {
+      updateImageMutation.mutate({ imageId, caption: newCaption });
+    }
+  };
 
   // Fetch signed URLs for existing images (using admin endpoint for draft studies)
   const fetchImageUrl = async (image: StudyImage) => {
@@ -538,8 +581,19 @@ function ImageGrid({
                 <X className="h-4 w-4" />
               </Button>
             )}
-            {image.caption && (
-              <p className="text-xs text-muted-foreground mt-1 truncate">{image.caption}</p>
+            {canEdit ? (
+              <Input
+                className="mt-2 text-xs"
+                placeholder={t('admin.studies.captionPlaceholder')}
+                value={editingCaptions[image.id] || ''}
+                onChange={(e) => handleCaptionChange(image.id, e.target.value)}
+                onBlur={() => handleCaptionBlur(image.id)}
+                disabled={updateImageMutation.isPending}
+              />
+            ) : (
+              image.caption && (
+                <p className="text-xs text-muted-foreground mt-1 truncate">{image.caption}</p>
+              )
             )}
           </div>
         );

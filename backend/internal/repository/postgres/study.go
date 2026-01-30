@@ -46,10 +46,15 @@ func (r *StudyRepository) Update(ctx context.Context, study *domain.Study) error
 	return r.db.WithContext(ctx).Save(study).Error
 }
 
-// Delete deletes a study and all associated data (images, responses) by its ID.
+// Delete deletes a study and all associated data (images, responses, users) by its ID.
 func (r *StudyRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Delete all responses first
+		// Delete all study users first
+		if err := tx.Delete(&domain.StudyUser{}, "study_id = ?", id).Error; err != nil {
+			return err
+		}
+
+		// Delete all responses
 		if err := tx.Delete(&domain.StudyResponse{}, "study_id = ?", id).Error; err != nil {
 			return err
 		}
@@ -119,6 +124,17 @@ func (r *StudyRepository) GetImageByID(ctx context.Context, imageID uuid.UUID) (
 	return &image, nil
 }
 
+// UpdateImage updates an image's mutable fields (caption, display_order).
+func (r *StudyRepository) UpdateImage(ctx context.Context, image *domain.StudyImage) error {
+	return r.db.WithContext(ctx).
+		Model(&domain.StudyImage{}).
+		Where("id = ?", image.ID).
+		Updates(map[string]interface{}{
+			"caption":       image.Caption,
+			"display_order": image.DisplayOrder,
+		}).Error
+}
+
 // DeleteImage deletes an image by its ID.
 func (r *StudyRepository) DeleteImage(ctx context.Context, imageID uuid.UUID) error {
 	return r.db.WithContext(ctx).Delete(&domain.StudyImage{}, "id = ?", imageID).Error
@@ -180,6 +196,60 @@ func (r *StudyRepository) UpdateUniqueUsers(ctx context.Context, studyID uuid.UU
 		Model(&domain.Study{}).
 		Where("id = ?", studyID).
 		Update("unique_users", count).Error
+}
+
+// AddUser adds a user to a study (grants access).
+func (r *StudyRepository) AddUser(ctx context.Context, studyID, userID uuid.UUID, email string) error {
+	studyUser := domain.NewStudyUser(studyID, userID, email)
+	return r.db.WithContext(ctx).Create(studyUser).Error
+}
+
+// RemoveUser removes a user from a study (revokes access).
+func (r *StudyRepository) RemoveUser(ctx context.Context, studyID, userID uuid.UUID) error {
+	return r.db.WithContext(ctx).
+		Delete(&domain.StudyUser{}, "study_id = ? AND user_id = ?", studyID, userID).Error
+}
+
+// GetUsers retrieves all users who have access to a study.
+func (r *StudyRepository) GetUsers(ctx context.Context, studyID uuid.UUID) ([]domain.StudyUser, error) {
+	var users []domain.StudyUser
+	err := r.db.WithContext(ctx).
+		Where("study_id = ?", studyID).
+		Order("created_at ASC").
+		Find(&users).Error
+	return users, err
+}
+
+// HasAccess checks if a user has access to a study.
+func (r *StudyRepository) HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.StudyUser{}).
+		Where("study_id = ? AND user_id = ?", studyID, userID).
+		Count(&count).Error
+	return count > 0, err
+}
+
+// ListForUser retrieves published studies accessible to a specific user with pagination.
+func (r *StudyRepository) ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Study, int64, error) {
+	var studies []domain.Study
+	var total int64
+
+	query := r.db.WithContext(ctx).
+		Model(&domain.Study{}).
+		Joins("INNER JOIN study_users ON study_users.study_id = studies.id").
+		Where("study_users.user_id = ? AND studies.status = ?", userID, domain.StudyStatusPublished)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := query.Order("studies.published_at DESC").
+		Limit(limit).Offset(offset).Find(&studies).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return studies, total, nil
 }
 
 // StudyResponseRepository implements study response persistence with async writes.

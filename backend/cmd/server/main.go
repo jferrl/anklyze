@@ -87,6 +87,7 @@ func main() {
 				&domain.Study{},
 				&domain.StudyImage{},
 				&domain.StudyResponse{},
+				&domain.StudyUser{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}

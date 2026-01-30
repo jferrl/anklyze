@@ -167,3 +167,28 @@ export interface AdminStudyImage extends StudyImage {
 export interface AdminStudyImagesResponse {
   images: AdminStudyImage[];
 }
+
+// --- Study user access types ---
+
+export interface StudyUser {
+  id: string;
+  user_id: string;
+  user_email: string;
+  created_at: string;
+}
+
+export interface StudyUsersListResponse {
+  users: StudyUser[];
+  total: number;
+}
+
+export interface AddStudyUserRequest {
+  user_email: string;
+}
+
+// --- Image update types ---
+
+export interface UpdateImageRequest {
+  caption?: string;
+  display_order?: number;
+}

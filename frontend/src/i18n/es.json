@@ -377,6 +377,15 @@
         "titleRequired": "El título es obligatorio",
         "imagesRequired": "Se requiere al menos una imagen para publicar"
       },
+      "users": {
+        "title": "Acceso al Estudio",
+        "description": "Gestiona qué usuarios pueden acceder a este estudio",
+        "emailPlaceholder": "Introduce el email del usuario",
+        "add": "Añadir Usuario",
+        "email": "Email",
+        "addedAt": "Añadido",
+        "empty": "Aún no se han añadido usuarios a este estudio"
+      },
       "table": {
         "title": "Título",
         "status": "Estado",

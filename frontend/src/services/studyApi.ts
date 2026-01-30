@@ -1,6 +1,7 @@
 import type {
   Study,
   StudyWithImages,
+  StudyImage,
   UserStudyDetail,
   StudyResponse,
   StudyListResponse,
@@ -15,6 +16,9 @@ import type {
   MyResponsesResponse,
   AdminStudyImagesResponse,
   ImageCategory,
+  StudyUsersListResponse,
+  AddStudyUserRequest,
+  UpdateImageRequest,
 } from '../types/study';
 import { supabase } from '../lib/supabase';
 import { AuthRequiredError, ForbiddenError } from './api';
@@ -404,6 +408,34 @@ export async function deleteStudyImage(studyId: string, imageId: string): Promis
 }
 
 /**
+ * Update an image's caption or display order (admin only)
+ */
+export async function updateStudyImage(
+  studyId: string,
+  imageId: string,
+  data: UpdateImageRequest
+): Promise<StudyImage> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/studies/${studyId}/images/${imageId}`,
+    {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(data),
+    }
+  );
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update image');
+  }
+
+  return response.json();
+}
+
+/**
  * Publish a study (admin only)
  */
 export async function publishStudy(studyId: string): Promise<Study> {
@@ -526,6 +558,72 @@ export async function downloadStudyResponsesCSV(studyId: string, filename?: stri
   document.body.removeChild(a);
 }
 
+// ================================
+// Study User Management (Admin)
+// ================================
+
+/**
+ * List users who have access to a study (admin only)
+ */
+export async function listStudyUsers(studyId: string): Promise<StudyUsersListResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/users`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to list study users');
+  }
+
+  return response.json();
+}
+
+/**
+ * Add a user to a study (admin only)
+ */
+export async function addStudyUser(
+  studyId: string,
+  data: AddStudyUserRequest
+): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/users`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to add user to study');
+  }
+}
+
+/**
+ * Remove a user from a study (admin only)
+ */
+export async function removeStudyUser(studyId: string, userId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/studies/${studyId}/users/${userId}`,
+    {
+      method: 'DELETE',
+      headers,
+    }
+  );
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to remove user from study');
+  }
+}
+
 // Export as a namespace object for convenience
 export const studyApi = {
   // User endpoints
@@ -542,6 +640,7 @@ export const studyApi = {
   deleteStudy,
   uploadImage: uploadStudyImage,
   getAdminStudyImages,
+  updateImage: updateStudyImage,
   deleteImage: deleteStudyImage,
   publishStudy,
   closeStudy,
@@ -549,6 +648,10 @@ export const studyApi = {
   listStudyResponses,
   exportStudyResponses,
   getAdminImageSignedURL,
+  // Study user management (admin)
+  listStudyUsers,
+  addStudyUser,
+  removeStudyUser,
   // Helpers
   getImageUrl: async (studyId: string, imageId: string) => {
     const result = await getImageSignedURL(studyId, imageId);

@@ -164,7 +164,7 @@ func SetupStudyRoutes(
 	analyticsRepo repository.StudyAnalyticsRepository,
 	storage storage.Storage,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, storage)
+	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, userRepo, storage)
 
 	api := router.Group("/api")
 
@@ -208,6 +208,7 @@ func setupProtectedStudyRoutes(
 		adminStudies.POST("/:id/images", studyHandler.UploadImage)
 		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
 		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
+		adminStudies.PATCH("/:id/images/:imageId", studyHandler.UpdateImage)
 		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
 		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
 		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
@@ -215,6 +216,11 @@ func setupProtectedStudyRoutes(
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+
+		// User access management
+		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
+		adminStudies.POST("/:id/users", studyHandler.AddStudyUser)
+		adminStudies.DELETE("/:id/users/:userId", studyHandler.RemoveStudyUser)
 	}
 }
 
@@ -244,6 +250,7 @@ func setupPublicStudyRoutes(
 		adminStudies.POST("/:id/images", studyHandler.UploadImage)
 		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
 		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
+		adminStudies.PATCH("/:id/images/:imageId", studyHandler.UpdateImage)
 		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
 		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
 		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
@@ -251,6 +258,11 @@ func setupPublicStudyRoutes(
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+
+		// User access management
+		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
+		adminStudies.POST("/:id/users", studyHandler.AddStudyUser)
+		adminStudies.DELETE("/:id/users/:userId", studyHandler.RemoveStudyUser)
 	}
 }
 

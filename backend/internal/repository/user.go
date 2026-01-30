@@ -41,6 +41,11 @@ func (r *NoOpUserRepository) UpdateRole(_ context.Context, _ uuid.UUID, _ domain
 	return nil
 }
 
+// GetByEmail returns nil (not found).
+func (r *NoOpUserRepository) GetByEmail(_ context.Context, _ string) (*domain.User, error) {
+	return nil, nil
+}
+
 // NewNoOpUserRepository creates a no-op user repository.
 func NewNoOpUserRepository() *NoOpUserRepository {
 	return &NoOpUserRepository{}
