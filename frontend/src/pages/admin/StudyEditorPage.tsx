@@ -87,6 +87,9 @@ export function StudyEditorPage() {
     setTitle(existingStudy.title);
     setDescription(existingStudy.description || '');
     setDeadline(existingStudy.deadline?.split('T')[0] || '');
+    // Clear pending uploads when switching to a different study
+    // (prevents showing duplicates after create navigates to edit)
+    setPendingUploads([]);
   }
 
   // Keep ref in sync with state
@@ -99,8 +102,12 @@ export function StudyEditorPage() {
   const createMutation = useMutation({
     mutationFn: studyApi.createStudy,
     onSuccess: async (study) => {
-      // Upload pending images
-      for (const upload of pendingUploads) {
+      // Copy and clear pending uploads to prevent duplicates after navigation
+      const uploadsToProcess = [...pendingUploads];
+      uploadsToProcess.forEach((upload) => URL.revokeObjectURL(upload.preview));
+      setPendingUploads([]);
+      // Upload the copied images
+      for (const upload of uploadsToProcess) {
         await studyApi.uploadImage(study.id, upload.file, upload.category, upload.caption);
       }
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });

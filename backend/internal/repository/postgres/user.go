@@ -49,7 +49,7 @@ func (r *UserRepository) SyncOnLogin(ctx context.Context, userID uuid.UUID, emai
 // GetByID retrieves a user by their ID.
 func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
 	var user domain.User
-	result := r.db.WithContext(ctx).First(&user, "id = ?", id)
+	result := r.db.WithContext(ctx).Take(&user, "id = ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -67,7 +67,7 @@ func (r *UserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role doma
 // GetByEmail retrieves a user by their email address.
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	var user domain.User
-	result := r.db.WithContext(ctx).First(&user, "email = ?", email)
+	result := r.db.WithContext(ctx).Take(&user, "email = ?", email)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
