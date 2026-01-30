@@ -12,6 +12,7 @@ interface SelectionCardProps {
   keyboardHint?: string
   className?: string
   disabled?: boolean
+  id?: string
 }
 
 function SelectionCard({
@@ -22,15 +23,19 @@ function SelectionCard({
   keyboardHint,
   className,
   disabled = false,
+  id,
 }: SelectionCardProps) {
   const [showPulse, setShowPulse] = useState(false)
 
   // Trigger pulse animation when selected
   useEffect(() => {
     if (selected) {
-      setShowPulse(true)
-      const timer = setTimeout(() => setShowPulse(false), 400)
-      return () => clearTimeout(timer)
+      const startTimer = setTimeout(() => setShowPulse(true), 0)
+      const endTimer = setTimeout(() => setShowPulse(false), 400)
+      return () => {
+        clearTimeout(startTimer)
+        clearTimeout(endTimer)
+      }
     }
   }, [selected])
 
@@ -43,6 +48,7 @@ function SelectionCard({
       onClick={onSelect}
       data-value={value}
       data-selected={selected}
+      id={id}
       className={cn(
         // Base styles
         "relative flex items-center gap-4 p-4 rounded-xl cursor-pointer w-full text-left",

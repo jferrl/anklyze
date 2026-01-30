@@ -55,11 +55,20 @@ export class LandingPage {
   }
 
   async switchLanguage(lang: 'en' | 'es') {
+    // Wait for any existing dropdown to close before opening
+    await expect(this.page.getByRole('menu')).toBeHidden({ timeout: 5000 }).catch(() => {});
+
     await this.languageSwitcher.click();
+    await expect(this.page.getByRole('menu')).toBeVisible();
+
     const menuItem = this.page.getByRole('menuitem', {
       name: lang === 'en' ? /english/i : /español/i
     });
     await menuItem.click();
+
+    // Wait for dropdown to close
+    await expect(this.page.getByRole('menu')).toBeHidden();
+
     // Wait for UI to update with new language (no page reload)
     const expectedText = lang === 'en' ? /classify ankle fractures/i : /clasifica fracturas/i;
     await expect(this.heroTitle).toContainText(expectedText);

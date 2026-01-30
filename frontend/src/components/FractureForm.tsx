@@ -1184,6 +1184,7 @@ export function FractureForm() {
             {options.involved_malleoli.map((option, index) => (
               <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                 <SelectionCard
+                  id={`malleoli-${option.value}`}
                   value={option.value}
                   label={option.label}
                   selected={formData.involved_malleoli === option.value}
@@ -1208,6 +1209,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="post-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -1221,6 +1223,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="post-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -1250,6 +1253,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`post-type-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -1276,6 +1280,7 @@ export function FractureForm() {
               {options.medial_morphology.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`medial-morph-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.medial_morphology === option.value}
@@ -1302,6 +1307,7 @@ export function FractureForm() {
               {options.fibular_levels.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lat-level-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibular_level === option.value}
@@ -1335,6 +1341,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lat-morph-infra-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.lateral_morphology === option.value}
@@ -1363,6 +1370,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lat-morph-trans-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.lateral_morphology === option.value}
@@ -1389,6 +1397,7 @@ export function FractureForm() {
               {options.suprasindesmal_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`supra-type-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.suprasindesmal_type === option.value}
@@ -1419,6 +1428,7 @@ export function FractureForm() {
               {options.fibula_trace_patterns.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lat-trace-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibula_trace_pattern === option.value}
@@ -1444,6 +1454,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="mp-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -1457,6 +1468,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="mp-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -1486,6 +1498,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`mp-post-type-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -1512,6 +1525,7 @@ export function FractureForm() {
               {options.fibular_levels.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-level-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibular_level === option.value}
@@ -1546,6 +1560,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lp-morph-infra-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.lateral_morphology === option.value}
@@ -1585,6 +1600,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-post-infra-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -1613,6 +1629,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lp-morph-trans-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.lateral_morphology === option.value}
@@ -1643,6 +1660,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="lp-trans-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -1656,6 +1674,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="lp-trans-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -1685,6 +1704,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-post-trans-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -1711,6 +1731,7 @@ export function FractureForm() {
               {options.suprasindesmal_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-supra-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.suprasindesmal_type === option.value}
@@ -1743,6 +1764,7 @@ export function FractureForm() {
               {options.fibula_trace_patterns.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-trace-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibula_trace_pattern === option.value}
@@ -1773,6 +1795,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="lp-supra-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -1786,6 +1809,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="lp-supra-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -1815,6 +1839,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lp-post-supra-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -1841,6 +1866,7 @@ export function FractureForm() {
               {options.medial_morphology.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lm-medial-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.medial_morphology === option.value}
@@ -1874,6 +1900,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="lm-infra-trans-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.fibula_infrasindesmal_transverse === true}
@@ -1890,6 +1917,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="lm-infra-trans-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.fibula_infrasindesmal_transverse === false}
@@ -1924,6 +1952,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lm-fib-level-${option.value}`}
                       value={option.value}
                       label={option.value === 'suprasindesmal' ? options.labels.high : options.labels.low}
                       selected={formData.fibular_level_for_transverse === option.value}
@@ -1956,6 +1985,7 @@ export function FractureForm() {
               {options.suprasindesmal_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lm-supra-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.suprasindesmal_type === option.value}
@@ -1986,6 +2016,7 @@ export function FractureForm() {
               {options.fibula_trace_patterns.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lm-trace-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibula_trace_pattern === option.value}
@@ -2012,6 +2043,7 @@ export function FractureForm() {
               {options.lateral_morphology.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`lm-morph-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.lateral_morphology === option.value}
@@ -2044,6 +2076,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`lm-trans-level-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.fibular_level === option.value}
@@ -2069,6 +2102,7 @@ export function FractureForm() {
             <div className="flex flex-col gap-2">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="tri-level-high"
                   value="suprasindesmal"
                   label={options.labels.high}
                   selected={formData.fibular_level === 'suprasindesmal'}
@@ -2084,6 +2118,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="tri-level-low"
                   value="infrasindesmal"
                   label={options.labels.low}
                   selected={formData.fibular_level === 'infrasindesmal'}
@@ -2115,6 +2150,7 @@ export function FractureForm() {
               {options.suprasindesmal_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`tri-supra-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.suprasindesmal_type === option.value}
@@ -2147,6 +2183,7 @@ export function FractureForm() {
               {options.fibula_trace_patterns.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`tri-trace-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.fibula_trace_pattern === option.value}
@@ -2177,6 +2214,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="tri-supra-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -2190,6 +2228,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="tri-supra-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -2219,6 +2258,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`tri-supra-post-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -2245,6 +2285,7 @@ export function FractureForm() {
               {options.lateral_morphology.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`tri-morph-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.lateral_morphology === option.value}
@@ -2276,6 +2317,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="tri-trans-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -2289,6 +2331,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="tri-trans-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -2317,6 +2360,7 @@ export function FractureForm() {
             <div className="grid grid-cols-2 gap-3">
               <div className="selection-option-enter stagger-1">
                 <SelectionCard
+                  id="tri-low-ct-yes"
                   value="yes"
                   label={options.labels.yes}
                   selected={formData.has_ct_scan === true}
@@ -2330,6 +2374,7 @@ export function FractureForm() {
               </div>
               <div className="selection-option-enter stagger-2">
                 <SelectionCard
+                  id="tri-low-ct-no"
                   value="no"
                   label={options.labels.no}
                   selected={formData.has_ct_scan === false}
@@ -2359,6 +2404,7 @@ export function FractureForm() {
               {options.posterior_fracture_types.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
+                    id={`tri-low-post-${option.value}`}
                     value={option.value}
                     label={option.label}
                     selected={formData.posterior_fracture_type === option.value}
@@ -2387,6 +2433,7 @@ export function FractureForm() {
                 .map((option, index) => (
                   <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                     <SelectionCard
+                      id={`tri-trans-level-${option.value}`}
                       value={option.value}
                       label={option.label}
                       selected={formData.fibular_level_for_transverse === option.value}
