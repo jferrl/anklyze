@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '../components/ui/spinner';
@@ -13,7 +14,6 @@ import {
   getMyResponses,
 } from '../services/studyApi';
 import { classifyFracture } from '../services/api';
-import type { UserStudyDetail, StudyResponse } from '../types/study';
 import type { FractureInput, ClassificationResult } from '../types/fracture';
 import {
   ImageGrid,
@@ -26,54 +26,47 @@ import {
 export function StudyDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-
-  const [study, setStudy] = useState<UserStudyDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   // Image gallery state
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
   const [loadingImages, setLoadingImages] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'xray' | 'tac'>('xray');
+  const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
 
   // Classification state
   const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // Time tracking
-  const startTimeRef = useRef<number>(Date.now());
-
-  // Previous responses
-  const [myResponses, setMyResponses] = useState<StudyResponse[]>([]);
-
-  // Fetch study data
+  // Time tracking - initialized in useEffect to avoid impure function call during render
+  const startTimeRef = useRef<number>(0);
   useEffect(() => {
-    async function fetchStudy() {
-      if (!id) return;
+    startTimeRef.current = Date.now();
+  }, []);
 
-      try {
-        setLoading(true);
-        const data = await getPublishedStudy(id);
-        setStudy(data);
+  // Fetch study data with React Query
+  const { data: study, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['published-study', id],
+    queryFn: () => getPublishedStudy(id!),
+    enabled: !!id,
+  });
 
-        // Determine initial tab based on available images
-        const hasXray = data.images.some((img) => img.category === 'xray');
-        const hasTac = data.images.some((img) => img.category === 'tac');
-        if (!hasXray && hasTac) {
-          setActiveTab('tac');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load study');
-      } finally {
-        setLoading(false);
-      }
+  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load study' : null;
+
+  // Set initial tab based on available images (only once when study loads)
+  // This pattern is recommended by React for syncing state with props during render
+  if (study && study.id !== prevStudyId) {
+    setPrevStudyId(study.id);
+    const hasXray = study.images.some((img) => img.category === 'xray');
+    const hasTac = study.images.some((img) => img.category === 'tac');
+    if (!hasXray && hasTac) {
+      setActiveTab('tac');
+    } else {
+      setActiveTab('xray');
     }
-
-    fetchStudy();
-  }, [id]);
+  }
 
   // Fetch signed URLs for images
   useEffect(() => {
@@ -101,21 +94,14 @@ export function StudyDetailPage() {
     fetchImageUrls();
   }, [study, id]);
 
-  // Fetch previous responses
-  useEffect(() => {
-    async function fetchMyResponses() {
-      if (!id || !study?.has_responded) return;
+  // Fetch previous responses with React Query
+  const { data: responsesData } = useQuery({
+    queryKey: ['my-responses', id],
+    queryFn: () => getMyResponses(id!),
+    enabled: !!id && !!study?.has_responded,
+  });
 
-      try {
-        const data = await getMyResponses(id);
-        setMyResponses(data.responses);
-      } catch (err) {
-        console.error('Failed to load previous responses:', err);
-      }
-    }
-
-    fetchMyResponses();
-  }, [id, study?.has_responded]);
+  const myResponses = responsesData?.responses ?? [];
 
   // Group images by category
   const xrayImages = study?.images.filter((img) => img.category === 'xray') || [];
@@ -129,39 +115,40 @@ export function StudyDetailPage() {
     return result;
   }, []);
 
-  // Handle response submission
-  const handleSubmitResponse = useCallback(async () => {
-    if (!classificationResult || !id) return;
-
-    setSubmitting(true);
-    setSubmitError(null);
-
-    try {
+  // Handle response submission with mutation
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      if (!classificationResult || !id) throw new Error('Missing data');
       const timeTakenMs = Date.now() - startTimeRef.current;
-
-      await submitStudyResponse(id, {
+      return submitStudyResponse(id, {
         classification: classificationResult,
         time_taken_ms: timeTakenMs,
       });
-
+    },
+    onSuccess: () => {
       setSubmitSuccess(true);
       toast.success(t('studies.submitSuccess'), {
         description: t('studies.submitSuccessDescription'),
       });
-
-      // Refresh study data to update response counts
-      const updatedStudy = await getPublishedStudy(id);
-      setStudy(updatedStudy);
-    } catch (err) {
+      // Invalidate all related queries to refresh data across the app
+      queryClient.invalidateQueries({ queryKey: ['published-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['my-responses', id] });
+    },
+    onError: (err) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
       setSubmitError(errorMessage);
       toast.error(t('studies.submitError'), {
         description: errorMessage,
       });
-    } finally {
-      setSubmitting(false);
-    }
-  }, [classificationResult, id, t]);
+    },
+  });
+
+  const handleSubmitResponse = useCallback(() => {
+    if (!classificationResult || !id) return;
+    setSubmitError(null);
+    submitMutation.mutate();
+  }, [classificationResult, id, submitMutation]);
 
   // Reset for re-answer
   const handleReanswer = useCallback(() => {
@@ -270,7 +257,7 @@ export function StudyDetailPage() {
             <ClassificationPanel
               hasTACImages={study.has_tac_images}
               classificationResult={classificationResult}
-              submitting={submitting}
+              submitting={submitMutation.isPending}
               submitError={submitError}
               submitSuccess={submitSuccess}
               isExpired={!!isExpired}

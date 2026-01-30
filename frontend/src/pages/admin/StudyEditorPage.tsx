@@ -103,6 +103,7 @@ export function StudyEditorPage() {
         await studyApi.uploadImage(study.id, upload.file, upload.category, upload.caption);
       }
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
       navigate(`/admin/studies/${study.id}/edit`);
     },
     onError: (err: Error) => {
@@ -117,6 +118,7 @@ export function StudyEditorPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['study', id] });
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -147,6 +149,8 @@ export function StudyEditorPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['study', id] });
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
       setShowPublishDialog(false);
       navigate('/admin/studies');
     },

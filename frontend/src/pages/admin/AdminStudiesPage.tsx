@@ -85,6 +85,8 @@ export function AdminStudiesPage() {
     mutationFn: studyApi.deleteStudy,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
       setDeleteId(null);
     },
   });
@@ -93,6 +95,8 @@ export function AdminStudiesPage() {
     mutationFn: studyApi.publishStudy,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
     },
   });
 
@@ -100,6 +104,8 @@ export function AdminStudiesPage() {
     mutationFn: studyApi.closeStudy,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
     },
   });
 

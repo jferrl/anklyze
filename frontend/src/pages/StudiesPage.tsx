@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   FileText,
   Clock,
@@ -34,27 +35,19 @@ type FilterStatus = 'all' | 'completed' | 'pending';
 
 export function StudiesPage() {
   const { t } = useTranslation();
-  const [studies, setStudies] = useState<UserStudyItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
 
-  useEffect(() => {
-    async function fetchStudies() {
-      try {
-        setLoading(true);
-        const response = await listPublishedStudies();
-        setStudies(response.studies);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load studies');
-      } finally {
-        setLoading(false);
-      }
-    }
+  const { data, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['published-studies'],
+    queryFn: async () => {
+      const response = await listPublishedStudies();
+      return response.studies;
+    },
+  });
 
-    fetchStudies();
-  }, []);
+  const studies = useMemo(() => data ?? [], [data]);
+  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load studies' : null;
 
   // Filter and search studies
   const filteredStudies = useMemo(() => {
