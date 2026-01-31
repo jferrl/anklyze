@@ -17,7 +17,7 @@ func SetupRoutes(
 	router *gin.Engine,
 	cfg *config.Config,
 	authValidator *auth.Validator,
-	userRepo auth.UserRepository,
+	userRepo auth.UserService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
 	chatService service.ChatService,
@@ -59,7 +59,7 @@ func SetupRoutes(
 func setupProtectedRoutes(
 	api *gin.RouterGroup,
 	authValidator *auth.Validator,
-	userRepo auth.UserRepository,
+	userRepo auth.UserService,
 	handler *Handler,
 	dailyQuota gin.HandlerFunc,
 	chatRateLimiter gin.HandlerFunc,
@@ -158,7 +158,7 @@ func setupPublicRoutes(
 func SetupStudyRoutes(
 	router *gin.Engine,
 	authValidator *auth.Validator,
-	userRepo auth.UserRepository,
+	userRepo auth.UserService,
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
@@ -179,7 +179,7 @@ func SetupStudyRoutes(
 func setupProtectedStudyRoutes(
 	api *gin.RouterGroup,
 	authValidator *auth.Validator,
-	userRepo auth.UserRepository,
+	userRepo auth.UserService,
 	studyHandler *StudyHandler,
 ) {
 	// User study routes - require authentication

@@ -17,6 +17,8 @@ type UserRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
 	// UpdateRole updates a user's role.
 	UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error
+	// GetByEmail retrieves a user by their email.
+	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 }
 
 // NoOpUserRepository is a no-op implementation for when DB is not configured.

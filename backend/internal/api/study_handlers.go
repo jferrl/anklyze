@@ -20,7 +20,7 @@ type StudyHandler struct {
 	studyRepo         repository.StudyRepository
 	responseRepo      repository.StudyResponseRepository
 	analyticsRepo     repository.StudyAnalyticsRepository
-	userRepo          auth.UserRepository
+	userRepo          auth.UserService
 	storage           storage.Storage
 	signedURLDuration time.Duration
 }
@@ -30,7 +30,7 @@ func NewStudyHandler(
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
-	userRepo auth.UserRepository,
+	userRepo auth.UserService,
 	storage storage.Storage,
 ) *StudyHandler {
 	return &StudyHandler{

@@ -23,6 +23,7 @@ import (
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
+	"github.com/jferrl/anklyze/internal/supabase"
 	"github.com/joho/godotenv"
 
 	_ "github.com/jferrl/anklyze/docs"
@@ -60,10 +61,17 @@ func main() {
 	var analyticsRepo api.AnalyticsRepository
 	var chatAuditRepo api.ChatAuditRepository
 	var chatAnalyticsRepo api.ChatAnalyticsRepository
-	var userRepo auth.UserRepository
+	var userRepo repository.UserRepository
 	var studyRepo repository.StudyRepository
 	var studyResponseRepo repository.StudyResponseRepository
 	var studyAnalyticsRepo repository.StudyAnalyticsRepository
+
+	// Initialize Supabase Auth Admin for syncing roles to app_metadata
+	var authAdmin *supabase.AuthAdmin
+	if cfg.HasSupabaseStorage() {
+		authAdmin = supabase.NewAuthAdmin(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
+		slog.Info("Supabase auth admin enabled for role syncing")
+	}
 
 	if cfg.HasDatabase() {
 		db, err := database.Connect(cfg.DatabaseURL)
@@ -113,6 +121,9 @@ func main() {
 		studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
 	}
 
+	// Create user service that orchestrates DB and Supabase operations
+	userService := service.NewUserService(userRepo, authAdmin)
+
 	// Initialize chat service if Gemini is configured
 	var chatService service.ChatService
 	if cfg.HasGemini() {
@@ -159,8 +170,8 @@ func main() {
 	}
 
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, authValidator, userRepo, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
-	api.SetupStudyRoutes(router, authValidator, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage)
+	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
+	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,

@@ -18,14 +18,17 @@ const (
 	ContextKeyUser   = "auth_user"
 )
 
-// UserRepository defines the interface for user operations in auth middleware.
-type UserRepository interface {
+// UserService defines the interface for user operations in auth middleware.
+type UserService interface {
 	// GetByID retrieves a user by their ID. Returns nil if not found.
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
 	// SyncOnLogin creates or updates a user from authentication claims.
-	// Should only be called on first login (when user doesn't exist in DB).
+	// Also syncs the role to external services (e.g., Supabase app_metadata).
 	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
+	// GetByEmail retrieves a user by their email.
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
+	// SyncRoleToSupabase syncs the user's role to Supabase app_metadata.
+	SyncRoleToSupabase(ctx context.Context, userID uuid.UUID, role domain.UserRole)
 }
 
 // AuthMiddleware creates a Gin middleware that validates JWT tokens.
@@ -189,7 +192,7 @@ func IsAdmin(c *gin.Context) bool {
 // UserSyncMiddleware creates a middleware that loads the authenticated user from the database.
 // It must be used after AuthMiddleware. On each authenticated request, it fetches the user.
 // If the user doesn't exist (first login), it creates them via SyncOnLogin.
-func UserSyncMiddleware(userRepo UserRepository) gin.HandlerFunc {
+func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims := GetClaims(c)
 		if claims == nil {
@@ -211,7 +214,7 @@ func UserSyncMiddleware(userRepo UserRepository) gin.HandlerFunc {
 		}
 
 		// First, try to get the user from the database (read-only operation)
-		user, err := userRepo.GetByID(c.Request.Context(), userID)
+		user, err := userSvc.GetByID(c.Request.Context(), userID)
 		if err != nil {
 			slog.Error("failed to get user", "user_id", userIDStr, "error", err)
 			c.Next()
@@ -227,13 +230,19 @@ func UserSyncMiddleware(userRepo UserRepository) gin.HandlerFunc {
 				}
 			}
 
-			user, err = userRepo.SyncOnLogin(c.Request.Context(), userID, claims.GetEmail(), provider)
+			user, err = userSvc.SyncOnLogin(c.Request.Context(), userID, claims.GetEmail(), provider)
 			if err != nil {
 				slog.Error("failed to sync user on first login", "user_id", userIDStr, "error", err)
 				c.Next()
 				return
 			}
 			slog.Info("user synced on first login", "user_id", userIDStr, "email", claims.GetEmail())
+		} else {
+			// For existing users, sync role to Supabase if it differs from JWT
+			jwtRole := claims.GetRole()
+			if string(user.Role) != string(jwtRole) {
+				userSvc.SyncRoleToSupabase(c.Request.Context(), userID, user.Role)
+			}
 		}
 
 		// Store the user in context (includes the actual role from DB)
