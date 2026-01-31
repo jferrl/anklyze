@@ -491,6 +491,157 @@
   .stagger-5 { animation-delay: 0.25s; }
   .stagger-6 { animation-delay: 0.3s; }
   .stagger-7 { animation-delay: 0.35s; }
+
+  /* Analytics stat card styles */
+  .stat-card {
+    @apply relative overflow-hidden rounded-2xl border border-border/50
+           bg-gradient-to-br from-card via-card to-muted/20
+           p-6 transition-all duration-300;
+  }
+
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, oklch(0.55 0.18 220 / 0.03) 100%);
+    pointer-events: none;
+  }
+
+  .stat-card:hover {
+    @apply border-primary/20 shadow-lg shadow-primary/5;
+    transform: translateY(-2px);
+  }
+
+  .dark .stat-card {
+    @apply from-card via-card to-muted/10;
+  }
+
+  .dark .stat-card::before {
+    background: linear-gradient(135deg, transparent 0%, oklch(0.7 0.18 220 / 0.05) 100%);
+  }
+
+  .dark .stat-card:hover {
+    @apply border-primary/30 shadow-xl shadow-primary/10;
+  }
+
+  /* Analytics chart card */
+  .chart-card {
+    @apply relative overflow-hidden rounded-2xl border border-border/50
+           bg-card p-6 transition-all duration-300;
+  }
+
+  .chart-card:hover {
+    @apply border-border shadow-lg shadow-primary/5;
+  }
+
+  .dark .chart-card:hover {
+    @apply shadow-xl shadow-primary/10;
+  }
+
+  /* Radial progress indicator */
+  .radial-progress {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .radial-progress svg {
+    transform: rotate(-90deg);
+  }
+
+  .radial-progress-track {
+    stroke: oklch(0.88 0.03 220);
+    fill: none;
+  }
+
+  .dark .radial-progress-track {
+    stroke: oklch(0.3 0.06 220);
+  }
+
+  .radial-progress-bar {
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Distribution bar styles */
+  .distribution-bar {
+    @apply relative h-3 rounded-full overflow-hidden bg-muted/50;
+  }
+
+  .distribution-bar-fill {
+    @apply absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out;
+  }
+
+  /* Tab trigger refined */
+  .analytics-tab {
+    @apply relative px-4 py-2 text-sm font-medium text-muted-foreground
+           rounded-lg transition-all duration-200;
+  }
+
+  .analytics-tab:hover {
+    @apply text-foreground bg-muted/50;
+  }
+
+  .analytics-tab[data-state="active"] {
+    @apply text-primary-foreground bg-primary shadow-md;
+  }
+
+  /* Legend item */
+  .legend-item {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-lg
+           bg-muted/30 border border-transparent
+           transition-all duration-200 cursor-default;
+  }
+
+  .legend-item:hover {
+    @apply bg-muted/50 border-border/50;
+  }
+
+  /* Number counter animation */
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-count-up {
+    animation: count-up 0.5s ease-out forwards;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  /* Chart enter animation */
+  @keyframes chart-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .chart-enter {
+    animation: chart-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Bar grow animation */
+  @keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .bar-grow {
+    transform-origin: left;
+    animation: bar-grow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
 
 /* Reduced motion support */
