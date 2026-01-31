@@ -333,7 +333,10 @@
     "tryDifferentFilter": "Intenta ajustar tu búsqueda o criterios de filtro.",
     "clearFilters": "Limpiar Filtros",
     "daysLeft": "{{count}} días restantes",
-    "yourResponses": "{{count}} respuesta(s) enviada(s)"
+    "yourResponses": "{{count}} respuesta(s) enviada(s)",
+    "submitSuccess": "Respuesta Enviada",
+    "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
+    "submitError": "Error al Enviar"
   },
   "admin": {
     "studies": {

@@ -386,6 +386,7 @@
     background: radial-gradient(circle, oklch(0.55 0.18 220 / 0.1) 0%, transparent 70%);
     opacity: 0;
     transition: opacity 0.5s;
+    pointer-events: none;
   }
   .spotlight:hover::before {
     opacity: 1;
