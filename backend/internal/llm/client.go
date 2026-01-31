@@ -3,12 +3,20 @@ package llm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"google.golang.org/genai"
 )
+
+// DefaultTimeout is the default timeout for LLM API calls.
+const DefaultTimeout = 30 * time.Second
+
+// ErrTimeout is returned when the LLM request times out.
+var ErrTimeout = errors.New("LLM request timed out")
 
 // ExtractionResult contains the extracted fracture data and metadata.
 type ExtractionResult struct {
@@ -27,8 +35,9 @@ type Clarification struct {
 
 // Client handles communication with the Gemini API.
 type Client struct {
-	client *genai.Client
-	model  string
+	client  *genai.Client
+	model   string
+	timeout time.Duration
 }
 
 // NewClient creates a new Gemini client.
@@ -50,14 +59,30 @@ func NewClient(ctx context.Context, apiKey, model string) (*Client, error) {
 	}
 
 	return &Client{
-		client: client,
-		model:  model,
+		client:  client,
+		model:   model,
+		timeout: DefaultTimeout,
 	}, nil
+}
+
+// WithTimeout sets a custom timeout for LLM API calls.
+func (c *Client) WithTimeout(timeout time.Duration) *Client {
+	c.timeout = timeout
+	return c
 }
 
 // ExtractFractureInput extracts structured FractureInput from a natural language description.
 // If previousInput is provided, it will be included as context for multi-turn conversations.
 func (c *Client) ExtractFractureInput(ctx context.Context, description string, lang i18n.Language, previousInput *domain.FractureInput) (*ExtractionResult, error) {
+	// Check context cancellation before starting
+	if err := ctx.Err(); err != nil {
+		return nil, fmt.Errorf("context cancelled before LLM request: %w", err)
+	}
+
+	// Apply timeout to prevent hanging on slow responses
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
+
 	prompt := BuildExtractionPromptWithContext(description, lang, previousInput)
 
 	config := &genai.GenerateContentConfig{
@@ -72,6 +97,12 @@ func (c *Client) ExtractFractureInput(ctx context.Context, description string, l
 
 	resp, err := c.client.Models.GenerateContent(ctx, c.model, genai.Text(prompt), config)
 	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			return nil, fmt.Errorf("%w: %v", ErrTimeout, err)
+		}
+		if errors.Is(err, context.Canceled) {
+			return nil, fmt.Errorf("request cancelled: %w", err)
+		}
 		return nil, fmt.Errorf("failed to generate content: %w", err)
 	}
 

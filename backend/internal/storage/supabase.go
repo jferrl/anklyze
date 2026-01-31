@@ -41,6 +41,11 @@ func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Rea
 		return fmt.Errorf("failed to read content: %w", err)
 	}
 
+	// Check context before making request
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context cancelled before upload: %w", err)
+	}
+
 	uploadURL := fmt.Sprintf("%s/object/%s/%s", s.baseURL, s.bucketName, path)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, bytes.NewReader(content))
@@ -54,13 +59,13 @@ func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Rea
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to upload file: %w", err)
+		return fmt.Errorf("failed to upload file to %s: %w", path, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("upload failed with status %d: %s", resp.StatusCode, string(body))
+		return fmt.Errorf("upload failed for %s with status %d: %s", path, resp.StatusCode, string(body))
 	}
 
 	return nil
@@ -68,24 +73,29 @@ func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Rea
 
 // Delete removes a file at the specified path from the bucket.
 func (s *SupabaseStorage) Delete(ctx context.Context, path string) error {
+	// Check context before making request
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context cancelled before delete: %w", err)
+	}
+
 	deleteURL := fmt.Sprintf("%s/object/%s/%s", s.baseURL, s.bucketName, path)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, deleteURL, nil)
 	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
+		return fmt.Errorf("failed to create delete request: %w", err)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.serviceRoleKey))
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to delete file: %w", err)
+		return fmt.Errorf("failed to delete file at %s: %w", path, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusNotFound {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("delete failed with status %d: %s", resp.StatusCode, string(body))
+		return fmt.Errorf("delete failed for %s with status %d: %s", path, resp.StatusCode, string(body))
 	}
 
 	return nil
@@ -103,6 +113,11 @@ type signedURLResponse struct {
 
 // GetSignedURL generates a time-limited URL for accessing the file.
 func (s *SupabaseStorage) GetSignedURL(ctx context.Context, path string, expiresIn time.Duration) (string, error) {
+	// Check context before making request
+	if err := ctx.Err(); err != nil {
+		return "", fmt.Errorf("context cancelled before creating signed URL: %w", err)
+	}
+
 	// Supabase expects seconds
 	expiresInSeconds := int(expiresIn.Seconds())
 	if expiresInSeconds < 1 {
@@ -116,12 +131,12 @@ func (s *SupabaseStorage) GetSignedURL(ctx context.Context, path string, expires
 	}
 	bodyBytes, err := json.Marshal(reqBody)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal request: %w", err)
+		return "", fmt.Errorf("failed to marshal signed URL request: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, signURL, bytes.NewReader(bodyBytes))
 	if err != nil {
-		return "", fmt.Errorf("failed to create request: %w", err)
+		return "", fmt.Errorf("failed to create signed URL request: %w", err)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.serviceRoleKey))
@@ -129,18 +144,18 @@ func (s *SupabaseStorage) GetSignedURL(ctx context.Context, path string, expires
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("failed to create signed URL: %w", err)
+		return "", fmt.Errorf("failed to create signed URL for %s: %w", path, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return "", fmt.Errorf("signed URL creation failed with status %d: %s", resp.StatusCode, string(body))
+		return "", fmt.Errorf("signed URL creation failed for %s with status %d: %s", path, resp.StatusCode, string(body))
 	}
 
 	var signResp signedURLResponse
 	if err := json.NewDecoder(resp.Body).Decode(&signResp); err != nil {
-		return "", fmt.Errorf("failed to decode response: %w", err)
+		return "", fmt.Errorf("failed to decode signed URL response: %w", err)
 	}
 
 	// The signedURL is a relative path with query params (e.g., /object/sign/bucket/path?token=xxx)

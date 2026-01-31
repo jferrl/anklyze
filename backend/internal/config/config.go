@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -80,18 +81,28 @@ func getEnv(key, defaultValue string) string {
 
 func getEnvInt(key string, defaultValue int) int {
 	if value := os.Getenv(key); value != "" {
-		if intVal, err := strconv.Atoi(value); err == nil {
-			return intVal
+		intVal, err := strconv.Atoi(value)
+		if err != nil {
+			// Log to stderr since slog may not be initialized yet during config load
+			fmt.Fprintf(os.Stderr, "WARN: invalid integer value for %s=%q, using default %d: %v\n",
+				key, value, defaultValue, err)
+			return defaultValue
 		}
+		return intVal
 	}
 	return defaultValue
 }
 
 func getEnvFloat(key string, defaultValue float64) float64 {
 	if value := os.Getenv(key); value != "" {
-		if floatVal, err := strconv.ParseFloat(value, 64); err == nil {
-			return floatVal
+		floatVal, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			// Log to stderr since slog may not be initialized yet during config load
+			fmt.Fprintf(os.Stderr, "WARN: invalid float value for %s=%q, using default %.2f: %v\n",
+				key, value, defaultValue, err)
+			return defaultValue
 		}
+		return floatVal
 	}
 	return defaultValue
 }

@@ -59,7 +59,12 @@ func AuthMiddleware(validator *Validator) gin.HandlerFunc {
 		token := parts[1]
 		claims, err := validator.ValidateToken(token)
 		if err != nil {
-			slog.Debug("JWT validation failed", "error", err, "token_prefix", token[:min(20, len(token))]+"...")
+			// Log token prefix for debugging (truncate if too long)
+			tokenPrefix := token
+			if len(token) > 20 {
+				tokenPrefix = token[:20] + "..."
+			}
+			slog.Debug("JWT validation failed", "error", err, "token_prefix", tokenPrefix)
 
 			status := http.StatusUnauthorized
 			message := "invalid token"
