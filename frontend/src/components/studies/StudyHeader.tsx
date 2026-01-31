@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock, Users, Scan, CalendarClock } from 'lucide-react';
 import { Badge } from '../ui/badge';
@@ -10,6 +11,16 @@ interface StudyHeaderProps {
   deadline?: string;
 }
 
+function computeDeadlineInfo(deadline?: string) {
+  const now = Date.now();
+  const deadlineDate = deadline ? new Date(deadline) : null;
+  const isExpired = deadlineDate ? deadlineDate.getTime() < now : false;
+  const daysRemaining = deadlineDate
+    ? Math.ceil((deadlineDate.getTime() - now) / (1000 * 60 * 60 * 24))
+    : null;
+  return { deadlineDate, isExpired, daysRemaining };
+}
+
 export function StudyHeader({
   title,
   description,
@@ -19,11 +30,17 @@ export function StudyHeader({
 }: StudyHeaderProps) {
   const { t } = useTranslation();
 
-  const deadlineDate = deadline ? new Date(deadline) : null;
-  const isExpired = deadlineDate && deadlineDate < new Date();
+  const [deadlineInfo, setDeadlineInfo] = useState<{
+    deadlineDate: Date | null;
+    isExpired: boolean;
+    daysRemaining: number | null;
+  }>({ deadlineDate: null, isExpired: false, daysRemaining: null });
 
-  // Calculate days remaining
-  const daysRemaining = deadlineDate ? Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+  useEffect(() => {
+    setDeadlineInfo(computeDeadlineInfo(deadline));
+  }, [deadline]);
+
+  const { deadlineDate, isExpired, daysRemaining } = deadlineInfo;
 
   return (
     <div className="space-y-4">

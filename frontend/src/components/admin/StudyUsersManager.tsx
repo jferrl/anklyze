@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { UserPlus, Trash2, Loader2, Users, Mail } from 'lucide-react';
+import { UserPlus, Trash2, Loader2, Users, Mail, UserCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import {
@@ -11,16 +11,10 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../ui/table';
 import { Alert, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
 import { studyApi } from '../../services/studyApi';
+import { cn } from '@/lib/utils';
 
 interface StudyUsersManagerProps {
   studyId: string;
@@ -71,84 +65,119 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
   const users = data?.users ?? [];
 
   return (
-    <Card>
+    <Card className="chart-card">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          {t('admin.studies.users.title')}
-        </CardTitle>
-        <CardDescription>{t('admin.studies.users.description')}</CardDescription>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Users className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <CardTitle>{t('admin.studies.users.title')}</CardTitle>
+            <CardDescription>{t('admin.studies.users.description')}</CardDescription>
+          </div>
+          <Badge variant="secondary" className="text-sm">
+            {users.length} {users.length === 1 ? 'user' : 'users'}
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent>
         {!disabled && (
-          <form onSubmit={handleAdd} className="flex gap-2 mb-4">
-            <div className="relative flex-1">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="email"
-                placeholder={t('admin.studies.users.emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-9"
-              />
+          <form onSubmit={handleAdd} className="mb-6">
+            <div className="flex gap-3">
+              <div className="relative flex-1">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  placeholder={t('admin.studies.users.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 h-12"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={addMutation.isPending || !email.trim()}
+                className="h-12 px-6 gap-2"
+              >
+                {addMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UserPlus className="h-4 w-4" />
+                )}
+                <span>{t('admin.studies.users.add')}</span>
+              </Button>
             </div>
-            <Button type="submit" disabled={addMutation.isPending || !email.trim()}>
-              {addMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <UserPlus className="h-4 w-4" />
-              )}
-              <span className="ml-2">{t('admin.studies.users.add')}</span>
-            </Button>
           </form>
         )}
 
         {error && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive" className="mb-4 animate-fade-in">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin" />
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center mb-3">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
           </div>
         ) : users.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
-            {t('admin.studies.users.empty')}
-          </p>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p className="text-muted-foreground font-medium">
+              {t('admin.studies.users.empty')}
+            </p>
+            {!disabled && (
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                {t('admin.studies.users.emailPlaceholder')}
+              </p>
+            )}
+          </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.studies.users.email')}</TableHead>
-                <TableHead>{t('admin.studies.users.addedAt')}</TableHead>
-                {!disabled && <TableHead className="w-[50px]"></TableHead>}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.user_email}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </TableCell>
-                  {!disabled && (
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeMutation.mutate(user.user_id)}
-                        disabled={removeMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="space-y-3">
+            {users.map((user, index) => (
+              <div
+                key={user.id}
+                className={cn(
+                  'flex items-center gap-4 p-4 rounded-xl',
+                  'bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50',
+                  'transition-all duration-200 group animate-fade-in'
+                )}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <UserCircle className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-foreground truncate">
+                    {user.user_email}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('admin.studies.users.addedAt')}: {new Date(user.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                {!disabled && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeMutation.mutate(user.user_id)}
+                    disabled={removeMutation.isPending}
+                    className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    {removeMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>
