@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ImageIcon } from 'lucide-react';
+import { ImageIcon, ZoomIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '../components/ui/spinner';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
   getPublishedStudy,
@@ -174,16 +174,19 @@ export function StudyDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Spinner size="lg" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <Spinner size="lg" />
+          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+        </div>
       </div>
     );
   }
 
   if (error || !study) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
+      <div className="container mx-auto px-4 py-12">
+        <Card className="border-destructive/20 bg-destructive/5">
           <CardContent className="py-12 text-center text-muted-foreground">
             {error || t('studies.notFound')}
           </CardContent>
@@ -196,64 +199,87 @@ export function StudyDetailPage() {
   const isExpired = deadline && deadline < new Date();
 
   return (
-    <div className="h-full">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Hero Section with Study Info */}
+      <div className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-8">
+          <StudyHeader
+            title={study.title}
+            description={study.description}
+            hasTACImages={study.has_tac_images}
+            myResponseCount={study.my_response_count}
+            deadline={study.deadline}
+          />
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Left column - Study info and images */}
-          <div className="space-y-6">
-            <StudyHeader
-              title={study.title}
-              description={study.description}
-              hasTACImages={study.has_tac_images}
-              myResponseCount={study.my_response_count}
-              deadline={study.deadline}
-            />
+        <div className="grid gap-8 lg:grid-cols-5">
+          {/* Left column - Images (takes more space) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Image gallery with modern styling */}
+            <div className="sticky top-4">
+              <Card className="overflow-hidden border-border/50 shadow-lg">
+                <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 px-6 py-4 border-b">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                      <ImageIcon className="h-5 w-5 text-primary" />
+                      {t('studies.imageGallery')}
+                    </h2>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <ZoomIn className="h-3 w-3" />
+                      {t('studies.clickToEnlarge')}
+                    </span>
+                  </div>
+                </div>
+                <CardContent className="p-0">
+                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'xray' | 'tac')}>
+                    <div className="px-4 pt-4">
+                      <TabsList className="w-full grid grid-cols-2">
+                        <TabsTrigger value="xray" disabled={xrayImages.length === 0} className="gap-2">
+                          X-Ray
+                          <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{xrayImages.length}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="tac" disabled={tacImages.length === 0} className="gap-2">
+                          TAC
+                          <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{tacImages.length}</span>
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
 
-            {/* Image gallery */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ImageIcon className="h-5 w-5" />
-                  {t('studies.imageGallery')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'xray' | 'tac')}>
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="xray" disabled={xrayImages.length === 0}>
-                      X-Ray ({xrayImages.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="tac" disabled={tacImages.length === 0}>
-                      TAC ({tacImages.length})
-                    </TabsTrigger>
-                  </TabsList>
+                    <TabsContent value="xray" className="mt-0 p-4">
+                      <ImageGrid
+                        images={xrayImages}
+                        imageUrls={imageUrls}
+                        loading={loadingImages}
+                        onImageClick={openLightbox}
+                      />
+                    </TabsContent>
 
-                  <TabsContent value="xray" className="mt-0">
-                    <ImageGrid
-                      images={xrayImages}
-                      imageUrls={imageUrls}
-                      loading={loadingImages}
-                      onImageClick={openLightbox}
-                    />
-                  </TabsContent>
+                    <TabsContent value="tac" className="mt-0 p-4">
+                      <ImageGrid
+                        images={tacImages}
+                        imageUrls={imageUrls}
+                        loading={loadingImages}
+                        onImageClick={openLightbox}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
 
-                  <TabsContent value="tac" className="mt-0">
-                    <ImageGrid
-                      images={tacImages}
-                      imageUrls={imageUrls}
-                      loading={loadingImages}
-                      onImageClick={openLightbox}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-
-            <PreviousResponses responses={myResponses} />
+              {/* Previous Responses - only show if there are responses */}
+              {myResponses.length > 0 && (
+                <div className="mt-6">
+                  <PreviousResponses responses={myResponses} />
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Right column - Classification form */}
-          <div className="space-y-6">
+          {/* Right column - Classification form (main focus) */}
+          <div className="lg:col-span-3">
             <ClassificationPanel
               hasTACImages={study.has_tac_images}
               classificationResult={classificationResult}

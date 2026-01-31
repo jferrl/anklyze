@@ -346,7 +346,21 @@ function ListView({ data }: { data: ChartDataItem[] }) {
 }
 
 // Custom Tooltip
-function CustomTooltip({ active, payload }: any) {
+interface TooltipPayloadItem {
+  payload: {
+    name: string;
+    value: number;
+    fill: string;
+    percentage: number;
+  };
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+}
+
+function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (!active || !payload || !payload.length) return null;
 
   const data = payload[0].payload;

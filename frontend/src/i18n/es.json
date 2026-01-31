@@ -107,7 +107,8 @@
     "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás",
     "draftRestored": "Progreso anterior restaurado",
     "linkCopied": "Enlace copiado al portapapeles",
-    "copyFailed": "Error al copiar el enlace"
+    "copyFailed": "Error al copiar el enlace",
+    "progress": "Progreso"
   },
   "results": {
     "title": "Resultados de la Clasificación",
@@ -336,7 +337,8 @@
     "yourResponses": "{{count}} respuesta(s) enviada(s)",
     "submitSuccess": "Respuesta Enviada",
     "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
-    "submitError": "Error al Enviar"
+    "submitError": "Error al Enviar",
+    "clickToEnlarge": "Clic para ampliar"
   },
   "admin": {
     "studies": {
