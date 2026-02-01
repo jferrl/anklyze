@@ -50,8 +50,8 @@ export function UserProfileForm() {
 
   // Sync profile data to form state when profile loads (only once per profile ID)
   useEffect(() => {
-    if (profile && initializedRef.current !== profile.user_id) {
-      initializedRef.current = profile.user_id;
+    if (profile && initializedRef.current !== profile.id) {
+      initializedRef.current = profile.id;
       // Use setTimeout to avoid synchronous setState in effect
       setTimeout(() => {
         setDisplayName(profile.display_name || '');
