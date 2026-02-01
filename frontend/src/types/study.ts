@@ -204,13 +204,34 @@ export interface UpdateImageRequest {
 
 // --- Reliability metrics types ---
 
+export interface ConfidenceInterval {
+  lower: number;
+  upper: number;
+  level: number; // e.g., 0.95 for 95% CI
+}
+
+export type KappaWeightType = 'linear' | 'quadratic';
+
 export interface SystemAgreement {
   system: string;
   percent_agreement: number;
   cohens_kappa?: number;
+  cohens_kappa_ci?: ConfidenceInterval;
+  weighted_kappa?: number;
+  weighted_kappa_type?: KappaWeightType;
   fleiss_kappa?: number;
+  fleiss_kappa_note?: string;
   confusion_matrix?: Record<string, Record<string, number>>;
   category_counts: Record<string, number>;
+}
+
+export interface CategoryMetrics {
+  category: string;
+  sensitivity: number;
+  specificity: number;
+  ppv: number;
+  npv: number;
+  f1_score: number;
 }
 
 export interface GoldStandardAccuracy {
@@ -222,6 +243,7 @@ export interface GoldStandardAccuracy {
   total_comparisons: number;
   correct_responses: number;
   incorrect_responses: number;
+  per_category_metrics?: Record<string, CategoryMetrics>;
 }
 
 export interface ReliabilityMetrics {

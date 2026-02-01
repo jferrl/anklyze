@@ -13,15 +13,41 @@ import {
   CheckCircle,
   XCircle,
   Percent,
+  Info,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard, KappaGauge, ConfusionMatrix } from '../../components/analytics';
 import { studyApi, downloadDetailedResponsesCSV } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
-import type { SystemAgreement } from '../../types/study';
+import type { SystemAgreement, ConfidenceInterval } from '../../types/study';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../../components/ui/tooltip';
 
 const CLASSIFICATION_SYSTEM_KEYS = ['danis_weber', 'lauge_hansen', 'ao_ota', 'bartonicek'] as const;
+
+// Helper to format Kappa value with confidence interval
+function formatKappaWithCI(kappa: number | undefined, ci?: ConfidenceInterval): string {
+  if (kappa === undefined) return '-';
+  const kappaStr = kappa.toFixed(3);
+  if (ci) {
+    return `${kappaStr} [${ci.lower.toFixed(2)}, ${ci.upper.toFixed(2)}]`;
+  }
+  return kappaStr;
+}
+
+// Helper to get color class based on metric value (0-1 scale)
+function getMetricColorClass(value: number): string {
+  if (value >= 0.9) return 'text-emerald-600 dark:text-emerald-400';
+  if (value >= 0.7) return 'text-green-600 dark:text-green-400';
+  if (value >= 0.5) return 'text-yellow-600 dark:text-yellow-400';
+  return 'text-red-600 dark:text-red-400';
+}
 
 export function StudyReliabilityPage() {
   const { t } = useTranslation();
@@ -269,6 +295,136 @@ export function StudyReliabilityPage() {
           </section>
         )}
 
+        {/* Per-Category Diagnostic Metrics */}
+        {hasGoldStandard && metrics.gold_standard_accuracy?.per_category_metrics &&
+          Object.keys(metrics.gold_standard_accuracy.per_category_metrics).length > 0 && (
+          <section className="chart-card mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">
+                {t('admin.reliability.diagnosticMetrics')}
+              </h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-muted-foreground/60" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>{t('admin.reliability.diagnosticMetricsDescription')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                      {t('admin.reliability.category')}
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center gap-1">
+                            {t('admin.reliability.sensitivity')}
+                            <Info className="w-3 h-3" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('admin.reliability.sensitivityDescription')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center gap-1">
+                            {t('admin.reliability.specificity')}
+                            <Info className="w-3 h-3" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('admin.reliability.specificityDescription')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center gap-1">
+                            {t('admin.reliability.ppv')}
+                            <Info className="w-3 h-3" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('admin.reliability.ppvDescription')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center gap-1">
+                            {t('admin.reliability.npv')}
+                            <Info className="w-3 h-3" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('admin.reliability.npvDescription')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center gap-1">
+                            {t('admin.reliability.f1Score')}
+                            <Info className="w-3 h-3" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('admin.reliability.f1ScoreDescription')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(metrics.gold_standard_accuracy.per_category_metrics)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([category, categoryMetrics]) => (
+                      <tr key={category} className="border-b border-border/30 hover:bg-muted/20">
+                        <td className="py-3 px-4 font-medium text-foreground">{category}</td>
+                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.sensitivity))}>
+                          {(categoryMetrics.sensitivity * 100).toFixed(1)}%
+                        </td>
+                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.specificity))}>
+                          {(categoryMetrics.specificity * 100).toFixed(1)}%
+                        </td>
+                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.ppv))}>
+                          {(categoryMetrics.ppv * 100).toFixed(1)}%
+                        </td>
+                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.npv))}>
+                          {(categoryMetrics.npv * 100).toFixed(1)}%
+                        </td>
+                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.f1_score))}>
+                          {(categoryMetrics.f1_score * 100).toFixed(1)}%
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4 p-3 bg-muted/30 rounded-lg">
+              <p className="text-xs text-muted-foreground">
+                {t('admin.reliability.diagnosticMetricsNote')}
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Kappa Scores Overview */}
         <section className="chart-card mb-8">
           <h2 className="text-xl font-semibold text-foreground mb-6">
@@ -385,11 +541,51 @@ export function StudyReliabilityPage() {
 
                   {getSystemAgreement.cohens_kappa !== undefined && (
                     <div className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
-                      <span className="text-sm text-muted-foreground">
-                        {t('admin.reliability.cohensKappa')} ({t('admin.reliability.raters2')})
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          {t('admin.reliability.cohensKappa')} ({t('admin.reliability.raters2')})
+                        </span>
+                        {getSystemAgreement.cohens_kappa_ci && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="w-3.5 h-3.5 text-muted-foreground/60" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('admin.reliability.confidenceInterval', { level: (getSystemAgreement.cohens_kappa_ci.level * 100).toFixed(0) })}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                       <span className="text-lg font-semibold text-foreground">
-                        {getSystemAgreement.cohens_kappa.toFixed(3)}
+                        {formatKappaWithCI(getSystemAgreement.cohens_kappa, getSystemAgreement.cohens_kappa_ci)}
+                      </span>
+                    </div>
+                  )}
+
+                  {getSystemAgreement.weighted_kappa !== undefined && (
+                    <div className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          {t('admin.reliability.weightedKappa')}
+                          {getSystemAgreement.weighted_kappa_type && (
+                            <span className="text-xs ml-1">({getSystemAgreement.weighted_kappa_type})</span>
+                          )}
+                        </span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="w-3.5 h-3.5 text-muted-foreground/60" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p>{t('admin.reliability.weightedKappaDescription')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <span className="text-lg font-semibold text-foreground">
+                        {getSystemAgreement.weighted_kappa.toFixed(3)}
                       </span>
                     </div>
                   )}
@@ -402,6 +598,22 @@ export function StudyReliabilityPage() {
                       <span className="text-lg font-semibold text-foreground">
                         {getSystemAgreement.fleiss_kappa.toFixed(3)}
                       </span>
+                    </div>
+                  )}
+
+                  {getSystemAgreement.fleiss_kappa === undefined && getSystemAgreement.fleiss_kappa_note && (
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                            {t('admin.reliability.fleissKappa')}
+                          </span>
+                          <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-1">
+                            {getSystemAgreement.fleiss_kappa_note}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
 

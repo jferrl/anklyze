@@ -20,6 +20,24 @@ type ReliabilityMetrics struct {
 	GoldStandardAccuracy *GoldStandardAccuracy `json:"gold_standard_accuracy,omitempty"`
 }
 
+// ConfidenceInterval represents a confidence interval for a statistical measure.
+type ConfidenceInterval struct {
+	Lower float64 `json:"lower"` // Lower bound
+	Upper float64 `json:"upper"` // Upper bound
+	Level float64 `json:"level"` // Confidence level (e.g., 0.95 for 95% CI)
+}
+
+// KappaWeightType defines the weighting scheme for weighted Kappa.
+type KappaWeightType string
+
+const (
+	// KappaWeightLinear uses linear weights: w_ij = 1 - |i-j|/(k-1)
+	// where k is the number of categories
+	KappaWeightLinear KappaWeightType = "linear"
+	// KappaWeightQuadratic uses quadratic weights: w_ij = 1 - (i-j)²/(k-1)²
+	KappaWeightQuadratic KappaWeightType = "quadratic"
+)
+
 // SystemAgreement contains agreement metrics for a single classification system.
 type SystemAgreement struct {
 	System string `json:"system"`
@@ -30,8 +48,17 @@ type SystemAgreement struct {
 	// Kappa statistics (adjusted for chance agreement)
 	// CohensKappa is only meaningful for exactly 2 raters
 	CohensKappa *float64 `json:"cohens_kappa,omitempty"`
-	// FleissKappa is used for 3+ raters
+	// CohensKappaCI is the confidence interval for Cohen's Kappa
+	CohensKappaCI *ConfidenceInterval `json:"cohens_kappa_ci,omitempty"`
+	// WeightedKappa is Kappa with weights accounting for ordinal categories
+	// Only calculated for systems with natural ordering (e.g., AO/OTA)
+	WeightedKappa *float64 `json:"weighted_kappa,omitempty"`
+	// WeightedKappaType indicates the weighting scheme used
+	WeightedKappaType *KappaWeightType `json:"weighted_kappa_type,omitempty"`
+	// FleissKappa is used for 3+ raters (requires multiple subjects/cases)
 	FleissKappa *float64 `json:"fleiss_kappa,omitempty"`
+	// FleissKappaNote explains why Fleiss' Kappa may not be available
+	FleissKappaNote *string `json:"fleiss_kappa_note,omitempty"`
 
 	// Confusion matrix: map[expected][observed] = count
 	// For gold standard comparison: expected = gold standard, observed = user response
@@ -40,6 +67,18 @@ type SystemAgreement struct {
 
 	// Distribution of classifications across categories
 	CategoryCounts map[string]int64 `json:"category_counts"`
+}
+
+// CategoryMetrics contains diagnostic metrics for a single classification category.
+// These metrics help evaluate how well the classification performs for each category
+// when compared against a gold standard.
+type CategoryMetrics struct {
+	Category    string  `json:"category"`
+	Sensitivity float64 `json:"sensitivity"` // True positive rate: TP / (TP + FN)
+	Specificity float64 `json:"specificity"` // True negative rate: TN / (TN + FP)
+	PPV         float64 `json:"ppv"`         // Positive predictive value: TP / (TP + FP)
+	NPV         float64 `json:"npv"`         // Negative predictive value: TN / (TN + FN)
+	F1Score     float64 `json:"f1_score"`    // Harmonic mean of PPV and sensitivity
 }
 
 // GoldStandardAccuracy compares user responses to the reference classification.
@@ -57,6 +96,9 @@ type GoldStandardAccuracy struct {
 	TotalComparisons   int64 `json:"total_comparisons"`
 	CorrectResponses   int64 `json:"correct_responses"`
 	IncorrectResponses int64 `json:"incorrect_responses"`
+
+	// Per-category diagnostic metrics (only populated when enough data exists)
+	PerCategoryMetrics map[string]*CategoryMetrics `json:"per_category_metrics,omitempty"`
 }
 
 // KappaInterpretation returns the interpretation of a Kappa value.
