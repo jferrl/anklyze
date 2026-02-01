@@ -169,9 +169,12 @@ func main() {
 		slog.Info("no SUPABASE_SERVICE_ROLE_KEY configured, study image storage disabled")
 	}
 
+	// Initialize statistics service for reliability metrics
+	statsService := service.NewStatisticsService()
+
 	router := gin.Default()
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
-	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage)
+	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage, statsService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,

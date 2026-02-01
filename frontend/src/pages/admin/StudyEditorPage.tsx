@@ -46,11 +46,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { studyApi } from '../../services/studyApi';
 import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
+import { ReferenceClassificationForm } from '../../components/studies/ReferenceClassificationForm';
 import { cn } from '@/lib/utils';
 import type { ImageCategory, StudyImage } from '../../types/study';
+import type { ClassificationResult } from '../../types/fracture';
+import { Switch } from '../../components/ui/switch';
+import { Settings, Target } from 'lucide-react';
 
 interface PendingUpload {
   id: string;
@@ -59,9 +70,9 @@ interface PendingUpload {
   preview: string;
 }
 
-type Step = 'details' | 'images' | 'users';
+type Step = 'details' | 'settings' | 'images' | 'users';
 
-const STEPS: Step[] = ['details', 'images', 'users'];
+const STEPS: Step[] = ['details', 'settings', 'images', 'users'];
 
 export function StudyEditorPage() {
   const { t } = useTranslation();
@@ -88,6 +99,12 @@ export function StudyEditorPage() {
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Validation study settings
+  const [referenceClassification, setReferenceClassification] = useState<ClassificationResult | undefined>(undefined);
+  const [showReferenceAfterSubmit, setShowReferenceAfterSubmit] = useState(false);
+  const [allowMultipleResponses, setAllowMultipleResponses] = useState(true);
+  const [showClassificationDialog, setShowClassificationDialog] = useState(false);
+
   // Track previous study ID to reset form when switching studies
   const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
   if (existingStudy && existingStudy.id !== prevStudyId) {
@@ -96,6 +113,10 @@ export function StudyEditorPage() {
     setDescription(existingStudy.description || '');
     setDeadline(existingStudy.deadline?.split('T')[0] || '');
     setPendingUploads([]);
+    // Validation study settings
+    setReferenceClassification(existingStudy.reference_classification);
+    setShowReferenceAfterSubmit(existingStudy.show_reference_after_submit || false);
+    setAllowMultipleResponses(existingStudy.allow_multiple_responses !== false);
   }
 
   // Create study mutation
@@ -108,8 +129,8 @@ export function StudyEditorPage() {
       for (const upload of uploadsToProcess) {
         await studyApi.uploadImage(study.id, upload.file, upload.category);
       }
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
       navigate(`/admin/studies/${study.id}/edit`);
     },
     onError: (err: Error) => {
@@ -122,9 +143,9 @@ export function StudyEditorPage() {
     mutationFn: ({ studyId, data }: { studyId: string; data: Parameters<typeof studyApi.updateStudy>[1] }) =>
       studyApi.updateStudy(studyId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
+      queryClient.invalidateQueries({ queryKey: ['study', id], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -153,10 +174,10 @@ export function StudyEditorPage() {
   const publishMutation = useMutation({
     mutationFn: studyApi.publishStudy,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['study', id], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
       setShowPublishDialog(false);
       navigate('/admin/studies');
     },
@@ -215,6 +236,9 @@ export function StudyEditorPage() {
       title: title.trim(),
       description: description.trim() || undefined,
       deadline: deadline ? new Date(deadline).toISOString() : undefined,
+      reference_classification: referenceClassification,
+      show_reference_after_submit: showReferenceAfterSubmit,
+      allow_multiple_responses: allowMultipleResponses,
     };
 
     if (isEditing) {
@@ -261,6 +285,8 @@ export function StudyEditorPage() {
   const isSaving = createMutation.isPending || updateMutation.isPending || uploadImageMutation.isPending;
   const canPublish = isEditing && existingStudy?.status === 'draft';
   const canEdit = !isEditing || existingStudy?.status === 'draft';
+  // Description and deadline can be edited even after publication
+  const canEditAlways = !isEditing || existingStudy?.status !== 'closed';
 
   const currentStepIndex = STEPS.indexOf(currentStep);
 
@@ -294,6 +320,11 @@ export function StudyEditorPage() {
       icon: FileText,
       label: t('admin.studies.details'),
       description: t('admin.studies.detailsDescription'),
+    },
+    settings: {
+      icon: Settings,
+      label: t('admin.studies.validationSettings', 'Validation'),
+      description: t('admin.studies.validationSettingsDescription', 'Configure validation study options'),
     },
     images: {
       icon: Images,
@@ -499,7 +530,7 @@ export function StudyEditorPage() {
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder={t('admin.studies.descriptionPlaceholder')}
                       rows={4}
-                      disabled={!canEdit}
+                      disabled={!canEditAlways}
                       className="resize-none"
                     />
                   </div>
@@ -516,7 +547,7 @@ export function StudyEditorPage() {
                       type="date"
                       value={deadline}
                       onChange={(e) => setDeadline(e.target.value)}
-                      disabled={!canEdit}
+                      disabled={!canEditAlways}
                       className="h-12"
                     />
                   </div>
@@ -525,6 +556,170 @@ export function StudyEditorPage() {
 
               {/* Navigation */}
               <div className="flex justify-end mt-6">
+                <Button onClick={goToNextStep} className="gap-2">
+                  {t('common.next')}
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Settings Step */}
+          {currentStep === 'settings' && (
+            <div className="animate-fade-in">
+              <Card className="chart-card">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Settings className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle>{t('admin.studies.validationSettings', 'Validation Settings')}</CardTitle>
+                      <CardDescription>
+                        {t('admin.studies.validationSettingsDescription', 'Configure how this study validates responses')}
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Reference Classification */}
+                  <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-border/50">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center mt-0.5">
+                        <Target className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground">
+                          {t('admin.studies.referenceClassification', 'Reference Classification (Gold Standard)')}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {t('admin.studies.referenceClassificationDescription',
+                            'Set the correct classification to compare against participant responses')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {referenceClassification ? (
+                      <div className="ml-11 space-y-3">
+                        <div className="p-3 rounded-lg bg-background border border-border/50">
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            {referenceClassification.danis_weber && (
+                              <div>
+                                <span className="text-muted-foreground">Danis-Weber:</span>{' '}
+                                <span className="font-medium">{referenceClassification.danis_weber.type}</span>
+                              </div>
+                            )}
+                            {referenceClassification.lauge_hansen && (
+                              <div>
+                                <span className="text-muted-foreground">Lauge-Hansen:</span>{' '}
+                                <span className="font-medium">{referenceClassification.lauge_hansen.type}</span>
+                              </div>
+                            )}
+                            {referenceClassification.ao_ota && (
+                              <div>
+                                <span className="text-muted-foreground">AO/OTA:</span>{' '}
+                                <span className="font-medium">{referenceClassification.ao_ota.code}</span>
+                              </div>
+                            )}
+                            {referenceClassification.bartonicek && (
+                              <div>
+                                <span className="text-muted-foreground">Bartonicek:</span>{' '}
+                                <span className="font-medium">{referenceClassification.bartonicek.type}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowClassificationDialog(true)}
+                            disabled={!canEdit}
+                          >
+                            {t('admin.studies.changeReference', 'Change')}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setReferenceClassification(undefined)}
+                            disabled={!canEdit}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            {t('admin.studies.clearReference', 'Clear Reference')}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="ml-11">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowClassificationDialog(true)}
+                          disabled={!canEdit}
+                          className="gap-2"
+                        >
+                          <Target className="w-4 h-4" />
+                          {t('admin.studies.setReference', 'Set Reference Classification')}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Response Options */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-foreground">
+                      {t('admin.studies.responseOptions', 'Response Options')}
+                    </h3>
+
+                    {/* Allow Multiple Responses */}
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
+                      <div className="space-y-1">
+                        <Label htmlFor="allowMultiple" className="font-medium cursor-pointer">
+                          {t('admin.studies.allowMultipleResponses', 'Allow Multiple Responses')}
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          {t('admin.studies.allowMultipleResponsesDescription',
+                            'When disabled, each participant can only submit one response')}
+                        </p>
+                      </div>
+                      <Switch
+                        id="allowMultiple"
+                        checked={allowMultipleResponses}
+                        onCheckedChange={setAllowMultipleResponses}
+                        disabled={!canEdit}
+                      />
+                    </div>
+
+                    {/* Show Reference After Submit */}
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
+                      <div className="space-y-1">
+                        <Label htmlFor="showReference" className="font-medium cursor-pointer">
+                          {t('admin.studies.showReferenceAfterSubmit', 'Show Reference After Submit')}
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          {t('admin.studies.showReferenceAfterSubmitDescription',
+                            'Display the correct classification after participants submit their response')}
+                        </p>
+                      </div>
+                      <Switch
+                        id="showReference"
+                        checked={showReferenceAfterSubmit}
+                        onCheckedChange={setShowReferenceAfterSubmit}
+                        disabled={!canEdit || !referenceClassification}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Navigation */}
+              <div className="flex justify-between mt-6">
+                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
+                  <ChevronLeft className="w-4 h-4" />
+                  {t('common.previous')}
+                </Button>
                 <Button onClick={goToNextStep} className="gap-2">
                   {t('common.next')}
                   <ChevronRight className="w-4 h-4" />
@@ -703,7 +898,7 @@ export function StudyEditorPage() {
             <div className="animate-fade-in">
               <StudyUsersManager
                 studyId={id!}
-                disabled={existingStudy?.status !== 'draft'}
+                disabled={existingStudy?.status === 'closed'}
               />
 
               {/* Navigation */}
@@ -740,6 +935,26 @@ export function StudyEditorPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Reference Classification Dialog */}
+      <Dialog open={showClassificationDialog} onOpenChange={setShowClassificationDialog}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('admin.studies.setReference', 'Set Reference Classification')}</DialogTitle>
+            <DialogDescription>
+              {t('admin.studies.setReferenceDescription', 'Select the gold standard classification for this study. Enable only the systems you want to evaluate.')}
+            </DialogDescription>
+          </DialogHeader>
+          <ReferenceClassificationForm
+            initialValue={referenceClassification}
+            onSave={(result) => {
+              setReferenceClassification(result);
+              setShowClassificationDialog(false);
+            }}
+            onCancel={() => setShowClassificationDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

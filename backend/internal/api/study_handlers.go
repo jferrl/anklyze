@@ -23,6 +23,12 @@ type StudyHandler struct {
 	userRepo          auth.UserService
 	storage           storage.Storage
 	signedURLDuration time.Duration
+	statsService      *StatisticsService
+}
+
+// StatisticsService is imported from service package
+type StatisticsService interface {
+	CalculateReliabilityMetrics(responses []domain.StudyResponse, study *domain.Study) (*domain.ReliabilityMetrics, error)
 }
 
 // NewStudyHandler creates a new study handler.
@@ -32,6 +38,7 @@ func NewStudyHandler(
 	analyticsRepo repository.StudyAnalyticsRepository,
 	userRepo auth.UserService,
 	storage storage.Storage,
+	statsService *StatisticsService,
 ) *StudyHandler {
 	return &StudyHandler{
 		studyRepo:         studyRepo,
@@ -40,6 +47,7 @@ func NewStudyHandler(
 		userRepo:          userRepo,
 		storage:           storage,
 		signedURLDuration: 15 * time.Minute,
+		statsService:      statsService,
 	}
 }
 
@@ -47,16 +55,22 @@ func NewStudyHandler(
 
 // CreateStudyRequest is the request body for creating a study.
 type CreateStudyRequest struct {
-	Title       string     `json:"title" binding:"required,max=255"`
-	Description string     `json:"description"`
-	Deadline    *time.Time `json:"deadline,omitempty"`
+	Title                    string                      `json:"title" binding:"required,max=255"`
+	Description              string                      `json:"description"`
+	Deadline                 *time.Time                  `json:"deadline,omitempty"`
+	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
+	ShowReferenceAfterSubmit bool                        `json:"show_reference_after_submit"`
+	AllowMultipleResponses   *bool                       `json:"allow_multiple_responses,omitempty"`
 }
 
 // UpdateStudyRequest is the request body for updating a study.
 type UpdateStudyRequest struct {
-	Title       *string    `json:"title,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	Deadline    *time.Time `json:"deadline,omitempty"`
+	Title                    *string                      `json:"title,omitempty"`
+	Description              *string                      `json:"description,omitempty"`
+	Deadline                 *time.Time                   `json:"deadline,omitempty"`
+	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
+	ShowReferenceAfterSubmit *bool                        `json:"show_reference_after_submit,omitempty"`
+	AllowMultipleResponses   *bool                        `json:"allow_multiple_responses,omitempty"`
 }
 
 // SubmitResponseRequest is the request body for submitting a classification response.
@@ -109,16 +123,34 @@ type UserStudyItem struct {
 
 // UserStudyDetailResponse is the response for getting a study detail for users.
 type UserStudyDetailResponse struct {
-	ID              uuid.UUID            `json:"id"`
-	Title           string               `json:"title"`
-	Description     string               `json:"description,omitempty"`
-	Status          domain.StudyStatus   `json:"status"`
-	Deadline        *time.Time           `json:"deadline,omitempty"`
-	PublishedAt     *time.Time           `json:"published_at,omitempty"`
-	HasTACImages    bool                 `json:"has_tac_images"`
-	Images          []StudyImageResponse `json:"images"`
-	HasResponded    bool                 `json:"has_responded"`
-	MyResponseCount int                  `json:"my_response_count"`
+	ID                     uuid.UUID            `json:"id"`
+	Title                  string               `json:"title"`
+	Description            string               `json:"description,omitempty"`
+	Status                 domain.StudyStatus   `json:"status"`
+	Deadline               *time.Time           `json:"deadline,omitempty"`
+	PublishedAt            *time.Time           `json:"published_at,omitempty"`
+	HasTACImages           bool                 `json:"has_tac_images"`
+	Images                 []StudyImageResponse `json:"images"`
+	HasResponded           bool                 `json:"has_responded"`
+	MyResponseCount        int                  `json:"my_response_count"`
+	AllowMultipleResponses bool                 `json:"allow_multiple_responses"`
+	IsExpired              bool                 `json:"is_expired"`
+}
+
+// SubmitResponseResult is the response for submitting a classification, including reference comparison.
+type SubmitResponseResult struct {
+	Response                *domain.StudyResponse        `json:"response"`
+	ReferenceClassification *domain.ClassificationResult `json:"reference_classification,omitempty"`
+	MatchesDanisWeber       *bool                        `json:"matches_danis_weber,omitempty"`
+	MatchesLaugeHansen      *bool                        `json:"matches_lauge_hansen,omitempty"`
+	MatchesAOOTA            *bool                        `json:"matches_ao_ota,omitempty"`
+	MatchesBartonicek       *bool                        `json:"matches_bartonicek,omitempty"`
+}
+
+// ReliabilityMetricsResponse is the response for reliability metrics endpoint.
+type ReliabilityMetricsResponse struct {
+	*domain.ReliabilityMetrics
+	CalculatedAt time.Time `json:"calculated_at"`
 }
 
 // StudyImageResponse is the image info in responses (no storage path).
@@ -194,6 +226,19 @@ func (h *StudyHandler) CreateStudy(c *gin.Context) {
 
 	study := domain.NewStudy(userID, req.Title, req.Description, req.Deadline)
 
+	// Set validation study options
+	if req.ReferenceClassification != nil {
+		if err := study.SetReferenceClassification(req.ReferenceClassification); err != nil {
+			slog.Error("failed to set reference classification", "error", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference classification"})
+			return
+		}
+	}
+	study.ShowReferenceAfterSubmit = req.ShowReferenceAfterSubmit
+	if req.AllowMultipleResponses != nil {
+		study.AllowMultipleResponses = *req.AllowMultipleResponses
+	}
+
 	if err := h.studyRepo.Create(c.Request.Context(), study); err != nil {
 		slog.Error("failed to create study", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create study"})
@@ -260,6 +305,8 @@ func (h *StudyHandler) GetStudy(c *gin.Context) {
 }
 
 // UpdateStudy handles PUT /api/admin/studies/:id
+// Draft studies: all fields can be edited
+// Published/Closed studies: only description and deadline can be edited
 func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -278,20 +325,33 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 		return
 	}
 
-	if !study.CanBeEdited() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "study cannot be edited in current status"})
-		return
-	}
-
 	var req UpdateStudyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
 		return
 	}
 
-	if req.Title != nil {
-		study.Title = *req.Title
+	// For draft studies, allow all fields to be edited
+	if study.CanBeEdited() {
+		if req.Title != nil {
+			study.Title = *req.Title
+		}
+		if req.ReferenceClassification != nil {
+			if err := study.SetReferenceClassification(req.ReferenceClassification); err != nil {
+				slog.Error("failed to set reference classification", "error", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference classification"})
+				return
+			}
+		}
+		if req.ShowReferenceAfterSubmit != nil {
+			study.ShowReferenceAfterSubmit = *req.ShowReferenceAfterSubmit
+		}
+		if req.AllowMultipleResponses != nil {
+			study.AllowMultipleResponses = *req.AllowMultipleResponses
+		}
 	}
+
+	// Description and deadline can always be edited (draft, published, or closed)
 	if req.Description != nil {
 		study.Description = *req.Description
 	}
@@ -817,16 +877,18 @@ func (h *StudyHandler) GetPublishedStudy(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, UserStudyDetailResponse{
-		ID:              study.ID,
-		Title:           study.Title,
-		Description:     study.Description,
-		Status:          study.Status,
-		Deadline:        study.Deadline,
-		PublishedAt:     study.PublishedAt,
-		HasTACImages:    study.HasTACImages,
-		Images:          imageResponses,
-		HasResponded:    hasResponded,
-		MyResponseCount: myResponseCount,
+		ID:                     study.ID,
+		Title:                  study.Title,
+		Description:            study.Description,
+		Status:                 study.Status,
+		Deadline:               study.Deadline,
+		PublishedAt:            study.PublishedAt,
+		HasTACImages:           study.HasTACImages,
+		Images:                 imageResponses,
+		HasResponded:           hasResponded,
+		MyResponseCount:        myResponseCount,
+		AllowMultipleResponses: study.AllowMultipleResponses,
+		IsExpired:              study.IsExpired(),
 	})
 }
 
@@ -979,11 +1041,31 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 
 	if !study.CanAcceptResponses() {
 		if study.IsExpired() {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "study deadline has passed"})
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "study deadline has passed",
+				"code":  "DEADLINE_PASSED",
+			})
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "study is not accepting responses"})
 		}
 		return
+	}
+
+	// Check if single response mode and user already responded
+	if !study.AllowMultipleResponses {
+		hasResponded, err := h.responseRepo.HasUserResponded(c.Request.Context(), userID, studyID)
+		if err != nil {
+			slog.Error("failed to check existing response", "error", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check response status"})
+			return
+		}
+		if hasResponded {
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "you have already submitted a response to this study",
+				"code":  "ALREADY_RESPONDED",
+			})
+			return
+		}
 	}
 
 	var req SubmitResponseRequest
@@ -1014,7 +1096,40 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 		_ = h.studyRepo.UpdateUniqueUsers(c.Request.Context(), studyID, int(count))
 	}()
 
-	c.JSON(http.StatusCreated, response)
+	// Build result with reference comparison if enabled
+	result := SubmitResponseResult{
+		Response: response,
+	}
+
+	if study.ShowReferenceAfterSubmit && study.HasReferenceClassification() {
+		refClass, err := study.GetReferenceClassification()
+		if err == nil && refClass != nil {
+			result.ReferenceClassification = refClass
+
+			// Compare Danis-Weber
+			if req.Classification.DanisWeber != nil && refClass.DanisWeber != nil {
+				match := req.Classification.DanisWeber.Type == refClass.DanisWeber.Type
+				result.MatchesDanisWeber = &match
+			}
+			// Compare Lauge-Hansen
+			if req.Classification.LaugeHansen != nil && refClass.LaugeHansen != nil {
+				match := req.Classification.LaugeHansen.Type == refClass.LaugeHansen.Type
+				result.MatchesLaugeHansen = &match
+			}
+			// Compare AO/OTA
+			if req.Classification.AOOTA != nil && refClass.AOOTA != nil {
+				match := req.Classification.AOOTA.Code == refClass.AOOTA.Code
+				result.MatchesAOOTA = &match
+			}
+			// Compare Bartonicek
+			if req.Classification.Bartonicek != nil && refClass.Bartonicek != nil {
+				match := req.Classification.Bartonicek.Type == refClass.Bartonicek.Type
+				result.MatchesBartonicek = &match
+			}
+		}
+	}
+
+	c.JSON(http.StatusCreated, result)
 }
 
 // GetMyResponses handles GET /api/studies/:id/my-responses
@@ -1313,4 +1428,189 @@ func (h *StudyHandler) RemoveStudyUser(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// --- Reliability Metrics ---
+
+// GetReliabilityMetrics handles GET /api/admin/studies/:id/reliability
+func (h *StudyHandler) GetReliabilityMetrics(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get study"})
+		return
+	}
+	if study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "study not found"})
+		return
+	}
+
+	// Get all responses for calculation
+	responses, err := h.responseRepo.GetAllByStudy(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get responses", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get responses"})
+		return
+	}
+
+	if len(responses) < 2 {
+		c.JSON(http.StatusOK, gin.H{
+			"message":          "insufficient responses for reliability calculation",
+			"response_count":   len(responses),
+			"minimum_required": 2,
+		})
+		return
+	}
+
+	// Calculate metrics using statistics service
+	if h.statsService == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "statistics service not available"})
+		return
+	}
+
+	metrics, err := (*h.statsService).CalculateReliabilityMetrics(responses, study)
+	if err != nil {
+		slog.Error("failed to calculate reliability metrics", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate metrics"})
+		return
+	}
+
+	c.JSON(http.StatusOK, ReliabilityMetricsResponse{
+		ReliabilityMetrics: metrics,
+		CalculatedAt:       time.Now(),
+	})
+}
+
+// ExportDetailedResponses handles GET /api/admin/studies/:id/export/detailed
+// Exports responses with user expertise and gold standard comparison.
+func (h *StudyHandler) ExportDetailedResponses(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil || study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "study not found"})
+		return
+	}
+
+	// Get responses with user expertise
+	responses, err := h.responseRepo.GetResponsesWithUserExpertise(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get responses for export", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to export responses"})
+		return
+	}
+
+	// Parse reference classification if exists
+	var refClass *domain.ClassificationResult
+	if study.HasReferenceClassification() {
+		refClass, _ = study.GetReferenceClassification()
+	}
+
+	// Generate CSV
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"study_%s_detailed.csv\"", studyID.String()[:8]))
+
+	// Write header
+	header := "response_id,user_email,years_experience,specialty,training_level,institution,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek"
+	if refClass != nil {
+		header += ",dw_correct,lh_correct,ao_correct,bt_correct"
+	}
+	c.Writer.WriteString(header + "\n")
+
+	// Write rows
+	for _, r := range responses {
+		dw := ""
+		if r.DanisWeberType != nil {
+			dw = *r.DanisWeberType
+		}
+		lh := ""
+		if r.LaugeHansenType != nil {
+			lh = *r.LaugeHansenType
+		}
+		ao := ""
+		if r.AOOTACode != nil {
+			ao = *r.AOOTACode
+		}
+		bt := ""
+		if r.BartonicekType != nil {
+			bt = *r.BartonicekType
+		}
+
+		yearsExp := ""
+		if r.YearsExperience != nil {
+			yearsExp = strconv.Itoa(*r.YearsExperience)
+		}
+		specialty := ""
+		if r.Specialty != nil {
+			specialty = *r.Specialty
+		}
+		trainingLevel := ""
+		if r.TrainingLevel != nil {
+			trainingLevel = *r.TrainingLevel
+		}
+		institution := ""
+		if r.Institution != nil {
+			institution = *r.Institution
+		}
+
+		line := fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s",
+			r.ID.String(),
+			r.UserEmail,
+			yearsExp,
+			specialty,
+			trainingLevel,
+			institution,
+			r.CreatedAt.Format(time.RFC3339),
+			r.TimeTakenMS,
+			dw, lh, ao, bt,
+		)
+
+		// Add gold standard comparison if reference exists
+		if refClass != nil {
+			dwCorrect, lhCorrect, aoCorrect, btCorrect := "", "", "", ""
+
+			if r.DanisWeberType != nil && refClass.DanisWeber != nil {
+				if *r.DanisWeberType == string(refClass.DanisWeber.Type) {
+					dwCorrect = "1"
+				} else {
+					dwCorrect = "0"
+				}
+			}
+			if r.LaugeHansenType != nil && refClass.LaugeHansen != nil {
+				if *r.LaugeHansenType == string(refClass.LaugeHansen.Type) {
+					lhCorrect = "1"
+				} else {
+					lhCorrect = "0"
+				}
+			}
+			if r.AOOTACode != nil && refClass.AOOTA != nil {
+				if *r.AOOTACode == string(refClass.AOOTA.Code) {
+					aoCorrect = "1"
+				} else {
+					aoCorrect = "0"
+				}
+			}
+			if r.BartonicekType != nil && refClass.Bartonicek != nil {
+				if *r.BartonicekType == string(refClass.Bartonicek.Type) {
+					btCorrect = "1"
+				} else {
+					btCorrect = "0"
+				}
+			}
+
+			line += fmt.Sprintf(",%s,%s,%s,%s", dwCorrect, lhCorrect, aoCorrect, btCorrect)
+		}
+
+		c.Writer.WriteString(line + "\n")
+	}
 }

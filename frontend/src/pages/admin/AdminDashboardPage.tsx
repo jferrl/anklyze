@@ -26,6 +26,8 @@ export function AdminDashboardPage() {
   const { data: studiesData, isLoading } = useQuery({
     queryKey: ['admin-studies-all'],
     queryFn: () => studyApi.listStudies(undefined, 1, 100),
+    staleTime: 0, // Always consider data stale
+    refetchOnMount: 'always', // Refetch when component mounts
   });
 
   const studies = studiesData?.studies ?? [];

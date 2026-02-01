@@ -12,6 +12,7 @@ import {
   FileText,
   ArrowLeft,
   Calendar,
+  Target,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
@@ -157,14 +158,25 @@ export function StudyAnalyticsPage() {
               </div>
             </div>
 
-            <Button
-              onClick={handleExportCSV}
-              size="lg"
-              className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
-            >
-              <Download className="w-4 h-4" />
-              {t('admin.studies.exportCSV', 'Export CSV')}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => navigate(`/admin/studies/${id}/reliability`)}
+                variant="outline"
+                size="lg"
+                className="gap-2"
+              >
+                <Target className="w-4 h-4" />
+                {t('admin.analytics.reliabilityMetrics', 'Reliability Metrics')}
+              </Button>
+              <Button
+                onClick={handleExportCSV}
+                size="lg"
+                className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
+              >
+                <Download className="w-4 h-4" />
+                {t('admin.studies.exportCSV', 'Export CSV')}
+              </Button>
+            </div>
           </div>
         </header>
 

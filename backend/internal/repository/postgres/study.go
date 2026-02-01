@@ -399,6 +399,46 @@ func (r *StudyResponseRepository) updateStudyCounters(studyID uuid.UUID) {
 	}
 }
 
+// HasUserResponded checks if a user has already submitted a response to a study.
+func (r *StudyResponseRepository) HasUserResponded(ctx context.Context, userID, studyID uuid.UUID) (bool, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.StudyResponse{}).
+		Where("user_id = ? AND study_id = ?", userID, studyID).
+		Count(&count).Error
+	return count > 0, err
+}
+
+// GetAllByStudy retrieves all responses for a study without pagination (for Kappa calculation).
+func (r *StudyResponseRepository) GetAllByStudy(ctx context.Context, studyID uuid.UUID) ([]domain.StudyResponse, error) {
+	var responses []domain.StudyResponse
+	err := r.db.WithContext(ctx).
+		Where("study_id = ?", studyID).
+		Order("created_at ASC").
+		Find(&responses).Error
+	return responses, err
+}
+
+// GetResponsesWithUserExpertise retrieves responses joined with user expertise data.
+func (r *StudyResponseRepository) GetResponsesWithUserExpertise(ctx context.Context, studyID uuid.UUID) ([]domain.ResponseWithExpertise, error) {
+	var results []domain.ResponseWithExpertise
+
+	err := r.db.WithContext(ctx).
+		Table("study_responses sr").
+		Select(`
+			sr.id, sr.study_id, sr.user_id, sr.created_at, sr.classification, sr.time_taken_ms,
+			sr.danis_weber_type, sr.lauge_hansen_type, sr.ao_ota_code, sr.bartonicek_type,
+			u.email as user_email, u.display_name as user_display_name,
+			u.years_experience, u.specialty, u.training_level, u.institution
+		`).
+		Joins("JOIN users u ON sr.user_id = u.id").
+		Where("sr.study_id = ?", studyID).
+		Order("sr.created_at ASC").
+		Scan(&results).Error
+
+	return results, err
+}
+
 // StudyAnalyticsRepository implements study analytics queries.
 type StudyAnalyticsRepository struct {
 	db *gorm.DB

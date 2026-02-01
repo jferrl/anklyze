@@ -21,6 +21,10 @@ export interface Study {
   has_tac_images: boolean;
   response_count: number;
   unique_users: number;
+  // Validation study fields
+  reference_classification?: ClassificationResult;
+  show_reference_after_submit: boolean;
+  allow_multiple_responses: boolean;
 }
 
 // Study image
@@ -74,6 +78,8 @@ export interface UserStudyDetail {
   images: StudyImageInfo[];
   has_responded: boolean;
   my_response_count: number;
+  allow_multiple_responses: boolean;
+  is_expired: boolean;
 }
 
 // Study response
@@ -98,12 +104,18 @@ export interface CreateStudyRequest {
   title: string;
   description?: string;
   deadline?: string;
+  reference_classification?: ClassificationResult;
+  show_reference_after_submit?: boolean;
+  allow_multiple_responses?: boolean;
 }
 
 export interface UpdateStudyRequest {
   title?: string;
   description?: string;
   deadline?: string;
+  reference_classification?: ClassificationResult;
+  show_reference_after_submit?: boolean;
+  allow_multiple_responses?: boolean;
 }
 
 export interface SubmitResponseRequest {
@@ -188,4 +200,91 @@ export interface AddStudyUserRequest {
 
 export interface UpdateImageRequest {
   display_order?: number;
+}
+
+// --- Reliability metrics types ---
+
+export interface SystemAgreement {
+  system: string;
+  percent_agreement: number;
+  cohens_kappa?: number;
+  fleiss_kappa?: number;
+  confusion_matrix?: Record<string, Record<string, number>>;
+  category_counts: Record<string, number>;
+}
+
+export interface GoldStandardAccuracy {
+  danis_weber_accuracy?: number;
+  lauge_hansen_accuracy?: number;
+  ao_ota_accuracy?: number;
+  bartonicek_accuracy?: number;
+  overall_accuracy: number;
+  total_comparisons: number;
+  correct_responses: number;
+  incorrect_responses: number;
+}
+
+export interface ReliabilityMetrics {
+  study_id: string;
+  total_responses: number;
+  unique_raters: number;
+  danis_weber_agreement?: SystemAgreement;
+  lauge_hansen_agreement?: SystemAgreement;
+  ao_ota_agreement?: SystemAgreement;
+  bartonicek_agreement?: SystemAgreement;
+  gold_standard_accuracy?: GoldStandardAccuracy;
+}
+
+export interface ReliabilityMetricsResponse extends ReliabilityMetrics {
+  calculated_at: string;
+}
+
+// --- Submit response result (with gold standard comparison) ---
+
+export interface SubmitResponseResult {
+  response: StudyResponse;
+  reference_classification?: ClassificationResult;
+  matches_danis_weber?: boolean;
+  matches_lauge_hansen?: boolean;
+  matches_ao_ota?: boolean;
+  matches_bartonicek?: boolean;
+}
+
+// --- User profile types ---
+
+export type Specialty = 'traumatology' | 'orthopedics' | 'emergency' | 'radiology' | 'general' | 'other';
+export type TrainingLevel = 'resident' | 'fellow' | 'attending' | 'other';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: 'user' | 'admin';
+  display_name?: string;
+  avatar_url?: string;
+  provider?: string;
+  years_experience?: number;
+  specialty?: Specialty;
+  training_level?: TrainingLevel;
+  institution?: string;
+}
+
+export interface UpdateUserProfileRequest {
+  display_name?: string;
+  years_experience?: number;
+  specialty?: Specialty;
+  training_level?: TrainingLevel;
+  institution?: string;
+}
+
+// Helper for Kappa interpretation
+export function getKappaInterpretation(kappa: number): {
+  label: string;
+  color: string;
+} {
+  if (kappa < 0) return { label: 'Poor', color: 'red' };
+  if (kappa <= 0.2) return { label: 'Slight', color: 'orange' };
+  if (kappa <= 0.4) return { label: 'Fair', color: 'yellow' };
+  if (kappa <= 0.6) return { label: 'Moderate', color: 'blue' };
+  if (kappa <= 0.8) return { label: 'Substantial', color: 'green' };
+  return { label: 'Almost Perfect', color: 'emerald' };
 }

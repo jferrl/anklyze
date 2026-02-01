@@ -7,7 +7,8 @@
     "dashboard": "Panel",
     "manageStudies": "Gestionar Estudios",
     "analytics": "Analíticas",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "profile": "Perfil"
   },
   "breadcrumbs": {
     "classify": "Clasificar",
@@ -338,7 +339,11 @@
     "submitSuccess": "Respuesta Enviada",
     "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
     "submitError": "Error al Enviar",
-    "clickToEnlarge": "Clic para ampliar"
+    "clickToEnlarge": "Clic para ampliar",
+    "alreadyResponded": "Ya Has Respondido",
+    "alreadyRespondedDescription": "Ya has enviado una respuesta a este estudio. Este estudio solo permite una respuesta por participante.",
+    "matchesReference": "¡Tu clasificación coincide con la referencia!",
+    "referenceComparison": "Comparación con la Referencia"
   },
   "admin": {
     "studies": {
@@ -360,6 +365,7 @@
       "exportCSV": "Exportar CSV",
       "backToList": "Volver a Estudios",
       "notFound": "Estudio no encontrado",
+      "notFoundDescription": "El estudio que buscas no existe o ha sido eliminado.",
       "details": "Detalles del Estudio",
       "detailsDescription": "Información básica sobre el caso clínico",
       "titlePlaceholder": "Introduce el título del estudio...",
@@ -401,6 +407,74 @@
         "created": "Creado",
         "deadline": "Fecha límite",
         "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"
+      },
+      "validationSettings": "Validación",
+      "validationSettingsDescription": "Configura las opciones del estudio de validación",
+      "referenceClassification": "Clasificación de Referencia (Gold Standard)",
+      "referenceClassificationDescription": "Establece la clasificación correcta para comparar con las respuestas de los participantes",
+      "clearReference": "Borrar Referencia",
+      "noReferenceSet": "No se ha establecido clasificación de referencia.",
+      "setReference": "Establecer Clasificación de Referencia",
+      "setReferenceDescription": "Completa el formulario de clasificación para establecer el gold standard de este estudio",
+      "changeReference": "Cambiar",
+      "responseOptions": "Opciones de Respuesta",
+      "allowMultipleResponses": "Permitir Múltiples Respuestas",
+      "allowMultipleResponsesDescription": "Cuando está desactivado, cada participante solo puede enviar una respuesta",
+      "showReferenceAfterSubmit": "Mostrar Referencia Después de Enviar",
+      "showReferenceAfterSubmitDescription": "Muestra la clasificación correcta después de que los participantes envíen su respuesta",
+      "selectClassification": "Seleccionar clasificación...",
+      "saveReference": "Guardar Referencia",
+      "notClassifiable": "No clasificable",
+      "notClassifiableDesc": "No se puede clasificar con este sistema",
+      "classifications": {
+        "danisWeber": {
+          "A": "Weber A",
+          "ADesc": "Infrasindesmótica",
+          "B": "Weber B",
+          "BDesc": "Transindesmótica",
+          "C": "Weber C",
+          "CDesc": "Suprasindesmótica"
+        },
+        "laugeHansen": {
+          "SA": "SA (Supinación-Aducción)",
+          "SADesc": "Supinación-Aducción",
+          "SER": "SER (Supinación-Rotación Externa)",
+          "SERDesc": "Supinación-Rotación Externa",
+          "PA": "PA (Pronación-Abducción)",
+          "PADesc": "Pronación-Abducción",
+          "PER": "PER (Pronación-Rotación Externa)",
+          "PERDesc": "Pronación-Rotación Externa"
+        },
+        "aoOta": {
+          "44-A1": "44-A1",
+          "44-A1Desc": "Infrasindesmótica, aislada",
+          "44-A2": "44-A2",
+          "44-A2Desc": "Infrasindesmótica con lesión medial",
+          "44-A3": "44-A3",
+          "44-A3Desc": "Infrasindesmótica con lesión posteromedial",
+          "44-B1": "44-B1",
+          "44-B1Desc": "Transindesmótica, aislada",
+          "44-B2": "44-B2",
+          "44-B2Desc": "Transindesmótica con lesión medial",
+          "44-B3": "44-B3",
+          "44-B3Desc": "Transindesmótica con lesión medial y posterior",
+          "44-C1": "44-C1",
+          "44-C1Desc": "Suprasindesmótica, diafisaria simple",
+          "44-C2": "44-C2",
+          "44-C2Desc": "Suprasindesmótica, multifragmentaria",
+          "44-C3": "44-C3",
+          "44-C3Desc": "Suprasindesmótica, peroneal proximal"
+        },
+        "bartonicek": {
+          "1": "Tipo 1",
+          "1Desc": "Fragmento extraincisural",
+          "2": "Tipo 2",
+          "2Desc": "Fragmento posterolateral",
+          "3": "Tipo 3",
+          "3Desc": "Posteromedial + posterolateral",
+          "4": "Tipo 4",
+          "4Desc": "Posterolateral triangular grande"
+        }
       }
     },
     "analytics": {
@@ -416,6 +490,47 @@
       "distributionPie": "Visión General de Distribución",
       "distributionBar": "Cantidad de Respuestas por Tipo",
       "andMore": "+ {{count}} tipos más"
+    },
+    "reliability": {
+      "title": "Fiabilidad Inter-Evaluador",
+      "hasGoldStandard": "Gold Standard Establecido",
+      "exportDetailed": "Exportar CSV Detallado",
+      "totalResponses": "Total de Respuestas",
+      "uniqueRaters": "Evaluadores Únicos",
+      "correctResponses": "Correctas",
+      "incorrectResponses": "Incorrectas",
+      "goldStandardAccuracy": "Precisión vs Gold Standard",
+      "overallAccuracy": "General",
+      "kappaScores": "Puntuaciones de Acuerdo Kappa",
+      "kappaInterpretation": "Guía de Interpretación Kappa",
+      "kappaPoor": "Pobre",
+      "kappaSlight": "Ligero",
+      "kappaFair": "Aceptable",
+      "kappaModerate": "Moderado",
+      "kappaSubstantial": "Sustancial",
+      "kappaAlmostPerfect": "Casi Perfecto",
+      "detailedAnalysis": "Análisis Detallado por Sistema",
+      "detailedDescription": "Matriz de confusión y distribución de categorías por sistema de clasificación",
+      "metrics": "Métricas",
+      "percentAgreement": "Porcentaje de Acuerdo",
+      "cohensKappa": "Kappa de Cohen",
+      "fleissKappa": "Kappa de Fleiss",
+      "categoryCounts": "Distribución por Categoría",
+      "confusionMatrix": "Matriz de Confusión",
+      "noDataForSystem": "No hay datos disponibles para este sistema de clasificación",
+      "agreement": "acuerdo",
+      "raters2": "2 evaluadores",
+      "ratersMulti": "multi-evaluador",
+      "systems": {
+        "danisWeber": "Danis-Weber",
+        "danisWeberDesc": "Nivel de fractura del peroné",
+        "laugeHansen": "Lauge-Hansen",
+        "laugeHansenDesc": "Mecanismo de lesión",
+        "aoOta": "AO/OTA",
+        "aoOtaDesc": "Clasificación completa",
+        "bartonicek": "Bartonicek",
+        "bartonicekDesc": "Maléolo posterior"
+      }
     },
     "dashboard": {
       "title": "Panel de Administración",
@@ -440,6 +555,38 @@
       "noResponses": "Sin respuestas aún",
       "statusBreakdown": "Distribución por Estado",
       "statusBreakdownDesc": "Distribución de estudios por estado"
+    }
+  },
+  "profile": {
+    "pageTitle": "Configuración del Perfil",
+    "pageDescription": "Gestiona la información de tu perfil profesional",
+    "title": "Tu Perfil",
+    "displayName": "Nombre para Mostrar",
+    "displayNamePlaceholder": "Tu nombre",
+    "yearsExperience": "Años de Experiencia",
+    "specialty": "Especialidad",
+    "selectSpecialty": "Seleccionar especialidad",
+    "trainingLevel": "Nivel de Formación",
+    "selectTrainingLevel": "Seleccionar nivel",
+    "institution": "Institución",
+    "institutionPlaceholder": "Nombre del hospital o universidad",
+    "notSpecified": "No especificado",
+    "saved": "Perfil guardado correctamente",
+    "saveFailed": "Error al guardar el perfil",
+    "save": "Guardar Perfil",
+    "specialties": {
+      "traumatology": "Traumatología",
+      "orthopedics": "Ortopedia",
+      "emergency": "Medicina de Urgencias",
+      "radiology": "Radiología",
+      "general": "Cirugía General",
+      "other": "Otra"
+    },
+    "trainingLevels": {
+      "resident": "Residente",
+      "fellow": "Fellow",
+      "attending": "Médico Adjunto",
+      "other": "Otro"
     }
   }
 }

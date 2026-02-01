@@ -56,6 +56,15 @@ type Study struct {
 	// Denormalized counters for efficient queries
 	ResponseCount int `gorm:"default:0" json:"response_count"`
 	UniqueUsers   int `gorm:"default:0" json:"unique_users"`
+
+	// Gold Standard / Reference Classification for validation studies
+	// Stores the "correct" classification to compare user responses against
+	ReferenceClassification  datatypes.JSON `gorm:"type:jsonb" json:"reference_classification,omitempty"`
+	ShowReferenceAfterSubmit bool           `json:"show_reference_after_submit"`
+
+	// Single Response Control - when false, users can only submit one response
+	// Note: Default is set in NewStudy(), not via GORM tag (GORM omits false values with default tags)
+	AllowMultipleResponses bool `json:"allow_multiple_responses"`
 }
 
 // TableName returns the table name for GORM.
@@ -66,15 +75,49 @@ func (Study) TableName() string {
 // NewStudy creates a new study with the given parameters.
 func NewStudy(createdBy uuid.UUID, title, description string, deadline *time.Time) *Study {
 	return &Study{
-		ID:          uuid.New(),
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-		CreatedBy:   createdBy,
-		Title:       title,
-		Description: description,
-		Status:      StudyStatusDraft,
-		Deadline:    deadline,
+		ID:                     uuid.New(),
+		CreatedAt:              time.Now(),
+		UpdatedAt:              time.Now(),
+		CreatedBy:              createdBy,
+		Title:                  title,
+		Description:            description,
+		Status:                 StudyStatusDraft,
+		Deadline:               deadline,
+		AllowMultipleResponses: true, // Default to allowing multiple responses
 	}
+}
+
+// GetReferenceClassification parses and returns the reference classification.
+func (s *Study) GetReferenceClassification() (*ClassificationResult, error) {
+	if len(s.ReferenceClassification) == 0 {
+		return nil, nil
+	}
+
+	var result ClassificationResult
+	if err := json.Unmarshal(s.ReferenceClassification, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// SetReferenceClassification sets the reference classification from a ClassificationResult.
+func (s *Study) SetReferenceClassification(result *ClassificationResult) error {
+	if result == nil {
+		s.ReferenceClassification = nil
+		return nil
+	}
+
+	data, err := json.Marshal(result)
+	if err != nil {
+		return err
+	}
+	s.ReferenceClassification = datatypes.JSON(data)
+	return nil
+}
+
+// HasReferenceClassification returns true if a reference classification is set.
+func (s *Study) HasReferenceClassification() bool {
+	return len(s.ReferenceClassification) > 0
 }
 
 // CanBeEdited returns true if the study can be modified.

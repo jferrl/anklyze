@@ -72,6 +72,13 @@ type StudyResponseRepository interface {
 	CountUniqueUsersByStudy(ctx context.Context, studyID uuid.UUID) (int64, error)
 	// Close gracefully shuts down the repository.
 	Close() error
+
+	// HasUserResponded checks if a user has already submitted a response to a study.
+	HasUserResponded(ctx context.Context, userID, studyID uuid.UUID) (bool, error)
+	// GetAllByStudy retrieves all responses for a study without pagination (for Kappa calculation).
+	GetAllByStudy(ctx context.Context, studyID uuid.UUID) ([]domain.StudyResponse, error)
+	// GetResponsesWithUserExpertise retrieves responses joined with user expertise data.
+	GetResponsesWithUserExpertise(ctx context.Context, studyID uuid.UUID) ([]domain.ResponseWithExpertise, error)
 }
 
 // StudyAnalyticsRepository defines the interface for study analytics queries.
@@ -202,6 +209,18 @@ func (r *NoOpStudyResponseRepository) CountUniqueUsersByStudy(_ context.Context,
 
 func (r *NoOpStudyResponseRepository) Close() error {
 	return nil
+}
+
+func (r *NoOpStudyResponseRepository) HasUserResponded(_ context.Context, _, _ uuid.UUID) (bool, error) {
+	return false, nil
+}
+
+func (r *NoOpStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UUID) ([]domain.StudyResponse, error) {
+	return []domain.StudyResponse{}, nil
+}
+
+func (r *NoOpStudyResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
+	return []domain.ResponseWithExpertise{}, nil
 }
 
 // NoOpStudyAnalyticsRepository is a no-op implementation.

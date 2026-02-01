@@ -15,6 +15,7 @@ import {
 } from '../services/studyApi';
 import { classifyFracture } from '../services/api';
 import type { FractureInput, ClassificationResult } from '../types/fracture';
+import type { SubmitResponseResult, UserStudyDetail } from '../types/study';
 import {
   ImageGrid,
   ImageLightbox,
@@ -39,6 +40,7 @@ export function StudyDetailPage() {
   const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitResult, setSubmitResult] = useState<SubmitResponseResult | null>(null);
 
   // Time tracking - initialized in useEffect to avoid impure function call during render
   const startTimeRef = useRef<number>(0);
@@ -125,11 +127,44 @@ export function StudyDetailPage() {
         time_taken_ms: timeTakenMs,
       });
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       setSubmitSuccess(true);
-      toast.success(t('studies.submitSuccess'), {
-        description: t('studies.submitSuccessDescription'),
+      setSubmitResult(result);
+
+      // Show different message based on gold standard comparison
+      if (result.reference_classification) {
+        const allMatch =
+          result.matches_danis_weber !== false &&
+          result.matches_lauge_hansen !== false &&
+          result.matches_ao_ota !== false &&
+          result.matches_bartonicek !== false;
+
+        if (allMatch) {
+          toast.success(t('studies.submitSuccess'), {
+            description: t('studies.matchesReference', 'Your classification matches the reference!'),
+          });
+        } else {
+          toast.info(t('studies.submitSuccess'), {
+            description: t('studies.submitSuccessDescription'),
+          });
+        }
+      } else {
+        toast.success(t('studies.submitSuccess'), {
+          description: t('studies.submitSuccessDescription'),
+        });
+      }
+
+      // Optimistically update the cache to immediately reflect that user has responded
+      // This prevents any race conditions where stale cache data could allow re-submission
+      queryClient.setQueryData(['published-study', id], (oldData: UserStudyDetail | undefined) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          has_responded: true,
+          my_response_count: oldData.my_response_count + 1,
+        };
       });
+
       // Invalidate all related queries to refresh data across the app
       queryClient.invalidateQueries({ queryKey: ['published-study', id] });
       queryClient.invalidateQueries({ queryKey: ['published-studies'] });
@@ -155,6 +190,7 @@ export function StudyDetailPage() {
     setClassificationResult(null);
     setSubmitSuccess(false);
     setSubmitError(null);
+    setSubmitResult(null);
     startTimeRef.current = Date.now();
   }, []);
 
@@ -196,7 +232,11 @@ export function StudyDetailPage() {
   }
 
   const deadline = study.deadline ? new Date(study.deadline) : null;
-  const isExpired = deadline && deadline < new Date();
+  const isExpired = study.is_expired || (deadline && deadline < new Date());
+
+  // Check if user can submit based on single response mode
+  const cannotSubmit = !study.allow_multiple_responses && study.has_responded;
+  const canReanswer = study.allow_multiple_responses;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -287,6 +327,9 @@ export function StudyDetailPage() {
               submitError={submitError}
               submitSuccess={submitSuccess}
               isExpired={!!isExpired}
+              cannotSubmit={cannotSubmit}
+              canReanswer={canReanswer}
+              submitResult={submitResult}
               onClassify={handleClassify}
               onSubmit={handleSubmitResponse}
               onReanswer={handleReanswer}

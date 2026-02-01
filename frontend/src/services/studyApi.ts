@@ -3,7 +3,6 @@ import type {
   StudyWithImages,
   StudyImage,
   UserStudyDetail,
-  StudyResponse,
   StudyListResponse,
   UserStudyListResponse,
   CreateStudyRequest,
@@ -19,6 +18,10 @@ import type {
   StudyUsersListResponse,
   AddStudyUserRequest,
   UpdateImageRequest,
+  ReliabilityMetricsResponse,
+  SubmitResponseResult,
+  UserProfile,
+  UpdateUserProfileRequest,
 } from '../types/study';
 import { supabase } from '../lib/supabase';
 import { AuthRequiredError, ForbiddenError } from './api';
@@ -171,11 +174,12 @@ export async function getAdminImageSignedURL(
 
 /**
  * Submit a classification response to a study
+ * Returns the response along with gold standard comparison if available
  */
 export async function submitStudyResponse(
   studyId: string,
   data: SubmitResponseRequest
-): Promise<StudyResponse> {
+): Promise<SubmitResponseResult> {
   const headers = await getAuthHeaders();
   const response = await fetch(`${API_BASE_URL}/api/studies/${studyId}/responses`, {
     method: 'POST',
@@ -186,6 +190,10 @@ export async function submitStudyResponse(
   handleAuthError(response.status);
 
   if (!response.ok) {
+    if (response.status === 409) {
+      const error = await response.json();
+      throw new Error(error.error || 'You have already submitted a response to this study');
+    }
     if (response.status === 400) {
       const error = await response.json();
       throw new Error(error.error || 'Cannot submit response');
@@ -556,6 +564,105 @@ export async function downloadStudyResponsesCSV(studyId: string, filename?: stri
   document.body.removeChild(a);
 }
 
+/**
+ * Get inter-rater reliability metrics for a study (admin only)
+ */
+export async function getReliabilityMetrics(studyId: string): Promise<ReliabilityMetricsResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/reliability`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get reliability metrics');
+  }
+
+  return response.json();
+}
+
+/**
+ * Export detailed study responses as CSV with expertise and gold standard comparison (admin only)
+ */
+export async function exportDetailedResponses(studyId: string): Promise<Blob> {
+  const headers = await getAuthHeaders();
+  // Remove Content-Type for blob response
+  delete headers['Content-Type'];
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/export/detailed`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    throw new Error('Failed to export detailed responses');
+  }
+
+  return response.blob();
+}
+
+/**
+ * Download the detailed export CSV
+ */
+export async function downloadDetailedResponsesCSV(studyId: string, filename?: string): Promise<void> {
+  const blob = await exportDetailedResponses(studyId);
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || `study_${studyId.slice(0, 8)}_detailed_responses.csv`;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+
+// ================================
+// User Profile Endpoints
+// ================================
+
+/**
+ * Get the current user's profile including expertise fields
+ */
+export async function getUserProfile(): Promise<UserProfile> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/me/profile`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get user profile');
+  }
+
+  return response.json();
+}
+
+/**
+ * Update the current user's expertise profile
+ */
+export async function updateUserProfile(data: UpdateUserProfileRequest): Promise<UserProfile> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/me/profile`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update user profile');
+  }
+
+  return response.json();
+}
+
 // ================================
 // Study User Management (Admin)
 // ================================
@@ -630,6 +737,9 @@ export const studyApi = {
   getImageSignedURL,
   submitStudyResponse,
   getMyResponses,
+  // User profile
+  getUserProfile,
+  updateUserProfile,
   // Admin endpoints
   createStudy,
   listStudies,
@@ -643,8 +753,11 @@ export const studyApi = {
   publishStudy,
   closeStudy,
   getStudyAnalytics,
+  getReliabilityMetrics,
   listStudyResponses,
   exportStudyResponses,
+  exportDetailedResponses,
+  downloadDetailedResponsesCSV,
   getAdminImageSignedURL,
   // Study user management (admin)
   listStudyUsers,

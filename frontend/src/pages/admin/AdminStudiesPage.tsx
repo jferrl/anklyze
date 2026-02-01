@@ -75,14 +75,16 @@ export function AdminStudiesPage() {
         page,
         limit
       ),
+    staleTime: 0, // Always consider data stale
+    refetchOnMount: 'always', // Refetch when component mounts
   });
 
   const deleteMutation = useMutation({
     mutationFn: studyApi.deleteStudy,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
       setDeleteId(null);
     },
   });
@@ -90,18 +92,18 @@ export function AdminStudiesPage() {
   const publishMutation = useMutation({
     mutationFn: studyApi.publishStudy,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
     },
   });
 
   const closeMutation = useMutation({
     mutationFn: studyApi.closeStudy,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'] });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
     },
   });
 
@@ -431,12 +433,10 @@ function StudyRow({
               <Eye className="h-4 w-4 mr-2" />
               {t('common.view')}
             </DropdownMenuItem>
-            {study.status === 'draft' && (
-              <DropdownMenuItem onClick={onEdit}>
-                <Pencil className="h-4 w-4 mr-2" />
-                {t('common.edit')}
-              </DropdownMenuItem>
-            )}
+            <DropdownMenuItem onClick={onEdit}>
+              <Pencil className="h-4 w-4 mr-2" />
+              {t('common.edit')}
+            </DropdownMenuItem>
             {study.status !== 'draft' && (
               <DropdownMenuItem onClick={onViewAnalytics}>
                 <BarChart3 className="h-4 w-4 mr-2" />

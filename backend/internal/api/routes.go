@@ -180,19 +180,30 @@ func SetupStudyRoutes(
 	router *gin.Engine,
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
+	userRepoForProfile repository.UserRepository,
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
 	storage storage.Storage,
+	statsService *service.StatisticsService,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, userRepo, storage)
+	// Create study handler with statistics service
+	var statsServicePtr *StatisticsService
+	if statsService != nil {
+		var s StatisticsService = statsService
+		statsServicePtr = &s
+	}
+	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, userRepo, storage, statsServicePtr)
+
+	// Create user handler for profile endpoints
+	userHandler := NewUserHandler(userRepoForProfile)
 
 	api := router.Group("/api")
 
 	if authValidator != nil {
-		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler)
+		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler, userHandler)
 	} else {
-		setupPublicStudyRoutes(api, studyHandler)
+		setupPublicStudyRoutes(api, studyHandler, userHandler)
 	}
 }
 
@@ -202,6 +213,7 @@ func setupProtectedStudyRoutes(
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	studyHandler *StudyHandler,
+	userHandler *UserHandler,
 ) {
 	// User study routes - require authentication
 	studies := api.Group("/studies")
@@ -213,6 +225,15 @@ func setupProtectedStudyRoutes(
 		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
 		studies.POST("/:id/responses", studyHandler.SubmitResponse)
 		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+	}
+
+	// User profile routes - require authentication
+	profile := api.Group("/me")
+	profile.Use(auth.AuthMiddleware(authValidator))
+	profile.Use(auth.UserSyncMiddleware(userRepo))
+	{
+		profile.GET("/profile", userHandler.GetUserProfile)
+		profile.PUT("/profile", userHandler.UpdateUserProfile)
 	}
 
 	// Admin study routes - require admin role
@@ -235,8 +256,10 @@ func setupProtectedStudyRoutes(
 		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
 		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
+		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)
 
 		// User access management
 		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
@@ -249,6 +272,7 @@ func setupProtectedStudyRoutes(
 func setupPublicStudyRoutes(
 	api *gin.RouterGroup,
 	studyHandler *StudyHandler,
+	userHandler *UserHandler,
 ) {
 	// User study routes
 	studies := api.Group("/studies")
@@ -258,6 +282,13 @@ func setupPublicStudyRoutes(
 		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
 		studies.POST("/:id/responses", studyHandler.SubmitResponse)
 		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+	}
+
+	// User profile routes (development mode)
+	profile := api.Group("/me")
+	{
+		profile.GET("/profile", userHandler.GetUserProfile)
+		profile.PUT("/profile", userHandler.UpdateUserProfile)
 	}
 
 	// Admin study routes
@@ -277,8 +308,10 @@ func setupPublicStudyRoutes(
 		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
 		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
+		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
+		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)
 
 		// User access management
 		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)

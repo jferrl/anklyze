@@ -36,7 +36,8 @@ func (r *UserRepository) SyncOnLogin(ctx context.Context, userID uuid.UUID, emai
 			email = EXCLUDED.email,
 			provider = EXCLUDED.provider,
 			updated_at = NOW()
-		RETURNING id, email, role, display_name, avatar_url, provider, last_login_at, created_at, updated_at
+		RETURNING id, email, role, display_name, avatar_url, provider, last_login_at, created_at, updated_at,
+			years_experience, specialty, training_level, institution
 	`, userID, email, provider, now).Scan(&user).Error
 
 	if err != nil {
@@ -75,4 +76,36 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+// UpdateProfile updates a user's expertise profile fields.
+func (r *UserRepository) UpdateProfile(ctx context.Context, id uuid.UUID, profile domain.UserProfileUpdate) error {
+	updates := make(map[string]interface{})
+
+	if profile.DisplayName != nil {
+		updates["display_name"] = *profile.DisplayName
+	}
+	if profile.YearsExperience != nil {
+		updates["years_experience"] = *profile.YearsExperience
+	}
+	if profile.Specialty != nil {
+		updates["specialty"] = *profile.Specialty
+	}
+	if profile.TrainingLevel != nil {
+		updates["training_level"] = *profile.TrainingLevel
+	}
+	if profile.Institution != nil {
+		updates["institution"] = *profile.Institution
+	}
+
+	if len(updates) == 0 {
+		return nil // Nothing to update
+	}
+
+	updates["updated_at"] = time.Now()
+
+	return r.db.WithContext(ctx).
+		Model(&domain.User{}).
+		Where("id = ?", id).
+		Updates(updates).Error
 }

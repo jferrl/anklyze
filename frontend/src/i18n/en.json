@@ -7,7 +7,8 @@
     "dashboard": "Dashboard",
     "manageStudies": "Manage Studies",
     "analytics": "Analytics",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "Profile"
   },
   "breadcrumbs": {
     "classify": "Classify",
@@ -338,7 +339,11 @@
     "submitSuccess": "Response Submitted",
     "submitSuccessDescription": "Your classification has been recorded successfully.",
     "submitError": "Submission Failed",
-    "clickToEnlarge": "Click to enlarge"
+    "clickToEnlarge": "Click to enlarge",
+    "alreadyResponded": "Already Responded",
+    "alreadyRespondedDescription": "You have already submitted a response to this study. This study only allows one response per participant.",
+    "matchesReference": "Your classification matches the reference!",
+    "referenceComparison": "Reference Comparison"
   },
   "admin": {
     "studies": {
@@ -360,6 +365,7 @@
       "exportCSV": "Export CSV",
       "backToList": "Back to Studies",
       "notFound": "Study not found",
+      "notFoundDescription": "The study you're looking for doesn't exist or has been removed.",
       "details": "Study Details",
       "detailsDescription": "Basic information about the study case",
       "titlePlaceholder": "Enter study title...",
@@ -401,6 +407,74 @@
         "created": "Created",
         "deadline": "Deadline",
         "showing": "Showing {{from}}-{{to}} of {{total}} studies"
+      },
+      "validationSettings": "Validation",
+      "validationSettingsDescription": "Configure validation study options",
+      "referenceClassification": "Reference Classification (Gold Standard)",
+      "referenceClassificationDescription": "Set the correct classification to compare against participant responses",
+      "clearReference": "Clear Reference",
+      "noReferenceSet": "No reference classification set.",
+      "setReference": "Set Reference Classification",
+      "setReferenceDescription": "Complete the classification form to set the gold standard for this study",
+      "changeReference": "Change",
+      "responseOptions": "Response Options",
+      "allowMultipleResponses": "Allow Multiple Responses",
+      "allowMultipleResponsesDescription": "When disabled, each participant can only submit one response",
+      "showReferenceAfterSubmit": "Show Reference After Submit",
+      "showReferenceAfterSubmitDescription": "Display the correct classification after participants submit their response",
+      "selectClassification": "Select classification...",
+      "saveReference": "Save Reference",
+      "notClassifiable": "Not classifiable",
+      "notClassifiableDesc": "Cannot be classified with this system",
+      "classifications": {
+        "danisWeber": {
+          "A": "Weber A",
+          "ADesc": "Infrasyndesmotic",
+          "B": "Weber B",
+          "BDesc": "Transsyndesmotic",
+          "C": "Weber C",
+          "CDesc": "Suprasyndesmotic"
+        },
+        "laugeHansen": {
+          "SA": "SA (Supination-Adduction)",
+          "SADesc": "Supination-Adduction",
+          "SER": "SER (Supination-External Rotation)",
+          "SERDesc": "Supination-External Rotation",
+          "PA": "PA (Pronation-Abduction)",
+          "PADesc": "Pronation-Abduction",
+          "PER": "PER (Pronation-External Rotation)",
+          "PERDesc": "Pronation-External Rotation"
+        },
+        "aoOta": {
+          "44-A1": "44-A1",
+          "44-A1Desc": "Infrasyndesmotic, isolated",
+          "44-A2": "44-A2",
+          "44-A2Desc": "Infrasyndesmotic with medial lesion",
+          "44-A3": "44-A3",
+          "44-A3Desc": "Infrasyndesmotic with posteromedial lesion",
+          "44-B1": "44-B1",
+          "44-B1Desc": "Transsyndesmotic, isolated",
+          "44-B2": "44-B2",
+          "44-B2Desc": "Transsyndesmotic with medial lesion",
+          "44-B3": "44-B3",
+          "44-B3Desc": "Transsyndesmotic with medial and posterior lesion",
+          "44-C1": "44-C1",
+          "44-C1Desc": "Suprasyndesmotic, simple diaphyseal",
+          "44-C2": "44-C2",
+          "44-C2Desc": "Suprasyndesmotic, multifragmentary",
+          "44-C3": "44-C3",
+          "44-C3Desc": "Suprasyndesmotic, proximal fibular"
+        },
+        "bartonicek": {
+          "1": "Type 1",
+          "1Desc": "Extraincisural fragment",
+          "2": "Type 2",
+          "2Desc": "Posterolateral fragment",
+          "3": "Type 3",
+          "3Desc": "Posteromedial + posterolateral",
+          "4": "Type 4",
+          "4Desc": "Large triangular posterolateral"
+        }
       }
     },
     "analytics": {
@@ -416,6 +490,47 @@
       "distributionPie": "Distribution Overview",
       "distributionBar": "Response Count by Type",
       "andMore": "+ {{count}} more types"
+    },
+    "reliability": {
+      "title": "Inter-Rater Reliability",
+      "hasGoldStandard": "Gold Standard Set",
+      "exportDetailed": "Export Detailed CSV",
+      "totalResponses": "Total Responses",
+      "uniqueRaters": "Unique Raters",
+      "correctResponses": "Correct",
+      "incorrectResponses": "Incorrect",
+      "goldStandardAccuracy": "Gold Standard Accuracy",
+      "overallAccuracy": "Overall",
+      "kappaScores": "Kappa Agreement Scores",
+      "kappaInterpretation": "Kappa Interpretation Guide",
+      "kappaPoor": "Poor",
+      "kappaSlight": "Slight",
+      "kappaFair": "Fair",
+      "kappaModerate": "Moderate",
+      "kappaSubstantial": "Substantial",
+      "kappaAlmostPerfect": "Almost Perfect",
+      "detailedAnalysis": "Detailed System Analysis",
+      "detailedDescription": "Confusion matrix and category distribution per classification system",
+      "metrics": "Metrics",
+      "percentAgreement": "Percent Agreement",
+      "cohensKappa": "Cohen's Kappa",
+      "fleissKappa": "Fleiss' Kappa",
+      "categoryCounts": "Category Distribution",
+      "confusionMatrix": "Confusion Matrix",
+      "noDataForSystem": "No data available for this classification system",
+      "agreement": "agreement",
+      "raters2": "2 raters",
+      "ratersMulti": "multi-rater",
+      "systems": {
+        "danisWeber": "Danis-Weber",
+        "danisWeberDesc": "Fibula fracture level",
+        "laugeHansen": "Lauge-Hansen",
+        "laugeHansenDesc": "Mechanism of injury",
+        "aoOta": "AO/OTA",
+        "aoOtaDesc": "Comprehensive classification",
+        "bartonicek": "Bartonicek",
+        "bartonicekDesc": "Posterior malleolus"
+      }
     },
     "dashboard": {
       "title": "Admin Dashboard",
@@ -440,6 +555,38 @@
       "noResponses": "No responses yet",
       "statusBreakdown": "Study Status Breakdown",
       "statusBreakdownDesc": "Distribution of studies by status"
+    }
+  },
+  "profile": {
+    "pageTitle": "Profile Settings",
+    "pageDescription": "Manage your expertise profile information",
+    "title": "Your Profile",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Your name",
+    "yearsExperience": "Years of Experience",
+    "specialty": "Specialty",
+    "selectSpecialty": "Select specialty",
+    "trainingLevel": "Training Level",
+    "selectTrainingLevel": "Select level",
+    "institution": "Institution",
+    "institutionPlaceholder": "Hospital or university name",
+    "notSpecified": "Not specified",
+    "saved": "Profile saved successfully",
+    "saveFailed": "Failed to save profile",
+    "save": "Save Profile",
+    "specialties": {
+      "traumatology": "Traumatology",
+      "orthopedics": "Orthopedics",
+      "emergency": "Emergency Medicine",
+      "radiology": "Radiology",
+      "general": "General Surgery",
+      "other": "Other"
+    },
+    "trainingLevels": {
+      "resident": "Resident",
+      "fellow": "Fellow",
+      "attending": "Attending Physician",
+      "other": "Other"
     }
   }
 }

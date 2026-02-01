@@ -19,6 +19,8 @@ type UserRepository interface {
 	UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error
 	// GetByEmail retrieves a user by their email.
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
+	// UpdateProfile updates a user's expertise profile fields.
+	UpdateProfile(ctx context.Context, id uuid.UUID, profile domain.UserProfileUpdate) error
 }
 
 // NoOpUserRepository is a no-op implementation for when DB is not configured.
@@ -47,6 +49,11 @@ func (r *NoOpUserRepository) UpdateRole(_ context.Context, _ uuid.UUID, _ domain
 // GetByEmail returns nil (not found).
 func (r *NoOpUserRepository) GetByEmail(_ context.Context, _ string) (*domain.User, error) {
 	return nil, nil
+}
+
+// UpdateProfile does nothing and returns nil.
+func (r *NoOpUserRepository) UpdateProfile(_ context.Context, _ uuid.UUID, _ domain.UserProfileUpdate) error {
+	return nil
 }
 
 // NewNoOpUserRepository creates a no-op user repository.

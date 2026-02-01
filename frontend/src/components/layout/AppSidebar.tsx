@@ -9,6 +9,7 @@ import {
   Shield,
   FileText,
   LayoutDashboard,
+  User,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -202,6 +203,12 @@ export function AppSidebar() {
                 align="end"
                 sideOffset={4}
               >
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    {t('nav.profile', 'Profile')}
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   {t('auth.signOut')}

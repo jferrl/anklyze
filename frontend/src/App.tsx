@@ -18,10 +18,12 @@ import { HomeRedirect } from './components/auth/HomeRedirect';
 import { ClassifyPage } from './pages/ClassifyPage';
 import { StudiesPage } from './pages/StudiesPage';
 import { StudyDetailPage } from './pages/StudyDetailPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyAnalyticsPage } from './pages/admin/StudyAnalyticsPage';
+import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppShell } from './components/layout';
@@ -70,6 +72,16 @@ function App() {
                       ]}
                     >
                       <StudyDetailPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <AppShell breadcrumbs={[{ labelKey: 'profile' }]}>
+                      <ProfilePage />
                     </AppShell>
                   </ProtectedRoute>
                 }
@@ -145,6 +157,22 @@ function App() {
                       ]}
                     >
                       <StudyAnalyticsPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies/:id/reliability"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'studies', href: '/admin/studies' },
+                        { labelKey: 'reliability' },
+                      ]}
+                    >
+                      <StudyReliabilityPage />
                     </AppShell>
                   </ProtectedRoute>
                 }
