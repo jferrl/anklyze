@@ -170,7 +170,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
+	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage)
 
 	srv := &http.Server{
@@ -218,6 +218,9 @@ func main() {
 			slog.Error("failed to close auth validator", "error", err)
 		}
 	}
+
+	// Stop rate limiter and quota tracker goroutines
+	routeCleanup.Stop()
 
 	slog.Info("server exited")
 }

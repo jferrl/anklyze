@@ -4,18 +4,25 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/service"
+	"github.com/jferrl/anklyze/internal/timeutil"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-// toJSON marshals data to indented JSON string
+// toJSON marshals data to indented JSON string.
+// Returns empty JSON object if marshaling fails.
 func toJSON(data any) string {
-	b, _ := json.MarshalIndent(data, "", "  ")
+	b, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		slog.Warn("failed to marshal JSON", "error", err, "type", fmt.Sprintf("%T", data))
+		return "{}"
+	}
 	return string(b)
 }
 
@@ -590,24 +597,9 @@ func getClassificationDistributionHandler(analytics AnalyticsRepository) server.
 
 // Helper function to parse date range from request
 func parseDateRangeFromRequest(request mcp.CallToolRequest) (time.Time, time.Time) {
-	now := time.Now()
-	defaultFrom := now.AddDate(0, 0, -30)
-	defaultTo := now
-
-	from := defaultFrom
-	to := defaultTo
-
-	if fromStr := request.GetString("from_date", ""); fromStr != "" {
-		if parsed, err := time.Parse("2006-01-02", fromStr); err == nil {
-			from = parsed
-		}
-	}
-
-	if toStr := request.GetString("to_date", ""); toStr != "" {
-		if parsed, err := time.Parse("2006-01-02", toStr); err == nil {
-			to = parsed.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
-		}
-	}
-
-	return from, to
+	dr := timeutil.ParseDateRange(
+		request.GetString("from_date", ""),
+		request.GetString("to_date", ""),
+	)
+	return dr.From, dr.To
 }

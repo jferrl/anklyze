@@ -12,7 +12,23 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// SetupRoutes configures all API routes
+// Cleanup holds references to resources that need cleanup on shutdown.
+type Cleanup struct {
+	rateLimiter *IPRateLimiter
+	dailyQuota  *DailyQuota
+}
+
+// Stop gracefully stops all background goroutines.
+func (c *Cleanup) Stop() {
+	if c.rateLimiter != nil {
+		c.rateLimiter.Stop()
+	}
+	if c.dailyQuota != nil {
+		c.dailyQuota.Stop()
+	}
+}
+
+// SetupRoutes configures all API routes and returns a Cleanup struct for graceful shutdown.
 func SetupRoutes(
 	router *gin.Engine,
 	cfg *config.Config,
@@ -23,7 +39,7 @@ func SetupRoutes(
 	chatService service.ChatService,
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
-) {
+) *Cleanup {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
 	classifier := service.NewClassifierService(ruleEngine)
@@ -34,10 +50,10 @@ func SetupRoutes(
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
 
 	// Rate limiter for chat endpoints (protects against excessive API costs)
-	_, chatRateLimiter := RateLimitMiddlewareWithConfig(cfg.RateLimitRate, cfg.RateLimitBurst)
+	rateLimiter, chatRateLimiter := RateLimitMiddlewareWithConfig(cfg.RateLimitRate, cfg.RateLimitBurst)
 
 	// Daily quota limiter per IP
-	_, dailyQuota := DailyQuotaMiddleware(cfg.DailyQuotaPerIP)
+	dailyQuota, quotaMiddleware := DailyQuotaMiddleware(cfg.DailyQuotaPerIP)
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
@@ -48,10 +64,15 @@ func SetupRoutes(
 
 	if authValidator != nil {
 		// Auth is enabled - protect routes
-		setupProtectedRoutes(api, authValidator, userRepo, handler, dailyQuota, chatRateLimiter)
+		setupProtectedRoutes(api, authValidator, userRepo, handler, quotaMiddleware, chatRateLimiter)
 	} else {
 		// Auth is disabled - all routes are public (development/backwards compatibility)
-		setupPublicRoutes(api, handler, dailyQuota, chatRateLimiter)
+		setupPublicRoutes(api, handler, quotaMiddleware, chatRateLimiter)
+	}
+
+	return &Cleanup{
+		rateLimiter: rateLimiter,
+		dailyQuota:  dailyQuota,
 	}
 }
 

@@ -71,7 +71,11 @@ func (a *AuthAdmin) UpdateUserRole(ctx context.Context, userID string, role stri
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			slog.Warn("failed to read error response body", "error", err)
+			return fmt.Errorf("update user failed with status %d", resp.StatusCode)
+		}
 		return fmt.Errorf("update user failed with status %d: %s", resp.StatusCode, string(body))
 	}
 

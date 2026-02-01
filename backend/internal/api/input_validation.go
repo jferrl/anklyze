@@ -6,6 +6,9 @@ import (
 	"unicode"
 )
 
+// wordSplitRegex is precompiled for performance - used in hot path for every validation.
+var wordSplitRegex = regexp.MustCompile(`[^\p{L}\p{N}\s]+`)
+
 // InputValidationResult contains the result of input validation
 type InputValidationResult struct {
 	Valid   bool
@@ -243,11 +246,10 @@ func (v *InputValidator) getAlphaRatio(input string) float64 {
 	return float64(alphaCount) / float64(totalCount)
 }
 
-// getWords splits input into lowercase words
+// getWords splits input into lowercase words.
 func (v *InputValidator) getWords(input string) []string {
 	// Remove punctuation and split by whitespace
-	reg := regexp.MustCompile(`[^\p{L}\p{N}\s]+`)
-	cleaned := reg.ReplaceAllString(input, " ")
+	cleaned := wordSplitRegex.ReplaceAllString(input, " ")
 	parts := strings.Fields(strings.ToLower(cleaned))
 
 	// Filter out very short words

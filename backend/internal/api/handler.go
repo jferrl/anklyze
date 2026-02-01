@@ -11,6 +11,7 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/service"
+	"github.com/jferrl/anklyze/internal/timeutil"
 )
 
 // AuditRepository defines the audit persistence interface needed by the handler.
@@ -318,27 +319,8 @@ func (h *Handler) HealthCheck(c *gin.Context) {
 
 // parseDateRange parses from/to query parameters with defaults.
 func parseDateRange(c *gin.Context) (time.Time, time.Time) {
-	now := time.Now()
-	defaultFrom := now.AddDate(0, 0, -30) // 30 days ago
-	defaultTo := now
-
-	from := defaultFrom
-	to := defaultTo
-
-	if fromStr := c.Query("from"); fromStr != "" {
-		if parsed, err := time.Parse("2006-01-02", fromStr); err == nil {
-			from = parsed
-		}
-	}
-
-	if toStr := c.Query("to"); toStr != "" {
-		if parsed, err := time.Parse("2006-01-02", toStr); err == nil {
-			// Set to end of day
-			to = parsed.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
-		}
-	}
-
-	return from, to
+	dr := timeutil.ParseDateRange(c.Query("from"), c.Query("to"))
+	return dr.From, dr.To
 }
 
 // GetAnalyticsSummary handles GET /api/analytics/summary
