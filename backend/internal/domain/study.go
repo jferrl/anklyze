@@ -65,6 +65,10 @@ type Study struct {
 	// Single Response Control - when false, users can only submit one response
 	// Note: Default is set in NewStudy(), not via GORM tag (GORM omits false values with default tags)
 	AllowMultipleResponses bool `json:"allow_multiple_responses"`
+
+	// Cohort membership - if set, this study is part of a cohort for multi-case reliability analysis
+	CohortID  *uuid.UUID `gorm:"type:uuid;index" json:"cohort_id,omitempty"`
+	CaseOrder int        `gorm:"default:0" json:"case_order"`
 }
 
 // TableName returns the table name for GORM.
@@ -146,6 +150,23 @@ func (s *Study) CanAcceptResponses() bool {
 // IsExpired returns true if the study deadline has passed.
 func (s *Study) IsExpired() bool {
 	return s.Deadline != nil && time.Now().After(*s.Deadline)
+}
+
+// BelongsToCohort returns true if the study is part of a cohort.
+func (s *Study) BelongsToCohort() bool {
+	return s.CohortID != nil
+}
+
+// SetCohort assigns this study to a cohort with a given case order.
+func (s *Study) SetCohort(cohortID uuid.UUID, caseOrder int) {
+	s.CohortID = &cohortID
+	s.CaseOrder = caseOrder
+}
+
+// RemoveFromCohort removes this study from its cohort.
+func (s *Study) RemoveFromCohort() {
+	s.CohortID = nil
+	s.CaseOrder = 0
 }
 
 // StudyImage represents an image attached to a study.

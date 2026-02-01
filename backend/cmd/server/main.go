@@ -65,6 +65,8 @@ func main() {
 	var studyRepo repository.StudyRepository
 	var studyResponseRepo repository.StudyResponseRepository
 	var studyAnalyticsRepo repository.StudyAnalyticsRepository
+	var cohortRepo repository.CohortRepository
+	var cohortResponseRepo repository.CohortResponseRepository
 
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
@@ -96,6 +98,8 @@ func main() {
 				&domain.StudyImage{},
 				&domain.StudyResponse{},
 				&domain.StudyUser{},
+				&domain.StudyCohort{},
+				&domain.CohortUser{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
@@ -108,6 +112,8 @@ func main() {
 			studyRepo = postgres.NewStudyRepository(db)
 			studyResponseRepo = postgres.NewStudyResponseRepository(db, cfg.AuditBufferSize)
 			studyAnalyticsRepo = postgres.NewStudyAnalyticsRepository(db)
+			cohortRepo = postgres.NewCohortRepository(db)
+			cohortResponseRepo = postgres.NewCohortResponseRepository(db)
 		}
 	} else {
 		slog.Info("no DATABASE_URL configured, audit trail disabled")
@@ -119,6 +125,8 @@ func main() {
 		studyRepo = repository.NewNoOpStudyRepository()
 		studyResponseRepo = repository.NewNoOpStudyResponseRepository()
 		studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
+		cohortRepo = repository.NewNoOpCohortRepository()
+		cohortResponseRepo = repository.NewNoOpCohortResponseRepository()
 	}
 
 	// Create user service that orchestrates DB and Supabase operations
@@ -174,7 +182,8 @@ func main() {
 
 	router := gin.Default()
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
-	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, studyStorage, statsService)
+	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, cohortRepo, cohortResponseRepo, studyStorage, statsService)
+	api.SetupCohortRoutes(router, authValidator, userService, cohortRepo, cohortResponseRepo, studyRepo, statsService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,

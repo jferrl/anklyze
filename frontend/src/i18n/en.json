@@ -6,6 +6,7 @@
     "admin": "Admin",
     "dashboard": "Dashboard",
     "manageStudies": "Manage Studies",
+    "cohorts": "Study Cohorts",
     "analytics": "Analytics",
     "settings": "Settings",
     "profile": "Profile"
@@ -18,7 +19,12 @@
     "dashboard": "Dashboard",
     "newStudy": "New Study",
     "editStudy": "Edit Study",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "reliability": "Reliability",
+    "cohorts": "Cohorts",
+    "newCohort": "New Cohort",
+    "editCohort": "Edit Cohort",
+    "cohortDetail": "Cohort Detail"
   },
   "app": {
     "title": "Ankle Fracture Classification",
@@ -572,6 +578,89 @@
       "noResponses": "No responses yet",
       "statusBreakdown": "Study Status Breakdown",
       "statusBreakdownDesc": "Distribution of studies by status"
+    },
+    "cohorts": {
+      "title": "Study Cohorts",
+      "subtitle": "Group studies for multi-case reliability analysis",
+      "create": "Create Cohort",
+      "createFirst": "Create Your First Cohort",
+      "createCohort": "Create New Cohort",
+      "editCohort": "Edit Cohort",
+      "search": "Search cohorts...",
+      "filterStatus": "Filter by status",
+      "allStatuses": "All statuses",
+      "noCohorts": "No cohorts found",
+      "noCohortsDesc": "Create your first cohort to enable multi-case reliability analysis.",
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "closed": "Closed"
+      },
+      "details": "Cohort Details",
+      "detailsDescription": "Basic information about the cohort",
+      "titlePlaceholder": "Enter cohort title...",
+      "descriptionPlaceholder": "Describe the purpose of this cohort...",
+      "cases": "Cases",
+      "casesDescription": "Studies included in this cohort",
+      "addCase": "Add Case",
+      "noCases": "No cases added",
+      "noCasesDesc": "Add studies to this cohort to enable reliability analysis.",
+      "removeCase": "Remove Case",
+      "reorderCases": "Reorder Cases",
+      "caseOrder": "Case Order",
+      "raters": "Raters",
+      "ratersDescription": "Users assigned to rate all cases in this cohort",
+      "addRater": "Add Rater",
+      "noRaters": "No raters assigned",
+      "noRatersDesc": "Assign users to rate cases in this cohort.",
+      "removeRater": "Remove Rater",
+      "progress": "Progress",
+      "casesCompleted": "cases completed",
+      "completeRaters": "Complete Raters",
+      "completeRatersDesc": "Raters who completed all cases",
+      "uniqueRaters": "Unique Raters",
+      "totalResponses": "Total Responses",
+      "activate": "Activate",
+      "close": "Close Cohort",
+      "activateConfirm": {
+        "title": "Activate Cohort",
+        "description": "Once activated, assigned raters can begin responding to cases. Are you sure?"
+      },
+      "closeConfirm": {
+        "title": "Close Cohort",
+        "description": "Closing the cohort will prevent new responses. Are you sure?"
+      },
+      "deleteConfirm": {
+        "title": "Delete Cohort",
+        "description": "Are you sure you want to delete this cohort? This action cannot be undone."
+      },
+      "errors": {
+        "titleRequired": "Title is required",
+        "needsCase": "At least one case is required to activate",
+        "needsRater": "At least one rater is required to activate"
+      },
+      "reliability": {
+        "title": "Cohort Reliability Metrics",
+        "description": "Inter-rater reliability analysis with Fleiss' Kappa",
+        "fleissKappa": "Fleiss' Kappa",
+        "fleissKappaDesc": "Multi-rater agreement statistic (requires multiple cases)",
+        "perCaseMetrics": "Per-Case Agreement",
+        "perCaseMetricsDesc": "Agreement breakdown for each case",
+        "hardCases": "Hard Cases",
+        "hardCasesDesc": "Cases with low agreement (< 60%)",
+        "goldStandard": "Gold Standard Accuracy",
+        "goldStandardDesc": "Accuracy compared to reference classifications",
+        "casesWithReference": "Cases with Reference"
+      },
+      "table": {
+        "title": "Title",
+        "status": "Status",
+        "cases": "Cases",
+        "raters": "Raters",
+        "complete": "Complete",
+        "created": "Created",
+        "showing": "Showing {{from}}-{{to}} of {{total}} cohorts"
+      }
     }
   },
   "profile": {

@@ -65,6 +65,11 @@ export function AppSidebar() {
       icon: LayoutDashboard,
     },
     {
+      title: t('nav.cohorts'),
+      url: '/admin/cohorts',
+      icon: Activity,
+    },
+    {
       title: t('nav.manageStudies'),
       url: '/admin/studies',
       icon: FileText,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Save, User } from 'lucide-react';
@@ -35,6 +35,7 @@ const TRAINING_LEVELS: { value: TrainingLevel; labelKey: string }[] = [
 export function UserProfileForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const initializedRef = useRef<string | null>(null);
 
   const [displayName, setDisplayName] = useState('');
   const [yearsExperience, setYearsExperience] = useState<string>('');
@@ -47,13 +48,18 @@ export function UserProfileForm() {
     queryFn: getUserProfile,
   });
 
+  // Sync profile data to form state when profile loads (only once per profile ID)
   useEffect(() => {
-    if (profile) {
-      setDisplayName(profile.display_name || '');
-      setYearsExperience(profile.years_experience?.toString() || '');
-      setSpecialty(profile.specialty || '');
-      setTrainingLevel(profile.training_level || '');
-      setInstitution(profile.institution || '');
+    if (profile && initializedRef.current !== profile.user_id) {
+      initializedRef.current = profile.user_id;
+      // Use setTimeout to avoid synchronous setState in effect
+      setTimeout(() => {
+        setDisplayName(profile.display_name || '');
+        setYearsExperience(profile.years_experience?.toString() || '');
+        setSpecialty(profile.specialty || '');
+        setTrainingLevel(profile.training_level || '');
+        setInstitution(profile.institution || '');
+      }, 0);
     }
   }, [profile]);
 

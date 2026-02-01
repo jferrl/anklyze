@@ -184,6 +184,8 @@ func SetupStudyRoutes(
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
+	cohortRepo repository.CohortRepository,
+	cohortResponseRepo repository.CohortResponseRepository,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
 ) {
@@ -193,7 +195,7 @@ func SetupStudyRoutes(
 		var s StatisticsService = statsService
 		statsServicePtr = &s
 	}
-	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, userRepo, storage, statsServicePtr)
+	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, cohortRepo, cohortResponseRepo, userRepo, storage, statsServicePtr)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -317,6 +319,103 @@ func setupPublicStudyRoutes(
 		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
 		adminStudies.POST("/:id/users", studyHandler.AddStudyUser)
 		adminStudies.DELETE("/:id/users/:userId", studyHandler.RemoveStudyUser)
+	}
+}
+
+// SetupCohortRoutes configures cohort-related routes.
+// This should be called after SetupRoutes.
+func SetupCohortRoutes(
+	router *gin.Engine,
+	authValidator *auth.Validator,
+	userRepo auth.UserService,
+	cohortRepo repository.CohortRepository,
+	cohortResponseRepo repository.CohortResponseRepository,
+	studyRepo repository.StudyRepository,
+	statsService *service.StatisticsService,
+) {
+	cohortHandler := NewCohortHandler(cohortRepo, cohortResponseRepo, studyRepo, userRepo, statsService)
+
+	api := router.Group("/api")
+
+	if authValidator != nil {
+		setupProtectedCohortRoutes(api, authValidator, userRepo, cohortHandler)
+	} else {
+		setupPublicCohortRoutes(api, cohortHandler)
+	}
+}
+
+// setupProtectedCohortRoutes configures cohort routes with authentication.
+func setupProtectedCohortRoutes(
+	api *gin.RouterGroup,
+	authValidator *auth.Validator,
+	userRepo auth.UserService,
+	cohortHandler *CohortHandler,
+) {
+	// Admin cohort routes - require admin role
+	adminCohorts := api.Group("/admin/cohorts")
+	adminCohorts.Use(auth.AuthMiddleware(authValidator))
+	adminCohorts.Use(auth.UserSyncMiddleware(userRepo))
+	adminCohorts.Use(auth.RequireRole(auth.RoleAdmin))
+	{
+		// CRUD
+		adminCohorts.POST("", cohortHandler.CreateCohort)
+		adminCohorts.GET("", cohortHandler.ListCohorts)
+		adminCohorts.GET("/:id", cohortHandler.GetCohort)
+		adminCohorts.PUT("/:id", cohortHandler.UpdateCohort)
+		adminCohorts.DELETE("/:id", cohortHandler.DeleteCohort)
+
+		// Case management
+		adminCohorts.POST("/:id/cases", cohortHandler.AddCase)
+		adminCohorts.DELETE("/:id/cases/:studyId", cohortHandler.RemoveCase)
+		adminCohorts.PUT("/:id/cases/reorder", cohortHandler.ReorderCases)
+
+		// User management
+		adminCohorts.GET("/:id/users", cohortHandler.ListCohortUsers)
+		adminCohorts.POST("/:id/users", cohortHandler.AddCohortUser)
+		adminCohorts.DELETE("/:id/users/:userId", cohortHandler.RemoveCohortUser)
+		adminCohorts.GET("/:id/progress", cohortHandler.GetRaterProgress)
+
+		// Status
+		adminCohorts.PUT("/:id/activate", cohortHandler.ActivateCohort)
+		adminCohorts.PUT("/:id/close", cohortHandler.CloseCohort)
+
+		// Analytics
+		adminCohorts.GET("/:id/reliability", cohortHandler.GetCohortReliabilityMetrics)
+	}
+}
+
+// setupPublicCohortRoutes configures cohort routes without authentication (development mode).
+func setupPublicCohortRoutes(
+	api *gin.RouterGroup,
+	cohortHandler *CohortHandler,
+) {
+	// Admin cohort routes (development mode - no auth)
+	adminCohorts := api.Group("/admin/cohorts")
+	{
+		// CRUD
+		adminCohorts.POST("", cohortHandler.CreateCohort)
+		adminCohorts.GET("", cohortHandler.ListCohorts)
+		adminCohorts.GET("/:id", cohortHandler.GetCohort)
+		adminCohorts.PUT("/:id", cohortHandler.UpdateCohort)
+		adminCohorts.DELETE("/:id", cohortHandler.DeleteCohort)
+
+		// Case management
+		adminCohorts.POST("/:id/cases", cohortHandler.AddCase)
+		adminCohorts.DELETE("/:id/cases/:studyId", cohortHandler.RemoveCase)
+		adminCohorts.PUT("/:id/cases/reorder", cohortHandler.ReorderCases)
+
+		// User management
+		adminCohorts.GET("/:id/users", cohortHandler.ListCohortUsers)
+		adminCohorts.POST("/:id/users", cohortHandler.AddCohortUser)
+		adminCohorts.DELETE("/:id/users/:userId", cohortHandler.RemoveCohortUser)
+		adminCohorts.GET("/:id/progress", cohortHandler.GetRaterProgress)
+
+		// Status
+		adminCohorts.PUT("/:id/activate", cohortHandler.ActivateCohort)
+		adminCohorts.PUT("/:id/close", cohortHandler.CloseCohort)
+
+		// Analytics
+		adminCohorts.GET("/:id/reliability", cohortHandler.GetCohortReliabilityMetrics)
 	}
 }
 

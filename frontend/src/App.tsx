@@ -24,6 +24,9 @@ import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyAnalyticsPage } from './pages/admin/StudyAnalyticsPage';
 import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
+import { AdminCohortsPage } from './pages/admin/AdminCohortsPage';
+import { CohortEditorPage } from './pages/admin/CohortEditorPage';
+import { CohortReliabilityPage } from './pages/admin/CohortReliabilityPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppShell } from './components/layout';
@@ -173,6 +176,87 @@ function App() {
                       ]}
                     >
                       <StudyReliabilityPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Cohort Routes */}
+              <Route
+                path="/admin/cohorts"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin', href: '/admin' },
+                        { labelKey: 'cohorts' },
+                      ]}
+                    >
+                      <AdminCohortsPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cohorts/new"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'cohorts', href: '/admin/cohorts' },
+                        { labelKey: 'newCohort' },
+                      ]}
+                    >
+                      <CohortEditorPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cohorts/:id"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'cohorts', href: '/admin/cohorts' },
+                        { labelKey: 'cohortDetail' },
+                      ]}
+                    >
+                      <CohortEditorPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cohorts/:id/edit"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'cohorts', href: '/admin/cohorts' },
+                        { labelKey: 'editCohort' },
+                      ]}
+                    >
+                      <CohortEditorPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cohorts/:id/reliability"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'cohorts', href: '/admin/cohorts' },
+                        { labelKey: 'reliability' },
+                      ]}
+                    >
+                      <CohortReliabilityPage />
                     </AppShell>
                   </ProtectedRoute>
                 }

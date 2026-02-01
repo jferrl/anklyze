@@ -10,7 +10,8 @@
 4. [Análisis de la Implementación Actual](#4-análisis-de-la-implementación-actual)
 5. [Puntos Débiles Identificados](#5-puntos-débiles-identificados)
 6. [Recomendaciones](#6-recomendaciones)
-7. [Glosario](#7-glosario)
+7. [Protocolo de Validación del Algoritmo](#7-protocolo-de-validación-del-algoritmo)
+8. [Glosario](#8-glosario)
 
 ---
 
@@ -467,47 +468,54 @@ Si `AllowMultipleResponses` está habilitado y los usuarios envían múltiples r
 
 ---
 
-#### Problema 2: Diseño de Sujeto Único en Kappa de Fleiss
+#### ~~Problema 2: Diseño de Sujeto Único en Kappa de Fleiss~~ ✅ RESUELTO
 
-**Ubicación:** `backend/internal/service/statistics.go` líneas 326-332
+**Estado:** Completamente resuelto en febrero de 2026
 
-**Qué sucede:**
-```go
-matrix := make([][]int, 1)  // ← Siempre 1 fila = 1 sujeto
-matrix[0] = make([]int, len(categories))
+**Solución:** Implementada la funcionalidad **StudyCohort** que agrupa múltiples estudios (casos) para el cálculo correcto del Kappa de Fleiss.
+
+**Cómo funciona:**
+
+1. El administrador crea una cohorte y añade múltiples estudios (casos)
+2. Los evaluadores se pre-asignan a la cohorte
+3. Los evaluadores completan todos los casos de la cohorte
+4. El sistema calcula el Kappa de Fleiss a través de todos los casos y evaluadores
+
+**Para estudios de caso único (compatibilidad hacia atrás):**
+
+- Devuelve `null` para el valor de `fleiss_kappa`
+- Proporciona una nota explicativa vía el campo `fleiss_kappa_note`
+- El frontend muestra la nota en una alerta informativa
+
+**Respuesta API de Cohorte:**
+
+```json
+{
+  "fleiss_kappa": {
+    "kappa": 0.72,
+    "interpretation": "substantial",
+    "num_raters": 5,
+    "num_subjects": 10,
+    "num_categories": 3,
+    "confidence_interval": {
+      "lower": 0.58,
+      "upper": 0.86,
+      "level": 0.95
+    }
+  }
+}
 ```
 
-**El Problema:**
+**Archivos Clave:**
 
-El Kappa de Fleiss está diseñado para múltiples sujetos (casos) evaluados por múltiples evaluadores. La implementación actual trata todo el estudio como un solo sujeto.
-
-**Visual del problema:**
-
-```
-Lo que está implementado (1 sujeto):
-              Weber A   Weber B   Weber C
-Sujeto 1        3         7         2      ← "12 evaluadores clasificaron este único caso"
-
-Lo que debería ser (múltiples sujetos):
-              Weber A   Weber B   Weber C
-Sujeto 1        2         1         0      ← "3 evaluadores, 2 dijeron A, 1 dijo B"
-Sujeto 2        0         3         0      ← "3 evaluadores, todos dijeron B"
-Sujeto 3        1         1         1      ← "3 evaluadores, todos en desacuerdo"
-Sujeto 4        0         0         3      ← "3 evaluadores, todos dijeron C"
-```
-
-**Impacto:**
-- El valor de Kappa de Fleiss es matemáticamente incorrecto para su propósito previsto
-- No se puede evaluar correctamente la fiabilidad inter-evaluador
-- Resultados engañosos en los informes de fiabilidad
-
-**Causa Raíz:**
-- El diseño actual del estudio es de caso único (un conjunto de imágenes por estudio)
-- No hay mecanismo para vincular múltiples casos como una cohorte
+- `backend/internal/domain/cohort.go` - Modelos de dominio
+- `backend/internal/repository/postgres/cohort.go` - Implementación del repositorio
+- `backend/internal/api/cohort_handlers.go` - Endpoints API
+- `frontend/src/pages/admin/CohortReliabilityPage.tsx` - Dashboard de fiabilidad
 
 ---
 
-#### Problema 3: Sin Intervalos de Confianza
+#### ~~Problema 3: Sin Intervalos de Confianza~~ ✅ RESUELTO
 
 **El Problema:**
 
@@ -541,41 +549,78 @@ Los códigos AO/OTA tienen un orden natural (44-A1 < 44-A2 < 44-B1 < ...). El Ka
 
 ### 5.2 Limitaciones del Diseño del Estudio
 
-#### Problema 5: Un Solo Caso Por Estudio
+#### ~~Problema 5: Un Solo Caso Por Estudio~~ ✅ RESUELTO
 
-**El Problema:**
+**Estado:** Resuelto en febrero de 2026
 
-Cada estudio contiene un conjunto de imágenes representando un caso.
+**Problema Original:** Cada estudio contenía un único conjunto de imágenes representando un caso, haciendo imposible el análisis de fiabilidad apropiado.
 
-**Por qué importa para la fiabilidad:**
+**Solución:** Implementada la funcionalidad **StudyCohort**:
 
-Los estudios de fiabilidad inter-evaluador apropiados necesitan:
-- Múltiples casos (idealmente 30+)
-- Los mismos evaluadores evaluando todos los casos
-- Capacidad de calcular acuerdo por caso
+```text
+StudyCohort
+├── Metadatos (título, descripción, estado)
+├── Caso 1 (Estudio) ─── Imágenes + Estándar de Oro
+├── Caso 2 (Estudio) ─── Imágenes + Estándar de Oro
+├── Caso 3 (Estudio) ─── Imágenes + Estándar de Oro
+└── ... (casos ilimitados)
+```
 
-**Solución alternativa actual:**
-- Crear muchos estudios separados
-- Asegurar manualmente que los mismos usuarios participen
-- Calcular estadísticas agregadas externamente
+**Características:**
 
-**Impacto:**
-- No se puede calcular el verdadero Kappa de Fleiss
-- No se puede identificar qué tipos de casos causan desacuerdo
-- Tedioso gestionar estudios de múltiples casos
+- Agrupar múltiples estudios en una cohorte
+- Reordenamiento de casos con arrastrar y soltar
+- Métricas de acuerdo por caso
+- Identificar "casos difíciles" con bajo acuerdo
+- Cálculo correcto del Kappa de Fleiss a través de todos los casos
+
+**Endpoints API:**
+
+- `POST /api/admin/cohorts` - Crear cohorte
+- `POST /api/admin/cohorts/:id/cases` - Añadir caso a cohorte
+- `GET /api/admin/cohorts/:id/reliability` - Obtener métricas de fiabilidad
 
 ---
 
-#### Problema 6: Sin Gestión de Cohorte de Evaluadores
+#### ~~Problema 6: Sin Gestión de Cohorte de Evaluadores~~ ✅ RESUELTO
 
-**El Problema:**
+**Estado:** Resuelto en febrero de 2026
 
-No hay forma de definir "estos 10 médicos deben evaluar todos estos 20 casos."
+**Problema Original:** No había forma de definir "estos 10 médicos deben evaluar todos estos 20 casos."
 
-**Impacto:**
-- Diferentes usuarios pueden evaluar diferentes estudios
-- No se puede asegurar un diseño balanceado
-- No se puede rastrear la consistencia individual del evaluador
+**Solución:** Implementadas asignaciones de **CohortUser** con control de acceso:
+
+```go
+type CohortUser struct {
+    CohortID       uuid.UUID  // Qué cohorte
+    UserID         uuid.UUID  // Qué usuario
+    UserEmail      string     // Para mostrar
+    CasesCompleted int        // Seguimiento de progreso
+    LastResponseAt *time.Time // Seguimiento de actividad
+}
+```
+
+**Características:**
+
+- Pre-asignar evaluadores específicos a cohortes
+- **Control de acceso obligatorio**: Solo evaluadores asignados pueden responder a estudios de cohorte
+- Seguimiento de progreso por evaluador (casos completados / total de casos)
+- Actualizaciones automáticas de progreso cuando se envían respuestas
+- Identificar evaluadores completos vs. incompletos para el Kappa de Fleiss
+
+**Modelo de Acceso Híbrido:**
+
+- **Estudios independientes**: Abiertos a todos los usuarios autenticados
+- **Estudios de cohorte**: Restringidos solo a evaluadores asignados
+
+**Respuesta de Error para Acceso No Autorizado:**
+
+```json
+{
+  "error": "you are not assigned to this cohort study",
+  "code": "NOT_COHORT_MEMBER"
+}
+```
 
 ---
 
@@ -704,16 +749,28 @@ Si muchos usuarios seleccionan combinaciones imposibles, indica:
 
 ### 6.1 Matriz de Prioridades
 
+#### Completado ✅
+
+| Problema | Estado | Notas |
+| -------- | ------ | ----- |
+| Corregir manejo de múltiples respuestas en Kappa de Cohen | ✅ Hecho | Ahora usa la respuesta más reciente |
+| Corregir cálculo de Kappa de Fleiss | ✅ Hecho | Devuelve null para caso único, cálculo completo para cohortes |
+| Agregar intervalos de confianza | ✅ Hecho | IC 95% para Kappa de Cohen y Fleiss |
+| Agregar Kappa ponderado | ✅ Hecho | Pesos lineales para AO/OTA |
+| Agregar sensibilidad/especificidad | ✅ Hecho | Métricas diagnósticas por categoría |
+| Implementar soporte de estudios multi-caso (StudyCohort) | ✅ Hecho | Gestión completa de cohortes con dashboard de fiabilidad |
+| Agregar gestión de cohorte de evaluadores | ✅ Hecho | Evaluadores pre-asignados con control de acceso obligatorio |
+| Seguimiento de progreso de evaluadores | ✅ Hecho | Seguimiento automático de casos completados por evaluador |
+
+#### Trabajo Pendiente
+
 | Prioridad | Problema | Esfuerzo | Impacto |
-|-----------|----------|----------|---------|
-| 🔴 Alta | Corregir cálculo de Kappa de Fleiss | Medio | Alto - Los valores actuales son engañosos |
-| 🔴 Alta | Corregir manejo de múltiples respuestas en Kappa de Cohen | Bajo | Medio - Se están desperdiciando datos |
-| 🟡 Media | Agregar intervalos de confianza | Medio | Alto - Requerido para publicaciones |
-| 🟡 Media | Implementar soporte de estudios multi-caso | Alto | Alto - Permite estudios de fiabilidad apropiados |
+| --------- | -------- | -------- | ------- |
 | 🟡 Media | Agregar versionado del algoritmo | Medio | Medio - Importante a largo plazo |
-| 🟢 Baja | Agregar Kappa ponderado | Bajo | Bajo - Útil para datos ordinales |
+| 🟡 Media | Agregar estratificación por expertise en análisis | Medio | Medio - Valioso para publicaciones |
 | 🟢 Baja | Agregar cálculo de ICC | Medio | Medio - Métrica alternativa |
 | 🟢 Baja | Agregar análisis de divergencia | Alto | Medio - Insights valiosos |
+| 🟢 Baja | Agregar análisis basado en tiempo | Bajo | Bajo - Indicadores de calidad |
 
 ### 6.2 Diseño de Estudio Recomendado
 
@@ -782,7 +839,7 @@ Resultado de Clasificación
 
 #### Panel de Analíticas Mejorado
 
-```
+```text
 Informe de Fiabilidad
 ├── Resumen
 │   ├── Kappa de Fleiss (con IC)
@@ -805,7 +862,141 @@ Informe de Fiabilidad
 
 ---
 
-## 7. Glosario
+## 7. Protocolo de Validación del Algoritmo
+
+La implementación actual está lista para estudios formales de validación del algoritmo. Esta sección describe cómo realizar un estudio de validación.
+
+### 7.1 Qué Se Puede Validar
+
+| Aspecto | Método | Métrica |
+| ------- | ------ | ------- |
+| **Fiabilidad inter-evaluador** | Múltiples médicos clasifican los mismos casos | Kappa de Fleiss |
+| **Precisión vs estándar de oro** | Comparar clasificaciones de usuarios con consenso experto | Tasa de coincidencia % |
+| **Claridad del cuestionario** | Identificar casos con alto desacuerdo | Acuerdo por caso |
+| **Fiabilidad por sistema** | Kappa separado para cada sistema de clasificación | Kappa por sistema |
+
+### 7.2 Flujo de Trabajo del Estudio de Validación
+
+```text
+1. PREPARACIÓN
+   ├── Seleccionar 30+ casos representativos de rayos X
+   │   ├── Incluir variedad: Weber A/B/C, diferentes mecanismos
+   │   ├── Mezcla de casos claros y desafiantes
+   │   └── Múltiples vistas (AP, lateral, mortaja) cuando estén disponibles
+   ├── Determinación del Estándar de Oro
+   │   ├── 2-3 expertos senior clasifican independientemente cada caso
+   │   ├── Resolver desacuerdos mediante discusión de consenso
+   │   └── Documentar justificación para cada estándar de oro
+   └── Preparar imágenes digitales de alta calidad
+
+2. CONFIGURACIÓN EN ANKLYZE
+   ├── Crear estudios individuales (uno por caso)
+   │   ├── Subir imágenes de rayos X
+   │   ├── Establecer clasificación de referencia (estándar de oro)
+   │   └── Mantener como borrador inicialmente
+   ├── Crear cohorte de validación
+   │   └── Título: "Estudio de Validación del Algoritmo [Año]"
+   ├── Añadir todos los estudios a la cohorte (reordenar según necesidad)
+   ├── Asignar evaluadores
+   │   ├── Mínimo: 4 evaluadores
+   │   ├── Recomendado: 6+ evaluadores
+   │   └── Mezcla de niveles de experiencia (adjuntos, fellows, residentes)
+   └── Activar cohorte cuando esté lista
+
+3. RECOLECCIÓN DE DATOS
+   ├── Los evaluadores acceden a los estudios publicados
+   ├── Cada evaluador clasifica TODOS los casos independientemente
+   ├── El sistema rastrea el progreso automáticamente
+   ├── Sin límite de tiempo, pero registrar tiempo por caso
+   └── Esperar hasta que todos los evaluadores asignados completen todos los casos
+
+4. ANÁLISIS
+   ├── Acceder al Dashboard de Fiabilidad de Cohorte
+   ├── Revisar métricas:
+   │   ├── Kappa de Fleiss por sistema (con IC 95%)
+   │   ├── Tasa de coincidencia con estándar de oro general
+   │   ├── Desglose de acuerdo por caso
+   │   └── Identificación de casos difíciles
+   └── Exportar CSV para análisis estadístico externo (SPSS, R, etc.)
+```
+
+### 7.3 Recomendaciones de Tamaño de Muestra
+
+Para validación lista para publicación:
+
+| Parámetro | Mínimo | Recomendado | Notas |
+| --------- | ------ | ----------- | ----- |
+| **Casos** | 30 | 50+ | Incluir variedad de tipos de fractura |
+| **Evaluadores** | 4 | 6+ | Mezcla de niveles de experiencia |
+| **Completitud** | 100% | 100% | Todos los evaluadores deben completar TODOS los casos |
+
+### 7.4 Interpretación de Resultados
+
+#### Guía de Interpretación de Kappa
+
+| Kappa de Fleiss | Interpretación | Acción |
+| --------------- | -------------- | ------ |
+| κ > 0.80 | Casi perfecto | Algoritmo validado ✅ |
+| 0.61 - 0.80 | Sustancial | Buena fiabilidad, revisar casos atípicos |
+| 0.41 - 0.60 | Moderado | Investigar patrones de confusión |
+| 0.21 - 0.40 | Aceptable | El cuestionario puede necesitar revisión |
+| < 0.21 | Leve/Pobre | Problemas significativos a abordar |
+
+#### Análisis de Patrones de Resultados
+
+**Alto Kappa + Alta Coincidencia**
+- *Significado:* Algoritmo y cuestionario funcionan bien
+- *Acción:* Listo para uso clínico ✅
+
+**Alto Kappa + Baja Coincidencia**
+- *Significado:* Evaluadores coinciden pero en respuestas incorrectas
+- *Acción:* Problema de formación o imágenes ambiguas
+
+**Bajo Kappa + Alta Coincidencia**
+- *Significado:* Variación aleatoria se cancela
+- *Acción:* Evaluadores poco fiables, mejorar instrucciones
+
+**Bajo Kappa + Baja Coincidencia**
+- *Significado:* Cuestionario confuso o imágenes inadecuadas
+- *Acción:* Revisar preguntas, mejorar calidad de imagen
+
+### 7.5 Resultados Listos para Publicación
+
+El sistema proporciona datos adecuados para publicación académica:
+
+1. **Métricas Estadísticas**
+   - Kappa de Fleiss con intervalos de confianza del 95%
+   - Porcentaje de acuerdo (general y por sistema)
+   - Sensibilidad/Especificidad por categoría de clasificación
+   - VPP, VPN, puntuaciones F1
+
+2. **Datos Exportables**
+   - Exportación CSV de todas las respuestas
+   - Métricas por caso para tablas
+   - Matrices de confusión para cada sistema de clasificación
+
+3. **Visualizaciones**
+   - Visualizaciones de medidores Kappa
+   - Gráficos de distribución de acuerdo
+   - Identificación de casos difíciles
+
+### 7.6 Lista de Verificación de Validación
+
+Antes de concluir un estudio de validación, verificar:
+
+- [ ] Todos los evaluadores asignados completaron TODOS los casos (100% requerido para Kappa de Fleiss)
+- [ ] El estándar de oro fue establecido por consenso de expertos independientes
+- [ ] La muestra incluye variedad representativa de tipos de fractura
+- [ ] Al menos 30 casos evaluados
+- [ ] Al menos 4 evaluadores participaron
+- [ ] Kappa de Fleiss calculado para cada sistema de clasificación
+- [ ] Intervalos de confianza reportados
+- [ ] Casos difíciles revisados y documentados
+- [ ] Datos CSV exportados para verificación independiente
+
+---
+
+## 8. Glosario
 
 | Término | Definición |
 |---------|------------|
@@ -829,6 +1020,7 @@ Informe de Fiabilidad
 | **Sensibilidad** | Capacidad de identificar correctamente casos positivos |
 | **Especificidad** | Capacidad de identificar correctamente casos negativos |
 | **Estudio/Encuesta** | En Anklyze, un caso con imágenes que los usuarios clasifican |
+| **StudyCohort** | Un grupo de múltiples estudios (casos) con evaluadores asignados para análisis de fiabilidad apropiado |
 | **Sujeto** | En estudios de fiabilidad, el ítem siendo evaluado (un caso/paciente) |
 | **Kappa Ponderado** | Kappa que considera el grado de desacuerdo |
 
@@ -837,9 +1029,18 @@ Informe de Fiabilidad
 ## Información del Documento
 
 - **Creado:** 2026-02-01
+- **Última Actualización:** 2026-02-02
 - **Propósito:** Documentar puntos débiles de la evaluación de fiabilidad y explicar conceptos estadísticos
 - **Audiencia:** Equipo de desarrollo de Anklyze y partes interesadas
-- **Estado:** Análisis inicial
+- **Estado:** Funcionalidades principales implementadas (ver Matriz de Prioridades en sección 6.1)
+
+### Registro de Cambios
+
+| Fecha | Cambios |
+| ----- | ------- |
+| 2026-02-01 | Documento de análisis inicial |
+| 2026-02-01 | Implementado: Corrección de Kappa de Cohen (usa respuesta más reciente), nota de Kappa de Fleiss para caso único, Intervalos de Confianza, Kappa Ponderado para AO/OTA, métricas de Sensibilidad/Especificidad/VPP/VPN/F1, actualizaciones de visualización en frontend |
+| 2026-02-02 | **Actualización Mayor - Implementación de StudyCohort:** Soporte completo de estudios multi-caso con gestión de cohortes, asignación de evaluadores con control de acceso obligatorio, seguimiento de progreso, métricas de acuerdo por caso, identificación de casos difíciles y dashboard de fiabilidad de cohorte. Kappa de Fleiss ahora completamente funcional para estudios de cohorte. |
 
 ---
 

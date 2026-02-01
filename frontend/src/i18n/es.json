@@ -6,6 +6,7 @@
     "admin": "Admin",
     "dashboard": "Panel",
     "manageStudies": "Gestionar Estudios",
+    "cohorts": "Cohortes de Estudios",
     "analytics": "Analíticas",
     "settings": "Configuración",
     "profile": "Perfil"
@@ -18,7 +19,12 @@
     "dashboard": "Panel",
     "newStudy": "Nuevo Estudio",
     "editStudy": "Editar Estudio",
-    "analytics": "Analíticas"
+    "analytics": "Analíticas",
+    "reliability": "Fiabilidad",
+    "cohorts": "Cohortes",
+    "newCohort": "Nueva Cohorte",
+    "editCohort": "Editar Cohorte",
+    "cohortDetail": "Detalle de Cohorte"
   },
   "app": {
     "title": "Clasificación de Fracturas de Tobillo",
@@ -572,6 +578,89 @@
       "noResponses": "Sin respuestas aún",
       "statusBreakdown": "Distribución por Estado",
       "statusBreakdownDesc": "Distribución de estudios por estado"
+    },
+    "cohorts": {
+      "title": "Cohortes de Estudios",
+      "subtitle": "Agrupa estudios para análisis de fiabilidad multi-caso",
+      "create": "Crear Cohorte",
+      "createFirst": "Crea Tu Primera Cohorte",
+      "createCohort": "Crear Nueva Cohorte",
+      "editCohort": "Editar Cohorte",
+      "search": "Buscar cohortes...",
+      "filterStatus": "Filtrar por estado",
+      "allStatuses": "Todos los estados",
+      "noCohorts": "No se encontraron cohortes",
+      "noCohortsDesc": "Crea tu primera cohorte para habilitar el análisis de fiabilidad multi-caso.",
+      "status": {
+        "draft": "Borrador",
+        "active": "Activa",
+        "closed": "Cerrada"
+      },
+      "details": "Detalles de la Cohorte",
+      "detailsDescription": "Información básica sobre la cohorte",
+      "titlePlaceholder": "Introduce el título de la cohorte...",
+      "descriptionPlaceholder": "Describe el propósito de esta cohorte...",
+      "cases": "Casos",
+      "casesDescription": "Estudios incluidos en esta cohorte",
+      "addCase": "Añadir Caso",
+      "noCases": "No hay casos añadidos",
+      "noCasesDesc": "Añade estudios a esta cohorte para habilitar el análisis de fiabilidad.",
+      "removeCase": "Eliminar Caso",
+      "reorderCases": "Reordenar Casos",
+      "caseOrder": "Orden del Caso",
+      "raters": "Evaluadores",
+      "ratersDescription": "Usuarios asignados para evaluar todos los casos de esta cohorte",
+      "addRater": "Añadir Evaluador",
+      "noRaters": "No hay evaluadores asignados",
+      "noRatersDesc": "Asigna usuarios para evaluar casos en esta cohorte.",
+      "removeRater": "Eliminar Evaluador",
+      "progress": "Progreso",
+      "casesCompleted": "casos completados",
+      "completeRaters": "Evaluadores Completos",
+      "completeRatersDesc": "Evaluadores que completaron todos los casos",
+      "uniqueRaters": "Evaluadores Únicos",
+      "totalResponses": "Respuestas Totales",
+      "activate": "Activar",
+      "close": "Cerrar Cohorte",
+      "activateConfirm": {
+        "title": "Activar Cohorte",
+        "description": "Una vez activada, los evaluadores asignados podrán comenzar a responder casos. ¿Estás seguro?"
+      },
+      "closeConfirm": {
+        "title": "Cerrar Cohorte",
+        "description": "Cerrar la cohorte impedirá nuevas respuestas. ¿Estás seguro?"
+      },
+      "deleteConfirm": {
+        "title": "Eliminar Cohorte",
+        "description": "¿Estás seguro de que quieres eliminar esta cohorte? Esta acción no se puede deshacer."
+      },
+      "errors": {
+        "titleRequired": "El título es obligatorio",
+        "needsCase": "Se requiere al menos un caso para activar",
+        "needsRater": "Se requiere al menos un evaluador para activar"
+      },
+      "reliability": {
+        "title": "Métricas de Fiabilidad de la Cohorte",
+        "description": "Análisis de fiabilidad inter-evaluador con Kappa de Fleiss",
+        "fleissKappa": "Kappa de Fleiss",
+        "fleissKappaDesc": "Estadístico de acuerdo multi-evaluador (requiere múltiples casos)",
+        "perCaseMetrics": "Acuerdo por Caso",
+        "perCaseMetricsDesc": "Desglose del acuerdo para cada caso",
+        "hardCases": "Casos Difíciles",
+        "hardCasesDesc": "Casos con bajo acuerdo (< 60%)",
+        "goldStandard": "Precisión vs Gold Standard",
+        "goldStandardDesc": "Precisión comparada con las clasificaciones de referencia",
+        "casesWithReference": "Casos con Referencia"
+      },
+      "table": {
+        "title": "Título",
+        "status": "Estado",
+        "cases": "Casos",
+        "raters": "Evaluadores",
+        "complete": "Completos",
+        "created": "Creado",
+        "showing": "Mostrando {{from}}-{{to}} de {{total}} cohortes"
+      }
     }
   },
   "profile": {

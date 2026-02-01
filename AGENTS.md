@@ -18,56 +18,145 @@ anklyze/
 │   │   └── mcpserver/main.go    # MCP server entry point
 │   └── internal/
 │       ├── api/                 # HTTP handlers and routes
+│       │   ├── handler.go       # Classification handlers
+│       │   ├── study_handlers.go    # Study CRUD and response handlers
+│       │   └── cohort_handlers.go   # Cohort management and reliability
 │       ├── config/              # Configuration loading
 │       ├── database/            # Database connection (GORM)
 │       ├── domain/              # Domain models and types
+│       │   ├── fracture.go      # Classification input types
+│       │   ├── study.go         # Study, StudyImage, StudyResponse
+│       │   ├── cohort.go        # StudyCohort, CohortUser
+│       │   └── reliability.go   # ReliabilityMetrics, FleissKappa
 │       ├── i18n/                # Translations (en.go, es.go)
 │       ├── llm/                 # LLM integration (Gemini API)
 │       ├── mcp/                 # MCP server (tools, resources, prompts)
 │       ├── repository/          # Data access layer
+│       │   ├── cohort.go        # CohortRepository interface
 │       │   └── postgres/        # PostgreSQL implementation
+│       │       ├── study.go     # Study repository
+│       │       └── cohort.go    # Cohort repository
 │       ├── rules/               # Classification rule engine
-│       └── service/             # Business logic services
+│       ├── service/             # Business logic services
+│       │   └── statistics.go    # Kappa calculations, reliability metrics
+│       └── storage/             # File storage (Supabase Storage)
+│
+├── docs/                        # Documentation
+│   ├── RELIABILITY_ANALYSIS.md  # Reliability analysis guide (EN)
+│   └── RELIABILITY_ANALYSIS_ES.md # Reliability analysis guide (ES)
+│
+├── fixtures/                    # SQL test fixtures
+│   ├── cohort_test_data.sql     # Test data for cohort UI
+│   └── cleanup_cohort_test_data.sql # Cleanup script
 │
 └── frontend/                    # React + TypeScript + shadcn/ui
     └── src/
         ├── components/          # React components + shadcn ui/
         │   └── annotation/      # Image annotation components
-        │       ├── ImageAnnotator.tsx    # Main wrapper component
-        │       ├── AnnotationCanvas.tsx  # Konva canvas with tools
-        │       ├── AnnotationToolbar.tsx # Tool selection & controls
-        │       └── ImageUploader.tsx     # Drag-drop image upload
         ├── hooks/               # Custom React hooks
         ├── i18n/                # Translations (en.json, es.json)
+        ├── pages/
+        │   └── admin/           # Admin pages
+        │       ├── AdminCohortsPage.tsx      # Cohort list
+        │       ├── CohortEditorPage.tsx      # Cohort editor
+        │       └── CohortReliabilityPage.tsx # Reliability dashboard
         ├── services/            # API client
-        └── types/               # TypeScript type definitions
+        └── types/
+            └── study.ts         # Study and cohort TypeScript types
 ```
 
 ## Backend (Go)
 
 ### Key Files
+
+**Classification:**
+
 - `internal/domain/fracture.go` - Input types: `FractureInput`, `MedialMorphology`, `FibularLevel`, `FibularMorphology`, `WeberCFractureType`, `InvolvedMalleoli`, `BartonicekType`
 - `internal/domain/classification.go` - Output types: `ClassificationResult`, `DanisWeberClassification`, `LaugeHansenClassification`, `AOOTAClassification`, `BartonicekClassification`
-- `internal/domain/audit.go` - Audit trail model: `AuditEntry` with GORM tags for PostgreSQL
-- `internal/domain/analytics.go` - Analytics models: `AnalyticsSummary`, `TrendData`, `ClassificationDistribution`
 - `internal/rules/engine.go` - Decision tree rule engine for all four classification systems
 - `internal/api/handler.go` - HTTP handlers with form options, audit logging, and analytics
-- `internal/i18n/` - Internationalization: `en.go`, `es.go` for English/Spanish translations
-- `internal/config/config.go` - Configuration loading from environment variables
-- `internal/database/database.go` - GORM PostgreSQL connection setup
+
+**Studies & Cohorts:**
+
+- `internal/domain/study.go` - `Study`, `StudyImage`, `StudyResponse`, `StudyUser` models
+- `internal/domain/cohort.go` - `StudyCohort`, `CohortUser` models with status (draft/active/closed)
+- `internal/domain/reliability.go` - `ReliabilityMetrics`, `FleissKappaResult`, `CohortReliabilityMetrics`, `RaterProgress`
+- `internal/api/study_handlers.go` - Study CRUD, image upload, response submission with cohort access control
+- `internal/api/cohort_handlers.go` - Cohort management, rater assignment, reliability metrics
+- `internal/repository/cohort.go` - `CohortRepository`, `CohortResponseRepository` interfaces
+- `internal/repository/postgres/cohort.go` - PostgreSQL implementation with access control and progress tracking
+- `internal/service/statistics.go` - Kappa calculations (Cohen's, Fleiss', Weighted), sensitivity/specificity, confidence intervals
+
+**Audit & Analytics:**
+
+- `internal/domain/audit.go` - Audit trail model: `AuditEntry` with GORM tags for PostgreSQL
+- `internal/domain/analytics.go` - Analytics models: `AnalyticsSummary`, `TrendData`, `ClassificationDistribution`
 - `internal/repository/audit.go` - `AuditRepository` and `AnalyticsRepository` interfaces with NoOp implementations
 - `internal/repository/postgres/audit.go` - PostgreSQL audit implementation with async writes
 - `internal/repository/postgres/analytics.go` - PostgreSQL analytics implementation with aggregation queries
+
+**Infrastructure:**
+
+- `internal/i18n/` - Internationalization: `en.go`, `es.go` for English/Spanish translations
+- `internal/config/config.go` - Configuration loading from environment variables
+- `internal/database/database.go` - GORM PostgreSQL connection setup
+- `internal/storage/storage.go` - File storage interface (Supabase Storage implementation)
 - `internal/llm/client.go` - Gemini API client for natural language fracture extraction
 - `internal/service/chat.go` - Chat service for processing natural language fracture descriptions
 
 ### API Endpoints
+
+**Classification:**
+
 - `POST /api/classify` - Accepts `FractureInput`, returns `ClassificationResult`
 - `POST /api/chat` - Chat-based classification from natural language descriptions
 - `GET /api/options` - Returns form options for frontend
+
+**Studies (requires auth):**
+
+- `GET /api/studies` - List published studies available to user
+- `GET /api/studies/:id` - Get study details with images
+- `POST /api/studies/:id/responses` - Submit classification response (with cohort access control)
+- `GET /api/studies/:id/my-responses` - Get user's own responses
+
+**Admin Studies:**
+
+- `POST /api/admin/studies` - Create study
+- `GET /api/admin/studies` - List all studies (with filters)
+- `GET /api/admin/studies/:id` - Get study with analytics
+- `PUT /api/admin/studies/:id` - Update study
+- `DELETE /api/admin/studies/:id` - Delete study
+- `POST /api/admin/studies/:id/images` - Upload image
+- `PUT /api/admin/studies/:id/publish` - Publish study
+- `PUT /api/admin/studies/:id/close` - Close study
+- `GET /api/admin/studies/:id/reliability` - Get reliability metrics (Kappa, etc.)
+
+**Admin Cohorts:**
+
+- `POST /api/admin/cohorts` - Create cohort
+- `GET /api/admin/cohorts` - List cohorts (with status filter)
+- `GET /api/admin/cohorts/:id` - Get cohort with cases
+- `PUT /api/admin/cohorts/:id` - Update cohort
+- `DELETE /api/admin/cohorts/:id` - Delete cohort
+- `POST /api/admin/cohorts/:id/cases` - Add study to cohort
+- `DELETE /api/admin/cohorts/:id/cases/:studyId` - Remove study from cohort
+- `PUT /api/admin/cohorts/:id/cases/reorder` - Reorder cases
+- `PUT /api/admin/cohorts/:id/activate` - Activate cohort
+- `PUT /api/admin/cohorts/:id/close` - Close cohort
+- `GET /api/admin/cohorts/:id/users` - List assigned raters
+- `POST /api/admin/cohorts/:id/users` - Assign rater to cohort
+- `DELETE /api/admin/cohorts/:id/users/:userId` - Remove rater from cohort
+- `GET /api/admin/cohorts/:id/reliability` - Get cohort reliability (Fleiss' Kappa, per-case metrics)
+- `GET /api/admin/cohorts/:id/progress` - Get rater progress
+
+**Analytics:**
+
 - `GET /api/analytics/summary` - Returns aggregated statistics for a time period
 - `GET /api/analytics/trends` - Returns time-series classification data
 - `GET /api/analytics/distribution/:system` - Returns distribution for a classification system
+
+**System:**
+
 - `GET /health` - Health check
 - `GET /swagger/*` - OpenAPI documentation (Swagger UI)
 
@@ -509,6 +598,90 @@ Based on selection, different paths are followed:
 | Type 2 | Fragmento posterolateral |
 | Type 3 | Fragmento posteromedial y posterolateral |
 | Type 4 | Gran fragmento triangular posterolateral |
+
+## Studies & Cohorts (Inter-Rater Reliability)
+
+### Study Model
+
+Studies are individual cases with X-ray images for classification evaluation:
+
+```go
+type Study struct {
+    ID                      uuid.UUID
+    Title                   string
+    Description             string
+    Status                  StudyStatus  // draft, published, closed
+    Deadline                *time.Time
+    ReferenceClassification *string      // Gold standard (JSON)
+    CohortID                *uuid.UUID   // If part of a cohort
+    CaseOrder               int          // Order within cohort
+    ResponseCount           int          // Denormalized counter
+    UniqueUsers             int          // Unique raters
+}
+```
+
+**Study Status Flow:** `draft` → `published` → `closed`
+
+### Cohort Model
+
+Cohorts group multiple studies for proper inter-rater reliability analysis (Fleiss' Kappa):
+
+```go
+type StudyCohort struct {
+    ID             uuid.UUID
+    Title          string
+    Description    string
+    Status         CohortStatus  // draft, active, closed
+    CaseCount      int           // Number of studies
+    TotalResponses int
+    UniqueRaters   int
+    CompleteRaters int           // Raters who completed ALL cases
+}
+
+type CohortUser struct {
+    CohortID       uuid.UUID
+    UserID         uuid.UUID
+    UserEmail      string
+    CasesCompleted int           // Progress tracking
+    LastResponseAt *time.Time
+}
+```
+
+**Access Control:**
+
+- **Standalone studies**: Open to all authenticated users
+- **Cohort studies**: Only pre-assigned raters can respond (enforced in `SubmitResponse`)
+
+### Reliability Metrics
+
+The statistics service calculates:
+
+| Metric | Description |
+|--------|-------------|
+| **Cohen's Kappa** | Agreement between 2 raters (with 95% CI) |
+| **Fleiss' Kappa** | Agreement among 3+ raters across multiple cases |
+| **Weighted Kappa** | For ordinal data (AO/OTA) with linear weights |
+| **Percent Agreement** | Simple agreement percentage |
+| **Sensitivity/Specificity** | Per-category diagnostic metrics |
+| **PPV/NPV/F1** | Positive/Negative Predictive Value, F1 score |
+
+**Fleiss' Kappa Requirements:**
+
+- Multiple cases (subjects) in a cohort
+- 3+ raters who completed ALL cases
+- Returns `null` with explanatory note for single-case studies
+
+### Cohort Workflow
+
+```text
+1. Admin creates cohort (draft)
+2. Admin adds studies (cases) to cohort
+3. Admin assigns raters (CohortUser)
+4. Admin activates cohort
+5. Raters complete all cases
+6. Admin views reliability metrics (Fleiss' Kappa, per-case agreement)
+7. Admin closes cohort
+```
 
 ## Testing
 

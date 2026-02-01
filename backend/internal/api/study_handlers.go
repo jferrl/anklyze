@@ -17,13 +17,15 @@ import (
 
 // StudyHandler handles study-related HTTP requests.
 type StudyHandler struct {
-	studyRepo         repository.StudyRepository
-	responseRepo      repository.StudyResponseRepository
-	analyticsRepo     repository.StudyAnalyticsRepository
-	userRepo          auth.UserService
-	storage           storage.Storage
-	signedURLDuration time.Duration
-	statsService      *StatisticsService
+	studyRepo          repository.StudyRepository
+	responseRepo       repository.StudyResponseRepository
+	analyticsRepo      repository.StudyAnalyticsRepository
+	cohortRepo         repository.CohortRepository
+	cohortResponseRepo repository.CohortResponseRepository
+	userRepo           auth.UserService
+	storage            storage.Storage
+	signedURLDuration  time.Duration
+	statsService       *StatisticsService
 }
 
 // StatisticsService is imported from service package
@@ -36,18 +38,22 @@ func NewStudyHandler(
 	studyRepo repository.StudyRepository,
 	responseRepo repository.StudyResponseRepository,
 	analyticsRepo repository.StudyAnalyticsRepository,
+	cohortRepo repository.CohortRepository,
+	cohortResponseRepo repository.CohortResponseRepository,
 	userRepo auth.UserService,
 	storage storage.Storage,
 	statsService *StatisticsService,
 ) *StudyHandler {
 	return &StudyHandler{
-		studyRepo:         studyRepo,
-		responseRepo:      responseRepo,
-		analyticsRepo:     analyticsRepo,
-		userRepo:          userRepo,
-		storage:           storage,
-		signedURLDuration: 15 * time.Minute,
-		statsService:      statsService,
+		studyRepo:          studyRepo,
+		responseRepo:       responseRepo,
+		analyticsRepo:      analyticsRepo,
+		cohortRepo:         cohortRepo,
+		cohortResponseRepo: cohortResponseRepo,
+		userRepo:           userRepo,
+		storage:            storage,
+		signedURLDuration:  15 * time.Minute,
+		statsService:       statsService,
 	}
 }
 
@@ -1051,6 +1057,23 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
+	// Check cohort access - if study belongs to a cohort, verify user is assigned
+	if study.BelongsToCohort() {
+		hasCohortAccess, err := h.cohortRepo.HasAccess(c.Request.Context(), *study.CohortID, userID)
+		if err != nil {
+			slog.Error("failed to check cohort access", "error", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify cohort access"})
+			return
+		}
+		if !hasCohortAccess {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "you are not assigned to this cohort study",
+				"code":  "NOT_COHORT_MEMBER",
+			})
+			return
+		}
+	}
+
 	// Check if single response mode and user already responded
 	if !study.AllowMultipleResponses {
 		hasResponded, err := h.responseRepo.HasUserResponded(c.Request.Context(), userID, studyID)
@@ -1094,6 +1117,18 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 		_ = h.studyRepo.IncrementResponseCount(c.Request.Context(), studyID)
 		count, _ := h.responseRepo.CountUniqueUsersByStudy(c.Request.Context(), studyID)
 		_ = h.studyRepo.UpdateUniqueUsers(c.Request.Context(), studyID, int(count))
+
+		// Update cohort user progress if study belongs to a cohort
+		if study.BelongsToCohort() {
+			casesCompleted, err := h.cohortResponseRepo.CountUserCasesCompleted(c.Request.Context(), *study.CohortID, userID)
+			if err != nil {
+				slog.Warn("failed to count user cases completed", "error", err, "cohortID", study.CohortID, "userID", userID)
+			} else {
+				if err := h.cohortRepo.UpdateUserProgress(c.Request.Context(), *study.CohortID, userID, casesCompleted); err != nil {
+					slog.Warn("failed to update cohort user progress", "error", err, "cohortID", study.CohortID, "userID", userID)
+				}
+			}
+		}
 	}()
 
 	// Build result with reference comparison if enabled

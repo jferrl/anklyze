@@ -10,7 +10,8 @@
 4. [Current Implementation Analysis](#4-current-implementation-analysis)
 5. [Identified Pain Points](#5-identified-pain-points)
 6. [Recommendations](#6-recommendations)
-7. [Glossary](#7-glossary)
+7. [Algorithm Validation Protocol](#7-algorithm-validation-protocol)
+8. [Glossary](#8-glossary)
 
 ---
 
@@ -459,26 +460,49 @@ ratings := [][2]string{
 
 ---
 
-#### ~~Problem 2: Fleiss' Kappa Single-Subject Design~~ ✅ ADDRESSED
+#### ~~Problem 2: Fleiss' Kappa Single-Subject Design~~ ✅ FIXED
 
-**Status:** Addressed in February 2026 (limitation acknowledged)
+**Status:** Fully resolved in February 2026
 
-**Solution:** Since the current study design is single-case, Fleiss' Kappa cannot be meaningfully calculated. The system now:
+**Solution:** Implemented **StudyCohort** feature that groups multiple studies (cases) together for proper Fleiss' Kappa calculation.
 
-1. Returns `null` for `fleiss_kappa` value
-2. Provides an explanatory note via `fleiss_kappa_note` field
-3. Frontend displays the note in an informational alert
+**How it works:**
 
-**API Response:**
+1. Admin creates a cohort and adds multiple studies (cases) to it
+2. Raters are pre-assigned to the cohort
+3. Raters complete all cases in the cohort
+4. System calculates Fleiss' Kappa across all cases and raters
+
+**For single-case studies (backward compatible):**
+
+- Returns `null` for `fleiss_kappa` value
+- Provides an explanatory note via `fleiss_kappa_note` field
+- Frontend displays the note in an informational alert
+
+**Cohort API Response:**
 
 ```json
 {
-  "fleiss_kappa": null,
-  "fleiss_kappa_note": "Fleiss' Kappa requires multiple cases (subjects) to calculate inter-rater reliability. Current study design has a single case. Consider creating a study cohort with multiple cases for proper reliability assessment."
+  "fleiss_kappa": {
+    "kappa": 0.72,
+    "interpretation": "substantial",
+    "num_raters": 5,
+    "num_subjects": 10,
+    "num_categories": 3,
+    "confidence_interval": {
+      "lower": 0.58,
+      "upper": 0.86,
+      "level": 0.95
+    }
+  }
 }
 ```
 
-**Remaining Work:** Implement multi-case study support (StudyCohort) to enable proper Fleiss' Kappa calculation. See section 6.3 for proposed design.
+**Key Files:**
+- `backend/internal/domain/cohort.go` - Domain models
+- `backend/internal/repository/postgres/cohort.go` - Repository implementation
+- `backend/internal/api/cohort_handlers.go` - API endpoints
+- `frontend/src/pages/admin/CohortReliabilityPage.tsx` - Reliability dashboard
 
 ---
 
@@ -546,41 +570,84 @@ var aoOTAOrdering = []string{
 
 ### 5.2 Study Design Limitations
 
-#### Problem 5: Single Case Per Study
+#### ~~Problem 5: Single Case Per Study~~ ✅ FIXED
 
-**The Issue:**
+**Status:** Resolved in February 2026
 
-Each study contains one set of images representing one case.
+**Original Issue:** Each study contains one set of images representing one case, making proper reliability analysis impossible.
 
-**Why it matters for reliability:**
+**Solution:** Implemented **StudyCohort** feature:
 
-Proper inter-rater reliability studies need:
-- Multiple cases (ideally 30+)
-- Same raters evaluating all cases
-- Ability to calculate per-case agreement
+```text
+StudyCohort
+├── Metadata (title, description, status)
+├── Case 1 (Study) ─── Images + Gold Standard
+├── Case 2 (Study) ─── Images + Gold Standard
+├── Case 3 (Study) ─── Images + Gold Standard
+└── ... (unlimited cases)
+```
 
-**Current workaround:**
-- Create many separate studies
-- Manually ensure same users participate
-- Calculate aggregate statistics externally
+**Features:**
 
-**Impact:**
-- Cannot calculate true Fleiss' Kappa
-- Cannot identify which case types cause disagreement
-- Tedious to manage multi-case studies
+- Group multiple studies into a cohort
+- Drag-and-drop case reordering
+- Per-case agreement metrics
+- Identify "hard cases" with low agreement
+- Proper Fleiss' Kappa calculation across all cases
+
+**API Endpoints:**
+
+- `POST /api/admin/cohorts` - Create cohort
+- `POST /api/admin/cohorts/:id/cases` - Add case to cohort
+- `GET /api/admin/cohorts/:id/reliability` - Get reliability metrics
 
 ---
 
-#### Problem 6: No Rater Cohort Management
+#### ~~Problem 6: No Rater Cohort Management~~ ✅ FIXED
 
-**The Issue:**
+**Status:** Resolved in February 2026
 
-There's no way to define "these 10 doctors should all evaluate these 20 cases."
+**Original Issue:** No way to define "these 10 doctors should all evaluate these 20 cases."
 
-**Impact:**
-- Different users may evaluate different studies
-- Cannot ensure balanced design
-- Cannot track individual rater consistency
+**Solution:** Implemented **CohortUser** assignments with access control:
+
+```go
+type CohortUser struct {
+    CohortID       uuid.UUID  // Which cohort
+    UserID         uuid.UUID  // Which user
+    UserEmail      string     // For display
+    CasesCompleted int        // Progress tracking
+    LastResponseAt *time.Time // Activity tracking
+}
+```
+
+**Features:**
+
+- Pre-assign specific raters to cohorts
+- **Access control enforcement**: Only assigned raters can respond to cohort studies
+- Progress tracking per rater (cases completed / total cases)
+- Automatic progress updates when responses are submitted
+- Identify complete vs. incomplete raters for Fleiss' Kappa
+
+**Hybrid Access Model:**
+
+- **Standalone studies**: Open to all authenticated users
+- **Cohort studies**: Restricted to assigned raters only
+
+**Error Response for Unauthorized Access:**
+
+```json
+{
+  "error": "you are not assigned to this cohort study",
+  "code": "NOT_COHORT_MEMBER"
+}
+```
+
+**Key Files:**
+
+- `backend/internal/api/study_handlers.go:1057-1072` - Access control check
+- `backend/internal/repository/postgres/cohort.go` - User management
+- `frontend/src/pages/admin/CohortEditorPage.tsx` - Rater assignment UI
 
 ---
 
@@ -714,22 +781,23 @@ If many users select impossible combinations, it indicates:
 | Issue | Status | Notes |
 |-------|--------|-------|
 | Fix Cohen's Kappa multi-response handling | ✅ Done | Now uses latest response |
-| Fix Fleiss' Kappa calculation | ✅ Addressed | Returns null with explanatory note for single-case studies |
-| Add confidence intervals | ✅ Done | 95% CI for Cohen's Kappa |
+| Fix Fleiss' Kappa calculation | ✅ Done | Returns null for single-case, full calculation for cohorts |
+| Add confidence intervals | ✅ Done | 95% CI for Cohen's Kappa and Fleiss' Kappa |
 | Add weighted Kappa | ✅ Done | Linear weights for AO/OTA |
 | Add sensitivity/specificity | ✅ Done | Per-category diagnostic metrics |
+| Implement multi-case study support (StudyCohort) | ✅ Done | Full cohort management with reliability dashboard |
+| Add rater cohort management | ✅ Done | Pre-assigned raters with access control enforcement |
+| Rater progress tracking | ✅ Done | Automatic tracking of cases completed per rater |
 
 #### Remaining Work
 
 | Priority | Issue | Effort | Impact |
-|----------|-------|--------|--------|
-| 🟡 Medium | Implement multi-case study support (StudyCohort) | High | High - Enables proper Fleiss' Kappa |
+| -------- | ----- | ------ | ------ |
 | 🟡 Medium | Add algorithm versioning | Medium | Medium - Important for long-term |
 | 🟡 Medium | Add expertise stratification in analytics | Medium | Medium - Valuable for publications |
 | 🟢 Low | Add ICC calculation | Medium | Medium - Alternative metric |
 | 🟢 Low | Add divergence analysis | High | Medium - Valuable insights |
 | 🟢 Low | Add time-based analysis | Low | Low - Quality indicators |
-| 🟢 Low | Add rater cohort management | High | Medium - Better study design |
 
 ### 6.2 Recommended Study Design
 
@@ -767,28 +835,76 @@ For a proper reliability study, consider this workflow:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 6.3 Suggested New Features
+### 6.3 Implemented Features
 
-#### Multi-Case Study (Study Cohort)
+#### ✅ Multi-Case Study (Study Cohort)
 
+**Status:** Fully implemented
+
+```text
+StudyCohort
+├── Metadata (title, description, status: draft/active/closed)
+├── Case 1 (Study) ─── Images + Gold Standard
+├── Case 2 (Study) ─── Images + Gold Standard
+├── Case N (Study) ─── Images + Gold Standard
+│
+└── CohortUsers (Assigned Raters)
+    ├── Rater 1 ─── Progress: 8/10 cases
+    ├── Rater 2 ─── Progress: 10/10 cases ✓
+    └── Rater N ─── Progress: 5/10 cases
 ```
-Study Cohort
-├── Case 1 (Study)
-│   ├── Images
-│   └── Gold Standard
-├── Case 2 (Study)
-│   ├── Images
-│   └── Gold Standard
-└── ... (up to N cases)
 
-Rater Pool
-├── Assigned raters (must complete all cases)
-└── Progress tracking per rater
+**Key Features:**
+
+- Create cohorts with unlimited cases
+- Drag-and-drop case reordering
+- Pre-assign raters with access control
+- Automatic progress tracking
+- Per-case agreement metrics
+- "Hard cases" identification (low agreement)
+- Fleiss' Kappa calculation across all complete raters
+
+**Frontend Pages:**
+
+- `/admin/cohorts` - List and manage cohorts
+- `/admin/cohorts/:id` - Edit cohort, manage cases and raters
+- `/admin/cohorts/:id/reliability` - Full reliability dashboard
+
+---
+
+#### ✅ Enhanced Analytics Dashboard
+
+**Status:** Fully implemented for cohorts
+
+```text
+Cohort Reliability Report
+├── Overview
+│   ├── Fleiss' Kappa per classification system (with CI)
+│   ├── Overall agreement percentages
+│   └── Complete rater count
+├── Per-System Analysis
+│   ├── Danis-Weber (Fleiss' Kappa, Agreement %)
+│   ├── Lauge-Hansen (Fleiss' Kappa, Agreement %)
+│   ├── AO/OTA (Fleiss' Kappa, Agreement %)
+│   └── Bartonicek (Fleiss' Kappa, Agreement %)
+├── Per-Case Analysis
+│   ├── Agreement per case
+│   ├── Gold standard match rate
+│   └── Hard case identification
+├── Rater Progress
+│   ├── Cases completed per rater
+│   ├── Complete vs incomplete status
+│   └── Last activity timestamp
+└── Gold Standard Accuracy (aggregated)
 ```
+
+---
+
+### 6.4 Suggested Future Features
 
 #### Algorithm Version Tracking
 
-```
+```text
 Classification Result
 ├── Classification data
 ├── Algorithm version: "1.2.3"
@@ -796,32 +912,150 @@ Classification Result
 └── Timestamp
 ```
 
-#### Enhanced Analytics Dashboard
+#### Additional Analytics Enhancements
 
-```
-Reliability Report
-├── Overview
-│   ├── Fleiss' Kappa (with CI)
-│   ├── Overall Accuracy
-│   └── Sample Size Assessment
-├── Per-System Analysis
-│   ├── Danis-Weber (Kappa, Confusion Matrix, Sens/Spec)
-│   ├── Lauge-Hansen (Kappa, Confusion Matrix, Sens/Spec)
-│   ├── AO/OTA (Weighted Kappa, Confusion Matrix)
-│   └── Bartonicek (Kappa, Confusion Matrix)
-├── Rater Analysis
-│   ├── Individual accuracy
-│   ├── Consistency over time
-│   └── Expertise correlation
-└── Case Analysis
-    ├── Most disagreed cases
-    ├── Impossible selection frequency
-    └── Time distribution
-```
+- Expertise stratification (breakdown by specialty/experience)
+- Time-based analysis (response time vs accuracy)
+- ICC calculation (alternative reliability metric)
+- Decision tree divergence analysis (where users go wrong)
 
 ---
 
-## 7. Glossary
+## 7. Algorithm Validation Protocol
+
+The current implementation is ready for formal algorithm validation studies. This section describes how to conduct a validation study.
+
+### 7.1 What Can Be Validated
+
+| Aspect | Method | Metric |
+|--------|--------|--------|
+| **Inter-rater reliability** | Multiple doctors classify same cases | Fleiss' Kappa |
+| **Gold standard accuracy** | Compare user classifications to expert consensus | Match rate % |
+| **Questionnaire clarity** | Identify cases with high disagreement | Per-case agreement |
+| **System-specific reliability** | Separate Kappa for each classification system | Per-system Kappa |
+
+### 7.2 Validation Study Workflow
+
+```text
+1. PREPARATION
+   ├── Select 30+ representative X-ray cases
+   │   ├── Include variety: Weber A/B/C, different mechanisms
+   │   ├── Mix of clear and challenging cases
+   │   └── Multiple views (AP, lateral, mortise) when available
+   ├── Gold Standard Determination
+   │   ├── Have 2-3 senior experts independently classify each case
+   │   ├── Resolve disagreements through consensus discussion
+   │   └── Document rationale for each gold standard
+   └── Prepare high-quality digital images
+
+2. SETUP IN ANKLYZE
+   ├── Create individual studies (one per case)
+   │   ├── Upload X-ray images
+   │   ├── Set reference classification (gold standard)
+   │   └── Keep as draft initially
+   ├── Create validation cohort
+   │   └── Title: "Algorithm Validation Study [Year]"
+   ├── Add all studies to cohort (drag-drop reorder as needed)
+   ├── Assign raters
+   │   ├── Minimum: 4 raters
+   │   ├── Recommended: 6+ raters
+   │   └── Mix of experience levels (attendings, fellows, residents)
+   └── Activate cohort when ready
+
+3. DATA COLLECTION
+   ├── Raters access published studies
+   ├── Each rater classifies ALL cases independently
+   ├── System automatically tracks progress
+   ├── No time limit, but record time taken per case
+   └── Wait until all assigned raters complete all cases
+
+4. ANALYSIS
+   ├── Access Cohort Reliability Dashboard
+   ├── Review metrics:
+   │   ├── Fleiss' Kappa per system (with 95% CI)
+   │   ├── Overall gold standard match rate
+   │   ├── Per-case agreement breakdown
+   │   └── Hard case identification
+   └── Export CSV for external statistical analysis (SPSS, R, etc.)
+```
+
+### 7.3 Sample Size Recommendations
+
+For publication-ready validation:
+
+| Parameter | Minimum | Recommended | Notes |
+|-----------|---------|-------------|-------|
+| **Cases** | 30 | 50+ | Include variety of fracture types |
+| **Raters** | 4 | 6+ | Mix of expertise levels |
+| **Completion** | 100% | 100% | All raters must complete ALL cases |
+
+### 7.4 Interpreting Results
+
+#### Kappa Interpretation Guide
+
+| Fleiss' Kappa | Interpretation | Action |
+|---------------|----------------|--------|
+| κ > 0.80 | Almost perfect | Algorithm validated ✅ |
+| 0.61 - 0.80 | Substantial | Good reliability, review outlier cases |
+| 0.41 - 0.60 | Moderate | Investigate confusion patterns |
+| 0.21 - 0.40 | Fair | Questionnaire may need revision |
+| < 0.21 | Slight/Poor | Significant issues to address |
+
+#### Result Pattern Analysis
+
+**High Kappa + High Gold Match**
+- *Meaning:* Algorithm and questionnaire work well
+- *Action:* Ready for clinical use ✅
+
+**High Kappa + Low Gold Match**
+- *Meaning:* Raters agree but on wrong answers
+- *Action:* Training issue or ambiguous images
+
+**Low Kappa + High Gold Match**
+- *Meaning:* Random variation cancels out
+- *Action:* Raters unreliable, need better instructions
+
+**Low Kappa + Low Gold Match**
+- *Meaning:* Questionnaire confusing or images inadequate
+- *Action:* Review questions, improve image quality
+
+### 7.5 Publication-Ready Outputs
+
+The system provides data suitable for academic publication:
+
+1. **Statistical Metrics**
+   - Fleiss' Kappa with 95% confidence intervals
+   - Percent agreement (overall and per-system)
+   - Sensitivity/Specificity per classification category
+   - PPV, NPV, F1 scores
+
+2. **Exportable Data**
+   - CSV export of all responses
+   - Per-case metrics for tables
+   - Confusion matrices for each classification system
+
+3. **Visual Outputs**
+   - Kappa gauge visualizations
+   - Agreement distribution charts
+   - Hard case identification
+
+### 7.6 Validation Checklist
+
+Before concluding a validation study, verify:
+
+- [ ] All assigned raters completed ALL cases (100% completion required for Fleiss' Kappa)
+- [ ] Gold standard was set by independent expert consensus
+- [ ] Sample includes representative variety of fracture types
+- [ ] At least 30 cases evaluated
+- [ ] At least 4 raters participated
+- [ ] Fleiss' Kappa calculated for each classification system
+- [ ] Confidence intervals reported
+- [ ] Hard cases reviewed and documented
+- [ ] CSV data exported for independent verification
+
+---
+
+## 8. Glossary
 
 | Term | Definition |
 |------|------------|
@@ -845,6 +1079,7 @@ Reliability Report
 | **Sensitivity** | Ability to correctly identify positive cases |
 | **Specificity** | Ability to correctly identify negative cases |
 | **Study/Survey** | In Anklyze, a case with images that users classify |
+| **StudyCohort** | A group of multiple studies (cases) with assigned raters for proper reliability analysis |
 | **Subject** | In reliability studies, the item being rated (a case/patient) |
 | **Weighted Kappa** | Kappa that accounts for the degree of disagreement |
 
@@ -853,17 +1088,18 @@ Reliability Report
 ## Document Information
 
 - **Created:** 2026-02-01
-- **Last Updated:** 2026-02-01
+- **Last Updated:** 2026-02-02
 - **Purpose:** Document reliability assessment pain points and explain statistical concepts
 - **Audience:** Anklyze development team and stakeholders
-- **Status:** Partially implemented (see Priority Matrix in section 6.1)
+- **Status:** Core features implemented (see Priority Matrix in section 6.1)
 
 ### Change Log
 
 | Date | Changes |
-|------|---------|
+| ---- | ------- |
 | 2026-02-01 | Initial analysis document |
 | 2026-02-01 | Implemented: Cohen's Kappa fix (uses latest response), Fleiss' Kappa note for single-case, Confidence Intervals, Weighted Kappa for AO/OTA, Sensitivity/Specificity/PPV/NPV/F1 metrics, Frontend display updates |
+| 2026-02-02 | **Major Update - StudyCohort Implementation:** Full multi-case study support with cohort management, rater assignment with access control enforcement, progress tracking, per-case agreement metrics, hard case identification, and cohort reliability dashboard. Fleiss' Kappa now fully functional for cohort studies. |
 
 ---
 

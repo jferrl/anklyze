@@ -25,6 +25,9 @@ export interface Study {
   reference_classification?: ClassificationResult;
   show_reference_after_submit: boolean;
   allow_multiple_responses: boolean;
+  // Cohort membership (optional)
+  cohort_id?: string;
+  case_order: number;
 }
 
 // Study image
@@ -296,6 +299,153 @@ export interface UpdateUserProfileRequest {
   specialty?: Specialty;
   training_level?: TrainingLevel;
   institution?: string;
+}
+
+// ============================================================================
+// Study Cohort Types (for multi-case reliability studies)
+// ============================================================================
+
+// Cohort status lifecycle
+export type CohortStatus = 'draft' | 'active' | 'closed';
+
+// Study cohort (groups multiple studies for multi-case reliability analysis)
+export interface StudyCohort {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  title: string;
+  description?: string;
+  status: CohortStatus;
+  case_count: number;
+  total_responses: number;
+  unique_raters: number;
+  complete_raters: number;
+}
+
+// Cohort with its cases (studies with cohort_id set)
+export interface CohortWithCases extends StudyCohort {
+  cases: Study[];
+}
+
+// Cohort user (pre-assigned rater)
+export interface CohortUser {
+  id: string;
+  cohort_id: string;
+  user_id: string;
+  user_email: string;
+  cases_completed: number;
+  last_response_at?: string;
+  created_at: string;
+}
+
+// Rater progress across a cohort
+export interface RaterProgress {
+  user_id: string;
+  user_email: string;
+  display_name?: string;
+  cases_completed: number;
+  total_cases: number;
+  is_complete: boolean;
+  last_response_at?: string;
+}
+
+// --- Cohort Request Types ---
+
+export interface CreateCohortRequest {
+  title: string;
+  description?: string;
+}
+
+export interface UpdateCohortRequest {
+  title?: string;
+  description?: string;
+}
+
+export interface AddCaseRequest {
+  study_id: string;
+  case_order?: number;
+}
+
+export interface ReorderCasesRequest {
+  study_ids: string[];
+}
+
+export interface AddCohortUserRequest {
+  user_id: string;
+  email: string;
+}
+
+// --- Cohort Response Types ---
+
+export interface CohortListResponse {
+  cohorts: StudyCohort[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface RaterProgressResponse {
+  raters: RaterProgress[];
+  total: number;
+}
+
+// --- Cohort Reliability Metrics ---
+
+// Fleiss' Kappa result (now calculable with multiple cases!)
+export interface FleissKappaResult {
+  kappa: number;
+  interpretation: string;
+  num_subjects: number;   // Number of cases
+  num_raters: number;     // Number of complete raters
+  num_categories: number;
+  confidence_interval?: ConfidenceInterval;
+  note?: string;
+}
+
+// Metrics for a single case within a cohort
+export interface CaseMetrics {
+  case_order: number;
+  study_id: string;
+  study_title: string;
+  response_count: number;
+  danis_weber_agreement: number;
+  lauge_hansen_agreement: number;
+  ao_ota_agreement: number;
+  bartonicek_agreement?: number;
+  gold_standard_match_rate?: number;
+  is_low_agreement: boolean;
+}
+
+// Gold standard accuracy aggregated across a cohort
+export interface CohortGoldStandardAccuracy {
+  overall_accuracy: number;
+  cases_with_reference: number;
+  total_comparisons: number;
+  danis_weber_accuracy?: number;
+  lauge_hansen_accuracy?: number;
+  ao_ota_accuracy?: number;
+  bartonicek_accuracy?: number;
+}
+
+// Full reliability metrics for a cohort
+export interface CohortReliabilityMetrics {
+  cohort_id: string;
+  cohort_title: string;
+  total_cases: number;
+  total_responses: number;
+  unique_raters: number;
+  complete_raters: number;
+  danis_weber_fleiss?: FleissKappaResult;
+  lauge_hansen_fleiss?: FleissKappaResult;
+  ao_ota_fleiss?: FleissKappaResult;
+  bartonicek_fleiss?: FleissKappaResult;
+  per_case_metrics: CaseMetrics[];
+  gold_standard_accuracy?: CohortGoldStandardAccuracy;
+}
+
+export interface CohortReliabilityResponse extends CohortReliabilityMetrics {
+  calculated_at: string;
 }
 
 // Helper for Kappa interpretation

@@ -3,6 +3,7 @@ package service
 import (
 	"math"
 
+	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 )
 
@@ -708,4 +709,472 @@ func (s *StatisticsService) extractCategories(ratings [][2]string) []string {
 func Round(val float64, precision int) float64 {
 	ratio := math.Pow(10, float64(precision))
 	return math.Round(val*ratio) / ratio
+}
+
+// ============================================================================
+// Cohort Reliability Metrics
+// ============================================================================
+
+// CalculateCohortReliabilityMetrics calculates reliability metrics across multiple cases in a cohort.
+// This enables proper Fleiss' Kappa calculation which requires multiple subjects (cases).
+func (s *StatisticsService) CalculateCohortReliabilityMetrics(
+	cohort *domain.StudyCohort,
+	cases []domain.Study,
+	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+) (*domain.CohortReliabilityMetrics, error) {
+	if len(cases) == 0 {
+		return nil, nil
+	}
+
+	// Count total responses and unique raters
+	var totalResponses int64
+	allRaters := make(map[uuid.UUID]bool)
+	for _, responses := range responsesByCase {
+		totalResponses += int64(len(responses))
+		for _, r := range responses {
+			allRaters[r.UserID] = true
+		}
+	}
+
+	// Identify complete raters (who responded to ALL cases)
+	completeRaters := s.identifyCompleteRaters(cases, responsesByCase)
+
+	metrics := &domain.CohortReliabilityMetrics{
+		CohortID:       cohort.ID,
+		CohortTitle:    cohort.Title,
+		TotalCases:     len(cases),
+		TotalResponses: totalResponses,
+		UniqueRaters:   int64(len(allRaters)),
+		CompleteRaters: int64(len(completeRaters)),
+	}
+
+	// Calculate Fleiss' Kappa for each classification system
+	// Requires at least 2 complete raters
+	if len(completeRaters) >= 2 {
+		metrics.DanisWeberFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "danis_weber")
+		metrics.LaugeHansenFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "lauge_hansen")
+		metrics.AOOTAFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "ao_ota")
+		metrics.BartonicekFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "bartonicek")
+	}
+
+	// Calculate per-case metrics
+	metrics.PerCaseMetrics = s.calculatePerCaseMetrics(cases, responsesByCase)
+
+	// Calculate aggregated gold standard accuracy
+	metrics.GoldStandardAccuracy = s.calculateCohortGoldStandardAccuracy(cases, responsesByCase)
+
+	return metrics, nil
+}
+
+// identifyCompleteRaters finds raters who completed ALL cases in the cohort.
+func (s *StatisticsService) identifyCompleteRaters(
+	cases []domain.Study,
+	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+) []uuid.UUID {
+	// Track which cases each rater completed
+	raterCases := make(map[uuid.UUID]map[uuid.UUID]bool) // userID -> studyID -> completed
+
+	for _, c := range cases {
+		responses := responsesByCase[c.ID]
+		for _, r := range responses {
+			if raterCases[r.UserID] == nil {
+				raterCases[r.UserID] = make(map[uuid.UUID]bool)
+			}
+			raterCases[r.UserID][c.ID] = true
+		}
+	}
+
+	// Filter to only complete raters
+	totalCases := len(cases)
+	var completeRaters []uuid.UUID
+	for userID, completed := range raterCases {
+		if len(completed) >= totalCases {
+			completeRaters = append(completeRaters, userID)
+		}
+	}
+
+	return completeRaters
+}
+
+// calculateFleissForSystem builds the Fleiss' Kappa matrix and calculates the statistic.
+// Matrix format: matrix[subject][category] = count of raters who assigned that category
+func (s *StatisticsService) calculateFleissForSystem(
+	cases []domain.Study,
+	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+	completeRaters []uuid.UUID,
+	system string,
+) *domain.FleissKappaResult {
+	// Create a set of complete rater IDs for quick lookup
+	completeRaterSet := make(map[uuid.UUID]bool)
+	for _, raterID := range completeRaters {
+		completeRaterSet[raterID] = true
+	}
+
+	// Collect all unique categories across all cases
+	allCategories := make(map[string]bool)
+	for _, c := range cases {
+		responses := responsesByCase[c.ID]
+		for _, r := range responses {
+			if !completeRaterSet[r.UserID] {
+				continue // Only include complete raters
+			}
+			cat := s.getClassificationForSystem(r, system)
+			if cat != "" {
+				allCategories[cat] = true
+			}
+		}
+	}
+
+	if len(allCategories) == 0 {
+		return nil
+	}
+
+	// Create ordered category list
+	var categories []string
+	for cat := range allCategories {
+		categories = append(categories, cat)
+	}
+
+	// Create category index map
+	catIndex := make(map[string]int)
+	for i, cat := range categories {
+		catIndex[cat] = i
+	}
+
+	numSubjects := len(cases)
+	numCategories := len(categories)
+	numRaters := len(completeRaters)
+
+	// Build the matrix: matrix[subject][category] = count
+	matrix := make([][]int, numSubjects)
+	for i := range matrix {
+		matrix[i] = make([]int, numCategories)
+	}
+
+	// Fill the matrix
+	for subjectIdx, c := range cases {
+		responses := responsesByCase[c.ID]
+		for _, r := range responses {
+			if !completeRaterSet[r.UserID] {
+				continue
+			}
+			cat := s.getClassificationForSystem(r, system)
+			if cat != "" {
+				if catIdx, ok := catIndex[cat]; ok {
+					matrix[subjectIdx][catIdx]++
+				}
+			}
+		}
+	}
+
+	// Calculate Fleiss' Kappa
+	kappa, err := s.FleissKappa(matrix, numRaters)
+	if err != nil {
+		return nil
+	}
+
+	result := domain.NewFleissKappaResult(kappa, numSubjects, numRaters, numCategories)
+
+	// Add confidence interval if we have enough data
+	// Using the standard error approximation for Fleiss' Kappa
+	if numSubjects >= 2 && numRaters >= 2 {
+		ci := s.calculateFleissKappaCI(matrix, numRaters, kappa, 0.95)
+		result.ConfidenceInterval = ci
+	}
+
+	return result
+}
+
+// calculateFleissKappaCI calculates confidence interval for Fleiss' Kappa.
+// Uses the approximate variance formula.
+func (s *StatisticsService) calculateFleissKappaCI(matrix [][]int, numRaters int, kappa float64, confidenceLevel float64) *domain.ConfidenceInterval {
+	// Simplified approximation for Fleiss' Kappa variance
+	// Based on Fleiss (1971) and later refinements
+	n := float64(len(matrix))      // Number of subjects
+	k := float64(numRaters)        // Number of raters
+
+	if n < 2 || k < 2 {
+		return nil
+	}
+
+	// Calculate P_e (expected agreement)
+	numCategories := len(matrix[0])
+	pj := make([]float64, numCategories)
+	totalAssignments := n * k
+
+	for j := 0; j < numCategories; j++ {
+		sum := 0
+		for i := 0; i < int(n); i++ {
+			if j < len(matrix[i]) {
+				sum += matrix[i][j]
+			}
+		}
+		pj[j] = float64(sum) / totalAssignments
+	}
+
+	pe := 0.0
+	for j := 0; j < numCategories; j++ {
+		pe += pj[j] * pj[j]
+	}
+
+	// Approximate standard error (simplified formula)
+	// SE ≈ sqrt(2 / (n * k * (k-1) * (1-Pe)^2))
+	denominator := n * k * (k - 1) * math.Pow(1-pe, 2)
+	if denominator <= 0 {
+		return nil
+	}
+
+	se := math.Sqrt(2 / denominator)
+
+	// Z-score for confidence level
+	z := 1.96 // 95% CI
+	switch confidenceLevel {
+	case 0.99:
+		z = 2.576
+	case 0.90:
+		z = 1.645
+	}
+
+	lower := kappa - z*se
+	upper := kappa + z*se
+
+	// Clamp to valid range
+	if lower < -1 {
+		lower = -1
+	}
+	if upper > 1 {
+		upper = 1
+	}
+
+	return &domain.ConfidenceInterval{
+		Lower: Round(lower, 4),
+		Upper: Round(upper, 4),
+		Level: confidenceLevel,
+	}
+}
+
+// getClassificationForSystem extracts the classification value for a given system from a response.
+func (s *StatisticsService) getClassificationForSystem(r domain.StudyResponse, system string) string {
+	var val *string
+	switch system {
+	case "danis_weber":
+		val = r.DanisWeberType
+	case "lauge_hansen":
+		val = r.LaugeHansenType
+	case "ao_ota":
+		val = r.AOOTACode
+	case "bartonicek":
+		val = r.BartonicekType
+	}
+	if val != nil {
+		return *val
+	}
+	return ""
+}
+
+// calculatePerCaseMetrics calculates agreement metrics for each case in a cohort.
+func (s *StatisticsService) calculatePerCaseMetrics(
+	cases []domain.Study,
+	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+) []domain.CaseMetrics {
+	result := make([]domain.CaseMetrics, 0, len(cases))
+
+	for _, c := range cases {
+		responses := responsesByCase[c.ID]
+
+		cm := domain.CaseMetrics{
+			CaseOrder:     c.CaseOrder,
+			StudyID:       c.ID,
+			StudyTitle:    c.Title,
+			ResponseCount: len(responses),
+		}
+
+		// Calculate agreement for each system
+		cm.DanisWeberAgreement = s.calculateCaseAgreement(responses, "danis_weber")
+		cm.LaugeHansenAgreement = s.calculateCaseAgreement(responses, "lauge_hansen")
+		cm.AOOTAAgreement = s.calculateCaseAgreement(responses, "ao_ota")
+
+		btAgreement := s.calculateCaseAgreement(responses, "bartonicek")
+		if btAgreement > 0 {
+			cm.BartonicekAgreement = &btAgreement
+		}
+
+		// Calculate gold standard match rate if reference is set
+		if c.HasReferenceClassification() {
+			refClass, err := c.GetReferenceClassification()
+			if err == nil && refClass != nil {
+				matchRate := s.calculateGoldStandardMatchRate(responses, refClass)
+				cm.GoldStandardMatchRate = &matchRate
+			}
+		}
+
+		// Flag low agreement cases
+		cm.IsLowAgreement = cm.DanisWeberAgreement < 60 ||
+			cm.LaugeHansenAgreement < 60 ||
+			cm.AOOTAAgreement < 60
+
+		result = append(result, cm)
+	}
+
+	return result
+}
+
+// calculateCaseAgreement calculates percent agreement for a single case and system.
+func (s *StatisticsService) calculateCaseAgreement(responses []domain.StudyResponse, system string) float64 {
+	var classifications []string
+	for _, r := range responses {
+		cat := s.getClassificationForSystem(r, system)
+		if cat != "" {
+			classifications = append(classifications, cat)
+		}
+	}
+
+	if len(classifications) < 2 {
+		return 100.0 // Single response = 100% agreement with itself
+	}
+
+	return s.PercentAgreement(classifications) * 100
+}
+
+// calculateGoldStandardMatchRate calculates the percentage of responses matching the gold standard.
+func (s *StatisticsService) calculateGoldStandardMatchRate(
+	responses []domain.StudyResponse,
+	reference *domain.ClassificationResult,
+) float64 {
+	if len(responses) == 0 || reference == nil {
+		return 0
+	}
+
+	var matches, total int
+
+	for _, r := range responses {
+		// Check each available system
+		comparisons := 0
+		matchCount := 0
+
+		if r.DanisWeberType != nil && reference.DanisWeber != nil {
+			comparisons++
+			if *r.DanisWeberType == string(reference.DanisWeber.Type) {
+				matchCount++
+			}
+		}
+		if r.LaugeHansenType != nil && reference.LaugeHansen != nil {
+			comparisons++
+			if *r.LaugeHansenType == string(reference.LaugeHansen.Type) {
+				matchCount++
+			}
+		}
+		if r.AOOTACode != nil && reference.AOOTA != nil {
+			comparisons++
+			if *r.AOOTACode == string(reference.AOOTA.Code) {
+				matchCount++
+			}
+		}
+		if r.BartonicekType != nil && reference.Bartonicek != nil {
+			comparisons++
+			if *r.BartonicekType == string(reference.Bartonicek.Type) {
+				matchCount++
+			}
+		}
+
+		if comparisons > 0 {
+			total += comparisons
+			matches += matchCount
+		}
+	}
+
+	if total == 0 {
+		return 0
+	}
+
+	return float64(matches) / float64(total) * 100
+}
+
+// calculateCohortGoldStandardAccuracy calculates aggregated gold standard accuracy across all cases.
+func (s *StatisticsService) calculateCohortGoldStandardAccuracy(
+	cases []domain.Study,
+	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+) *domain.CohortGoldStandardAccuracy {
+	var totalDW, correctDW int64
+	var totalLH, correctLH int64
+	var totalAO, correctAO int64
+	var totalBT, correctBT int64
+	casesWithRef := 0
+
+	for _, c := range cases {
+		if !c.HasReferenceClassification() {
+			continue
+		}
+
+		refClass, err := c.GetReferenceClassification()
+		if err != nil || refClass == nil {
+			continue
+		}
+
+		casesWithRef++
+		responses := responsesByCase[c.ID]
+
+		for _, r := range responses {
+			if r.DanisWeberType != nil && refClass.DanisWeber != nil {
+				totalDW++
+				if *r.DanisWeberType == string(refClass.DanisWeber.Type) {
+					correctDW++
+				}
+			}
+			if r.LaugeHansenType != nil && refClass.LaugeHansen != nil {
+				totalLH++
+				if *r.LaugeHansenType == string(refClass.LaugeHansen.Type) {
+					correctLH++
+				}
+			}
+			if r.AOOTACode != nil && refClass.AOOTA != nil {
+				totalAO++
+				if *r.AOOTACode == string(refClass.AOOTA.Code) {
+					correctAO++
+				}
+			}
+			if r.BartonicekType != nil && refClass.Bartonicek != nil {
+				totalBT++
+				if *r.BartonicekType == string(refClass.Bartonicek.Type) {
+					correctBT++
+				}
+			}
+		}
+	}
+
+	if casesWithRef == 0 {
+		return nil
+	}
+
+	totalComparisons := totalDW + totalLH + totalAO + totalBT
+	totalCorrect := correctDW + correctLH + correctAO + correctBT
+
+	if totalComparisons == 0 {
+		return nil
+	}
+
+	accuracy := &domain.CohortGoldStandardAccuracy{
+		CasesWithReference: casesWithRef,
+		TotalComparisons:   totalComparisons,
+		OverallAccuracy:    float64(totalCorrect) / float64(totalComparisons) * 100,
+	}
+
+	if totalDW > 0 {
+		acc := float64(correctDW) / float64(totalDW) * 100
+		accuracy.DanisWeberAccuracy = &acc
+	}
+	if totalLH > 0 {
+		acc := float64(correctLH) / float64(totalLH) * 100
+		accuracy.LaugeHansenAccuracy = &acc
+	}
+	if totalAO > 0 {
+		acc := float64(correctAO) / float64(totalAO) * 100
+		accuracy.AOOTAAccuracy = &acc
+	}
+	if totalBT > 0 {
+		acc := float64(correctBT) / float64(totalBT) * 100
+		accuracy.BartonicekAccuracy = &acc
+	}
+
+	return accuracy
 }

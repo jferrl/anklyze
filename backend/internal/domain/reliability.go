@@ -157,3 +157,93 @@ type ResponseWithExpertise struct {
 	MatchesAOOTA       *bool `json:"matches_ao_ota,omitempty"`
 	MatchesBartonicek  *bool `json:"matches_bartonicek,omitempty"`
 }
+
+// ============================================================================
+// Cohort-Level Reliability Metrics
+// ============================================================================
+
+// CohortReliabilityMetrics contains reliability statistics across a cohort.
+// This enables proper Fleiss' Kappa calculation with multiple subjects (cases).
+type CohortReliabilityMetrics struct {
+	CohortID    uuid.UUID `json:"cohort_id"`
+	CohortTitle string    `json:"cohort_title"`
+
+	// Summary counts
+	TotalCases     int   `json:"total_cases"`
+	TotalResponses int64 `json:"total_responses"`
+	UniqueRaters   int64 `json:"unique_raters"`
+	CompleteRaters int64 `json:"complete_raters"` // Raters who completed all cases
+
+	// Fleiss' Kappa per classification system (now calculable with multiple subjects!)
+	DanisWeberFleiss  *FleissKappaResult `json:"danis_weber_fleiss,omitempty"`
+	LaugeHansenFleiss *FleissKappaResult `json:"lauge_hansen_fleiss,omitempty"`
+	AOOTAFleiss       *FleissKappaResult `json:"ao_ota_fleiss,omitempty"`
+	BartonicekFleiss  *FleissKappaResult `json:"bartonicek_fleiss,omitempty"`
+
+	// Per-case analysis (helps identify "hard cases")
+	PerCaseMetrics []CaseMetrics `json:"per_case_metrics"`
+
+	// Gold standard accuracy (aggregated across all cases)
+	GoldStandardAccuracy *CohortGoldStandardAccuracy `json:"gold_standard_accuracy,omitempty"`
+}
+
+// FleissKappaResult contains Fleiss' Kappa with metadata.
+type FleissKappaResult struct {
+	Kappa          float64 `json:"kappa"`
+	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+
+	// Matrix dimensions
+	NumSubjects   int `json:"num_subjects"`   // Number of cases
+	NumRaters     int `json:"num_raters"`     // Number of complete raters
+	NumCategories int `json:"num_categories"` // Number of classification categories
+
+	// Confidence interval (optional)
+	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
+
+	// Note explaining any limitations or issues
+	Note *string `json:"note,omitempty"`
+}
+
+// NewFleissKappaResult creates a FleissKappaResult with interpretation.
+func NewFleissKappaResult(kappa float64, numSubjects, numRaters, numCategories int) *FleissKappaResult {
+	return &FleissKappaResult{
+		Kappa:          kappa,
+		Interpretation: KappaInterpretation(kappa),
+		NumSubjects:    numSubjects,
+		NumRaters:      numRaters,
+		NumCategories:  numCategories,
+	}
+}
+
+// CaseMetrics contains metrics for a single case within a cohort.
+type CaseMetrics struct {
+	CaseOrder     int       `json:"case_order"`
+	StudyID       uuid.UUID `json:"study_id"`
+	StudyTitle    string    `json:"study_title"`
+	ResponseCount int       `json:"response_count"`
+
+	// Per-system agreement (percentage)
+	DanisWeberAgreement  float64 `json:"danis_weber_agreement"`
+	LaugeHansenAgreement float64 `json:"lauge_hansen_agreement"`
+	AOOTAAgreement       float64 `json:"ao_ota_agreement"`
+	BartonicekAgreement  *float64 `json:"bartonicek_agreement,omitempty"` // Optional, requires CT
+
+	// Gold standard match rate (if reference set for this case)
+	GoldStandardMatchRate *float64 `json:"gold_standard_match_rate,omitempty"`
+
+	// Identifies cases with low agreement (potential "hard cases")
+	IsLowAgreement bool `json:"is_low_agreement"` // True if any system < 60%
+}
+
+// CohortGoldStandardAccuracy aggregates accuracy across all cases in a cohort.
+type CohortGoldStandardAccuracy struct {
+	OverallAccuracy    float64 `json:"overall_accuracy"`
+	CasesWithReference int     `json:"cases_with_reference"`
+	TotalComparisons   int64   `json:"total_comparisons"`
+
+	// Per-system accuracy (averaged across cases)
+	DanisWeberAccuracy  *float64 `json:"danis_weber_accuracy,omitempty"`
+	LaugeHansenAccuracy *float64 `json:"lauge_hansen_accuracy,omitempty"`
+	AOOTAAccuracy       *float64 `json:"ao_ota_accuracy,omitempty"`
+	BartonicekAccuracy  *float64 `json:"bartonicek_accuracy,omitempty"`
+}

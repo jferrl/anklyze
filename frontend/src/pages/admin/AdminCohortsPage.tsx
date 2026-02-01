@@ -10,13 +10,14 @@ import {
   Pencil,
   Trash2,
   BarChart3,
-  Send,
+  Play,
   Lock,
-  FileText,
+  FolderKanban,
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Sparkles,
+  Users,
+  FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -54,65 +55,59 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { studyApi } from '../../services/studyApi';
-import type { Study, StudyStatus } from '../../types/study';
+import type { StudyCohort, CohortStatus } from '../../types/study';
 import { cn } from '@/lib/utils';
 
-export function AdminStudiesPage() {
+export function AdminCohortsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [statusFilter, setStatusFilter] = useState<StudyStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<CohortStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-studies', statusFilter, page],
+    queryKey: ['admin-cohorts', statusFilter, page],
     queryFn: () =>
-      studyApi.listStudies(
+      studyApi.listCohorts(
         statusFilter === 'all' ? undefined : statusFilter,
         page,
         limit
       ),
-    staleTime: 0, // Always consider data stale
-    refetchOnMount: 'always', // Refetch when component mounts
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const deleteMutation = useMutation({
-    mutationFn: studyApi.deleteStudy,
+    mutationFn: studyApi.deleteCohort,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
       setDeleteId(null);
     },
   });
 
-  const publishMutation = useMutation({
-    mutationFn: studyApi.publishStudy,
+  const activateMutation = useMutation({
+    mutationFn: studyApi.activateCohort,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
     },
   });
 
   const closeMutation = useMutation({
-    mutationFn: studyApi.closeStudy,
+    mutationFn: studyApi.closeCohort,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
     },
   });
 
-  const studies = data?.studies ?? [];
+  const cohorts = data?.cohorts ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
-  const filteredStudies = studies.filter((study) =>
-    study.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCohorts = cohorts.filter((cohort) =>
+    cohort.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const formatDate = (dateString?: string) => {
@@ -122,11 +117,6 @@ export function AdminStudiesPage() {
       month: 'short',
       day: 'numeric',
     });
-  };
-
-  const isDeadlinePassed = (deadline?: string) => {
-    if (!deadline) return false;
-    return new Date(deadline) < new Date();
   };
 
   if (isLoading) {
@@ -140,7 +130,7 @@ export function AdminStudiesPage() {
             <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
           </div>
           <p className="text-muted-foreground mt-4 font-medium">
-            {t('common.loading', 'Loading studies...')}
+            {t('common.loading', 'Loading cohorts...')}
           </p>
         </div>
       </div>
@@ -155,19 +145,19 @@ export function AdminStudiesPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                {t('admin.studies.title')}
+                {t('admin.cohorts.title')}
               </h1>
               <p className="text-muted-foreground mt-1">
-                {t('admin.studies.subtitle')}
+                {t('admin.cohorts.subtitle')}
               </p>
             </div>
             <Button
-              onClick={() => navigate('/admin/studies/new')}
+              onClick={() => navigate('/admin/cohorts/new')}
               size="lg"
               className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
             >
-              <Sparkles className="w-4 h-4" />
-              {t('admin.studies.create')}
+              <Plus className="w-4 h-4" />
+              {t('admin.cohorts.create')}
             </Button>
           </div>
         </header>
@@ -178,7 +168,7 @@ export function AdminStudiesPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('admin.studies.search')}
+                placeholder={t('admin.cohorts.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 bg-muted/30 border-border/50 focus:bg-background"
@@ -186,55 +176,54 @@ export function AdminStudiesPage() {
             </div>
             <Select
               value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as StudyStatus | 'all')}
+              onValueChange={(value) => setStatusFilter(value as CohortStatus | 'all')}
             >
               <SelectTrigger className="w-full sm:w-[180px] bg-muted/30 border-border/50">
-                <SelectValue placeholder={t('admin.studies.filterStatus')} />
+                <SelectValue placeholder={t('admin.cohorts.filterStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('admin.studies.allStatuses')}</SelectItem>
-                <SelectItem value="draft">{t('studies.status.draft')}</SelectItem>
-                <SelectItem value="published">{t('studies.status.published')}</SelectItem>
-                <SelectItem value="closed">{t('studies.status.closed')}</SelectItem>
+                <SelectItem value="all">{t('admin.cohorts.allStatuses')}</SelectItem>
+                <SelectItem value="draft">{t('admin.cohorts.status.draft')}</SelectItem>
+                <SelectItem value="active">{t('admin.cohorts.status.active')}</SelectItem>
+                <SelectItem value="closed">{t('admin.cohorts.status.closed')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Studies Table */}
-        {filteredStudies.length === 0 ? (
+        {/* Cohorts Table */}
+        {filteredCohorts.length === 0 ? (
           <div className="chart-card text-center py-16">
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-muted-foreground/50" />
+              <FolderKanban className="w-8 h-8 text-muted-foreground/50" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t('admin.studies.noStudies')}
+              {t('admin.cohorts.noCohorts')}
             </h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              {t('admin.studies.noStudiesDesc')}
+              {t('admin.cohorts.noCohortsDesc')}
             </p>
-            <Button onClick={() => navigate('/admin/studies/new')} className="gap-2">
+            <Button onClick={() => navigate('/admin/cohorts/new')} className="gap-2">
               <Plus className="h-4 w-4" />
-              {t('admin.studies.createFirst')}
+              {t('admin.cohorts.createFirst')}
             </Button>
           </div>
         ) : (
           <>
             {/* Mobile: Card layout */}
             <div className="md:hidden space-y-3">
-              {filteredStudies.map((study, index) => (
-                <StudyCard
-                  key={study.id}
-                  study={study}
+              {filteredCohorts.map((cohort, index) => (
+                <CohortCard
+                  key={cohort.id}
+                  cohort={cohort}
                   index={index}
                   formatDate={formatDate}
-                  isDeadlinePassed={isDeadlinePassed}
-                  onView={() => navigate(`/studies/${study.id}`)}
-                  onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
-                  onDelete={() => setDeleteId(study.id)}
-                  onPublish={() => publishMutation.mutate(study.id)}
-                  onClose={() => closeMutation.mutate(study.id)}
-                  onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                  onView={() => navigate(`/admin/cohorts/${cohort.id}`)}
+                  onEdit={() => navigate(`/admin/cohorts/${cohort.id}/edit`)}
+                  onDelete={() => setDeleteId(cohort.id)}
+                  onActivate={() => activateMutation.mutate(cohort.id)}
+                  onClose={() => closeMutation.mutate(cohort.id)}
+                  onViewReliability={() => navigate(`/admin/cohorts/${cohort.id}/reliability`)}
                   t={t}
                 />
               ))}
@@ -245,38 +234,40 @@ export function AdminStudiesPage() {
               <Table className="table-fixed">
                 <TableHeader>
                   <TableRow className="border-border/50 hover:bg-transparent">
-                    <TableHead className="w-[45%] text-muted-foreground font-medium">
-                      {t('admin.studies.table.title')}
+                    <TableHead className="w-[40%] text-muted-foreground font-medium">
+                      {t('admin.cohorts.table.title')}
                     </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium">
-                      {t('admin.studies.table.status')}
+                    <TableHead className="w-[90px] text-muted-foreground font-medium">
+                      {t('admin.cohorts.table.status')}
                     </TableHead>
-                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium">
-                      {t('admin.studies.table.responses')}
+                    <TableHead className="w-[70px] text-center text-muted-foreground font-medium">
+                      {t('admin.cohorts.table.cases')}
+                    </TableHead>
+                    <TableHead className="w-[70px] text-center text-muted-foreground font-medium">
+                      {t('admin.cohorts.table.raters')}
+                    </TableHead>
+                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium hidden lg:table-cell">
+                      {t('admin.cohorts.table.complete')}
                     </TableHead>
                     <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.studies.table.created')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.studies.table.deadline')}
+                      {t('admin.cohorts.table.created')}
                     </TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredStudies.map((study, index) => (
-                    <StudyRow
-                      key={study.id}
-                      study={study}
+                  {filteredCohorts.map((cohort, index) => (
+                    <CohortRow
+                      key={cohort.id}
+                      cohort={cohort}
                       index={index}
                       formatDate={formatDate}
-                      isDeadlinePassed={isDeadlinePassed}
-                      onView={() => navigate(`/studies/${study.id}`)}
-                      onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
-                      onDelete={() => setDeleteId(study.id)}
-                      onPublish={() => publishMutation.mutate(study.id)}
-                      onClose={() => closeMutation.mutate(study.id)}
-                      onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                      onView={() => navigate(`/admin/cohorts/${cohort.id}`)}
+                      onEdit={() => navigate(`/admin/cohorts/${cohort.id}/edit`)}
+                      onDelete={() => setDeleteId(cohort.id)}
+                      onActivate={() => activateMutation.mutate(cohort.id)}
+                      onClose={() => closeMutation.mutate(cohort.id)}
+                      onViewReliability={() => navigate(`/admin/cohorts/${cohort.id}/reliability`)}
                       t={t}
                     />
                   ))}
@@ -290,7 +281,7 @@ export function AdminStudiesPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-sm text-muted-foreground">
-              {t('admin.studies.table.showing', {
+              {t('admin.cohorts.table.showing', {
                 from: (page - 1) * limit + 1,
                 to: Math.min(page * limit, total),
                 total,
@@ -327,9 +318,9 @@ export function AdminStudiesPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.studies.deleteConfirm.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.cohorts.deleteConfirm.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.studies.deleteConfirm.description')}
+              {t('admin.cohorts.deleteConfirm.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -347,33 +338,31 @@ export function AdminStudiesPage() {
   );
 }
 
-interface StudyRowProps {
-  study: Study;
+interface CohortRowProps {
+  cohort: StudyCohort;
   index: number;
   formatDate: (date?: string) => string;
-  isDeadlinePassed: (deadline?: string) => boolean;
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  onPublish: () => void;
+  onActivate: () => void;
   onClose: () => void;
-  onViewAnalytics: () => void;
+  onViewReliability: () => void;
   t: (key: string) => string;
 }
 
-function StudyCard({
-  study,
+function CohortCard({
+  cohort,
   index,
   formatDate,
-  isDeadlinePassed,
   onView,
   onEdit,
   onDelete,
-  onPublish,
+  onActivate,
   onClose,
-  onViewAnalytics,
+  onViewReliability,
   t,
-}: StudyRowProps) {
+}: CohortRowProps) {
   return (
     <div
       className={cn(
@@ -386,46 +375,35 @@ function StudyCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground truncate">{study.title}</span>
+            <span className="font-medium text-foreground truncate">{cohort.title}</span>
             <Badge
               variant="outline"
               className={cn(
                 'font-medium text-xs flex-shrink-0',
-                study.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-                study.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-                study.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+                cohort.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+                cohort.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+                cohort.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
               )}
             >
-              {t(`studies.status.${study.status}`)}
+              {t(`admin.cohorts.status.${cohort.status}`)}
             </Badge>
           </div>
-          {study.description && (
+          {cohort.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-              {study.description}
+              {cohort.description}
             </p>
           )}
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <span className={cn(
-              'inline-flex items-center gap-1',
-              study.response_count > 0 ? 'text-primary' : ''
-            )}>
-              <BarChart3 className="w-3.5 h-3.5" />
-              {study.response_count} {t('admin.studies.table.responses').toLowerCase()}
+            <span className="inline-flex items-center gap-1">
+              <FileText className="w-3.5 h-3.5" />
+              {cohort.case_count} {t('admin.cohorts.table.cases').toLowerCase()}
             </span>
-            <span>{formatDate(study.created_at)}</span>
-            {study.deadline && (
-              <span className={cn(
-                isDeadlinePassed(study.deadline) && 'text-destructive font-medium'
-              )}>
-                → {formatDate(study.deadline)}
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1">
+              <Users className="w-3.5 h-3.5" />
+              {cohort.unique_raters} {t('admin.cohorts.table.raters').toLowerCase()}
+            </span>
+            <span>{formatDate(cohort.created_at)}</span>
           </div>
-          {study.has_tac_images && (
-            <Badge variant="outline" className="mt-2 text-xs border-primary/30 text-primary">
-              TAC
-            </Badge>
-          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -442,23 +420,23 @@ function StudyCard({
               <Pencil className="h-4 w-4 mr-2" />
               {t('common.edit')}
             </DropdownMenuItem>
-            {study.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewAnalytics}>
+            {cohort.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewReliability}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.studies.analytics')}
+                {t('admin.cohorts.reliability.title')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            {study.status === 'draft' && (
-              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
-                <Send className="h-4 w-4 mr-2" />
-                {t('admin.studies.publish')}
+            {cohort.status === 'draft' && (
+              <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
+                <Play className="h-4 w-4 mr-2" />
+                {t('admin.cohorts.activate')}
               </DropdownMenuItem>
             )}
-            {study.status === 'published' && (
+            {cohort.status === 'active' && (
               <DropdownMenuItem onClick={onClose}>
                 <Lock className="h-4 w-4 mr-2" />
-                {t('admin.studies.close')}
+                {t('admin.cohorts.close')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -473,19 +451,18 @@ function StudyCard({
   );
 }
 
-function StudyRow({
-  study,
+function CohortRow({
+  cohort,
   index,
   formatDate,
-  isDeadlinePassed,
   onView,
   onEdit,
   onDelete,
-  onPublish,
+  onActivate,
   onClose,
-  onViewAnalytics,
+  onViewReliability,
   t,
-}: StudyRowProps) {
+}: CohortRowProps) {
   return (
     <TableRow
       className={cn(
@@ -497,16 +474,11 @@ function StudyRow({
     >
       <TableCell className="max-w-0">
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="font-medium text-foreground truncate">{study.title}</span>
-          {study.description && (
+          <span className="font-medium text-foreground truncate">{cohort.title}</span>
+          {cohort.description && (
             <span className="text-sm text-muted-foreground truncate">
-              {study.description}
+              {cohort.description}
             </span>
-          )}
-          {study.has_tac_images && (
-            <Badge variant="outline" className="w-fit text-xs border-primary/30 text-primary">
-              TAC
-            </Badge>
           )}
         </div>
       </TableCell>
@@ -515,42 +487,48 @@ function StudyRow({
           variant="outline"
           className={cn(
             'font-medium whitespace-nowrap',
-            study.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-            study.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-            study.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+            cohort.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+            cohort.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+            cohort.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
           )}
         >
-          {t(`studies.status.${study.status}`)}
+          {t(`admin.cohorts.status.${cohort.status}`)}
         </Badge>
       </TableCell>
       <TableCell className="text-center">
         <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          study.response_count > 0
+          'inline-flex items-center justify-center gap-1 min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+          cohort.case_count > 0
             ? 'bg-primary/10 text-primary'
             : 'bg-muted/50 text-muted-foreground'
         )}>
-          {study.response_count}
+          <FileText className="w-3 h-3" />
+          {cohort.case_count}
+        </span>
+      </TableCell>
+      <TableCell className="text-center">
+        <span className={cn(
+          'inline-flex items-center justify-center gap-1 min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+          cohort.unique_raters > 0
+            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+            : 'bg-muted/50 text-muted-foreground'
+        )}>
+          <Users className="w-3 h-3" />
+          {cohort.unique_raters}
+        </span>
+      </TableCell>
+      <TableCell className="text-center hidden lg:table-cell">
+        <span className={cn(
+          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+          cohort.complete_raters > 0
+            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+            : 'bg-muted/50 text-muted-foreground'
+        )}>
+          {cohort.complete_raters}
         </span>
       </TableCell>
       <TableCell className="text-muted-foreground text-sm hidden lg:table-cell">
-        {formatDate(study.created_at)}
-      </TableCell>
-      <TableCell className="hidden lg:table-cell">
-        {study.deadline ? (
-          <span
-            className={cn(
-              'text-sm',
-              isDeadlinePassed(study.deadline)
-                ? 'text-destructive font-medium'
-                : 'text-muted-foreground'
-            )}
-          >
-            {formatDate(study.deadline)}
-          </span>
-        ) : (
-          <span className="text-muted-foreground/50 text-sm">-</span>
-        )}
+        {formatDate(cohort.created_at)}
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -572,23 +550,23 @@ function StudyRow({
               <Pencil className="h-4 w-4 mr-2" />
               {t('common.edit')}
             </DropdownMenuItem>
-            {study.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewAnalytics}>
+            {cohort.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewReliability}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.studies.analytics')}
+                {t('admin.cohorts.reliability.title')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            {study.status === 'draft' && (
-              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
-                <Send className="h-4 w-4 mr-2" />
-                {t('admin.studies.publish')}
+            {cohort.status === 'draft' && (
+              <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
+                <Play className="h-4 w-4 mr-2" />
+                {t('admin.cohorts.activate')}
               </DropdownMenuItem>
             )}
-            {study.status === 'published' && (
+            {cohort.status === 'active' && (
               <DropdownMenuItem onClick={onClose}>
                 <Lock className="h-4 w-4 mr-2" />
-                {t('admin.studies.close')}
+                {t('admin.cohorts.close')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />

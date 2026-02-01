@@ -316,7 +316,45 @@ export function StudyReliabilityPage() {
               </TooltipProvider>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Mobile: Card layout */}
+            <div className="md:hidden space-y-3">
+              {Object.entries(metrics.gold_standard_accuracy.per_category_metrics)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([category, categoryMetrics]) => (
+                  <div key={category} className="p-4 bg-muted/20 rounded-lg space-y-2">
+                    <div className="font-medium text-foreground">{category}</div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t('admin.reliability.sensitivity')}</span>
+                        <span className={cn('font-semibold', getMetricColorClass(categoryMetrics.sensitivity))}>
+                          {(categoryMetrics.sensitivity * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t('admin.reliability.specificity')}</span>
+                        <span className={cn('font-semibold', getMetricColorClass(categoryMetrics.specificity))}>
+                          {(categoryMetrics.specificity * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t('admin.reliability.f1Score')}</span>
+                        <span className={cn('font-semibold', getMetricColorClass(categoryMetrics.f1_score))}>
+                          {(categoryMetrics.f1_score * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t('admin.reliability.ppv')}</span>
+                        <span className={cn('font-semibold', getMetricColorClass(categoryMetrics.ppv))}>
+                          {(categoryMetrics.ppv * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {/* Desktop: Table layout */}
+            <div className="hidden md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/50">
@@ -362,7 +400,7 @@ export function StudyReliabilityPage() {
                         </Tooltip>
                       </TooltipProvider>
                     </th>
-                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground hidden lg:table-cell">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger className="flex items-center justify-center gap-1">
@@ -405,7 +443,7 @@ export function StudyReliabilityPage() {
                         <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.ppv))}>
                           {(categoryMetrics.ppv * 100).toFixed(1)}%
                         </td>
-                        <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.npv))}>
+                        <td className={cn('py-3 px-4 text-center font-semibold hidden lg:table-cell', getMetricColorClass(categoryMetrics.npv))}>
                           {(categoryMetrics.npv * 100).toFixed(1)}%
                         </td>
                         <td className={cn('py-3 px-4 text-center font-semibold', getMetricColorClass(categoryMetrics.f1_score))}>

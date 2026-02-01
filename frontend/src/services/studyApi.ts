@@ -22,6 +22,16 @@ import type {
   SubmitResponseResult,
   UserProfile,
   UpdateUserProfileRequest,
+  // Cohort types
+  StudyCohort,
+  CohortWithCases,
+  CohortListResponse,
+  CreateCohortRequest,
+  UpdateCohortRequest,
+  CohortUser,
+  RaterProgressResponse,
+  CohortReliabilityResponse,
+  CohortStatus,
 } from '../types/study';
 import { supabase } from '../lib/supabase';
 import { AuthRequiredError, ForbiddenError } from './api';
@@ -729,6 +739,371 @@ export async function removeStudyUser(studyId: string, userId: string): Promise<
   }
 }
 
+// ================================
+// Cohort Endpoints (Admin)
+// ================================
+
+/**
+ * Create a new cohort (admin only)
+ */
+export async function createCohort(data: CreateCohortRequest): Promise<StudyCohort> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * List all cohorts (admin only)
+ */
+export async function listCohorts(
+  status?: CohortStatus,
+  page: number = 1,
+  limit: number = 20
+): Promise<CohortListResponse> {
+  const params = new URLSearchParams();
+  if (status) params.append('status', status);
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts?${params}`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to list cohorts');
+  }
+
+  return response.json();
+}
+
+/**
+ * Get a cohort with its cases (admin only)
+ */
+export async function getCohort(cohortId: string): Promise<CohortWithCases> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Cohort not found');
+    }
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Update a cohort (admin only)
+ */
+export async function updateCohort(
+  cohortId: string,
+  data: UpdateCohortRequest
+): Promise<StudyCohort> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Delete a cohort (admin only)
+ */
+export async function deleteCohort(cohortId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete cohort');
+  }
+}
+
+/**
+ * Activate a cohort (admin only)
+ */
+export async function activateCohort(cohortId: string): Promise<StudyCohort> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/activate`, {
+    method: 'PUT',
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to activate cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Close a cohort (admin only)
+ */
+export async function closeCohort(cohortId: string): Promise<StudyCohort> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/close`, {
+    method: 'PUT',
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to close cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Add a case (study) to a cohort (admin only)
+ */
+export async function addCaseToCohort(
+  cohortId: string,
+  studyId: string,
+  caseOrder?: number
+): Promise<Study> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ study_id: studyId, case_order: caseOrder }),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to add case to cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Remove a case from a cohort (admin only)
+ */
+export async function removeCaseFromCohort(cohortId: string, studyId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases/${studyId}`,
+    {
+      method: 'DELETE',
+      headers,
+    }
+  );
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to remove case from cohort');
+  }
+}
+
+/**
+ * Reorder cases in a cohort (admin only)
+ */
+export async function reorderCohortCases(
+  cohortId: string,
+  studyIds: string[]
+): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases/reorder`,
+    {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ study_ids: studyIds }),
+    }
+  );
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to reorder cases');
+  }
+}
+
+/**
+ * List users assigned to a cohort (admin only)
+ */
+export async function listCohortUsers(cohortId: string): Promise<{ users: CohortUser[]; total: number }> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/users`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to list cohort users');
+  }
+
+  return response.json();
+}
+
+/**
+ * Add a user to a cohort (admin only)
+ */
+export async function addUserToCohort(
+  cohortId: string,
+  userEmail: string
+): Promise<CohortUser> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/users`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ email: userEmail }),
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to add user to cohort');
+  }
+
+  return response.json();
+}
+
+/**
+ * Remove a user from a cohort (admin only)
+ */
+export async function removeUserFromCohort(cohortId: string, userId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/users/${userId}`,
+    {
+      method: 'DELETE',
+      headers,
+    }
+  );
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to remove user from cohort');
+  }
+}
+
+/**
+ * Get rater progress for a cohort (admin only)
+ */
+export async function getCohortRaterProgress(cohortId: string): Promise<RaterProgressResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/progress`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get rater progress');
+  }
+
+  return response.json();
+}
+
+/**
+ * Get cohort reliability metrics (admin only)
+ */
+export async function getCohortReliabilityMetrics(cohortId: string): Promise<CohortReliabilityResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/reliability`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get cohort reliability metrics');
+  }
+
+  return response.json();
+}
+
+/**
+ * Export cohort responses as CSV (admin only)
+ */
+export async function exportCohortResponses(cohortId: string): Promise<Blob> {
+  const headers = await getAuthHeaders();
+  delete headers['Content-Type'];
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/export`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    throw new Error('Failed to export cohort responses');
+  }
+
+  return response.blob();
+}
+
+/**
+ * Download cohort responses CSV
+ */
+export async function downloadCohortResponsesCSV(cohortId: string, filename?: string): Promise<void> {
+  const blob = await exportCohortResponses(cohortId);
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || `cohort_${cohortId.slice(0, 8)}_responses.csv`;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+
 // Export as a namespace object for convenience
 export const studyApi = {
   // User endpoints
@@ -772,4 +1147,22 @@ export const studyApi = {
     const result = await getAdminImageSignedURL(studyId, imageId);
     return result.url;
   },
+  // Cohort management (admin)
+  createCohort,
+  listCohorts,
+  getCohort,
+  updateCohort,
+  deleteCohort,
+  activateCohort,
+  closeCohort,
+  addCaseToCohort,
+  removeCaseFromCohort,
+  reorderCohortCases,
+  listCohortUsers,
+  addUserToCohort,
+  removeUserFromCohort,
+  getCohortRaterProgress,
+  getCohortReliabilityMetrics,
+  exportCohortResponses,
+  downloadCohortResponsesCSV,
 };
