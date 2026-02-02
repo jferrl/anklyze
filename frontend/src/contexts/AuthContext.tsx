@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase, isSupabaseConfigured, type UserRole, type UserProfile } from '../lib/supabase';
 import { getCurrentUser } from '../services/api';
 
@@ -68,11 +69,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const previousUserIdRef = useRef<string | null>(null);
 
   const isConfigured = isSupabaseConfigured();
 
   // Initialize auth state
   useEffect(() => {
+    // Clear cached data when user changes or signs out
+    const clearUserData = () => {
+      queryClient.clear();
+      localStorage.removeItem('anklyze-form-draft');
+    };
     if (!supabase) {
       setLoading(false);
       return;
@@ -87,6 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session } } = await supabaseClient.auth.getSession();
 
         if (!mounted) return;
+
+        // Track the initial user ID
+        previousUserIdRef.current = session?.user?.id ?? null;
 
         setSession(session);
         setUser(session?.user ?? null);
@@ -110,8 +121,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
+
+      const currentUserId = session?.user?.id ?? null;
+      const previousUserId = previousUserIdRef.current;
+
+      // Clear cache if user changed or signed out
+      if (event === 'SIGNED_OUT' || (currentUserId !== previousUserId && previousUserId !== null)) {
+        clearUserData();
+      }
+
+      previousUserIdRef.current = currentUserId;
 
       try {
         setSession(session);
@@ -139,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient]);
 
   const signInWithGoogle = async () => {
     if (!supabase) return;

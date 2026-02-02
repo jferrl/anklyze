@@ -1,6 +1,7 @@
 import { LogOut, User, Shield, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -15,6 +16,7 @@ export function UserMenu() {
   const { t } = useTranslation();
   const { profile, signOut, isAdmin, isConfigured, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Don't show if auth is not configured
   if (!isConfigured) {
@@ -31,6 +33,10 @@ export function UserMenu() {
   }
 
   const handleSignOut = async () => {
+    // Clear all cached data to prevent data leakage between accounts
+    queryClient.clear();
+    // Clear form draft from localStorage
+    localStorage.removeItem('anklyze-form-draft');
     await signOut();
     navigate('/');
   };
