@@ -296,8 +296,8 @@ export interface SubmitResponseResult {
 
 // --- User profile types ---
 
-export type Specialty = 'traumatology' | 'orthopedics' | 'emergency' | 'radiology' | 'general' | 'other';
-export type TrainingLevel = 'resident' | 'fellow' | 'attending' | 'other';
+export type Specialty = 'spine' | 'upper_extremity' | 'lower_extremity' | 'pelvis' | 'foot_ankle';
+export type TrainingLevel = 'resident' | 'attending';
 
 export interface UserProfile {
   id: string;

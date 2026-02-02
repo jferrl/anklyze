@@ -915,18 +915,15 @@
     "saveFailed": "Failed to save profile",
     "save": "Save Profile",
     "specialties": {
-      "traumatology": "Traumatology",
-      "orthopedics": "Orthopedics",
-      "emergency": "Emergency Medicine",
-      "radiology": "Radiology",
-      "general": "General Surgery",
-      "other": "Other"
+      "spine": "Spine",
+      "upperExtremity": "Upper Extremity",
+      "lowerExtremity": "Lower Extremity",
+      "pelvis": "Pelvis",
+      "footAnkle": "Foot & Ankle"
     },
     "trainingLevels": {
       "resident": "Resident",
-      "fellow": "Fellow",
-      "attending": "Attending Physician",
-      "other": "Other"
+      "attending": "Attending Physician"
     }
   }
 }

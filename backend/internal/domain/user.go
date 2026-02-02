@@ -16,27 +16,26 @@ const (
 	UserRoleAdmin UserRole = "admin"
 )
 
-// Specialty represents the medical specialty of a user.
+// Specialty represents the trauma subspecialty of a user.
+// All users are assumed to be from trauma, so this represents the branch within trauma.
 type Specialty string
 
 const (
-	SpecialtyTraumatology Specialty = "traumatology"
-	SpecialtyOrthopedics  Specialty = "orthopedics"
-	SpecialtyEmergency    Specialty = "emergency"
-	SpecialtyRadiology    Specialty = "radiology"
-	SpecialtyGeneral      Specialty = "general"
-	SpecialtyOther        Specialty = "other"
+	SpecialtySpine          Specialty = "spine"
+	SpecialtyUpperExtremity Specialty = "upper_extremity"
+	SpecialtyLowerExtremity Specialty = "lower_extremity"
+	SpecialtyPelvis         Specialty = "pelvis"
+	SpecialtyFootAnkle      Specialty = "foot_ankle"
 )
 
 // ValidSpecialties returns all valid specialty values.
 func ValidSpecialties() []Specialty {
 	return []Specialty{
-		SpecialtyTraumatology,
-		SpecialtyOrthopedics,
-		SpecialtyEmergency,
-		SpecialtyRadiology,
-		SpecialtyGeneral,
-		SpecialtyOther,
+		SpecialtySpine,
+		SpecialtyUpperExtremity,
+		SpecialtyLowerExtremity,
+		SpecialtyPelvis,
+		SpecialtyFootAnkle,
 	}
 }
 
@@ -55,18 +54,14 @@ type TrainingLevel string
 
 const (
 	TrainingLevelResident  TrainingLevel = "resident"
-	TrainingLevelFellow    TrainingLevel = "fellow"
 	TrainingLevelAttending TrainingLevel = "attending"
-	TrainingLevelOther     TrainingLevel = "other"
 )
 
 // ValidTrainingLevels returns all valid training level values.
 func ValidTrainingLevels() []TrainingLevel {
 	return []TrainingLevel{
 		TrainingLevelResident,
-		TrainingLevelFellow,
 		TrainingLevelAttending,
-		TrainingLevelOther,
 	}
 }
 
