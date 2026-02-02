@@ -22,9 +22,24 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
+// QuestionAnswer represents a single answer in the user's decision path
+export interface QuestionAnswer {
+  question: string;
+  answer: string;
+  timestamp: number;
+}
+
+// AnswerTracking contains tracking data for divergence analysis
+export interface AnswerTracking {
+  answerPath: QuestionAnswer[];
+  decisionPath: string;
+  timePerQuestion: Record<string, number>;
+  backClicks: number;
+}
+
 interface StudyClassificationFormProps {
   hasTACImages: boolean;
-  onClassify: (input: FractureInput) => Promise<ClassificationResult>;
+  onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
 }
 
 export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClassificationFormProps) {
@@ -41,6 +56,14 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const formEndRef = useRef<HTMLDivElement>(null);
+
+  // Answer tracking state for divergence analysis
+  const startTimeRef = useRef<number>(Date.now());
+  const [answerPath, setAnswerPath] = useState<QuestionAnswer[]>([]);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+  const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({});
+  const [backClicks, setBackClicks] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
 
   // Re-fetch options when language changes
   useEffect(() => {
@@ -65,6 +88,10 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
   // Go back to previous state
   const goBack = useCallback(() => {
     if (formHistory.length === 0) return;
+
+    // Track back click for divergence analysis
+    setBackClicks(prev => prev + 1);
+
     const previousState = formHistory[formHistory.length - 1];
     setFormHistory(prev => prev.slice(0, -1));
     setFormData(previousState);
@@ -72,11 +99,44 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
 
   const canGoBack = formHistory.length > 0;
 
-  // Update form data helper
+  // Update form data helper with answer tracking
   const updateFormData = useCallback((newData: Partial<FractureInput>) => {
+    const now = Date.now();
+    const elapsed = now - questionStartTime;
+
+    // Record time spent on previous question
+    if (currentQuestion) {
+      setTimePerQuestion(prev => ({
+        ...prev,
+        [currentQuestion]: (prev[currentQuestion] || 0) + elapsed
+      }));
+    }
+
+    // Find what changed to record the answer
+    const changedKeys = Object.keys(newData).filter(
+      key => newData[key as keyof FractureInput] !== formData[key as keyof FractureInput]
+    );
+
+    // Record each new answer
+    for (const key of changedKeys) {
+      const value = newData[key as keyof FractureInput];
+      if (value !== undefined && value !== null) {
+        setAnswerPath(prev => [...prev, {
+          question: key,
+          answer: String(value),
+          timestamp: now - startTimeRef.current
+        }]);
+        // Update current question for time tracking
+        setCurrentQuestion(key);
+      }
+    }
+
+    // Reset timer for next question
+    setQuestionStartTime(now);
+
     pushToHistory();
     setFormData(newData);
-  }, [pushToHistory]);
+  }, [pushToHistory, questionStartTime, currentQuestion, formData]);
 
   // Determine which questions to show
   const involvedMalleoli = formData.involved_malleoli;
@@ -171,6 +231,32 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
     return Math.round((completedSteps / totalSteps) * 100);
   }, [involvedMalleoli, formData]);
 
+  // Build decision path string from form data
+  const buildDecisionPath = useCallback((): string => {
+    const pathKeys = [
+      'involved_malleoli',
+      'fibular_level',
+      'lateral_morphology',
+      'medial_morphology',
+      'suprasindesmal_type',
+      'fibula_trace_pattern',
+      'posterior_fracture_type'
+    ] as const;
+
+    return pathKeys
+      .filter(key => formData[key] !== undefined && formData[key] !== null)
+      .map(key => String(formData[key]))
+      .join('→');
+  }, [formData]);
+
+  // Get answer tracking data
+  const getAnswerTracking = useCallback((): AnswerTracking => ({
+    answerPath,
+    decisionPath: buildDecisionPath(),
+    timePerQuestion,
+    backClicks
+  }), [answerPath, buildDecisionPath, timePerQuestion, backClicks]);
+
   // Check if form is complete
   const isFormComplete = useCallback((): boolean => {
     if (!involvedMalleoli) return false;
@@ -227,7 +313,9 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
     setError(null);
 
     try {
-      await onClassify(formData as FractureInput);
+      // Get answer tracking data for divergence analysis
+      const tracking = getAnswerTracking();
+      await onClassify(formData as FractureInput, tracking);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Classification failed');
     } finally {

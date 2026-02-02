@@ -197,6 +197,10 @@ func SetupStudyRoutes(
 	}
 	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, cohortRepo, cohortResponseRepo, userRepo, storage, statsServicePtr)
 
+	// Add divergence service
+	divergenceService := service.NewDivergenceService(responseRepo, studyRepo)
+	studyHandler.WithDivergenceService(divergenceService)
+
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
 
@@ -259,6 +263,7 @@ func setupProtectedStudyRoutes(
 		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
 		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
+		adminStudies.GET("/:id/divergence", studyHandler.GetDivergenceAnalysis)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
 		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)
@@ -311,6 +316,7 @@ func setupPublicStudyRoutes(
 		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
 		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
+		adminStudies.GET("/:id/divergence", studyHandler.GetDivergenceAnalysis)
 		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
 		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
 		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)

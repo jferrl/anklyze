@@ -111,58 +111,68 @@ BEGIN
     -- =========================================================================
 
     -- Studies for Active Cohort
-    INSERT INTO studies (id, created_at, updated_at, published_at, created_by, title, description, status, has_tac_images, response_count, unique_users, cohort_id, case_order, allow_multiple_responses, show_reference_after_submit, reference_classification)
+    -- Note: reference_input stores the FractureInput used to generate reference_classification
+    -- This enables divergence analysis to compare user answer paths against the gold standard path
+    INSERT INTO studies (id, created_at, updated_at, published_at, created_by, title, description, status, has_tac_images, response_count, unique_users, cohort_id, case_order, allow_multiple_responses, show_reference_after_submit, reference_classification, reference_input)
     VALUES
         (study_active_1_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A1: Weber B Fracture',
          'Adult patient presenting with lateral malleolus fracture at the level of the syndesmosis.',
          'published', false, 0, 0, cohort_active_id, 1, false, true,
-         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 2, "description": "Supination-External Rotation Stage II"}, "ao_ota": {"code": "44-B1", "description": "Transsyndesmotic fibula fracture, simple"}}'::jsonb),
+         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 2, "description": "Supination-External Rotation Stage II"}, "ao_ota": {"code": "44-B1", "description": "Transsyndesmotic fibula fracture, simple"}}'::jsonb,
+         '{"involved_malleoli": "lateral_only", "fibular_level": "transindesmal", "lateral_morphology": "spiral"}'::jsonb),
 
         (study_active_2_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A2: Bimalleolar Fracture',
          'Complex ankle injury with both lateral and medial malleolus involvement.',
          'published', true, 0, 0, cohort_active_id, 2, false, true,
-         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 4, "description": "Supination-External Rotation Stage IV"}, "ao_ota": {"code": "44-B2", "description": "Transsyndesmotic fibula fracture with medial lesion"}, "bartonicek": {"type": "2", "description": "Posterolateral oblique fragment"}}'::jsonb),
+         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 4, "description": "Supination-External Rotation Stage IV"}, "ao_ota": {"code": "44-B2", "description": "Transsyndesmotic fibula fracture with medial lesion"}, "bartonicek": {"type": "2", "description": "Posterolateral oblique fragment"}}'::jsonb,
+         '{"involved_malleoli": "lateral_medial", "medial_morphology": "transverse", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "spiral"}'::jsonb),
 
         (study_active_3_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A3: Weber C High Fibula',
          'Proximal fibula fracture with syndesmotic injury. CT confirms complete disruption.',
          'published', true, 0, 0, cohort_active_id, 3, false, true,
-         '{"danis_weber": {"type": "C", "description": "Fracture above the syndesmosis"}, "lauge_hansen": {"type": "PER", "stage": 4, "description": "Pronation-External Rotation Stage IV"}, "ao_ota": {"code": "44-C2", "description": "Suprasyndesmotic fibula fracture, multifragmentary"}}'::jsonb),
+         '{"danis_weber": {"type": "C", "description": "Fracture above the syndesmosis"}, "lauge_hansen": {"type": "PER", "stage": 4, "description": "Pronation-External Rotation Stage IV"}, "ao_ota": {"code": "44-C2", "description": "Suprasyndesmotic fibula fracture, multifragmentary"}}'::jsonb,
+         '{"involved_malleoli": "lateral_only", "fibular_level": "suprasindesmal", "suprasindesmal_type": "multifragmentary", "fibula_trace_pattern": "transverse"}'::jsonb),
 
         (study_active_4_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A4: Isolated Medial Malleolus',
          'Medial malleolus fracture without lateral involvement. Evaluate mechanism.',
          'published', false, 0, 0, cohort_active_id, 4, false, true,
-         '{"lauge_hansen": {"type": "PA", "stage": 1, "description": "Pronation-Abduction Stage I"}, "ao_ota": {"code": "44-A1", "description": "Isolated infrasyndesmotic lesion"}}'::jsonb),
+         '{"lauge_hansen": {"type": "PA", "stage": 1, "description": "Pronation-Abduction Stage I"}, "ao_ota": {"code": "44-A1", "description": "Isolated infrasyndesmotic lesion"}}'::jsonb,
+         '{"involved_malleoli": "medial_only", "medial_morphology": "oblique"}'::jsonb),
 
         (study_active_5_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A5: Trimalleolar Fracture',
          'Complex trimalleolar pattern with posterior malleolus fragment. Full CT available.',
          'published', true, 0, 0, cohort_active_id, 5, false, true,
-         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 4, "description": "Supination-External Rotation Stage IV with posterior fragment"}, "ao_ota": {"code": "44-B3", "description": "Transsyndesmotic with posterior and medial lesion"}, "bartonicek": {"type": "3", "description": "Posteromedial two-part fragment"}}'::jsonb);
+         '{"danis_weber": {"type": "B", "description": "Fracture at the level of the syndesmosis"}, "lauge_hansen": {"type": "SER", "stage": 4, "description": "Supination-External Rotation Stage IV with posterior fragment"}, "ao_ota": {"code": "44-B3", "description": "Transsyndesmotic with posterior and medial lesion"}, "bartonicek": {"type": "3", "description": "Posteromedial two-part fragment"}}'::jsonb,
+         '{"involved_malleoli": "trimaleolar", "fibular_level": "transindesmal", "lateral_morphology": "spiral", "has_ct_scan": true, "posterior_fracture_type": "type_3"}'::jsonb);
 
     -- Studies for Closed Cohort
-    INSERT INTO studies (id, created_at, updated_at, published_at, closed_at, created_by, title, description, status, has_tac_images, response_count, unique_users, cohort_id, case_order, allow_multiple_responses, show_reference_after_submit, reference_classification)
+    INSERT INTO studies (id, created_at, updated_at, published_at, closed_at, created_by, title, description, status, has_tac_images, response_count, unique_users, cohort_id, case_order, allow_multiple_responses, show_reference_after_submit, reference_classification, reference_input)
     VALUES
         (study_closed_1_id, NOW() - INTERVAL '60 days', NOW() - INTERVAL '30 days', NOW() - INTERVAL '55 days', NOW() - INTERVAL '30 days', admin_user_id,
          'Validation Case 1: Classic SER',
          'Textbook supination-external rotation mechanism fracture.',
          'closed', false, 15, 15, cohort_closed_id, 1, false, true,
-         '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb),
+         '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
+         '{"involved_malleoli": "lateral_only", "fibular_level": "transindesmal", "lateral_morphology": "spiral"}'::jsonb),
 
         (study_closed_2_id, NOW() - INTERVAL '60 days', NOW() - INTERVAL '30 days', NOW() - INTERVAL '55 days', NOW() - INTERVAL '30 days', admin_user_id,
          'Validation Case 2: PAB Pattern',
          'Pronation-abduction mechanism with characteristic fracture line.',
          'closed', true, 15, 15, cohort_closed_id, 2, false, true,
-         '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb),
+         '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb,
+         '{"involved_malleoli": "lateral_medial", "medial_morphology": "oblique", "fibula_infrasindesmal_transverse": false, "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "oblique"}'::jsonb),
 
         (study_closed_3_id, NOW() - INTERVAL '60 days', NOW() - INTERVAL '30 days', NOW() - INTERVAL '55 days', NOW() - INTERVAL '30 days', admin_user_id,
          'Validation Case 3: High Fibula PER',
          'Pronation-external rotation with high fibula fracture.',
          'closed', true, 15, 15, cohort_closed_id, 3, false, true,
-         '{"danis_weber": {"type": "C"}, "lauge_hansen": {"type": "PER", "stage": 4}, "ao_ota": {"code": "44-C1"}}'::jsonb);
+         '{"danis_weber": {"type": "C"}, "lauge_hansen": {"type": "PER", "stage": 4}, "ao_ota": {"code": "44-C1"}}'::jsonb,
+         '{"involved_malleoli": "lateral_only", "fibular_level": "suprasindesmal", "suprasindesmal_type": "proximal"}'::jsonb);
 
     -- Studies for Draft Cohort
     INSERT INTO studies (id, created_at, updated_at, created_by, title, description, status, has_tac_images, cohort_id, case_order, allow_multiple_responses)
@@ -204,23 +214,49 @@ BEGIN
     -- We'll create realistic responses with some agreement and some disagreement.
 
     -- Responses for Active Cohort - Case A1 (Weber B, SER) - High agreement
-    INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, danis_weber_type, lauge_hansen_type, ao_ota_code)
+    -- Note: Includes divergence analysis tracking fields (answer_path, decision_path, time_per_question, back_clicks)
+    INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, danis_weber_type, lauge_hansen_type, ao_ota_code, answer_path, decision_path, time_per_question, back_clicks)
     VALUES
+        -- Rater 1: Correct path, no back clicks (confident)
         (gen_random_uuid(), study_active_1_id, rater1_id, NOW() - INTERVAL '1 day',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
-         45000, 'B', 'SER', '44-B1'),
+         45000, 'B', 'SER', '44-B1',
+         '[{"question": "involved_malleoli", "answer": "lateral_only", "timestamp": 5000}, {"question": "fibular_level", "answer": "transindesmal", "timestamp": 18000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 35000}]'::jsonb,
+         'lateral_only→transindesmal→spiral',
+         '{"involved_malleoli": 5000, "fibular_level": 13000, "lateral_morphology": 17000}'::jsonb,
+         0),
+        -- Rater 2: Correct path, 1 back click (minor hesitation)
         (gen_random_uuid(), study_active_1_id, rater2_id, NOW() - INTERVAL '2 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
-         62000, 'B', 'SER', '44-B1'),
+         62000, 'B', 'SER', '44-B1',
+         '[{"question": "involved_malleoli", "answer": "lateral_only", "timestamp": 8000}, {"question": "fibular_level", "answer": "transindesmal", "timestamp": 25000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 55000}]'::jsonb,
+         'lateral_only→transindesmal→spiral',
+         '{"involved_malleoli": 8000, "fibular_level": 17000, "lateral_morphology": 30000}'::jsonb,
+         1),
+        -- Rater 3: Correct path, no back clicks
         (gen_random_uuid(), study_active_1_id, rater3_id, NOW() - INTERVAL '3 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
-         38000, 'B', 'SER', '44-B1'),
+         38000, 'B', 'SER', '44-B1',
+         '[{"question": "involved_malleoli", "answer": "lateral_only", "timestamp": 4000}, {"question": "fibular_level", "answer": "transindesmal", "timestamp": 15000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 30000}]'::jsonb,
+         'lateral_only→transindesmal→spiral',
+         '{"involved_malleoli": 4000, "fibular_level": 11000, "lateral_morphology": 15000}'::jsonb,
+         0),
+        -- Rater 4: WRONG morphology (oblique instead of spiral), 3 back clicks (uncertainty)
         (gen_random_uuid(), study_active_1_id, rater4_id, NOW() - INTERVAL '5 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
-         55000, 'B', 'PAB', '44-B1'),
+         55000, 'B', 'PAB', '44-B1',
+         '[{"question": "involved_malleoli", "answer": "lateral_only", "timestamp": 6000}, {"question": "fibular_level", "answer": "transindesmal", "timestamp": 22000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 45000}]'::jsonb,
+         'lateral_only→transindesmal→oblique',
+         '{"involved_malleoli": 6000, "fibular_level": 16000, "lateral_morphology": 23000}'::jsonb,
+         3),
+        -- Rater 5: Correct path, 2 back clicks but got it right
         (gen_random_uuid(), study_active_1_id, rater5_id, NOW() - INTERVAL '7 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 2}, "ao_ota": {"code": "44-B1"}}'::jsonb,
-         78000, 'B', 'SER', '44-B1');
+         78000, 'B', 'SER', '44-B1',
+         '[{"question": "involved_malleoli", "answer": "lateral_only", "timestamp": 12000}, {"question": "fibular_level", "answer": "transindesmal", "timestamp": 40000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 70000}]'::jsonb,
+         'lateral_only→transindesmal→spiral',
+         '{"involved_malleoli": 12000, "fibular_level": 28000, "lateral_morphology": 30000}'::jsonb,
+         2);
 
     -- Responses for Active Cohort - Case A2 (Bimalleolar) - Moderate agreement
     INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, danis_weber_type, lauge_hansen_type, ao_ota_code, bartonicek_type)
@@ -255,17 +291,33 @@ BEGIN
          82000, 'C', 'PER', '44-C2');
 
     -- Responses for Active Cohort - Case A4 (Medial only) - Lower agreement (tricky case)
-    INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, lauge_hansen_type, ao_ota_code)
+    -- This case has high error rate on medial_morphology question - perfect for divergence analysis
+    INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, lauge_hansen_type, ao_ota_code, answer_path, decision_path, time_per_question, back_clicks)
     VALUES
+        -- Rater 1: Correct path (oblique morphology), no back clicks
         (gen_random_uuid(), study_active_4_id, rater1_id, NOW() - INTERVAL '1 day',
          '{"lauge_hansen": {"type": "PA", "stage": 1}, "ao_ota": {"code": "44-A1"}}'::jsonb,
-         43000, 'PA', '44-A1'),
+         43000, 'PA', '44-A1',
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 5000}, {"question": "medial_morphology", "answer": "oblique", "timestamp": 35000}]'::jsonb,
+         'medial_only→oblique',
+         '{"involved_malleoli": 5000, "medial_morphology": 30000}'::jsonb,
+         0),
+        -- Rater 2: WRONG morphology (transverse instead of oblique), 4 back clicks (very confused)
         (gen_random_uuid(), study_active_4_id, rater2_id, NOW() - INTERVAL '2 days',
          '{"lauge_hansen": {"type": "SA", "stage": 1}, "ao_ota": {"code": "44-A1"}}'::jsonb,
-         51000, 'SA', '44-A1'),
+         51000, 'SA', '44-A1',
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 7000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 42000}]'::jsonb,
+         'medial_only→transverse',
+         '{"involved_malleoli": 7000, "medial_morphology": 35000}'::jsonb,
+         4),
+        -- Rater 3: WRONG morphology (transverse instead of oblique), 2 back clicks
         (gen_random_uuid(), study_active_4_id, rater3_id, NOW() - INTERVAL '3 days',
          '{"lauge_hansen": {"type": "PA", "stage": 1}, "ao_ota": {"code": "44-A2"}}'::jsonb,
-         39000, 'PA', '44-A2');
+         39000, 'PA', '44-A2',
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 4000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 32000}]'::jsonb,
+         'medial_only→transverse',
+         '{"involved_malleoli": 4000, "medial_morphology": 28000}'::jsonb,
+         2);
 
     -- Responses for Active Cohort - Case A5 (Trimalleolar) - Variable agreement
     INSERT INTO study_responses (id, study_id, user_id, created_at, classification, time_taken_ms, danis_weber_type, lauge_hansen_type, ao_ota_code, bartonicek_type)

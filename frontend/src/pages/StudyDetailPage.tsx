@@ -23,6 +23,7 @@ import {
   PreviousResponses,
   ClassificationPanel,
 } from '../components/studies';
+import type { AnswerTracking } from '../components/studies/StudyClassificationForm';
 
 export function StudyDetailPage() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export function StudyDetailPage() {
 
   // Classification state
   const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
+  const [answerTracking, setAnswerTracking] = useState<AnswerTracking | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitResult, setSubmitResult] = useState<SubmitResponseResult | null>(null);
@@ -111,9 +113,12 @@ export function StudyDetailPage() {
   const currentImages = activeTab === 'xray' ? xrayImages : tacImages;
 
   // Handle classification form submission
-  const handleClassify = useCallback(async (input: FractureInput) => {
+  const handleClassify = useCallback(async (input: FractureInput, tracking?: AnswerTracking) => {
     const result = await classifyFracture(input);
     setClassificationResult(result);
+    if (tracking) {
+      setAnswerTracking(tracking);
+    }
     return result;
   }, []);
 
@@ -125,6 +130,13 @@ export function StudyDetailPage() {
       return submitStudyResponse(id, {
         classification: classificationResult,
         time_taken_ms: timeTakenMs,
+        // Include tracking data for divergence analysis
+        ...(answerTracking && {
+          answer_path: answerTracking.answerPath,
+          decision_path: answerTracking.decisionPath,
+          time_per_question: answerTracking.timePerQuestion,
+          back_clicks: answerTracking.backClicks,
+        }),
       });
     },
     onSuccess: (result) => {
@@ -188,6 +200,7 @@ export function StudyDetailPage() {
   // Reset for re-answer
   const handleReanswer = useCallback(() => {
     setClassificationResult(null);
+    setAnswerTracking(null);
     setSubmitSuccess(false);
     setSubmitError(null);
     setSubmitResult(null);

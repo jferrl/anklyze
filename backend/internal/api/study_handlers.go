@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -12,8 +13,14 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 )
+
+// DivergenceService handles divergence analysis calculations.
+type DivergenceService interface {
+	AnalyzeDivergence(ctx context.Context, studyID uuid.UUID) (*service.DivergenceReport, error)
+}
 
 // StudyHandler handles study-related HTTP requests.
 type StudyHandler struct {
@@ -26,6 +33,7 @@ type StudyHandler struct {
 	storage            storage.Storage
 	signedURLDuration  time.Duration
 	statsService       *StatisticsService
+	divergenceService  DivergenceService
 }
 
 // StatisticsService is imported from service package
@@ -57,16 +65,23 @@ func NewStudyHandler(
 	}
 }
 
+// WithDivergenceService sets the divergence service for divergence analysis.
+func (h *StudyHandler) WithDivergenceService(ds DivergenceService) *StudyHandler {
+	h.divergenceService = ds
+	return h
+}
+
 // --- Request/Response Types ---
 
 // CreateStudyRequest is the request body for creating a study.
 type CreateStudyRequest struct {
-	Title                    string                      `json:"title" binding:"required,max=255"`
-	Description              string                      `json:"description"`
-	Deadline                 *time.Time                  `json:"deadline,omitempty"`
+	Title                    string                       `json:"title" binding:"required,max=255"`
+	Description              string                       `json:"description"`
+	Deadline                 *time.Time                   `json:"deadline,omitempty"`
 	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
-	ShowReferenceAfterSubmit bool                        `json:"show_reference_after_submit"`
-	AllowMultipleResponses   *bool                       `json:"allow_multiple_responses,omitempty"`
+	ReferenceInput           *domain.FractureInput        `json:"reference_input,omitempty"` // For divergence analysis
+	ShowReferenceAfterSubmit bool                         `json:"show_reference_after_submit"`
+	AllowMultipleResponses   *bool                        `json:"allow_multiple_responses,omitempty"`
 }
 
 // UpdateStudyRequest is the request body for updating a study.
@@ -75,6 +90,7 @@ type UpdateStudyRequest struct {
 	Description              *string                      `json:"description,omitempty"`
 	Deadline                 *time.Time                   `json:"deadline,omitempty"`
 	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
+	ReferenceInput           *domain.FractureInput        `json:"reference_input,omitempty"` // For divergence analysis
 	ShowReferenceAfterSubmit *bool                        `json:"show_reference_after_submit,omitempty"`
 	AllowMultipleResponses   *bool                        `json:"allow_multiple_responses,omitempty"`
 }
@@ -83,6 +99,12 @@ type UpdateStudyRequest struct {
 type SubmitResponseRequest struct {
 	Classification domain.ClassificationResult `json:"classification" binding:"required"`
 	TimeTakenMS    int64                       `json:"time_taken_ms"`
+
+	// Answer tracking fields for divergence analysis
+	AnswerPath      []domain.QuestionAnswer `json:"answer_path,omitempty"`
+	DecisionPath    string                  `json:"decision_path,omitempty"`
+	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty"`
+	BackClicks      int                     `json:"back_clicks,omitempty"`
 }
 
 // StudyListResponse is the response for listing studies.
@@ -240,6 +262,13 @@ func (h *StudyHandler) CreateStudy(c *gin.Context) {
 			return
 		}
 	}
+	if req.ReferenceInput != nil {
+		if err := study.SetReferenceInput(req.ReferenceInput); err != nil {
+			slog.Error("failed to set reference input", "error", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference input"})
+			return
+		}
+	}
 	study.ShowReferenceAfterSubmit = req.ShowReferenceAfterSubmit
 	if req.AllowMultipleResponses != nil {
 		study.AllowMultipleResponses = *req.AllowMultipleResponses
@@ -346,6 +375,13 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 			if err := study.SetReferenceClassification(req.ReferenceClassification); err != nil {
 				slog.Error("failed to set reference classification", "error", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference classification"})
+				return
+			}
+		}
+		if req.ReferenceInput != nil {
+			if err := study.SetReferenceInput(req.ReferenceInput); err != nil {
+				slog.Error("failed to set reference input", "error", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference input"})
 				return
 			}
 		}
@@ -1097,8 +1133,19 @@ func (h *StudyHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Create response
-	response, err := domain.NewStudyResponse(studyID, userID, req.Classification, req.TimeTakenMS)
+	// Build answer tracking if provided
+	var tracking *domain.AnswerTracking
+	if len(req.AnswerPath) > 0 || req.DecisionPath != "" || len(req.TimePerQuestion) > 0 || req.BackClicks > 0 {
+		tracking = &domain.AnswerTracking{
+			AnswerPath:      req.AnswerPath,
+			DecisionPath:    req.DecisionPath,
+			TimePerQuestion: req.TimePerQuestion,
+			BackClicks:      req.BackClicks,
+		}
+	}
+
+	// Create response with tracking
+	response, err := domain.NewStudyResponseWithTracking(studyID, userID, req.Classification, req.TimeTakenMS, tracking)
 	if err != nil {
 		slog.Error("failed to create response", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create response"})
@@ -1520,6 +1567,41 @@ func (h *StudyHandler) GetReliabilityMetrics(c *gin.Context) {
 		ReliabilityMetrics: metrics,
 		CalculatedAt:       time.Now(),
 	})
+}
+
+// GetDivergenceAnalysis handles GET /api/admin/studies/:id/divergence
+// Returns divergence analysis showing where users deviate from the gold standard path.
+func (h *StudyHandler) GetDivergenceAnalysis(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid study id"})
+		return
+	}
+
+	if h.divergenceService == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "divergence analysis not available"})
+		return
+	}
+
+	report, err := h.divergenceService.AnalyzeDivergence(c.Request.Context(), studyID)
+	if err != nil {
+		if err.Error() == "study has no gold standard input stored" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "divergence analysis requires gold standard input",
+				"hint":  "set the reference input (FractureInput) when creating or updating the study",
+			})
+			return
+		}
+		if err.Error() == "study not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "study not found"})
+			return
+		}
+		slog.Error("failed to analyze divergence", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to analyze divergence"})
+		return
+	}
+
+	c.JSON(http.StatusOK, report)
 }
 
 // ExportDetailedResponses handles GET /api/admin/studies/:id/export/detailed

@@ -202,38 +202,7 @@ Case    Weber A    Weber B    Weber C    (5 doctors per case)
 
 ---
 
-### 3.4 Intraclass Correlation Coefficient (ICC)
-
-**What it is:** A measure of how similar ratings are within the same "class" (group of raters evaluating the same thing).
-
-**Think of it like this:**
-
-ICC asks: "Of all the variation in the ratings, how much is because the cases are actually different, vs. how much is because the raters disagree?"
-
-```
-Total Variation = Variation Between Cases + Variation Between Raters + Random Error
-                  ──────────────────────────────────────────────────────────────────
-                  (what we want to measure)    (disagreement)      (noise)
-```
-
-**ICC Values:**
-- **ICC = 1.0**: All variation is from real differences between cases (perfect reliability)
-- **ICC = 0.5**: Half the variation is from real differences, half from rater disagreement
-- **ICC = 0.0**: All variation is from rater disagreement (no reliability)
-
-**Why ICC vs. Kappa?**
-
-| Use Kappa When... | Use ICC When... |
-|-------------------|-----------------|
-| Categories are distinct (Weber A, B, C) | Ratings are on a scale (1-10) |
-| Order doesn't matter (A isn't "better" than C) | Order matters (a 7 is higher than a 5) |
-| You have nominal data | You have ordinal or continuous data |
-
-**For Anklyze:** Kappa is appropriate for Danis-Weber and Lauge-Hansen (nominal categories), but ICC might be better for analyzing AO/OTA subtypes if treated as ordinal.
-
----
-
-### 3.5 Confidence Intervals
+### 3.4 Confidence Intervals
 
 **What it is:** A range that likely contains the "true" value.
 
@@ -262,7 +231,7 @@ The width of the CI depends on sample size. More responses = narrower CI = more 
 
 ---
 
-### 3.6 Weighted Kappa
+### 3.5 Weighted Kappa
 
 **What it is:** A version of Kappa that accounts for "how wrong" a disagreement is.
 
@@ -294,7 +263,7 @@ Doctor A  Weber A      0         0.5        1.0
 
 ---
 
-### 3.7 Sensitivity and Specificity
+### 3.6 Sensitivity and Specificity
 
 **What they are:** Measures of how good a test is at detecting things.
 
@@ -336,7 +305,7 @@ Specificity = 65 / (65 + 5) = 92.9%  "Correctly rules out 93% of non-Weber A cas
 
 ---
 
-### 3.8 Confusion Matrix
+### 3.7 Confusion Matrix
 
 **What it is:** A table showing how classifications compare between predicted and actual (or between two raters).
 
@@ -386,7 +355,6 @@ Std     PA     1       4      35       0        40
 | Gold Standard Accuracy | ✅ Yes | `statistics.go` |
 | Sensitivity/Specificity | ✅ Yes | `statistics.go:184-276` |
 | Per-Category Metrics (PPV, NPV, F1) | ✅ Yes | `statistics.go:184-276` |
-| ICC | ❌ No | - |
 
 ### 4.2 How the Survey Feature Works
 
@@ -672,9 +640,11 @@ If the classification algorithm is updated, there's no record of which version p
 
 ### 5.3 Analysis Feature Gaps
 
-#### Problem 8: No Decision Tree Divergence Analysis
+#### ~~Problem 8: No Decision Tree Divergence Analysis~~ ✅ FIXED
 
-**The Issue:**
+**Status:** Resolved in February 2026
+
+**Original Issue:**
 
 When users disagree with the gold standard, we know WHAT they answered, but not WHERE in the decision tree they diverged.
 
@@ -695,10 +665,48 @@ The questionnaire path:
                     This is where PA comes from instead of SER
 ```
 
-**Impact:**
-- Cannot identify which questions cause the most errors
-- Cannot improve questionnaire wording for confusing questions
-- Cannot provide targeted training
+**Solution:** Implemented **Gold Standard Input with Decision Path Tracking**
+
+The system now captures the complete decision path when admins configure the gold standard classification:
+
+**1. Gold Standard Questionnaire (GoldStandardInputDialog)**
+
+Admins complete the same questionnaire that users see, capturing:
+- `reference_classification`: The final classification result (Weber, Lauge-Hansen, AO/OTA, Bartonicek)
+- `reference_input`: The complete decision path (FractureInput) with all questionnaire answers
+
+**2. Decision Path Storage**
+
+```typescript
+// FractureInput stores the decision path
+interface FractureInput {
+  affectedMalleoli: string[];
+  fibulaLevel?: 'infrasindesmal' | 'transindesmal' | 'suprasindesmal';
+  lateralMorphology?: 'oblique' | 'spiral' | 'comminuted';
+  medialMorphology?: 'oblique' | 'transverse';
+  // ... all questionnaire answers
+}
+
+// Decision path string format: "lateral_only→transindesmal→spiral"
+```
+
+**3. Divergence Analysis Dashboard (StudyDivergencePage)**
+
+For each user response, the system can now:
+- Compare user's decision path against gold standard path
+- Identify exact divergence point in the questionnaire
+- Show which question caused the wrong classification
+- Aggregate divergence statistics across all responses
+
+**Key Files:**
+- `frontend/src/components/studies/GoldStandardInputDialog.tsx` - Questionnaire for capturing gold standard input
+- `frontend/src/pages/admin/StudyDivergencePage.tsx` - Divergence analysis dashboard
+- `frontend/src/types/study.ts` - Added `reference_input` field to Study type
+
+**Impact (Now Addressed):**
+- ✅ Can identify which questions cause the most errors
+- ✅ Can improve questionnaire wording for confusing questions
+- ✅ Can provide targeted training based on common divergence points
 
 ---
 
@@ -788,6 +796,7 @@ If many users select impossible combinations, it indicates:
 | Implement multi-case study support (StudyCohort) | ✅ Done | Full cohort management with reliability dashboard |
 | Add rater cohort management | ✅ Done | Pre-assigned raters with access control enforcement |
 | Rater progress tracking | ✅ Done | Automatic tracking of cases completed per rater |
+| Add divergence analysis | ✅ Done | Decision path tracking with questionnaire-based gold standard configuration |
 
 #### Remaining Work
 
@@ -795,8 +804,6 @@ If many users select impossible combinations, it indicates:
 | -------- | ----- | ------ | ------ |
 | 🟡 Medium | Add algorithm versioning | Medium | Medium - Important for long-term |
 | 🟡 Medium | Add expertise stratification in analytics | Medium | Medium - Valuable for publications |
-| 🟢 Low | Add ICC calculation | Medium | Medium - Alternative metric |
-| 🟢 Low | Add divergence analysis | High | Medium - Valuable insights |
 | 🟢 Low | Add time-based analysis | Low | Low - Quality indicators |
 
 ### 6.2 Recommended Study Design
@@ -916,8 +923,6 @@ Classification Result
 
 - Expertise stratification (breakdown by specialty/experience)
 - Time-based analysis (response time vs accuracy)
-- ICC calculation (alternative reliability metric)
-- Decision tree divergence analysis (where users go wrong)
 
 ---
 
@@ -1068,7 +1073,6 @@ Before concluding a validation study, verify:
 | **Danis-Weber** | Classification based on fibula fracture location relative to syndesmosis |
 | **Fleiss' Kappa** | Extension of Cohen's Kappa for three or more raters |
 | **Gold Standard** | The "correct" answer, typically determined by expert consensus or surgical confirmation |
-| **ICC** | Intraclass Correlation Coefficient - measures rating consistency |
 | **Inter-rater Reliability** | Consistency of ratings between different raters |
 | **Intra-rater Reliability** | Consistency of ratings by the same rater over time |
 | **Kappa** | A statistical measure of inter-rater agreement adjusted for chance |
@@ -1100,6 +1104,8 @@ Before concluding a validation study, verify:
 | 2026-02-01 | Initial analysis document |
 | 2026-02-01 | Implemented: Cohen's Kappa fix (uses latest response), Fleiss' Kappa note for single-case, Confidence Intervals, Weighted Kappa for AO/OTA, Sensitivity/Specificity/PPV/NPV/F1 metrics, Frontend display updates |
 | 2026-02-02 | **Major Update - StudyCohort Implementation:** Full multi-case study support with cohort management, rater assignment with access control enforcement, progress tracking, per-case agreement metrics, hard case identification, and cohort reliability dashboard. Fleiss' Kappa now fully functional for cohort studies. |
+| 2026-02-02 | Removed ICC from roadmap - not applicable for categorical classification data. Kappa + Weighted Kappa cover all use cases. |
+| 2026-02-02 | **Divergence Analysis Implementation:** Added decision path tracking via `reference_input` field. New GoldStandardInputDialog allows admins to complete questionnaire to capture both classification result AND decision path. StudyDivergencePage dashboard shows where users diverge from gold standard in the decision tree. Problem 8 marked as FIXED. |
 
 ---
 

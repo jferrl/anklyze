@@ -62,6 +62,10 @@ type Study struct {
 	ReferenceClassification  datatypes.JSON `gorm:"type:jsonb" json:"reference_classification,omitempty"`
 	ShowReferenceAfterSubmit bool           `json:"show_reference_after_submit"`
 
+	// Reference input (FractureInput) that produced the gold standard classification
+	// Used for divergence analysis to compare answer paths
+	ReferenceInput datatypes.JSON `gorm:"type:jsonb" json:"reference_input,omitempty"`
+
 	// Single Response Control - when false, users can only submit one response
 	// Note: Default is set in NewStudy(), not via GORM tag (GORM omits false values with default tags)
 	AllowMultipleResponses bool `json:"allow_multiple_responses"`
@@ -122,6 +126,39 @@ func (s *Study) SetReferenceClassification(result *ClassificationResult) error {
 // HasReferenceClassification returns true if a reference classification is set.
 func (s *Study) HasReferenceClassification() bool {
 	return len(s.ReferenceClassification) > 0
+}
+
+// GetReferenceInput parses and returns the reference input (FractureInput).
+func (s *Study) GetReferenceInput() (*FractureInput, error) {
+	if len(s.ReferenceInput) == 0 {
+		return nil, nil
+	}
+
+	var input FractureInput
+	if err := json.Unmarshal(s.ReferenceInput, &input); err != nil {
+		return nil, err
+	}
+	return &input, nil
+}
+
+// SetReferenceInput sets the reference input from a FractureInput.
+func (s *Study) SetReferenceInput(input *FractureInput) error {
+	if input == nil {
+		s.ReferenceInput = nil
+		return nil
+	}
+
+	data, err := json.Marshal(input)
+	if err != nil {
+		return err
+	}
+	s.ReferenceInput = datatypes.JSON(data)
+	return nil
+}
+
+// HasReferenceInput returns true if a reference input is set.
+func (s *Study) HasReferenceInput() bool {
+	return len(s.ReferenceInput) > 0
 }
 
 // CanBeEdited returns true if the study can be modified.
@@ -213,6 +250,13 @@ func NewStudyImage(
 	}
 }
 
+// QuestionAnswer represents a single answer in the user's decision path.
+type QuestionAnswer struct {
+	Question  string `json:"question"`  // Question key: "involved_malleoli", "fibular_level", etc.
+	Answer    string `json:"answer"`    // Answer value: "lateral_only", "transindesmal", etc.
+	Timestamp int64  `json:"timestamp"` // Milliseconds since form start
+}
+
 // StudyResponse represents a user's classification response to a study.
 type StudyResponse struct {
 	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
@@ -231,11 +275,25 @@ type StudyResponse struct {
 	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:5;index" json:"-"`
 	AOOTACode       *string `gorm:"column:ao_ota_code;size:10;index" json:"-"`
 	BartonicekType  *string `gorm:"column:bartonicek_type;size:15;index" json:"-"`
+
+	// Answer path tracking for divergence analysis
+	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty"`       // []QuestionAnswer
+	DecisionPath    string         `gorm:"size:500;index" json:"decision_path,omitempty"` // "lateral_only→transindesmal→spiral"
+	TimePerQuestion datatypes.JSON `gorm:"type:jsonb" json:"time_per_question,omitempty"` // map[string]int64
+	BackClicks      int            `gorm:"default:0" json:"back_clicks,omitempty"`        // Back button usage count
 }
 
 // TableName returns the table name for GORM.
 func (StudyResponse) TableName() string {
 	return "study_responses"
+}
+
+// AnswerTracking contains the answer path tracking data submitted with a response.
+type AnswerTracking struct {
+	AnswerPath      []QuestionAnswer `json:"answer_path,omitempty"`
+	DecisionPath    string           `json:"decision_path,omitempty"`
+	TimePerQuestion map[string]int64 `json:"time_per_question,omitempty"`
+	BackClicks      int              `json:"back_clicks,omitempty"`
 }
 
 // NewStudyResponse creates a new study response with denormalized fields extracted.
@@ -277,6 +335,73 @@ func NewStudyResponse(
 	}
 
 	return response, nil
+}
+
+// NewStudyResponseWithTracking creates a new study response with answer tracking data.
+func NewStudyResponseWithTracking(
+	studyID, userID uuid.UUID,
+	result ClassificationResult,
+	timeTakenMS int64,
+	tracking *AnswerTracking,
+) (*StudyResponse, error) {
+	response, err := NewStudyResponse(studyID, userID, result, timeTakenMS)
+	if err != nil {
+		return nil, err
+	}
+
+	if tracking != nil {
+		// Set answer path
+		if len(tracking.AnswerPath) > 0 {
+			answerPathJSON, err := json.Marshal(tracking.AnswerPath)
+			if err != nil {
+				return nil, err
+			}
+			response.AnswerPath = datatypes.JSON(answerPathJSON)
+		}
+
+		// Set decision path
+		response.DecisionPath = tracking.DecisionPath
+
+		// Set time per question
+		if len(tracking.TimePerQuestion) > 0 {
+			timePerQJSON, err := json.Marshal(tracking.TimePerQuestion)
+			if err != nil {
+				return nil, err
+			}
+			response.TimePerQuestion = datatypes.JSON(timePerQJSON)
+		}
+
+		// Set back clicks
+		response.BackClicks = tracking.BackClicks
+	}
+
+	return response, nil
+}
+
+// GetAnswerPath parses and returns the answer path.
+func (r *StudyResponse) GetAnswerPath() ([]QuestionAnswer, error) {
+	if len(r.AnswerPath) == 0 {
+		return nil, nil
+	}
+
+	var path []QuestionAnswer
+	if err := json.Unmarshal(r.AnswerPath, &path); err != nil {
+		return nil, err
+	}
+	return path, nil
+}
+
+// GetTimePerQuestion parses and returns the time per question map.
+func (r *StudyResponse) GetTimePerQuestion() (map[string]int64, error) {
+	if len(r.TimePerQuestion) == 0 {
+		return nil, nil
+	}
+
+	var timeMap map[string]int64
+	if err := json.Unmarshal(r.TimePerQuestion, &timeMap); err != nil {
+		return nil, err
+	}
+	return timeMap, nil
 }
 
 // GetClassification parses and returns the classification result.

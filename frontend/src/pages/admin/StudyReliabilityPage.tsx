@@ -191,14 +191,27 @@ export function StudyReliabilityPage() {
               </div>
             </div>
 
-            <Button
-              onClick={handleExportCSV}
-              size="lg"
-              className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
-            >
-              <Download className="w-4 h-4" />
-              {t('admin.reliability.exportDetailed')}
-            </Button>
+            <div className="flex gap-3">
+              {hasGoldStandard && (
+                <Button
+                  onClick={() => navigate(`/admin/studies/${id}/divergence`)}
+                  variant="outline"
+                  size="lg"
+                  className="gap-2"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  {t('admin.reliability.viewDivergence', 'Divergence Analysis')}
+                </Button>
+              )}
+              <Button
+                onClick={handleExportCSV}
+                size="lg"
+                className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
+              >
+                <Download className="w-4 h-4" />
+                {t('admin.reliability.exportDetailed')}
+              </Button>
+            </div>
           </div>
         </header>
 

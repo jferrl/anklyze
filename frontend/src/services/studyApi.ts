@@ -32,6 +32,8 @@ import type {
   RaterProgressResponse,
   CohortReliabilityResponse,
   CohortStatus,
+  // Divergence analysis types
+  DivergenceReport,
 } from '../types/study';
 import { supabase } from '../lib/supabase';
 import { AuthRequiredError, ForbiddenError } from './api';
@@ -594,6 +596,26 @@ export async function getReliabilityMetrics(studyId: string): Promise<Reliabilit
 }
 
 /**
+ * Get divergence analysis for a study (admin only)
+ * Analyzes where users diverge from the gold standard path
+ */
+export async function getDivergenceAnalysis(studyId: string): Promise<DivergenceReport> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/divergence`, {
+    headers,
+  });
+
+  handleAuthError(response.status);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to get divergence analysis');
+  }
+
+  return response.json();
+}
+
+/**
  * Export detailed study responses as CSV with expertise and gold standard comparison (admin only)
  */
 export async function exportDetailedResponses(studyId: string): Promise<Blob> {
@@ -1129,6 +1151,7 @@ export const studyApi = {
   closeStudy,
   getStudyAnalytics,
   getReliabilityMetrics,
+  getDivergenceAnalysis,
   listStudyResponses,
   exportStudyResponses,
   exportDetailedResponses,

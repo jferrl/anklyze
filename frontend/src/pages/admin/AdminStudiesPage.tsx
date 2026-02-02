@@ -10,6 +10,7 @@ import {
   Pencil,
   Trash2,
   BarChart3,
+  TrendingUp,
   Send,
   Lock,
   FileText,
@@ -235,6 +236,7 @@ export function AdminStudiesPage() {
                   onPublish={() => publishMutation.mutate(study.id)}
                   onClose={() => closeMutation.mutate(study.id)}
                   onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                  onViewDivergence={() => navigate(`/admin/studies/${study.id}/divergence`)}
                   t={t}
                 />
               ))}
@@ -277,6 +279,7 @@ export function AdminStudiesPage() {
                       onPublish={() => publishMutation.mutate(study.id)}
                       onClose={() => closeMutation.mutate(study.id)}
                       onViewAnalytics={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                      onViewDivergence={() => navigate(`/admin/studies/${study.id}/divergence`)}
                       t={t}
                     />
                   ))}
@@ -358,6 +361,7 @@ interface StudyRowProps {
   onPublish: () => void;
   onClose: () => void;
   onViewAnalytics: () => void;
+  onViewDivergence: () => void;
   t: (key: string) => string;
 }
 
@@ -372,6 +376,7 @@ function StudyCard({
   onPublish,
   onClose,
   onViewAnalytics,
+  onViewDivergence,
   t,
 }: StudyRowProps) {
   return (
@@ -448,6 +453,12 @@ function StudyCard({
                 {t('admin.studies.analytics')}
               </DropdownMenuItem>
             )}
+            {study.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewDivergence}>
+                <TrendingUp className="h-4 w-4 mr-2" />
+                {t('admin.studies.divergence')}
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             {study.status === 'draft' && (
               <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
@@ -484,6 +495,7 @@ function StudyRow({
   onPublish,
   onClose,
   onViewAnalytics,
+  onViewDivergence,
   t,
 }: StudyRowProps) {
   return (
@@ -576,6 +588,12 @@ function StudyRow({
               <DropdownMenuItem onClick={onViewAnalytics}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 {t('admin.studies.analytics')}
+              </DropdownMenuItem>
+            )}
+            {study.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewDivergence}>
+                <TrendingUp className="h-4 w-4 mr-2" />
+                {t('admin.studies.divergence')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />

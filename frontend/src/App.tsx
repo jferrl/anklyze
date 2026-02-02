@@ -24,6 +24,7 @@ import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyAnalyticsPage } from './pages/admin/StudyAnalyticsPage';
 import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
+import { StudyDivergencePage } from './pages/admin/StudyDivergencePage';
 import { AdminCohortsPage } from './pages/admin/AdminCohortsPage';
 import { CohortEditorPage } from './pages/admin/CohortEditorPage';
 import { CohortReliabilityPage } from './pages/admin/CohortReliabilityPage';
@@ -176,6 +177,22 @@ function App() {
                       ]}
                     >
                       <StudyReliabilityPage />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/studies/:id/divergence"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AppShell
+                      breadcrumbs={[
+                        { labelKey: 'admin' },
+                        { labelKey: 'studies', href: '/admin/studies' },
+                        { labelKey: 'divergence' },
+                      ]}
+                    >
+                      <StudyDivergencePage />
                     </AppShell>
                   </ProtectedRoute>
                 }

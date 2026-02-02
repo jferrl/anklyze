@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '../ui/alert';
 import type { ClassificationResult, FractureInput } from '../../types/fracture';
 import type { SubmitResponseResult } from '../../types/study';
 import { ClassificationResult as ClassificationResultComponent } from '../ClassificationResult';
-import { StudyClassificationForm } from './StudyClassificationForm';
+import { StudyClassificationForm, type AnswerTracking } from './StudyClassificationForm';
 import { cn } from '@/lib/utils';
 
 interface ClassificationPanelProps {
@@ -19,7 +19,7 @@ interface ClassificationPanelProps {
   cannotSubmit?: boolean;
   canReanswer?: boolean;
   submitResult?: SubmitResponseResult | null;
-  onClassify: (input: FractureInput) => Promise<ClassificationResult>;
+  onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
   onSubmit: () => void;
   onReanswer: () => void;
 }

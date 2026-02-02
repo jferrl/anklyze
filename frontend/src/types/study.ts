@@ -1,4 +1,4 @@
-import type { ClassificationResult } from './fracture';
+import type { ClassificationResult, FractureInput } from './fracture';
 
 // Study status lifecycle
 export type StudyStatus = 'draft' | 'published' | 'closed';
@@ -23,6 +23,7 @@ export interface Study {
   unique_users: number;
   // Validation study fields
   reference_classification?: ClassificationResult;
+  reference_input?: FractureInput;
   show_reference_after_submit: boolean;
   allow_multiple_responses: boolean;
   // Cohort membership (optional)
@@ -108,6 +109,7 @@ export interface CreateStudyRequest {
   description?: string;
   deadline?: string;
   reference_classification?: ClassificationResult;
+  reference_input?: FractureInput;
   show_reference_after_submit?: boolean;
   allow_multiple_responses?: boolean;
 }
@@ -117,13 +119,26 @@ export interface UpdateStudyRequest {
   description?: string;
   deadline?: string;
   reference_classification?: ClassificationResult;
+  reference_input?: FractureInput;
   show_reference_after_submit?: boolean;
   allow_multiple_responses?: boolean;
+}
+
+// QuestionAnswer represents a single answer in the user's decision path
+export interface QuestionAnswer {
+  question: string;
+  answer: string;
+  timestamp: number;
 }
 
 export interface SubmitResponseRequest {
   classification: ClassificationResult;
   time_taken_ms: number;
+  // Answer tracking for divergence analysis
+  answer_path?: QuestionAnswer[];
+  decision_path?: string;
+  time_per_question?: Record<string, number>;
+  back_clicks?: number;
 }
 
 // --- Response types ---
@@ -446,6 +461,36 @@ export interface CohortReliabilityMetrics {
 
 export interface CohortReliabilityResponse extends CohortReliabilityMetrics {
   calculated_at: string;
+}
+
+// ============================================================================
+// Divergence Analysis Types
+// ============================================================================
+
+// QuestionErrorStats tracks error rates for a specific question
+export interface QuestionErrorStats {
+  question: string;
+  total_answers: number;
+  correct_answers: number;
+  incorrect_answers: number;
+  error_rate: number;
+  wrong_answer_distribution: Record<string, number>;
+  avg_time_ms: number;
+}
+
+// DivergenceReport is the complete analysis output
+export interface DivergenceReport {
+  study_id: string;
+  study_title: string;
+  total_responses: number;
+  responses_with_path: number;
+  question_stats: QuestionErrorStats[];
+  most_confusing_question: string;
+  most_confusing_error_rate: number;
+  path_distribution: Record<string, number>;
+  correct_path: string;
+  avg_back_clicks: number;
+  back_click_correlation: 'positive' | 'negative' | 'none';
 }
 
 // Helper for Kappa interpretation

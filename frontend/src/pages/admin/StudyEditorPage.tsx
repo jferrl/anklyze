@@ -46,22 +46,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../../components/ui/dialog';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { studyApi } from '../../services/studyApi';
 import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
-import { ReferenceClassificationForm } from '../../components/studies/ReferenceClassificationForm';
+import { GoldStandardInputDialog } from '../../components/studies/GoldStandardInputDialog';
 import { cn } from '@/lib/utils';
 import type { ImageCategory, StudyImage } from '../../types/study';
-import type { ClassificationResult } from '../../types/fracture';
+import type { ClassificationResult, FractureInput } from '../../types/fracture';
 import { Switch } from '../../components/ui/switch';
-import { Settings, Target } from 'lucide-react';
+import { Settings, Target, GitBranch } from 'lucide-react';
 
 interface PendingUpload {
   id: string;
@@ -101,9 +94,10 @@ export function StudyEditorPage() {
 
   // Validation study settings
   const [referenceClassification, setReferenceClassification] = useState<ClassificationResult | undefined>(undefined);
+  const [referenceInput, setReferenceInput] = useState<FractureInput | undefined>(undefined);
   const [showReferenceAfterSubmit, setShowReferenceAfterSubmit] = useState(false);
   const [allowMultipleResponses, setAllowMultipleResponses] = useState(true);
-  const [showClassificationDialog, setShowClassificationDialog] = useState(false);
+  const [showGoldStandardInputDialog, setShowGoldStandardInputDialog] = useState(false);
 
   // Track previous study ID to reset form when switching studies
   const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
@@ -115,6 +109,7 @@ export function StudyEditorPage() {
     setPendingUploads([]);
     // Validation study settings
     setReferenceClassification(existingStudy.reference_classification);
+    setReferenceInput(existingStudy.reference_input);
     setShowReferenceAfterSubmit(existingStudy.show_reference_after_submit || false);
     setAllowMultipleResponses(existingStudy.allow_multiple_responses !== false);
   }
@@ -237,6 +232,7 @@ export function StudyEditorPage() {
       description: description.trim() || undefined,
       deadline: deadline ? new Date(deadline).toISOString() : undefined,
       reference_classification: referenceClassification,
+      reference_input: referenceInput,
       show_reference_after_submit: showReferenceAfterSubmit,
       allow_multiple_responses: allowMultipleResponses,
     };
@@ -628,26 +624,39 @@ export function StudyEditorPage() {
                               </div>
                             )}
                           </div>
+                          {referenceInput && (
+                            <div className="mt-3 pt-3 border-t border-border/50">
+                              <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                                <GitBranch className="w-3 h-3" />
+                                <span>{t('admin.studies.decisionPathConfigured', 'Decision path configured for divergence analysis')}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => setShowClassificationDialog(true)}
+                            onClick={() => setShowGoldStandardInputDialog(true)}
                             disabled={!canEdit}
+                            className="gap-1"
                           >
+                            <GitBranch className="w-4 h-4" />
                             {t('admin.studies.changeReference', 'Change')}
                           </Button>
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => setReferenceClassification(undefined)}
+                            onClick={() => {
+                              setReferenceClassification(undefined);
+                              setReferenceInput(undefined);
+                            }}
                             disabled={!canEdit}
                           >
                             <X className="w-4 h-4 mr-1" />
-                            {t('admin.studies.clearReference', 'Clear Reference')}
+                            {t('admin.studies.clearReference', 'Clear')}
                           </Button>
                         </div>
                       </div>
@@ -655,8 +664,7 @@ export function StudyEditorPage() {
                       <div className="ml-11">
                         <Button
                           type="button"
-                          variant="outline"
-                          onClick={() => setShowClassificationDialog(true)}
+                          onClick={() => setShowGoldStandardInputDialog(true)}
                           disabled={!canEdit}
                           className="gap-2"
                         >
@@ -936,25 +944,18 @@ export function StudyEditorPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Reference Classification Dialog */}
-      <Dialog open={showClassificationDialog} onOpenChange={setShowClassificationDialog}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t('admin.studies.setReference', 'Set Reference Classification')}</DialogTitle>
-            <DialogDescription>
-              {t('admin.studies.setReferenceDescription', 'Select the gold standard classification for this study. Enable only the systems you want to evaluate.')}
-            </DialogDescription>
-          </DialogHeader>
-          <ReferenceClassificationForm
-            initialValue={referenceClassification}
-            onSave={(result) => {
-              setReferenceClassification(result);
-              setShowClassificationDialog(false);
-            }}
-            onCancel={() => setShowClassificationDialog(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Gold Standard Input Dialog (via Questionnaire) */}
+      <GoldStandardInputDialog
+        open={showGoldStandardInputDialog}
+        onOpenChange={setShowGoldStandardInputDialog}
+        hasTACImages={tacImages.length + pendingTac.length > 0}
+        initialInput={referenceInput}
+        initialClassification={referenceClassification}
+        onSave={(input, classification) => {
+          setReferenceInput(input);
+          setReferenceClassification(classification);
+        }}
+      />
     </div>
   );
 }
