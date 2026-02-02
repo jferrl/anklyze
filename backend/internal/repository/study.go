@@ -15,83 +15,81 @@ type StudyRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.Study, error)
 	// Update updates a study.
 	Update(ctx context.Context, study *domain.Study) error
-	// Delete deletes a study by its ID.
+	// Delete deletes a study by its ID (cascades to cases and raters).
 	Delete(ctx context.Context, id uuid.UUID) error
 	// List retrieves studies with optional status filter and pagination.
 	List(ctx context.Context, status *domain.StudyStatus, limit, offset int) ([]domain.Study, int64, error)
-	// ListPublished retrieves only published studies with pagination.
-	ListPublished(ctx context.Context, limit, offset int) ([]domain.Study, int64, error)
 
-	// AddImage adds an image to a study.
-	AddImage(ctx context.Context, image *domain.StudyImage) error
-	// GetImages retrieves all images for a study.
-	GetImages(ctx context.Context, studyID uuid.UUID) ([]domain.StudyImage, error)
-	// GetImageByID retrieves an image by its ID.
-	GetImageByID(ctx context.Context, imageID uuid.UUID) (*domain.StudyImage, error)
-	// UpdateImage updates an image's mutable fields (display_order).
-	UpdateImage(ctx context.Context, image *domain.StudyImage) error
-	// DeleteImage deletes an image by its ID.
-	DeleteImage(ctx context.Context, imageID uuid.UUID) error
-	// UpdateHasTACImages recalculates and updates the has_tac_images flag for a study.
-	UpdateHasTACImages(ctx context.Context, studyID uuid.UUID) error
+	// Case management (cases with study_id set)
+	// AddCase assigns a case to a study with the given case order.
+	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
+	// RemoveCase removes a case from a study (clears study_id).
+	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
+	// GetCases retrieves all cases in a study, ordered by case_order.
+	GetCases(ctx context.Context, studyID uuid.UUID) ([]domain.Case, error)
+	// ReorderCases updates the case_order of cases in a study.
+	ReorderCases(ctx context.Context, studyID uuid.UUID, caseIDs []uuid.UUID) error
+	// GetStudyByCaseID retrieves the study that contains a case (if any).
+	GetStudyByCaseID(ctx context.Context, caseID uuid.UUID) (*domain.Study, error)
+	// GetNextCaseOrder returns the next available case order for a study.
+	GetNextCaseOrder(ctx context.Context, studyID uuid.UUID) (int, error)
 
-	// Publish changes a study status from draft to published.
-	Publish(ctx context.Context, id uuid.UUID) error
-	// Close changes a study status to closed.
+	// Rater management
+	// AddRater assigns a user as a rater to a study.
+	AddRater(ctx context.Context, studyID, userID uuid.UUID, email string) error
+	// RemoveRater removes a user from a study.
+	RemoveRater(ctx context.Context, studyID, userID uuid.UUID) error
+	// GetRaters retrieves all raters assigned to a study.
+	GetRaters(ctx context.Context, studyID uuid.UUID) ([]domain.StudyRater, error)
+	// HasAccess checks if a user is assigned to a study.
+	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
+	// GetRaterProgress retrieves completion progress for all raters in a study.
+	GetRaterProgress(ctx context.Context, studyID uuid.UUID) ([]domain.RaterProgress, error)
+	// UpdateRaterProgress updates a rater's progress in a study.
+	UpdateRaterProgress(ctx context.Context, studyID, userID uuid.UUID, casesCompleted int) error
+
+	// Status transitions
+	// Activate changes a study from draft to active.
+	Activate(ctx context.Context, id uuid.UUID) error
+	// Close changes a study to closed status.
 	Close(ctx context.Context, id uuid.UUID) error
 
-	// IncrementResponseCount increments the response count for a study.
-	IncrementResponseCount(ctx context.Context, studyID uuid.UUID) error
-	// UpdateUniqueUsers recalculates and updates the unique users count.
-	UpdateUniqueUsers(ctx context.Context, studyID uuid.UUID, count int) error
-
-	// User access management
-	// AddUser adds a user to a study (grants access).
-	AddUser(ctx context.Context, studyID, userID uuid.UUID, email string) error
-	// RemoveUser removes a user from a study (revokes access).
-	RemoveUser(ctx context.Context, studyID, userID uuid.UUID) error
-	// GetUsers retrieves all users who have access to a study.
-	GetUsers(ctx context.Context, studyID uuid.UUID) ([]domain.StudyUser, error)
-	// HasAccess checks if a user has access to a study.
-	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
-	// ListForUser retrieves published studies accessible to a specific user with pagination.
-	ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Study, int64, error)
+	// Counter updates
+	// UpdateCounters recalculates and updates all denormalized counters.
+	UpdateCounters(ctx context.Context, studyID uuid.UUID) error
 }
 
-// StudyResponseRepository defines the interface for study response persistence.
+// StudyResponseRepository handles response queries across studies.
 type StudyResponseRepository interface {
-	// Save saves a study response asynchronously.
-	Save(ctx context.Context, response *domain.StudyResponse) error
-	// GetByStudy retrieves all responses for a study with pagination.
-	GetByStudy(ctx context.Context, studyID uuid.UUID, limit, offset int) ([]domain.StudyResponse, int64, error)
-	// GetByUserAndStudy retrieves all responses by a user for a study.
-	GetByUserAndStudy(ctx context.Context, userID, studyID uuid.UUID) ([]domain.StudyResponse, error)
-	// CountByStudy counts the total responses for a study.
-	CountByStudy(ctx context.Context, studyID uuid.UUID) (int64, error)
-	// CountUniqueUsersByStudy counts unique users who responded to a study.
-	CountUniqueUsersByStudy(ctx context.Context, studyID uuid.UUID) (int64, error)
-	// Close gracefully shuts down the repository.
-	Close() error
+	// GetAllByStudy retrieves all responses for all cases in a study.
+	// Returns a map of caseID -> responses.
+	GetAllByStudy(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
 
-	// HasUserResponded checks if a user has already submitted a response to a study.
-	HasUserResponded(ctx context.Context, userID, studyID uuid.UUID) (bool, error)
-	// GetAllByStudy retrieves all responses for a study without pagination (for Kappa calculation).
-	GetAllByStudy(ctx context.Context, studyID uuid.UUID) ([]domain.StudyResponse, error)
-	// GetResponsesWithUserExpertise retrieves responses joined with user expertise data.
-	GetResponsesWithUserExpertise(ctx context.Context, studyID uuid.UUID) ([]domain.ResponseWithExpertise, error)
+	// GetCompleteRaterResponses retrieves responses only from raters who completed all cases.
+	// Returns a map of caseID -> responses (filtered to complete raters only).
+	GetCompleteRaterResponses(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
+
+	// CountUniqueRaters counts unique users who responded to any case in the study.
+	CountUniqueRaters(ctx context.Context, studyID uuid.UUID) (int64, error)
+
+	// CountCompleteRaters counts users who responded to ALL cases in the study.
+	CountCompleteRaters(ctx context.Context, studyID uuid.UUID) (int64, error)
+
+	// GetRaterCaseCompletion returns a map of userID -> list of caseIDs they completed.
+	GetRaterCaseCompletion(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]uuid.UUID, error)
+
+	// CountUserCasesCompleted counts how many cases a specific user has completed in a study.
+	CountUserCasesCompleted(ctx context.Context, studyID, userID uuid.UUID) (int, error)
 }
 
-// StudyAnalyticsRepository defines the interface for study analytics queries.
-type StudyAnalyticsRepository interface {
-	// GetSummary retrieves aggregated analytics for a study.
-	GetSummary(ctx context.Context, studyID uuid.UUID) (*domain.StudyAnalyticsSummary, error)
-	// GetClassificationDistribution retrieves distribution for a specific classification system.
-	GetClassificationDistribution(ctx context.Context, studyID uuid.UUID, system string) (map[string]int64, error)
-}
+// ============================================================================
+// No-Op Implementations (for when database is not configured)
+// ============================================================================
 
 // NoOpStudyRepository is a no-op implementation for when DB is not configured.
 type NoOpStudyRepository struct{}
 
+// NewNoOpStudyRepository creates a no-op study repository.
 func NewNoOpStudyRepository() *NoOpStudyRepository {
 	return &NoOpStudyRepository{}
 }
@@ -116,35 +114,55 @@ func (r *NoOpStudyRepository) List(_ context.Context, _ *domain.StudyStatus, _, 
 	return []domain.Study{}, 0, nil
 }
 
-func (r *NoOpStudyRepository) ListPublished(_ context.Context, _, _ int) ([]domain.Study, int64, error) {
-	return []domain.Study{}, 0, nil
-}
-
-func (r *NoOpStudyRepository) AddImage(_ context.Context, _ *domain.StudyImage) error {
+func (r *NoOpStudyRepository) AddCase(_ context.Context, _, _ uuid.UUID, _ int) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) GetImages(_ context.Context, _ uuid.UUID) ([]domain.StudyImage, error) {
-	return []domain.StudyImage{}, nil
+func (r *NoOpStudyRepository) RemoveCase(_ context.Context, _, _ uuid.UUID) error {
+	return nil
 }
 
-func (r *NoOpStudyRepository) GetImageByID(_ context.Context, _ uuid.UUID) (*domain.StudyImage, error) {
+func (r *NoOpStudyRepository) GetCases(_ context.Context, _ uuid.UUID) ([]domain.Case, error) {
+	return []domain.Case{}, nil
+}
+
+func (r *NoOpStudyRepository) ReorderCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) error {
+	return nil
+}
+
+func (r *NoOpStudyRepository) GetStudyByCaseID(_ context.Context, _ uuid.UUID) (*domain.Study, error) {
 	return nil, nil
 }
 
-func (r *NoOpStudyRepository) UpdateImage(_ context.Context, _ *domain.StudyImage) error {
+func (r *NoOpStudyRepository) GetNextCaseOrder(_ context.Context, _ uuid.UUID) (int, error) {
+	return 0, nil
+}
+
+func (r *NoOpStudyRepository) AddRater(_ context.Context, _, _ uuid.UUID, _ string) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) DeleteImage(_ context.Context, _ uuid.UUID) error {
+func (r *NoOpStudyRepository) RemoveRater(_ context.Context, _, _ uuid.UUID) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) UpdateHasTACImages(_ context.Context, _ uuid.UUID) error {
+func (r *NoOpStudyRepository) GetRaters(_ context.Context, _ uuid.UUID) ([]domain.StudyRater, error) {
+	return []domain.StudyRater{}, nil
+}
+
+func (r *NoOpStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
+	return false, nil
+}
+
+func (r *NoOpStudyRepository) GetRaterProgress(_ context.Context, _ uuid.UUID) ([]domain.RaterProgress, error) {
+	return []domain.RaterProgress{}, nil
+}
+
+func (r *NoOpStudyRepository) UpdateRaterProgress(_ context.Context, _, _ uuid.UUID, _ int) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) Publish(_ context.Context, _ uuid.UUID) error {
+func (r *NoOpStudyRepository) Activate(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
@@ -152,94 +170,38 @@ func (r *NoOpStudyRepository) Close(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) IncrementResponseCount(_ context.Context, _ uuid.UUID) error {
+func (r *NoOpStudyRepository) UpdateCounters(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
-func (r *NoOpStudyRepository) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
-	return nil
-}
-
-func (r *NoOpStudyRepository) AddUser(_ context.Context, _, _ uuid.UUID, _ string) error {
-	return nil
-}
-
-func (r *NoOpStudyRepository) RemoveUser(_ context.Context, _, _ uuid.UUID) error {
-	return nil
-}
-
-func (r *NoOpStudyRepository) GetUsers(_ context.Context, _ uuid.UUID) ([]domain.StudyUser, error) {
-	return []domain.StudyUser{}, nil
-}
-
-func (r *NoOpStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return false, nil
-}
-
-func (r *NoOpStudyRepository) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Study, int64, error) {
-	return []domain.Study{}, 0, nil
-}
-
-// NoOpStudyResponseRepository is a no-op implementation.
+// NoOpStudyResponseRepository is a no-op implementation for when DB is not configured.
 type NoOpStudyResponseRepository struct{}
 
+// NewNoOpStudyResponseRepository creates a no-op study response repository.
 func NewNoOpStudyResponseRepository() *NoOpStudyResponseRepository {
 	return &NoOpStudyResponseRepository{}
 }
 
-func (r *NoOpStudyResponseRepository) Save(_ context.Context, _ *domain.StudyResponse) error {
-	return nil
+func (r *NoOpStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
+	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
-func (r *NoOpStudyResponseRepository) GetByStudy(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.StudyResponse, int64, error) {
-	return []domain.StudyResponse{}, 0, nil
+func (r *NoOpStudyResponseRepository) GetCompleteRaterResponses(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
+	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
-func (r *NoOpStudyResponseRepository) GetByUserAndStudy(_ context.Context, _, _ uuid.UUID) ([]domain.StudyResponse, error) {
-	return []domain.StudyResponse{}, nil
-}
-
-func (r *NoOpStudyResponseRepository) CountByStudy(_ context.Context, _ uuid.UUID) (int64, error) {
+func (r *NoOpStudyResponseRepository) CountUniqueRaters(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
-func (r *NoOpStudyResponseRepository) CountUniqueUsersByStudy(_ context.Context, _ uuid.UUID) (int64, error) {
+func (r *NoOpStudyResponseRepository) CountCompleteRaters(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
-func (r *NoOpStudyResponseRepository) Close() error {
-	return nil
+func (r *NoOpStudyResponseRepository) GetRaterCaseCompletion(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
+	return make(map[uuid.UUID][]uuid.UUID), nil
 }
 
-func (r *NoOpStudyResponseRepository) HasUserResponded(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return false, nil
-}
-
-func (r *NoOpStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UUID) ([]domain.StudyResponse, error) {
-	return []domain.StudyResponse{}, nil
-}
-
-func (r *NoOpStudyResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
-	return []domain.ResponseWithExpertise{}, nil
-}
-
-// NoOpStudyAnalyticsRepository is a no-op implementation.
-type NoOpStudyAnalyticsRepository struct{}
-
-func NewNoOpStudyAnalyticsRepository() *NoOpStudyAnalyticsRepository {
-	return &NoOpStudyAnalyticsRepository{}
-}
-
-func (r *NoOpStudyAnalyticsRepository) GetSummary(_ context.Context, studyID uuid.UUID) (*domain.StudyAnalyticsSummary, error) {
-	return &domain.StudyAnalyticsSummary{
-		StudyID:             studyID,
-		DanisWeberDist:      make(map[string]int64),
-		LaugeHansenDist:     make(map[string]int64),
-		AOOTADist:           make(map[string]int64),
-		BartonicekDist:      make(map[string]int64),
-	}, nil
-}
-
-func (r *NoOpStudyAnalyticsRepository) GetClassificationDistribution(_ context.Context, _ uuid.UUID, _ string) (map[string]int64, error) {
-	return make(map[string]int64), nil
+func (r *NoOpStudyResponseRepository) CountUserCasesCompleted(_ context.Context, _, _ uuid.UUID) (int, error) {
+	return 0, nil
 }

@@ -37,12 +37,12 @@ export interface AnswerTracking {
   backClicks: number;
 }
 
-interface StudyClassificationFormProps {
+interface CaseClassificationFormProps {
   hasTACImages: boolean;
   onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
 }
 
-export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClassificationFormProps) {
+export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassificationFormProps) {
   const { t, i18n } = useTranslation();
   const [options, setOptions] = useState<FormOptions | null>(null);
   const [formData, setFormData] = useState<Partial<FractureInput>>(() => {
@@ -355,7 +355,7 @@ export function StudyClassificationForm({ hasTACImages, onClassify }: StudyClass
           <Sparkles className="h-4 w-4 text-primary" />
           <AlertDescription className="flex items-center gap-2">
             <Badge variant="secondary" className="bg-primary/10 text-primary border-0">TAC</Badge>
-            {t('studies.ctScanAutoDetected')}
+            {t('cases.ctScanAutoDetected')}
           </AlertDescription>
         </Alert>
       )}

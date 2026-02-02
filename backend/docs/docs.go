@@ -22,6 +22,699 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/studies": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "List studies",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by status (draft, active, closed)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.StudyListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Create a new study",
+                "parameters": [
+                    {
+                        "description": "Study details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateStudyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Study"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Get study details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.StudyDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Update a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateStudyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Study"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Delete a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/activate": {
+            "put": {
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Activate a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Study"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/cases": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Add a case to a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Case details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddCaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Case"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/cases/reorder": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Reorder cases in a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Ordered list of case IDs",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.ReorderCasesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/cases/{caseId}": {
+            "delete": {
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Remove a case from a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Case ID",
+                        "name": "caseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/close": {
+            "put": {
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Close a study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Study"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/progress": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Get rater progress",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.RaterProgressResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/raters": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "List study raters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.StudyRater"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Add rater to study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddStudyRaterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StudyRater"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/raters/{userId}": {
+            "delete": {
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Remove rater from study",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/studies/{id}/reliability": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Studies"
+                ],
+                "summary": "Get study reliability metrics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Study ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.StudyReliabilityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/analytics/chat/confidence": {
             "get": {
                 "description": "Returns distribution of extraction confidence levels",
@@ -787,11 +1480,64 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api.AddCaseRequest": {
+            "type": "object",
+            "required": [
+                "case_id"
+            ],
+            "properties": {
+                "case_id": {
+                    "type": "string"
+                },
+                "case_order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AddStudyRaterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "user_id"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "api.CreateChatSessionResponse": {
             "type": "object",
             "properties": {
                 "session_id": {
                     "type": "string"
+                }
+            }
+        },
+        "api.CreateStudyRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "api.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Invalid request body"
                 }
             }
         },
@@ -895,6 +1641,34 @@ const docTemplate = `{
                 }
             }
         },
+        "api.RaterProgressResponse": {
+            "type": "object",
+            "properties": {
+                "raters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RaterProgress"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.ReorderCasesRequest": {
+            "type": "object",
+            "required": [
+                "case_ids"
+            ],
+            "properties": {
+                "case_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "api.SelectOption": {
             "type": "object",
             "properties": {
@@ -902,6 +1676,142 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.StudyDetailResponse": {
+            "type": "object",
+            "properties": {
+                "case_count": {
+                    "description": "Denormalized counters for efficient queries",
+                    "type": "integer"
+                },
+                "cases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Case"
+                    }
+                },
+                "complete_raters": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.StudyStatus"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "total_responses": {
+                    "type": "integer"
+                },
+                "unique_raters": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.StudyListResponse": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "studies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Study"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.StudyReliabilityResponse": {
+            "type": "object",
+            "properties": {
+                "ao_ota_fleiss": {
+                    "$ref": "#/definitions/domain.FleissKappaResult"
+                },
+                "bartonicek_fleiss": {
+                    "$ref": "#/definitions/domain.FleissKappaResult"
+                },
+                "calculated_at": {
+                    "type": "string"
+                },
+                "complete_raters": {
+                    "description": "Raters who completed all cases",
+                    "type": "integer"
+                },
+                "danis_weber_fleiss": {
+                    "description": "Fleiss' Kappa per classification system (now calculable with multiple subjects!)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.FleissKappaResult"
+                        }
+                    ]
+                },
+                "gold_standard_accuracy": {
+                    "description": "Gold standard accuracy (aggregated across all cases)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.StudyGoldStandardAccuracy"
+                        }
+                    ]
+                },
+                "lauge_hansen_fleiss": {
+                    "$ref": "#/definitions/domain.FleissKappaResult"
+                },
+                "per_case_metrics": {
+                    "description": "Per-case analysis (helps identify \"hard cases\")",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.PerCaseMetrics"
+                    }
+                },
+                "study_id": {
+                    "type": "string"
+                },
+                "study_title": {
+                    "type": "string"
+                },
+                "total_cases": {
+                    "description": "Summary counts",
+                    "type": "integer"
+                },
+                "total_responses": {
+                    "type": "integer"
+                },
+                "unique_raters": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.UpdateStudyRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -921,11 +1831,23 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "institution": {
+                    "type": "string"
+                },
                 "provider": {
                     "type": "string"
                 },
                 "role": {
                     "type": "string"
+                },
+                "specialty": {
+                    "type": "string"
+                },
+                "training_level": {
+                    "type": "string"
+                },
+                "years_experience": {
+                    "type": "integer"
                 }
             }
         },
@@ -1055,6 +1977,90 @@ const docTemplate = `{
                 "BartonicekType2",
                 "BartonicekType3",
                 "BartonicekType4"
+            ]
+        },
+        "domain.Case": {
+            "type": "object",
+            "properties": {
+                "allow_multiple_responses": {
+                    "description": "Single Response Control - when false, users can only submit one response\nNote: Default is set in NewCase(), not via GORM tag (GORM omits false values with default tags)",
+                    "type": "boolean"
+                },
+                "case_order": {
+                    "type": "integer"
+                },
+                "closed_at": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "description": "Admin who created the case",
+                    "type": "string"
+                },
+                "deadline": {
+                    "description": "Optional deadline for responses",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "has_tac_images": {
+                    "description": "Auto-computed from images - true if any TAC images exist",
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "published_at": {
+                    "type": "string"
+                },
+                "reference_classification": {
+                    "description": "Gold Standard / Reference Classification for validation studies\nStores the \"correct\" classification to compare user responses against",
+                    "type": "object"
+                },
+                "reference_input": {
+                    "description": "Reference input (FractureInput) that produced the gold standard classification\nUsed for divergence analysis to compare answer paths",
+                    "type": "object"
+                },
+                "response_count": {
+                    "description": "Denormalized counters for efficient queries",
+                    "type": "integer"
+                },
+                "show_reference_after_submit": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.CaseStatus"
+                },
+                "study_id": {
+                    "description": "Study membership - if set, this case is part of a study for multi-case reliability analysis",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Case metadata",
+                    "type": "string"
+                },
+                "unique_users": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CaseStatus": {
+            "type": "string",
+            "enum": [
+                "draft",
+                "published",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "CaseStatusDraft",
+                "CaseStatusPublished",
+                "CaseStatusClosed"
             ]
         },
         "domain.ChatAnalyticsSummary": {
@@ -1281,6 +2287,23 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ConfidenceInterval": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "description": "Confidence level (e.g., 0.95 for 95% CI)",
+                    "type": "number"
+                },
+                "lower": {
+                    "description": "Lower bound",
+                    "type": "number"
+                },
+                "upper": {
+                    "description": "Upper bound",
+                    "type": "number"
+                }
+            }
+        },
         "domain.DanisWeberClassification": {
             "type": "object",
             "properties": {
@@ -1363,6 +2386,42 @@ const docTemplate = `{
                 "FibularLevelTransindesmal",
                 "FibularLevelSuprasindesmal"
             ]
+        },
+        "domain.FleissKappaResult": {
+            "type": "object",
+            "properties": {
+                "confidence_interval": {
+                    "description": "Confidence interval (optional)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/domain.ConfidenceInterval"
+                        }
+                    ]
+                },
+                "interpretation": {
+                    "description": "Uses KappaInterpretation()",
+                    "type": "string"
+                },
+                "kappa": {
+                    "type": "number"
+                },
+                "note": {
+                    "description": "Note explaining any limitations or issues",
+                    "type": "string"
+                },
+                "num_categories": {
+                    "description": "Number of classification categories",
+                    "type": "integer"
+                },
+                "num_raters": {
+                    "description": "Number of complete raters",
+                    "type": "integer"
+                },
+                "num_subjects": {
+                    "description": "Matrix dimensions",
+                    "type": "integer"
+                }
+            }
         },
         "domain.FractureInput": {
             "type": "object",
@@ -1569,6 +2628,45 @@ const docTemplate = `{
                 "MedialMorphologyTransverse"
             ]
         },
+        "domain.PerCaseMetrics": {
+            "type": "object",
+            "properties": {
+                "ao_ota_agreement": {
+                    "type": "number"
+                },
+                "bartonicek_agreement": {
+                    "description": "Optional, requires CT",
+                    "type": "number"
+                },
+                "case_id": {
+                    "type": "string"
+                },
+                "case_order": {
+                    "type": "integer"
+                },
+                "case_title": {
+                    "type": "string"
+                },
+                "danis_weber_agreement": {
+                    "description": "Per-system agreement (percentage)",
+                    "type": "number"
+                },
+                "gold_standard_match_rate": {
+                    "description": "Gold standard match rate (if reference set for this case)",
+                    "type": "number"
+                },
+                "is_low_agreement": {
+                    "description": "Identifies cases with low agreement (potential \"hard cases\")",
+                    "type": "boolean"
+                },
+                "lauge_hansen_agreement": {
+                    "type": "number"
+                },
+                "response_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.PosteriorFractureType": {
             "type": "string",
             "enum": [
@@ -1594,6 +2692,137 @@ const docTemplate = `{
                 "PosteriorPosterolateral",
                 "PosteriorPosteromedialPosterolateral",
                 "PosteriorLargePosterolateral"
+            ]
+        },
+        "domain.RaterProgress": {
+            "type": "object",
+            "properties": {
+                "cases_completed": {
+                    "type": "integer"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "is_complete": {
+                    "type": "boolean"
+                },
+                "last_response_at": {
+                    "type": "string"
+                },
+                "total_cases": {
+                    "type": "integer"
+                },
+                "user_email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Study": {
+            "type": "object",
+            "properties": {
+                "case_count": {
+                    "description": "Denormalized counters for efficient queries",
+                    "type": "integer"
+                },
+                "complete_raters": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.StudyStatus"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "total_responses": {
+                    "type": "integer"
+                },
+                "unique_raters": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StudyGoldStandardAccuracy": {
+            "type": "object",
+            "properties": {
+                "ao_ota_accuracy": {
+                    "type": "number"
+                },
+                "bartonicek_accuracy": {
+                    "type": "number"
+                },
+                "cases_with_reference": {
+                    "type": "integer"
+                },
+                "danis_weber_accuracy": {
+                    "description": "Per-system accuracy (averaged across cases)",
+                    "type": "number"
+                },
+                "lauge_hansen_accuracy": {
+                    "type": "number"
+                },
+                "overall_accuracy": {
+                    "type": "number"
+                },
+                "total_comparisons": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.StudyRater": {
+            "type": "object",
+            "properties": {
+                "cases_completed": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_response_at": {
+                    "type": "string"
+                },
+                "study_id": {
+                    "type": "string"
+                },
+                "user_email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StudyStatus": {
+            "type": "string",
+            "enum": [
+                "draft",
+                "active",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "StudyStatusDraft",
+                "StudyStatusActive",
+                "StudyStatusClosed"
             ]
         },
         "domain.SuprasindesmalType": {

@@ -8,24 +8,24 @@ import { Spinner } from '../components/ui/spinner';
 import { Card, CardContent } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
-  getPublishedStudy,
+  getPublishedCase,
   getImageSignedURL,
-  submitStudyResponse,
+  submitCaseResponse,
   getMyResponses,
 } from '../services/studyApi';
 import { classifyFracture } from '../services/api';
 import type { FractureInput, ClassificationResult } from '../types/fracture';
-import type { SubmitResponseResult, UserStudyDetail } from '../types/study';
+import type { SubmitResponseResult, UserCaseDetail } from '../types/study';
 import {
   ImageGrid,
   ImageLightbox,
-  StudyHeader,
+  CaseHeader,
   PreviousResponses,
   ClassificationPanel,
-} from '../components/studies';
-import type { AnswerTracking } from '../components/studies/StudyClassificationForm';
+} from '../components/cases';
+import type { AnswerTracking } from '../components/cases';
 
-export function StudyDetailPage() {
+export function CaseDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -35,7 +35,7 @@ export function StudyDetailPage() {
   const [loadingImages, setLoadingImages] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'xray' | 'tac'>('xray');
-  const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
+  const [prevCaseId, setPrevCaseId] = useState<string | undefined>(undefined);
 
   // Classification state
   const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
@@ -50,21 +50,21 @@ export function StudyDetailPage() {
     startTimeRef.current = Date.now();
   }, []);
 
-  // Fetch study data with React Query
-  const { data: study, isLoading: loading, error: queryError } = useQuery({
-    queryKey: ['published-study', id],
-    queryFn: () => getPublishedStudy(id!),
+  // Fetch case data with React Query
+  const { data: caseData, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['published-case', id],
+    queryFn: () => getPublishedCase(id!),
     enabled: !!id,
   });
 
-  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load study' : null;
+  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load case' : null;
 
-  // Set initial tab based on available images (only once when study loads)
+  // Set initial tab based on available images (only once when case loads)
   // This pattern is recommended by React for syncing state with props during render
-  if (study && study.id !== prevStudyId) {
-    setPrevStudyId(study.id);
-    const hasXray = study.images.some((img) => img.category === 'xray');
-    const hasTac = study.images.some((img) => img.category === 'tac');
+  if (caseData && caseData.id !== prevCaseId) {
+    setPrevCaseId(caseData.id);
+    const hasXray = caseData.images.some((img) => img.category === 'xray');
+    const hasTac = caseData.images.some((img) => img.category === 'tac');
     if (!hasXray && hasTac) {
       setActiveTab('tac');
     } else {
@@ -75,13 +75,13 @@ export function StudyDetailPage() {
   // Fetch signed URLs for images
   useEffect(() => {
     async function fetchImageUrls() {
-      if (!study || !id) return;
+      if (!caseData || !id) return;
 
       setLoadingImages(true);
       const urls: Record<string, string> = {};
 
       await Promise.all(
-        study.images.map(async (image) => {
+        caseData.images.map(async (image) => {
           try {
             const response = await getImageSignedURL(id, image.id);
             urls[image.id] = response.url;
@@ -96,20 +96,20 @@ export function StudyDetailPage() {
     }
 
     fetchImageUrls();
-  }, [study, id]);
+  }, [caseData, id]);
 
   // Fetch previous responses with React Query
   const { data: responsesData } = useQuery({
     queryKey: ['my-responses', id],
     queryFn: () => getMyResponses(id!),
-    enabled: !!id && !!study?.has_responded,
+    enabled: !!id && !!caseData?.has_responded,
   });
 
   const myResponses = responsesData?.responses ?? [];
 
   // Group images by category
-  const xrayImages = study?.images.filter((img) => img.category === 'xray') || [];
-  const tacImages = study?.images.filter((img) => img.category === 'tac') || [];
+  const xrayImages = caseData?.images.filter((img) => img.category === 'xray') || [];
+  const tacImages = caseData?.images.filter((img) => img.category === 'tac') || [];
   const currentImages = activeTab === 'xray' ? xrayImages : tacImages;
 
   // Handle classification form submission
@@ -127,7 +127,7 @@ export function StudyDetailPage() {
     mutationFn: async () => {
       if (!classificationResult || !id) throw new Error('Missing data');
       const timeTakenMs = Date.now() - startTimeRef.current;
-      return submitStudyResponse(id, {
+      return submitCaseResponse(id, {
         classification: classificationResult,
         time_taken_ms: timeTakenMs,
         // Include tracking data for divergence analysis
@@ -152,23 +152,23 @@ export function StudyDetailPage() {
           result.matches_bartonicek !== false;
 
         if (allMatch) {
-          toast.success(t('studies.submitSuccess'), {
-            description: t('studies.matchesReference', 'Your classification matches the reference!'),
+          toast.success(t('cases.submitSuccess'), {
+            description: t('cases.matchesReference', 'Your classification matches the reference!'),
           });
         } else {
-          toast.info(t('studies.submitSuccess'), {
-            description: t('studies.submitSuccessDescription'),
+          toast.info(t('cases.submitSuccess'), {
+            description: t('cases.submitSuccessDescription'),
           });
         }
       } else {
-        toast.success(t('studies.submitSuccess'), {
-          description: t('studies.submitSuccessDescription'),
+        toast.success(t('cases.submitSuccess'), {
+          description: t('cases.submitSuccessDescription'),
         });
       }
 
       // Optimistically update the cache to immediately reflect that user has responded
       // This prevents any race conditions where stale cache data could allow re-submission
-      queryClient.setQueryData(['published-study', id], (oldData: UserStudyDetail | undefined) => {
+      queryClient.setQueryData(['published-case', id], (oldData: UserCaseDetail | undefined) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -178,14 +178,14 @@ export function StudyDetailPage() {
       });
 
       // Invalidate all related queries to refresh data across the app
-      queryClient.invalidateQueries({ queryKey: ['published-study', id] });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'] });
+      queryClient.invalidateQueries({ queryKey: ['published-case', id] });
+      queryClient.invalidateQueries({ queryKey: ['published-cases'] });
       queryClient.invalidateQueries({ queryKey: ['my-responses', id] });
     },
     onError: (err) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
       setSubmitError(errorMessage);
-      toast.error(t('studies.submitError'), {
+      toast.error(t('cases.submitError'), {
         description: errorMessage,
       });
     },
@@ -232,36 +232,36 @@ export function StudyDetailPage() {
     );
   }
 
-  if (error || !study) {
+  if (error || !caseData) {
     return (
       <div className="container mx-auto px-4 py-12">
         <Card className="border-destructive/20 bg-destructive/5">
           <CardContent className="py-12 text-center text-muted-foreground">
-            {error || t('studies.notFound')}
+            {error || t('cases.notFound')}
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const deadline = study.deadline ? new Date(study.deadline) : null;
-  const isExpired = study.is_expired || (deadline && deadline < new Date());
+  const deadline = caseData.deadline ? new Date(caseData.deadline) : null;
+  const isExpired = caseData.is_expired || (deadline && deadline < new Date());
 
   // Check if user can submit based on single response mode
-  const cannotSubmit = !study.allow_multiple_responses && study.has_responded;
-  const canReanswer = study.allow_multiple_responses;
+  const cannotSubmit = !caseData.allow_multiple_responses && caseData.has_responded;
+  const canReanswer = caseData.allow_multiple_responses;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Hero Section with Study Info */}
+      {/* Hero Section with Case Info */}
       <div className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8">
-          <StudyHeader
-            title={study.title}
-            description={study.description}
-            hasTACImages={study.has_tac_images}
-            myResponseCount={study.my_response_count}
-            deadline={study.deadline}
+          <CaseHeader
+            title={caseData.title}
+            description={caseData.description}
+            hasTACImages={caseData.has_tac_images}
+            myResponseCount={caseData.my_response_count}
+            deadline={caseData.deadline}
           />
         </div>
       </div>
@@ -278,11 +278,11 @@ export function StudyDetailPage() {
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold flex items-center gap-2">
                       <ImageIcon className="h-5 w-5 text-primary" />
-                      {t('studies.imageGallery')}
+                      {t('cases.imageGallery')}
                     </h2>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <ZoomIn className="h-3 w-3" />
-                      {t('studies.clickToEnlarge')}
+                      {t('cases.clickToEnlarge')}
                     </span>
                   </div>
                 </div>
@@ -334,7 +334,7 @@ export function StudyDetailPage() {
           {/* Right column - Classification form (main focus) */}
           <div className="lg:col-span-3">
             <ClassificationPanel
-              hasTACImages={study.has_tac_images}
+              hasTACImages={caseData.has_tac_images}
               classificationResult={classificationResult}
               submitting={submitMutation.isPending}
               submitError={submitError}

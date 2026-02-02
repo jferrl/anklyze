@@ -13,30 +13,30 @@ import {
 } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
-import { studyApi } from '../../services/studyApi';
+import { caseApi } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
 
-interface StudyUsersManagerProps {
-  studyId: string;
+interface CaseUsersManagerProps {
+  caseId: string;
   disabled?: boolean;
 }
 
-export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps) {
+export function CaseUsersManager({ caseId, disabled }: CaseUsersManagerProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['study-raters', studyId],
-    queryFn: () => studyApi.listStudyRaters(studyId),
+    queryKey: ['case-users', caseId],
+    queryFn: () => caseApi.listCaseUsers(caseId),
   });
 
   const addMutation = useMutation({
     mutationFn: (userEmail: string) =>
-      studyApi.addStudyRater(studyId, userEmail),
+      caseApi.addCaseUser(caseId, { user_email: userEmail }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-raters', studyId] });
+      queryClient.invalidateQueries({ queryKey: ['case-users', caseId] });
       setEmail('');
       setError(null);
     },
@@ -46,9 +46,9 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
   });
 
   const removeMutation = useMutation({
-    mutationFn: (userId: string) => studyApi.removeStudyRater(studyId, userId),
+    mutationFn: (userId: string) => caseApi.removeCaseUser(caseId, userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study-raters', studyId] });
+      queryClient.invalidateQueries({ queryKey: ['case-users', caseId] });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -62,7 +62,7 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
     addMutation.mutate(email.trim());
   };
 
-  const raters = data?.raters ?? [];
+  const users = data?.users ?? [];
 
   return (
     <Card className="chart-card">
@@ -72,11 +72,11 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
             <Users className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <CardTitle>{t('admin.studies.raters.title', 'Assigned Raters')}</CardTitle>
-            <CardDescription>{t('admin.studies.raters.description', 'Manage who can rate cases in this study')}</CardDescription>
+            <CardTitle>{t('admin.cases.users.title')}</CardTitle>
+            <CardDescription>{t('admin.cases.users.description')}</CardDescription>
           </div>
           <Badge variant="secondary" className="text-sm">
-            {raters.length} {raters.length === 1 ? 'rater' : 'raters'}
+            {users.length} {users.length === 1 ? 'user' : 'users'}
           </Badge>
         </div>
       </CardHeader>
@@ -88,7 +88,7 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="email"
-                  placeholder={t('admin.studies.raters.emailPlaceholder', 'Enter rater email address...')}
+                  placeholder={t('admin.cases.users.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-12"
@@ -104,7 +104,7 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
                 ) : (
                   <UserPlus className="h-4 w-4" />
                 )}
-                <span>{t('admin.studies.raters.add', 'Add Rater')}</span>
+                <span>{t('admin.cases.users.add')}</span>
               </Button>
             </div>
           </form>
@@ -123,25 +123,25 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
             </div>
             <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
           </div>
-        ) : raters.length === 0 ? (
+        ) : users.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
               <Users className="h-8 w-8 text-muted-foreground/50" />
             </div>
             <p className="text-muted-foreground font-medium">
-              {t('admin.studies.raters.empty', 'No raters assigned')}
+              {t('admin.cases.users.empty')}
             </p>
             {!disabled && (
               <p className="text-sm text-muted-foreground/70 mt-1">
-                {t('admin.studies.raters.emailPlaceholder', 'Enter rater email address...')}
+                {t('admin.cases.users.emailPlaceholder')}
               </p>
             )}
           </div>
         ) : (
           <div className="space-y-3">
-            {raters.map((rater, index) => (
+            {users.map((user, index) => (
               <div
-                key={rater.id}
+                key={user.id}
                 className={cn(
                   'flex items-center gap-4 p-4 rounded-xl',
                   'bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50',
@@ -154,17 +154,17 @@ export function StudyUsersManager({ studyId, disabled }: StudyUsersManagerProps)
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground truncate">
-                    {rater.user_email}
+                    {user.user_email}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {t('admin.studies.raters.addedAt', 'Added')}: {new Date(rater.created_at).toLocaleDateString()}
+                    {t('admin.cases.users.addedAt')}: {new Date(user.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 {!disabled && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeMutation.mutate(rater.user_id)}
+                    onClick={() => removeMutation.mutate(user.user_id)}
                     disabled={removeMutation.isPending}
                     className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
                   >

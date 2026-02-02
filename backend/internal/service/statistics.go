@@ -438,10 +438,10 @@ func (s *StatisticsService) CalculateAccuracy(observed, expected []string) float
 	return float64(correct) / float64(total) * 100
 }
 
-// CalculateReliabilityMetrics calculates all reliability metrics for a study.
+// CalculateReliabilityMetrics calculates all reliability metrics for a case.
 func (s *StatisticsService) CalculateReliabilityMetrics(
-	responses []domain.StudyResponse,
-	study *domain.Study,
+	responses []domain.CaseResponse,
+	cs *domain.Case,
 ) (*domain.ReliabilityMetrics, error) {
 	if len(responses) == 0 {
 		return nil, nil
@@ -454,7 +454,7 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 	}
 
 	metrics := &domain.ReliabilityMetrics{
-		StudyID:        study.ID,
+		CaseID:         cs.ID,
 		TotalResponses: int64(len(responses)),
 		UniqueRaters:   int64(len(uniqueRaters)),
 	}
@@ -466,8 +466,8 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 	metrics.BartonicekAgreement = s.calculateSystemAgreement(responses, "bartonicek")
 
 	// Calculate gold standard accuracy if reference is set
-	if study.HasReferenceClassification() {
-		refClass, err := study.GetReferenceClassification()
+	if cs.HasReferenceClassification() {
+		refClass, err := cs.GetReferenceClassification()
 		if err == nil && refClass != nil {
 			metrics.GoldStandardAccuracy = s.calculateGoldStandardAccuracy(responses, refClass)
 		}
@@ -477,7 +477,7 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 }
 
 // calculateSystemAgreement calculates agreement metrics for a single classification system.
-func (s *StatisticsService) calculateSystemAgreement(responses []domain.StudyResponse, system string) *domain.SystemAgreement {
+func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResponse, system string) *domain.SystemAgreement {
 	// Extract classifications for this system
 	var classifications []string
 	for _, r := range responses {
@@ -563,7 +563,7 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.StudyRes
 	} else if numRaters > 2 {
 		// Fleiss' Kappa for multiple raters
 		// NOTE: Fleiss' Kappa requires multiple subjects (cases) to be meaningful.
-		// Current study design has a single case, so we cannot properly calculate
+		// Current case design has a single case, so we cannot properly calculate
 		// inter-rater reliability using Fleiss' Kappa.
 		//
 		// The formula requires a matrix where:
@@ -574,7 +574,7 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.StudyRes
 		// With only 1 subject, we can only calculate within-case agreement,
 		// not across-case reliability. Return nil with explanatory note.
 		note := "Fleiss' Kappa requires multiple cases (subjects) to calculate inter-rater reliability. " +
-			"Current study design has a single case. Consider creating a study cohort with multiple cases " +
+			"Current case design has a single case. Consider creating a study with multiple cases " +
 			"for proper reliability assessment."
 		agreement.FleissKappaNote = &note
 		// FleissKappa remains nil
@@ -585,7 +585,7 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.StudyRes
 
 // calculateGoldStandardAccuracy calculates accuracy comparing responses to reference.
 func (s *StatisticsService) calculateGoldStandardAccuracy(
-	responses []domain.StudyResponse,
+	responses []domain.CaseResponse,
 	reference *domain.ClassificationResult,
 ) *domain.GoldStandardAccuracy {
 	accuracy := &domain.GoldStandardAccuracy{
@@ -712,16 +712,16 @@ func Round(val float64, precision int) float64 {
 }
 
 // ============================================================================
-// Cohort Reliability Metrics
+// Study Reliability Metrics
 // ============================================================================
 
-// CalculateCohortReliabilityMetrics calculates reliability metrics across multiple cases in a cohort.
+// CalculateStudyReliabilityMetrics calculates reliability metrics across multiple cases in a study.
 // This enables proper Fleiss' Kappa calculation which requires multiple subjects (cases).
-func (s *StatisticsService) CalculateCohortReliabilityMetrics(
-	cohort *domain.StudyCohort,
-	cases []domain.Study,
-	responsesByCase map[uuid.UUID][]domain.StudyResponse,
-) (*domain.CohortReliabilityMetrics, error) {
+func (s *StatisticsService) CalculateStudyReliabilityMetrics(
+	study *domain.Study,
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
+) (*domain.StudyReliabilityMetrics, error) {
 	if len(cases) == 0 {
 		return nil, nil
 	}
@@ -739,9 +739,9 @@ func (s *StatisticsService) CalculateCohortReliabilityMetrics(
 	// Identify complete raters (who responded to ALL cases)
 	completeRaters := s.identifyCompleteRaters(cases, responsesByCase)
 
-	metrics := &domain.CohortReliabilityMetrics{
-		CohortID:       cohort.ID,
-		CohortTitle:    cohort.Title,
+	metrics := &domain.StudyReliabilityMetrics{
+		StudyID:        study.ID,
+		StudyTitle:     study.Title,
 		TotalCases:     len(cases),
 		TotalResponses: totalResponses,
 		UniqueRaters:   int64(len(allRaters)),
@@ -761,18 +761,18 @@ func (s *StatisticsService) CalculateCohortReliabilityMetrics(
 	metrics.PerCaseMetrics = s.calculatePerCaseMetrics(cases, responsesByCase)
 
 	// Calculate aggregated gold standard accuracy
-	metrics.GoldStandardAccuracy = s.calculateCohortGoldStandardAccuracy(cases, responsesByCase)
+	metrics.GoldStandardAccuracy = s.calculateStudyGoldStandardAccuracy(cases, responsesByCase)
 
 	return metrics, nil
 }
 
-// identifyCompleteRaters finds raters who completed ALL cases in the cohort.
+// identifyCompleteRaters finds raters who completed ALL cases in the study.
 func (s *StatisticsService) identifyCompleteRaters(
-	cases []domain.Study,
-	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
 ) []uuid.UUID {
 	// Track which cases each rater completed
-	raterCases := make(map[uuid.UUID]map[uuid.UUID]bool) // userID -> studyID -> completed
+	raterCases := make(map[uuid.UUID]map[uuid.UUID]bool) // userID -> caseID -> completed
 
 	for _, c := range cases {
 		responses := responsesByCase[c.ID]
@@ -799,8 +799,8 @@ func (s *StatisticsService) identifyCompleteRaters(
 // calculateFleissForSystem builds the Fleiss' Kappa matrix and calculates the statistic.
 // Matrix format: matrix[subject][category] = count of raters who assigned that category
 func (s *StatisticsService) calculateFleissForSystem(
-	cases []domain.Study,
-	responsesByCase map[uuid.UUID][]domain.StudyResponse,
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
 	completeRaters []uuid.UUID,
 	system string,
 ) *domain.FleissKappaResult {
@@ -890,8 +890,8 @@ func (s *StatisticsService) calculateFleissForSystem(
 func (s *StatisticsService) calculateFleissKappaCI(matrix [][]int, numRaters int, kappa float64, confidenceLevel float64) *domain.ConfidenceInterval {
 	// Simplified approximation for Fleiss' Kappa variance
 	// Based on Fleiss (1971) and later refinements
-	n := float64(len(matrix))      // Number of subjects
-	k := float64(numRaters)        // Number of raters
+	n := float64(len(matrix)) // Number of subjects
+	k := float64(numRaters)   // Number of raters
 
 	if n < 2 || k < 2 {
 		return nil
@@ -954,7 +954,7 @@ func (s *StatisticsService) calculateFleissKappaCI(matrix [][]int, numRaters int
 }
 
 // getClassificationForSystem extracts the classification value for a given system from a response.
-func (s *StatisticsService) getClassificationForSystem(r domain.StudyResponse, system string) string {
+func (s *StatisticsService) getClassificationForSystem(r domain.CaseResponse, system string) string {
 	var val *string
 	switch system {
 	case "danis_weber":
@@ -972,20 +972,20 @@ func (s *StatisticsService) getClassificationForSystem(r domain.StudyResponse, s
 	return ""
 }
 
-// calculatePerCaseMetrics calculates agreement metrics for each case in a cohort.
+// calculatePerCaseMetrics calculates agreement metrics for each case in a study.
 func (s *StatisticsService) calculatePerCaseMetrics(
-	cases []domain.Study,
-	responsesByCase map[uuid.UUID][]domain.StudyResponse,
-) []domain.CaseMetrics {
-	result := make([]domain.CaseMetrics, 0, len(cases))
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
+) []domain.PerCaseMetrics {
+	result := make([]domain.PerCaseMetrics, 0, len(cases))
 
 	for _, c := range cases {
 		responses := responsesByCase[c.ID]
 
-		cm := domain.CaseMetrics{
+		cm := domain.PerCaseMetrics{
 			CaseOrder:     c.CaseOrder,
-			StudyID:       c.ID,
-			StudyTitle:    c.Title,
+			CaseID:        c.ID,
+			CaseTitle:     c.Title,
 			ResponseCount: len(responses),
 		}
 
@@ -1020,7 +1020,7 @@ func (s *StatisticsService) calculatePerCaseMetrics(
 }
 
 // calculateCaseAgreement calculates percent agreement for a single case and system.
-func (s *StatisticsService) calculateCaseAgreement(responses []domain.StudyResponse, system string) float64 {
+func (s *StatisticsService) calculateCaseAgreement(responses []domain.CaseResponse, system string) float64 {
 	var classifications []string
 	for _, r := range responses {
 		cat := s.getClassificationForSystem(r, system)
@@ -1038,7 +1038,7 @@ func (s *StatisticsService) calculateCaseAgreement(responses []domain.StudyRespo
 
 // calculateGoldStandardMatchRate calculates the percentage of responses matching the gold standard.
 func (s *StatisticsService) calculateGoldStandardMatchRate(
-	responses []domain.StudyResponse,
+	responses []domain.CaseResponse,
 	reference *domain.ClassificationResult,
 ) float64 {
 	if len(responses) == 0 || reference == nil {
@@ -1090,11 +1090,11 @@ func (s *StatisticsService) calculateGoldStandardMatchRate(
 	return float64(matches) / float64(total) * 100
 }
 
-// calculateCohortGoldStandardAccuracy calculates aggregated gold standard accuracy across all cases.
-func (s *StatisticsService) calculateCohortGoldStandardAccuracy(
-	cases []domain.Study,
-	responsesByCase map[uuid.UUID][]domain.StudyResponse,
-) *domain.CohortGoldStandardAccuracy {
+// calculateStudyGoldStandardAccuracy calculates aggregated gold standard accuracy across all cases.
+func (s *StatisticsService) calculateStudyGoldStandardAccuracy(
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
+) *domain.StudyGoldStandardAccuracy {
 	var totalDW, correctDW int64
 	var totalLH, correctLH int64
 	var totalAO, correctAO int64
@@ -1153,7 +1153,7 @@ func (s *StatisticsService) calculateCohortGoldStandardAccuracy(
 		return nil
 	}
 
-	accuracy := &domain.CohortGoldStandardAccuracy{
+	accuracy := &domain.StudyGoldStandardAccuracy{
 		CasesWithReference: casesWithRef,
 		TotalComparisons:   totalComparisons,
 		OverallAccuracy:    float64(totalCorrect) / float64(totalComparisons) * 100,

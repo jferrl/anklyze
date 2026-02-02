@@ -28,53 +28,53 @@ import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { listPublishedStudies } from '../services/studyApi';
-import type { UserStudyItem } from '../types/study';
+import { listPublishedCases } from '../services/studyApi';
+import type { UserCaseItem } from '../types/study';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 
-export function StudiesPage() {
+export function CasesPage() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
 
   const { data, isLoading: loading, error: queryError } = useQuery({
-    queryKey: ['published-studies'],
+    queryKey: ['published-cases'],
     queryFn: async () => {
-      const response = await listPublishedStudies();
-      return response.studies;
+      const response = await listPublishedCases();
+      return response.cases;
     },
   });
 
-  const studies = useMemo(() => data ?? [], [data]);
-  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load studies' : null;
+  const cases = useMemo(() => data ?? [], [data]);
+  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
 
-  // Filter and search studies
-  const filteredStudies = useMemo(() => {
-    return studies.filter((study) => {
+  // Filter and search cases
+  const filteredCases = useMemo(() => {
+    return cases.filter((caseItem) => {
       // Search filter
       const matchesSearch =
-        study.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        study.description?.toLowerCase().includes(searchQuery.toLowerCase());
+        caseItem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        caseItem.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
       // Status filter
       const matchesStatus =
         filterStatus === 'all' ||
-        (filterStatus === 'completed' && study.has_responded) ||
-        (filterStatus === 'pending' && !study.has_responded);
+        (filterStatus === 'completed' && caseItem.has_responded) ||
+        (filterStatus === 'pending' && !caseItem.has_responded);
 
       return matchesSearch && matchesStatus;
     });
-  }, [studies, searchQuery, filterStatus]);
+  }, [cases, searchQuery, filterStatus]);
 
   // Calculate stats
   const stats = useMemo(() => {
-    const total = studies.length;
-    const completed = studies.filter((s) => s.has_responded).length;
+    const total = cases.length;
+    const completed = cases.filter((c) => c.has_responded).length;
     const pending = total - completed;
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, completed, pending, progress };
-  }, [studies]);
+  }, [cases]);
 
   const formatDeadline = (deadline: string | undefined) => {
     if (!deadline) return null;
@@ -99,16 +99,16 @@ export function StudiesPage() {
         <div className="container mx-auto px-4 py-8 relative">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">{t('studies.pageTitle')}</h1>
-              <p className="text-muted-foreground mt-2">{t('studies.pageSubtitle')}</p>
+              <h1 className="text-3xl font-bold tracking-tight">{t('cases.pageTitle')}</h1>
+              <p className="text-muted-foreground mt-2">{t('cases.pageSubtitle')}</p>
             </div>
 
             {/* Progress Overview */}
-            {!loading && studies.length > 0 && (
+            {!loading && cases.length > 0 && (
               <div className="flex items-center gap-6 p-4 rounded-xl glass-card">
                 <div className="flex-1 min-w-[200px]">
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">{t('studies.yourProgress')}</span>
+                    <span className="text-muted-foreground">{t('cases.yourProgress')}</span>
                     <span className="font-medium">{stats.completed} / {stats.total}</span>
                   </div>
                   <Progress value={stats.progress} className="h-2" />
@@ -116,11 +116,11 @@ export function StudiesPage() {
                 <div className="hidden sm:flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5">
                     <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
-                    <span className="text-muted-foreground">{stats.completed} {t('studies.completedCount')}</span>
+                    <span className="text-muted-foreground">{stats.completed} {t('cases.completedCount')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.5)]" />
-                    <span className="text-muted-foreground">{stats.pending} {t('studies.pendingCount')}</span>
+                    <span className="text-muted-foreground">{stats.pending} {t('cases.pendingCount')}</span>
                   </div>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export function StudiesPage() {
             <div className="relative w-full sm:w-[300px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('studies.searchPlaceholder')}
+                placeholder={t('cases.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -149,7 +149,7 @@ export function StudiesPage() {
               <TabsList>
                 <TabsTrigger value="all" className="gap-1.5">
                   <Filter className="h-3.5 w-3.5" />
-                  {t('studies.filterAll')}
+                  {t('cases.filterAll')}
                   {stats.total > 0 && (
                     <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
                       {stats.total}
@@ -157,7 +157,7 @@ export function StudiesPage() {
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="pending" className="gap-1.5">
-                  {t('studies.filterPending')}
+                  {t('cases.filterPending')}
                   {stats.pending > 0 && (
                     <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
                       {stats.pending}
@@ -166,7 +166,7 @@ export function StudiesPage() {
                 </TabsTrigger>
                 <TabsTrigger value="completed" className="gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  {t('studies.filterCompleted')}
+                  {t('cases.filterCompleted')}
                   {stats.completed > 0 && (
                     <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
                       {stats.completed}
@@ -191,20 +191,20 @@ export function StudiesPage() {
               {error}
             </CardContent>
           </Card>
-        ) : filteredStudies.length === 0 ? (
+        ) : filteredCases.length === 0 ? (
           <Card>
             <CardContent>
               <EmptyState
                 icon={FileText}
                 title={
                   searchQuery || filterStatus !== 'all'
-                    ? t('studies.noMatchingStudies')
-                    : t('studies.noStudies')
+                    ? t('cases.noMatchingCases')
+                    : t('cases.noCases')
                 }
                 description={
                   searchQuery || filterStatus !== 'all'
-                    ? t('studies.tryDifferentFilter')
-                    : t('studies.noStudiesDescription')
+                    ? t('cases.tryDifferentFilter')
+                    : t('cases.noCasesDescription')
                 }
                 action={
                   (searchQuery || filterStatus !== 'all') && (
@@ -215,7 +215,7 @@ export function StudiesPage() {
                         setFilterStatus('all');
                       }}
                     >
-                      {t('studies.clearFilters')}
+                      {t('cases.clearFilters')}
                     </Button>
                   )
                 }
@@ -224,8 +224,8 @@ export function StudiesPage() {
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredStudies.map((study) => (
-              <StudyCard key={study.id} study={study} formatDeadline={formatDeadline} />
+            {filteredCases.map((caseItem) => (
+              <CaseCard key={caseItem.id} caseItem={caseItem} formatDeadline={formatDeadline} />
             ))}
           </div>
         )}
@@ -234,8 +234,8 @@ export function StudiesPage() {
   );
 }
 
-interface StudyCardProps {
-  study: UserStudyItem;
+interface CaseCardProps {
+  caseItem: UserCaseItem;
   formatDeadline: (deadline: string | undefined) => {
     text: string;
     isExpired: boolean;
@@ -244,13 +244,13 @@ interface StudyCardProps {
   } | null;
 }
 
-function StudyCard({ study, formatDeadline }: StudyCardProps) {
+function CaseCard({ caseItem, formatDeadline }: CaseCardProps) {
   const { t } = useTranslation();
-  const deadline = formatDeadline(study.deadline);
+  const deadline = formatDeadline(caseItem.deadline);
 
   return (
     <Card className={`group relative overflow-hidden glass-card card-hover spotlight ${
-      study.has_responded
+      caseItem.has_responded
         ? 'border-green-500/30 dark:border-green-500/20'
         : 'border-border/50 hover:border-primary/30'
     }`}>
@@ -261,7 +261,7 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
 
       {/* Status indicator bar with glow */}
       <div className={`absolute top-0 left-0 right-0 h-1 ${
-        study.has_responded
+        caseItem.has_responded
           ? 'bg-gradient-to-r from-green-400 to-green-600 shadow-[0_0_10px_rgba(34,197,94,0.5)]'
           : deadline?.isExpired
           ? 'bg-gradient-to-r from-red-400 to-red-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
@@ -273,18 +273,18 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
       <CardHeader className="pb-3 relative">
         <div className="flex items-start justify-between gap-3">
           <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-all duration-300">
-            {study.title}
+            {caseItem.title}
           </CardTitle>
-          {study.has_responded && (
+          {caseItem.has_responded && (
             <Badge variant="secondary" className="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 shadow-sm">
               <CheckCircle2 className="h-3 w-3 mr-1" />
-              {t('studies.responded')}
+              {t('cases.responded')}
             </Badge>
           )}
         </div>
-        {study.description && (
+        {caseItem.description && (
           <CardDescription className="line-clamp-2 mt-1.5 text-muted-foreground/80">
-            {study.description}
+            {caseItem.description}
           </CardDescription>
         )}
       </CardHeader>
@@ -294,16 +294,16 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
         <div className="flex flex-wrap gap-2 mb-4">
           <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
             <ImageIcon className="h-3 w-3 text-primary/70" />
-            {study.image_count} {t('studies.imagesCount')}
+            {caseItem.image_count} {t('cases.imagesCount')}
           </Badge>
-          {study.has_tac_images && (
+          {caseItem.has_tac_images && (
             <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 shadow-sm">
               TAC
             </Badge>
           )}
           <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
             <Users className="h-3 w-3 text-primary/70" />
-            {study.response_count} {t('studies.responses')}
+            {caseItem.response_count} {t('cases.responses')}
           </Badge>
         </div>
 
@@ -322,23 +322,23 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
               <CalendarDays className="h-4 w-4" />
             )}
             {deadline.isExpired ? (
-              <span className="font-medium">{t('studies.expired')}</span>
+              <span className="font-medium">{t('cases.expired')}</span>
             ) : deadline.isUrgent ? (
               <span className="font-medium">
-                {t('studies.daysLeft', { count: deadline.daysLeft })}
+                {t('cases.daysLeft', { count: deadline.daysLeft })}
               </span>
             ) : (
-              <span>{t('studies.deadline')}: {deadline.text}</span>
+              <span>{t('cases.deadline')}: {deadline.text}</span>
             )}
           </div>
         )}
 
         {/* User's response count */}
-        {study.my_response_count > 0 && (
+        {caseItem.my_response_count > 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             <span>
-              {t('studies.yourResponses', { count: study.my_response_count })}
+              {t('cases.yourResponses', { count: caseItem.my_response_count })}
             </span>
           </div>
         )}
@@ -346,10 +346,10 @@ function StudyCard({ study, formatDeadline }: StudyCardProps) {
 
       <CardFooter className="pt-0">
         <Button asChild className="w-full group/btn hover-glow">
-          <Link to={`/studies/${study.id}`}>
-            {study.has_responded
-              ? t('studies.viewOrReanswer')
-              : t('studies.startClassification')
+          <Link to={`/cases/${caseItem.id}`}>
+            {caseItem.has_responded
+              ? t('cases.viewOrReanswer')
+              : t('cases.startClassification')
             }
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
           </Link>

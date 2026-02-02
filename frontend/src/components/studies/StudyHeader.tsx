@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Clock, Users, Scan, CalendarClock } from 'lucide-react';
 import { Badge } from '../ui/badge';
 
-interface StudyHeaderProps {
+interface CaseHeaderProps {
   title: string;
   description?: string;
   hasTACImages: boolean;
@@ -21,13 +21,13 @@ function computeDeadlineInfo(deadline?: string) {
   return { deadlineDate, isExpired, daysRemaining };
 }
 
-export function StudyHeader({
+export function CaseHeader({
   title,
   description,
   hasTACImages,
   myResponseCount,
   deadline,
-}: StudyHeaderProps) {
+}: CaseHeaderProps) {
   const { t } = useTranslation();
 
   const [deadlineInfo, setDeadlineInfo] = useState<{
@@ -59,13 +59,13 @@ export function StudyHeader({
         {hasTACImages && (
           <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 gap-1.5 px-3 py-1">
             <Scan className="h-3.5 w-3.5" />
-            {t('studies.includesTAC')}
+            {t('cases.includesTAC')}
           </Badge>
         )}
 
         <Badge variant="outline" className="gap-1.5 px-3 py-1">
           <Users className="h-3.5 w-3.5" />
-          {myResponseCount} {t('studies.myResponses')}
+          {myResponseCount} {t('cases.myResponses')}
         </Badge>
 
         {deadlineDate && (
@@ -82,13 +82,13 @@ export function StudyHeader({
             {isExpired ? (
               <>
                 <Clock className="h-3.5 w-3.5" />
-                {t('studies.expired')}
+                {t('cases.expired')}
               </>
             ) : (
               <>
                 <CalendarClock className="h-3.5 w-3.5" />
                 {daysRemaining !== null && daysRemaining > 0
-                  ? t('studies.daysLeft', { count: daysRemaining })
+                  ? t('cases.daysLeft', { count: daysRemaining })
                   : deadlineDate.toLocaleDateString()
                 }
               </>

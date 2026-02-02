@@ -32,10 +32,10 @@ type QuestionErrorStats struct {
 
 // DivergenceReport is the complete analysis output.
 type DivergenceReport struct {
-	StudyID           uuid.UUID             `json:"study_id"`
-	StudyTitle        string                `json:"study_title"`
-	TotalResponses    int                   `json:"total_responses"`
-	ResponsesWithPath int                   `json:"responses_with_path"`
+	CaseID            uuid.UUID            `json:"case_id"`
+	CaseTitle         string               `json:"case_title"`
+	TotalResponses    int                  `json:"total_responses"`
+	ResponsesWithPath int                  `json:"responses_with_path"`
 
 	// Per-question analysis
 	QuestionStats     []QuestionErrorStats `json:"question_stats"`
@@ -53,40 +53,40 @@ type DivergenceReport struct {
 
 // DivergenceService handles divergence analysis calculations.
 type DivergenceService struct {
-	responseRepo repository.StudyResponseRepository
-	studyRepo    repository.StudyRepository
+	responseRepo repository.CaseResponseRepository
+	caseRepo     repository.CaseRepository
 }
 
 // NewDivergenceService creates a new divergence service.
-func NewDivergenceService(rr repository.StudyResponseRepository, sr repository.StudyRepository) *DivergenceService {
+func NewDivergenceService(rr repository.CaseResponseRepository, cr repository.CaseRepository) *DivergenceService {
 	return &DivergenceService{
 		responseRepo: rr,
-		studyRepo:    sr,
+		caseRepo:     cr,
 	}
 }
 
-// AnalyzeDivergence generates a complete divergence report for a study.
-func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, studyID uuid.UUID) (*DivergenceReport, error) {
-	// 1. Get study with gold standard input
-	study, err := s.studyRepo.GetByID(ctx, studyID)
+// AnalyzeDivergence generates a complete divergence report for a case.
+func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.UUID) (*DivergenceReport, error) {
+	// 1. Get case with gold standard input
+	cs, err := s.caseRepo.GetByID(ctx, caseID)
 	if err != nil {
 		return nil, err
 	}
-	if study == nil {
-		return nil, errors.New("study not found")
+	if cs == nil {
+		return nil, errors.New("case not found")
 	}
 
-	if !study.HasReferenceInput() {
-		return nil, errors.New("study has no gold standard input stored")
+	if !cs.HasReferenceInput() {
+		return nil, errors.New("case has no gold standard input stored")
 	}
 
-	goldInput, err := study.GetReferenceInput()
+	goldInput, err := cs.GetReferenceInput()
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. Get all responses for this study
-	responses, err := s.responseRepo.GetAllByStudy(ctx, studyID)
+	// 2. Get all responses for this case
+	responses, err := s.responseRepo.GetAllByCase(ctx, caseID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +97,8 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, studyID uuid.
 
 	// 4. Initialize report
 	report := &DivergenceReport{
-		StudyID:          studyID,
-		StudyTitle:       study.Title,
+		CaseID:           caseID,
+		CaseTitle:        cs.Title,
 		TotalResponses:   len(responses),
 		CorrectPath:      goldPathStr,
 		PathDistribution: make(map[string]int),
@@ -284,16 +284,16 @@ func buildDecisionPathString(input *domain.FractureInput) string {
 // GetQuestionDisplayName returns a human-readable name for a question key.
 func GetQuestionDisplayName(key string) string {
 	names := map[string]string{
-		"involved_malleoli":              "Involved Malleoli",
-		"fibular_level":                  "Fibular Level",
-		"lateral_morphology":             "Lateral Morphology",
-		"medial_morphology":              "Medial Morphology",
-		"suprasindesmal_type":            "Suprasindesmal Type",
-		"fibula_trace_pattern":           "Fibula Trace Pattern",
-		"posterior_fracture_type":        "Posterior Fracture Type",
-		"has_ct_scan":                    "Has CT Scan",
+		"involved_malleoli":               "Involved Malleoli",
+		"fibular_level":                   "Fibular Level",
+		"lateral_morphology":              "Lateral Morphology",
+		"medial_morphology":               "Medial Morphology",
+		"suprasindesmal_type":             "Suprasindesmal Type",
+		"fibula_trace_pattern":            "Fibula Trace Pattern",
+		"posterior_fracture_type":         "Posterior Fracture Type",
+		"has_ct_scan":                     "Has CT Scan",
 		"fibula_infrasindesmal_transverse": "Fibula Infrasindesmal Transverse",
-		"fibular_level_for_transverse":   "Fibular Level for Transverse",
+		"fibular_level_for_transverse":    "Fibular Level for Transverse",
 	}
 	if name, ok := names[key]; ok {
 		return name

@@ -62,11 +62,11 @@ func main() {
 	var chatAuditRepo api.ChatAuditRepository
 	var chatAnalyticsRepo api.ChatAnalyticsRepository
 	var userRepo repository.UserRepository
+	var caseRepo repository.CaseRepository
+	var caseResponseRepo repository.CaseResponseRepository
+	var caseAnalyticsRepo repository.CaseAnalyticsRepository
 	var studyRepo repository.StudyRepository
 	var studyResponseRepo repository.StudyResponseRepository
-	var studyAnalyticsRepo repository.StudyAnalyticsRepository
-	var cohortRepo repository.CohortRepository
-	var cohortResponseRepo repository.CohortResponseRepository
 
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
@@ -84,9 +84,11 @@ func main() {
 			chatAuditRepo = repository.NewNoOpChatAuditRepository()
 			chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 			userRepo = repository.NewNoOpUserRepository()
+			caseRepo = repository.NewNoOpCaseRepository()
+			caseResponseRepo = repository.NewNoOpCaseResponseRepository()
+			caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
 			studyRepo = repository.NewNoOpStudyRepository()
 			studyResponseRepo = repository.NewNoOpStudyResponseRepository()
-			studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
 		} else {
 			if err := db.AutoMigrate(
 				&domain.AuditEntry{},
@@ -94,12 +96,12 @@ func main() {
 				&domain.ChatMessage{},
 				&domain.ChatFeedback{},
 				&domain.User{},
+				&domain.Case{},
+				&domain.CaseImage{},
+				&domain.CaseResponse{},
+				&domain.CaseUser{},
 				&domain.Study{},
-				&domain.StudyImage{},
-				&domain.StudyResponse{},
-				&domain.StudyUser{},
-				&domain.StudyCohort{},
-				&domain.CohortUser{},
+				&domain.StudyRater{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
@@ -109,11 +111,11 @@ func main() {
 			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
 			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
 			userRepo = postgres.NewUserRepository(db)
+			caseRepo = postgres.NewCaseRepository(db)
+			caseResponseRepo = postgres.NewCaseResponseRepository(db, cfg.AuditBufferSize)
+			caseAnalyticsRepo = postgres.NewCaseAnalyticsRepository(db)
 			studyRepo = postgres.NewStudyRepository(db)
-			studyResponseRepo = postgres.NewStudyResponseRepository(db, cfg.AuditBufferSize)
-			studyAnalyticsRepo = postgres.NewStudyAnalyticsRepository(db)
-			cohortRepo = postgres.NewCohortRepository(db)
-			cohortResponseRepo = postgres.NewCohortResponseRepository(db)
+			studyResponseRepo = postgres.NewStudyResponseRepository(db)
 		}
 	} else {
 		slog.Info("no DATABASE_URL configured, audit trail disabled")
@@ -122,11 +124,11 @@ func main() {
 		chatAuditRepo = repository.NewNoOpChatAuditRepository()
 		chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
 		userRepo = repository.NewNoOpUserRepository()
+		caseRepo = repository.NewNoOpCaseRepository()
+		caseResponseRepo = repository.NewNoOpCaseResponseRepository()
+		caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
 		studyRepo = repository.NewNoOpStudyRepository()
 		studyResponseRepo = repository.NewNoOpStudyResponseRepository()
-		studyAnalyticsRepo = repository.NewNoOpStudyAnalyticsRepository()
-		cohortRepo = repository.NewNoOpCohortRepository()
-		cohortResponseRepo = repository.NewNoOpCohortResponseRepository()
 	}
 
 	// Create user service that orchestrates DB and Supabase operations
@@ -168,13 +170,13 @@ func main() {
 	}
 
 	// Initialize storage
-	var studyStorage storage.Storage
+	var caseStorage storage.Storage
 	if cfg.HasSupabaseStorage() {
-		studyStorage = storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey, cfg.StudyBucketName)
+		caseStorage = storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey, cfg.StudyBucketName)
 		slog.Info("Supabase storage enabled", "bucket", cfg.StudyBucketName)
 	} else {
-		studyStorage = storage.NewNoOpStorage()
-		slog.Info("no SUPABASE_SERVICE_ROLE_KEY configured, study image storage disabled")
+		caseStorage = storage.NewNoOpStorage()
+		slog.Info("no SUPABASE_SERVICE_ROLE_KEY configured, case image storage disabled")
 	}
 
 	// Initialize statistics service for reliability metrics
@@ -182,8 +184,8 @@ func main() {
 
 	router := gin.Default()
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
-	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, studyAnalyticsRepo, cohortRepo, cohortResponseRepo, studyStorage, statsService)
-	api.SetupCohortRoutes(router, authValidator, userService, cohortRepo, cohortResponseRepo, studyRepo, statsService)
+	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo, caseStorage, statsService)
+	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, statsService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
@@ -220,8 +222,8 @@ func main() {
 	if err := chatAuditRepo.Close(); err != nil {
 		slog.Error("failed to close chat audit repository", "error", err)
 	}
-	if err := studyResponseRepo.Close(); err != nil {
-		slog.Error("failed to close study response repository", "error", err)
+	if err := caseResponseRepo.Close(); err != nil {
+		slog.Error("failed to close case response repository", "error", err)
 	}
 
 	// Close auth validator

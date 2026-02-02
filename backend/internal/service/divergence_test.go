@@ -10,100 +10,100 @@ import (
 	"gorm.io/datatypes"
 )
 
-// mockStudyRepository is a mock implementation for testing.
-type mockStudyRepository struct {
-	study *domain.Study
-	err   error
+// mockCaseRepository is a mock implementation for testing.
+type mockCaseRepository struct {
+	cs  *domain.Case
+	err error
 }
 
-func (m *mockStudyRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Study, error) {
-	return m.study, m.err
+func (m *mockCaseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Case, error) {
+	return m.cs, m.err
 }
 
 // Implement other required interface methods as no-ops
-func (m *mockStudyRepository) Create(ctx context.Context, study *domain.Study) error { return nil }
-func (m *mockStudyRepository) Update(ctx context.Context, study *domain.Study) error { return nil }
-func (m *mockStudyRepository) Delete(ctx context.Context, id uuid.UUID) error        { return nil }
-func (m *mockStudyRepository) List(ctx context.Context, status *domain.StudyStatus, limit, offset int) ([]domain.Study, int64, error) {
+func (m *mockCaseRepository) Create(ctx context.Context, cs *domain.Case) error { return nil }
+func (m *mockCaseRepository) Update(ctx context.Context, cs *domain.Case) error { return nil }
+func (m *mockCaseRepository) Delete(ctx context.Context, id uuid.UUID) error    { return nil }
+func (m *mockCaseRepository) List(ctx context.Context, status *domain.CaseStatus, limit, offset int) ([]domain.Case, int64, error) {
 	return nil, 0, nil
 }
-func (m *mockStudyRepository) ListPublished(ctx context.Context, limit, offset int) ([]domain.Study, int64, error) {
+func (m *mockCaseRepository) ListPublished(ctx context.Context, limit, offset int) ([]domain.Case, int64, error) {
 	return nil, 0, nil
 }
-func (m *mockStudyRepository) ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Study, int64, error) {
+func (m *mockCaseRepository) ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Case, int64, error) {
 	return nil, 0, nil
 }
-func (m *mockStudyRepository) Publish(ctx context.Context, id uuid.UUID) error             { return nil }
-func (m *mockStudyRepository) Close(ctx context.Context, id uuid.UUID) error               { return nil }
-func (m *mockStudyRepository) AddImage(ctx context.Context, image *domain.StudyImage) error { return nil }
-func (m *mockStudyRepository) GetImages(ctx context.Context, studyID uuid.UUID) ([]domain.StudyImage, error) {
+func (m *mockCaseRepository) Publish(ctx context.Context, id uuid.UUID) error            { return nil }
+func (m *mockCaseRepository) Close(ctx context.Context, id uuid.UUID) error              { return nil }
+func (m *mockCaseRepository) AddImage(ctx context.Context, image *domain.CaseImage) error { return nil }
+func (m *mockCaseRepository) GetImages(ctx context.Context, caseID uuid.UUID) ([]domain.CaseImage, error) {
 	return nil, nil
 }
-func (m *mockStudyRepository) GetImageByID(ctx context.Context, id uuid.UUID) (*domain.StudyImage, error) {
+func (m *mockCaseRepository) GetImageByID(ctx context.Context, id uuid.UUID) (*domain.CaseImage, error) {
 	return nil, nil
 }
-func (m *mockStudyRepository) DeleteImage(ctx context.Context, id uuid.UUID) error { return nil }
-func (m *mockStudyRepository) UpdateImage(ctx context.Context, image *domain.StudyImage) error {
+func (m *mockCaseRepository) DeleteImage(ctx context.Context, id uuid.UUID) error { return nil }
+func (m *mockCaseRepository) UpdateImage(ctx context.Context, image *domain.CaseImage) error {
 	return nil
 }
-func (m *mockStudyRepository) UpdateHasTACImages(ctx context.Context, studyID uuid.UUID) error {
+func (m *mockCaseRepository) UpdateHasTACImages(ctx context.Context, caseID uuid.UUID) error {
 	return nil
 }
-func (m *mockStudyRepository) IncrementResponseCount(ctx context.Context, studyID uuid.UUID) error {
+func (m *mockCaseRepository) IncrementResponseCount(ctx context.Context, caseID uuid.UUID) error {
 	return nil
 }
-func (m *mockStudyRepository) UpdateUniqueUsers(ctx context.Context, studyID uuid.UUID, count int) error {
+func (m *mockCaseRepository) UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID, count int) error {
 	return nil
 }
-func (m *mockStudyRepository) HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error) {
+func (m *mockCaseRepository) HasAccess(ctx context.Context, caseID, userID uuid.UUID) (bool, error) {
 	return false, nil
 }
-func (m *mockStudyRepository) AddUser(ctx context.Context, studyID, userID uuid.UUID, email string) error {
+func (m *mockCaseRepository) AddUser(ctx context.Context, caseID, userID uuid.UUID, email string) error {
 	return nil
 }
-func (m *mockStudyRepository) RemoveUser(ctx context.Context, studyID, userID uuid.UUID) error {
+func (m *mockCaseRepository) RemoveUser(ctx context.Context, caseID, userID uuid.UUID) error {
 	return nil
 }
-func (m *mockStudyRepository) GetUsers(ctx context.Context, studyID uuid.UUID) ([]domain.StudyUser, error) {
+func (m *mockCaseRepository) GetUsers(ctx context.Context, caseID uuid.UUID) ([]domain.CaseUser, error) {
 	return nil, nil
 }
-func (m *mockStudyRepository) GetByCohortID(ctx context.Context, cohortID uuid.UUID) ([]domain.Study, error) {
+func (m *mockCaseRepository) GetByStudyID(ctx context.Context, studyID uuid.UUID) ([]domain.Case, error) {
 	return nil, nil
 }
 
-// mockResponseRepository is a mock implementation for testing.
-type mockResponseRepository struct {
-	responses []domain.StudyResponse
+// mockCaseResponseRepository is a mock implementation for testing.
+type mockCaseResponseRepository struct {
+	responses []domain.CaseResponse
 	err       error
 }
 
-func (m *mockResponseRepository) GetAllByStudy(ctx context.Context, studyID uuid.UUID) ([]domain.StudyResponse, error) {
+func (m *mockCaseResponseRepository) GetAllByCase(ctx context.Context, caseID uuid.UUID) ([]domain.CaseResponse, error) {
 	return m.responses, m.err
 }
 
 // Implement other required interface methods as no-ops
-func (m *mockResponseRepository) Save(ctx context.Context, response *domain.StudyResponse) error {
+func (m *mockCaseResponseRepository) Save(ctx context.Context, response *domain.CaseResponse) error {
 	return nil
 }
-func (m *mockResponseRepository) GetByStudy(ctx context.Context, studyID uuid.UUID, limit, offset int) ([]domain.StudyResponse, int64, error) {
+func (m *mockCaseResponseRepository) GetByCase(ctx context.Context, caseID uuid.UUID, limit, offset int) ([]domain.CaseResponse, int64, error) {
 	return nil, 0, nil
 }
-func (m *mockResponseRepository) GetByUserAndStudy(ctx context.Context, userID, studyID uuid.UUID) ([]domain.StudyResponse, error) {
+func (m *mockCaseResponseRepository) GetByUserAndCase(ctx context.Context, userID, caseID uuid.UUID) ([]domain.CaseResponse, error) {
 	return nil, nil
 }
-func (m *mockResponseRepository) CountByStudy(ctx context.Context, studyID uuid.UUID) (int64, error) {
+func (m *mockCaseResponseRepository) CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error) {
 	return 0, nil
 }
-func (m *mockResponseRepository) HasUserResponded(ctx context.Context, userID, studyID uuid.UUID) (bool, error) {
+func (m *mockCaseResponseRepository) HasUserResponded(ctx context.Context, userID, caseID uuid.UUID) (bool, error) {
 	return false, nil
 }
-func (m *mockResponseRepository) CountUniqueUsersByStudy(ctx context.Context, studyID uuid.UUID) (int64, error) {
+func (m *mockCaseResponseRepository) CountUniqueUsersByCase(ctx context.Context, caseID uuid.UUID) (int64, error) {
 	return 0, nil
 }
-func (m *mockResponseRepository) GetResponsesWithUserExpertise(ctx context.Context, studyID uuid.UUID) ([]domain.ResponseWithExpertise, error) {
+func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(ctx context.Context, caseID uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return nil, nil
 }
-func (m *mockResponseRepository) Close() error { return nil }
+func (m *mockCaseResponseRepository) Close() error { return nil }
 
 func TestBuildAnswerPathFromInput(t *testing.T) {
 	tests := []struct {
@@ -255,7 +255,7 @@ func TestGetQuestionDisplayName(t *testing.T) {
 }
 
 func TestAnalyzeDivergence(t *testing.T) {
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	// Create a reference input
 	referenceInput := &domain.FractureInput{
@@ -267,37 +267,37 @@ func TestAnalyzeDivergence(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		study         *domain.Study
-		responses     []domain.StudyResponse
+		cs            *domain.Case
+		responses     []domain.CaseResponse
 		expectedError string
 		validate      func(*testing.T, *DivergenceReport)
 	}{
 		{
-			name:          "study not found",
-			study:         nil,
+			name:          "case not found",
+			cs:            nil,
 			responses:     nil,
-			expectedError: "study not found",
+			expectedError: "case not found",
 		},
 		{
-			name: "study without reference input",
-			study: &domain.Study{
-				ID:    studyID,
-				Title: "Test Study",
+			name: "case without reference input",
+			cs: &domain.Case{
+				ID:    caseID,
+				Title: "Test Case",
 			},
 			responses:     nil,
-			expectedError: "study has no gold standard input stored",
+			expectedError: "case has no gold standard input stored",
 		},
 		{
 			name: "no responses with answer path",
-			study: &domain.Study{
-				ID:             studyID,
-				Title:          "Test Study",
+			cs: &domain.Case{
+				ID:             caseID,
+				Title:          "Test Case",
 				ReferenceInput: datatypes.JSON(referenceInputJSON),
 			},
-			responses: []domain.StudyResponse{
+			responses: []domain.CaseResponse{
 				{
 					ID:           uuid.New(),
-					StudyID:      studyID,
+					CaseID:       caseID,
 					DecisionPath: "", // No answer path
 				},
 			},
@@ -312,13 +312,13 @@ func TestAnalyzeDivergence(t *testing.T) {
 		},
 		{
 			name: "responses with correct path",
-			study: &domain.Study{
-				ID:             studyID,
-				Title:          "Test Study",
+			cs: &domain.Case{
+				ID:             caseID,
+				Title:          "Test Case",
 				ReferenceInput: datatypes.JSON(referenceInputJSON),
 			},
-			responses: []domain.StudyResponse{
-				createResponseWithPath(studyID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
+			responses: []domain.CaseResponse{
+				createResponseWithPath(caseID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
 					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
 					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
 					{Question: "lateral_morphology", Answer: "spiral", Timestamp: 3000},
@@ -338,20 +338,20 @@ func TestAnalyzeDivergence(t *testing.T) {
 		},
 		{
 			name: "responses with errors",
-			study: &domain.Study{
-				ID:             studyID,
-				Title:          "Test Study",
+			cs: &domain.Case{
+				ID:             caseID,
+				Title:          "Test Case",
 				ReferenceInput: datatypes.JSON(referenceInputJSON),
 			},
-			responses: []domain.StudyResponse{
+			responses: []domain.CaseResponse{
 				// Correct response
-				createResponseWithPath(studyID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
+				createResponseWithPath(caseID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
 					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
 					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
 					{Question: "lateral_morphology", Answer: "spiral", Timestamp: 3000},
 				}, 0),
 				// Incorrect response - wrong morphology
-				createResponseWithPath(studyID, "lateral_only→transindesmal→oblique", []domain.QuestionAnswer{
+				createResponseWithPath(caseID, "lateral_only→transindesmal→oblique", []domain.QuestionAnswer{
 					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
 					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
 					{Question: "lateral_morphology", Answer: "oblique", Timestamp: 3000},
@@ -388,20 +388,20 @@ func TestAnalyzeDivergence(t *testing.T) {
 		},
 		{
 			name: "back click correlation",
-			study: &domain.Study{
-				ID:             studyID,
-				Title:          "Test Study",
+			cs: &domain.Case{
+				ID:             caseID,
+				Title:          "Test Case",
 				ReferenceInput: datatypes.JSON(referenceInputJSON),
 			},
-			responses: []domain.StudyResponse{
+			responses: []domain.CaseResponse{
 				// Correct with high back clicks
-				createResponseWithPath(studyID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
+				createResponseWithPath(caseID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
 					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
 					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
 					{Question: "lateral_morphology", Answer: "spiral", Timestamp: 3000},
 				}, 5),
 				// Incorrect with low back clicks
-				createResponseWithPath(studyID, "lateral_only→transindesmal→oblique", []domain.QuestionAnswer{
+				createResponseWithPath(caseID, "lateral_only→transindesmal→oblique", []domain.QuestionAnswer{
 					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
 					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
 					{Question: "lateral_morphology", Answer: "oblique", Timestamp: 3000},
@@ -421,11 +421,11 @@ func TestAnalyzeDivergence(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			studyRepo := &mockStudyRepository{study: tt.study}
-			responseRepo := &mockResponseRepository{responses: tt.responses}
+			caseRepo := &mockCaseRepository{cs: tt.cs}
+			responseRepo := &mockCaseResponseRepository{responses: tt.responses}
 
-			svc := NewDivergenceService(responseRepo, studyRepo)
-			report, err := svc.AnalyzeDivergence(context.Background(), studyID)
+			svc := NewDivergenceService(responseRepo, caseRepo)
+			report, err := svc.AnalyzeDivergence(context.Background(), caseID)
 
 			if tt.expectedError != "" {
 				if err == nil {
@@ -456,12 +456,12 @@ func boolPtr(b bool) *bool {
 	return &b
 }
 
-func createResponseWithPath(studyID uuid.UUID, decisionPath string, answers []domain.QuestionAnswer, backClicks int) domain.StudyResponse {
+func createResponseWithPath(caseID uuid.UUID, decisionPath string, answers []domain.QuestionAnswer, backClicks int) domain.CaseResponse {
 	answersJSON, _ := json.Marshal(answers)
 
-	return domain.StudyResponse{
+	return domain.CaseResponse{
 		ID:           uuid.New(),
-		StudyID:      studyID,
+		CaseID:       caseID,
 		UserID:       uuid.New(),
 		DecisionPath: decisionPath,
 		AnswerPath:   datatypes.JSON(answersJSON),

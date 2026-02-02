@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '../ui/alert';
 import type { ClassificationResult, FractureInput } from '../../types/fracture';
 import type { SubmitResponseResult } from '../../types/study';
 import { ClassificationResult as ClassificationResultComponent } from '../ClassificationResult';
-import { StudyClassificationForm, type AnswerTracking } from './StudyClassificationForm';
+import { CaseClassificationForm, type AnswerTracking } from './StudyClassificationForm';
 import { cn } from '@/lib/utils';
 
 interface ClassificationPanelProps {
@@ -253,7 +253,7 @@ export function ClassificationPanel({
         </div>
       </div>
       <CardContent className="p-6">
-        <StudyClassificationForm
+        <CaseClassificationForm
           hasTACImages={hasTACImages}
           onClassify={onClassify}
         />

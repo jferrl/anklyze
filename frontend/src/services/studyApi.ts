@@ -1,37 +1,38 @@
 import type {
-  Study,
-  StudyWithImages,
-  StudyImage,
-  UserStudyDetail,
-  StudyListResponse,
-  UserStudyListResponse,
-  CreateStudyRequest,
-  UpdateStudyRequest,
+  // Case types (individual patient presentations)
+  Case,
+  CaseWithImages,
+  CaseImage,
+  UserCaseDetail,
+  CaseListResponse,
+  UserCaseListResponse,
+  CreateCaseRequest,
+  UpdateCaseRequest,
   SubmitResponseRequest,
   ImageUploadResponse,
   SignedURLResponse,
-  StudyAnalyticsSummary,
-  StudyResponseListResponse,
+  CaseAnalyticsSummary,
+  CaseResponseListResponse,
   MyResponsesResponse,
-  AdminStudyImagesResponse,
+  AdminCaseImagesResponse,
   ImageCategory,
-  StudyUsersListResponse,
-  AddStudyUserRequest,
+  CaseUsersListResponse,
+  AddCaseUserRequest,
   UpdateImageRequest,
   ReliabilityMetricsResponse,
   SubmitResponseResult,
   UserProfile,
   UpdateUserProfileRequest,
-  // Cohort types
-  StudyCohort,
-  CohortWithCases,
-  CohortListResponse,
-  CreateCohortRequest,
-  UpdateCohortRequest,
-  CohortUser,
+  // Study types (research projects)
+  Study,
+  StudyWithCases,
+  StudyListResponse,
+  CreateStudyRequest,
+  UpdateStudyRequest,
+  StudyRater,
   RaterProgressResponse,
-  CohortReliabilityResponse,
-  CohortStatus,
+  StudyReliabilityResponse,
+  StudyStatus,
   // Divergence analysis types
   DivergenceReport,
 } from '../types/study';
@@ -81,22 +82,22 @@ function handleAuthError(status: number): void {
 }
 
 // ================================
-// User Endpoints
+// User Case Endpoints
 // ================================
 
 /**
- * List all published studies
+ * List all published cases
  */
-export async function listPublishedStudies(
+export async function listPublishedCases(
   page: number = 1,
   limit: number = 20
-): Promise<UserStudyListResponse> {
+): Promise<UserCaseListResponse> {
   const params = new URLSearchParams();
   params.append('page', page.toString());
   params.append('limit', limit.toString());
 
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/studies?${params}`, {
+  const response = await fetch(`${API_BASE_URL}/api/cases?${params}`, {
     headers,
   });
 
@@ -104,18 +105,18 @@ export async function listPublishedStudies(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to list studies');
+    throw new Error(error.error || 'Failed to list cases');
   }
 
   return response.json();
 }
 
 /**
- * Get a published study with its images
+ * Get a published case with its images
  */
-export async function getPublishedStudy(studyId: string): Promise<UserStudyDetail> {
+export async function getPublishedCase(caseId: string): Promise<UserCaseDetail> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/studies/${studyId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/cases/${caseId}`, {
     headers,
   });
 
@@ -123,25 +124,25 @@ export async function getPublishedStudy(studyId: string): Promise<UserStudyDetai
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('Study not found');
+      throw new Error('Case not found');
     }
     const error = await response.json();
-    throw new Error(error.error || 'Failed to get study');
+    throw new Error(error.error || 'Failed to get case');
   }
 
   return response.json();
 }
 
 /**
- * Get a signed URL for viewing an image (for published studies)
+ * Get a signed URL for viewing an image (for published cases)
  */
 export async function getImageSignedURL(
-  studyId: string,
+  caseId: string,
   imageId: string
 ): Promise<SignedURLResponse> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/studies/${studyId}/images/${imageId}/url`,
+    `${API_BASE_URL}/api/cases/${caseId}/images/${imageId}/url`,
     { headers }
   );
 
@@ -159,15 +160,15 @@ export async function getImageSignedURL(
 }
 
 /**
- * Get a signed URL for viewing an image (admin - works for any study status)
+ * Get a signed URL for viewing an image (admin - works for any case status)
  */
 export async function getAdminImageSignedURL(
-  studyId: string,
+  caseId: string,
   imageId: string
 ): Promise<SignedURLResponse> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/studies/${studyId}/images/${imageId}/url`,
+    `${API_BASE_URL}/api/admin/cases/${caseId}/images/${imageId}/url`,
     { headers }
   );
 
@@ -185,15 +186,15 @@ export async function getAdminImageSignedURL(
 }
 
 /**
- * Submit a classification response to a study
+ * Submit a classification response to a case
  * Returns the response along with gold standard comparison if available
  */
-export async function submitStudyResponse(
-  studyId: string,
+export async function submitCaseResponse(
+  caseId: string,
   data: SubmitResponseRequest
 ): Promise<SubmitResponseResult> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/studies/${studyId}/responses`, {
+  const response = await fetch(`${API_BASE_URL}/api/cases/${caseId}/responses`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),
@@ -204,7 +205,7 @@ export async function submitStudyResponse(
   if (!response.ok) {
     if (response.status === 409) {
       const error = await response.json();
-      throw new Error(error.error || 'You have already submitted a response to this study');
+      throw new Error(error.error || 'You have already submitted a response to this case');
     }
     if (response.status === 400) {
       const error = await response.json();
@@ -218,11 +219,11 @@ export async function submitStudyResponse(
 }
 
 /**
- * Get the current user's responses for a study
+ * Get the current user's responses for a case
  */
-export async function getMyResponses(studyId: string): Promise<MyResponsesResponse> {
+export async function getMyResponses(caseId: string): Promise<MyResponsesResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/studies/${studyId}/my-responses`, {
+  const response = await fetch(`${API_BASE_URL}/api/cases/${caseId}/my-responses`, {
     headers,
   });
 
@@ -237,15 +238,15 @@ export async function getMyResponses(studyId: string): Promise<MyResponsesRespon
 }
 
 // ================================
-// Admin Endpoints
+// Admin Case Endpoints
 // ================================
 
 /**
- * Create a new study (admin only)
+ * Create a new case (admin only)
  */
-export async function createStudy(data: CreateStudyRequest): Promise<Study> {
+export async function createCase(data: CreateCaseRequest): Promise<Case> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),
@@ -255,27 +256,27 @@ export async function createStudy(data: CreateStudyRequest): Promise<Study> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to create study');
+    throw new Error(error.error || 'Failed to create case');
   }
 
   return response.json();
 }
 
 /**
- * List all studies (admin only)
+ * List all cases (admin only)
  */
-export async function listStudies(
+export async function listCases(
   status?: string,
   page: number = 1,
   limit: number = 20
-): Promise<StudyListResponse> {
+): Promise<CaseListResponse> {
   const params = new URLSearchParams();
   if (status) params.append('status', status);
   params.append('page', page.toString());
   params.append('limit', limit.toString());
 
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies?${params}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases?${params}`, {
     headers,
   });
 
@@ -283,18 +284,18 @@ export async function listStudies(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to list studies');
+    throw new Error(error.error || 'Failed to list cases');
   }
 
   return response.json();
 }
 
 /**
- * Get a study with images (admin only)
+ * Get a case with images (admin only)
  */
-export async function getStudy(studyId: string): Promise<StudyWithImages> {
+export async function getCase(caseId: string): Promise<CaseWithImages> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}`, {
     headers,
   });
 
@@ -302,24 +303,24 @@ export async function getStudy(studyId: string): Promise<StudyWithImages> {
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('Study not found');
+      throw new Error('Case not found');
     }
     const error = await response.json();
-    throw new Error(error.error || 'Failed to get study');
+    throw new Error(error.error || 'Failed to get case');
   }
 
   return response.json();
 }
 
 /**
- * Update a study (admin only)
+ * Update a case (admin only)
  */
-export async function updateStudy(
-  studyId: string,
-  data: UpdateStudyRequest
-): Promise<Study> {
+export async function updateCase(
+  caseId: string,
+  data: UpdateCaseRequest
+): Promise<Case> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}`, {
     method: 'PUT',
     headers,
     body: JSON.stringify(data),
@@ -329,18 +330,18 @@ export async function updateStudy(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to update study');
+    throw new Error(error.error || 'Failed to update case');
   }
 
   return response.json();
 }
 
 /**
- * Delete a draft study (admin only)
+ * Delete a draft case (admin only)
  */
-export async function deleteStudy(studyId: string): Promise<void> {
+export async function deleteCase(caseId: string): Promise<void> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}`, {
     method: 'DELETE',
     headers,
   });
@@ -349,15 +350,15 @@ export async function deleteStudy(studyId: string): Promise<void> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to delete study');
+    throw new Error(error.error || 'Failed to delete case');
   }
 }
 
 /**
- * Upload an image to a study (admin only)
+ * Upload an image to a case (admin only)
  */
-export async function uploadStudyImage(
-  studyId: string,
+export async function uploadCaseImage(
+  caseId: string,
   file: File,
   category: ImageCategory,
   displayOrder?: number
@@ -369,7 +370,7 @@ export async function uploadStudyImage(
   formData.append('category', category);
   if (displayOrder !== undefined) formData.append('display_order', displayOrder.toString());
 
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/images`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/images`, {
     method: 'POST',
     headers,
     body: formData,
@@ -386,11 +387,11 @@ export async function uploadStudyImage(
 }
 
 /**
- * Get study images with signed URLs (admin only)
+ * Get case images with signed URLs (admin only)
  */
-export async function getAdminStudyImages(studyId: string): Promise<AdminStudyImagesResponse> {
+export async function getAdminCaseImages(caseId: string): Promise<AdminCaseImagesResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/images`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/images`, {
     headers,
   });
 
@@ -405,12 +406,12 @@ export async function getAdminStudyImages(studyId: string): Promise<AdminStudyIm
 }
 
 /**
- * Delete an image from a study (admin only)
+ * Delete an image from a case (admin only)
  */
-export async function deleteStudyImage(studyId: string, imageId: string): Promise<void> {
+export async function deleteCaseImage(caseId: string, imageId: string): Promise<void> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/studies/${studyId}/images/${imageId}`,
+    `${API_BASE_URL}/api/admin/cases/${caseId}/images/${imageId}`,
     {
       method: 'DELETE',
       headers,
@@ -428,14 +429,14 @@ export async function deleteStudyImage(studyId: string, imageId: string): Promis
 /**
  * Update an image's display order (admin only)
  */
-export async function updateStudyImage(
-  studyId: string,
+export async function updateCaseImage(
+  caseId: string,
   imageId: string,
   data: UpdateImageRequest
-): Promise<StudyImage> {
+): Promise<CaseImage> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/studies/${studyId}/images/${imageId}`,
+    `${API_BASE_URL}/api/admin/cases/${caseId}/images/${imageId}`,
     {
       method: 'PATCH',
       headers,
@@ -454,11 +455,11 @@ export async function updateStudyImage(
 }
 
 /**
- * Publish a study (admin only)
+ * Publish a case (admin only)
  */
-export async function publishStudy(studyId: string): Promise<Study> {
+export async function publishCase(caseId: string): Promise<Case> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/publish`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/publish`, {
     method: 'PUT',
     headers,
   });
@@ -467,18 +468,18 @@ export async function publishStudy(studyId: string): Promise<Study> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to publish study');
+    throw new Error(error.error || 'Failed to publish case');
   }
 
   return response.json();
 }
 
 /**
- * Close a study (admin only)
+ * Close a case (admin only)
  */
-export async function closeStudy(studyId: string): Promise<Study> {
+export async function closeCase(caseId: string): Promise<Case> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/close`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/close`, {
     method: 'PUT',
     headers,
   });
@@ -487,18 +488,18 @@ export async function closeStudy(studyId: string): Promise<Study> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to close study');
+    throw new Error(error.error || 'Failed to close case');
   }
 
   return response.json();
 }
 
 /**
- * Get study analytics (admin only)
+ * Get case analytics (admin only)
  */
-export async function getStudyAnalytics(studyId: string): Promise<StudyAnalyticsSummary> {
+export async function getCaseAnalytics(caseId: string): Promise<CaseAnalyticsSummary> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/analytics`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/analytics`, {
     headers,
   });
 
@@ -513,20 +514,20 @@ export async function getStudyAnalytics(studyId: string): Promise<StudyAnalytics
 }
 
 /**
- * List study responses (admin only)
+ * List case responses (admin only)
  */
-export async function listStudyResponses(
-  studyId: string,
+export async function listCaseResponses(
+  caseId: string,
   page: number = 1,
   limit: number = 20
-): Promise<StudyResponseListResponse> {
+): Promise<CaseResponseListResponse> {
   const params = new URLSearchParams();
   params.append('page', page.toString());
   params.append('limit', limit.toString());
 
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/studies/${studyId}/responses?${params}`,
+    `${API_BASE_URL}/api/admin/cases/${caseId}/responses?${params}`,
     { headers }
   );
 
@@ -541,14 +542,14 @@ export async function listStudyResponses(
 }
 
 /**
- * Export study responses as CSV (admin only)
+ * Export case responses as CSV (admin only)
  */
-export async function exportStudyResponses(studyId: string): Promise<Blob> {
+export async function exportCaseResponses(caseId: string): Promise<Blob> {
   const headers = await getAuthHeaders();
   // Remove Content-Type for blob response
   delete headers['Content-Type'];
 
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/export`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/export`, {
     headers,
   });
 
@@ -564,12 +565,12 @@ export async function exportStudyResponses(studyId: string): Promise<Blob> {
 /**
  * Download the exported CSV
  */
-export async function downloadStudyResponsesCSV(studyId: string, filename?: string): Promise<void> {
-  const blob = await exportStudyResponses(studyId);
+export async function downloadCaseResponsesCSV(caseId: string, filename?: string): Promise<void> {
+  const blob = await exportCaseResponses(caseId);
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = filename || `study_${studyId.slice(0, 8)}_responses.csv`;
+  a.download = filename || `case_${caseId.slice(0, 8)}_responses.csv`;
   document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);
@@ -577,11 +578,11 @@ export async function downloadStudyResponsesCSV(studyId: string, filename?: stri
 }
 
 /**
- * Get inter-rater reliability metrics for a study (admin only)
+ * Get inter-rater reliability metrics for a case (admin only)
  */
-export async function getReliabilityMetrics(studyId: string): Promise<ReliabilityMetricsResponse> {
+export async function getReliabilityMetrics(caseId: string): Promise<ReliabilityMetricsResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/reliability`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/reliability`, {
     headers,
   });
 
@@ -596,12 +597,12 @@ export async function getReliabilityMetrics(studyId: string): Promise<Reliabilit
 }
 
 /**
- * Get divergence analysis for a study (admin only)
+ * Get divergence analysis for a case (admin only)
  * Analyzes where users diverge from the gold standard path
  */
-export async function getDivergenceAnalysis(studyId: string): Promise<DivergenceReport> {
+export async function getDivergenceAnalysis(caseId: string): Promise<DivergenceReport> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/divergence`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/divergence`, {
     headers,
   });
 
@@ -616,14 +617,14 @@ export async function getDivergenceAnalysis(studyId: string): Promise<Divergence
 }
 
 /**
- * Export detailed study responses as CSV with expertise and gold standard comparison (admin only)
+ * Export detailed case responses as CSV with expertise and gold standard comparison (admin only)
  */
-export async function exportDetailedResponses(studyId: string): Promise<Blob> {
+export async function exportDetailedResponses(caseId: string): Promise<Blob> {
   const headers = await getAuthHeaders();
   // Remove Content-Type for blob response
   delete headers['Content-Type'];
 
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/export/detailed`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/export/detailed`, {
     headers,
   });
 
@@ -639,12 +640,12 @@ export async function exportDetailedResponses(studyId: string): Promise<Blob> {
 /**
  * Download the detailed export CSV
  */
-export async function downloadDetailedResponsesCSV(studyId: string, filename?: string): Promise<void> {
-  const blob = await exportDetailedResponses(studyId);
+export async function downloadDetailedResponsesCSV(caseId: string, filename?: string): Promise<void> {
+  const blob = await exportDetailedResponses(caseId);
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = filename || `study_${studyId.slice(0, 8)}_detailed_responses.csv`;
+  a.download = filename || `case_${caseId.slice(0, 8)}_detailed_responses.csv`;
   document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);
@@ -696,15 +697,15 @@ export async function updateUserProfile(data: UpdateUserProfileRequest): Promise
 }
 
 // ================================
-// Study User Management (Admin)
+// Case User Management (Admin)
 // ================================
 
 /**
- * List users who have access to a study (admin only)
+ * List users who have access to a case (admin only)
  */
-export async function listStudyUsers(studyId: string): Promise<StudyUsersListResponse> {
+export async function listCaseUsers(caseId: string): Promise<CaseUsersListResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/users`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/users`, {
     headers,
   });
 
@@ -712,21 +713,21 @@ export async function listStudyUsers(studyId: string): Promise<StudyUsersListRes
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to list study users');
+    throw new Error(error.error || 'Failed to list case users');
   }
 
   return response.json();
 }
 
 /**
- * Add a user to a study (admin only)
+ * Add a user to a case (admin only)
  */
-export async function addStudyUser(
-  studyId: string,
-  data: AddStudyUserRequest
+export async function addCaseUser(
+  caseId: string,
+  data: AddCaseUserRequest
 ): Promise<void> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/users`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/cases/${caseId}/users`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),
@@ -736,17 +737,17 @@ export async function addStudyUser(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to add user to study');
+    throw new Error(error.error || 'Failed to add user to case');
   }
 }
 
 /**
- * Remove a user from a study (admin only)
+ * Remove a user from a case (admin only)
  */
-export async function removeStudyUser(studyId: string, userId: string): Promise<void> {
+export async function removeCaseUser(caseId: string, userId: string): Promise<void> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/studies/${studyId}/users/${userId}`,
+    `${API_BASE_URL}/api/admin/cases/${caseId}/users/${userId}`,
     {
       method: 'DELETE',
       headers,
@@ -757,20 +758,20 @@ export async function removeStudyUser(studyId: string, userId: string): Promise<
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to remove user from study');
+    throw new Error(error.error || 'Failed to remove user from case');
   }
 }
 
 // ================================
-// Cohort Endpoints (Admin)
+// Study Endpoints (Admin)
 // ================================
 
 /**
- * Create a new cohort (admin only)
+ * Create a new study (admin only)
  */
-export async function createCohort(data: CreateCohortRequest): Promise<StudyCohort> {
+export async function createStudy(data: CreateStudyRequest): Promise<Study> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies`, {
     method: 'POST',
     headers,
     body: JSON.stringify(data),
@@ -780,27 +781,27 @@ export async function createCohort(data: CreateCohortRequest): Promise<StudyCoho
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to create cohort');
+    throw new Error(error.error || 'Failed to create study');
   }
 
   return response.json();
 }
 
 /**
- * List all cohorts (admin only)
+ * List all studies (admin only)
  */
-export async function listCohorts(
-  status?: CohortStatus,
+export async function listStudies(
+  status?: StudyStatus,
   page: number = 1,
   limit: number = 20
-): Promise<CohortListResponse> {
+): Promise<StudyListResponse> {
   const params = new URLSearchParams();
   if (status) params.append('status', status);
   params.append('page', page.toString());
   params.append('limit', limit.toString());
 
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts?${params}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies?${params}`, {
     headers,
   });
 
@@ -808,18 +809,18 @@ export async function listCohorts(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to list cohorts');
+    throw new Error(error.error || 'Failed to list studies');
   }
 
   return response.json();
 }
 
 /**
- * Get a cohort with its cases (admin only)
+ * Get a study with its cases (admin only)
  */
-export async function getCohort(cohortId: string): Promise<CohortWithCases> {
+export async function getStudy(studyId: string): Promise<StudyWithCases> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
     headers,
   });
 
@@ -827,24 +828,24 @@ export async function getCohort(cohortId: string): Promise<CohortWithCases> {
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('Cohort not found');
+      throw new Error('Study not found');
     }
     const error = await response.json();
-    throw new Error(error.error || 'Failed to get cohort');
+    throw new Error(error.error || 'Failed to get study');
   }
 
   return response.json();
 }
 
 /**
- * Update a cohort (admin only)
+ * Update a study (admin only)
  */
-export async function updateCohort(
-  cohortId: string,
-  data: UpdateCohortRequest
-): Promise<StudyCohort> {
+export async function updateStudy(
+  studyId: string,
+  data: UpdateStudyRequest
+): Promise<Study> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
     method: 'PUT',
     headers,
     body: JSON.stringify(data),
@@ -854,18 +855,18 @@ export async function updateCohort(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to update cohort');
+    throw new Error(error.error || 'Failed to update study');
   }
 
   return response.json();
 }
 
 /**
- * Delete a cohort (admin only)
+ * Delete a study (admin only)
  */
-export async function deleteCohort(cohortId: string): Promise<void> {
+export async function deleteStudy(studyId: string): Promise<void> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}`, {
     method: 'DELETE',
     headers,
   });
@@ -874,16 +875,16 @@ export async function deleteCohort(cohortId: string): Promise<void> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to delete cohort');
+    throw new Error(error.error || 'Failed to delete study');
   }
 }
 
 /**
- * Activate a cohort (admin only)
+ * Activate a study (admin only)
  */
-export async function activateCohort(cohortId: string): Promise<StudyCohort> {
+export async function activateStudy(studyId: string): Promise<Study> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/activate`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/activate`, {
     method: 'PUT',
     headers,
   });
@@ -892,18 +893,18 @@ export async function activateCohort(cohortId: string): Promise<StudyCohort> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to activate cohort');
+    throw new Error(error.error || 'Failed to activate study');
   }
 
   return response.json();
 }
 
 /**
- * Close a cohort (admin only)
+ * Close a study (admin only)
  */
-export async function closeCohort(cohortId: string): Promise<StudyCohort> {
+export async function closeStudy(studyId: string): Promise<Study> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/close`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/close`, {
     method: 'PUT',
     headers,
   });
@@ -912,44 +913,44 @@ export async function closeCohort(cohortId: string): Promise<StudyCohort> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to close cohort');
+    throw new Error(error.error || 'Failed to close study');
   }
 
   return response.json();
 }
 
 /**
- * Add a case (study) to a cohort (admin only)
+ * Add a case to a study (admin only)
  */
-export async function addCaseToCohort(
-  cohortId: string,
+export async function addCaseToStudy(
   studyId: string,
+  caseId: string,
   caseOrder?: number
-): Promise<Study> {
+): Promise<Case> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/cases`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ study_id: studyId, case_order: caseOrder }),
+    body: JSON.stringify({ case_id: caseId, case_order: caseOrder }),
   });
 
   handleAuthError(response.status);
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to add case to cohort');
+    throw new Error(error.error || 'Failed to add case to study');
   }
 
   return response.json();
 }
 
 /**
- * Remove a case from a cohort (admin only)
+ * Remove a case from a study (admin only)
  */
-export async function removeCaseFromCohort(cohortId: string, studyId: string): Promise<void> {
+export async function removeCaseFromStudy(studyId: string, caseId: string): Promise<void> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases/${studyId}`,
+    `${API_BASE_URL}/api/admin/studies/${studyId}/cases/${caseId}`,
     {
       method: 'DELETE',
       headers,
@@ -960,24 +961,24 @@ export async function removeCaseFromCohort(cohortId: string, studyId: string): P
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to remove case from cohort');
+    throw new Error(error.error || 'Failed to remove case from study');
   }
 }
 
 /**
- * Reorder cases in a cohort (admin only)
+ * Reorder cases in a study (admin only)
  */
-export async function reorderCohortCases(
-  cohortId: string,
-  studyIds: string[]
+export async function reorderStudyCases(
+  studyId: string,
+  caseIds: string[]
 ): Promise<void> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/cases/reorder`,
+    `${API_BASE_URL}/api/admin/studies/${studyId}/cases/reorder`,
     {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ study_ids: studyIds }),
+      body: JSON.stringify({ case_ids: caseIds }),
     }
   );
 
@@ -990,11 +991,11 @@ export async function reorderCohortCases(
 }
 
 /**
- * List users assigned to a cohort (admin only)
+ * List raters assigned to a study (admin only)
  */
-export async function listCohortUsers(cohortId: string): Promise<{ users: CohortUser[]; total: number }> {
+export async function listStudyRaters(studyId: string): Promise<{ raters: StudyRater[]; total: number }> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/users`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/raters`, {
     headers,
   });
 
@@ -1002,21 +1003,21 @@ export async function listCohortUsers(cohortId: string): Promise<{ users: Cohort
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to list cohort users');
+    throw new Error(error.error || 'Failed to list study raters');
   }
 
   return response.json();
 }
 
 /**
- * Add a user to a cohort (admin only)
+ * Add a rater to a study (admin only)
  */
-export async function addUserToCohort(
-  cohortId: string,
+export async function addStudyRater(
+  studyId: string,
   userEmail: string
-): Promise<CohortUser> {
+): Promise<StudyRater> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/users`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/raters`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ email: userEmail }),
@@ -1026,19 +1027,19 @@ export async function addUserToCohort(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to add user to cohort');
+    throw new Error(error.error || 'Failed to add rater to study');
   }
 
   return response.json();
 }
 
 /**
- * Remove a user from a cohort (admin only)
+ * Remove a rater from a study (admin only)
  */
-export async function removeUserFromCohort(cohortId: string, userId: string): Promise<void> {
+export async function removeStudyRater(studyId: string, userId: string): Promise<void> {
   const headers = await getAuthHeaders();
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/cohorts/${cohortId}/users/${userId}`,
+    `${API_BASE_URL}/api/admin/studies/${studyId}/raters/${userId}`,
     {
       method: 'DELETE',
       headers,
@@ -1049,16 +1050,16 @@ export async function removeUserFromCohort(cohortId: string, userId: string): Pr
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to remove user from cohort');
+    throw new Error(error.error || 'Failed to remove rater from study');
   }
 }
 
 /**
- * Get rater progress for a cohort (admin only)
+ * Get rater progress for a study (admin only)
  */
-export async function getCohortRaterProgress(cohortId: string): Promise<RaterProgressResponse> {
+export async function getStudyRaterProgress(studyId: string): Promise<RaterProgressResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/progress`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/progress`, {
     headers,
   });
 
@@ -1073,11 +1074,11 @@ export async function getCohortRaterProgress(cohortId: string): Promise<RaterPro
 }
 
 /**
- * Get cohort reliability metrics (admin only)
+ * Get study reliability metrics (admin only)
  */
-export async function getCohortReliabilityMetrics(cohortId: string): Promise<CohortReliabilityResponse> {
+export async function getStudyReliabilityMetrics(studyId: string): Promise<StudyReliabilityResponse> {
   const headers = await getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/reliability`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/reliability`, {
     headers,
   });
 
@@ -1085,107 +1086,198 @@ export async function getCohortReliabilityMetrics(cohortId: string): Promise<Coh
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to get cohort reliability metrics');
+    throw new Error(error.error || 'Failed to get study reliability metrics');
   }
 
   return response.json();
 }
 
 /**
- * Export cohort responses as CSV (admin only)
+ * Export study responses as CSV (admin only)
  */
-export async function exportCohortResponses(cohortId: string): Promise<Blob> {
+export async function exportStudyResponses(studyId: string): Promise<Blob> {
   const headers = await getAuthHeaders();
   delete headers['Content-Type'];
 
-  const response = await fetch(`${API_BASE_URL}/api/admin/cohorts/${cohortId}/export`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/studies/${studyId}/export`, {
     headers,
   });
 
   handleAuthError(response.status);
 
   if (!response.ok) {
-    throw new Error('Failed to export cohort responses');
+    throw new Error('Failed to export study responses');
   }
 
   return response.blob();
 }
 
 /**
- * Download cohort responses CSV
+ * Download study responses CSV
  */
-export async function downloadCohortResponsesCSV(cohortId: string, filename?: string): Promise<void> {
-  const blob = await exportCohortResponses(cohortId);
+export async function downloadStudyResponsesCSV(studyId: string, filename?: string): Promise<void> {
+  const blob = await exportStudyResponses(studyId);
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = filename || `cohort_${cohortId.slice(0, 8)}_responses.csv`;
+  a.download = filename || `study_${studyId.slice(0, 8)}_responses.csv`;
   document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);
   document.body.removeChild(a);
 }
 
+// ================================
+// Backwards Compatibility Aliases
+// ================================
+
+/** @deprecated Use listPublishedCases instead */
+export const listPublishedStudies = listPublishedCases;
+/** @deprecated Use getPublishedCase instead */
+export const getPublishedStudy = getPublishedCase;
+/** @deprecated Use submitCaseResponse instead */
+export const submitStudyResponse = submitCaseResponse;
+/** @deprecated Use createCase instead */
+export const createStudyOld = createCase;
+/** @deprecated Use listCases instead */
+export const listStudiesOld = listCases;
+/** @deprecated Use getCase instead */
+export const getStudyOld = getCase;
+/** @deprecated Use updateCase instead */
+export const updateStudyOld = updateCase;
+/** @deprecated Use deleteCase instead */
+export const deleteStudyOld = deleteCase;
+/** @deprecated Use uploadCaseImage instead */
+export const uploadStudyImage = uploadCaseImage;
+/** @deprecated Use getAdminCaseImages instead */
+export const getAdminStudyImages = getAdminCaseImages;
+/** @deprecated Use deleteCaseImage instead */
+export const deleteStudyImage = deleteCaseImage;
+/** @deprecated Use updateCaseImage instead */
+export const updateStudyImage = updateCaseImage;
+/** @deprecated Use publishCase instead */
+export const publishStudy = publishCase;
+/** @deprecated Use closeCase instead */
+export const closeStudyOld = closeCase;
+/** @deprecated Use getCaseAnalytics instead */
+export const getStudyAnalytics = getCaseAnalytics;
+/** @deprecated Use listCaseResponses instead */
+export const listStudyResponses = listCaseResponses;
+/** @deprecated Use exportCaseResponses instead */
+export const exportStudyResponsesOld = exportCaseResponses;
+/** @deprecated Use listCaseUsers instead */
+export const listStudyUsers = listCaseUsers;
+/** @deprecated Use addCaseUser instead */
+export const addStudyUser = addCaseUser;
+/** @deprecated Use removeCaseUser instead */
+export const removeStudyUser = removeCaseUser;
+
+// Cohort aliases -> Study
+/** @deprecated Use createStudy instead */
+export const createCohort = createStudy;
+/** @deprecated Use listStudies instead */
+export const listCohorts = listStudies;
+/** @deprecated Use getStudy instead */
+export const getCohort = getStudy;
+/** @deprecated Use updateStudy instead */
+export const updateCohort = updateStudy;
+/** @deprecated Use deleteStudy instead */
+export const deleteCohort = deleteStudy;
+/** @deprecated Use activateStudy instead */
+export const activateCohort = activateStudy;
+/** @deprecated Use closeStudy instead */
+export const closeCohort = closeStudy;
+/** @deprecated Use addCaseToStudy instead */
+export const addCaseToCohort = addCaseToStudy;
+/** @deprecated Use removeCaseFromStudy instead */
+export const removeCaseFromCohort = removeCaseFromStudy;
+/** @deprecated Use reorderStudyCases instead */
+export const reorderCohortCases = reorderStudyCases;
+/** @deprecated Use listStudyRaters instead */
+export const listCohortUsers = listStudyRaters;
+/** @deprecated Use addStudyRater instead */
+export const addUserToCohort = addStudyRater;
+/** @deprecated Use removeStudyRater instead */
+export const removeUserFromCohort = removeStudyRater;
+/** @deprecated Use getStudyRaterProgress instead */
+export const getCohortRaterProgress = getStudyRaterProgress;
+/** @deprecated Use getStudyReliabilityMetrics instead */
+export const getCohortReliabilityMetrics = getStudyReliabilityMetrics;
+/** @deprecated Use exportStudyResponses instead */
+export const exportCohortResponses = exportStudyResponses;
+/** @deprecated Use downloadStudyResponsesCSV instead */
+export const downloadCohortResponsesCSV = downloadStudyResponsesCSV;
+
 // Export as a namespace object for convenience
-export const studyApi = {
+export const caseApi = {
   // User endpoints
-  listPublishedStudies,
-  getPublishedStudy,
+  listPublishedCases,
+  getPublishedCase,
   getImageSignedURL,
-  submitStudyResponse,
+  submitCaseResponse,
   getMyResponses,
   // User profile
   getUserProfile,
   updateUserProfile,
-  // Admin endpoints
+  // Admin case endpoints
+  createCase,
+  listCases,
+  getCase,
+  updateCase,
+  deleteCase,
+  uploadImage: uploadCaseImage,
+  getAdminCaseImages,
+  updateImage: updateCaseImage,
+  deleteImage: deleteCaseImage,
+  publishCase,
+  closeCase,
+  getCaseAnalytics,
+  getReliabilityMetrics,
+  getDivergenceAnalysis,
+  listCaseResponses,
+  exportCaseResponses,
+  exportDetailedResponses,
+  downloadDetailedResponsesCSV,
+  getAdminImageSignedURL,
+  // Case user management (admin)
+  listCaseUsers,
+  addCaseUser,
+  removeCaseUser,
+  // Helpers
+  getImageUrl: async (caseId: string, imageId: string) => {
+    const result = await getImageSignedURL(caseId, imageId);
+    return result.url;
+  },
+  getAdminImageUrl: async (caseId: string, imageId: string) => {
+    const result = await getAdminImageSignedURL(caseId, imageId);
+    return result.url;
+  },
+};
+
+export const studyApi = {
+  // Study management (admin)
   createStudy,
   listStudies,
   getStudy,
   updateStudy,
   deleteStudy,
-  uploadImage: uploadStudyImage,
-  getAdminStudyImages,
-  updateImage: updateStudyImage,
-  deleteImage: deleteStudyImage,
-  publishStudy,
+  activateStudy,
   closeStudy,
-  getStudyAnalytics,
-  getReliabilityMetrics,
-  getDivergenceAnalysis,
-  listStudyResponses,
+  addCaseToStudy,
+  removeCaseFromStudy,
+  reorderStudyCases,
+  listStudyRaters,
+  addStudyRater,
+  removeStudyRater,
+  getStudyRaterProgress,
+  getStudyReliabilityMetrics,
   exportStudyResponses,
-  exportDetailedResponses,
-  downloadDetailedResponsesCSV,
-  getAdminImageSignedURL,
-  // Study user management (admin)
-  listStudyUsers,
-  addStudyUser,
-  removeStudyUser,
-  // Helpers
-  getImageUrl: async (studyId: string, imageId: string) => {
-    const result = await getImageSignedURL(studyId, imageId);
-    return result.url;
-  },
-  getAdminImageUrl: async (studyId: string, imageId: string) => {
-    const result = await getAdminImageSignedURL(studyId, imageId);
-    return result.url;
-  },
-  // Cohort management (admin)
-  createCohort,
-  listCohorts,
-  getCohort,
-  updateCohort,
-  deleteCohort,
-  activateCohort,
-  closeCohort,
-  addCaseToCohort,
-  removeCaseFromCohort,
-  reorderCohortCases,
-  listCohortUsers,
-  addUserToCohort,
-  removeUserFromCohort,
-  getCohortRaterProgress,
-  getCohortReliabilityMetrics,
-  exportCohortResponses,
-  downloadCohortResponsesCSV,
+  downloadStudyResponsesCSV,
+  // Backwards compatibility (deprecated)
+  /** @deprecated Use caseApi instead */
+  listPublishedStudies,
+  /** @deprecated Use caseApi instead */
+  getPublishedStudy,
+  /** @deprecated Use caseApi instead */
+  submitStudyResponse,
 };

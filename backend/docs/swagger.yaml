@@ -1,8 +1,43 @@
 basePath: /
 definitions:
+  api.AddCaseRequest:
+    properties:
+      case_id:
+        type: string
+      case_order:
+        type: integer
+    required:
+    - case_id
+    type: object
+  api.AddStudyRaterRequest:
+    properties:
+      email:
+        type: string
+      user_id:
+        type: string
+    required:
+    - email
+    - user_id
+    type: object
   api.CreateChatSessionResponse:
     properties:
       session_id:
+        type: string
+    type: object
+  api.CreateStudyRequest:
+    properties:
+      description:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - title
+    type: object
+  api.ErrorResponse:
+    properties:
+      error:
+        example: Invalid request body
         type: string
     type: object
   api.FeedbackRequest:
@@ -74,11 +109,118 @@ definitions:
       title:
         type: string
     type: object
+  api.RaterProgressResponse:
+    properties:
+      raters:
+        items:
+          $ref: '#/definitions/domain.RaterProgress'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.ReorderCasesRequest:
+    properties:
+      case_ids:
+        items:
+          type: string
+        type: array
+    required:
+    - case_ids
+    type: object
   api.SelectOption:
     properties:
       label:
         type: string
       value:
+        type: string
+    type: object
+  api.StudyDetailResponse:
+    properties:
+      case_count:
+        description: Denormalized counters for efficient queries
+        type: integer
+      cases:
+        items:
+          $ref: '#/definitions/domain.Case'
+        type: array
+      complete_raters:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/domain.StudyStatus'
+      title:
+        type: string
+      total_responses:
+        type: integer
+      unique_raters:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  api.StudyListResponse:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      studies:
+        items:
+          $ref: '#/definitions/domain.Study'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.StudyReliabilityResponse:
+    properties:
+      ao_ota_fleiss:
+        $ref: '#/definitions/domain.FleissKappaResult'
+      bartonicek_fleiss:
+        $ref: '#/definitions/domain.FleissKappaResult'
+      calculated_at:
+        type: string
+      complete_raters:
+        description: Raters who completed all cases
+        type: integer
+      danis_weber_fleiss:
+        allOf:
+        - $ref: '#/definitions/domain.FleissKappaResult'
+        description: Fleiss' Kappa per classification system (now calculable with
+          multiple subjects!)
+      gold_standard_accuracy:
+        allOf:
+        - $ref: '#/definitions/domain.StudyGoldStandardAccuracy'
+        description: Gold standard accuracy (aggregated across all cases)
+      lauge_hansen_fleiss:
+        $ref: '#/definitions/domain.FleissKappaResult'
+      per_case_metrics:
+        description: Per-case analysis (helps identify "hard cases")
+        items:
+          $ref: '#/definitions/domain.PerCaseMetrics'
+        type: array
+      study_id:
+        type: string
+      study_title:
+        type: string
+      total_cases:
+        description: Summary counts
+        type: integer
+      total_responses:
+        type: integer
+      unique_raters:
+        type: integer
+    type: object
+  api.UpdateStudyRequest:
+    properties:
+      description:
+        type: string
+      title:
         type: string
     type: object
   api.UserProfileResponse:
@@ -91,10 +233,18 @@ definitions:
         type: string
       id:
         type: string
+      institution:
+        type: string
       provider:
         type: string
       role:
         type: string
+      specialty:
+        type: string
+      training_level:
+        type: string
+      years_experience:
+        type: integer
     type: object
   domain.AOOTAClassification:
     properties:
@@ -193,6 +343,73 @@ definitions:
     - BartonicekType2
     - BartonicekType3
     - BartonicekType4
+  domain.Case:
+    properties:
+      allow_multiple_responses:
+        description: |-
+          Single Response Control - when false, users can only submit one response
+          Note: Default is set in NewCase(), not via GORM tag (GORM omits false values with default tags)
+        type: boolean
+      case_order:
+        type: integer
+      closed_at:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        description: Admin who created the case
+        type: string
+      deadline:
+        description: Optional deadline for responses
+        type: string
+      description:
+        type: string
+      has_tac_images:
+        description: Auto-computed from images - true if any TAC images exist
+        type: boolean
+      id:
+        type: string
+      published_at:
+        type: string
+      reference_classification:
+        description: |-
+          Gold Standard / Reference Classification for validation studies
+          Stores the "correct" classification to compare user responses against
+        type: object
+      reference_input:
+        description: |-
+          Reference input (FractureInput) that produced the gold standard classification
+          Used for divergence analysis to compare answer paths
+        type: object
+      response_count:
+        description: Denormalized counters for efficient queries
+        type: integer
+      show_reference_after_submit:
+        type: boolean
+      status:
+        $ref: '#/definitions/domain.CaseStatus'
+      study_id:
+        description: Study membership - if set, this case is part of a study for multi-case
+          reliability analysis
+        type: string
+      title:
+        description: Case metadata
+        type: string
+      unique_users:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  domain.CaseStatus:
+    enum:
+    - draft
+    - published
+    - closed
+    type: string
+    x-enum-varnames:
+    - CaseStatusDraft
+    - CaseStatusPublished
+    - CaseStatusClosed
   domain.ChatAnalyticsSummary:
     properties:
       abandoned_sessions:
@@ -339,6 +556,18 @@ definitions:
       total:
         type: integer
     type: object
+  domain.ConfidenceInterval:
+    properties:
+      level:
+        description: Confidence level (e.g., 0.95 for 95% CI)
+        type: number
+      lower:
+        description: Lower bound
+        type: number
+      upper:
+        description: Upper bound
+        type: number
+    type: object
   domain.DanisWeberClassification:
     properties:
       description:
@@ -399,6 +628,30 @@ definitions:
     - FibularLevelInfrasindesmal
     - FibularLevelTransindesmal
     - FibularLevelSuprasindesmal
+  domain.FleissKappaResult:
+    properties:
+      confidence_interval:
+        allOf:
+        - $ref: '#/definitions/domain.ConfidenceInterval'
+        description: Confidence interval (optional)
+      interpretation:
+        description: Uses KappaInterpretation()
+        type: string
+      kappa:
+        type: number
+      note:
+        description: Note explaining any limitations or issues
+        type: string
+      num_categories:
+        description: Number of classification categories
+        type: integer
+      num_raters:
+        description: Number of complete raters
+        type: integer
+      num_subjects:
+        description: Matrix dimensions
+        type: integer
+    type: object
   domain.FractureInput:
     properties:
       fibula_infrasindesmal_transverse:
@@ -542,6 +795,33 @@ definitions:
     x-enum-varnames:
     - MedialMorphologyOblique
     - MedialMorphologyTransverse
+  domain.PerCaseMetrics:
+    properties:
+      ao_ota_agreement:
+        type: number
+      bartonicek_agreement:
+        description: Optional, requires CT
+        type: number
+      case_id:
+        type: string
+      case_order:
+        type: integer
+      case_title:
+        type: string
+      danis_weber_agreement:
+        description: Per-system agreement (percentage)
+        type: number
+      gold_standard_match_rate:
+        description: Gold standard match rate (if reference set for this case)
+        type: number
+      is_low_agreement:
+        description: Identifies cases with low agreement (potential "hard cases")
+        type: boolean
+      lauge_hansen_agreement:
+        type: number
+      response_count:
+        type: integer
+    type: object
   domain.PosteriorFractureType:
     enum:
     - extraincisural
@@ -566,6 +846,94 @@ definitions:
     - PosteriorPosterolateral
     - PosteriorPosteromedialPosterolateral
     - PosteriorLargePosterolateral
+  domain.RaterProgress:
+    properties:
+      cases_completed:
+        type: integer
+      display_name:
+        type: string
+      is_complete:
+        type: boolean
+      last_response_at:
+        type: string
+      total_cases:
+        type: integer
+      user_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.Study:
+    properties:
+      case_count:
+        description: Denormalized counters for efficient queries
+        type: integer
+      complete_raters:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/domain.StudyStatus'
+      title:
+        type: string
+      total_responses:
+        type: integer
+      unique_raters:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  domain.StudyGoldStandardAccuracy:
+    properties:
+      ao_ota_accuracy:
+        type: number
+      bartonicek_accuracy:
+        type: number
+      cases_with_reference:
+        type: integer
+      danis_weber_accuracy:
+        description: Per-system accuracy (averaged across cases)
+        type: number
+      lauge_hansen_accuracy:
+        type: number
+      overall_accuracy:
+        type: number
+      total_comparisons:
+        type: integer
+    type: object
+  domain.StudyRater:
+    properties:
+      cases_completed:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: string
+      last_response_at:
+        type: string
+      study_id:
+        type: string
+      user_email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.StudyStatus:
+    enum:
+    - draft
+    - active
+    - closed
+    type: string
+    x-enum-varnames:
+    - StudyStatusDraft
+    - StudyStatusActive
+    - StudyStatusClosed
   domain.SuprasindesmalType:
     enum:
     - simple_diaphyseal
@@ -675,6 +1043,460 @@ info:
   title: Anklyze API
   version: "1.0"
 paths:
+  /api/admin/studies:
+    get:
+      parameters:
+      - description: Filter by status (draft, active, closed)
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.StudyListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: List studies
+      tags:
+      - Admin Studies
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Study details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateStudyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Study'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Create a new study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}:
+    delete:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Delete a study
+      tags:
+      - Admin Studies
+    get:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.StudyDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get study details
+      tags:
+      - Admin Studies
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateStudyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Study'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Update a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/activate:
+    put:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Study'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Activate a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/cases:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Case details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddCaseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Case'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Add a case to a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/cases/{caseId}:
+    delete:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Case ID
+        in: path
+        name: caseId
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Remove a case from a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/cases/reorder:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Ordered list of case IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.ReorderCasesRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Reorder cases in a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/close:
+    put:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Study'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Close a study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/progress:
+    get:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.RaterProgressResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get rater progress
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/raters:
+    get:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.StudyRater'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: List study raters
+      tags:
+      - Admin Studies
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddStudyRaterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.StudyRater'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Add rater to study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/raters/{userId}:
+    delete:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Remove rater from study
+      tags:
+      - Admin Studies
+  /api/admin/studies/{id}/reliability:
+    get:
+      parameters:
+      - description: Study ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.StudyReliabilityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get study reliability metrics
+      tags:
+      - Admin Studies
   /api/analytics/chat/confidence:
     get:
       description: Returns distribution of extraction confidence levels

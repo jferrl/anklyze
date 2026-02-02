@@ -19,7 +19,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Progress } from '../../components/ui/progress';
-import { studyApi } from '../../services/studyApi';
+import { caseApi } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -184,24 +184,24 @@ function PathDistributionChart({ distribution, correctPath }: { distribution: Re
   );
 }
 
-export function StudyDivergencePage() {
+export function CaseDivergencePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  const { data: study, isLoading: isLoadingStudy } = useQuery({
-    queryKey: ['study', id],
-    queryFn: () => studyApi.getStudy(id!),
+  const { data: caseData, isLoading: isLoadingCase } = useQuery({
+    queryKey: ['case', id],
+    queryFn: () => caseApi.getCase(id!),
     enabled: !!id,
   });
 
   const { data: report, isLoading: isLoadingReport, error: reportError } = useQuery({
-    queryKey: ['study-divergence', id],
-    queryFn: () => studyApi.getDivergenceAnalysis(id!),
+    queryKey: ['case-divergence', id],
+    queryFn: () => caseApi.getDivergenceAnalysis(id!),
     enabled: !!id,
   });
 
-  const isLoading = isLoadingStudy || isLoadingReport;
+  const isLoading = isLoadingCase || isLoadingReport;
 
   if (isLoading) {
     return (
@@ -221,7 +221,7 @@ export function StudyDivergencePage() {
     );
   }
 
-  if (!study) {
+  if (!caseData) {
     return (
       <div className="min-h-screen bg-mesh flex items-center justify-center p-4">
         <div className="chart-card max-w-md w-full text-center">
@@ -229,14 +229,14 @@ export function StudyDivergencePage() {
             <FileText className="w-8 h-8 text-muted-foreground/50" />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            {t('admin.studies.notFound')}
+            {t('admin.cases.notFound')}
           </h2>
           <p className="text-muted-foreground mb-6">
-            {t('admin.studies.notFoundDescription')}
+            {t('admin.cases.notFoundDescription')}
           </p>
-          <Button onClick={() => navigate('/admin/studies')} className="gap-2">
+          <Button onClick={() => navigate('/admin/cases')} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
-            {t('admin.studies.backToList')}
+            {t('admin.cases.backToList')}
           </Button>
         </div>
       </div>
@@ -255,18 +255,18 @@ export function StudyDivergencePage() {
           <header className="mb-8">
             <div className="space-y-3">
               <button
-                onClick={() => navigate('/admin/studies')}
+                onClick={() => navigate('/admin/cases')}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                {t('admin.studies.backToList')}
+                {t('admin.cases.backToList')}
               </button>
 
               <div>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
                   {t('admin.divergence.title')}
                 </h1>
-                <p className="text-muted-foreground mt-1">{study.title}</p>
+                <p className="text-muted-foreground mt-1">{caseData.title}</p>
               </div>
             </div>
           </header>
@@ -287,7 +287,7 @@ export function StudyDivergencePage() {
               </p>
               {needsGoldStandard && (
                 <Button
-                  onClick={() => navigate(`/admin/studies/${id}/edit`)}
+                  onClick={() => navigate(`/admin/cases/${id}/edit`)}
                   variant="outline"
                   className="gap-2"
                 >
@@ -315,31 +315,31 @@ export function StudyDivergencePage() {
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div className="space-y-3">
               <button
-                onClick={() => navigate('/admin/studies')}
+                onClick={() => navigate('/admin/cases')}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                {t('admin.studies.backToList')}
+                {t('admin.cases.backToList')}
               </button>
 
               <div>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
                   {t('admin.divergence.title')}
                 </h1>
-                <p className="text-muted-foreground mt-1">{study.title}</p>
+                <p className="text-muted-foreground mt-1">{caseData.title}</p>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
                   <Badge
                     variant="outline"
                     className={cn(
                       'font-medium',
-                      study.status === 'published' &&
+                      caseData.status === 'published' &&
                         'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                      study.status === 'closed' &&
+                      caseData.status === 'closed' &&
                         'border-amber-500/50 text-amber-600 dark:text-amber-400',
-                      study.status === 'draft' && 'border-muted-foreground/50'
+                      caseData.status === 'draft' && 'border-muted-foreground/50'
                     )}
                   >
-                    {t(`studies.status.${study.status}`)}
+                    {t(`cases.status.${caseData.status}`)}
                   </Badge>
                   <Badge
                     variant="outline"
@@ -354,7 +354,7 @@ export function StudyDivergencePage() {
 
             <div className="flex gap-3">
               <Button
-                onClick={() => navigate(`/admin/studies/${id}/reliability`)}
+                onClick={() => navigate(`/admin/cases/${id}/reliability`)}
                 variant="outline"
                 className="gap-2"
               >

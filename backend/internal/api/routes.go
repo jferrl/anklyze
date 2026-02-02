@@ -174,32 +174,32 @@ func setupPublicRoutes(
 	}
 }
 
-// SetupStudyRoutes configures study-related routes.
+// SetupCaseRoutes configures case-related routes.
 // This should be called after SetupRoutes.
-func SetupStudyRoutes(
+func SetupCaseRoutes(
 	router *gin.Engine,
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	userRepoForProfile repository.UserRepository,
+	caseRepo repository.CaseRepository,
+	responseRepo repository.CaseResponseRepository,
+	analyticsRepo repository.CaseAnalyticsRepository,
 	studyRepo repository.StudyRepository,
-	responseRepo repository.StudyResponseRepository,
-	analyticsRepo repository.StudyAnalyticsRepository,
-	cohortRepo repository.CohortRepository,
-	cohortResponseRepo repository.CohortResponseRepository,
+	studyResponseRepo repository.StudyResponseRepository,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
 ) {
-	// Create study handler with statistics service
+	// Create case handler with statistics service
 	var statsServicePtr *StatisticsService
 	if statsService != nil {
 		var s StatisticsService = statsService
 		statsServicePtr = &s
 	}
-	studyHandler := NewStudyHandler(studyRepo, responseRepo, analyticsRepo, cohortRepo, cohortResponseRepo, userRepo, storage, statsServicePtr)
+	caseHandler := NewCaseHandler(caseRepo, responseRepo, analyticsRepo, studyRepo, studyResponseRepo, userRepo, storage, statsServicePtr)
 
 	// Add divergence service
-	divergenceService := service.NewDivergenceService(responseRepo, studyRepo)
-	studyHandler.WithDivergenceService(divergenceService)
+	divergenceService := service.NewDivergenceService(responseRepo, caseRepo)
+	caseHandler.WithDivergenceService(divergenceService)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -207,30 +207,30 @@ func SetupStudyRoutes(
 	api := router.Group("/api")
 
 	if authValidator != nil {
-		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler, userHandler)
+		setupProtectedCaseRoutes(api, authValidator, userRepo, caseHandler, userHandler)
 	} else {
-		setupPublicStudyRoutes(api, studyHandler, userHandler)
+		setupPublicCaseRoutes(api, caseHandler, userHandler)
 	}
 }
 
-// setupProtectedStudyRoutes configures study routes with authentication.
-func setupProtectedStudyRoutes(
+// setupProtectedCaseRoutes configures case routes with authentication.
+func setupProtectedCaseRoutes(
 	api *gin.RouterGroup,
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
-	studyHandler *StudyHandler,
+	caseHandler *CaseHandler,
 	userHandler *UserHandler,
 ) {
-	// User study routes - require authentication
-	studies := api.Group("/studies")
-	studies.Use(auth.AuthMiddleware(authValidator))
-	studies.Use(auth.UserSyncMiddleware(userRepo))
+	// User case routes - require authentication
+	cases := api.Group("/cases")
+	cases.Use(auth.AuthMiddleware(authValidator))
+	cases.Use(auth.UserSyncMiddleware(userRepo))
 	{
-		studies.GET("", studyHandler.ListPublishedStudies)
-		studies.GET("/:id", studyHandler.GetPublishedStudy)
-		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
-		studies.POST("/:id/responses", studyHandler.SubmitResponse)
-		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+		cases.GET("", caseHandler.ListPublishedCases)
+		cases.GET("/:id", caseHandler.GetPublishedCase)
+		cases.GET("/:id/images/:imageId/url", caseHandler.GetImageSignedURL)
+		cases.POST("/:id/responses", caseHandler.SubmitResponse)
+		cases.GET("/:id/my-responses", caseHandler.GetMyResponses)
 	}
 
 	// User profile routes - require authentication
@@ -242,53 +242,53 @@ func setupProtectedStudyRoutes(
 		profile.PUT("/profile", userHandler.UpdateUserProfile)
 	}
 
-	// Admin study routes - require admin role
-	adminStudies := api.Group("/admin/studies")
-	adminStudies.Use(auth.AuthMiddleware(authValidator))
-	adminStudies.Use(auth.UserSyncMiddleware(userRepo))
-	adminStudies.Use(auth.RequireRole(auth.RoleAdmin))
+	// Admin case routes - require admin role
+	adminCases := api.Group("/admin/cases")
+	adminCases.Use(auth.AuthMiddleware(authValidator))
+	adminCases.Use(auth.UserSyncMiddleware(userRepo))
+	adminCases.Use(auth.RequireRole(auth.RoleAdmin))
 	{
-		adminStudies.POST("", studyHandler.CreateStudy)
-		adminStudies.GET("", studyHandler.ListStudies)
-		adminStudies.GET("/:id", studyHandler.GetStudy)
-		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
-		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
-		adminStudies.POST("/:id/images", studyHandler.UploadImage)
-		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
-		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
-		adminStudies.PATCH("/:id/images/:imageId", studyHandler.UpdateImage)
-		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
-		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
-		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
-		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
-		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
-		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
-		adminStudies.GET("/:id/divergence", studyHandler.GetDivergenceAnalysis)
-		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
-		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
-		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)
+		adminCases.POST("", caseHandler.CreateCase)
+		adminCases.GET("", caseHandler.ListCases)
+		adminCases.GET("/:id", caseHandler.GetCase)
+		adminCases.PUT("/:id", caseHandler.UpdateCase)
+		adminCases.DELETE("/:id", caseHandler.DeleteCase)
+		adminCases.POST("/:id/images", caseHandler.UploadImage)
+		adminCases.GET("/:id/images", caseHandler.GetAdminCaseImages)
+		adminCases.GET("/:id/images/:imageId/url", caseHandler.GetAdminImageSignedURL)
+		adminCases.PATCH("/:id/images/:imageId", caseHandler.UpdateImage)
+		adminCases.DELETE("/:id/images/:imageId", caseHandler.DeleteImage)
+		adminCases.PUT("/:id/images/reorder", caseHandler.ReorderImages)
+		adminCases.PUT("/:id/publish", caseHandler.PublishCase)
+		adminCases.PUT("/:id/close", caseHandler.CloseCase)
+		adminCases.GET("/:id/analytics", caseHandler.GetCaseAnalytics)
+		adminCases.GET("/:id/reliability", caseHandler.GetReliabilityMetrics)
+		adminCases.GET("/:id/divergence", caseHandler.GetDivergenceAnalysis)
+		adminCases.GET("/:id/responses", caseHandler.ListCaseResponses)
+		adminCases.GET("/:id/export", caseHandler.ExportResponses)
+		adminCases.GET("/:id/export/detailed", caseHandler.ExportDetailedResponses)
 
 		// User access management
-		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
-		adminStudies.POST("/:id/users", studyHandler.AddStudyUser)
-		adminStudies.DELETE("/:id/users/:userId", studyHandler.RemoveStudyUser)
+		adminCases.GET("/:id/users", caseHandler.ListCaseUsers)
+		adminCases.POST("/:id/users", caseHandler.AddCaseUser)
+		adminCases.DELETE("/:id/users/:userId", caseHandler.RemoveCaseUser)
 	}
 }
 
-// setupPublicStudyRoutes configures study routes without authentication (development mode).
-func setupPublicStudyRoutes(
+// setupPublicCaseRoutes configures case routes without authentication (development mode).
+func setupPublicCaseRoutes(
 	api *gin.RouterGroup,
-	studyHandler *StudyHandler,
+	caseHandler *CaseHandler,
 	userHandler *UserHandler,
 ) {
-	// User study routes
-	studies := api.Group("/studies")
+	// User case routes
+	cases := api.Group("/cases")
 	{
-		studies.GET("", studyHandler.ListPublishedStudies)
-		studies.GET("/:id", studyHandler.GetPublishedStudy)
-		studies.GET("/:id/images/:imageId/url", studyHandler.GetImageSignedURL)
-		studies.POST("/:id/responses", studyHandler.SubmitResponse)
-		studies.GET("/:id/my-responses", studyHandler.GetMyResponses)
+		cases.GET("", caseHandler.ListPublishedCases)
+		cases.GET("/:id", caseHandler.GetPublishedCase)
+		cases.GET("/:id/images/:imageId/url", caseHandler.GetImageSignedURL)
+		cases.POST("/:id/responses", caseHandler.SubmitResponse)
+		cases.GET("/:id/my-responses", caseHandler.GetMyResponses)
 	}
 
 	// User profile routes (development mode)
@@ -298,130 +298,130 @@ func setupPublicStudyRoutes(
 		profile.PUT("/profile", userHandler.UpdateUserProfile)
 	}
 
-	// Admin study routes
-	adminStudies := api.Group("/admin/studies")
+	// Admin case routes
+	adminCases := api.Group("/admin/cases")
 	{
+		adminCases.POST("", caseHandler.CreateCase)
+		adminCases.GET("", caseHandler.ListCases)
+		adminCases.GET("/:id", caseHandler.GetCase)
+		adminCases.PUT("/:id", caseHandler.UpdateCase)
+		adminCases.DELETE("/:id", caseHandler.DeleteCase)
+		adminCases.POST("/:id/images", caseHandler.UploadImage)
+		adminCases.GET("/:id/images", caseHandler.GetAdminCaseImages)
+		adminCases.GET("/:id/images/:imageId/url", caseHandler.GetAdminImageSignedURL)
+		adminCases.PATCH("/:id/images/:imageId", caseHandler.UpdateImage)
+		adminCases.DELETE("/:id/images/:imageId", caseHandler.DeleteImage)
+		adminCases.PUT("/:id/images/reorder", caseHandler.ReorderImages)
+		adminCases.PUT("/:id/publish", caseHandler.PublishCase)
+		adminCases.PUT("/:id/close", caseHandler.CloseCase)
+		adminCases.GET("/:id/analytics", caseHandler.GetCaseAnalytics)
+		adminCases.GET("/:id/reliability", caseHandler.GetReliabilityMetrics)
+		adminCases.GET("/:id/divergence", caseHandler.GetDivergenceAnalysis)
+		adminCases.GET("/:id/responses", caseHandler.ListCaseResponses)
+		adminCases.GET("/:id/export", caseHandler.ExportResponses)
+		adminCases.GET("/:id/export/detailed", caseHandler.ExportDetailedResponses)
+
+		// User access management
+		adminCases.GET("/:id/users", caseHandler.ListCaseUsers)
+		adminCases.POST("/:id/users", caseHandler.AddCaseUser)
+		adminCases.DELETE("/:id/users/:userId", caseHandler.RemoveCaseUser)
+	}
+}
+
+// SetupStudyRoutes configures study-related routes.
+// This should be called after SetupRoutes.
+func SetupStudyRoutes(
+	router *gin.Engine,
+	authValidator *auth.Validator,
+	userRepo auth.UserService,
+	studyRepo repository.StudyRepository,
+	studyResponseRepo repository.StudyResponseRepository,
+	caseRepo repository.CaseRepository,
+	statsService *service.StatisticsService,
+) {
+	studyHandler := NewStudyHandler(studyRepo, studyResponseRepo, caseRepo, userRepo, statsService)
+
+	api := router.Group("/api")
+
+	if authValidator != nil {
+		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler)
+	} else {
+		setupPublicStudyRoutes(api, studyHandler)
+	}
+}
+
+// setupProtectedStudyRoutes configures study routes with authentication.
+func setupProtectedStudyRoutes(
+	api *gin.RouterGroup,
+	authValidator *auth.Validator,
+	userRepo auth.UserService,
+	studyHandler *StudyHandler,
+) {
+	// Admin study routes - require admin role
+	adminStudies := api.Group("/admin/studies")
+	adminStudies.Use(auth.AuthMiddleware(authValidator))
+	adminStudies.Use(auth.UserSyncMiddleware(userRepo))
+	adminStudies.Use(auth.RequireRole(auth.RoleAdmin))
+	{
+		// CRUD
 		adminStudies.POST("", studyHandler.CreateStudy)
 		adminStudies.GET("", studyHandler.ListStudies)
 		adminStudies.GET("/:id", studyHandler.GetStudy)
 		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
 		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
-		adminStudies.POST("/:id/images", studyHandler.UploadImage)
-		adminStudies.GET("/:id/images", studyHandler.GetAdminStudyImages)
-		adminStudies.GET("/:id/images/:imageId/url", studyHandler.GetAdminImageSignedURL)
-		adminStudies.PATCH("/:id/images/:imageId", studyHandler.UpdateImage)
-		adminStudies.DELETE("/:id/images/:imageId", studyHandler.DeleteImage)
-		adminStudies.PUT("/:id/images/reorder", studyHandler.ReorderImages)
-		adminStudies.PUT("/:id/publish", studyHandler.PublishStudy)
+
+		// Case management
+		adminStudies.POST("/:id/cases", studyHandler.AddCase)
+		adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
+		adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
+
+		// Rater management
+		adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
+		adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
+		adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
+		adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
+
+		// Status
+		adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
 		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
-		adminStudies.GET("/:id/analytics", studyHandler.GetStudyAnalytics)
-		adminStudies.GET("/:id/reliability", studyHandler.GetReliabilityMetrics)
-		adminStudies.GET("/:id/divergence", studyHandler.GetDivergenceAnalysis)
-		adminStudies.GET("/:id/responses", studyHandler.ListStudyResponses)
-		adminStudies.GET("/:id/export", studyHandler.ExportResponses)
-		adminStudies.GET("/:id/export/detailed", studyHandler.ExportDetailedResponses)
-
-		// User access management
-		adminStudies.GET("/:id/users", studyHandler.ListStudyUsers)
-		adminStudies.POST("/:id/users", studyHandler.AddStudyUser)
-		adminStudies.DELETE("/:id/users/:userId", studyHandler.RemoveStudyUser)
-	}
-}
-
-// SetupCohortRoutes configures cohort-related routes.
-// This should be called after SetupRoutes.
-func SetupCohortRoutes(
-	router *gin.Engine,
-	authValidator *auth.Validator,
-	userRepo auth.UserService,
-	cohortRepo repository.CohortRepository,
-	cohortResponseRepo repository.CohortResponseRepository,
-	studyRepo repository.StudyRepository,
-	statsService *service.StatisticsService,
-) {
-	cohortHandler := NewCohortHandler(cohortRepo, cohortResponseRepo, studyRepo, userRepo, statsService)
-
-	api := router.Group("/api")
-
-	if authValidator != nil {
-		setupProtectedCohortRoutes(api, authValidator, userRepo, cohortHandler)
-	} else {
-		setupPublicCohortRoutes(api, cohortHandler)
-	}
-}
-
-// setupProtectedCohortRoutes configures cohort routes with authentication.
-func setupProtectedCohortRoutes(
-	api *gin.RouterGroup,
-	authValidator *auth.Validator,
-	userRepo auth.UserService,
-	cohortHandler *CohortHandler,
-) {
-	// Admin cohort routes - require admin role
-	adminCohorts := api.Group("/admin/cohorts")
-	adminCohorts.Use(auth.AuthMiddleware(authValidator))
-	adminCohorts.Use(auth.UserSyncMiddleware(userRepo))
-	adminCohorts.Use(auth.RequireRole(auth.RoleAdmin))
-	{
-		// CRUD
-		adminCohorts.POST("", cohortHandler.CreateCohort)
-		adminCohorts.GET("", cohortHandler.ListCohorts)
-		adminCohorts.GET("/:id", cohortHandler.GetCohort)
-		adminCohorts.PUT("/:id", cohortHandler.UpdateCohort)
-		adminCohorts.DELETE("/:id", cohortHandler.DeleteCohort)
-
-		// Case management
-		adminCohorts.POST("/:id/cases", cohortHandler.AddCase)
-		adminCohorts.DELETE("/:id/cases/:studyId", cohortHandler.RemoveCase)
-		adminCohorts.PUT("/:id/cases/reorder", cohortHandler.ReorderCases)
-
-		// User management
-		adminCohorts.GET("/:id/users", cohortHandler.ListCohortUsers)
-		adminCohorts.POST("/:id/users", cohortHandler.AddCohortUser)
-		adminCohorts.DELETE("/:id/users/:userId", cohortHandler.RemoveCohortUser)
-		adminCohorts.GET("/:id/progress", cohortHandler.GetRaterProgress)
-
-		// Status
-		adminCohorts.PUT("/:id/activate", cohortHandler.ActivateCohort)
-		adminCohorts.PUT("/:id/close", cohortHandler.CloseCohort)
 
 		// Analytics
-		adminCohorts.GET("/:id/reliability", cohortHandler.GetCohortReliabilityMetrics)
+		adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
 	}
 }
 
-// setupPublicCohortRoutes configures cohort routes without authentication (development mode).
-func setupPublicCohortRoutes(
+// setupPublicStudyRoutes configures study routes without authentication (development mode).
+func setupPublicStudyRoutes(
 	api *gin.RouterGroup,
-	cohortHandler *CohortHandler,
+	studyHandler *StudyHandler,
 ) {
-	// Admin cohort routes (development mode - no auth)
-	adminCohorts := api.Group("/admin/cohorts")
+	// Admin study routes (development mode - no auth)
+	adminStudies := api.Group("/admin/studies")
 	{
 		// CRUD
-		adminCohorts.POST("", cohortHandler.CreateCohort)
-		adminCohorts.GET("", cohortHandler.ListCohorts)
-		adminCohorts.GET("/:id", cohortHandler.GetCohort)
-		adminCohorts.PUT("/:id", cohortHandler.UpdateCohort)
-		adminCohorts.DELETE("/:id", cohortHandler.DeleteCohort)
+		adminStudies.POST("", studyHandler.CreateStudy)
+		adminStudies.GET("", studyHandler.ListStudies)
+		adminStudies.GET("/:id", studyHandler.GetStudy)
+		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
+		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
 
 		// Case management
-		adminCohorts.POST("/:id/cases", cohortHandler.AddCase)
-		adminCohorts.DELETE("/:id/cases/:studyId", cohortHandler.RemoveCase)
-		adminCohorts.PUT("/:id/cases/reorder", cohortHandler.ReorderCases)
+		adminStudies.POST("/:id/cases", studyHandler.AddCase)
+		adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
+		adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
 
-		// User management
-		adminCohorts.GET("/:id/users", cohortHandler.ListCohortUsers)
-		adminCohorts.POST("/:id/users", cohortHandler.AddCohortUser)
-		adminCohorts.DELETE("/:id/users/:userId", cohortHandler.RemoveCohortUser)
-		adminCohorts.GET("/:id/progress", cohortHandler.GetRaterProgress)
+		// Rater management
+		adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
+		adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
+		adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
+		adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
 
 		// Status
-		adminCohorts.PUT("/:id/activate", cohortHandler.ActivateCohort)
-		adminCohorts.PUT("/:id/close", cohortHandler.CloseCohort)
+		adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
+		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 
 		// Analytics
-		adminCohorts.GET("/:id/reliability", cohortHandler.GetCohortReliabilityMetrics)
+		adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
 	}
 }
 

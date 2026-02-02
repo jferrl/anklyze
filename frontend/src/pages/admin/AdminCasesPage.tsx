@@ -10,14 +10,14 @@ import {
   Pencil,
   Trash2,
   BarChart3,
-  Play,
+  TrendingUp,
+  Send,
   Lock,
-  FolderKanban,
+  FileText,
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Users,
-  FileText,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -54,60 +54,66 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { studyApi } from '../../services/studyApi';
-import type { StudyCohort, CohortStatus } from '../../types/study';
+import { caseApi } from '../../services/studyApi';
+import type { Case, CaseStatus } from '../../types/study';
 import { cn } from '@/lib/utils';
 
-export function AdminCohortsPage() {
+export function AdminCasesPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [statusFilter, setStatusFilter] = useState<CohortStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-cohorts', statusFilter, page],
+    queryKey: ['admin-cases', statusFilter, page],
     queryFn: () =>
-      studyApi.listCohorts(
+      caseApi.listCases(
         statusFilter === 'all' ? undefined : statusFilter,
         page,
         limit
       ),
-    staleTime: 0,
-    refetchOnMount: 'always',
+    staleTime: 0, // Always consider data stale
+    refetchOnMount: 'always', // Refetch when component mounts
   });
 
   const deleteMutation = useMutation({
-    mutationFn: studyApi.deleteCohort,
+    mutationFn: caseApi.deleteCase,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
       setDeleteId(null);
     },
   });
 
-  const activateMutation = useMutation({
-    mutationFn: studyApi.activateCohort,
+  const publishMutation = useMutation({
+    mutationFn: caseApi.publishCase,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
     },
   });
 
   const closeMutation = useMutation({
-    mutationFn: studyApi.closeCohort,
+    mutationFn: caseApi.closeCase,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cohorts'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
     },
   });
 
-  const cohorts = data?.cohorts ?? [];
+  const cases = data?.cases ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
-  const filteredCohorts = cohorts.filter((cohort) =>
-    cohort.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCases = cases.filter((caseItem) =>
+    caseItem.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const formatDate = (dateString?: string) => {
@@ -117,6 +123,11 @@ export function AdminCohortsPage() {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const isDeadlinePassed = (deadline?: string) => {
+    if (!deadline) return false;
+    return new Date(deadline) < new Date();
   };
 
   if (isLoading) {
@@ -130,7 +141,7 @@ export function AdminCohortsPage() {
             <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
           </div>
           <p className="text-muted-foreground mt-4 font-medium">
-            {t('common.loading', 'Loading cohorts...')}
+            {t('common.loading', 'Loading cases...')}
           </p>
         </div>
       </div>
@@ -145,19 +156,19 @@ export function AdminCohortsPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                {t('admin.cohorts.title')}
+                {t('admin.cases.title')}
               </h1>
               <p className="text-muted-foreground mt-1">
-                {t('admin.cohorts.subtitle')}
+                {t('admin.cases.subtitle')}
               </p>
             </div>
             <Button
-              onClick={() => navigate('/admin/cohorts/new')}
+              onClick={() => navigate('/admin/cases/new')}
               size="lg"
               className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
             >
-              <Plus className="w-4 h-4" />
-              {t('admin.cohorts.create')}
+              <Sparkles className="w-4 h-4" />
+              {t('admin.cases.create')}
             </Button>
           </div>
         </header>
@@ -168,7 +179,7 @@ export function AdminCohortsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('admin.cohorts.search')}
+                placeholder={t('admin.cases.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 bg-muted/30 border-border/50 focus:bg-background"
@@ -176,54 +187,56 @@ export function AdminCohortsPage() {
             </div>
             <Select
               value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as CohortStatus | 'all')}
+              onValueChange={(value) => setStatusFilter(value as CaseStatus | 'all')}
             >
               <SelectTrigger className="w-full sm:w-[180px] bg-muted/30 border-border/50">
-                <SelectValue placeholder={t('admin.cohorts.filterStatus')} />
+                <SelectValue placeholder={t('admin.cases.filterStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('admin.cohorts.allStatuses')}</SelectItem>
-                <SelectItem value="draft">{t('admin.cohorts.status.draft')}</SelectItem>
-                <SelectItem value="active">{t('admin.cohorts.status.active')}</SelectItem>
-                <SelectItem value="closed">{t('admin.cohorts.status.closed')}</SelectItem>
+                <SelectItem value="all">{t('admin.cases.allStatuses')}</SelectItem>
+                <SelectItem value="draft">{t('cases.status.draft')}</SelectItem>
+                <SelectItem value="published">{t('cases.status.published')}</SelectItem>
+                <SelectItem value="closed">{t('cases.status.closed')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Cohorts Table */}
-        {filteredCohorts.length === 0 ? (
+        {/* Cases Table */}
+        {filteredCases.length === 0 ? (
           <div className="chart-card text-center py-16">
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-              <FolderKanban className="w-8 h-8 text-muted-foreground/50" />
+              <FileText className="w-8 h-8 text-muted-foreground/50" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t('admin.cohorts.noCohorts')}
+              {t('admin.cases.noCases')}
             </h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              {t('admin.cohorts.noCohortsDesc')}
+              {t('admin.cases.noCasesDesc')}
             </p>
-            <Button onClick={() => navigate('/admin/cohorts/new')} className="gap-2">
+            <Button onClick={() => navigate('/admin/cases/new')} className="gap-2">
               <Plus className="h-4 w-4" />
-              {t('admin.cohorts.createFirst')}
+              {t('admin.cases.createFirst')}
             </Button>
           </div>
         ) : (
           <>
             {/* Mobile: Card layout */}
             <div className="md:hidden space-y-3">
-              {filteredCohorts.map((cohort, index) => (
-                <CohortCard
-                  key={cohort.id}
-                  cohort={cohort}
+              {filteredCases.map((caseItem, index) => (
+                <CaseCard
+                  key={caseItem.id}
+                  caseItem={caseItem}
                   index={index}
                   formatDate={formatDate}
-                  onView={() => navigate(`/admin/cohorts/${cohort.id}`)}
-                  onEdit={() => navigate(`/admin/cohorts/${cohort.id}/edit`)}
-                  onDelete={() => setDeleteId(cohort.id)}
-                  onActivate={() => activateMutation.mutate(cohort.id)}
-                  onClose={() => closeMutation.mutate(cohort.id)}
-                  onViewReliability={() => navigate(`/admin/cohorts/${cohort.id}/reliability`)}
+                  isDeadlinePassed={isDeadlinePassed}
+                  onView={() => navigate(`/cases/${caseItem.id}`)}
+                  onEdit={() => navigate(`/admin/cases/${caseItem.id}/edit`)}
+                  onDelete={() => setDeleteId(caseItem.id)}
+                  onPublish={() => publishMutation.mutate(caseItem.id)}
+                  onClose={() => closeMutation.mutate(caseItem.id)}
+                  onViewAnalytics={() => navigate(`/admin/cases/${caseItem.id}/analytics`)}
+                  onViewDivergence={() => navigate(`/admin/cases/${caseItem.id}/divergence`)}
                   t={t}
                 />
               ))}
@@ -234,40 +247,39 @@ export function AdminCohortsPage() {
               <Table className="table-fixed">
                 <TableHeader>
                   <TableRow className="border-border/50 hover:bg-transparent">
-                    <TableHead className="w-[40%] text-muted-foreground font-medium">
-                      {t('admin.cohorts.table.title')}
+                    <TableHead className="w-[45%] text-muted-foreground font-medium">
+                      {t('admin.cases.table.title')}
                     </TableHead>
-                    <TableHead className="w-[90px] text-muted-foreground font-medium">
-                      {t('admin.cohorts.table.status')}
+                    <TableHead className="w-[100px] text-muted-foreground font-medium">
+                      {t('admin.cases.table.status')}
                     </TableHead>
-                    <TableHead className="w-[70px] text-center text-muted-foreground font-medium">
-                      {t('admin.cohorts.table.cases')}
-                    </TableHead>
-                    <TableHead className="w-[70px] text-center text-muted-foreground font-medium">
-                      {t('admin.cohorts.table.raters')}
-                    </TableHead>
-                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.cohorts.table.complete')}
+                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium">
+                      {t('admin.cases.table.responses')}
                     </TableHead>
                     <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.cohorts.table.created')}
+                      {t('admin.cases.table.created')}
+                    </TableHead>
+                    <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
+                      {t('admin.cases.table.deadline')}
                     </TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredCohorts.map((cohort, index) => (
-                    <CohortRow
-                      key={cohort.id}
-                      cohort={cohort}
+                  {filteredCases.map((caseItem, index) => (
+                    <CaseRow
+                      key={caseItem.id}
+                      caseItem={caseItem}
                       index={index}
                       formatDate={formatDate}
-                      onView={() => navigate(`/admin/cohorts/${cohort.id}`)}
-                      onEdit={() => navigate(`/admin/cohorts/${cohort.id}/edit`)}
-                      onDelete={() => setDeleteId(cohort.id)}
-                      onActivate={() => activateMutation.mutate(cohort.id)}
-                      onClose={() => closeMutation.mutate(cohort.id)}
-                      onViewReliability={() => navigate(`/admin/cohorts/${cohort.id}/reliability`)}
+                      isDeadlinePassed={isDeadlinePassed}
+                      onView={() => navigate(`/cases/${caseItem.id}`)}
+                      onEdit={() => navigate(`/admin/cases/${caseItem.id}/edit`)}
+                      onDelete={() => setDeleteId(caseItem.id)}
+                      onPublish={() => publishMutation.mutate(caseItem.id)}
+                      onClose={() => closeMutation.mutate(caseItem.id)}
+                      onViewAnalytics={() => navigate(`/admin/cases/${caseItem.id}/analytics`)}
+                      onViewDivergence={() => navigate(`/admin/cases/${caseItem.id}/divergence`)}
                       t={t}
                     />
                   ))}
@@ -281,7 +293,7 @@ export function AdminCohortsPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-sm text-muted-foreground">
-              {t('admin.cohorts.table.showing', {
+              {t('admin.cases.table.showing', {
                 from: (page - 1) * limit + 1,
                 to: Math.min(page * limit, total),
                 total,
@@ -318,9 +330,9 @@ export function AdminCohortsPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.cohorts.deleteConfirm.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.cases.deleteConfirm.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.cohorts.deleteConfirm.description')}
+              {t('admin.cases.deleteConfirm.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -338,31 +350,35 @@ export function AdminCohortsPage() {
   );
 }
 
-interface CohortRowProps {
-  cohort: StudyCohort;
+interface CaseRowProps {
+  caseItem: Case;
   index: number;
   formatDate: (date?: string) => string;
+  isDeadlinePassed: (deadline?: string) => boolean;
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  onActivate: () => void;
+  onPublish: () => void;
   onClose: () => void;
-  onViewReliability: () => void;
+  onViewAnalytics: () => void;
+  onViewDivergence: () => void;
   t: (key: string) => string;
 }
 
-function CohortCard({
-  cohort,
+function CaseCard({
+  caseItem,
   index,
   formatDate,
+  isDeadlinePassed,
   onView,
   onEdit,
   onDelete,
-  onActivate,
+  onPublish,
   onClose,
-  onViewReliability,
+  onViewAnalytics,
+  onViewDivergence,
   t,
-}: CohortRowProps) {
+}: CaseRowProps) {
   return (
     <div
       className={cn(
@@ -375,35 +391,46 @@ function CohortCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground truncate">{cohort.title}</span>
+            <span className="font-medium text-foreground truncate">{caseItem.title}</span>
             <Badge
               variant="outline"
               className={cn(
                 'font-medium text-xs flex-shrink-0',
-                cohort.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-                cohort.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-                cohort.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+                caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+                caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+                caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
               )}
             >
-              {t(`admin.cohorts.status.${cohort.status}`)}
+              {t(`cases.status.${caseItem.status}`)}
             </Badge>
           </div>
-          {cohort.description && (
+          {caseItem.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-              {cohort.description}
+              {caseItem.description}
             </p>
           )}
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <FileText className="w-3.5 h-3.5" />
-              {cohort.case_count} {t('admin.cohorts.table.cases').toLowerCase()}
+            <span className={cn(
+              'inline-flex items-center gap-1',
+              caseItem.response_count > 0 ? 'text-primary' : ''
+            )}>
+              <BarChart3 className="w-3.5 h-3.5" />
+              {caseItem.response_count} {t('admin.cases.table.responses').toLowerCase()}
             </span>
-            <span className="inline-flex items-center gap-1">
-              <Users className="w-3.5 h-3.5" />
-              {cohort.unique_raters} {t('admin.cohorts.table.raters').toLowerCase()}
-            </span>
-            <span>{formatDate(cohort.created_at)}</span>
+            <span>{formatDate(caseItem.created_at)}</span>
+            {caseItem.deadline && (
+              <span className={cn(
+                isDeadlinePassed(caseItem.deadline) && 'text-destructive font-medium'
+              )}>
+                {formatDate(caseItem.deadline)}
+              </span>
+            )}
           </div>
+          {caseItem.has_tac_images && (
+            <Badge variant="outline" className="mt-2 text-xs border-primary/30 text-primary">
+              TAC
+            </Badge>
+          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -420,23 +447,29 @@ function CohortCard({
               <Pencil className="h-4 w-4 mr-2" />
               {t('common.edit')}
             </DropdownMenuItem>
-            {cohort.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewReliability}>
+            {caseItem.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewAnalytics}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.reliability.title')}
+                {t('admin.cases.analytics')}
+              </DropdownMenuItem>
+            )}
+            {caseItem.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewDivergence}>
+                <TrendingUp className="h-4 w-4 mr-2" />
+                {t('admin.cases.divergence')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            {cohort.status === 'draft' && (
-              <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
-                <Play className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.activate')}
+            {caseItem.status === 'draft' && (
+              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
+                <Send className="h-4 w-4 mr-2" />
+                {t('admin.cases.publish')}
               </DropdownMenuItem>
             )}
-            {cohort.status === 'active' && (
+            {caseItem.status === 'published' && (
               <DropdownMenuItem onClick={onClose}>
                 <Lock className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.close')}
+                {t('admin.cases.close')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -451,18 +484,20 @@ function CohortCard({
   );
 }
 
-function CohortRow({
-  cohort,
+function CaseRow({
+  caseItem,
   index,
   formatDate,
+  isDeadlinePassed,
   onView,
   onEdit,
   onDelete,
-  onActivate,
+  onPublish,
   onClose,
-  onViewReliability,
+  onViewAnalytics,
+  onViewDivergence,
   t,
-}: CohortRowProps) {
+}: CaseRowProps) {
   return (
     <TableRow
       className={cn(
@@ -474,11 +509,16 @@ function CohortRow({
     >
       <TableCell className="max-w-0">
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="font-medium text-foreground truncate">{cohort.title}</span>
-          {cohort.description && (
+          <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+          {caseItem.description && (
             <span className="text-sm text-muted-foreground truncate">
-              {cohort.description}
+              {caseItem.description}
             </span>
+          )}
+          {caseItem.has_tac_images && (
+            <Badge variant="outline" className="w-fit text-xs border-primary/30 text-primary">
+              TAC
+            </Badge>
           )}
         </div>
       </TableCell>
@@ -487,48 +527,42 @@ function CohortRow({
           variant="outline"
           className={cn(
             'font-medium whitespace-nowrap',
-            cohort.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-            cohort.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-            cohort.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+            caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+            caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+            caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
           )}
         >
-          {t(`admin.cohorts.status.${cohort.status}`)}
+          {t(`cases.status.${caseItem.status}`)}
         </Badge>
       </TableCell>
       <TableCell className="text-center">
         <span className={cn(
-          'inline-flex items-center justify-center gap-1 min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          cohort.case_count > 0
+          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+          caseItem.response_count > 0
             ? 'bg-primary/10 text-primary'
             : 'bg-muted/50 text-muted-foreground'
         )}>
-          <FileText className="w-3 h-3" />
-          {cohort.case_count}
-        </span>
-      </TableCell>
-      <TableCell className="text-center">
-        <span className={cn(
-          'inline-flex items-center justify-center gap-1 min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          cohort.unique_raters > 0
-            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          <Users className="w-3 h-3" />
-          {cohort.unique_raters}
-        </span>
-      </TableCell>
-      <TableCell className="text-center hidden lg:table-cell">
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          cohort.complete_raters > 0
-            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          {cohort.complete_raters}
+          {caseItem.response_count}
         </span>
       </TableCell>
       <TableCell className="text-muted-foreground text-sm hidden lg:table-cell">
-        {formatDate(cohort.created_at)}
+        {formatDate(caseItem.created_at)}
+      </TableCell>
+      <TableCell className="hidden lg:table-cell">
+        {caseItem.deadline ? (
+          <span
+            className={cn(
+              'text-sm',
+              isDeadlinePassed(caseItem.deadline)
+                ? 'text-destructive font-medium'
+                : 'text-muted-foreground'
+            )}
+          >
+            {formatDate(caseItem.deadline)}
+          </span>
+        ) : (
+          <span className="text-muted-foreground/50 text-sm">-</span>
+        )}
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -550,23 +584,29 @@ function CohortRow({
               <Pencil className="h-4 w-4 mr-2" />
               {t('common.edit')}
             </DropdownMenuItem>
-            {cohort.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewReliability}>
+            {caseItem.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewAnalytics}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.reliability.title')}
+                {t('admin.cases.analytics')}
+              </DropdownMenuItem>
+            )}
+            {caseItem.status !== 'draft' && (
+              <DropdownMenuItem onClick={onViewDivergence}>
+                <TrendingUp className="h-4 w-4 mr-2" />
+                {t('admin.cases.divergence')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            {cohort.status === 'draft' && (
-              <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
-                <Play className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.activate')}
+            {caseItem.status === 'draft' && (
+              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
+                <Send className="h-4 w-4 mr-2" />
+                {t('admin.cases.publish')}
               </DropdownMenuItem>
             )}
-            {cohort.status === 'active' && (
+            {caseItem.status === 'published' && (
               <DropdownMenuItem onClick={onClose}>
                 <Lock className="h-4 w-4 mr-2" />
-                {t('admin.cohorts.close')}
+                {t('admin.cases.close')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />

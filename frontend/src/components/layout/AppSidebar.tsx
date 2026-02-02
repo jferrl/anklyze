@@ -52,8 +52,8 @@ export function AppSidebar() {
       icon: Sparkles,
     },
     {
-      title: t('nav.studies'),
-      url: '/studies',
+      title: t('nav.cases'),
+      url: '/cases',
       icon: BookOpen,
     },
   ];
@@ -65,14 +65,14 @@ export function AppSidebar() {
       icon: LayoutDashboard,
     },
     {
-      title: t('nav.cohorts'),
-      url: '/admin/cohorts',
-      icon: Activity,
+      title: t('nav.manageCases'),
+      url: '/admin/cases',
+      icon: FileText,
     },
     {
-      title: t('nav.manageStudies'),
+      title: t('nav.studies'),
       url: '/admin/studies',
-      icon: FileText,
+      icon: Activity,
     },
   ];
 

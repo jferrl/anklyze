@@ -16,45 +16,45 @@ import {
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { StatCard } from '../../components/analytics';
-import { studyApi } from '../../services/studyApi';
+import { caseApi } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
 
 export function AdminDashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data: studiesData, isLoading } = useQuery({
-    queryKey: ['admin-studies-all'],
-    queryFn: () => studyApi.listStudies(undefined, 1, 100),
+  const { data: casesData, isLoading } = useQuery({
+    queryKey: ['admin-cases-all'],
+    queryFn: () => caseApi.listCases(undefined, 1, 100),
     staleTime: 0, // Always consider data stale
     refetchOnMount: 'always', // Refetch when component mounts
   });
 
-  const studies = studiesData?.studies ?? [];
+  const cases = casesData?.cases ?? [];
 
   const stats = {
-    totalStudies: studies.length,
-    draftStudies: studies.filter((s) => s.status === 'draft').length,
-    publishedStudies: studies.filter((s) => s.status === 'published').length,
-    closedStudies: studies.filter((s) => s.status === 'closed').length,
-    totalResponses: studies.reduce((sum, s) => sum + s.response_count, 0),
-    totalUniqueUsers: studies.reduce((sum, s) => sum + s.unique_users, 0),
-    avgResponsesPerStudy:
-      studies.length > 0
+    totalCases: cases.length,
+    draftCases: cases.filter((c) => c.status === 'draft').length,
+    publishedCases: cases.filter((c) => c.status === 'published').length,
+    closedCases: cases.filter((c) => c.status === 'closed').length,
+    totalResponses: cases.reduce((sum, c) => sum + c.response_count, 0),
+    totalUniqueUsers: cases.reduce((sum, c) => sum + c.unique_users, 0),
+    avgResponsesPerCase:
+      cases.length > 0
         ? Math.round(
-            studies.reduce((sum, s) => sum + s.response_count, 0) / studies.length
+            cases.reduce((sum, c) => sum + c.response_count, 0) / cases.length
           )
         : 0,
   };
 
-  const recentActiveStudies = [...studies]
-    .filter((s) => s.response_count > 0)
+  const recentActiveCases = [...cases]
+    .filter((c) => c.response_count > 0)
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 5);
 
-  const studiesNeedingAttention = studies.filter((s) => {
-    if (s.status === 'published' && s.response_count === 0) return true;
-    if (s.deadline && new Date(s.deadline) < new Date() && s.status === 'published')
+  const casesNeedingAttention = cases.filter((c) => {
+    if (c.status === 'published' && c.response_count === 0) return true;
+    if (c.deadline && new Date(c.deadline) < new Date() && c.status === 'published')
       return true;
     return false;
   });
@@ -92,12 +92,12 @@ export function AdminDashboardPage() {
               </p>
             </div>
             <Button
-              onClick={() => navigate('/admin/studies/new')}
+              onClick={() => navigate('/admin/cases/new')}
               size="lg"
               className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
             >
               <Sparkles className="w-4 h-4" />
-              {t('admin.studies.create', 'Create Study')}
+              {t('admin.cases.create', 'Create Case')}
             </Button>
           </div>
         </header>
@@ -105,9 +105,9 @@ export function AdminDashboardPage() {
         {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
-            title={t('admin.dashboard.totalStudies')}
-            value={stats.totalStudies}
-            subtitle={`${stats.draftStudies} ${t('admin.dashboard.drafts')}, ${stats.publishedStudies} ${t('admin.dashboard.active')}`}
+            title={t('admin.dashboard.totalCases', 'Total Cases')}
+            value={stats.totalCases}
+            subtitle={`${stats.draftCases} ${t('admin.dashboard.drafts')}, ${stats.publishedCases} ${t('admin.dashboard.active')}`}
             icon={FileText}
             color="blue"
             delay={0}
@@ -115,7 +115,7 @@ export function AdminDashboardPage() {
           <StatCard
             title={t('admin.dashboard.totalResponses')}
             value={stats.totalResponses}
-            subtitle={t('admin.dashboard.avgPerStudy', { count: stats.avgResponsesPerStudy })}
+            subtitle={t('admin.dashboard.avgPerCase', { count: stats.avgResponsesPerCase })}
             icon={BarChart3}
             color="emerald"
             delay={50}
@@ -123,15 +123,15 @@ export function AdminDashboardPage() {
           <StatCard
             title={t('admin.dashboard.uniqueParticipants')}
             value={stats.totalUniqueUsers}
-            subtitle={t('admin.dashboard.acrossAllStudies')}
+            subtitle={t('admin.dashboard.acrossAllCases', 'Across all cases')}
             icon={Users}
             color="amber"
             delay={100}
           />
           <StatCard
-            title={t('admin.dashboard.completedStudies')}
-            value={stats.closedStudies}
-            subtitle={`${stats.publishedStudies} ${t('admin.dashboard.stillActive')}`}
+            title={t('admin.dashboard.completedCases', 'Completed Cases')}
+            value={stats.closedCases}
+            subtitle={`${stats.publishedCases} ${t('admin.dashboard.stillActive')}`}
             icon={CheckCircle2}
             color="violet"
             delay={150}
@@ -158,7 +158,7 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            {recentActiveStudies.length === 0 ? (
+            {recentActiveCases.length === 0 ? (
               <div className="text-center py-8">
                 <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
                   <Clock className="w-6 h-6 text-muted-foreground/50" />
@@ -169,10 +169,10 @@ export function AdminDashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {recentActiveStudies.map((study, index) => (
+                {recentActiveCases.map((caseItem, index) => (
                   <button
-                    key={study.id}
-                    onClick={() => navigate(`/admin/studies/${study.id}/analytics`)}
+                    key={caseItem.id}
+                    onClick={() => navigate(`/admin/cases/${caseItem.id}/analytics`)}
                     className={cn(
                       'w-full flex items-center justify-between p-3 rounded-xl',
                       'bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50',
@@ -183,27 +183,27 @@ export function AdminDashboardPage() {
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                        {study.title}
+                        {caseItem.title}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge
                           variant="outline"
                           className={cn(
                             'text-xs',
-                            study.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                            study.status === 'closed' && 'border-muted-foreground/50'
+                            caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
+                            caseItem.status === 'closed' && 'border-muted-foreground/50'
                           )}
                         >
-                          {t(`studies.status.${study.status}`)}
+                          {t(`cases.status.${caseItem.status}`)}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {study.response_count} {t('admin.dashboard.responses')}
+                          {caseItem.response_count} {t('admin.dashboard.responses')}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
                       <span className="text-xs text-muted-foreground">
-                        {new Date(study.updated_at).toLocaleDateString()}
+                        {new Date(caseItem.updated_at).toLocaleDateString()}
                       </span>
                       <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                     </div>
@@ -231,7 +231,7 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            {studiesNeedingAttention.length === 0 ? (
+            {casesNeedingAttention.length === 0 ? (
               <div className="text-center py-8">
                 <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
                   <CheckCircle2 className="w-6 h-6 text-emerald-500" />
@@ -240,18 +240,18 @@ export function AdminDashboardPage() {
                   {t('admin.dashboard.allGood')}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  All studies are performing well
+                  All cases are performing well
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
-                {studiesNeedingAttention.slice(0, 5).map((study, index) => {
+                {casesNeedingAttention.slice(0, 5).map((caseItem, index) => {
                   const isPastDeadline =
-                    study.deadline && new Date(study.deadline) < new Date();
+                    caseItem.deadline && new Date(caseItem.deadline) < new Date();
                   return (
                     <button
-                      key={study.id}
-                      onClick={() => navigate(`/admin/studies/${study.id}/edit`)}
+                      key={caseItem.id}
+                      onClick={() => navigate(`/admin/cases/${caseItem.id}/edit`)}
                       className={cn(
                         'w-full flex items-center justify-between p-3 rounded-xl',
                         'bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/30',
@@ -262,7 +262,7 @@ export function AdminDashboardPage() {
                     >
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground truncate">
-                          {study.title}
+                          {caseItem.title}
                         </p>
                         <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
                           {isPastDeadline
@@ -293,22 +293,22 @@ export function AdminDashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               {
-                label: t('studies.status.draft'),
-                value: stats.draftStudies,
+                label: t('cases.status.draft'),
+                value: stats.draftCases,
                 color: 'text-muted-foreground',
                 bg: 'bg-muted/50',
                 ring: 'ring-muted-foreground/20',
               },
               {
-                label: t('studies.status.published'),
-                value: stats.publishedStudies,
+                label: t('cases.status.published'),
+                value: stats.publishedCases,
                 color: 'text-emerald-600 dark:text-emerald-400',
                 bg: 'bg-emerald-500/10',
                 ring: 'ring-emerald-500/30',
               },
               {
-                label: t('studies.status.closed'),
-                value: stats.closedStudies,
+                label: t('cases.status.closed'),
+                value: stats.closedCases,
                 color: 'text-muted-foreground',
                 bg: 'bg-muted/50',
                 ring: 'ring-muted-foreground/20',
@@ -332,9 +332,9 @@ export function AdminDashboardPage() {
                 <p className="text-sm text-muted-foreground mt-2 font-medium">
                   {status.label}
                 </p>
-                {stats.totalStudies > 0 && (
+                {stats.totalCases > 0 && (
                   <p className="text-xs text-muted-foreground/70 mt-1">
-                    {((status.value / stats.totalStudies) * 100).toFixed(0)}% of total
+                    {((status.value / stats.totalCases) * 100).toFixed(0)}% of total
                   </p>
                 )}
               </div>
@@ -342,40 +342,40 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Progress Bar */}
-          {stats.totalStudies > 0 && (
+          {stats.totalCases > 0 && (
             <div className="mt-6 pt-6 border-t border-border/50">
               <div className="h-3 rounded-full bg-muted/50 overflow-hidden flex">
-                {stats.draftStudies > 0 && (
+                {stats.draftCases > 0 && (
                   <div
                     className="h-full bg-muted-foreground/30 transition-all duration-500"
-                    style={{ width: `${(stats.draftStudies / stats.totalStudies) * 100}%` }}
+                    style={{ width: `${(stats.draftCases / stats.totalCases) * 100}%` }}
                   />
                 )}
-                {stats.publishedStudies > 0 && (
+                {stats.publishedCases > 0 && (
                   <div
                     className="h-full bg-emerald-500 transition-all duration-500"
-                    style={{ width: `${(stats.publishedStudies / stats.totalStudies) * 100}%` }}
+                    style={{ width: `${(stats.publishedCases / stats.totalCases) * 100}%` }}
                   />
                 )}
-                {stats.closedStudies > 0 && (
+                {stats.closedCases > 0 && (
                   <div
                     className="h-full bg-muted-foreground/50 transition-all duration-500"
-                    style={{ width: `${(stats.closedStudies / stats.totalStudies) * 100}%` }}
+                    style={{ width: `${(stats.closedCases / stats.totalCases) * 100}%` }}
                   />
                 )}
               </div>
               <div className="flex items-center justify-center gap-6 mt-3">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-                  <span className="text-xs text-muted-foreground">{t('studies.status.draft')}</span>
+                  <span className="text-xs text-muted-foreground">{t('cases.status.draft')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs text-muted-foreground">{t('studies.status.published')}</span>
+                  <span className="text-xs text-muted-foreground">{t('cases.status.published')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-muted-foreground/50" />
-                  <span className="text-xs text-muted-foreground">{t('studies.status.closed')}</span>
+                  <span className="text-xs text-muted-foreground">{t('cases.status.closed')}</span>
                 </div>
               </div>
             </div>

@@ -1,41 +1,39 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useDropzone } from 'react-dropzone';
 import {
-  Upload,
-  X,
-  Image as ImageIcon,
   Save,
-  Send,
-  AlertCircle,
   Loader2,
+  Plus,
+  Trash2,
   FileText,
-  Users,
-  Images,
+  Play,
+  XCircle,
+  BarChart3,
   Check,
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  Calendar,
   Type,
   AlignLeft,
-  Scan,
-  Radio,
+  Users,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
+import { Label } from '../../components/ui/label';
 import { Badge } from '../../components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+import { Alert, AlertDescription } from '../../components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,183 +44,142 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { Alert, AlertDescription } from '../../components/ui/alert';
-import { studyApi } from '../../services/studyApi';
+import { studyApi, caseApi } from '../../services/studyApi';
 import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
-import { GoldStandardInputDialog } from '../../components/studies/GoldStandardInputDialog';
+import type { StudyStatus, CaseStatus } from '../../types/study';
 import { cn } from '@/lib/utils';
-import type { ImageCategory, StudyImage } from '../../types/study';
-import type { ClassificationResult, FractureInput } from '../../types/fracture';
-import { Switch } from '../../components/ui/switch';
-import { Settings, Target, GitBranch } from 'lucide-react';
 
-interface PendingUpload {
-  id: string;
-  file: File;
-  category: ImageCategory;
-  preview: string;
-}
+type Step = 'details' | 'cases' | 'raters';
 
-type Step = 'details' | 'settings' | 'images' | 'users';
-
-const STEPS: Step[] = ['details', 'settings', 'images', 'users'];
+const STEPS: Step[] = ['details', 'cases', 'raters'];
 
 export function StudyEditorPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
-  const isEditing = !!id && id !== 'new';
+  const queryClient = useQueryClient();
+  const isEditing = Boolean(id);
 
   // Current step state
   const [currentStep, setCurrentStep] = useState<Step>('details');
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
+  const [showActivateDialog, setShowActivateDialog] = useState(false);
 
-  // Fetch existing study if editing - must be before state that depends on it
-  const { data: existingStudy, isLoading: isLoadingStudy } = useQuery({
-    queryKey: ['study', id],
+  // Fetch existing study if editing
+  const { data: study, isLoading: isLoadingStudy } = useQuery({
+    queryKey: ['admin-study', id],
     queryFn: () => studyApi.getStudy(id!),
     enabled: isEditing,
   });
 
-  // Form state
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
-  const [showPublishDialog, setShowPublishDialog] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Form state - use study data as defaults, allow local overrides
+  const [formDirty, setFormDirty] = useState(false);
+  const [localTitle, setLocalTitle] = useState('');
+  const [localDescription, setLocalDescription] = useState('');
 
-  // Validation study settings
-  const [referenceClassification, setReferenceClassification] = useState<ClassificationResult | undefined>(undefined);
-  const [referenceInput, setReferenceInput] = useState<FractureInput | undefined>(undefined);
-  const [showReferenceAfterSubmit, setShowReferenceAfterSubmit] = useState(false);
-  const [allowMultipleResponses, setAllowMultipleResponses] = useState(true);
-  const [showGoldStandardInputDialog, setShowGoldStandardInputDialog] = useState(false);
+  // Computed title/description - use local values if dirty, otherwise use study data
+  const title = formDirty ? localTitle : (study?.title ?? localTitle);
+  const description = formDirty ? localDescription : (study?.description ?? localDescription);
 
-  // Track previous study ID to reset form when switching studies
-  const [prevStudyId, setPrevStudyId] = useState<string | undefined>(undefined);
-  if (existingStudy && existingStudy.id !== prevStudyId) {
-    setPrevStudyId(existingStudy.id);
-    setTitle(existingStudy.title);
-    setDescription(existingStudy.description || '');
-    setDeadline(existingStudy.deadline?.split('T')[0] || '');
-    setPendingUploads([]);
-    // Validation study settings
-    setReferenceClassification(existingStudy.reference_classification);
-    setReferenceInput(existingStudy.reference_input);
-    setShowReferenceAfterSubmit(existingStudy.show_reference_after_submit || false);
-    setAllowMultipleResponses(existingStudy.allow_multiple_responses !== false);
-  }
+  const setTitle = (value: string) => {
+    setFormDirty(true);
+    setLocalTitle(value);
+  };
 
-  // Create study mutation
-  const createMutation = useMutation({
-    mutationFn: studyApi.createStudy,
-    onSuccess: async (study) => {
-      const uploadsToProcess = [...pendingUploads];
-      uploadsToProcess.forEach((upload) => URL.revokeObjectURL(upload.preview));
-      setPendingUploads([]);
-      for (const upload of uploadsToProcess) {
-        await studyApi.uploadImage(study.id, upload.file, upload.category);
-      }
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-      navigate(`/admin/studies/${study.id}/edit`);
-    },
-    onError: (err: Error) => {
-      setError(err.message);
-    },
+  const setDescription = (value: string) => {
+    setFormDirty(true);
+    setLocalDescription(value);
+  };
+
+  // Fetch available cases (published, not in a study)
+  const { data: availableCasesData } = useQuery({
+    queryKey: ['admin-cases-available'],
+    queryFn: () => caseApi.listCases('published', 1, 100),
   });
 
-  // Update study mutation
-  const updateMutation = useMutation({
-    mutationFn: ({ studyId, data }: { studyId: string; data: Parameters<typeof studyApi.updateStudy>[1] }) =>
-      studyApi.updateStudy(studyId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-    },
-    onError: (err: Error) => {
-      setError(err.message);
-    },
-  });
-
-  // Upload image mutation
-  const uploadImageMutation = useMutation({
-    mutationFn: ({ studyId, file, category }: { studyId: string; file: File; category: ImageCategory }) =>
-      studyApi.uploadImage(studyId, file, category),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id] });
-    },
-  });
-
-  // Delete image mutation
-  const deleteImageMutation = useMutation({
-    mutationFn: ({ studyId, imageId }: { studyId: string; imageId: string }) =>
-      studyApi.deleteImage(studyId, imageId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id] });
-    },
-  });
-
-  // Publish mutation
-  const publishMutation = useMutation({
-    mutationFn: studyApi.publishStudy,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['study', id], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['admin-studies-all'], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['published-studies'], refetchType: 'all' });
-      setShowPublishDialog(false);
-      navigate('/admin/studies');
-    },
-  });
-
-  const createOnDrop = useCallback(
-    (category: ImageCategory) => (acceptedFiles: File[]) => {
-      const newUploads = acceptedFiles.map((file) => ({
-        id: Math.random().toString(36).substring(7),
-        file,
-        category,
-        preview: URL.createObjectURL(file),
-      }));
-      setPendingUploads((prev) => [...prev, ...newUploads]);
-    },
-    []
+  // Filter out cases that are already in this study
+  const availableCases = (availableCasesData?.cases ?? []).filter(
+    (c) => !study?.cases?.some((sc) => sc.id === c.id)
   );
 
-  const dropzoneConfig = {
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+  const createMutation = useMutation({
+    mutationFn: (data: { title: string; description?: string }) =>
+      studyApi.createStudy(data),
+    onSuccess: (newStudy) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      navigate(`/admin/studies/${newStudy.id}/edit`);
     },
-    maxSize: 10 * 1024 * 1024,
-  };
-
-  const xrayDropzone = useDropzone({
-    ...dropzoneConfig,
-    onDrop: createOnDrop('xray'),
+    onError: (err: Error) => {
+      setError(err.message);
+    },
   });
 
-  const tacDropzone = useDropzone({
-    ...dropzoneConfig,
-    onDrop: createOnDrop('tac'),
+  const updateMutation = useMutation({
+    mutationFn: (data: { title?: string; description?: string }) =>
+      studyApi.updateStudy(id!, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      setFormDirty(false);
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
   });
 
-  const removePendingUpload = (uploadId: string) => {
-    setPendingUploads((prev) => {
-      const upload = prev.find((u) => u.id === uploadId);
-      if (upload) {
-        URL.revokeObjectURL(upload.preview);
-      }
-      return prev.filter((u) => u.id !== uploadId);
-    });
-  };
+  const addCaseMutation = useMutation({
+    mutationFn: (caseId: string) => studyApi.addCaseToStudy(id!, caseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-available'] });
+      setSelectedCaseId('');
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
+
+  const removeCaseMutation = useMutation({
+    mutationFn: (caseId: string) => studyApi.removeCaseFromStudy(id!, caseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-available'] });
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: () => studyApi.activateStudy(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+      setShowActivateDialog(false);
+      navigate('/admin/studies');
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: () => studyApi.closeStudy(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-studies'] });
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
 
   const handleSave = async () => {
     setError(null);
 
     if (!title.trim()) {
-      setError(t('admin.studies.errors.titleRequired'));
+      setError(t('admin.studies.titleRequired', 'Title is required'));
       setCurrentStep('details');
       return;
     }
@@ -230,69 +187,89 @@ export function StudyEditorPage() {
     const data = {
       title: title.trim(),
       description: description.trim() || undefined,
-      deadline: deadline ? new Date(deadline).toISOString() : undefined,
-      reference_classification: referenceClassification,
-      reference_input: referenceInput,
-      show_reference_after_submit: showReferenceAfterSubmit,
-      allow_multiple_responses: allowMultipleResponses,
     };
 
     if (isEditing) {
-      await updateMutation.mutateAsync({ studyId: id!, data });
-      const uploadsToProcess = [...pendingUploads];
-      uploadsToProcess.forEach((upload) => URL.revokeObjectURL(upload.preview));
-      setPendingUploads([]);
-      for (const upload of uploadsToProcess) {
-        await uploadImageMutation.mutateAsync({
-          studyId: id!,
-          file: upload.file,
-          category: upload.category,
-        });
-      }
+      await updateMutation.mutateAsync(data);
     } else {
       await createMutation.mutateAsync(data);
     }
   };
 
-  const handlePublish = () => {
-    const totalImages = (existingStudy?.images?.length ?? 0) + pendingUploads.length;
-    if (totalImages === 0) {
-      setError(t('admin.studies.errors.imagesRequired'));
-      setCurrentStep('images');
+  const handleAddCase = () => {
+    if (selectedCaseId && id) {
+      addCaseMutation.mutate(selectedCaseId);
+    }
+  };
+
+  const handleActivate = () => {
+    if ((study?.cases?.length ?? 0) === 0) {
+      setError(t('admin.studies.errors.casesRequired', 'At least one case is required to activate'));
+      setCurrentStep('cases');
       return;
     }
-    setShowPublishDialog(true);
+    setShowActivateDialog(true);
   };
 
-  const confirmPublish = async () => {
-    if (isEditing) {
-      await handleSave();
-      publishMutation.mutate(id!);
+  const getStatusBadge = (status: StudyStatus) => {
+    switch (status) {
+      case 'draft':
+        return (
+          <Badge variant="outline" className="text-muted-foreground">
+            {t('studies.status.draft')}
+          </Badge>
+        );
+      case 'active':
+        return (
+          <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+            {t('studies.status.active')}
+          </Badge>
+        );
+      case 'closed':
+        return <Badge variant="secondary">{t('studies.status.closed')}</Badge>;
     }
   };
 
-  const existingImages = existingStudy?.images ?? [];
-  const xrayImages = existingImages.filter((img) => img.category === 'xray');
-  const tacImages = existingImages.filter((img) => img.category === 'tac');
-  const pendingXray = pendingUploads.filter((u) => u.category === 'xray');
-  const pendingTac = pendingUploads.filter((u) => u.category === 'tac');
-  const totalImages = existingImages.length + pendingUploads.length;
+  const getCaseStatusBadge = (status: CaseStatus) => {
+    switch (status) {
+      case 'draft':
+        return <Badge variant="outline" className="text-xs">{t('cases.status.draft')}</Badge>;
+      case 'published':
+        return <Badge className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">{t('cases.status.published')}</Badge>;
+      case 'closed':
+        return <Badge variant="secondary" className="text-xs">{t('cases.status.closed')}</Badge>;
+    }
+  };
 
-  const isSaving = createMutation.isPending || updateMutation.isPending || uploadImageMutation.isPending;
-  const canPublish = isEditing && existingStudy?.status === 'draft';
-  const canEdit = !isEditing || existingStudy?.status === 'draft';
-  // Description and deadline can be edited even after publication
-  const canEditAlways = !isEditing || existingStudy?.status !== 'closed';
+  const isSaving = createMutation.isPending || updateMutation.isPending;
+  const canActivate = isEditing && study?.status === 'draft' && (study?.cases?.length ?? 0) > 0;
+  const canEdit = !isEditing || study?.status === 'draft';
+  const isReadOnly = study?.status === 'closed';
 
   const currentStepIndex = STEPS.indexOf(currentStep);
 
-  const goToNextStep = () => {
+  const goToNextStep = async () => {
     const nextIndex = currentStepIndex + 1;
     if (nextIndex < STEPS.length) {
-      // Skip users step if not editing
-      if (STEPS[nextIndex] === 'users' && !isEditing) {
+      // Skip raters step if not editing
+      if (STEPS[nextIndex] === 'raters' && !isEditing) {
         return;
       }
+      
+      // When moving to cases step, ensure study is created first
+      if (STEPS[nextIndex] === 'cases' && !isEditing) {
+        if (!title.trim()) {
+          setError(t('admin.studies.titleRequired', 'Title is required'));
+          return;
+        }
+        // Create the study first, navigation happens in onSuccess
+        await createMutation.mutateAsync({
+          title: title.trim(),
+          description: description.trim() || undefined,
+        });
+        return; // Navigation happens in createMutation.onSuccess
+      }
+      
       setCurrentStep(STEPS[nextIndex]);
     }
   };
@@ -314,25 +291,22 @@ export function StudyEditorPage() {
   const stepConfig = {
     details: {
       icon: FileText,
-      label: t('admin.studies.details'),
-      description: t('admin.studies.detailsDescription'),
+      label: t('admin.studies.details', 'Details'),
+      description: t('admin.studies.detailsDescription', 'Basic study information'),
     },
-    settings: {
-      icon: Settings,
-      label: t('admin.studies.validationSettings', 'Validation'),
-      description: t('admin.studies.validationSettingsDescription', 'Configure validation study options'),
+    cases: {
+      icon: FolderOpen,
+      label: t('admin.studies.cases', 'Cases'),
+      description: t('admin.studies.casesDescription', 'Add cases to the study'),
     },
-    images: {
-      icon: Images,
-      label: t('admin.studies.images'),
-      description: t('admin.studies.imagesDescription'),
-    },
-    users: {
+    raters: {
       icon: Users,
-      label: t('admin.studies.users.title'),
-      description: t('admin.studies.users.description'),
+      label: t('admin.studies.raters.title', 'Raters'),
+      description: t('admin.studies.raters.description', 'Assign raters'),
     },
   };
+
+  const totalCases = study?.cases?.length ?? 0;
 
   if (isEditing && isLoadingStudy) {
     return (
@@ -363,26 +337,15 @@ export function StudyEditorPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                    {isEditing ? t('admin.studies.editStudy') : t('admin.studies.createStudy')}
+                    {isEditing ? t('admin.studies.editTitle', 'Edit Study') : t('admin.studies.createTitle', 'Create Study')}
                   </h1>
-                  {existingStudy && (
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        'mt-1',
-                        existingStudy.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                        existingStudy.status === 'closed' && 'border-muted-foreground/50'
-                      )}
-                    >
-                      {t(`studies.status.${existingStudy.status}`)}
-                    </Badge>
-                  )}
+                  {study && getStatusBadge(study.status)}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSave} disabled={isSaving} className="gap-2">
+              <Button variant="outline" onClick={handleSave} disabled={isSaving || isReadOnly} className="gap-2">
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -390,15 +353,40 @@ export function StudyEditorPage() {
                 )}
                 {t('common.save')}
               </Button>
-              {canPublish && (
+              {canActivate && (
                 <Button
-                  onClick={handlePublish}
+                  onClick={handleActivate}
                   disabled={isSaving}
                   className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
                 >
-                  <Send className="h-4 w-4" />
-                  {t('admin.studies.publish')}
+                  <Play className="h-4 w-4" />
+                  {t('admin.studies.activate', 'Activate')}
                 </Button>
+              )}
+              {study?.status === 'active' && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/admin/studies/${id}/reliability`)}
+                    className="gap-2"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    {t('admin.studies.viewReliability', 'Reliability')}
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => closeMutation.mutate()}
+                    disabled={closeMutation.isPending}
+                    className="gap-2"
+                  >
+                    {closeMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <XCircle className="h-4 w-4" />
+                    )}
+                    {t('admin.studies.close', 'Close')}
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -406,7 +394,6 @@ export function StudyEditorPage() {
 
         {error && (
           <Alert variant="destructive" className="mb-6 animate-fade-in">
-            <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -415,13 +402,13 @@ export function StudyEditorPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => {
-              // Skip users step in stepper if not editing
-              if (step === 'users' && !isEditing) return null;
+              // Skip raters step in stepper if not editing
+              if (step === 'raters' && !isEditing) return null;
 
               const status = getStepStatus(step);
               const config = stepConfig[step];
               const Icon = config.icon;
-              const isLast = index === STEPS.length - 1 || (step === 'images' && !isEditing);
+              const isLast = index === STEPS.length - 1 || (step === 'cases' && !isEditing);
 
               return (
                 <div key={step} className="flex items-center flex-1">
@@ -459,10 +446,10 @@ export function StudyEditorPage() {
                       </p>
                       <p className="text-xs text-muted-foreground hidden lg:block">
                         {status === 'completed' ? (
-                          step === 'details' ? (title || '—') :
-                          step === 'images' ? `${totalImages} ${t('studies.imagesCount')}` :
-                          '—'
-                        ) : '—'}
+                          step === 'details' ? (title || '-') :
+                          step === 'cases' ? `${totalCases} cases` :
+                          '-'
+                        ) : '-'}
                       </p>
                     </div>
                   </button>
@@ -491,8 +478,8 @@ export function StudyEditorPage() {
                       <FileText className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <CardTitle>{t('admin.studies.details')}</CardTitle>
-                      <CardDescription>{t('admin.studies.detailsDescription')}</CardDescription>
+                      <CardTitle>{t('admin.studies.details', 'Details')}</CardTitle>
+                      <CardDescription>{t('admin.studies.detailsDescription', 'Basic study information')}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -501,14 +488,14 @@ export function StudyEditorPage() {
                   <div className="space-y-2">
                     <Label htmlFor="title" className="flex items-center gap-2">
                       <Type className="w-4 h-4 text-muted-foreground" />
-                      {t('studies.title')} <span className="text-destructive">*</span>
+                      {t('admin.studies.titleLabel', 'Title')} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder={t('admin.studies.titlePlaceholder')}
-                      disabled={!canEdit}
+                      placeholder={t('admin.studies.titlePlaceholder', 'Enter study title...')}
+                      disabled={isReadOnly}
                       className="h-12 text-base"
                     />
                   </div>
@@ -517,563 +504,209 @@ export function StudyEditorPage() {
                   <div className="space-y-2">
                     <Label htmlFor="description" className="flex items-center gap-2">
                       <AlignLeft className="w-4 h-4 text-muted-foreground" />
-                      {t('studies.description')}
-                      <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
+                      {t('admin.studies.descriptionLabel', 'Description')}
+                      <span className="text-muted-foreground text-xs">({t('common.optional', 'Optional')})</span>
                     </Label>
                     <Textarea
                       id="description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder={t('admin.studies.descriptionPlaceholder')}
+                      placeholder={t('admin.studies.descriptionPlaceholder', 'Optional description...')}
                       rows={4}
-                      disabled={!canEditAlways}
+                      disabled={isReadOnly}
                       className="resize-none"
                     />
                   </div>
-
-                  {/* Deadline Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="deadline" className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      {t('studies.deadline')}
-                      <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
-                    </Label>
-                    <Input
-                      id="deadline"
-                      type="date"
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
-                      disabled={!canEditAlways}
-                      className="h-12"
-                    />
-                  </div>
                 </CardContent>
               </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-end mt-6">
-                <Button onClick={goToNextStep} className="gap-2">
-                  {t('common.next')}
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
             </div>
           )}
 
-          {/* Settings Step */}
-          {currentStep === 'settings' && (
+          {/* Cases Step */}
+          {currentStep === 'cases' && (
             <div className="animate-fade-in">
               <Card className="chart-card">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Settings className="w-5 h-5 text-primary" />
+                      <FolderOpen className="w-5 h-5 text-primary" />
                     </div>
-                    <div>
-                      <CardTitle>{t('admin.studies.validationSettings', 'Validation Settings')}</CardTitle>
+                    <div className="flex-1">
+                      <CardTitle>{t('admin.studies.cases', 'Study Cases')}</CardTitle>
                       <CardDescription>
-                        {t('admin.studies.validationSettingsDescription', 'Configure how this study validates responses')}
+                        {t('admin.studies.casesDesc', 'Add published cases to this study for multi-rater analysis')}
                       </CardDescription>
                     </div>
+                    <Badge variant="secondary">
+                      {totalCases} {totalCases === 1 ? 'case' : 'cases'}
+                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Reference Classification */}
-                  <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-border/50">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center mt-0.5">
-                        <Target className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">
-                          {t('admin.studies.referenceClassification', 'Reference Classification (Gold Standard)')}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {t('admin.studies.referenceClassificationDescription',
-                            'Set the correct classification to compare against participant responses')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {referenceClassification ? (
-                      <div className="ml-11 space-y-3">
-                        <div className="p-3 rounded-lg bg-background border border-border/50">
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            {referenceClassification.danis_weber && (
-                              <div>
-                                <span className="text-muted-foreground">Danis-Weber:</span>{' '}
-                                <span className="font-medium">{referenceClassification.danis_weber.type}</span>
-                              </div>
-                            )}
-                            {referenceClassification.lauge_hansen && (
-                              <div>
-                                <span className="text-muted-foreground">Lauge-Hansen:</span>{' '}
-                                <span className="font-medium">{referenceClassification.lauge_hansen.type}</span>
-                              </div>
-                            )}
-                            {referenceClassification.ao_ota && (
-                              <div>
-                                <span className="text-muted-foreground">AO/OTA:</span>{' '}
-                                <span className="font-medium">{referenceClassification.ao_ota.code}</span>
-                              </div>
-                            )}
-                            {referenceClassification.bartonicek && (
-                              <div>
-                                <span className="text-muted-foreground">Bartonicek:</span>{' '}
-                                <span className="font-medium">{referenceClassification.bartonicek.type}</span>
-                              </div>
-                            )}
-                          </div>
-                          {referenceInput && (
-                            <div className="mt-3 pt-3 border-t border-border/50">
-                              <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
-                                <GitBranch className="w-3 h-3" />
-                                <span>{t('admin.studies.decisionPathConfigured', 'Decision path configured for divergence analysis')}</span>
-                              </div>
+                <CardContent>
+                  {/* Add case form - only for draft studies */}
+                  {canEdit && (
+                    <div className="flex gap-3 mb-6">
+                      <Select
+                        value={selectedCaseId}
+                        onValueChange={setSelectedCaseId}
+                      >
+                        <SelectTrigger className="flex-1 h-12">
+                          <SelectValue placeholder={t('admin.studies.selectCase', 'Select a case to add...')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableCases.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              {t('admin.studies.noCasesAvailable', 'No published cases available')}
                             </div>
+                          ) : (
+                            availableCases.map((c) => (
+                              <SelectItem key={c.id} value={c.id}>
+                                {c.title}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        onClick={handleAddCase}
+                        disabled={!selectedCaseId || !id || addCaseMutation.isPending}
+                        className="h-12 gap-2"
+                      >
+                        {addCaseMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Plus className="w-4 h-4" />
+                        )}
+                        {t('common.add', 'Add')}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Cases list */}
+                  {totalCases === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                        <FolderOpen className="w-8 h-8 text-muted-foreground/50" />
+                      </div>
+                      <p className="text-muted-foreground font-medium">
+                        {t('admin.studies.noCases', 'No cases in this study yet')}
+                      </p>
+                      <p className="text-sm text-muted-foreground/70 mt-1">
+                        {t('admin.studies.addCasesHint', 'Add published cases to get started')}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {study?.cases?.map((caseItem, index) => (
+                        <div
+                          key={caseItem.id}
+                          className={cn(
+                            'flex items-center gap-3 p-4 rounded-xl',
+                            'bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50',
+                            'transition-all duration-200 group'
+                          )}
+                        >
+                          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary font-medium text-sm">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground truncate">
+                              {caseItem.title}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              {getCaseStatusBadge(caseItem.status)}
+                              <span className="text-xs text-muted-foreground">
+                                {caseItem.response_count} responses
+                              </span>
+                            </div>
+                          </div>
+                          {canEdit && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeCaseMutation.mutate(caseItem.id)}
+                              disabled={removeCaseMutation.isPending}
+                              className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              {removeCaseMutation.isPending ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </Button>
                           )}
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowGoldStandardInputDialog(true)}
-                            disabled={!canEdit}
-                            className="gap-1"
-                          >
-                            <GitBranch className="w-4 h-4" />
-                            {t('admin.studies.changeReference', 'Change')}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setReferenceClassification(undefined);
-                              setReferenceInput(undefined);
-                            }}
-                            disabled={!canEdit}
-                          >
-                            <X className="w-4 h-4 mr-1" />
-                            {t('admin.studies.clearReference', 'Clear')}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="ml-11">
-                        <Button
-                          type="button"
-                          onClick={() => setShowGoldStandardInputDialog(true)}
-                          disabled={!canEdit}
-                          className="gap-2"
-                        >
-                          <Target className="w-4 h-4" />
-                          {t('admin.studies.setReference', 'Set Reference Classification')}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Response Options */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-foreground">
-                      {t('admin.studies.responseOptions', 'Response Options')}
-                    </h3>
-
-                    {/* Allow Multiple Responses */}
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
-                      <div className="space-y-1">
-                        <Label htmlFor="allowMultiple" className="font-medium cursor-pointer">
-                          {t('admin.studies.allowMultipleResponses', 'Allow Multiple Responses')}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {t('admin.studies.allowMultipleResponsesDescription',
-                            'When disabled, each participant can only submit one response')}
-                        </p>
-                      </div>
-                      <Switch
-                        id="allowMultiple"
-                        checked={allowMultipleResponses}
-                        onCheckedChange={setAllowMultipleResponses}
-                        disabled={!canEdit}
-                      />
+                      ))}
                     </div>
-
-                    {/* Show Reference After Submit */}
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
-                      <div className="space-y-1">
-                        <Label htmlFor="showReference" className="font-medium cursor-pointer">
-                          {t('admin.studies.showReferenceAfterSubmit', 'Show Reference After Submit')}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {t('admin.studies.showReferenceAfterSubmitDescription',
-                            'Display the correct classification after participants submit their response')}
-                        </p>
-                      </div>
-                      <Switch
-                        id="showReference"
-                        checked={showReferenceAfterSubmit}
-                        onCheckedChange={setShowReferenceAfterSubmit}
-                        disabled={!canEdit || !referenceClassification}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" />
-                  {t('common.previous')}
-                </Button>
-                <Button onClick={goToNextStep} className="gap-2">
-                  {t('common.next')}
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
             </div>
           )}
 
-          {/* Images Step */}
-          {currentStep === 'images' && (
+          {/* Raters Step */}
+          {currentStep === 'raters' && isEditing && (
             <div className="animate-fade-in">
-              <Card className="chart-card">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Images className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>{t('admin.studies.images')}</CardTitle>
-                      <CardDescription>{t('admin.studies.imagesDescription')}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-8">
-                  {/* X-ray Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Radio className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">{t('studies.images.xray')}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {xrayImages.length + pendingXray.length} {t('studies.imagesCount')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* X-ray Dropzone */}
-                    {canEdit && (
-                      <div
-                        {...xrayDropzone.getRootProps()}
-                        className={cn(
-                          'relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300',
-                          'hover:border-blue-500/50 hover:bg-blue-500/5',
-                          xrayDropzone.isDragActive
-                            ? 'border-blue-500 bg-blue-500/10 scale-[1.01]'
-                            : 'border-muted-foreground/25'
-                        )}
-                      >
-                        <input {...xrayDropzone.getInputProps()} />
-                        <div className="flex items-center justify-center gap-4">
-                          <div className={cn(
-                            'w-12 h-12 rounded-xl flex items-center justify-center transition-all',
-                            xrayDropzone.isDragActive ? 'bg-blue-500/20 scale-110' : 'bg-muted'
-                          )}>
-                            <Radio className={cn(
-                              'w-6 h-6 transition-colors',
-                              xrayDropzone.isDragActive ? 'text-blue-500' : 'text-muted-foreground'
-                            )} />
-                          </div>
-                          <div className="text-left">
-                            <p className="font-medium text-foreground">
-                              {xrayDropzone.isDragActive
-                                ? t('admin.studies.dropHere')
-                                : t('admin.studies.dragOrClick')}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {t('admin.studies.maxFileSize')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* X-ray Images Grid */}
-                    <ImageGrid
-                      existingImages={xrayImages}
-                      pendingUploads={pendingXray}
-                      onRemovePending={removePendingUpload}
-                      onDeleteExisting={(imageId) =>
-                        deleteImageMutation.mutate({ studyId: id!, imageId })
-                      }
-                      canEdit={canEdit}
-                      studyId={id}
-                    />
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-border/50" />
-
-                  {/* CT Scan Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                        <Scan className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">{t('studies.images.tac')}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {tacImages.length + pendingTac.length} {t('studies.imagesCount')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* CT Scan Dropzone */}
-                    {canEdit && (
-                      <div
-                        {...tacDropzone.getRootProps()}
-                        className={cn(
-                          'relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300',
-                          'hover:border-emerald-500/50 hover:bg-emerald-500/5',
-                          tacDropzone.isDragActive
-                            ? 'border-emerald-500 bg-emerald-500/10 scale-[1.01]'
-                            : 'border-muted-foreground/25'
-                        )}
-                      >
-                        <input {...tacDropzone.getInputProps()} />
-                        <div className="flex items-center justify-center gap-4">
-                          <div className={cn(
-                            'w-12 h-12 rounded-xl flex items-center justify-center transition-all',
-                            tacDropzone.isDragActive ? 'bg-emerald-500/20 scale-110' : 'bg-muted'
-                          )}>
-                            <Scan className={cn(
-                              'w-6 h-6 transition-colors',
-                              tacDropzone.isDragActive ? 'text-emerald-500' : 'text-muted-foreground'
-                            )} />
-                          </div>
-                          <div className="text-left">
-                            <p className="font-medium text-foreground">
-                              {tacDropzone.isDragActive
-                                ? t('admin.studies.dropHere')
-                                : t('admin.studies.dragOrClick')}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {t('admin.studies.maxFileSize')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* CT Scan Images Grid */}
-                    <ImageGrid
-                      existingImages={tacImages}
-                      pendingUploads={pendingTac}
-                      onRemovePending={removePendingUpload}
-                      onDeleteExisting={(imageId) =>
-                        deleteImageMutation.mutate({ studyId: id!, imageId })
-                      }
-                      canEdit={canEdit}
-                      studyId={id}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" />
-                  {t('common.previous')}
-                </Button>
-                {isEditing && (
-                  <Button onClick={goToNextStep} className="gap-2">
-                    {t('common.next')}
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Users Step */}
-          {currentStep === 'users' && isEditing && (
-            <div className="animate-fade-in">
-              <StudyUsersManager
-                studyId={id!}
-                disabled={existingStudy?.status === 'closed'}
-              />
-
-              {/* Navigation */}
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" />
-                  {t('common.previous')}
-                </Button>
-              </div>
+              <StudyUsersManager studyId={id!} disabled={isReadOnly} />
             </div>
           )}
         </div>
-      </div>
 
-      {/* Publish Confirmation Dialog */}
-      <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.studies.publishConfirm.title')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('admin.studies.publishConfirm.description')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmPublish} className="gap-2">
-              {publishMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-              {t('admin.studies.publish')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Gold Standard Input Dialog (via Questionnaire) */}
-      <GoldStandardInputDialog
-        open={showGoldStandardInputDialog}
-        onOpenChange={setShowGoldStandardInputDialog}
-        hasTACImages={tacImages.length + pendingTac.length > 0}
-        initialInput={referenceInput}
-        initialClassification={referenceClassification}
-        onSave={(input, classification) => {
-          setReferenceInput(input);
-          setReferenceClassification(classification);
-        }}
-      />
-    </div>
-  );
-}
-
-interface ImageGridProps {
-  existingImages: StudyImage[];
-  pendingUploads: PendingUpload[];
-  onRemovePending: (id: string) => void;
-  onDeleteExisting: (imageId: string) => void;
-  canEdit: boolean;
-  studyId?: string;
-}
-
-function ImageGrid({
-  existingImages,
-  pendingUploads,
-  onRemovePending,
-  onDeleteExisting,
-  canEdit,
-  studyId,
-}: ImageGridProps) {
-  const { t } = useTranslation();
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-
-  const fetchImageUrl = async (image: StudyImage) => {
-    if (!studyId || imageUrls[image.id]) return;
-    try {
-      const url = await studyApi.getAdminImageUrl(studyId, image.id);
-      setImageUrls((prev) => ({ ...prev, [image.id]: url }));
-    } catch (error) {
-      console.error('Failed to fetch image URL:', error);
-    }
-  };
-
-  if (existingImages.length === 0 && pendingUploads.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-          <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-        </div>
-        <p className="text-muted-foreground font-medium">{t('admin.studies.noImages')}</p>
-        <p className="text-sm text-muted-foreground/70 mt-1">
-          {t('admin.studies.dragOrClick')}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {/* Existing images */}
-      {existingImages.map((image, index) => {
-        if (!imageUrls[image.id]) {
-          fetchImageUrl(image);
-        }
-        return (
-          <div
-            key={image.id}
-            className="relative group animate-fade-in"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-1 ring-border/50 transition-all group-hover:ring-primary/30 group-hover:shadow-lg">
-              {imageUrls[image.id] ? (
-                <img
-                  src={imageUrls[image.id]}
-                  alt={image.filename}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            {canEdit && (
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                onClick={() => onDeleteExisting(image.id)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        );
-      })}
-
-      {/* Pending uploads */}
-      {pendingUploads.map((upload, index) => (
-        <div
-          key={upload.id}
-          className="relative group animate-fade-in"
-          style={{ animationDelay: `${(existingImages.length + index) * 50}ms` }}
-        >
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-2 ring-dashed ring-primary/50">
-            <img
-              src={upload.preview}
-              alt="Pending upload"
-              className="w-full h-full object-cover opacity-75"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
-              <Badge className="bg-primary/90 text-primary-foreground shadow-lg">
-                <Upload className="w-3 h-3 mr-1" />
-                {t('admin.studies.pending')}
-              </Badge>
-            </div>
-          </div>
+        {/* Navigation Buttons */}
+        <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
           <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2 h-8 w-8 shadow-lg"
-            onClick={() => onRemovePending(upload.id)}
+            variant="outline"
+            onClick={goToPrevStep}
+            disabled={currentStepIndex === 0}
+            className="gap-2"
           >
-            <X className="h-4 w-4" />
+            <ChevronLeft className="w-4 h-4" />
+            {t('common.previous', 'Previous')}
+          </Button>
+
+          <div className="text-sm text-muted-foreground">
+            {t('admin.studies.step', 'Step')} {currentStepIndex + 1} {t('common.of', 'of')} {isEditing ? STEPS.length : STEPS.length - 1}
+          </div>
+
+          <Button
+            onClick={goToNextStep}
+            disabled={
+              (currentStep === 'cases' && !isEditing) ||
+              (currentStep === 'raters')
+            }
+            className="gap-2"
+          >
+            {t('common.next', 'Next')}
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
-      ))}
+
+        {/* Activate Confirmation Dialog */}
+        <AlertDialog open={showActivateDialog} onOpenChange={setShowActivateDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.studies.activateConfirmTitle', 'Activate Study')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('admin.studies.activateConfirmDescription', 'Once activated, the study will be available for assigned raters to submit classifications. Cases cannot be added or removed after activation.')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => activateMutation.mutate()}
+                className="gap-2"
+              >
+                {activateMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                {t('admin.studies.activate', 'Activate')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

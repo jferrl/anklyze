@@ -2,11 +2,11 @@ package domain
 
 import "github.com/google/uuid"
 
-// ReliabilityMetrics contains inter-rater reliability statistics for a study.
+// ReliabilityMetrics contains inter-rater reliability statistics for a case.
 // These metrics help validate the classification algorithm by measuring
 // agreement between multiple raters and comparing against a gold standard.
 type ReliabilityMetrics struct {
-	StudyID        uuid.UUID `json:"study_id"`
+	CaseID         uuid.UUID `json:"case_id"`
 	TotalResponses int64     `json:"total_responses"`
 	UniqueRaters   int64     `json:"unique_raters"`
 
@@ -138,10 +138,10 @@ func KappaInterpretationLabel(kappa float64) string {
 	}
 }
 
-// ResponseWithExpertise combines a study response with the user's expertise data.
+// ResponseWithExpertise combines a case response with the user's expertise data.
 // Used for detailed exports and stratified analysis.
 type ResponseWithExpertise struct {
-	StudyResponse
+	CaseResponse
 
 	// User expertise data
 	UserEmail       string  `json:"user_email"`
@@ -159,14 +159,14 @@ type ResponseWithExpertise struct {
 }
 
 // ============================================================================
-// Cohort-Level Reliability Metrics
+// Study-Level Reliability Metrics
 // ============================================================================
 
-// CohortReliabilityMetrics contains reliability statistics across a cohort.
+// StudyReliabilityMetrics contains reliability statistics across a study.
 // This enables proper Fleiss' Kappa calculation with multiple subjects (cases).
-type CohortReliabilityMetrics struct {
-	CohortID    uuid.UUID `json:"cohort_id"`
-	CohortTitle string    `json:"cohort_title"`
+type StudyReliabilityMetrics struct {
+	StudyID    uuid.UUID `json:"study_id"`
+	StudyTitle string    `json:"study_title"`
 
 	// Summary counts
 	TotalCases     int   `json:"total_cases"`
@@ -181,10 +181,10 @@ type CohortReliabilityMetrics struct {
 	BartonicekFleiss  *FleissKappaResult `json:"bartonicek_fleiss,omitempty"`
 
 	// Per-case analysis (helps identify "hard cases")
-	PerCaseMetrics []CaseMetrics `json:"per_case_metrics"`
+	PerCaseMetrics []PerCaseMetrics `json:"per_case_metrics"`
 
 	// Gold standard accuracy (aggregated across all cases)
-	GoldStandardAccuracy *CohortGoldStandardAccuracy `json:"gold_standard_accuracy,omitempty"`
+	GoldStandardAccuracy *StudyGoldStandardAccuracy `json:"gold_standard_accuracy,omitempty"`
 }
 
 // FleissKappaResult contains Fleiss' Kappa with metadata.
@@ -215,17 +215,17 @@ func NewFleissKappaResult(kappa float64, numSubjects, numRaters, numCategories i
 	}
 }
 
-// CaseMetrics contains metrics for a single case within a cohort.
-type CaseMetrics struct {
+// PerCaseMetrics contains metrics for a single case within a study.
+type PerCaseMetrics struct {
 	CaseOrder     int       `json:"case_order"`
-	StudyID       uuid.UUID `json:"study_id"`
-	StudyTitle    string    `json:"study_title"`
+	CaseID        uuid.UUID `json:"case_id"`
+	CaseTitle     string    `json:"case_title"`
 	ResponseCount int       `json:"response_count"`
 
 	// Per-system agreement (percentage)
-	DanisWeberAgreement  float64 `json:"danis_weber_agreement"`
-	LaugeHansenAgreement float64 `json:"lauge_hansen_agreement"`
-	AOOTAAgreement       float64 `json:"ao_ota_agreement"`
+	DanisWeberAgreement  float64  `json:"danis_weber_agreement"`
+	LaugeHansenAgreement float64  `json:"lauge_hansen_agreement"`
+	AOOTAAgreement       float64  `json:"ao_ota_agreement"`
 	BartonicekAgreement  *float64 `json:"bartonicek_agreement,omitempty"` // Optional, requires CT
 
 	// Gold standard match rate (if reference set for this case)
@@ -235,8 +235,8 @@ type CaseMetrics struct {
 	IsLowAgreement bool `json:"is_low_agreement"` // True if any system < 60%
 }
 
-// CohortGoldStandardAccuracy aggregates accuracy across all cases in a cohort.
-type CohortGoldStandardAccuracy struct {
+// StudyGoldStandardAccuracy aggregates accuracy across all cases in a study.
+type StudyGoldStandardAccuracy struct {
 	OverallAccuracy    float64 `json:"overall_accuracy"`
 	CasesWithReference int     `json:"cases_with_reference"`
 	TotalComparisons   int64   `json:"total_comparisons"`

@@ -17,7 +17,7 @@ import {
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard, ClassificationChart } from '../../components/analytics';
-import { studyApi, downloadStudyResponsesCSV } from '../../services/studyApi';
+import { caseApi, downloadCaseResponsesCSV } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
 
 const CLASSIFICATION_SYSTEMS = [
@@ -27,27 +27,27 @@ const CLASSIFICATION_SYSTEMS = [
   { key: 'bartonicek', label: 'Bartonicek', description: 'Posterior malleolus' },
 ];
 
-export function StudyAnalyticsPage() {
+export function CaseAnalyticsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeSystem, setActiveSystem] = useState('danis_weber');
 
-  const { data: study, isLoading: isLoadingStudy } = useQuery({
-    queryKey: ['study', id],
-    queryFn: () => studyApi.getStudy(id!),
+  const { data: caseData, isLoading: isLoadingCase } = useQuery({
+    queryKey: ['case', id],
+    queryFn: () => caseApi.getCase(id!),
     enabled: !!id,
   });
 
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
-    queryKey: ['study-analytics', id],
-    queryFn: () => studyApi.getStudyAnalytics(id!),
+    queryKey: ['case-analytics', id],
+    queryFn: () => caseApi.getCaseAnalytics(id!),
     enabled: !!id,
   });
 
   const handleExportCSV = async () => {
-    if (id && study) {
-      await downloadStudyResponsesCSV(id, `${study.title.replace(/\s+/g, '_')}_responses.csv`);
+    if (id && caseData) {
+      await downloadCaseResponsesCSV(id, `${caseData.title.replace(/\s+/g, '_')}_responses.csv`);
     }
   };
 
@@ -77,7 +77,7 @@ export function StudyAnalyticsPage() {
 
   const activeSystemInfo = CLASSIFICATION_SYSTEMS.find(s => s.key === activeSystem);
 
-  if (isLoadingStudy || isLoadingAnalytics) {
+  if (isLoadingCase || isLoadingAnalytics) {
     return (
       <div className="min-h-screen bg-mesh flex items-center justify-center">
         <div className="text-center">
@@ -95,7 +95,7 @@ export function StudyAnalyticsPage() {
     );
   }
 
-  if (!study || !analytics) {
+  if (!caseData || !analytics) {
     return (
       <div className="min-h-screen bg-mesh flex items-center justify-center p-4">
         <div className="chart-card max-w-md w-full text-center">
@@ -103,14 +103,14 @@ export function StudyAnalyticsPage() {
             <FileText className="w-8 h-8 text-muted-foreground/50" />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            {t('admin.studies.notFound', 'Study not found')}
+            {t('admin.cases.notFound', 'Case not found')}
           </h2>
           <p className="text-muted-foreground mb-6">
-            {t('admin.studies.notFoundDescription', 'The study you\'re looking for doesn\'t exist or has been removed.')}
+            {t('admin.cases.notFoundDescription', 'The case you\'re looking for doesn\'t exist or has been removed.')}
           </p>
-          <Button onClick={() => navigate('/admin/studies')} className="gap-2">
+          <Button onClick={() => navigate('/admin/cases')} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
-            {t('admin.studies.backToList', 'Back to Studies')}
+            {t('admin.cases.backToList', 'Back to Cases')}
           </Button>
         </div>
       </div>
@@ -125,33 +125,33 @@ export function StudyAnalyticsPage() {
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div className="space-y-3">
               <button
-                onClick={() => navigate('/admin/studies')}
+                onClick={() => navigate('/admin/cases')}
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                {t('admin.studies.backToStudies', 'Back to Studies')}
+                {t('admin.cases.backToCases', 'Back to Cases')}
               </button>
 
               <div>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                  {study.title}
+                  {caseData.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
                   <Badge
                     variant="outline"
                     className={cn(
                       'font-medium',
-                      study.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                      study.status === 'closed' && 'border-amber-500/50 text-amber-600 dark:text-amber-400',
-                      study.status === 'draft' && 'border-muted-foreground/50'
+                      caseData.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
+                      caseData.status === 'closed' && 'border-amber-500/50 text-amber-600 dark:text-amber-400',
+                      caseData.status === 'draft' && 'border-muted-foreground/50'
                     )}
                   >
-                    {t(`studies.status.${study.status}`)}
+                    {t(`cases.status.${caseData.status}`)}
                   </Badge>
-                  {study.deadline && (
+                  {caseData.deadline && (
                     <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
-                      {new Date(study.deadline).toLocaleDateString()}
+                      {new Date(caseData.deadline).toLocaleDateString()}
                     </span>
                   )}
                 </div>
@@ -160,7 +160,7 @@ export function StudyAnalyticsPage() {
 
             <div className="flex gap-2">
               <Button
-                onClick={() => navigate(`/admin/studies/${id}/reliability`)}
+                onClick={() => navigate(`/admin/cases/${id}/reliability`)}
                 variant="outline"
                 size="lg"
                 className="gap-2"
@@ -174,7 +174,7 @@ export function StudyAnalyticsPage() {
                 className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
               >
                 <Download className="w-4 h-4" />
-                {t('admin.studies.exportCSV', 'Export CSV')}
+                {t('admin.cases.exportCSV', 'Export CSV')}
               </Button>
             </div>
           </div>

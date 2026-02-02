@@ -422,12 +422,12 @@ func TestCalculateReliabilityMetrics_TwoRaters(t *testing.T) {
 
 	user1 := uuid.New()
 	user2 := uuid.New()
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	dw1 := "Weber A"
 	dw2 := "Weber A"
 
-	responses := []domain.StudyResponse{
+	responses := []domain.CaseResponse{
 		{
 			UserID:         user1,
 			DanisWeberType: &dw1,
@@ -438,11 +438,11 @@ func TestCalculateReliabilityMetrics_TwoRaters(t *testing.T) {
 		},
 	}
 
-	study := &domain.Study{
-		ID: studyID,
+	cs := &domain.Case{
+		ID: caseID,
 	}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -482,19 +482,19 @@ func TestCalculateReliabilityMetrics_MultipleRaters_FleissNote(t *testing.T) {
 	user1 := uuid.New()
 	user2 := uuid.New()
 	user3 := uuid.New()
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	dw := "Weber A"
 
-	responses := []domain.StudyResponse{
+	responses := []domain.CaseResponse{
 		{UserID: user1, DanisWeberType: &dw},
 		{UserID: user2, DanisWeberType: &dw},
 		{UserID: user3, DanisWeberType: &dw},
 	}
 
-	study := &domain.Study{ID: studyID}
+	cs := &domain.Case{ID: caseID}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -526,7 +526,7 @@ func TestCalculateReliabilityMetrics_MultipleResponsesPerUser(t *testing.T) {
 
 	user1 := uuid.New()
 	user2 := uuid.New()
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	// User 1: first response "Weber A", second response "Weber B"
 	dw1a := "Weber A"
@@ -535,16 +535,16 @@ func TestCalculateReliabilityMetrics_MultipleResponsesPerUser(t *testing.T) {
 	dw2a := "Weber A"
 	dw2b := "Weber B"
 
-	responses := []domain.StudyResponse{
+	responses := []domain.CaseResponse{
 		{UserID: user1, DanisWeberType: &dw1a}, // First response user1
 		{UserID: user2, DanisWeberType: &dw2a}, // First response user2
 		{UserID: user1, DanisWeberType: &dw1b}, // Second response user1 (latest)
 		{UserID: user2, DanisWeberType: &dw2b}, // Second response user2 (latest)
 	}
 
-	study := &domain.Study{ID: studyID}
+	cs := &domain.Case{ID: caseID}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -570,10 +570,10 @@ func TestCalculateReliabilityMetrics_EmptyResponses(t *testing.T) {
 
 	svc := NewStatisticsService()
 
-	responses := []domain.StudyResponse{}
-	study := &domain.Study{ID: uuid.New()}
+	responses := []domain.CaseResponse{}
+	cs := &domain.Case{ID: uuid.New()}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -883,19 +883,19 @@ func TestCalculateReliabilityMetrics_AOOTAIncludesWeightedKappa(t *testing.T) {
 
 	user1 := uuid.New()
 	user2 := uuid.New()
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	ao1 := "44-B1"
 	ao2 := "44-B2" // Adjacent code
 
-	responses := []domain.StudyResponse{
+	responses := []domain.CaseResponse{
 		{UserID: user1, AOOTACode: &ao1},
 		{UserID: user2, AOOTACode: &ao2},
 	}
 
-	study := &domain.Study{ID: studyID}
+	cs := &domain.Case{ID: caseID}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1046,21 +1046,21 @@ func TestCalculateReliabilityMetrics_WithSingleCase_NoCI(t *testing.T) {
 
 	user1 := uuid.New()
 	user2 := uuid.New()
-	studyID := uuid.New()
+	caseID := uuid.New()
 
 	dw1 := "Weber A"
 	dw2 := "Weber A"
 
 	// With single-case study design, we only have 1 rating pair
 	// CI requires at least 2 rating pairs to be meaningful
-	responses := []domain.StudyResponse{
+	responses := []domain.CaseResponse{
 		{UserID: user1, DanisWeberType: &dw1},
 		{UserID: user2, DanisWeberType: &dw2},
 	}
 
-	study := &domain.Study{ID: studyID}
+	cs := &domain.Case{ID: caseID}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, study)
+	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

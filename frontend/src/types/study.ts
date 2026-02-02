@@ -1,13 +1,17 @@
 import type { ClassificationResult, FractureInput } from './fracture';
 
-// Study status lifecycle
-export type StudyStatus = 'draft' | 'published' | 'closed';
+// ============================================================================
+// Case Types (individual patient presentations)
+// ============================================================================
+
+// Case status lifecycle
+export type CaseStatus = 'draft' | 'published' | 'closed';
 
 // Image category
 export type ImageCategory = 'xray' | 'tac';
 
-// Study (admin view)
-export interface Study {
+// Case (admin view) - individual patient presentation
+export interface Case {
   id: string;
   created_at: string;
   updated_at: string;
@@ -16,25 +20,25 @@ export interface Study {
   created_by: string;
   title: string;
   description?: string;
-  status: StudyStatus;
+  status: CaseStatus;
   deadline?: string;
   has_tac_images: boolean;
   response_count: number;
   unique_users: number;
-  // Validation study fields
+  // Validation case fields
   reference_classification?: ClassificationResult;
   reference_input?: FractureInput;
   show_reference_after_submit: boolean;
   allow_multiple_responses: boolean;
-  // Cohort membership (optional)
-  cohort_id?: string;
+  // Study membership (optional)
+  study_id?: string;
   case_order: number;
 }
 
-// Study image
-export interface StudyImage {
+// Case image
+export interface CaseImage {
   id: string;
-  study_id: string;
+  case_id: string;
   category: ImageCategory;
   display_order: number;
   filename: string;
@@ -42,25 +46,25 @@ export interface StudyImage {
   size_bytes: number;
 }
 
-// Study image for user view (no storage path)
-export interface StudyImageInfo {
+// Case image for user view (no storage path)
+export interface CaseImageInfo {
   id: string;
   category: ImageCategory;
   display_order: number;
   filename: string;
 }
 
-// Study with images (admin view)
-export interface StudyWithImages extends Study {
-  images: StudyImage[];
+// Case with images (admin view)
+export interface CaseWithImages extends Case {
+  images: CaseImage[];
 }
 
-// User's view of a study in list
-export interface UserStudyItem {
+// User's view of a case in list
+export interface UserCaseItem {
   id: string;
   title: string;
   description?: string;
-  status: StudyStatus;
+  status: CaseStatus;
   deadline?: string;
   published_at?: string;
   has_tac_images: boolean;
@@ -70,26 +74,26 @@ export interface UserStudyItem {
   my_response_count: number;
 }
 
-// User's view of a study detail
-export interface UserStudyDetail {
+// User's view of a case detail
+export interface UserCaseDetail {
   id: string;
   title: string;
   description?: string;
-  status: StudyStatus;
+  status: CaseStatus;
   deadline?: string;
   published_at?: string;
   has_tac_images: boolean;
-  images: StudyImageInfo[];
+  images: CaseImageInfo[];
   has_responded: boolean;
   my_response_count: number;
   allow_multiple_responses: boolean;
   is_expired: boolean;
 }
 
-// Study response
-export interface StudyResponse {
+// Case response
+export interface CaseResponse {
   id: string;
-  study_id: string;
+  case_id: string;
   user_id: string;
   created_at: string;
   classification: ClassificationResult;
@@ -104,7 +108,7 @@ export interface SignedURLResponse {
 
 // --- Request types ---
 
-export interface CreateStudyRequest {
+export interface CreateCaseRequest {
   title: string;
   description?: string;
   deadline?: string;
@@ -114,7 +118,7 @@ export interface CreateStudyRequest {
   allow_multiple_responses?: boolean;
 }
 
-export interface UpdateStudyRequest {
+export interface UpdateCaseRequest {
   title?: string;
   description?: string;
   deadline?: string;
@@ -143,41 +147,41 @@ export interface SubmitResponseRequest {
 
 // --- Response types ---
 
-export interface StudyListResponse {
-  studies: Study[];
+export interface CaseListResponse {
+  cases: Case[];
   total: number;
   page: number;
   limit: number;
 }
 
-export interface UserStudyListResponse {
-  studies: UserStudyItem[];
+export interface UserCaseListResponse {
+  cases: UserCaseItem[];
   total: number;
   page: number;
   limit: number;
 }
 
 export interface ImageUploadResponse {
-  image: StudyImage;
+  image: CaseImage;
 }
 
-export interface StudyResponseListResponse {
-  responses: StudyResponse[];
+export interface CaseResponseListResponse {
+  responses: CaseResponse[];
   total: number;
   page: number;
   limit: number;
 }
 
 export interface MyResponsesResponse {
-  responses: StudyResponse[];
+  responses: CaseResponse[];
 }
 
 // --- Analytics types ---
 
-export interface StudyAnalyticsSummary {
-  study_id: string;
+export interface CaseAnalyticsSummary {
+  case_id: string;
   title: string;
-  status: StudyStatus;
+  status: CaseStatus;
   response_count: number;
   unique_respondents: number;
   avg_time_taken_ms: number;
@@ -188,29 +192,29 @@ export interface StudyAnalyticsSummary {
 }
 
 // Admin image with signed URL for preview
-export interface AdminStudyImage extends StudyImage {
+export interface AdminCaseImage extends CaseImage {
   signed_url?: string;
 }
 
-export interface AdminStudyImagesResponse {
-  images: AdminStudyImage[];
+export interface AdminCaseImagesResponse {
+  images: AdminCaseImage[];
 }
 
-// --- Study user access types ---
+// --- Case user access types ---
 
-export interface StudyUser {
+export interface CaseUser {
   id: string;
   user_id: string;
   user_email: string;
   created_at: string;
 }
 
-export interface StudyUsersListResponse {
-  users: StudyUser[];
+export interface CaseUsersListResponse {
+  users: CaseUser[];
   total: number;
 }
 
-export interface AddStudyUserRequest {
+export interface AddCaseUserRequest {
   user_email: string;
 }
 
@@ -265,7 +269,7 @@ export interface GoldStandardAccuracy {
 }
 
 export interface ReliabilityMetrics {
-  study_id: string;
+  case_id: string;
   total_responses: number;
   unique_raters: number;
   danis_weber_agreement?: SystemAgreement;
@@ -282,7 +286,7 @@ export interface ReliabilityMetricsResponse extends ReliabilityMetrics {
 // --- Submit response result (with gold standard comparison) ---
 
 export interface SubmitResponseResult {
-  response: StudyResponse;
+  response: CaseResponse;
   reference_classification?: ClassificationResult;
   matches_danis_weber?: boolean;
   matches_lauge_hansen?: boolean;
@@ -317,36 +321,36 @@ export interface UpdateUserProfileRequest {
 }
 
 // ============================================================================
-// Study Cohort Types (for multi-case reliability studies)
+// Study Types (research projects grouping multiple cases)
 // ============================================================================
 
-// Cohort status lifecycle
-export type CohortStatus = 'draft' | 'active' | 'closed';
+// Study status lifecycle
+export type StudyStatus = 'draft' | 'active' | 'closed';
 
-// Study cohort (groups multiple studies for multi-case reliability analysis)
-export interface StudyCohort {
+// Study (groups multiple cases for multi-case reliability analysis)
+export interface Study {
   id: string;
   created_at: string;
   updated_at: string;
   created_by: string;
   title: string;
   description?: string;
-  status: CohortStatus;
+  status: StudyStatus;
   case_count: number;
   total_responses: number;
   unique_raters: number;
   complete_raters: number;
 }
 
-// Cohort with its cases (studies with cohort_id set)
-export interface CohortWithCases extends StudyCohort {
-  cases: Study[];
+// Study with its cases
+export interface StudyWithCases extends Study {
+  cases: Case[];
 }
 
-// Cohort user (pre-assigned rater)
-export interface CohortUser {
+// Study rater (pre-assigned rater)
+export interface StudyRater {
   id: string;
-  cohort_id: string;
+  study_id: string;
   user_id: string;
   user_email: string;
   cases_completed: number;
@@ -354,7 +358,7 @@ export interface CohortUser {
   created_at: string;
 }
 
-// Rater progress across a cohort
+// Rater progress across a study
 export interface RaterProgress {
   user_id: string;
   user_email: string;
@@ -365,36 +369,36 @@ export interface RaterProgress {
   last_response_at?: string;
 }
 
-// --- Cohort Request Types ---
+// --- Study Request Types ---
 
-export interface CreateCohortRequest {
+export interface CreateStudyRequest {
   title: string;
   description?: string;
 }
 
-export interface UpdateCohortRequest {
+export interface UpdateStudyRequest {
   title?: string;
   description?: string;
 }
 
-export interface AddCaseRequest {
-  study_id: string;
+export interface AddCaseToStudyRequest {
+  case_id: string;
   case_order?: number;
 }
 
 export interface ReorderCasesRequest {
-  study_ids: string[];
+  case_ids: string[];
 }
 
-export interface AddCohortUserRequest {
+export interface AddStudyRaterRequest {
   user_id: string;
   email: string;
 }
 
-// --- Cohort Response Types ---
+// --- Study Response Types ---
 
-export interface CohortListResponse {
-  cohorts: StudyCohort[];
+export interface StudyListResponse {
+  studies: Study[];
   total: number;
   page: number;
   limit: number;
@@ -405,7 +409,7 @@ export interface RaterProgressResponse {
   total: number;
 }
 
-// --- Cohort Reliability Metrics ---
+// --- Study Reliability Metrics ---
 
 // Fleiss' Kappa result (now calculable with multiple cases!)
 export interface FleissKappaResult {
@@ -418,11 +422,11 @@ export interface FleissKappaResult {
   note?: string;
 }
 
-// Metrics for a single case within a cohort
+// Metrics for a single case within a study
 export interface CaseMetrics {
   case_order: number;
-  study_id: string;
-  study_title: string;
+  case_id: string;
+  case_title: string;
   response_count: number;
   danis_weber_agreement: number;
   lauge_hansen_agreement: number;
@@ -432,8 +436,8 @@ export interface CaseMetrics {
   is_low_agreement: boolean;
 }
 
-// Gold standard accuracy aggregated across a cohort
-export interface CohortGoldStandardAccuracy {
+// Gold standard accuracy aggregated across a study
+export interface StudyGoldStandardAccuracy {
   overall_accuracy: number;
   cases_with_reference: number;
   total_comparisons: number;
@@ -443,10 +447,10 @@ export interface CohortGoldStandardAccuracy {
   bartonicek_accuracy?: number;
 }
 
-// Full reliability metrics for a cohort
-export interface CohortReliabilityMetrics {
-  cohort_id: string;
-  cohort_title: string;
+// Full reliability metrics for a study
+export interface StudyReliabilityMetrics {
+  study_id: string;
+  study_title: string;
   total_cases: number;
   total_responses: number;
   unique_raters: number;
@@ -456,10 +460,10 @@ export interface CohortReliabilityMetrics {
   ao_ota_fleiss?: FleissKappaResult;
   bartonicek_fleiss?: FleissKappaResult;
   per_case_metrics: CaseMetrics[];
-  gold_standard_accuracy?: CohortGoldStandardAccuracy;
+  gold_standard_accuracy?: StudyGoldStandardAccuracy;
 }
 
-export interface CohortReliabilityResponse extends CohortReliabilityMetrics {
+export interface StudyReliabilityResponse extends StudyReliabilityMetrics {
   calculated_at: string;
 }
 
@@ -480,8 +484,8 @@ export interface QuestionErrorStats {
 
 // DivergenceReport is the complete analysis output
 export interface DivergenceReport {
-  study_id: string;
-  study_title: string;
+  case_id: string;
+  case_title: string;
   total_responses: number;
   responses_with_path: number;
   question_stats: QuestionErrorStats[];
@@ -505,3 +509,70 @@ export function getKappaInterpretation(kappa: number): {
   if (kappa <= 0.8) return { label: 'Substantial', color: 'green' };
   return { label: 'Almost Perfect', color: 'emerald' };
 }
+
+// ============================================================================
+// Backwards Compatibility Aliases (for gradual migration)
+// ============================================================================
+
+// Old Study types now map to Case
+/** @deprecated Use Case instead */
+export type StudyOld = Case;
+/** @deprecated Use CaseStatus instead */
+export type StudyStatusOld = CaseStatus;
+/** @deprecated Use CaseImage instead */
+export type StudyImage = CaseImage;
+/** @deprecated Use CaseImageInfo instead */
+export type StudyImageInfo = CaseImageInfo;
+/** @deprecated Use CaseWithImages instead */
+export type StudyWithImages = CaseWithImages;
+/** @deprecated Use UserCaseItem instead */
+export type UserStudyItem = UserCaseItem;
+/** @deprecated Use UserCaseDetail instead */
+export type UserStudyDetail = UserCaseDetail;
+/** @deprecated Use CaseResponse instead */
+export type StudyResponse = CaseResponse;
+/** @deprecated Use CreateCaseRequest instead */
+export type CreateStudyRequestOld = CreateCaseRequest;
+/** @deprecated Use UpdateCaseRequest instead */
+export type UpdateStudyRequestOld = UpdateCaseRequest;
+/** @deprecated Use CaseListResponse instead */
+export type StudyListResponseOld = CaseListResponse;
+/** @deprecated Use UserCaseListResponse instead */
+export type UserStudyListResponse = UserCaseListResponse;
+/** @deprecated Use CaseResponseListResponse instead */
+export type StudyResponseListResponse = CaseResponseListResponse;
+/** @deprecated Use CaseAnalyticsSummary instead */
+export type StudyAnalyticsSummary = CaseAnalyticsSummary;
+/** @deprecated Use AdminCaseImage instead */
+export type AdminStudyImage = AdminCaseImage;
+// Note: AdminCaseImagesResponse is already defined above, no alias needed
+/** @deprecated Use CaseUser instead */
+export type StudyUser = CaseUser;
+/** @deprecated Use CaseUsersListResponse instead */
+export type StudyUsersListResponse = CaseUsersListResponse;
+/** @deprecated Use AddCaseUserRequest instead */
+export type AddStudyUserRequest = AddCaseUserRequest;
+
+// Old Cohort types now map to Study
+/** @deprecated Use StudyStatus instead */
+export type CohortStatus = StudyStatus;
+/** @deprecated Use Study instead */
+export type StudyCohort = Study;
+/** @deprecated Use StudyWithCases instead */
+export type CohortWithCases = StudyWithCases;
+/** @deprecated Use StudyRater instead */
+export type CohortUser = StudyRater;
+/** @deprecated Use CreateStudyRequest instead */
+export type CreateCohortRequest = CreateStudyRequest;
+/** @deprecated Use UpdateStudyRequest instead */
+export type UpdateCohortRequest = UpdateStudyRequest;
+/** @deprecated Use AddStudyRaterRequest instead */
+export type AddCohortUserRequest = AddStudyRaterRequest;
+/** @deprecated Use StudyListResponse instead */
+export type CohortListResponse = StudyListResponse;
+/** @deprecated Use StudyGoldStandardAccuracy instead */
+export type CohortGoldStandardAccuracy = StudyGoldStandardAccuracy;
+/** @deprecated Use StudyReliabilityMetrics instead */
+export type CohortReliabilityMetrics = StudyReliabilityMetrics;
+/** @deprecated Use StudyReliabilityResponse instead */
+export type CohortReliabilityResponse = StudyReliabilityResponse;
