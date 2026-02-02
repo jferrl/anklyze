@@ -21,21 +21,15 @@ const (
 type Specialty string
 
 const (
-	SpecialtySpine          Specialty = "spine"
-	SpecialtyUpperExtremity Specialty = "upper_extremity"
-	SpecialtyLowerExtremity Specialty = "lower_extremity"
-	SpecialtyPelvis         Specialty = "pelvis"
-	SpecialtyFootAnkle      Specialty = "foot_ankle"
+	SpecialtyFootAnkle Specialty = "foot_ankle"
+	SpecialtyOther     Specialty = "other"
 )
 
 // ValidSpecialties returns all valid specialty values.
 func ValidSpecialties() []Specialty {
 	return []Specialty{
-		SpecialtySpine,
-		SpecialtyUpperExtremity,
-		SpecialtyLowerExtremity,
-		SpecialtyPelvis,
 		SpecialtyFootAnkle,
+		SpecialtyOther,
 	}
 }
 

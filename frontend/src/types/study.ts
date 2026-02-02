@@ -296,7 +296,7 @@ export interface SubmitResponseResult {
 
 // --- User profile types ---
 
-export type Specialty = 'spine' | 'upper_extremity' | 'lower_extremity' | 'pelvis' | 'foot_ankle';
+export type Specialty = 'foot_ankle' | 'other';
 export type TrainingLevel = 'resident' | 'attending';
 
 export interface UserProfile {
@@ -473,6 +473,7 @@ export interface StudyReliabilityResponse extends StudyReliabilityMetrics {
 // QuestionErrorStats tracks error rates for a specific question
 export interface QuestionErrorStats {
   question: string;
+  correct_answer: string;
   total_answers: number;
   correct_answers: number;
   incorrect_answers: number;
@@ -492,8 +493,15 @@ export interface DivergenceReport {
   most_confusing_error_rate: number;
   path_distribution: Record<string, number>;
   correct_path: string;
+  correct_path_count: number;
+  correct_path_percent: number;
+  unique_paths_count: number;
+  first_divergence_stats: Record<string, number>;
+  most_common_first_divergence: string;
   avg_back_clicks: number;
   back_click_correlation: 'positive' | 'negative' | 'none';
+  correct_with_high_back_count: number;
+  incorrect_with_high_back_count: number;
 }
 
 // Helper for Kappa interpretation

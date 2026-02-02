@@ -17,11 +17,8 @@ import type { UpdateUserProfileRequest, Specialty, TrainingLevel } from '../../t
 import { toast } from 'sonner';
 
 const SPECIALTIES: { value: Specialty; labelKey: string }[] = [
-  { value: 'spine', labelKey: 'profile.specialties.spine' },
-  { value: 'upper_extremity', labelKey: 'profile.specialties.upperExtremity' },
-  { value: 'lower_extremity', labelKey: 'profile.specialties.lowerExtremity' },
-  { value: 'pelvis', labelKey: 'profile.specialties.pelvis' },
   { value: 'foot_ankle', labelKey: 'profile.specialties.footAnkle' },
+  { value: 'other', labelKey: 'profile.specialties.other' },
 ];
 
 const TRAINING_LEVELS: { value: TrainingLevel; labelKey: string }[] = [

@@ -22,6 +22,7 @@ type DivergencePoint struct {
 // QuestionErrorStats tracks error rates for a specific question.
 type QuestionErrorStats struct {
 	Question         string         `json:"question"`
+	CorrectAnswer    string         `json:"correct_answer"`
 	TotalAnswers     int            `json:"total_answers"`
 	CorrectAnswers   int            `json:"correct_answers"`
 	IncorrectAnswers int            `json:"incorrect_answers"`
@@ -43,12 +44,21 @@ type DivergenceReport struct {
 	MostConfusingRate float64              `json:"most_confusing_error_rate"`
 
 	// Path distribution
-	PathDistribution map[string]int `json:"path_distribution"`
-	CorrectPath      string         `json:"correct_path"`
+	PathDistribution   map[string]int `json:"path_distribution"`
+	CorrectPath        string         `json:"correct_path"`
+	CorrectPathCount   int            `json:"correct_path_count"`
+	CorrectPathPercent float64        `json:"correct_path_percent"`
+	UniquePathsCount   int            `json:"unique_paths_count"`
+
+	// Divergence analysis
+	FirstDivergenceStats map[string]int `json:"first_divergence_stats"` // question -> count of users who first diverged here
+	MostCommonFirstDiv   string         `json:"most_common_first_divergence"`
 
 	// Back button analysis
-	AvgBackClicks        float64 `json:"avg_back_clicks"`
-	BackClickCorrelation string  `json:"back_click_correlation"` // "positive", "negative", "none"
+	AvgBackClicks            float64 `json:"avg_back_clicks"`
+	BackClickCorrelation     string  `json:"back_click_correlation"` // "positive", "negative", "none"
+	CorrectWithHighBackCount int     `json:"correct_with_high_back_count"`
+	IncorrectWithHighBackCnt int     `json:"incorrect_with_high_back_count"`
 }
 
 // DivergenceService handles divergence analysis calculations.
@@ -97,16 +107,18 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 
 	// 4. Initialize report
 	report := &DivergenceReport{
-		CaseID:           caseID,
-		CaseTitle:        cs.Title,
-		TotalResponses:   len(responses),
-		CorrectPath:      goldPathStr,
-		PathDistribution: make(map[string]int),
+		CaseID:               caseID,
+		CaseTitle:            cs.Title,
+		TotalResponses:       len(responses),
+		CorrectPath:          goldPathStr,
+		PathDistribution:     make(map[string]int),
+		FirstDivergenceStats: make(map[string]int),
 	}
 
 	questionStats := make(map[string]*QuestionErrorStats)
 	var totalBackClicks int
 	var correctWithHighBack, incorrectWithHighBack int
+	var correctPathCount int
 
 	// 5. Analyze each response
 	for _, resp := range responses {
@@ -128,12 +140,22 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 		// Track back clicks
 		totalBackClicks += resp.BackClicks
 
+		// Track if this user got the correct path
+		isCorrect := resp.DecisionPath == goldPathStr
+		if isCorrect {
+			correctPathCount++
+		}
+
+		// Track first divergence point
+		firstDivergenceFound := false
+
 		// Compare each answer against gold standard
 		for _, qa := range userPath {
 			// Initialize stats for this question if needed
 			if _, exists := questionStats[qa.Question]; !exists {
 				questionStats[qa.Question] = &QuestionErrorStats{
 					Question:        qa.Question,
+					CorrectAnswer:   goldPath[qa.Question],
 					WrongAnswerDist: make(map[string]int),
 				}
 			}
@@ -150,6 +172,12 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 				// Only count as incorrect if there was a gold answer for this question
 				stats.IncorrectAnswers++
 				stats.WrongAnswerDist[qa.Answer]++
+
+				// Track first divergence point (only once per response)
+				if !firstDivergenceFound {
+					report.FirstDivergenceStats[qa.Question]++
+					firstDivergenceFound = true
+				}
 			}
 
 			// Track time
@@ -161,7 +189,6 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 		}
 
 		// Correlation analysis
-		isCorrect := resp.DecisionPath == goldPathStr
 		if resp.BackClicks > 2 {
 			if isCorrect {
 				correctWithHighBack++
@@ -196,7 +223,25 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 		report.AvgBackClicks = float64(totalBackClicks) / float64(report.ResponsesWithPath)
 	}
 
+	// Path accuracy stats
+	report.CorrectPathCount = correctPathCount
+	report.UniquePathsCount = len(report.PathDistribution)
+	if report.ResponsesWithPath > 0 {
+		report.CorrectPathPercent = float64(correctPathCount) / float64(report.ResponsesWithPath) * 100
+	}
+
+	// Find most common first divergence point
+	var maxDivCount int
+	for q, count := range report.FirstDivergenceStats {
+		if count > maxDivCount {
+			maxDivCount = count
+			report.MostCommonFirstDiv = q
+		}
+	}
+
 	// Back click correlation
+	report.CorrectWithHighBackCount = correctWithHighBack
+	report.IncorrectWithHighBackCnt = incorrectWithHighBack
 	if correctWithHighBack > incorrectWithHighBack {
 		report.BackClickCorrelation = "positive" // More back clicks = more correct
 	} else if incorrectWithHighBack > correctWithHighBack {

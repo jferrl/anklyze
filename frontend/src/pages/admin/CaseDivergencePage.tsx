@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,18 +7,23 @@ import {
   Loader2,
   FileText,
   AlertTriangle,
-  TrendingUp,
   Target,
   ArrowLeftRight,
   Clock,
   BarChart3,
   Users,
   HelpCircle,
+  CheckCircle2,
+  GitBranch,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Progress } from '../../components/ui/progress';
+import { StatCard } from '../../components/analytics';
 import { caseApi } from '../../services/studyApi';
 import { cn } from '@/lib/utils';
 import {
@@ -40,17 +45,20 @@ function getErrorRateBadgeClass(errorRate: number): string {
 
 function QuestionCard({ stats }: { stats: QuestionErrorStats }) {
   const { t } = useTranslation();
+  const [showAllWrongAnswers, setShowAllWrongAnswers] = useState(false);
   const displayName = t(`admin.divergence.questions.${stats.question}`, stats.question);
   const errorPercent = Math.round(stats.error_rate * 100);
   const correctPercent = 100 - errorPercent;
 
-  // Get top 3 wrong answers
-  const topWrongAnswers = useMemo(() => {
+  // Get all wrong answers sorted
+  const allWrongAnswers = useMemo(() => {
     if (!stats.wrong_answer_distribution) return [];
     return Object.entries(stats.wrong_answer_distribution)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 3);
+      .sort(([, a], [, b]) => b - a);
   }, [stats.wrong_answer_distribution]);
+
+  const displayedWrongAnswers = showAllWrongAnswers ? allWrongAnswers : allWrongAnswers.slice(0, 3);
+  const hasMoreAnswers = allWrongAnswers.length > 3;
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -73,6 +81,17 @@ function QuestionCard({ stats }: { stats: QuestionErrorStats }) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Correct answer indicator */}
+        {stats.correct_answer && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span className="text-sm text-emerald-700 dark:text-emerald-300">
+              <span className="font-medium">{t('admin.divergence.correctAnswer')}:</span>{' '}
+              <span className="font-mono">{stats.correct_answer}</span>
+            </span>
+          </div>
+        )}
+
         {/* Error/Correct ratio bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
@@ -102,13 +121,13 @@ function QuestionCard({ stats }: { stats: QuestionErrorStats }) {
         </div>
 
         {/* Wrong answer distribution */}
-        {topWrongAnswers.length > 0 && (
+        {displayedWrongAnswers.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {t('admin.divergence.commonWrongAnswers')}
             </p>
             <div className="space-y-1.5">
-              {topWrongAnswers.map(([answer, count]) => (
+              {displayedWrongAnswers.map(([answer, count]) => (
                 <div
                   key={answer}
                   className="flex items-center justify-between text-sm bg-muted/50 px-3 py-1.5 rounded-md"
@@ -120,6 +139,24 @@ function QuestionCard({ stats }: { stats: QuestionErrorStats }) {
                 </div>
               ))}
             </div>
+            {hasMoreAnswers && (
+              <button
+                onClick={() => setShowAllWrongAnswers(!showAllWrongAnswers)}
+                className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mt-1"
+              >
+                {showAllWrongAnswers ? (
+                  <>
+                    <ChevronUp className="h-3 w-3" />
+                    {t('admin.divergence.showLess')}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-3 w-3" />
+                    {t('admin.divergence.showAll', { count: allWrongAnswers.length })}
+                  </>
+                )}
+              </button>
+            )}
           </div>
         )}
       </CardContent>
@@ -302,11 +339,6 @@ export function CaseDivergencePage() {
     );
   }
 
-  // Calculate coverage percentage
-  const coveragePercent = report.total_responses > 0
-    ? Math.round((report.responses_with_path / report.total_responses) * 100)
-    : 0;
-
   return (
     <div className="min-h-screen bg-mesh">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -366,76 +398,64 @@ export function CaseDivergencePage() {
         </header>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.divergence.totalResponses')}</p>
-                  <p className="text-2xl font-bold">{report.total_responses}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.divergence.pathCoverage')}</p>
-                  <p className="text-2xl font-bold">{coveragePercent}%</p>
-                  <p className="text-xs text-muted-foreground">
-                    {t('admin.divergence.pathCoverageOf', { count: report.responses_with_path, total: report.total_responses })}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                  <HelpCircle className="h-6 w-6 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.divergence.mostConfusing')}</p>
-                  <p className="text-lg font-semibold truncate max-w-[150px]">
-                    {report.most_confusing_question
-                      ? t(`admin.divergence.questions.${report.most_confusing_question}`, report.most_confusing_question)
-                      : 'N/A'}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t('admin.divergence.errorRate', { percent: Math.round(report.most_confusing_error_rate * 100) })}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                  <ArrowLeftRight className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.divergence.avgBackClicks')}</p>
-                  <p className="text-2xl font-bold">{report.avg_back_clicks.toFixed(1)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {t('admin.divergence.correlation', { type: report.back_click_correlation })}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <StatCard
+            title={t('admin.divergence.totalResponses')}
+            value={report.total_responses}
+            subtitle={t('admin.divergence.pathCoverageOf', { count: report.responses_with_path, total: report.total_responses })}
+            icon={Users}
+            color="blue"
+            delay={0}
+          />
+          <StatCard
+            title={t('admin.divergence.correctPathRate')}
+            value={`${report.correct_path_percent.toFixed(1)}%`}
+            subtitle={t('admin.divergence.correctPathCount', { count: report.correct_path_count, total: report.responses_with_path })}
+            icon={CheckCircle2}
+            color="emerald"
+            delay={50}
+          />
+          <StatCard
+            title={t('admin.divergence.uniquePaths')}
+            value={report.unique_paths_count}
+            subtitle={t('admin.divergence.uniquePathsDesc')}
+            icon={GitBranch}
+            color="violet"
+            delay={100}
+          />
+          <StatCard
+            title={t('admin.divergence.mostConfusing')}
+            value={report.most_confusing_question
+              ? t(`admin.divergence.questions.${report.most_confusing_question}`, report.most_confusing_question)
+              : 'N/A'}
+            subtitle={t('admin.divergence.errorRate', { percent: Math.round(report.most_confusing_error_rate * 100) })}
+            icon={HelpCircle}
+            color="amber"
+            delay={150}
+          />
+          <StatCard
+            title={t('admin.divergence.firstDivergence')}
+            value={report.most_common_first_divergence
+              ? t(`admin.divergence.questions.${report.most_common_first_divergence}`, report.most_common_first_divergence)
+              : 'N/A'}
+            subtitle={t('admin.divergence.firstDivergenceDesc')}
+            icon={AlertCircle}
+            color="rose"
+            delay={200}
+          />
+          <StatCard
+            title={t('admin.divergence.avgBackClicks')}
+            value={report.avg_back_clicks.toFixed(1)}
+            subtitle={
+              report.back_click_correlation === 'positive' ? t('admin.divergence.correlationPositive') :
+              report.back_click_correlation === 'negative' ? t('admin.divergence.correlationNegative') :
+              t('admin.divergence.correlationNone')
+            }
+            icon={ArrowLeftRight}
+            color="blue"
+            delay={250}
+          />
+        </section>
 
         {/* Main content grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -538,6 +558,30 @@ export function CaseDivergencePage() {
                         {report.back_click_correlation === 'none' && t('admin.divergence.correlationNone')}
                       </Badge>
                     </div>
+
+                    {/* High back click breakdown */}
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                        {t('admin.divergence.highBackClickBreakdown')}
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            {t('admin.divergence.correctWithHighBack')}
+                          </span>
+                          <span className="font-mono">{report.correct_with_high_back_count}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                            {t('admin.divergence.incorrectWithHighBack')}
+                          </span>
+                          <span className="font-mono">{report.incorrect_with_high_back_count}</span>
+                        </div>
+                      </div>
+                    </div>
+
                     <p className="text-xs text-muted-foreground">
                       {report.back_click_correlation === 'positive' && t('admin.divergence.correlationPositiveDesc')}
                       {report.back_click_correlation === 'negative' && t('admin.divergence.correlationNegativeDesc')}
@@ -547,6 +591,39 @@ export function CaseDivergencePage() {
                 </CardContent>
               </Card>
             </TooltipProvider>
+
+            {/* First Divergence Distribution */}
+            {report.first_divergence_stats && Object.keys(report.first_divergence_stats).length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <AlertCircle className="h-5 w-5 text-amber-500" />
+                    {t('admin.divergence.firstDivergenceDistribution')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(report.first_divergence_stats)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([question, count]) => {
+                        const maxCount = Math.max(...Object.values(report.first_divergence_stats));
+                        const percentage = Math.round((count / maxCount) * 100);
+                        return (
+                          <div key={question} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="truncate">
+                                {t(`admin.divergence.questions.${question}`, question)}
+                              </span>
+                              <span className="font-mono text-muted-foreground ml-2">{count}</span>
+                            </div>
+                            <Progress value={percentage} className="h-1.5 [&>div]:bg-amber-500" />
+                          </div>
+                        );
+                      })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
