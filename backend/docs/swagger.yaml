@@ -13,11 +13,8 @@ definitions:
     properties:
       email:
         type: string
-      user_id:
-        type: string
     required:
     - email
-    - user_id
     type: object
   api.CreateChatSessionResponse:
     properties:
@@ -173,6 +170,15 @@ definitions:
       studies:
         items:
           $ref: '#/definitions/domain.Study'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.StudyRatersResponse:
+    properties:
+      raters:
+        items:
+          $ref: '#/definitions/domain.StudyRater'
         type: array
       total:
         type: integer
@@ -1393,9 +1399,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.StudyRater'
-            type: array
+            $ref: '#/definitions/api.StudyRatersResponse'
         "400":
           description: Bad Request
           schema:

@@ -391,7 +391,6 @@ export interface ReorderCasesRequest {
 }
 
 export interface AddStudyRaterRequest {
-  user_id: string;
   email: string;
 }
 

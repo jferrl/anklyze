@@ -557,10 +557,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.StudyRater"
-                            }
+                            "$ref": "#/definitions/api.StudyRatersResponse"
                         }
                     },
                     "400": {
@@ -1497,14 +1494,10 @@ const docTemplate = `{
         "api.AddStudyRaterRequest": {
             "type": "object",
             "required": [
-                "email",
-                "user_id"
+                "email"
             ],
             "properties": {
                 "email": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -1738,6 +1731,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Study"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.StudyRatersResponse": {
+            "type": "object",
+            "properties": {
+                "raters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.StudyRater"
                     }
                 },
                 "total": {

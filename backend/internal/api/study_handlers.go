@@ -67,8 +67,7 @@ type ReorderCasesRequest struct {
 
 // AddStudyRaterRequest is the request body for adding a user to a study.
 type AddStudyRaterRequest struct {
-	UserID string `json:"user_id" binding:"required,uuid"`
-	Email  string `json:"email" binding:"required,email"`
+	Email string `json:"email" binding:"required,email"`
 }
 
 // StudyListResponse is the response for listing studies.
@@ -498,12 +497,18 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 
 // --- User/Rater Management ---
 
+// StudyRatersResponse is the response for listing study raters.
+type StudyRatersResponse struct {
+	Raters []domain.StudyRater `json:"raters"`
+	Total  int                 `json:"total"`
+}
+
 // ListStudyRaters lists all users assigned to a study.
 // @Summary List study raters
 // @Tags Admin Studies
 // @Produce json
 // @Param id path string true "Study ID"
-// @Success 200 {object} []domain.StudyRater
+// @Success 200 {object} StudyRatersResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /api/admin/studies/{id}/raters [get]
@@ -521,7 +526,10 @@ func (h *StudyHandler) ListStudyRaters(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, raters)
+	c.JSON(http.StatusOK, StudyRatersResponse{
+		Raters: raters,
+		Total:  len(raters),
+	})
 }
 
 // AddStudyRater assigns a user as a rater to a study.
@@ -548,11 +556,19 @@ func (h *StudyHandler) AddStudyRater(c *gin.Context) {
 		return
 	}
 
-	userID, err := uuid.Parse(req.UserID)
+	// Look up user by email
+	user, err := h.userRepo.GetByEmail(c.Request.Context(), req.Email)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		slog.Error("failed to look up user by email", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to look up user"})
 		return
 	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found. The user must have logged in at least once before being added as a rater."})
+		return
+	}
+
+	userID := user.ID
 
 	// Check if user is already in study
 	hasAccess, err := h.studyRepo.HasAccess(c.Request.Context(), studyID, userID)
