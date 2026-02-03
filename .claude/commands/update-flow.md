@@ -1,21 +1,44 @@
 # Update Classification Flow
 
-When the classification flow changes in `docs/Option Choice Decision Flow-ES.mmd`, execute the following steps:
+When a new classification flow diagram is created (e.g., `docs/Danis-Weber AO_OTA Flow-{DATE}.mmd`), execute the following steps:
+
+## File Naming Convention
+Flow diagrams are versioned using the format: `docs/Danis-Weber AO_OTA Flow-{YYYY-MM-DD}-{LANG}.mmd`
+- Example: `docs/Danis-Weber AO_OTA Flow-2026-02-02-ES.mmd` (Spanish)
+- Example: `docs/Danis-Weber AO_OTA Flow-2026-02-02-EN.mmd` (English)
 
 ## 1. Review Spanish Spelling and Syntax
 Review the Spanish file for spelling and syntax issues. Common terms to check:
 - "maléolo" (with accent)
-- "transindesmales" / "transindesmal" (with 'n')
-- "suprasindesmales" / "suprasindesmal" (with 'n')
-- "infrasindesmal" (with 'n')
+- "transindesmal" (with 'n', not 's')
+- "suprasindesmal" (with 'n', not 's')
+- "infrasindesmal" (with 'n', not 's')
+- "oblicuo" (not "blicuo")
+- "peroné" (not "pernoé")
+- "Fractura" (not "ractura")
 
-## 2. Update English Translation
-Translate changes from `docs/Option Choice Decision Flow-ES.mmd` to `docs/Option Choice Decision Flow-EN.mmd`.
-Ensure the English file matches the Spanish file's structure and logic.
+Rename the Spanish file with `-ES` suffix if not already present.
 
-## 3. Update Backend Rules Engine
+## 2. Create English Translation
+Create the English version from the Spanish file with `-EN` suffix:
+- Translate all Spanish text to English
+- Ensure the English file matches the Spanish file's structure and logic
+- Key translations:
+  - maléolo posterior -> posterior malleolus
+  - maléolo medial -> medial malleolus
+  - maléolo lateral -> lateral malleolus
+  - infrasindesmal -> infrasyndesmotic
+  - transindesmal -> transsyndesmotic
+  - suprasindesmal -> suprasyndesmotic
+  - Fractura unimaleolar -> Unimalleolar fracture
+  - Fractura bimaleolar -> Bimalleolar fracture
+  - Fractura trimaleolar -> Trimalleolar fracture
+  - ¿Tiene TAC? -> CT scan available?
+  - peroné -> fibula
+
+## 3. Update Backend Rules Engine (using English as source of truth)
 Update the classification logic in `backend/internal/rules/engine.go`:
-- Ensure all classification paths match the new flow diagram
+- Ensure all classification paths match the English flow diagram
 - Update the `classifyLateralOnly()`, `classifyLateralPosterior()`, `classifyLateralMedial()`, `classifyTrimaleolar()` functions as needed
 - Update impossible case handling
 
@@ -74,8 +97,8 @@ cd e2e && npm run test
 ## Key Files Reference
 
 ### Documentation
-- `docs/Option Choice Decision Flow-ES.mmd` - Source of truth (Spanish)
-- `docs/Option Choice Decision Flow-EN.mmd` - English translation
+- `docs/Danis-Weber AO_OTA Flow-{DATE}-ES.mmd` - Spanish version
+- `docs/Danis-Weber AO_OTA Flow-{DATE}-EN.mmd` - English version (source of truth for code)
 
 ### Backend
 
@@ -100,7 +123,7 @@ cd e2e && npm run test
 - `e2e/pages/classify.page.ts` - Page object
 
 ## Usage
-Run this command when you've made changes to the Spanish flow diagram:
+Run this command when you've created a new flow diagram:
 ```
 /update-flow
 ```

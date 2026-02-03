@@ -5,68 +5,68 @@ config:
 ---
 flowchart TB
     A(["Danis-Weber AO/OTA Flow"]) --> B{"Which malleoli are fractured?"}
-    B --> C["Posterior malleolus"] & D["Medial malleolus"] & n1["Lateral malleolus"] & n2["Medial and posterior malleoli"] & n3["Lateral and posterior malleoli"] & n4["Lateral and medial malleoli"] & n5["Medial, lateral and posterior malleoli"]
-    C --> n218["Do you have a CT scan?"]
-    n6["What type of fracture is it?"] --> n7@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n8@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n9@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n10@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
-    n7 --> n11@{ label: "<span style=\"color:\">Unimalleolar fracture posterior malleolus</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen SER</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
-    n8 --> n12@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar fracture posterior malleolus</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 2</span>" }
-    n9 --> n13@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar fracture posterior malleolus</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 3</span>" }
-    n10 --> n14@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar fracture posterior malleolus</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"color:\"><br>Bartonicek 4</span>" }
-    D --> n15["What morphology does it have?"]
-    n15 --> n16["Oblique"] & n17["Transverse"]
-    n16 --> n18@{ label: "<span style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Unimalleolar fracture medial malleolus</span><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA</span><span style=\"--tw-scale-x:\"><br></span>" }
-    n17 --> n19@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture medial malleolus<br>AO 44 A1<br>Lauge-Hansen unclassifiable (could be PA/SER/PER)<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\"><br></span>" }
+    B --> C["Posterior malleolus"] & D["Medial malleolus"] & n1["Lateral malleolus"] & n2["Medial and posterior malleoli"] & n3["Lateral and posterior malleoli"] & n4["Lateral and medial malleoli"] & n5["Medial, lateral, and posterior malleoli"]
+    C --> n218["CT scan available?"]
+    n6["What type of fracture is it?"] --> n7@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n8@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n9@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n10@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n7 --> n11@{ label: "<span style=\"color:\">Unimalleolar posterior malleolus fracture</span><span style=\"color:\"><br>AO 44 B3<br></span>Lauge-Hansen unclassifiable<br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
+    n8 --> n12@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar posterior malleolus fracture</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span>Lauge-Hansen unclassifiable<span style=\"color:\"><br>Bartonicek 2</span>" }
+    n9 --> n13@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar posterior malleolus fracture</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span>Lauge-Hansen unclassifiable<span style=\"color:\"><br>Bartonicek 3</span>" }
+    n10 --> n14@{ label: "<span style=\"--tw-scale-x:\"><span style=\"color:\">Unimalleolar posterior malleolus fracture</span><br>AO 44 B3<br style=\"--tw-scale-x:\"></span>Lauge-Hansen unclassifiable<br><span style=\"color:\">Bartonicek 4</span>" }
+    D --> n15["What is the morphology?"]
+    n15 --> n16["Oblique/Vertical"] & n17["Transverse"]
+    n16 --> n18@{ label: "<span style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Unimalleolar medial malleolus fracture</span><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA</span><span style=\"--tw-scale-x:\"><br></span>" }
+    n17 --> n19@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar medial malleolus fracture<br>AO 44 A1<br>Lauge-Hansen unclassifiable (could be PA/SER/PER)<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\"><br></span>" }
     n1 --> n20["At what level is the fracture?"]
     n20 --> n21@{ label: "<span style=\"--tw-scale-x:\">Infrasyndesmotic</span><br style=\"--tw-scale-x:\">" } & n22@{ label: "<span style=\"color:\">Transsyndesmotic</span>" } & n23@{ label: "<span style=\"color:\">Suprasyndesmotic</span>" }
-    n21 --> n27@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br>" }
+    n21 --> n27@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span><br>" }
     n22 --> n29["What is the fracture morphology?"]
-    n29 --> n30["Spiral (Low anterior, high posterior)"] & n31["Transverse/Oblique (Low medial, high lateral)"]
-    n30 --> n32@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
-    n31 --> n33@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n29 --> n30["Spiral (Low anterior, high posterior)"] & n31["Transverse/Oblique(Low medial, high lateral)/Comminuted"]
+    n30 --> n32@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
+    n31 --> n33@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
     n23 --> n34@{ label: "<span style=\"color:\">What type?</span>" }
-    n34 --> n35@{ label: "<span style=\"color:\">Simple Diaphyseal</span>" } & n36@{ label: "<span style=\"color:\">Multifragmentary</span>" } & n37@{ label: "<span style=\"color:\">Proximal</span>" }
-    n35 --> n286["What is the fibula trace pattern?"]
-    n36 --> n290["What is the fibula trace pattern?"]
-    n37 --> n41@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C3<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
-    n2 --> n264["Do you have a CT scan?"]
+    n34 --> n35@{ label: "<span style=\"color:\">Yesmple Diaphyseal</span>" } & n36@{ label: "<span style=\"color:\">Multifragmentary</span>" } & n37@{ label: "<span style=\"color:\">Proximal</span>" }
+    n35 --> n286["What is the fibula fracture pattern?"]
+    n36 --> n290["What is the fibula fracture pattern?"]
+    n37 --> n41@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C3<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n2 --> n264["CT scan available?"]
     n3 --> n43["At what level is the fibula fracture?"]
     n43 --> n44["Infrasyndesmotic"] & n45["Transsyndesmotic"] & n46["Suprasyndesmotic"]
-    n44 --> n66["Not possible because SA mechanism does not involve the posterior malleolus.<br>PA mechanism is transsyndesmotic or suprasyndesmotic"]
+    n44 --> n66["Not possible because SA mechanism does not avulse posterior malleolus.<br>PA mechanism is transsyndesmotic or suprasyndesmotic"]
     n45 --> n48["What is the fracture morphology?"]
     n46 --> n49["What type?"]
-    n48 --> n52["Spiral (Low anterior, high posterior)"] & n53["Transverse/Oblique (Low medial, high lateral)"]
-    n49 --> n54["Simple Diaphyseal"] & n55["Multifragmentary"] & n56["Proximal"]
-    n67["What type of fracture is the posterior malleolus?"] --> n68@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n69@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n70@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n71@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n48 --> n52["Spiral (Low anterior, high posterior)"] & n53["Transverse/Oblique(Low medial, high lateral)/Comminuted"]
+    n49 --> n54["Yesmple Diaphyseal"] & n55["Multifragmentary"] & n56["Proximal"]
+    n67["What type of posterior malleolus fracture?"] --> n68@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n69@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n70@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n71@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n68 --> n72@{ label: "<span style=\"color:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen SER<br></span><span style=\"color:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
     n69 --> n73@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n70 --> n74@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n71 --> n75@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n76["What type of fracture is the posterior malleolus?"] --> n77@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n78@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n79@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n80@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n76["What type of posterior malleolus fracture?"] --> n77@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n78@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n79@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n80@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n77 --> n81@{ label: "<span style=\"color:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"color:\"><br>AO 44 B3<br></span><span style=\"color:\">Lauge-Hansen PA<br></span><span style=\"color:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
     n78 --> n82@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n79 --> n83@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n80 --> n84@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n52 --> n223["Do you have a CT scan?"]
-    n53 --> n227["Do you have a CT scan?"]
-    n85["What type of fracture is the posterior malleolus?"] --> n86@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n87@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n88@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n89@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n52 --> n223["CT scan available?"]
+    n53 --> n227["CT scan available?"]
+    n85["What type of posterior malleolus fracture?"] --> n86@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n87@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n88@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n89@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n86 --> n90@{ label: "<span style=\"color:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"color:\"><br>AO 44 C1<br></span><span style=\"color:\">Lauge-Hansen PER<br></span><span style=\"color:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
     n87 --> n91@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n88 --> n92@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n89 --> n93@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n94["What type of fracture is the posterior malleolus?"] --> n95@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n96@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n97@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n98@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n94["What type of posterior malleolus fracture?"] --> n95@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n96@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n97@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n98@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n95 --> n99@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 1</span>" }
     n96 --> n100@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n97 --> n101@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n98 --> n102@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n103["What type of fracture is the posterior malleolus?"] --> n104@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n105@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n106@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n107@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n103["What type of posterior malleolus fracture?"] --> n104@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n105@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n106@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n107@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n104 --> n108@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 1</span>" }
     n105 --> n109@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n106 --> n110@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n107 --> n111@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n54 --> n307["What is the fibula trace pattern?"]
-    n55 --> n310["What is the fibula trace pattern?"]
-    n56 --> n237["Do you have a CT scan?"]
-    n4 --> n112["What is the morphology of the medial malleolus fracture?"]
+    n54 --> n307["What is the fibula fracture pattern?"]
+    n55 --> n310["What is the fibula fracture pattern?"]
+    n56 --> n237["CT scan available?"]
+    n4 --> n112["What is the medial malleolus fracture morphology?"]
     n112 --> n113["Oblique/vertical"] & n114["Transverse"]
     n113 --> n115["Is the fibula fracture infrasyndesmotic and transverse?"]
     n115 --> n116["Yes"] & n117["No"]
@@ -75,77 +75,77 @@ flowchart TB
     n117 --> n119
     n119 --> n120["High (Suprasyndesmotic)"] & n121["Low (Transsyndesmotic / Infrasyndesmotic)"]
     n120 --> n122["What type?"]
-    n122 --> n123["Simple Diaphyseal"] & n124["Multifragmentary"] & n125["Proximal"]
-    n123 --> n336["What is the fibula trace pattern?"]
-    n124 --> n340["What is the fibula trace pattern?"]
+    n122 --> n123["Yesmple Diaphyseal"] & n124["Multifragmentary"] & n125["Proximal"]
+    n123 --> n336["What is the fibula fracture pattern?"]
+    n124 --> n340["What is the fibula fracture pattern?"]
     n125 --> n128@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n121 --> n129["What is the morphology of the fibula fracture?"]
-    n129 --> n130["Transverse"] & n131["Transverse/Oblique (Low medial, high lateral)"] & n132["Spiral (Low anterior, high posterior)"]
+    n121 --> n129["What is the fibula fracture morphology?"]
+    n129 --> n130["Transverse"] & n131["Oblique(Low medial, high lateral)/Comminuted"] & n132["Spiral (Low anterior, high posterior)"]
     n130 --> n133["At what level is the fibula fracture?"]
     n133 --> n134["Infrasyndesmotic"] & n135["Transsyndesmotic"]
     n134 --> n136@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 A2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber A</span>" }
     n135 --> n138@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
     n131 --> n139@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
     n132 --> n140@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
-    n5 --> n141["What is the morphology of the fibula fracture?"]
+    n5 --> n141["What is the fibula fracture morphology?"]
     n141 --> n143["High (Suprasyndesmotic)"] & n152["Low (Transsyndesmotic / Infrasyndesmotic)"]
-    n145["What type?"] --> n146["Simple Diaphyseal"] & n147["Multifragmentary"] & n148["Proximal"]
-    n146 --> n345["What is the fibula trace pattern?"]
-    n147 --> n363["What is the fibula trace pattern?"]
-    n148 --> n249["Do you have a CT scan?"]
+    n145["What type?"] --> n146["Yesmple Diaphyseal"] & n147["Multifragmentary"] & n148["Proximal"]
+    n146 --> n345["What is the fibula fracture pattern?"]
+    n147 --> n363["What is the fibula fracture pattern?"]
+    n148 --> n249["CT scan available?"]
     n143 --> n145
-    n152 --> n153["What is the morphology of the fibula fracture?"]
-    n153 --> n154["Transverse"] & n155["Oblique (low medial, high lateral)"] & n156["Spiral (Low anterior, high posterior)"]
+    n152 --> n153["What is the fibula fracture morphology?"]
+    n153 --> n154["Transverse"] & n155["Oblique(Low medial, high lateral)/Comminuted"] & n156["Spiral (Low anterior, high posterior)"]
     n154 --> n157["At what level is the fibula fracture?"]
     n157 --> n158["Infrasyndesmotic"] & n159["Transsyndesmotic"]
     n158 --> n160@{ label: "<span style=\"--tw-scale-x:\">Not possible, exceptional mechanism</span>" }
-    n159 --> n253["Do you have a CT scan?"]
-    n156 --> n260["Do you have a CT scan?"]
-    n164["What type of fracture is the posterior malleolus?"] --> n165["Extra-incisural fragment"] & n166["Posterolateral fragment"] & n167["Posteromedial and posterolateral fragment"] & n168["Large posterolateral triangular fragment"]
+    n159 --> n253["CT scan available?"]
+    n156 --> n260["CT scan available?"]
+    n164["What type of posterior malleolus fracture?"] --> n165["Extraincisural fragment"] & n166["Posterolateral fragment"] & n167["Posteromedial and posterolateral fragment"] & n168["Large posterolateral triangular fragment"]
     n165 --> n169@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 1</span>" }
     n166 --> n170@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n167 --> n171@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n168 --> n172@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n173["What type of fracture is the posterior malleolus?"] --> n174["Extra-incisural fragment"] & n175["Posterolateral fragment"] & n176["Posteromedial and posterolateral fragment"] & n177["Large posterolateral triangular fragment"]
+    n173["What type of posterior malleolus fracture?"] --> n174["Extraincisural fragment"] & n175["Posterolateral fragment"] & n176["Posteromedial and posterolateral fragment"] & n177["Large posterolateral triangular fragment"]
     n174 --> n178@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 1</span>" }
     n175 --> n179@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 2</span>" }
     n176 --> n180@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 3</span>" }
     n177 --> n181@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 4</span>" }
-    n182["What type of fracture is the posterior malleolus?"] --> n183["Extra-incisural fragment"] & n184["Posterolateral fragment"] & n185["Posteromedial and posterolateral fragment"] & n186["Large posterolateral triangular fragment"]
+    n182["What type of posterior malleolus fracture?"] --> n183["Extraincisural fragment"] & n184["Posterolateral fragment"] & n185["Posteromedial and posterolateral fragment"] & n186["Large posterolateral triangular fragment"]
     n183 --> n187@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 1</span>" }
     n184 --> n188@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 2</span>" }
     n185 --> n189@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 3</span>" }
     n186 --> n190@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br>Bartonicek 4</span>" }
-    n191["What type of fracture is the posterior malleolus?"] --> n192["Extra-incisural fragment"] & n193["Posterolateral fragment"] & n194["Posteromedial and posterolateral fragment"] & n195["Large posterolateral triangular fragment"]
+    n191["What type of posterior malleolus fracture?"] --> n192["Extraincisural fragment"] & n193["Posterolateral fragment"] & n194["Posteromedial and posterolateral fragment"] & n195["Posteromedial and posterolateral fragment"]
     n192 --> n196@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 1</span>" }
     n193 --> n197@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 2</span>" }
     n194 --> n198@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 3</span>" }
     n195 --> n199@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 4</span>" }
-    n201["What type of fracture is the posterior malleolus?"] --> n206["Extra-incisural fragment"] & n207["Posterolateral fragment"] & n208["Posteromedial and posterolateral fragment"] & n209["Large posterolateral triangular fragment"]
+    n201["What type of posterior malleolus fracture?"] --> n206["Extraincisural fragment"] & n207["Posterolateral fragment"] & n208["Posteromedial and posterolateral fragment"] & n209["Large posterolateral triangular fragment"]
     n206 --> n214@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 1</span>" }
     n207 --> n215@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 2</span>" }
     n208 --> n216@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 3</span>" }
     n209 --> n217@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br>Bartonicek 4</span>" }
     n218 --> n219["Yes"] & n220["No"]
     n219 --> n6
-    n220 --> n221@{ label: "<span style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Unimalleolar fracture posterior malleolus</span><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER</span><span style=\"--tw-scale-x:\"><br></span>" }
+    n220 --> n221@{ label: "<span style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Unimalleolar posterior malleolus fracture</span><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable</span><span style=\"--tw-scale-x:\"><br></span>" }
     n223 --> n224["Yes"] & n225["No"]
     n225 --> n226@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span><br style=\"--tw-scale-x:\">" }
     n224 --> n67
     n227 --> n228["Yes"] & n344["No"]
     n228 --> n76
-    n230["Do you have a CT scan?"] --> n231["Yes"] & n285["No"]
+    n230["CT scan available?"] --> n231["Yes"] & n285["No"]
     n231 --> n85
-    n233["Do you have a CT scan?"] --> n234["Yes"] & n235["No"]
+    n233["CT scan available?"] --> n234["Yes"] & n235["No"]
     n234 --> n94
     n235 --> n236@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
     n237 --> n238["Yes"] & n239["No"]
     n238 --> n103
     n239 --> n240@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br>" }
-    n241["Do you have a CT scan?"] --> n242["Yes"] & n243["No"]
+    n241["CT scan available?"] --> n242["Yes"] & n243["No"]
     n242 --> n164
     n243 --> n244@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n245["Do you have a CT scan?"] --> n246["Yes"] & n247["No"]
+    n245["CT scan available?"] --> n246["Yes"] & n247["No"]
     n246 --> n173
     n247 --> n248@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
     n249 --> n250["Yes"] & n251["No"]
@@ -157,67 +157,67 @@ flowchart TB
     n261 --> n201
     n262 --> n263@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen SER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B<br></span>" }
     n264 --> n265["Yes"] & n266["No"]
-    n265 --> n267["What type of fracture is the posterior malleolus?"]
-    n267 --> n268["Extra-incisural fragment"] & n269["Posterolateral fragment"] & n270["Posteromedial and posterolateral fragment"] & n271["Large posterolateral triangular fragment"]
+    n265 --> n267["What type of posterior malleolus fracture?"]
+    n267 --> n268["Extraincisural fragment"] & n269["Posterolateral fragment"] & n270["Posteromedial and posterolateral fragment"] & n271["Large posterolateral triangular fragment"]
     n266 --> n272@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)" }
     n268 --> n273@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 1" }
-    n269 --> n274@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 2" } & n327["Untitled Node"] & n328["Untitled Node"]
+    n269 --> n274@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 2" }
     n270 --> n275@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 3" }
-    n271 --> n276@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 4" } & n360["Untitled Node"] & n361["Untitled Node"]
+    n271 --> n276@{ label: "Bimalleolar fracture (Medial + Posterior)<br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\">Lauge-Hansen unclassifiable (SER/PA)<br>Bartonicek 4" }
     n285 --> n232@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n286 --> n287["Parasyndesmotic short oblique/transverse/comminuted trace"] & n288["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
-    n288 --> n39@{ label: "<br><span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C1<br>Lauge-Hansen PER<span style=\"color:\"><br>Weber C</span><br>" }
-    n287 --> n289@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C1<br style=\"--tw-scale-x:\">Lauge-Hansen PA<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
-    n290 --> n291["Parasyndesmotic short oblique/transverse/comminuted trace"] & n292["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
-    n292 --> n40@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C2<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
-    n291 --> n293@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar fracture lateral malleolus</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C2<br style=\"--tw-scale-x:\">Lauge-Hansen PA<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
-    n294["What type of fracture is the posterior malleolus?"] --> n295@{ label: "<span style=\"color:\">Extra-incisural fragment</span>" } & n296@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n297@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n298@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
+    n286 --> n287["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n288["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n288 --> n39@{ label: "<br><span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C1<br>Lauge-Hansen PER<span style=\"color:\"><br>Weber C</span><br>" }
+    n287 --> n289@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C1<br style=\"--tw-scale-x:\">Lauge-Hansen PA<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n290 --> n291["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n292["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n292 --> n40@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C2<br style=\"--tw-scale-x:\">Lauge-Hansen PER<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n291 --> n293@{ label: "<span style=\"--tw-scale-x:\">Unimalleolar lateral malleolus fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\"></span>AO-44-C2<br style=\"--tw-scale-x:\">Lauge-Hansen PA<span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">Weber C</span>" }
+    n294["What type of posterior malleolus fracture?"] --> n295@{ label: "<span style=\"color:\">Extraincisural fragment</span>" } & n296@{ label: "<span style=\"color:\">Posterolateral fragment</span>" } & n297@{ label: "<span style=\"color:\">Posteromedial and posterolateral fragment</span>" } & n298@{ label: "<span style=\"color:\">Large posterolateral triangular fragment</span>" }
     n295 --> n299@{ label: "<span style=\"color:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"color:\"><br>AO 44 C1<br></span><span style=\"color:\">Lauge-Hansen PA<br></span><span style=\"color:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"color:\">Bartonicek 1</span>" }
     n296 --> n300@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n297 --> n301@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n298 --> n302@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n303["Do you have a CT scan?"] --> n304["Yes"] & n305["No"]
+    n303["CT scan available?"] --> n304["Yes"] & n305["No"]
     n304 --> n294
     n305 --> n306@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n307 --> n308["Parasyndesmotic short oblique/transverse/comminuted trace"] & n309["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n307 --> n308["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n309["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n309 --> n230
     n308 --> n303
-    n310 --> n311["Parasyndesmotic short oblique/transverse/comminuted trace"] & n312["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n310 --> n311["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n312["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n312 --> n233
-    n311 --> n313["Do you have a CT scan?"]
+    n311 --> n313["CT scan available?"]
     n313 --> n314["Yes"] & n315["No"]
     n315 --> n316@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n314 --> n325["What type of fracture is the posterior malleolus?"]
-    n325 --> n326["Extra-incisural fragment"] & n329["Posterolateral fragment"] & n330["Posteromedial and posterolateral fragment"] & n331["Large posterolateral triangular fragment"]
+    n314 --> n325["What type of posterior malleolus fracture?"]
+    n325 --> n326["Extraincisural fragment"] & n329["Posterolateral fragment"] & n330["Posteromedial and posterolateral fragment"] & n331["Large posterolateral triangular fragment"]
     n326 --> n332@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 1</span>" }
     n329 --> n333@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n330 --> n334@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 3</span>" }
     n331 --> n335@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br style=\"--tw-scale-x:\"><span style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n336 --> n337["Parasyndesmotic short oblique/transverse/comminuted trace"] & n338["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n336 --> n337["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n338["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n338 --> n126@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span><br>" }
     n337 --> n339@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n340 --> n341["Parasyndesmotic short oblique/transverse/comminuted trace"] & n342["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n340 --> n341["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n342["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n342 --> n127@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PER<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
     n341 --> n343@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and medial malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
     n344 --> n229@{ label: "<span style=\"--tw-scale-x:\">Bimalleolar fracture (lateral and posterior malleolus)</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 B3<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber B</span>" }
-    n345 --> n346["Parasyndesmotic short oblique/transverse/comminuted trace"] & n347["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n345 --> n346["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n347["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n347 --> n241
-    n346 --> n348["Do you have a CT scan?"]
+    n346 --> n348["CT scan available?"]
     n348 --> n349["Yes"] & n350["No"]
-    n349 --> n351["What type of fracture is the posterior malleolus?"]
+    n349 --> n351["What type of posterior malleolus fracture?"]
     n350 --> n352@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n351 --> n353["Extra-incisural fragment"] & n354["Posterolateral fragment"] & n355["Posteromedial and posterolateral fragment"] & n356["Large posterolateral triangular fragment"]
+    n351 --> n353["Extraincisural fragment"] & n354["Posterolateral fragment"] & n355["Posteromedial and posterolateral fragment"] & n356["Large posterolateral triangular fragment"]
     n353 --> n357@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 1</span>" }
     n354 --> n358@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n355 --> n359@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 3</span>" }
-    n356 --> n362@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 4</span>" }
-    n363 --> n364["Parasyndesmotic short oblique/transverse/comminuted trace"] & n365["Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"]
+    n356 --> n362@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C1<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 3</span>" }
+    n363 --> n364["Parasyndesmotic with short oblique/transverse/comminuted pattern"] & n365["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n365 --> n245
-    n364 --> n366["Do you have a CT scan?"]
+    n364 --> n366["CT scan available?"]
     n366 --> n367["Yes"] & n368["No"]
     n368 --> n369@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C</span>" }
-    n367 --> n370["What type of fracture is the posterior malleolus?"]
-    n370 --> n371["Extra-incisural fragment"] & n372["Posterolateral fragment"] & n373["Posteromedial and posterolateral fragment"] & n374["Large posterolateral triangular fragment"]
+    n367 --> n370["What type of posterior malleolus fracture?"]
+    n370 --> n371["Extraincisural fragment"] & n372["Posterolateral fragment"] & n373["Posteromedial and posterolateral fragment"] & n374["Large posterolateral triangular fragment"]
     n371 --> n375@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 1</span>" }
     n372 --> n376@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 2</span>" }
     n373 --> n377@{ label: "<span style=\"--tw-scale-x:\">Trimalleolar fracture</span><span style=\"--tw-scale-x:\"><br style=\"--tw-scale-x:\">AO 44 C2<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Lauge-Hansen PA<br style=\"--tw-scale-x:\"></span><span style=\"--tw-scale-x:\">Weber C<br style=\"--tw-scale-x:\">Bartonicek 3</span>" }
