@@ -40,7 +40,7 @@ export const flowchartEN = `flowchart TB
 
     n22 --> n29{"What is the fracture morphology?"}
     n29 --> n30["Spiral (Low anterior, high posterior)"]
-    n29 --> n31["Oblique (Low medial, high lateral)/Comminuted"]
+    n29 --> n31["Transverse/Oblique (Low medial, high lateral)/Comminuted"]
     n30 --> n32["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
     n31 --> n33["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
 
@@ -90,7 +90,7 @@ export const flowchartEN = `flowchart TB
 
     n45 --> n48{"What is the fracture morphology?"}
     n48 --> n52["Spiral (Low anterior, high posterior)"]
-    n48 --> n53["Oblique (Low medial, high lateral)/Comminuted"]
+    n48 --> n53["Transverse/Oblique (Low medial, high lateral)/Comminuted"]
 
     %% Transsyndesmotic spiral - CT scan
     n52 --> n223{"Do you have a CT scan?"}
@@ -240,7 +240,7 @@ export const flowchartEN = `flowchart TB
     n117 --> n119
 
     n119 --> n120["High (Suprasyndesmotic)"]
-    n119 --> n121["Low (At tibial plafond or below)"]
+    n119 --> n121["Low (Transsyndesmal / Infrasyndesmal)"]
 
     n120 --> n122{"What type?"}
     n122 --> n123["Simple Diaphyseal"]
@@ -265,7 +265,7 @@ export const flowchartEN = `flowchart TB
 
     n121 --> n129{"What is the fibula fracture morphology?"}
     n129 --> n130["Transverse"]
-    n129 --> n131["Oblique (low medial, high lateral)"]
+    n129 --> n131["Oblique (Low medial, high lateral)/Comminuted"]
     n129 --> n132["Spiral (Low anterior, high posterior)"]
 
     n130 --> n133{"At what level is the fibula fracture?"}
@@ -279,7 +279,7 @@ export const flowchartEN = `flowchart TB
     %% Trimalleolar branch
     n5 --> n141{"At what level is the fibula fracture?"}
     n141 --> n143["High (Suprasyndesmotic)"]
-    n141 --> n152["Low (At tibial plafond or below)"]
+    n141 --> n152["Low (Transsyndesmal / Infrasyndesmal)"]
 
     n143 --> n145{"What type?"}
     n145 --> n146["Simple Diaphyseal"]
@@ -384,7 +384,7 @@ export const flowchartEN = `flowchart TB
 
     n152 --> n153{"What is the fibula fracture morphology?"}
     n153 --> n154["Transverse"]
-    n153 --> n155["Oblique (low medial, high lateral)"]
+    n153 --> n155["Oblique (Low medial, high lateral)/Comminuted"]
     n153 --> n156["Spiral (Low anterior, high posterior)"]
 
     n154 --> n157{"At what level is the fibula fracture?"}

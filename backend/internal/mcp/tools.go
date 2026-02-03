@@ -167,8 +167,10 @@ type FormOptions struct {
 	InvolvedMalleoli       []SelectOption      `json:"involved_malleoli,omitempty"`
 	PosteriorFractureTypes []SelectOption      `json:"posterior_fracture_types,omitempty"`
 	MedialMorphology       []SelectOption      `json:"medial_morphology,omitempty"`
+	MedialMorphologyLM     []SelectOption      `json:"medial_morphology_lm,omitempty"`
 	FibularLevels          []SelectOption      `json:"fibular_levels,omitempty"`
 	LateralMorphology      []SelectOption      `json:"lateral_morphology,omitempty"`
+	FibulaMorphologyLMTri  []SelectOption      `json:"fibula_morphology_lm_tri,omitempty"`
 	SuprasindesmalTypes    []SelectOption      `json:"suprasindesmal_types,omitempty"`
 	FibulaTracePatterns    []SelectOption      `json:"fibula_trace_patterns,omitempty"`
 }
@@ -228,6 +230,10 @@ func buildFormOptions(lang i18n.Language) FormOptions {
 			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionMedialOblique)},
 			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionMedialTransverse)},
 		},
+		MedialMorphologyLM: []SelectOption{
+			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionMedialObliqueLM)},
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionMedialTransverse)},
+		},
 		FibularLevels: []SelectOption{
 			{Value: "infrasindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularInfrasindesmal)},
 			{Value: "transindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularTransindesmal)},
@@ -236,6 +242,11 @@ func buildFormOptions(lang i18n.Language) FormOptions {
 		LateralMorphology: []SelectOption{
 			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionLateralTransverse)},
 			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionLateralOblique)},
+			{Value: "spiral", Label: i18n.T(lang, i18n.KeyOptionLateralSpiral)},
+		},
+		FibulaMorphologyLMTri: []SelectOption{
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionLateralTransverse)},
+			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionFibulaObliqueLMTri)},
 			{Value: "spiral", Label: i18n.T(lang, i18n.KeyOptionLateralSpiral)},
 		},
 		SuprasindesmalTypes: []SelectOption{
@@ -258,10 +269,14 @@ func filterOptions(opts FormOptions, category string) any {
 		return map[string]any{"posterior_fracture_types": opts.PosteriorFractureTypes}
 	case "medial_morphology":
 		return map[string]any{"medial_morphology": opts.MedialMorphology}
+	case "medial_morphology_lm":
+		return map[string]any{"medial_morphology_lm": opts.MedialMorphologyLM}
 	case "fibular_levels":
 		return map[string]any{"fibular_levels": opts.FibularLevels}
 	case "lateral_morphology":
 		return map[string]any{"lateral_morphology": opts.LateralMorphology}
+	case "fibula_morphology_lm_tri":
+		return map[string]any{"fibula_morphology_lm_tri": opts.FibulaMorphologyLMTri}
 	case "suprasindesmal_types":
 		return map[string]any{"suprasindesmal_types": opts.SuprasindesmalTypes}
 	case "fibula_trace_patterns":

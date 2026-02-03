@@ -114,7 +114,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   classificationStyles.laugeHansen.hover
                 )}>
                   {result.lauge_hansen.type}
-                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">
@@ -160,7 +160,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   classificationStyles.danisWeber.hover
                 )}>
                   {result.danis_weber.type}
-                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">
@@ -200,7 +200,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   classificationStyles.aoota.hover
                 )}>
                   {result.ao_ota.code}
-                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">
@@ -240,7 +240,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   classificationStyles.bartonicek.hover
                 )}>
                   {result.bartonicek.type}
-                  <Info className="h-4 w-4 text-muted-foreground" />
+                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">

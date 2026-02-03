@@ -182,11 +182,17 @@ type FormOptions struct {
 	// Medial morphology options
 	MedialMorphology []SelectOption `json:"medial_morphology"`
 
+	// Medial morphology options (for lateral+medial path - different labels)
+	MedialMorphologyLM []SelectOption `json:"medial_morphology_lm"`
+
 	// Fibular level options
 	FibularLevels []SelectOption `json:"fibular_levels"`
 
 	// Lateral morphology options
 	LateralMorphology []SelectOption `json:"lateral_morphology"`
+
+	// Fibula morphology options (for lateral+medial and trimaleolar paths - different labels)
+	FibulaMorphologyLMTri []SelectOption `json:"fibula_morphology_lm_tri"`
 
 	// Suprasindesmal type options
 	SuprasindesmalTypes []SelectOption `json:"suprasindesmal_types"`
@@ -282,6 +288,10 @@ func (h *Handler) GetOptions(c *gin.Context) {
 			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionMedialOblique)},
 			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionMedialTransverse)},
 		},
+		MedialMorphologyLM: []SelectOption{
+			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionMedialObliqueLM)},
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionMedialTransverse)},
+		},
 		FibularLevels: []SelectOption{
 			{Value: "infrasindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularInfrasindesmal)},
 			{Value: "transindesmal", Label: i18n.T(lang, i18n.KeyOptionFibularTransindesmal)},
@@ -290,6 +300,11 @@ func (h *Handler) GetOptions(c *gin.Context) {
 		LateralMorphology: []SelectOption{
 			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionLateralTransverse)},
 			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionLateralOblique)},
+			{Value: "spiral", Label: i18n.T(lang, i18n.KeyOptionLateralSpiral)},
+		},
+		FibulaMorphologyLMTri: []SelectOption{
+			{Value: "transverse", Label: i18n.T(lang, i18n.KeyOptionLateralTransverse)},
+			{Value: "oblique", Label: i18n.T(lang, i18n.KeyOptionFibulaObliqueLMTri)},
 			{Value: "spiral", Label: i18n.T(lang, i18n.KeyOptionLateralSpiral)},
 		},
 		SuprasindesmalTypes: []SelectOption{

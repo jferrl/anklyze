@@ -647,7 +647,7 @@ export function FractureForm() {
     // PATH: Lateral y medial - morfología medial
     if (showLMMedialMorphology && !formData.medial_morphology) {
       return {
-        options: options.medial_morphology,
+        options: options.medial_morphology_lm,
         onSelect: (value: string) => updateFormData({
           ...formData,
           medial_morphology: value as MedialMorphology,
@@ -718,7 +718,7 @@ export function FractureForm() {
     // PATH: Lateral y medial - morfología fibular
     if (showLMFibularMorphology && !formData.lateral_morphology) {
       return {
-        options: options.lateral_morphology,
+        options: options.fibula_morphology_lm_tri,
         onSelect: (value: string) => updateFormData({
           ...formData,
           lateral_morphology: value as LateralMorphology,
@@ -805,7 +805,7 @@ export function FractureForm() {
     // PATH: Trimaleolar - morfología
     if (showTrimaleolarMorphology && !formData.lateral_morphology) {
       return {
-        options: options.lateral_morphology,
+        options: options.fibula_morphology_lm_tri,
         onSelect: (value: string) => updateFormData({
           ...formData,
           lateral_morphology: value as LateralMorphology,
@@ -1863,7 +1863,7 @@ export function FractureForm() {
           </QuestionCardHeader>
           <QuestionCardContent>
             <div className="flex flex-col gap-2">
-              {options.medial_morphology.map((option, index) => (
+              {options.medial_morphology_lm.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
                     id={`lm-medial-${option.value}`}
@@ -2040,7 +2040,7 @@ export function FractureForm() {
           </QuestionCardHeader>
           <QuestionCardContent>
             <div className="flex flex-col gap-2">
-              {options.lateral_morphology.map((option, index) => (
+              {options.fibula_morphology_lm_tri.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
                     id={`lm-morph-${option.value}`}
@@ -2282,7 +2282,7 @@ export function FractureForm() {
           </QuestionCardHeader>
           <QuestionCardContent>
             <div className="flex flex-col gap-2">
-              {options.lateral_morphology.map((option, index) => (
+              {options.fibula_morphology_lm_tri.map((option, index) => (
                 <div key={option.value} className={`selection-option-enter stagger-${index + 1}`}>
                   <SelectionCard
                     id={`tri-morph-${option.value}`}

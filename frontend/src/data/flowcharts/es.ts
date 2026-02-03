@@ -40,7 +40,7 @@ export const flowchartES = `flowchart TB
 
     n22 --> n29{"¿De qué morfología es la fractura?"}
     n29 --> n30["Espiroidea (Baja anterior, alta posterior)"]
-    n29 --> n31["Oblicua (Baja medial, alta lateral)/Conminuta"]
+    n29 --> n31["Transversa/Oblicua (Baja medial, alta lateral)/Conminuta"]
     n30 --> n32["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
     n31 --> n33["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
 
@@ -90,7 +90,7 @@ export const flowchartES = `flowchart TB
 
     n45 --> n48{"¿De qué morfología es la fractura?"}
     n48 --> n52["Espiroidea (Baja anterior, alta posterior)"]
-    n48 --> n53["Oblicua (Baja medial, alta lateral)/Conminuta"]
+    n48 --> n53["Transversa/Oblicua (Baja medial, alta lateral)/Conminuta"]
 
     %% Transindesmal espiroidea - CT scan
     n52 --> n223{"¿Tiene TAC?"}
@@ -240,7 +240,7 @@ export const flowchartES = `flowchart TB
     n117 --> n119
 
     n119 --> n120["Alta (Suprasindesmal)"]
-    n119 --> n121["Baja (A nivel de pilón tibial o inferior)"]
+    n119 --> n121["Baja (Transindesmal / Infrasindesmal)"]
 
     n120 --> n122{"¿De qué tipo?"}
     n122 --> n123["Diafisaria Simple"]
@@ -265,7 +265,7 @@ export const flowchartES = `flowchart TB
 
     n121 --> n129{"¿De qué morfología es la fractura del peroné?"}
     n129 --> n130["Transversa"]
-    n129 --> n131["Oblicua (baja medial, alta lateral)"]
+    n129 --> n131["Oblicua (Baja medial, alta lateral)/Conminuta"]
     n129 --> n132["Espiroidea (Baja anterior, alta posterior)"]
 
     n130 --> n133{"¿A qué nivel está la fractura de peroné?"}
@@ -279,7 +279,7 @@ export const flowchartES = `flowchart TB
     %% Rama Trimaleolar
     n5 --> n141{"¿A qué nivel está la fractura del peroné?"}
     n141 --> n143["Alta (Suprasindesmal)"]
-    n141 --> n152["Baja (A nivel de pilón tibial o inferior)"]
+    n141 --> n152["Baja (Transindesmal / Infrasindesmal)"]
 
     n143 --> n145{"¿De qué tipo?"}
     n145 --> n146["Diafisaria Simple"]
@@ -384,7 +384,7 @@ export const flowchartES = `flowchart TB
 
     n152 --> n153{"¿De qué morfología es la fractura del peroné?"}
     n153 --> n154["Transversa"]
-    n153 --> n155["Oblicua (baja medial, alta lateral)"]
+    n153 --> n155["Oblicua (Baja medial, alta lateral)/Conminuta"]
     n153 --> n156["Espiroidea (Baja anterior, alta posterior)"]
 
     n154 --> n157{"¿A qué nivel está la fractura de peroné?"}

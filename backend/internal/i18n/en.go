@@ -15,7 +15,7 @@ var englishTranslations = map[string]string{
 	KeyQuestionMedialMorphologyLM:    "What is the morphology of the medial malleolus fracture?",
 	KeyQuestionFibularLevel:          "At what level is the fracture?",
 	KeyQuestionFibularLevelLM:        "At what level is the fibular fracture?",
-	KeyQuestionFibularLevelTri:       "What is the morphology of the fibular fracture?",
+	KeyQuestionFibularLevelTri:       "At what level is the fibular fracture?",
 	KeyQuestionLateralMorphology:     "What is the morphology of the fracture?",
 	KeyQuestionSuprasindesmalType:    "What type?",
 	KeyQuestionFibulaInfraTransverse: "Is the fibular fracture infrasyndesmal and transverse?",
@@ -41,6 +41,9 @@ var englishTranslations = map[string]string{
 	KeyOptionMedialOblique:    "Oblique",
 	KeyOptionMedialTransverse: "Transverse",
 
+	// Option labels - Medial morphology (for lateral+medial path - different label)
+	KeyOptionMedialObliqueLM: "Oblique/Vertical",
+
 	// Option labels - Fibular level
 	KeyOptionFibularInfrasindesmal: "Infrasyndesmal",
 	KeyOptionFibularTransindesmal:  "Transsyndesmal",
@@ -48,8 +51,11 @@ var englishTranslations = map[string]string{
 
 	// Option labels - Lateral morphology
 	KeyOptionLateralTransverse: "Transverse",
-	KeyOptionLateralOblique:    "Oblique (Low medial, high lateral)/Comminuted",
+	KeyOptionLateralOblique:    "Transverse/Oblique (Low medial, high lateral)/Comminuted",
 	KeyOptionLateralSpiral:     "Spiral (Low anterior, high posterior)",
+
+	// Option labels - Fibula morphology (for lateral+medial and trimaleolar paths)
+	KeyOptionFibulaObliqueLMTri: "Oblique (Low medial, high lateral)/Comminuted",
 
 	// Option labels - Suprasindesmal type
 	KeyOptionSupraSimple:           "Simple Diaphyseal",
@@ -63,8 +69,8 @@ var englishTranslations = map[string]string{
 	// Labels
 	KeyLabelYes:  "Yes",
 	KeyLabelNo:   "No",
-	KeyLabelHigh: "High",
-	KeyLabelLow:  "Low",
+	KeyLabelHigh: "High (Suprasyndesmotic)",
+	KeyLabelLow:  "Low (Transsyndesmal / Infrasyndesmal)",
 
 	// Fracture descriptions
 	KeyNoFractureSelected:                 "No fracture selected",
@@ -91,7 +97,7 @@ var englishTranslations = map[string]string{
 	KeyLHPADesc:        "Pronation mechanism with abduction.",
 	KeyLHAmbiguousName:      "Not classifiable",
 	KeyLHAmbiguousDesc:      "Lauge-Hansen not classifiable (could be PA/SER/PER)",
-	KeyLHUnclassifiableDesc: "Lauge-Hansen not classifiable",
+	KeyLHUnclassifiableDesc: "Isolated posterior malleolus fractures don't fit classic Lauge-Hansen injury mechanisms",
 
 	// Danis-Weber descriptions
 	KeyDWADesc: "Weber A: Fracture below syndesmosis",

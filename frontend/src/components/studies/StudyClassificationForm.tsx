@@ -459,12 +459,12 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
         <QuestionCard questionKey="medial_morphology">
           <QuestionCardHeader>
             <QuestionCardTitle>
-              {options.questions.medial_morphology?.title}
+              {showLMMedialMorphology ? options.questions.medial_morphology_lm?.title : options.questions.medial_morphology?.title}
             </QuestionCardTitle>
           </QuestionCardHeader>
           <QuestionCardContent>
-            <div className="grid gap-3" role="radiogroup" aria-label={options.questions.medial_morphology?.title}>
-              {options.medial_morphology.map((option, index) => (
+            <div className="grid gap-3" role="radiogroup" aria-label={showLMMedialMorphology ? options.questions.medial_morphology_lm?.title : options.questions.medial_morphology?.title}>
+              {(showLMMedialMorphology ? options.medial_morphology_lm : options.medial_morphology).map((option, index) => (
                 <SelectionCard
                   key={option.value}
                   value={option.value}
@@ -516,7 +516,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
           </QuestionCardHeader>
           <QuestionCardContent>
             <div className="grid gap-3" role="radiogroup" aria-label={options.questions.lateral_morphology?.title}>
-              {options.lateral_morphology.map((option, index) => (
+              {((showLMFibularMorphology || showTriLateralMorphologyTransComplete) ? options.fibula_morphology_lm_tri : options.lateral_morphology).map((option, index) => (
                 <SelectionCard
                   key={option.value}
                   value={option.value}

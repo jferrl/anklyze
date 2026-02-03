@@ -96,6 +96,9 @@ const (
 	KeyOptionMedialOblique    = "option.medial.oblique"
 	KeyOptionMedialTransverse = "option.medial.transverse"
 
+	// Option labels - Medial morphology (for lateral+medial path)
+	KeyOptionMedialObliqueLM = "option.medial.oblique_lm"
+
 	// Option labels - Fibular level
 	KeyOptionFibularInfrasindesmal  = "option.fibular.infrasindesmal"
 	KeyOptionFibularTransindesmal   = "option.fibular.transindesmal"
@@ -105,6 +108,9 @@ const (
 	KeyOptionLateralTransverse = "option.lateral.transverse"
 	KeyOptionLateralOblique    = "option.lateral.oblique"
 	KeyOptionLateralSpiral     = "option.lateral.spiral"
+
+	// Option labels - Fibula morphology (for lateral+medial and trimaleolar paths)
+	KeyOptionFibulaObliqueLMTri = "option.fibula.oblique_lm_tri"
 
 	// Option labels - Suprasindesmal type
 	KeyOptionSupraSimple           = "option.supra.simple"

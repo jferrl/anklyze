@@ -144,8 +144,10 @@ export interface FormOptions {
   involved_malleoli: SelectOption[];
   posterior_fracture_types: SelectOption[];
   medial_morphology: SelectOption[];
+  medial_morphology_lm: SelectOption[];
   fibular_levels: SelectOption[];
   lateral_morphology: SelectOption[];
+  fibula_morphology_lm_tri: SelectOption[];
   suprasindesmal_types: SelectOption[];
   fibula_trace_patterns: SelectOption[];
   labels: Record<string, string>;
