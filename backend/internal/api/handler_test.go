@@ -76,52 +76,46 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name                string
-		posteriorType       domain.PosteriorFractureType
-		lang                string
-		expectedBartonicek  domain.BartonicekType
-		expectedAOOTA       domain.AOOTACode
-		expectedLaugeHansen domain.LaugeHansenType
+		name               string
+		posteriorType      domain.PosteriorFractureType
+		lang               string
+		expectedBartonicek domain.BartonicekType
+		expectedAOOTA      domain.AOOTACode
 	}{
 		{
-			name:                "extraincisural posterior fracture",
-			posteriorType:       domain.PosteriorExtraincisural,
-			lang:                "en",
-			expectedBartonicek:  domain.BartonicekType1,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "extraincisural posterior fracture",
+			posteriorType:      domain.PosteriorExtraincisural,
+			lang:               "en",
+			expectedBartonicek: domain.BartonicekType1,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posterolateral posterior fracture",
-			posteriorType:       domain.PosteriorPosterolateral,
-			lang:                "en",
-			expectedBartonicek:  domain.BartonicekType2,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posterolateral posterior fracture",
+			posteriorType:      domain.PosteriorPosterolateral,
+			lang:               "en",
+			expectedBartonicek: domain.BartonicekType2,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posteromedial and posterolateral posterior fracture",
-			posteriorType:       domain.PosteriorPosteromedialPosterolateral,
-			lang:                "en",
-			expectedBartonicek:  domain.BartonicekType3,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posteromedial and posterolateral posterior fracture",
+			posteriorType:      domain.PosteriorPosteromedialPosterolateral,
+			lang:               "en",
+			expectedBartonicek: domain.BartonicekType3,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "large posterolateral posterior fracture",
-			posteriorType:       domain.PosteriorLargePosterolateral,
-			lang:                "en",
-			expectedBartonicek:  domain.BartonicekType4,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "large posterolateral posterior fracture",
+			posteriorType:      domain.PosteriorLargePosterolateral,
+			lang:               "en",
+			expectedBartonicek: domain.BartonicekType4,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posterior only in Spanish",
-			posteriorType:       domain.PosteriorExtraincisural,
-			lang:                "es",
-			expectedBartonicek:  domain.BartonicekType1,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posterior only in Spanish",
+			posteriorType:      domain.PosteriorExtraincisural,
+			lang:               "es",
+			expectedBartonicek: domain.BartonicekType1,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 	}
 
@@ -172,11 +166,15 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
 			}
 
+			// Posterior-only fractures are Lauge-Hansen unclassifiable
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
 			}
-			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
+			if !result.LaugeHansen.Ambiguous {
+				t.Error("LaugeHansen.Ambiguous should be true for posterior-only fractures")
+			}
+			if result.LaugeHansen.Type != "" {
+				t.Errorf("LaugeHansen.Type should be empty for unclassifiable, got %q", result.LaugeHansen.Type)
 			}
 		})
 	}

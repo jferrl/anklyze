@@ -71,52 +71,46 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		expectedBartonicek  domain.BartonicekType
 		expectBartonicekNil bool
 		expectedAOOTA       domain.AOOTACode
-		expectedLaugeHansen domain.LaugeHansenType
 	}{
 		{
-			name:                "extraincisural posterior fracture with CT scan",
-			posteriorType:       domain.PosteriorExtraincisural,
-			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
-			expectedBartonicek:  domain.BartonicekType1,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "extraincisural posterior fracture with CT scan",
+			posteriorType:      domain.PosteriorExtraincisural,
+			hasCTScan:          &boolTrue,
+			lang:               i18n.English,
+			expectedBartonicek: domain.BartonicekType1,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posterolateral posterior fracture with CT scan",
-			posteriorType:       domain.PosteriorPosterolateral,
-			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
-			expectedBartonicek:  domain.BartonicekType2,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posterolateral posterior fracture with CT scan",
+			posteriorType:      domain.PosteriorPosterolateral,
+			hasCTScan:          &boolTrue,
+			lang:               i18n.English,
+			expectedBartonicek: domain.BartonicekType2,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posteromedial and posterolateral posterior fracture with CT scan",
-			posteriorType:       domain.PosteriorPosteromedialPosterolateral,
-			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
-			expectedBartonicek:  domain.BartonicekType3,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posteromedial and posterolateral posterior fracture with CT scan",
+			posteriorType:      domain.PosteriorPosteromedialPosterolateral,
+			hasCTScan:          &boolTrue,
+			lang:               i18n.English,
+			expectedBartonicek: domain.BartonicekType3,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "large posterolateral posterior fracture with CT scan",
-			posteriorType:       domain.PosteriorLargePosterolateral,
-			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
-			expectedBartonicek:  domain.BartonicekType4,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "large posterolateral posterior fracture with CT scan",
+			posteriorType:      domain.PosteriorLargePosterolateral,
+			hasCTScan:          &boolTrue,
+			lang:               i18n.English,
+			expectedBartonicek: domain.BartonicekType4,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:                "posterior only in Spanish with CT scan",
-			posteriorType:       domain.PosteriorExtraincisural,
-			hasCTScan:           &boolTrue,
-			lang:                i18n.Spanish,
-			expectedBartonicek:  domain.BartonicekType1,
-			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
+			name:               "posterior only in Spanish with CT scan",
+			posteriorType:      domain.PosteriorExtraincisural,
+			hasCTScan:          &boolTrue,
+			lang:               i18n.Spanish,
+			expectedBartonicek: domain.BartonicekType1,
+			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:                "posterior only without CT scan - no Bartonicek",
@@ -125,7 +119,6 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 			lang:                i18n.English,
 			expectBartonicekNil: true,
 			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
 			name:                "posterior only with nil CT scan - no Bartonicek",
@@ -134,7 +127,6 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 			lang:                i18n.English,
 			expectBartonicekNil: true,
 			expectedAOOTA:       domain.AOOTAB3,
-			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 	}
 
@@ -163,11 +155,15 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
 			}
 
+			// Posterior-only fractures are Lauge-Hansen unclassifiable
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
 			}
-			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
+			if !result.LaugeHansen.Ambiguous {
+				t.Error("LaugeHansen.Ambiguous should be true for posterior-only fractures")
+			}
+			if result.LaugeHansen.Type != "" {
+				t.Errorf("LaugeHansen.Type should be empty for unclassifiable, got %q", result.LaugeHansen.Type)
 			}
 
 			if tt.expectBartonicekNil {

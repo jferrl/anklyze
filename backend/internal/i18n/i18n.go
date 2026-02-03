@@ -144,8 +144,9 @@ const (
 	KeyLHPERDesc       = "lh.per.desc"
 	KeyLHPAName        = "lh.pa.name"
 	KeyLHPADesc        = "lh.pa.desc"
-	KeyLHAmbiguousName = "lh.ambiguous.name"
-	KeyLHAmbiguousDesc = "lh.ambiguous.desc"
+	KeyLHAmbiguousName        = "lh.ambiguous.name"
+	KeyLHAmbiguousDesc        = "lh.ambiguous.desc"
+	KeyLHUnclassifiableDesc   = "lh.unclassifiable.desc"
 
 	// Danis-Weber descriptions
 	KeyDWADesc = "dw.a.desc"

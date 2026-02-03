@@ -48,7 +48,7 @@ var spanishTranslations = map[string]string{
 
 	// Option labels - Lateral morphology
 	KeyOptionLateralTransverse: "Transversa",
-	KeyOptionLateralOblique:    "Oblicua (Baja medial, alta lateral)",
+	KeyOptionLateralOblique:    "Oblicua (Baja medial, alta lateral)/Conminuta",
 	KeyOptionLateralSpiral:     "Espiroidea (Baja anterior, alta posterior)",
 
 	// Option labels - Suprasindesmal type
@@ -89,8 +89,9 @@ var spanishTranslations = map[string]string{
 	KeyLHPERDesc:       "Mecanismo de pronación con rotación externa.",
 	KeyLHPAName:        "Pronación-Abducción",
 	KeyLHPADesc:        "Mecanismo de pronación con abducción.",
-	KeyLHAmbiguousName: "No clasificable",
-	KeyLHAmbiguousDesc: "Lauge-Hansen no clasificable (podría ser PA/SER/PER)",
+	KeyLHAmbiguousName:      "No clasificable",
+	KeyLHAmbiguousDesc:      "Lauge-Hansen no clasificable (podría ser PA/SER/PER)",
+	KeyLHUnclassifiableDesc: "Lauge-Hansen no clasificable",
 
 	// Danis-Weber descriptions
 	KeyDWADesc: "Weber A: Fractura por debajo de la sindesmosis",

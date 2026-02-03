@@ -12,16 +12,16 @@ export const flowchartEN = `flowchart TB
     C --> n218{"Do you have a CT scan?"}
     n218 --> n219["Yes"]
     n218 --> n220["No"]
-    n220 --> n221["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER"]
+    n220 --> n221["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable"]
     n219 --> n6{"What type of fracture is it?"}
     n6 --> n7["Extra-incisural fragment"]
     n6 --> n8["Posterolateral fragment"]
     n6 --> n9["Posteromedial and posterolateral fragment"]
     n6 --> n10["Large posterolateral triangular fragment"]
-    n7 --> n11["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 1"]
-    n8 --> n12["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 2"]
-    n9 --> n13["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 3"]
-    n10 --> n14["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 4"]
+    n7 --> n11["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 1"]
+    n8 --> n12["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 2"]
+    n9 --> n13["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 3"]
+    n10 --> n14["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 4"]
 
     %% Medial malleolus branch
     D --> n15{"What morphology does it have?"}
@@ -40,7 +40,7 @@ export const flowchartEN = `flowchart TB
 
     n22 --> n29{"What is the fracture morphology?"}
     n29 --> n30["Spiral (Low anterior, high posterior)"]
-    n29 --> n31["Oblique (Low medial, high lateral)"]
+    n29 --> n31["Oblique (Low medial, high lateral)/Comminuted"]
     n30 --> n32["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
     n31 --> n33["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
 
@@ -90,7 +90,7 @@ export const flowchartEN = `flowchart TB
 
     n45 --> n48{"What is the fracture morphology?"}
     n48 --> n52["Spiral (Low anterior, high posterior)"]
-    n48 --> n53["Oblique (Low medial, high lateral)"]
+    n48 --> n53["Oblique (Low medial, high lateral)/Comminuted"]
 
     %% Transsyndesmotic spiral - CT scan
     n52 --> n223{"Do you have a CT scan?"}

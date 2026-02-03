@@ -459,7 +459,7 @@ Type 1-4    classify
 | Lateral only | Supra | Short oblique | C | PA | 44-C |
 | Medial only | - | Oblique | - | SA | 44-A1 |
 | Medial only | - | Transverse | - | Ambiguous | 44-A1 |
-| Posterior only | - | - | - | SER | 44-B3 |
+| Posterior only | - | - | - | Unclassifiable | 44-B3 |
 | L+M | Infra | Transverse | A | SA | 44-A2 |
 | L+M | Trans | Spiral | B | SER | 44-B2 |
 | L+M | Trans | Oblique | B | PA | 44-B2 |

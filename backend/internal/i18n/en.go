@@ -48,7 +48,7 @@ var englishTranslations = map[string]string{
 
 	// Option labels - Lateral morphology
 	KeyOptionLateralTransverse: "Transverse",
-	KeyOptionLateralOblique:    "Oblique (Low medial, high lateral)",
+	KeyOptionLateralOblique:    "Oblique (Low medial, high lateral)/Comminuted",
 	KeyOptionLateralSpiral:     "Spiral (Low anterior, high posterior)",
 
 	// Option labels - Suprasindesmal type
@@ -89,8 +89,9 @@ var englishTranslations = map[string]string{
 	KeyLHPERDesc:       "Pronation mechanism with external rotation.",
 	KeyLHPAName:        "Pronation-Abduction",
 	KeyLHPADesc:        "Pronation mechanism with abduction.",
-	KeyLHAmbiguousName: "Not classifiable",
-	KeyLHAmbiguousDesc: "Lauge-Hansen not classifiable (could be PA/SER/PER)",
+	KeyLHAmbiguousName:      "Not classifiable",
+	KeyLHAmbiguousDesc:      "Lauge-Hansen not classifiable (could be PA/SER/PER)",
+	KeyLHUnclassifiableDesc: "Lauge-Hansen not classifiable",
 
 	// Danis-Weber descriptions
 	KeyDWADesc: "Weber A: Fracture below syndesmosis",

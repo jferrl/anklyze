@@ -65,7 +65,7 @@ You MUST respond with valid JSON matching this exact schema:
 ### posterior_only
 - Required: has_ct_scan (CT scan availability)
 - If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
-- Classification: Always SER mechanism, AO-44-B3
+- Classification: Lauge-Hansen unclassifiable, AO-44-B3
 
 ### medial_only
 - Required: medial_morphology (oblique or transverse)
@@ -293,7 +293,7 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 ### posterior_only
 - Requerido: has_ct_scan (disponibilidad de TAC)
 - Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
-- Clasificación: Siempre mecanismo SER, AO-44-B3
+- Clasificación: Lauge-Hansen no clasificable, AO-44-B3
 
 ### medial_only
 - Requerido: medial_morphology (oblicua o transversa)

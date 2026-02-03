@@ -12,16 +12,16 @@ export const flowchartES = `flowchart TB
     C --> n218{"¿Tiene TAC?"}
     n218 --> n219["Sí"]
     n218 --> n220["No"]
-    n220 --> n221["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen SER"]
+    n220 --> n221["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable"]
     n219 --> n6{"¿Qué tipo de fractura es?"}
     n6 --> n7["Fragmento extraincisural"]
     n6 --> n8["Fragmento posterolateral"]
     n6 --> n9["Fragmento posteromedial y posterolateral"]
     n6 --> n10["Gran fragmento triangular posterolateral"]
-    n7 --> n11["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 1"]
-    n8 --> n12["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 2"]
-    n9 --> n13["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 3"]
-    n10 --> n14["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen SER<br/>Bartonicek 4"]
+    n7 --> n11["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 1"]
+    n8 --> n12["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 2"]
+    n9 --> n13["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 3"]
+    n10 --> n14["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 4"]
 
     %% Rama maléolo medial
     D --> n15{"¿Qué morfología tiene?"}
@@ -40,7 +40,7 @@ export const flowchartES = `flowchart TB
 
     n22 --> n29{"¿De qué morfología es la fractura?"}
     n29 --> n30["Espiroidea (Baja anterior, alta posterior)"]
-    n29 --> n31["Oblicua (Baja medial, alta lateral)"]
+    n29 --> n31["Oblicua (Baja medial, alta lateral)/Conminuta"]
     n30 --> n32["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
     n31 --> n33["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
 
@@ -90,7 +90,7 @@ export const flowchartES = `flowchart TB
 
     n45 --> n48{"¿De qué morfología es la fractura?"}
     n48 --> n52["Espiroidea (Baja anterior, alta posterior)"]
-    n48 --> n53["Oblicua (Baja medial, alta lateral)"]
+    n48 --> n53["Oblicua (Baja medial, alta lateral)/Conminuta"]
 
     %% Transindesmal espiroidea - CT scan
     n52 --> n223{"¿Tiene TAC?"}

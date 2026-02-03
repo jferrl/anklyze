@@ -45,10 +45,12 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput, lang i18n.Lan
 			Code:        domain.AOOTAB3,
 			Description: i18n.T(lang, i18n.KeyAOB3Desc),
 		},
+		// Posterior-only fractures are Lauge-Hansen unclassifiable
+		// as isolated posterior malleolus fractures don't fit the classic LH mechanisms
 		LaugeHansen: &domain.LaugeHansenClassification{
-			Type:        domain.LaugeHansenSER,
-			FullName:    i18n.T(lang, i18n.KeyLHSERName),
-			Description: i18n.T(lang, i18n.KeyLHSERDesc),
+			FullName:    i18n.T(lang, i18n.KeyLHAmbiguousName),
+			Description: i18n.T(lang, i18n.KeyLHUnclassifiableDesc),
+			Ambiguous:   true,
 		},
 	}
 
