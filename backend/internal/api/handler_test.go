@@ -515,8 +515,8 @@ func TestHandler_ClassifyFracture_InvalidInput(t *testing.T) {
 		t.Fatalf("failed to unmarshal error response: %v", err)
 	}
 
-	if _, ok := errResp["error"]; !ok {
-		t.Error("expected error field in response")
+	if _, ok := errResp["error_code"]; !ok {
+		t.Error("expected error_code field in response")
 	}
 }
 

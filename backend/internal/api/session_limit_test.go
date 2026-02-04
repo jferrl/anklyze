@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
@@ -178,14 +177,14 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 				t.Errorf("got status %d, want %d - %s", w.Code, tt.wantStatus, tt.description)
 			}
 
-			// Check error message if expected
+			// Check error code if expected
 			if tt.wantError != "" {
 				var response map[string]interface{}
 				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 					t.Fatalf("failed to parse response: %v", err)
 				}
-				if response["error"] != tt.wantError {
-					t.Errorf("got error %q, want %q", response["error"], tt.wantError)
+				if response["error_code"] != tt.wantError {
+					t.Errorf("got error_code %q, want %q", response["error_code"], tt.wantError)
 				}
 			}
 		})
@@ -254,47 +253,8 @@ func TestHandler_WithSessionMessageLimit(t *testing.T) {
 	}
 }
 
-func TestGetSessionLimitMessage(t *testing.T) {
-	tests := []struct {
-		name     string
-		lang     string
-		contains string
-	}{
-		{
-			name:     "English message",
-			lang:     "en",
-			contains: "message limit",
-		},
-		{
-			name:     "Spanish message",
-			lang:     "es",
-			contains: "límite de mensajes",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			msg := getSessionLimitMessage(parseTestLanguage(tt.lang))
-			if !containsString(msg, tt.contains) {
-				t.Errorf("message %q should contain %q", msg, tt.contains)
-			}
-		})
-	}
-}
-
-// parseTestLanguage converts a string to i18n.Language for testing
-func parseTestLanguage(lang string) i18n.Language {
-	if lang == "es" {
-		return i18n.Spanish
-	}
-	return i18n.English
-}
-
-// containsString checks if s contains substr
-func containsString(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 ||
-		(len(s) > 0 && len(substr) > 0 && findSubstring(s, substr)))
-}
+// TestGetSessionLimitMessage removed - translations now handled on frontend
+// The API now returns error_code instead of translated messages
 
 func findSubstring(s, substr string) bool {
 	for i := 0; i <= len(s)-len(substr); i++ {

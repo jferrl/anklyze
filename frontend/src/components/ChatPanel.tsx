@@ -120,14 +120,14 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-220px)] max-w-3xl mx-auto relative">
+    <div className="flex flex-col h-[calc(100vh-220px)] w-full max-w-full mx-auto relative">
       {/* Messages Area */}
       <ScrollArea
         className="flex-1 relative"
         ref={scrollAreaRef}
         onScroll={handleScroll}
       >
-        <div className="p-4 space-y-4 min-h-full">
+        <div className="p-2 sm:p-4 space-y-4 min-h-full">
           {messages.length === 0 ? (
             <WelcomeScreen
               examples={exampleDescriptions}
@@ -169,8 +169,10 @@ export function ChatPanel({ onClassificationComplete }: ChatPanelProps) {
 
           {/* Classification Result */}
           {classification && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <ClassificationResultComponent result={classification} />
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full overflow-hidden">
+              <div className="w-full max-w-full">
+                <ClassificationResultComponent result={classification} />
+              </div>
               <ChatFeedback onSubmit={submitFeedback} submitted={feedbackSubmitted} />
             </div>
           )}

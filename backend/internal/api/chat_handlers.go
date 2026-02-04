@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/i18n"
 )
 
 // CreateChatSessionResponse represents the response for session creation.
@@ -131,19 +130,17 @@ type FeedbackRequest struct {
 // @Failure 409 {object} map[string]string "Feedback already submitted"
 // @Router /api/chat/session/{id}/feedback [post]
 func (h *Handler) SubmitFeedback(c *gin.Context) {
-	lang := getLanguage(c)
-
 	sessionID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": i18n.T(lang, i18n.KeyErrorInvalidInput)})
+		c.JSON(http.StatusBadRequest, gin.H{"error_code": domain.ErrCodeInvalidInput})
 		return
 	}
 
 	var req FeedbackRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   i18n.T(lang, i18n.KeyErrorInvalidInput),
-			"details": err.Error(),
+			"error_code": domain.ErrCodeInvalidInput,
+			"details":    err.Error(),
 		})
 		return
 	}

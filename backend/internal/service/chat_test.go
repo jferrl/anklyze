@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/llm"
 )
 
@@ -90,145 +89,8 @@ func TestChatService_ProcessMessage_NilLLMClient(t *testing.T) {
 	}
 }
 
-func TestGetErrorMessage(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name     string
-		lang     i18n.Language
-		contains string
-	}{
-		{
-			name:     "English error message",
-			lang:     i18n.English,
-			contains: "Sorry",
-		},
-		{
-			name:     "Spanish error message",
-			lang:     i18n.Spanish,
-			contains: "Lo siento",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			got := getErrorMessage(tt.lang)
-			if got == "" {
-				t.Error("getErrorMessage() returned empty string")
-			}
-			if !containsSubstring(got, tt.contains) {
-				t.Errorf("getErrorMessage() = %q, want to contain %q", got, tt.contains)
-			}
-		})
-	}
-}
-
-func TestGetClarificationMessage(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name     string
-		lang     i18n.Language
-		contains string
-	}{
-		{
-			name:     "English clarification message",
-			lang:     i18n.English,
-			contains: "more information",
-		},
-		{
-			name:     "Spanish clarification message",
-			lang:     i18n.Spanish,
-			contains: "más información",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			got := getClarificationMessage(tt.lang)
-			if got == "" {
-				t.Error("getClarificationMessage() returned empty string")
-			}
-			if !containsSubstring(got, tt.contains) {
-				t.Errorf("getClarificationMessage() = %q, want to contain %q", got, tt.contains)
-			}
-		})
-	}
-}
-
-func TestGetClassificationErrorMessage(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name     string
-		lang     i18n.Language
-		contains string
-	}{
-		{
-			name:     "English classification error message",
-			lang:     i18n.English,
-			contains: "Error classifying",
-		},
-		{
-			name:     "Spanish classification error message",
-			lang:     i18n.Spanish,
-			contains: "Error al clasificar",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			got := getClassificationErrorMessage(tt.lang)
-			if got == "" {
-				t.Error("getClassificationErrorMessage() returned empty string")
-			}
-			if !containsSubstring(got, tt.contains) {
-				t.Errorf("getClassificationErrorMessage() = %q, want to contain %q", got, tt.contains)
-			}
-		})
-	}
-}
-
-func TestGetSuccessMessage(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name     string
-		lang     i18n.Language
-		contains string
-	}{
-		{
-			name:     "English success message",
-			lang:     i18n.English,
-			contains: "classified successfully",
-		},
-		{
-			name:     "Spanish success message",
-			lang:     i18n.Spanish,
-			contains: "clasificada exitosamente",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			got := getSuccessMessage(tt.lang)
-			if got == "" {
-				t.Error("getSuccessMessage() returned empty string")
-			}
-			if !containsSubstring(got, tt.contains) {
-				t.Errorf("getSuccessMessage() = %q, want to contain %q", got, tt.contains)
-			}
-		})
-	}
-}
+// Message helper function tests removed - translations now handled on frontend
+// The ChatResponse.Message field is no longer populated by the service
 
 func TestChatStatus_Values(t *testing.T) {
 	t.Parallel()

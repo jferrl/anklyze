@@ -442,7 +442,7 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			hasCTScan:             &boolFalse,
 			lang:                  i18n.English,
 			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   domain.LaugeHansenSER,
+			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
 			expectedAmbiguous:     true,
 			expectedPossibleTypes: []string{"SER", "PA"},
 			expectBartonicekNil:   true,
@@ -452,7 +452,7 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			hasCTScan:             &boolFalse,
 			lang:                  i18n.Spanish,
 			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   domain.LaugeHansenSER,
+			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
 			expectedAmbiguous:     true,
 			expectedPossibleTypes: []string{"SER", "PA"},
 			expectBartonicekNil:   true,
@@ -463,7 +463,7 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			posteriorType:         domain.PosteriorPosterolateral,
 			lang:                  i18n.English,
 			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   domain.LaugeHansenSER,
+			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
 			expectedAmbiguous:     true,
 			expectedPossibleTypes: []string{"SER", "PA"},
 			expectedBartonicek:    domain.BartonicekType2,

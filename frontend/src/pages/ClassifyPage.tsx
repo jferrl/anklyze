@@ -44,8 +44,8 @@ export function ClassifyPage() {
       </div>
 
       {/* Content Section */}
-      <section className="py-8 md:py-12">
-        <div className="container mx-auto px-4">
+      <section className="py-8 md:py-12 w-full overflow-x-hidden">
+        <div className={`w-full mx-auto px-2 sm:px-4 ${mode === 'chat' ? 'max-w-4xl' : 'container'}`}>
           {mode === 'form' ? <FractureForm /> : <ChatPanel />}
         </div>
       </section>

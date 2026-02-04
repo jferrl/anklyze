@@ -11,16 +11,25 @@ Flow diagrams are versioned using the format: `docs/Danis-Weber AO_OTA Flow-{YYY
 
 The application uses a **frontend-first translation approach**:
 
-- **Backend**: Returns only codes/keys (e.g., `"type": "Weber A"`, `"fracture_type": "unimaleolar_lateral"`)
-- **Frontend**: Translates codes to descriptions using local i18n files via helper functions in `frontend/src/utils/classificationTranslations.ts`
+- **Backend**: Returns only codes/keys for all responses:
+  - Classification results: `"type": "Weber A"`, `"fracture_type": "unimaleolar_lateral"`
+  - Error responses: `"error_code": "invalid_input"`, `"error_code": "classification_error"`
+  - Statistical notes: `"fleiss_kappa_note": "fleiss_kappa_single_case_limitation"` (translation key)
+- **Frontend**: Translates all codes client-side using local i18n files:
+  - Classification descriptions: via `frontend/src/utils/classificationTranslations.ts`
+  - Error messages: via `errors.*` keys in `frontend/src/i18n/en.json` and `es.json`
 - **Language Detection**: Uses standard HTTP `Accept-Language` header (no query parameters)
-- **Backend i18n**: Only for error messages and API responses, NOT for classification descriptions
+- **Backend i18n**: **Only for LLM system prompts and MCP tools** (external Claude clients)
+  - `backend/internal/llm/prompts.go` - Language-specific prompts for Gemini API (MUST stay in backend)
+  - `backend/internal/mcp/tools.go` - Returns translated options for Claude/LLM clients
+  - **NOT used for API error messages** - frontend handles all UI translations
 
 This architecture:
 - Reduces API payload size
 - Allows frontend to control all UI text
 - Enables easier translation updates without backend changes
 - Follows standard HTTP practices
+- Maintains clear separation: backend = logic & LLM, frontend = presentation
 
 ## 1. Review Spanish Spelling and Syntax
 Review the Spanish file for spelling and syntax issues. Common terms to check:
@@ -57,11 +66,13 @@ Update the classification logic in `backend/internal/rules/engine.go`:
 - Update the `classifyLateralOnly()`, `classifyLateralPosterior()`, `classifyLateralMedial()`, `classifyTrimaleolar()` functions as needed
 - Update impossible case handling
 - **IMPORTANT**: Backend should return only codes/keys (e.g., `"type": "Weber A"`, `"fracture_type": "unimaleolar_lateral"`), NOT translated descriptions
-- Backend translations in `backend/internal/i18n/` are only used for error messages and API responses, not for classification descriptions
 
-Update translations (error messages only) in:
-- `backend/internal/i18n/en.go`
-- `backend/internal/i18n/es.go`
+**Backend i18n usage (limited scope):**
+- `backend/internal/i18n/en.go` and `es.go` are **only for**:
+  - LLM system prompts (in `backend/internal/llm/prompts.go`)
+  - MCP tool responses (in `backend/internal/mcp/tools.go`) for external Claude clients
+- **NOT used for API error messages** - API returns error codes (e.g., `"error_code": "invalid_input"`)
+- Error code constants defined in `backend/internal/domain/errors.go`
 
 ## 3.1 Update LLM Prompts
 
@@ -113,6 +124,8 @@ Update `frontend/src/services/api.ts`:
 - Ensure all API calls use Accept-Language header (not query parameters)
 - Language is set via `headers['Accept-Language'] = lang`
 - No `?lang=` query parameters should be used
+- **Error handling**: API returns `error_code` field (not `error`), frontend translates using `i18n.t(\`errors.\${error_code}\`)`
+- Example error codes: `invalid_input`, `classification_error`, `chat_unavailable`, `session_limit_exceeded`
 
 ## 8. Update Frontend Flowcharts
 Update flowchart diagrams in:
@@ -149,20 +162,26 @@ cd e2e && npm run test
 - `backend/internal/rules/engine_test.go` - Backend tests (test for codes/keys, not translations)
 - `backend/internal/domain/fracture.go` - Domain types
 - `backend/internal/domain/classification.go` - Classification types (codes only)
-- `backend/internal/api/handler.go` - API handlers (uses Accept-Language header, no lang query param)
+- `backend/internal/domain/errors.go` - Error code constants (used in API responses)
+- `backend/internal/api/handler.go` - API handlers (returns `error_code`, not translated messages)
+- `backend/internal/api/chat_handlers.go` - Chat API handlers (returns `error_code` for errors)
 - `backend/internal/service/classifier.go` - Classifier service (no lang parameter)
-- `backend/internal/i18n/en.go` - English translations (error messages only)
-- `backend/internal/i18n/es.go` - Spanish translations (error messages only)
-- `backend/internal/llm/prompts.go` - LLM prompts for chat classification (decision tree questions and few-shot examples)
+- `backend/internal/service/chat.go` - Chat service (no message translation, frontend handles via Status)
+- `backend/internal/service/statistics.go` - Statistics service (returns translation keys for notes)
+- `backend/internal/i18n/en.go` - English translations (LLM prompts + MCP tools only)
+- `backend/internal/i18n/es.go` - Spanish translations (LLM prompts + MCP tools only)
+- `backend/internal/llm/prompts.go` - LLM system prompts (MUST use i18n for Gemini API)
+- `backend/internal/mcp/tools.go` - MCP tools (returns translated options for Claude clients)
 - `backend/internal/mcp/resources.go` - MCP server resources (decision flowchart, classification docs)
 
 ### Frontend
 - `frontend/src/components/FractureForm.tsx` - Form component
 - `frontend/src/components/ClassificationResult.tsx` - Results display component
 - `frontend/src/utils/classificationTranslations.ts` - Translation helper functions (maps backend codes to i18n keys)
-- `frontend/src/services/api.ts` - API service (uses Accept-Language header)
-- `frontend/src/i18n/en.json` - English translations (classification descriptions)
-- `frontend/src/i18n/es.json` - Spanish translations (classification descriptions)
+- `frontend/src/services/api.ts` - API service (translates `error_code` to user messages)
+- `frontend/src/i18n/en.json` - English translations (includes `errors.*` for API error codes, `results.*` for classifications, `admin.reliability.*` for stats)
+- `frontend/src/i18n/es.json` - Spanish translations (same structure as en.json)
+- `frontend/src/i18n/config.ts` - i18n configuration and utilities
 - `frontend/src/data/flowcharts/en.ts` - English flowchart
 - `frontend/src/data/flowcharts/es.ts` - Spanish flowchart
 - `frontend/src/types/fracture.ts` - TypeScript types

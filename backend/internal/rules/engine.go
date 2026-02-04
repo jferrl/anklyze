@@ -156,20 +156,13 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 		},
 	}
 
-	// Lauge-Hansen is unclassifiable without CT scan to determine the mechanism
+	// Lauge-Hansen is ambiguous - could be SER or PA mechanism
 	if input.HasCTScan != nil && *input.HasCTScan {
 		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:          domain.LaugeHansenSER,
-			Ambiguous:     true,
-			PossibleTypes: []string{"SER", "PA"},
-		}
-	} else {
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Type:          domain.LaugeHansenSER,
-			Ambiguous:     true,
-			PossibleTypes: []string{"SER", "PA"},
-		}
+	}
+	result.LaugeHansen = &domain.LaugeHansenClassification{
+		Ambiguous:     true,
+		PossibleTypes: []string{"SER", "PA"},
 	}
 
 	return result, nil

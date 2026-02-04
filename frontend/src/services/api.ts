@@ -9,7 +9,7 @@ import type {
   ChatFeedbackSummary,
   ConfidenceDistribution,
 } from '../types/fracture';
-import { getCurrentLanguage } from '../i18n/config';
+import i18n, { getCurrentLanguage } from '../i18n/config';
 import { supabase } from '../lib/supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -105,7 +105,9 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Classification error');
+    const errorCode = error.error_code || 'classification_error';
+    const t = i18n.t.bind(i18n);
+    throw new Error(t(`errors.${errorCode}`));
   }
 
   return response.json();
@@ -133,33 +135,40 @@ export async function sendChatMessage(message: string, sessionId?: string): Prom
   if (!response.ok) {
     if (response.status === 429) {
       const error = await response.json();
+      const t = i18n.t.bind(i18n);
       // Check specific error types
-      if (error.error === 'session_limit_exceeded') {
-        throw new SessionLimitError('Session limit exceeded');
+      if (error.error_code === 'session_limit_exceeded') {
+        throw new SessionLimitError(t('chat.errors.sessionLimit'));
       }
-      if (error.error === 'daily quota exceeded') {
-        throw new DailyQuotaError('Daily quota exceeded');
+      if (error.error_code === 'daily_quota_exceeded') {
+        throw new DailyQuotaError(t('chat.errors.dailyQuota'));
       }
-      throw new RateLimitError('Rate limit exceeded');
+      throw new RateLimitError(t('chat.errors.rateLimit'));
     }
     if (response.status === 400) {
       const error = await response.json();
+      const t = i18n.t.bind(i18n);
       // Check for input validation errors
       const validationCodes = [
         'input_too_short', 'repeated_characters', 'too_many_special_chars',
         'too_few_words', 'keyboard_smash', 'no_medical_context',
         'unsupported_language', 'no_words'
       ];
-      if (validationCodes.includes(error.error)) {
-        throw new InputValidationError(error.message || 'Invalid input', error.error);
+      if (validationCodes.includes(error.error_code)) {
+        const errorMessage = t(`errors.${error.error_code}`, 'Invalid input');
+        throw new InputValidationError(errorMessage, error.error_code);
       }
-      throw new Error(error.error || 'Invalid input');
+      const errorCode = error.error_code || 'invalid_input';
+      throw new Error(t(`errors.${errorCode}`));
     }
     if (response.status === 503) {
-      throw new Error('Chat classification is temporarily unavailable');
+      const t = i18n.t.bind(i18n);
+      throw new Error(t('errors.chat_unavailable'));
     }
     const error = await response.json();
-    throw new Error(error.error || 'Chat error');
+    const t = i18n.t.bind(i18n);
+    const errorCode = error.error_code || 'classification_error';
+    throw new Error(t(`errors.${errorCode}`));
   }
 
   return response.json();

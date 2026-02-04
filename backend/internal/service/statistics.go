@@ -572,11 +572,9 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 		// - Each cell = count of raters choosing that category for that subject
 		//
 		// With only 1 subject, we can only calculate within-case agreement,
-		// not across-case reliability. Return nil with explanatory note.
-		note := "Fleiss' Kappa requires multiple cases (subjects) to calculate inter-rater reliability. " +
-			"Current case design has a single case. Consider creating a study with multiple cases " +
-			"for proper reliability assessment."
-		agreement.FleissKappaNote = &note
+		// not across-case reliability. Return translation key for frontend to display.
+		noteKey := "fleiss_kappa_single_case_limitation"
+		agreement.FleissKappaNote = &noteKey
 		// FleissKappa remains nil
 	}
 

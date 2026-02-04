@@ -64,9 +64,11 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            {children}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
+          <ScrollArea className="h-full w-full">
+            <div className="w-full max-w-full overflow-x-hidden">
+              {children}
+            </div>
           </ScrollArea>
         </main>
       </SidebarInset>

@@ -64,32 +64,44 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	extraction, err := s.llmClient.ExtractFractureInput(ctx, req.Message, lang, req.PreviousInput)
 	if err != nil {
 		slog.Error("LLM extraction failed", "error", err)
+		msg := "I couldn't understand the fracture description. Please try describing it differently."
+		if lang == i18n.Spanish {
+			msg = "No pude entender la descripción de la fractura. Por favor, intenta describirla de otra manera."
+		}
 		return &ChatResponse{
 			Status:  ChatStatusError,
-			Message: getErrorMessage(lang),
+			Message: msg,
 		}, nil
 	}
 
 	// Check if we need clarification
 	if extraction.Confidence < 0.7 || len(extraction.Clarifications) > 0 {
+		msg := "I need some clarification to classify this fracture accurately. Please answer the questions below."
+		if lang == i18n.Spanish {
+			msg = "Necesito algunas aclaraciones para clasificar esta fractura con precisión. Por favor, responde las siguientes preguntas."
+		}
 		return &ChatResponse{
 			Status:         ChatStatusNeedsClarification,
 			ExtractedInput: &extraction.Input,
 			Confidence:     extraction.Confidence,
 			MissingFields:  extraction.MissingFields,
 			Clarifications: extraction.Clarifications,
-			Message:        getClarificationMessage(lang),
+			Message:        msg,
 		}, nil
 	}
 
 	// Classify the extracted input
 	result, err := s.classifier.Classify(extraction.Input)
 	if err != nil {
+		msg := "An error occurred while classifying the fracture. Please try again."
+		if lang == i18n.Spanish {
+			msg = "Ocurrió un error al clasificar la fractura. Por favor, inténtalo de nuevo."
+		}
 		return &ChatResponse{
 			Status:         ChatStatusError,
 			ExtractedInput: &extraction.Input,
 			Confidence:     extraction.Confidence,
-			Message:        getClassificationErrorMessage(lang),
+			Message:        msg,
 		}, nil
 	}
 
@@ -98,34 +110,39 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 		ExtractedInput: &extraction.Input,
 		Classification: result,
 		Confidence:     extraction.Confidence,
-		Message:        getSuccessMessage(lang),
+		Message:        generateClassificationMessage(result, lang),
 	}, nil
 }
 
-func getErrorMessage(lang i18n.Language) string {
-	if lang == i18n.Spanish {
-		return "Lo siento, no pude procesar esa descripción. Por favor, intenta de nuevo."
+// generateClassificationMessage creates a helpful message based on the classification result.
+func generateClassificationMessage(result *domain.ClassificationResult, lang i18n.Language) string {
+	// Check if classification is impossible
+	if result.Impossible {
+		if lang == i18n.Spanish {
+			return "Esta combinación de fracturas no es anatómicamente posible. Por favor, verifica los datos ingresados."
+		}
+		return "This fracture combination is not anatomically possible. Please verify the input data."
 	}
-	return "Sorry, I couldn't process that description. Please try again."
-}
 
-func getClarificationMessage(lang i18n.Language) string {
-	if lang == i18n.Spanish {
-		return "Necesito más información para clasificar esta fractura."
+	// Check for ambiguous Lauge-Hansen classification with possible types
+	if result.LaugeHansen != nil && result.LaugeHansen.Ambiguous && len(result.LaugeHansen.PossibleTypes) > 0 {
+		if lang == i18n.Spanish {
+			return "La clasificación Lauge-Hansen es ambigua para este patrón de fractura. Se muestran los mecanismos posibles para tu consideración."
+		}
+		return "The Lauge-Hansen classification is ambiguous for this fracture pattern. Possible mechanisms are shown for your consideration."
 	}
-	return "I need more information to classify this fracture."
-}
 
-func getClassificationErrorMessage(lang i18n.Language) string {
-	if lang == i18n.Spanish {
-		return "Error al clasificar la fractura. Por favor, verifica los datos extraídos."
+	// Check for ambiguous Lauge-Hansen without possible types (truly unclassifiable)
+	if result.LaugeHansen != nil && result.LaugeHansen.Ambiguous && len(result.LaugeHansen.PossibleTypes) == 0 {
+		if lang == i18n.Spanish {
+			return "La fractura aislada del maléolo posterior no se puede clasificar según Lauge-Hansen, ya que no encaja en los mecanismos clásicos de lesión."
+		}
+		return "Isolated posterior malleolus fracture cannot be classified by Lauge-Hansen as it doesn't fit classic injury mechanisms."
 	}
-	return "Error classifying the fracture. Please verify the extracted data."
-}
 
-func getSuccessMessage(lang i18n.Language) string {
+	// Default success message
 	if lang == i18n.Spanish {
-		return "Fractura clasificada exitosamente."
+		return "Clasificación completada con éxito."
 	}
-	return "Fracture classified successfully."
+	return "Classification completed successfully."
 }

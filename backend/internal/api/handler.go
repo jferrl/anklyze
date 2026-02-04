@@ -109,8 +109,8 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	var input domain.FractureInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   i18n.T(lang, i18n.KeyErrorInvalidInput),
-			"details": err.Error(),
+			"error_code": domain.ErrCodeInvalidInput,
+			"details":    err.Error(),
 		})
 		return
 	}
@@ -118,8 +118,8 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	result, err := h.classifier.Classify(input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   i18n.T(lang, i18n.KeyErrorClassification),
-			"details": err.Error(),
+			"error_code": domain.ErrCodeClassification,
+			"details":    err.Error(),
 		})
 		return
 	}
@@ -246,9 +246,8 @@ func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 // @Router /api/chat [post]
 func (h *Handler) ChatMessage(c *gin.Context) {
 	if h.chatService == nil {
-		lang := getLanguage(c)
 		c.JSON(http.StatusServiceUnavailable, gin.H{
-			"error": i18n.T(lang, i18n.KeyErrorChatUnavailable),
+			"error_code": domain.ErrCodeChatUnavailable,
 		})
 		return
 	}
@@ -257,10 +256,9 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 
 	var req service.ChatRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		lang := getLanguage(c)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   i18n.T(lang, i18n.KeyErrorInvalidInput),
-			"details": err.Error(),
+			"error_code": domain.ErrCodeInvalidInput,
+			"details":    err.Error(),
 		})
 		return
 	}
@@ -272,14 +270,11 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 
 	// Validate input for gibberish/spam
 	if h.inputValidator != nil {
-		lang := i18n.ParseLanguage(req.Language)
-
 		// Check for gibberish/invalid input
 		validationResult := h.inputValidator.Validate(req.Message)
 		if !validationResult.Valid {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":   validationResult.Code,
-				"message": getValidationErrorMessage(lang, validationResult.Code),
+				"error_code": validationResult.Code,
 			})
 			return
 		}
@@ -288,8 +283,7 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		langResult := h.inputValidator.ValidateLanguage(req.Message)
 		if !langResult.Valid {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":   langResult.Code,
-				"message": getValidationErrorMessage(lang, langResult.Code),
+				"error_code": langResult.Code,
 			})
 			return
 		}
@@ -312,10 +306,8 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 		if err == nil && session != nil {
 			// Check session message limit
 			if h.sessionMessageLimit > 0 && session.TotalMessages >= h.sessionMessageLimit {
-				lang := i18n.ParseLanguage(req.Language)
 				c.JSON(http.StatusTooManyRequests, gin.H{
-					"error":   "session_limit_exceeded",
-					"message": getSessionLimitMessage(lang),
+					"error_code": domain.ErrCodeSessionLimitExceeded,
 				})
 				return
 			}
@@ -346,9 +338,8 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 
 	resp, err := h.chatService.ProcessMessage(c.Request.Context(), req)
 	if err != nil {
-		lang := i18n.ParseLanguage(req.Language)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": i18n.T(lang, i18n.KeyErrorClassification),
+			"error_code": domain.ErrCodeClassification,
 		})
 		return
 	}
@@ -404,66 +395,4 @@ func (h *Handler) ChatMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
-}
-
-// getSessionLimitMessage returns the session limit exceeded message in the given language
-func getSessionLimitMessage(lang i18n.Language) string {
-	if lang == i18n.Spanish {
-		return "Has alcanzado el límite de mensajes para esta sesión. Por favor, inicia una nueva conversación."
-	}
-	return "You have reached the message limit for this session. Please start a new conversation."
-}
-
-// getValidationErrorMessage returns validation error messages in the given language
-func getValidationErrorMessage(lang i18n.Language, code string) string {
-	messages := map[string]map[i18n.Language]string{
-		"input_too_short": {
-			i18n.English: "Please provide a more detailed description of the fracture.",
-			i18n.Spanish: "Por favor proporciona una descripción más detallada de la fractura.",
-		},
-		"repeated_characters": {
-			i18n.English: "Your message contains invalid repeated characters. Please describe the fracture clearly.",
-			i18n.Spanish: "Tu mensaje contiene caracteres repetidos inválidos. Por favor describe la fractura claramente.",
-		},
-		"too_many_special_chars": {
-			i18n.English: "Your message contains too many special characters. Please use normal text.",
-			i18n.Spanish: "Tu mensaje contiene demasiados caracteres especiales. Por favor usa texto normal.",
-		},
-		"too_few_words": {
-			i18n.English: "Please provide a more complete description of the fracture.",
-			i18n.Spanish: "Por favor proporciona una descripción más completa de la fractura.",
-		},
-		"keyboard_smash": {
-			i18n.English: "Your message appears to contain random characters. Please describe the fracture properly.",
-			i18n.Spanish: "Tu mensaje parece contener caracteres aleatorios. Por favor describe la fractura correctamente.",
-		},
-		"no_medical_context": {
-			i18n.English: "Your message doesn't appear to describe an ankle fracture. Please include relevant medical details.",
-			i18n.Spanish: "Tu mensaje no parece describir una fractura de tobillo. Por favor incluye detalles médicos relevantes.",
-		},
-		"unsupported_language": {
-			i18n.English: "Please use English or Spanish to describe the fracture.",
-			i18n.Spanish: "Por favor usa inglés o español para describir la fractura.",
-		},
-		"no_words": {
-			i18n.English: "Please enter a valid fracture description.",
-			i18n.Spanish: "Por favor ingresa una descripción válida de la fractura.",
-		},
-	}
-
-	if langMessages, ok := messages[code]; ok {
-		if msg, ok := langMessages[lang]; ok {
-			return msg
-		}
-		// Fallback to English
-		if msg, ok := langMessages[i18n.English]; ok {
-			return msg
-		}
-	}
-
-	// Default message
-	if lang == i18n.Spanish {
-		return "Entrada inválida. Por favor intenta de nuevo."
-	}
-	return "Invalid input. Please try again."
 }
