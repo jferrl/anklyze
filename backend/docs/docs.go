@@ -1332,7 +1332,7 @@ const docTemplate = `{
         },
         "/api/classify": {
             "post": {
-                "description": "Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems",
+                "description": "Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems. Language is determined from the Accept-Language header.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1344,13 +1344,6 @@ const docTemplate = `{
                 ],
                 "summary": "Classify an ankle fracture",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "default": "en",
-                        "description": "Language (en, es)",
-                        "name": "lang",
-                        "in": "query"
-                    },
                     {
                         "description": "Fracture input parameters",
                         "name": "input",
@@ -1418,35 +1411,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/options": {
-            "get": {
-                "description": "Returns localized form options for the classification form",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Classification"
-                ],
-                "summary": "Get form options",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "en",
-                        "description": "Language (en, es)",
-                        "name": "lang",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Form options",
-                        "schema": {
-                            "$ref": "#/definitions/api.FormOptions"
                         }
                     }
                 }
@@ -1552,88 +1516,6 @@ const docTemplate = `{
                 }
             }
         },
-        "api.FormOptions": {
-            "type": "object",
-            "properties": {
-                "fibula_trace_patterns": {
-                    "description": "Fibula trace pattern options",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "fibular_levels": {
-                    "description": "Fibular level options",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "involved_malleoli": {
-                    "description": "Involved malleoli options (first question)",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "labels": {
-                    "description": "Labels",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "lateral_morphology": {
-                    "description": "Lateral morphology options",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "medial_morphology": {
-                    "description": "Medial morphology options",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "posterior_fracture_types": {
-                    "description": "Posterior fracture type options (Bartonicek)",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                },
-                "questions": {
-                    "description": "Questions",
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/api.Question"
-                    }
-                },
-                "suprasindesmal_types": {
-                    "description": "Suprasindesmal type options",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.SelectOption"
-                    }
-                }
-            }
-        },
-        "api.Question": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "api.RaterProgressResponse": {
             "type": "object",
             "properties": {
@@ -1659,17 +1541,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "api.SelectOption": {
-            "type": "object",
-            "properties": {
-                "label": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
                 }
             }
         },
@@ -1863,9 +1734,6 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "$ref": "#/definitions/domain.AOOTACode"
-                },
-                "description": {
-                    "type": "string"
                 }
             }
         },
@@ -1963,9 +1831,6 @@ const docTemplate = `{
         "domain.BartonicekClassification": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
                 "type": {
                     "$ref": "#/definitions/domain.BartonicekType"
                 }
@@ -2243,13 +2108,15 @@ const docTemplate = `{
                 "danis_weber": {
                     "$ref": "#/definitions/domain.DanisWeberClassification"
                 },
-                "fracture_description": {
+                "fracture_type": {
+                    "description": "Key for frontend translation",
                     "type": "string"
                 },
                 "impossible": {
                     "type": "boolean"
                 },
-                "impossible_reason": {
+                "impossible_key": {
+                    "description": "Key for frontend translation",
                     "type": "string"
                 },
                 "lauge_hansen": {
@@ -2314,9 +2181,6 @@ const docTemplate = `{
         "domain.DanisWeberClassification": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
                 "type": {
                     "$ref": "#/definitions/domain.DanisWeberType"
                 }
@@ -2575,14 +2439,6 @@ const docTemplate = `{
                 "ambiguous": {
                     "description": "Whether classification is ambiguous",
                     "type": "boolean"
-                },
-                "description": {
-                    "description": "Description of the mechanism",
-                    "type": "string"
-                },
-                "full_name": {
-                    "description": "Full mechanism name",
-                    "type": "string"
                 },
                 "possible_types": {
                     "description": "Alternative types when classification is ambiguous",

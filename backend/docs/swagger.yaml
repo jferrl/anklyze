@@ -49,63 +49,6 @@ definitions:
     required:
     - rating
     type: object
-  api.FormOptions:
-    properties:
-      fibula_trace_patterns:
-        description: Fibula trace pattern options
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      fibular_levels:
-        description: Fibular level options
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      involved_malleoli:
-        description: Involved malleoli options (first question)
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      labels:
-        additionalProperties:
-          type: string
-        description: Labels
-        type: object
-      lateral_morphology:
-        description: Lateral morphology options
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      medial_morphology:
-        description: Medial morphology options
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      posterior_fracture_types:
-        description: Posterior fracture type options (Bartonicek)
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-      questions:
-        additionalProperties:
-          $ref: '#/definitions/api.Question'
-        description: Questions
-        type: object
-      suprasindesmal_types:
-        description: Suprasindesmal type options
-        items:
-          $ref: '#/definitions/api.SelectOption'
-        type: array
-    type: object
-  api.Question:
-    properties:
-      description:
-        type: string
-      id:
-        type: string
-      title:
-        type: string
-    type: object
   api.RaterProgressResponse:
     properties:
       raters:
@@ -123,13 +66,6 @@ definitions:
         type: array
     required:
     - case_ids
-    type: object
-  api.SelectOption:
-    properties:
-      label:
-        type: string
-      value:
-        type: string
     type: object
   api.StudyDetailResponse:
     properties:
@@ -256,8 +192,6 @@ definitions:
     properties:
       code:
         $ref: '#/definitions/domain.AOOTACode'
-      description:
-        type: string
     type: object
   domain.AOOTACode:
     enum:
@@ -332,8 +266,6 @@ definitions:
     type: object
   domain.BartonicekClassification:
     properties:
-      description:
-        type: string
       type:
         $ref: '#/definitions/domain.BartonicekType'
     type: object
@@ -529,11 +461,13 @@ definitions:
         $ref: '#/definitions/domain.BartonicekClassification'
       danis_weber:
         $ref: '#/definitions/domain.DanisWeberClassification'
-      fracture_description:
+      fracture_type:
+        description: Key for frontend translation
         type: string
       impossible:
         type: boolean
-      impossible_reason:
+      impossible_key:
+        description: Key for frontend translation
         type: string
       lauge_hansen:
         $ref: '#/definitions/domain.LaugeHansenClassification'
@@ -576,8 +510,6 @@ definitions:
     type: object
   domain.DanisWeberClassification:
     properties:
-      description:
-        type: string
       type:
         $ref: '#/definitions/domain.DanisWeberType'
     type: object
@@ -759,12 +691,6 @@ definitions:
       ambiguous:
         description: Whether classification is ambiguous
         type: boolean
-      description:
-        description: Description of the mechanism
-        type: string
-      full_name:
-        description: Full mechanism name
-        type: string
       possible_types:
         description: Alternative types when classification is ambiguous
         items:
@@ -1917,13 +1843,9 @@ paths:
       consumes:
       - application/json
       description: Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen,
-        AO/OTA, and Bartonicek systems
+        AO/OTA, and Bartonicek systems. Language is determined from the Accept-Language
+        header.
       parameters:
-      - default: en
-        description: Language (en, es)
-        in: query
-        name: lang
-        type: string
       - description: Fracture input parameters
         in: body
         name: input
@@ -1973,25 +1895,6 @@ paths:
       summary: Get current user profile
       tags:
       - User
-  /api/options:
-    get:
-      description: Returns localized form options for the classification form
-      parameters:
-      - default: en
-        description: Language (en, es)
-        in: query
-        name: lang
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Form options
-          schema:
-            $ref: '#/definitions/api.FormOptions'
-      summary: Get form options
-      tags:
-      - Classification
   /health:
     get:
       description: Returns the health status of the API

@@ -1,8 +1,6 @@
 package i18n
 
 import (
-	"net/http"
-	"net/url"
 	"testing"
 )
 
@@ -74,68 +72,6 @@ func TestParseAcceptLanguage(t *testing.T) {
 			got := ParseAcceptLanguage(tt.header)
 			if got != tt.want {
 				t.Errorf("ParseAcceptLanguage(%q) = %q, want %q", tt.header, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestGetLanguageFromRequest(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name         string
-		queryParam   string
-		headerValue  string
-		wantLanguage Language
-	}{
-		{
-			name:         "no language specified",
-			queryParam:   "",
-			headerValue:  "",
-			wantLanguage: English,
-		},
-		{
-			name:         "query param takes precedence",
-			queryParam:   "es",
-			headerValue:  "en",
-			wantLanguage: Spanish,
-		},
-		{
-			name:         "header used when no query param",
-			queryParam:   "",
-			headerValue:  "es-ES",
-			wantLanguage: Spanish,
-		},
-		{
-			name:         "English query param",
-			queryParam:   "en",
-			headerValue:  "es",
-			wantLanguage: English,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			u, _ := url.Parse("http://example.com/api")
-			if tt.queryParam != "" {
-				q := u.Query()
-				q.Set("lang", tt.queryParam)
-				u.RawQuery = q.Encode()
-			}
-
-			req := &http.Request{
-				URL:    u,
-				Header: make(http.Header),
-			}
-			if tt.headerValue != "" {
-				req.Header.Set("Accept-Language", tt.headerValue)
-			}
-
-			got := GetLanguageFromRequest(req)
-			if got != tt.wantLanguage {
-				t.Errorf("GetLanguageFromRequest() = %q, want %q", got, tt.wantLanguage)
 			}
 		})
 	}

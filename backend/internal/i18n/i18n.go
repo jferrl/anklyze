@@ -1,7 +1,6 @@
 package i18n
 
 import (
-	"net/http"
 	"strings"
 )
 
@@ -42,18 +41,6 @@ func ParseAcceptLanguage(header string) Language {
 	return DefaultLanguage
 }
 
-// GetLanguageFromRequest extracts the language from an HTTP request
-// Checks Accept-Language header and ?lang= query parameter
-func GetLanguageFromRequest(r *http.Request) Language {
-	// Query parameter takes precedence
-	if lang := r.URL.Query().Get("lang"); lang != "" {
-		return ParseLanguage(lang)
-	}
-
-	// Fall back to Accept-Language header
-	return ParseAcceptLanguage(r.Header.Get("Accept-Language"))
-}
-
 // Translation keys
 const (
 	// Error messages
@@ -87,10 +74,10 @@ const (
 	KeyOptionTrimaleolar      = "option.malleoli.trimaleolar"
 
 	// Option labels - Posterior fracture type (Bartonicek)
-	KeyOptionPosteriorExtraincisural            = "option.posterior.extraincisural"
-	KeyOptionPosteriorPosterolateral            = "option.posterior.posterolateral"
+	KeyOptionPosteriorExtraincisural              = "option.posterior.extraincisural"
+	KeyOptionPosteriorPosterolateral              = "option.posterior.posterolateral"
 	KeyOptionPosteriorPosteromedialPosterolateral = "option.posterior.posteromedial_posterolateral"
-	KeyOptionPosteriorLargePosterolateral       = "option.posterior.large_posterolateral"
+	KeyOptionPosteriorLargePosterolateral         = "option.posterior.large_posterolateral"
 
 	// Option labels - Medial morphology
 	KeyOptionMedialOblique    = "option.medial.oblique"
@@ -100,9 +87,9 @@ const (
 	KeyOptionMedialObliqueLM = "option.medial.oblique_lm"
 
 	// Option labels - Fibular level
-	KeyOptionFibularInfrasindesmal  = "option.fibular.infrasindesmal"
-	KeyOptionFibularTransindesmal   = "option.fibular.transindesmal"
-	KeyOptionFibularSuprasindesmal  = "option.fibular.suprasindesmal"
+	KeyOptionFibularInfrasindesmal = "option.fibular.infrasindesmal"
+	KeyOptionFibularTransindesmal  = "option.fibular.transindesmal"
+	KeyOptionFibularSuprasindesmal = "option.fibular.suprasindesmal"
 
 	// Option labels - Lateral morphology
 	KeyOptionLateralTransverse = "option.lateral.transverse"
@@ -142,17 +129,17 @@ const (
 	KeyNotPossibleExceptional = "impossible.exceptional"
 
 	// Lauge-Hansen names and descriptions
-	KeyLHSAName        = "lh.sa.name"
-	KeyLHSADesc        = "lh.sa.desc"
-	KeyLHSERName       = "lh.ser.name"
-	KeyLHSERDesc       = "lh.ser.desc"
-	KeyLHPERName       = "lh.per.name"
-	KeyLHPERDesc       = "lh.per.desc"
-	KeyLHPAName        = "lh.pa.name"
-	KeyLHPADesc        = "lh.pa.desc"
-	KeyLHAmbiguousName        = "lh.ambiguous.name"
-	KeyLHAmbiguousDesc        = "lh.ambiguous.desc"
-	KeyLHUnclassifiableDesc   = "lh.unclassifiable.desc"
+	KeyLHSAName             = "lh.sa.name"
+	KeyLHSADesc             = "lh.sa.desc"
+	KeyLHSERName            = "lh.ser.name"
+	KeyLHSERDesc            = "lh.ser.desc"
+	KeyLHPERName            = "lh.per.name"
+	KeyLHPERDesc            = "lh.per.desc"
+	KeyLHPAName             = "lh.pa.name"
+	KeyLHPADesc             = "lh.pa.desc"
+	KeyLHAmbiguousName      = "lh.ambiguous.name"
+	KeyLHAmbiguousDesc      = "lh.ambiguous.desc"
+	KeyLHUnclassifiableDesc = "lh.unclassifiable.desc"
 
 	// Danis-Weber descriptions
 	KeyDWADesc = "dw.a.desc"
