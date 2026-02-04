@@ -21,17 +21,14 @@ const (
 
 // DanisWeberClassification holds the Danis-Weber classification result
 type DanisWeberClassification struct {
-	Type        DanisWeberType `json:"type"`
-	Description string         `json:"description"`
+	Type DanisWeberType `json:"type"`
 }
 
 // LaugeHansenClassification holds the Lauge-Hansen classification result
 type LaugeHansenClassification struct {
-	Type          LaugeHansenType   `json:"type"`                     // SA, SER, PER, PA
-	FullName      string            `json:"full_name"`                // Full mechanism name
-	Description   string            `json:"description"`              // Description of the mechanism
-	Ambiguous     bool              `json:"ambiguous,omitempty"`      // Whether classification is ambiguous
-	PossibleTypes []string          `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
+	Type          LaugeHansenType `json:"type"`                     // SA, SER, PER, PA
+	Ambiguous     bool            `json:"ambiguous,omitempty"`      // Whether classification is ambiguous
+	PossibleTypes []string        `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
 }
 
 // AOOTACode represents the AO/OTA classification code
@@ -55,8 +52,7 @@ const (
 
 // AOOTAClassification holds the AO/OTA classification result
 type AOOTAClassification struct {
-	Code        AOOTACode `json:"code"`
-	Description string    `json:"description"`
+	Code AOOTACode `json:"code"`
 }
 
 // BartonicekType represents the Bartonicek classification for posterior malleolus
@@ -71,18 +67,17 @@ const (
 
 // BartonicekClassification holds the Bartonicek classification for posterior malleolus
 type BartonicekClassification struct {
-	Type        BartonicekType `json:"type"`
-	Description string         `json:"description"`
+	Type BartonicekType `json:"type"`
 }
 
 // ClassificationResult contains the classification result
 type ClassificationResult struct {
-	FractureDescription string                     `json:"fracture_description"`
+	FractureType        string                     `json:"fracture_type"` // Key for frontend translation
 	DanisWeber          *DanisWeberClassification  `json:"danis_weber,omitempty"`
 	LaugeHansen         *LaugeHansenClassification `json:"lauge_hansen,omitempty"`
 	AOOTA               *AOOTAClassification       `json:"ao_ota,omitempty"`
 	Bartonicek          *BartonicekClassification  `json:"bartonicek,omitempty"`
 	Notes               []string                   `json:"notes,omitempty"`
 	Impossible          bool                       `json:"impossible,omitempty"`
-	ImpossibleReason    string                     `json:"impossible_reason,omitempty"`
+	ImpossibleKey       string                     `json:"impossible_key,omitempty"` // Key for frontend translation
 }

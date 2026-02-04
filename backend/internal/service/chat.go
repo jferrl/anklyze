@@ -83,7 +83,7 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	}
 
 	// Classify the extracted input
-	result, err := s.classifier.Classify(extraction.Input, lang)
+	result, err := s.classifier.Classify(extraction.Input)
 	if err != nil {
 		return &ChatResponse{
 			Status:         ChatStatusError,

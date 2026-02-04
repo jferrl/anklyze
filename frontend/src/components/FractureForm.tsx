@@ -14,7 +14,7 @@ import type {
   SuprasindesmalType,
   FibulaTracePattern,
 } from '../types/fracture';
-import { getFormOptions } from '../services/api';
+import { getLocalFormOptions } from '../utils/formOptions';
 import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';
 import { ComparisonView } from './ComparisonView';
@@ -46,9 +46,9 @@ export function FractureForm() {
   const formEndRef = useRef<HTMLDivElement>(null);
   const { result, loading, error, scenarios, classify, addScenario, clearScenarios, reset, resetAll } = useClassification();
 
-  // Re-fetch options when language changes
+  // Re-load options when language changes
   useEffect(() => {
-    getFormOptions().then(setOptions).catch(console.error);
+    setOptions(getLocalFormOptions());
   }, [i18n.language]);
 
   // Load from URL params on mount

@@ -34,7 +34,6 @@ func setupTestRouter(h *Handler) *gin.Engine {
 
 	router.GET("/health", h.HealthCheck)
 	router.POST("/api/classify", h.ClassifyFracture)
-	router.GET("/api/options", h.GetOptions)
 	router.GET("/api/analytics/summary", h.GetAnalyticsSummary)
 	router.GET("/api/analytics/trends", h.GetAnalyticsTrends)
 	router.GET("/api/analytics/distribution/:system", h.GetAnalyticsDistribution)
@@ -78,42 +77,42 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 	tests := []struct {
 		name               string
 		posteriorType      domain.PosteriorFractureType
-		lang               string
+		acceptLanguage     string
 		expectedBartonicek domain.BartonicekType
 		expectedAOOTA      domain.AOOTACode
 	}{
 		{
 			name:               "extraincisural posterior fracture",
 			posteriorType:      domain.PosteriorExtraincisural,
-			lang:               "en",
+			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType1,
 			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorPosterolateral,
-			lang:               "en",
+			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType2,
 			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posteromedial and posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorPosteromedialPosterolateral,
-			lang:               "en",
+			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType3,
 			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "large posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorLargePosterolateral,
-			lang:               "en",
+			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType4,
 			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posterior only in Spanish",
 			posteriorType:      domain.PosteriorExtraincisural,
-			lang:               "es",
+			acceptLanguage:     "es",
 			expectedBartonicek: domain.BartonicekType1,
 			expectedAOOTA:      domain.AOOTAB3,
 		},
@@ -137,8 +136,11 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 				t.Fatalf("failed to marshal input: %v", err)
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/api/classify?lang="+tt.lang, bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
+			if tt.acceptLanguage != "" {
+				req.Header.Set("Accept-Language", tt.acceptLanguage)
+			}
 			w := httptest.NewRecorder()
 
 			router.ServeHTTP(w, req)
@@ -458,14 +460,14 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 				if !result.Impossible {
 					t.Error("expected Impossible = true, got false")
 				}
-				if result.ImpossibleReason == "" {
+				if result.ImpossibleKey == "" {
 					t.Error("ImpossibleReason should not be empty for impossible cases")
 				}
 				return
 			}
 
 			if result.Impossible {
-				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleReason)
+				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleKey)
 			}
 
 			if result.DanisWeber == nil {
@@ -543,9 +545,9 @@ func TestHandler_ClassifyFracture_EmptyInput(t *testing.T) {
 	}
 
 	// Empty input should return "no fracture selected" description
-	expectedDesc := i18n.T(i18n.English, i18n.KeyNoFractureSelected)
-	if result.FractureDescription != expectedDesc {
-		t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+	expectedType := "none_selected"
+	if result.FractureType != expectedType {
+		t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 	}
 }
 
@@ -554,19 +556,13 @@ func TestHandler_ClassifyFracture_LanguageSupport(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		langParam        string
 		acceptLangHeader string
 		expectedLang     i18n.Language
 	}{
 		{
-			name:         "English via query param",
-			langParam:    "en",
-			expectedLang: i18n.English,
-		},
-		{
-			name:         "Spanish via query param",
-			langParam:    "es",
-			expectedLang: i18n.Spanish,
+			name:             "English via Accept-Language header",
+			acceptLangHeader: "en",
+			expectedLang:     i18n.English,
 		},
 		{
 			name:             "Spanish via Accept-Language header",
@@ -574,10 +570,9 @@ func TestHandler_ClassifyFracture_LanguageSupport(t *testing.T) {
 			expectedLang:     i18n.Spanish,
 		},
 		{
-			name:             "query param takes precedence over header",
-			langParam:        "en",
-			acceptLangHeader: "es-ES",
-			expectedLang:     i18n.English,
+			name:             "simple Spanish header",
+			acceptLangHeader: "es",
+			expectedLang:     i18n.Spanish,
 		},
 		{
 			name:         "defaults to English",
@@ -598,12 +593,7 @@ func TestHandler_ClassifyFracture_LanguageSupport(t *testing.T) {
 			}
 			body, _ := json.Marshal(input)
 
-			url := "/api/classify"
-			if tt.langParam != "" {
-				url += "?lang=" + tt.langParam
-			}
-
-			req := httptest.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			if tt.acceptLangHeader != "" {
 				req.Header.Set("Accept-Language", tt.acceptLangHeader)
@@ -622,148 +612,11 @@ func TestHandler_ClassifyFracture_LanguageSupport(t *testing.T) {
 			}
 
 			// Verify the response contains localized text
-			expectedDesc := i18n.T(tt.expectedLang, i18n.KeyFractureUnimaleolarMedial)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q (lang=%v)", result.FractureDescription, expectedDesc, tt.expectedLang)
+			expectedType := "unimaleolar_medial"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q (lang-independent)", result.FractureType, expectedType)
 			}
 		})
-	}
-}
-
-func TestHandler_GetOptions(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name        string
-		queryParams string
-		checkLabels func(t *testing.T, labels map[string]string)
-	}{
-		{
-			name:        "default language (English)",
-			queryParams: "",
-			checkLabels: func(t *testing.T, labels map[string]string) {
-				if labels["yes"] != i18n.T(i18n.English, i18n.KeyLabelYes) {
-					t.Errorf("yes label = %q, want English version", labels["yes"])
-				}
-			},
-		},
-		{
-			name:        "Spanish language",
-			queryParams: "?lang=es",
-			checkLabels: func(t *testing.T, labels map[string]string) {
-				if labels["yes"] != i18n.T(i18n.Spanish, i18n.KeyLabelYes) {
-					t.Errorf("yes label = %q, want Spanish version", labels["yes"])
-				}
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			h := setupTestHandler()
-			router := setupTestRouter(h)
-
-			req := httptest.NewRequest(http.MethodGet, "/api/options"+tt.queryParams, nil)
-			w := httptest.NewRecorder()
-
-			router.ServeHTTP(w, req)
-
-			if w.Code != http.StatusOK {
-				t.Errorf("GetOptions() status = %d, want %d", w.Code, http.StatusOK)
-			}
-
-			var response FormOptions
-			if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-				t.Fatalf("failed to unmarshal response: %v", err)
-			}
-
-			if tt.checkLabels != nil {
-				tt.checkLabels(t, response.Labels)
-			}
-		})
-	}
-}
-
-func TestHandler_GetOptions_ResponseStructure(t *testing.T) {
-	t.Parallel()
-
-	h := setupTestHandler()
-	router := setupTestRouter(h)
-
-	req := httptest.NewRequest(http.MethodGet, "/api/options", nil)
-	w := httptest.NewRecorder()
-
-	router.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Fatalf("GetOptions() status = %d, want %d", w.Code, http.StatusOK)
-	}
-
-	var response FormOptions
-	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-		t.Fatalf("failed to unmarshal response: %v", err)
-	}
-
-	// Verify questions structure
-	requiredQuestions := []string{
-		"involved_malleoli",
-		"posterior_fracture_type",
-		"medial_morphology",
-		"fibular_level",
-		"lateral_morphology",
-		"suprasindesmal_type",
-	}
-	for _, qID := range requiredQuestions {
-		if q, ok := response.Questions[qID]; !ok {
-			t.Errorf("missing required question %q", qID)
-		} else if q.ID != qID {
-			t.Errorf("Question ID = %q, want %q", q.ID, qID)
-		} else if q.Title == "" {
-			t.Errorf("Question %q has empty title", qID)
-		}
-	}
-
-	// Verify labels structure
-	requiredLabels := []string{"yes", "no", "high", "low"}
-	for _, label := range requiredLabels {
-		if response.Labels[label] == "" {
-			t.Errorf("missing or empty label %q", label)
-		}
-	}
-
-	// Verify select options have correct structure
-	if len(response.InvolvedMalleoli) != 7 {
-		t.Errorf("InvolvedMalleoli has %d options, want 7", len(response.InvolvedMalleoli))
-	}
-	for _, opt := range response.InvolvedMalleoli {
-		if opt.Value == "" {
-			t.Error("InvolvedMalleoli option has empty value")
-		}
-		if opt.Label == "" {
-			t.Error("InvolvedMalleoli option has empty label")
-		}
-	}
-
-	if len(response.PosteriorFractureTypes) != 4 {
-		t.Errorf("PosteriorFractureTypes has %d options, want 4", len(response.PosteriorFractureTypes))
-	}
-
-	if len(response.FibularLevels) != 3 {
-		t.Errorf("FibularLevels has %d options, want 3", len(response.FibularLevels))
-	}
-
-	if len(response.MedialMorphology) != 2 {
-		t.Errorf("MedialMorphology has %d options, want 2", len(response.MedialMorphology))
-	}
-
-	if len(response.LateralMorphology) != 3 {
-		t.Errorf("LateralMorphology has %d options, want 3", len(response.LateralMorphology))
-	}
-
-	if len(response.SuprasindesmalTypes) != 3 {
-		t.Errorf("SuprasindesmalTypes has %d options, want 3", len(response.SuprasindesmalTypes))
 	}
 }
 
@@ -943,33 +796,28 @@ func TestGetLanguage(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		queryLang    string
 		acceptHeader string
 		wantLang     i18n.Language
 	}{
 		{
-			name:         "query param takes precedence over header",
-			queryLang:    "es",
-			acceptHeader: "en-US",
-			wantLang:     i18n.Spanish,
-		},
-		{
-			name:         "falls back to Accept-Language header",
-			queryLang:    "",
+			name:         "Spanish from Accept-Language header",
 			acceptHeader: "es-ES,es;q=0.9",
 			wantLang:     i18n.Spanish,
 		},
 		{
+			name:         "English from Accept-Language header",
+			acceptHeader: "en-US",
+			wantLang:     i18n.English,
+		},
+		{
 			name:         "defaults to English when no language specified",
-			queryLang:    "",
 			acceptHeader: "",
 			wantLang:     i18n.English,
 		},
 		{
-			name:         "English from query param",
-			queryLang:    "en",
-			acceptHeader: "",
-			wantLang:     i18n.English,
+			name:         "simple Spanish header",
+			acceptHeader: "es",
+			wantLang:     i18n.Spanish,
 		},
 	}
 
@@ -980,11 +828,7 @@ func TestGetLanguage(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 
-			url := "/test"
-			if tt.queryLang != "" {
-				url += "?lang=" + tt.queryLang
-			}
-			c.Request = httptest.NewRequest(http.MethodGet, url, nil)
+			c.Request = httptest.NewRequest(http.MethodGet, "/test", nil)
 			if tt.acceptHeader != "" {
 				c.Request.Header.Set("Accept-Language", tt.acceptHeader)
 			}
@@ -1073,20 +917,6 @@ func BenchmarkHandler_ClassifyFracture(b *testing.B) {
 	for b.Loop() {
 		req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-	}
-}
-
-func BenchmarkHandler_GetOptions(b *testing.B) {
-	gin.SetMode(gin.TestMode)
-
-	h := setupTestHandler()
-	router := setupTestRouter(h)
-
-	b.ResetTimer()
-	for b.Loop() {
-		req := httptest.NewRequest(http.MethodGet, "/api/options", nil)
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, req)
 	}

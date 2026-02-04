@@ -13,7 +13,7 @@ import type {
   SuprasindesmalType,
   FibulaTracePattern,
 } from '../../types/fracture';
-import { getFormOptions } from '../../services/api';
+import { getLocalFormOptions } from '../../utils/formOptions';
 import { Button } from '@/components/ui/button';
 import { QuestionCard, QuestionCardHeader, QuestionCardTitle, QuestionCardContent } from '@/components/ui/question-card';
 import { SelectionCard } from '@/components/ui/selection-card';
@@ -65,9 +65,9 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
   const [backClicks, setBackClicks] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
 
-  // Re-fetch options when language changes
+  // Re-load options when language changes
   useEffect(() => {
-    getFormOptions().then(setOptions).catch(console.error);
+    setOptions(getLocalFormOptions());
   }, [i18n.language]);
 
   // Smooth scroll to new question when form advances

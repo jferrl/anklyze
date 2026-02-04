@@ -12,12 +12,12 @@ import (
 
 // mockClassifierService is a mock implementation of ClassifierService for testing.
 type mockClassifierService struct {
-	classifyFunc func(input domain.FractureInput, lang i18n.Language) (*domain.ClassificationResult, error)
+	classifyFunc func(input domain.FractureInput) (*domain.ClassificationResult, error)
 }
 
-func (m *mockClassifierService) Classify(input domain.FractureInput, lang i18n.Language) (*domain.ClassificationResult, error) {
+func (m *mockClassifierService) Classify(input domain.FractureInput) (*domain.ClassificationResult, error) {
 	if m.classifyFunc != nil {
-		return m.classifyFunc(input, lang)
+		return m.classifyFunc(input)
 	}
 	return nil, errors.New("not implemented")
 }
@@ -30,7 +30,7 @@ func TestChatService_ProcessMessage_NilLLMClient(t *testing.T) {
 	t.Parallel()
 
 	classifier := &mockClassifierService{
-		classifyFunc: func(_ domain.FractureInput, _ i18n.Language) (*domain.ClassificationResult, error) {
+		classifyFunc: func(_ domain.FractureInput) (*domain.ClassificationResult, error) {
 			return &domain.ClassificationResult{}, nil
 		},
 	}

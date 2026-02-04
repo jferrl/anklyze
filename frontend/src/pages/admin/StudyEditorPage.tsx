@@ -447,7 +447,7 @@ export function StudyEditorPage() {
                       <p className="text-xs text-muted-foreground hidden lg:block">
                         {status === 'completed' ? (
                           step === 'details' ? (title || '-') :
-                          step === 'cases' ? `${totalCases} cases` :
+                          step === 'cases' ? `${totalCases} ${totalCases === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}` :
                           '-'
                         ) : '-'}
                       </p>
@@ -538,7 +538,7 @@ export function StudyEditorPage() {
                       </CardDescription>
                     </div>
                     <Badge variant="secondary">
-                      {totalCases} {totalCases === 1 ? 'case' : 'cases'}
+                      {totalCases} {totalCases === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -616,7 +616,7 @@ export function StudyEditorPage() {
                             <div className="flex items-center gap-2 mt-1">
                               {getCaseStatusBadge(caseItem.status)}
                               <span className="text-xs text-muted-foreground">
-                                {caseItem.response_count} responses
+                                {caseItem.response_count} {t('admin.studies.responses')}
                               </span>
                             </div>
                           </div>

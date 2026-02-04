@@ -96,7 +96,7 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
   const headers = await getAuthHeaders();
   headers['Accept-Language'] = lang;
 
-  const response = await fetch(`${API_BASE_URL}/api/classify?lang=${lang}`, {
+  const response = await fetch(`${API_BASE_URL}/api/classify`, {
     method: 'POST',
     headers,
     body: JSON.stringify(input),
@@ -107,24 +107,6 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Classification error');
-  }
-
-  return response.json();
-}
-
-export async function getFormOptions(): Promise<FormOptions> {
-  const lang = getCurrentLanguage();
-  const headers = await getAuthHeaders();
-  headers['Accept-Language'] = lang;
-
-  const response = await fetch(`${API_BASE_URL}/api/options?lang=${lang}`, {
-    headers,
-  });
-
-  handleAuthError(response.status);
-
-  if (!response.ok) {
-    throw new Error('Error loading form options');
   }
 
   return response.json();
@@ -141,7 +123,7 @@ export async function sendChatMessage(message: string, sessionId?: string): Prom
     session_id: sessionId,
   };
 
-  const response = await fetch(`${API_BASE_URL}/api/chat?lang=${lang}`, {
+  const response = await fetch(`${API_BASE_URL}/api/chat`, {
     method: 'POST',
     headers,
     body: JSON.stringify(request),
@@ -190,7 +172,7 @@ export async function createChatSession(): Promise<ChatSessionResponse> {
   const headers = await getAuthHeaders();
   headers['Accept-Language'] = lang;
 
-  const response = await fetch(`${API_BASE_URL}/api/chat/session?lang=${lang}`, {
+  const response = await fetch(`${API_BASE_URL}/api/chat/session`, {
     method: 'POST',
     headers,
   });

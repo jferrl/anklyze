@@ -94,35 +94,30 @@ export function ReferenceClassificationForm({
 
   const handleSave = () => {
     const result: ClassificationResult = {
-      fracture_description: 'Reference classification',
+      fracture_type: 'reference',
     };
 
     if (includeDanisWeber && danisWeber) {
       result.danis_weber = {
         type: danisWeber === NOT_CLASSIFIABLE ? 'Not classifiable' : danisWeber,
-        description: getDanisWeberDesc(danisWeber),
       };
     }
 
     if (includeLaugeHansen && laugeHansen) {
       result.lauge_hansen = {
         type: laugeHansen === NOT_CLASSIFIABLE ? 'Not classifiable' : laugeHansen,
-        full_name: getLaugeHansenDesc(laugeHansen),
-        description: getLaugeHansenDesc(laugeHansen),
       };
     }
 
     if (includeAoOta && aoOta) {
       result.ao_ota = {
         code: aoOta === NOT_CLASSIFIABLE ? 'Not classifiable' : aoOta,
-        description: getAoOtaDesc(aoOta),
       };
     }
 
     if (includeBartonicek && bartonicek) {
       result.bartonicek = {
         type: bartonicek === NOT_CLASSIFIABLE ? 'Not classifiable' : `Type ${bartonicek}`,
-        description: getBartonicekDesc(bartonicek),
       };
     }
 

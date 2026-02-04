@@ -13,7 +13,8 @@ import type {
   SuprasindesmalType,
   FibulaTracePattern,
 } from '../../types/fracture';
-import { getFormOptions, classifyFracture } from '../../services/api';
+import { classifyFracture } from '../../services/api';
+import { getLocalFormOptions } from '../../utils/formOptions';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -77,9 +78,9 @@ export function GoldStandardInputDialog({
     }
   }, [open, initialInput, initialClassification, hasTACImages]);
 
-  // Re-fetch options when language changes
+  // Re-load options when language changes
   useEffect(() => {
-    getFormOptions().then(setOptions).catch(console.error);
+    setOptions(getLocalFormOptions());
   }, [i18n.language]);
 
   // Smooth scroll to new question when form advances

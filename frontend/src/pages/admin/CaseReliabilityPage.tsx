@@ -41,7 +41,7 @@ function formatKappaWithCI(kappa: number | undefined, ci?: ConfidenceInterval): 
   return kappaStr;
 }
 
-// Helper to get color class based on metric value (0-1 scale)
+// Helper to get color class based on metric value (expects decimal 0-1 for diagnostic metrics)
 function getMetricColorClass(value: number): string {
   if (value >= 0.9) return 'text-emerald-600 dark:text-emerald-400';
   if (value >= 0.7) return 'text-green-600 dark:text-green-400';
@@ -652,7 +652,8 @@ export function CaseReliabilityPage() {
                     </div>
                   )}
 
-                  {getSystemAgreement.fleiss_kappa === undefined && getSystemAgreement.fleiss_kappa_note && (
+                  {getSystemAgreement.fleiss_kappa === undefined &&
+                   (getSystemAgreement.requires_multiple_cases || getSystemAgreement.fleiss_kappa_note) && (
                     <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                       <div className="flex items-start gap-2">
                         <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
@@ -661,7 +662,7 @@ export function CaseReliabilityPage() {
                             {t('admin.reliability.fleissKappa')}
                           </span>
                           <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-1">
-                            {getSystemAgreement.fleiss_kappa_note}
+                            {t('admin.reliability.fleissKappaNote')}
                           </p>
                         </div>
                       </div>

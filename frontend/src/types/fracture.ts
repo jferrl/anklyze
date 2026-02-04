@@ -79,7 +79,6 @@ export interface FractureInput {
 // Danis-Weber classification result
 export interface DanisWeberClassification {
   type: string;
-  description: string;
 }
 
 // Lauge-Hansen type
@@ -88,8 +87,6 @@ export type LaugeHansenType = 'SA' | 'SER' | 'PER' | 'PA';
 // Lauge-Hansen classification result
 export interface LaugeHansenClassification {
   type: string;
-  full_name: string;
-  description: string;
   ambiguous?: boolean;
   possible_types?: string[];
 }
@@ -97,25 +94,23 @@ export interface LaugeHansenClassification {
 // AO/OTA classification result
 export interface AOOTAClassification {
   code: string;
-  description: string;
 }
 
 // Bartonicek classification result
 export interface BartonicekClassification {
   type: string;
-  description: string;
 }
 
 // Combined classification result
 export interface ClassificationResult {
-  fracture_description: string;
+  fracture_type: string;
   danis_weber?: DanisWeberClassification;
   lauge_hansen?: LaugeHansenClassification;
   ao_ota?: AOOTAClassification;
   bartonicek?: BartonicekClassification;
   notes?: string[];
   impossible?: boolean;
-  impossible_reason?: string;
+  impossible_key?: string;
 }
 
 // Comparison scenario for side-by-side comparison

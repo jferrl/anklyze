@@ -28,11 +28,11 @@ import {
   TooltipTrigger,
 } from '../../components/ui/tooltip';
 
-// Helper to get color class based on agreement value (0-1 scale)
+// Helper to get color class based on agreement value (expects percentages 0-100)
 function getAgreementColorClass(value: number): string {
-  if (value >= 0.8) return 'text-emerald-600 dark:text-emerald-400';
-  if (value >= 0.6) return 'text-green-600 dark:text-green-400';
-  if (value >= 0.4) return 'text-yellow-600 dark:text-yellow-400';
+  if (value >= 80) return 'text-emerald-600 dark:text-emerald-400';
+  if (value >= 60) return 'text-green-600 dark:text-green-400';
+  if (value >= 40) return 'text-yellow-600 dark:text-yellow-400';
   return 'text-red-600 dark:text-red-400';
 }
 
@@ -246,7 +246,7 @@ export function StudyReliabilityPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-6">
               <div className="flex flex-col items-center p-4 bg-primary/5 rounded-xl">
                 <span className="text-3xl font-bold text-foreground">
-                  {(reliability.gold_standard_accuracy.overall_accuracy * 100).toFixed(1)}%
+                  {reliability.gold_standard_accuracy.overall_accuracy.toFixed(1)}%
                 </span>
                 <span className="text-sm text-muted-foreground">
                   {t('admin.reliability.overallAccuracy', 'Overall')}
@@ -256,7 +256,7 @@ export function StudyReliabilityPage() {
               {reliability.gold_standard_accuracy.danis_weber_accuracy !== undefined && (
                 <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
                   <span className="text-2xl font-bold text-foreground">
-                    {(reliability.gold_standard_accuracy.danis_weber_accuracy * 100).toFixed(1)}%
+                    {reliability.gold_standard_accuracy.danis_weber_accuracy.toFixed(1)}%
                   </span>
                   <span className="text-sm text-muted-foreground">Danis-Weber</span>
                 </div>
@@ -265,7 +265,7 @@ export function StudyReliabilityPage() {
               {reliability.gold_standard_accuracy.lauge_hansen_accuracy !== undefined && (
                 <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
                   <span className="text-2xl font-bold text-foreground">
-                    {(reliability.gold_standard_accuracy.lauge_hansen_accuracy * 100).toFixed(1)}%
+                    {reliability.gold_standard_accuracy.lauge_hansen_accuracy.toFixed(1)}%
                   </span>
                   <span className="text-sm text-muted-foreground">Lauge-Hansen</span>
                 </div>
@@ -274,7 +274,7 @@ export function StudyReliabilityPage() {
               {reliability.gold_standard_accuracy.ao_ota_accuracy !== undefined && (
                 <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
                   <span className="text-2xl font-bold text-foreground">
-                    {(reliability.gold_standard_accuracy.ao_ota_accuracy * 100).toFixed(1)}%
+                    {reliability.gold_standard_accuracy.ao_ota_accuracy.toFixed(1)}%
                   </span>
                   <span className="text-sm text-muted-foreground">AO/OTA</span>
                 </div>
@@ -283,7 +283,7 @@ export function StudyReliabilityPage() {
               {reliability.gold_standard_accuracy.bartonicek_accuracy !== undefined && (
                 <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
                   <span className="text-2xl font-bold text-foreground">
-                    {(reliability.gold_standard_accuracy.bartonicek_accuracy * 100).toFixed(1)}%
+                    {reliability.gold_standard_accuracy.bartonicek_accuracy.toFixed(1)}%
                   </span>
                   <span className="text-sm text-muted-foreground">Bartonicek</span>
                 </div>
@@ -480,23 +480,23 @@ export function StudyReliabilityPage() {
                             {caseMetrics.response_count}
                           </td>
                           <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.danis_weber_agreement))}>
-                            {(caseMetrics.danis_weber_agreement * 100).toFixed(0)}%
+                            {caseMetrics.danis_weber_agreement.toFixed(0)}%
                           </td>
                           <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.lauge_hansen_agreement))}>
-                            {(caseMetrics.lauge_hansen_agreement * 100).toFixed(0)}%
+                            {caseMetrics.lauge_hansen_agreement.toFixed(0)}%
                           </td>
                           <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.ao_ota_agreement))}>
-                            {(caseMetrics.ao_ota_agreement * 100).toFixed(0)}%
+                            {caseMetrics.ao_ota_agreement.toFixed(0)}%
                           </td>
                           <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.bartonicek_agreement ?? 0))}>
                             {caseMetrics.bartonicek_agreement !== undefined
-                              ? `${(caseMetrics.bartonicek_agreement * 100).toFixed(0)}%`
+                              ? `${caseMetrics.bartonicek_agreement.toFixed(0)}%`
                               : '-'}
                           </td>
                           {hasGoldStandard && (
                             <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.gold_standard_match_rate ?? 0))}>
                               {caseMetrics.gold_standard_match_rate !== undefined
-                                ? `${(caseMetrics.gold_standard_match_rate * 100).toFixed(0)}%`
+                                ? `${caseMetrics.gold_standard_match_rate.toFixed(0)}%`
                                 : '-'}
                             </td>
                           )}
@@ -567,13 +567,18 @@ export function StudyReliabilityPage() {
               </div>
             )}
 
-            {getActiveKappa()!.note && (
+            {(getActiveKappa()!.requires_multiple_cases || getActiveKappa()!.note) && (
               <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-amber-600/80 dark:text-amber-400/80">
-                    {getActiveKappa()!.note}
-                  </p>
+                  <div>
+                    <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                      {t('admin.reliability.fleissKappa')}
+                    </span>
+                    <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-1">
+                      {t('admin.reliability.fleissKappaNote')}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -629,7 +634,7 @@ function CaseMetricCard({
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">{metrics.response_count} responses</span>
         <span className={cn('text-lg font-bold', getAgreementColorClass(agreement))}>
-          {(agreement * 100).toFixed(0)}%
+          {agreement.toFixed(0)}%
         </span>
       </div>
     </div>

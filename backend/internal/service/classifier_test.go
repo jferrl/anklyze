@@ -167,7 +167,7 @@ func TestClassifierService_Classify(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := svc.Classify(tt.input, tt.lang)
+			got, err := svc.Classify(tt.input)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Classify() error = %v, wantErr %v", err, tt.wantErr)
@@ -269,7 +269,7 @@ func TestClassifierService_ClassifyBimalleolar(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := svc.Classify(tt.input, tt.lang)
+			got, err := svc.Classify(tt.input)
 
 			if err != nil {
 				t.Errorf("Classify() unexpected error = %v", err)

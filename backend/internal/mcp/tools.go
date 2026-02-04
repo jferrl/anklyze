@@ -119,9 +119,7 @@ func classifyFractureHandler(classifier service.ClassifierService) server.ToolHa
 			FibularLevelForTransverse:      domain.FibularLevel(request.GetString("fibular_level_for_transverse", "")),
 		}
 
-		lang := i18n.ParseLanguage(request.GetString("language", "en"))
-
-		result, err := classifier.Classify(input, lang)
+		result, err := classifier.Classify(input)
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("classification error: %v", err)), nil
 		}
@@ -323,22 +321,22 @@ type ValidationResult struct {
 
 func validateCombinationHandler(classifier service.ClassifierService) server.ToolHandlerFunc {
 	return func(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		lang := i18n.ParseLanguage(request.GetString("language", "en"))
+
 		input := domain.FractureInput{
 			InvolvedMalleoli:  domain.InvolvedMalleoli(request.GetString("involved_malleoli", "")),
 			FibularLevel:      domain.FibularLevel(request.GetString("fibular_level", "")),
 			LateralMorphology: domain.LateralMorphology(request.GetString("lateral_morphology", "")),
 		}
 
-		lang := i18n.ParseLanguage(request.GetString("language", "en"))
-
-		result, err := classifier.Classify(input, lang)
+		result, err := classifier.Classify(input)
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("validation error: %v", err)), nil
 		}
 
 		validation := ValidationResult{
 			Valid:  !result.Impossible,
-			Reason: result.ImpossibleReason,
+			Reason: result.ImpossibleKey,
 		}
 
 		if validation.Valid {

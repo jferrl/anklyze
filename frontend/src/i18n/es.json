@@ -122,7 +122,76 @@
     "draftRestored": "Progreso anterior restaurado",
     "linkCopied": "Enlace copiado al portapapeles",
     "copyFailed": "Error al copiar el enlace",
-    "progress": "Progreso"
+    "progress": "Progreso",
+    "questions": {
+      "involved_malleoli": "¿Qué maléolos tiene fracturados?",
+      "posterior_fracture_type": "¿Qué tipo de fractura es?",
+      "medial_morphology": "¿Qué morfología tiene?",
+      "medial_morphology_lm": "¿De qué morfología es la fractura del maléolo medial?",
+      "fibular_level": "¿A qué nivel está la fractura?",
+      "fibular_level_lm": "¿A qué nivel está la fractura de peroné?",
+      "fibular_level_tri": "¿A qué nivel está la fractura del peroné?",
+      "lateral_morphology": "¿De qué morfología es la fractura?",
+      "suprasindesmal_type": "¿De qué tipo?",
+      "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
+      "has_ct_scan": "¿Tiene TAC?",
+      "fibula_trace_pattern": "¿Cómo es el trazo del peroné?"
+    },
+    "options": {
+      "involvedMalleoli": {
+        "posterior_only": "Maléolo posterior",
+        "medial_only": "Maléolo medial",
+        "lateral_only": "Maléolo lateral",
+        "medial_posterior": "Maléolos medial y posterior",
+        "lateral_posterior": "Maléolos lateral y posterior",
+        "lateral_medial": "Maléolos lateral y medial",
+        "trimaleolar": "Maléolos medial, lateral y posterior"
+      },
+      "posteriorType": {
+        "extraincisural": "Fragmento extraincisural",
+        "posterolateral": "Fragmento posterolateral",
+        "posteromedial_posterolateral": "Fragmento posteromedial y posterolateral",
+        "large_posterolateral": "Gran fragmento triangular posterolateral"
+      },
+      "medialMorphology": {
+        "oblique": "Oblicuo",
+        "transverse": "Transverso"
+      },
+      "medialMorphologyLM": {
+        "oblique": "Oblicuo/Vertical",
+        "transverse": "Transverso"
+      },
+      "fibularLevel": {
+        "infrasindesmal": "Infrasindesmal",
+        "transindesmal": "Transindesmal",
+        "suprasindesmal": "Suprasindesmal"
+      },
+      "lateralMorphology": {
+        "transverse": "Transversa",
+        "oblique": "Transversa/Oblicua (Baja medial, alta lateral)/Conminuta",
+        "spiral": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      "fibulaMorphologyLMTri": {
+        "transverse": "Transversa",
+        "oblique": "Oblicua (Baja medial, alta lateral)/Conminuta",
+        "spiral": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      "suprasindesmalType": {
+        "simple_diaphyseal": "Diafisaria Simple",
+        "multifragmentary": "Multifragmentaria",
+        "proximal": "Proximal"
+      },
+      "fibulaTracePattern": {
+        "parasindesmotic_short": "Parasindesmal de trazo oblicuo corto/transverso/conminuto",
+        "parasindesmotic_long": "Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"
+      }
+    },
+    "labels": {
+      "yes": "Sí",
+      "no": "No",
+      "high": "Alta (Suprasindesmal)",
+      "low": "Baja (Transindesmal / Infrasindesmal)"
+    }
   },
   "results": {
     "title": "Resultados de la Clasificación",
@@ -145,7 +214,57 @@
     },
     "clinicalNotes": "Notas Clínicas",
     "notPossible": "No posible",
-    "possibleTypes": "Tipos posibles"
+    "possibleTypes": "Tipos posibles",
+    "fractureDescriptions": {
+      "none_selected": "No se ha seleccionado ninguna fractura",
+      "unimaleolar_posterior": "Fractura unimaleolar maléolo posterior",
+      "unimaleolar_medial": "Fractura unimaleolar maléolo medial",
+      "unimaleolar_lateral": "Fractura unimaleolar maléolo lateral",
+      "bimaleolar_medial_posterior": "Fractura bimaleolar (Medial + Posterior)",
+      "bimaleolar_lateral_posterior": "Fractura bimaleolar (Lateral + Posterior)",
+      "bimaleolar_lateral_medial": "Fractura bimaleolar (Lateral + Medial)",
+      "trimaleolar": "Fractura trimaleolar"
+    },
+    "classifications": {
+      "laugeHansen": {
+        "SA_name": "Supinación-Aducción",
+        "SA_desc": "Mecanismo de supinación con fuerza de aducción.",
+        "SER_name": "Supinación-Rotación Externa",
+        "SER_desc": "Mecanismo de supinación con rotación externa del astrágalo.",
+        "PER_name": "Pronación-Rotación Externa",
+        "PER_desc": "Mecanismo de pronación con rotación externa.",
+        "PA_name": "Pronación-Abducción",
+        "PA_desc": "Mecanismo de pronación con abducción.",
+        "ambiguous_name": "No clasificable",
+        "ambiguous_desc": "Lauge-Hansen no clasificable (podría ser PA/SER/PER)",
+        "unclassifiable_desc": "Las fracturas aisladas del maléolo posterior no encajan en los mecanismos clásicos de Lauge-Hansen"
+      },
+      "danisWeber": {
+        "A_desc": "Weber A: Fractura por debajo de la sindesmosis",
+        "B_desc": "Weber B: Fractura a nivel de la sindesmosis",
+        "C_desc": "Weber C: Fractura por encima de la sindesmosis"
+      },
+      "aoOta": {
+        "A1_desc": "44-A1: Fractura infrasindesmal aislada",
+        "A2_desc": "44-A2: Fractura infrasindesmal con afectación medial",
+        "B1_desc": "44-B1: Fractura transindesmal aislada",
+        "B2_desc": "44-B2: Fractura transindesmal con afectación medial",
+        "B3_desc": "44-B3: Fractura transindesmal con afectación medial y posterior",
+        "C1_desc": "44-C1: Fractura suprasindesmal diafisaria simple",
+        "C2_desc": "44-C2: Fractura suprasindesmal multifragmentaria",
+        "C3_desc": "44-C3: Fractura suprasindesmal proximal (Maisonneuve)"
+      },
+      "bartonicek": {
+        "1_desc": "Bartonicek 1: Fragmento extraincisural",
+        "2_desc": "Bartonicek 2: Fragmento posterolateral",
+        "3_desc": "Bartonicek 3: Fragmento posteromedial y posterolateral",
+        "4_desc": "Bartonicek 4: Gran fragmento triangular posterolateral"
+      }
+    },
+    "impossible": {
+      "sa_mechanism": "No posible. El mecanismo SA no arranca el maléolo posterior. Mecanismo PA son transindesmales o suprasindesmales.",
+      "exceptional": "No posible (excepcional)"
+    }
   },
   "alerts": {
     "bimaleolarMedialPosterior": "Fractura bimaleolar (Medial + Posterior). Pulse clasificar para ver el resultado.",
@@ -278,6 +397,8 @@
     "optional": "opcional",
     "previous": "Anterior",
     "next": "Siguiente",
+    "of": "de",
+    "add": "Agregar",
     "loading": "Cargando...",
     "home": "Inicio",
     "classify": "Clasificar",
@@ -365,7 +486,7 @@
     "noDeadline": "Sin fecha límite",
     "status": {
       "draft": "Borrador",
-      "published": "Publicado",
+      "active": "Activo",
       "closed": "Cerrado"
     },
     "images": {
@@ -525,7 +646,8 @@
       "selectClassification": "Seleccionar clasificación...",
       "saveReference": "Guardar Referencia",
       "notClassifiable": "No clasificable",
-      "notClassifiableDesc": "No se puede clasificar con este sistema"
+      "notClassifiableDesc": "No se puede clasificar con este sistema",
+      "backToCases": "Volver a Casos"
     },
     "studies": {
       "title": "Gestión de Estudios",
@@ -533,25 +655,48 @@
       "create": "Crear Estudio",
       "createFirst": "Crea Tu Primer Estudio",
       "createStudy": "Crear Nuevo Estudio",
+      "createTitle": "Crear Estudio",
       "editStudy": "Editar Estudio",
+      "editTitle": "Editar Estudio",
       "search": "Buscar estudios...",
       "filterStatus": "Filtrar por estado",
       "allStatuses": "Todos los estados",
       "noStudies": "No se encontraron estudios",
       "noStudiesDesc": "Crea tu primer estudio para comenzar.",
+      "titleRequired": "El título es obligatorio",
+      "activate": "Activar",
+      "viewReliability": "Fiabilidad",
+      "close": "Cerrar",
       "responses": "respuestas",
+      "case": "caso",
+      "cases_plural": "casos",
       "analytics": "Analíticas",
       "divergence": "Análisis de Divergencia",
       "publish": "Publicar",
-      "close": "Cerrar Estudio",
       "exportCSV": "Exportar CSV",
       "backToList": "Volver a Estudios",
       "notFound": "Estudio no encontrado",
       "notFoundDescription": "El estudio que buscas no existe o ha sido eliminado.",
-      "details": "Detalles del Estudio",
-      "detailsDescription": "Información básica sobre el caso clínico",
+      "details": "Detalles",
+      "detailsDescription": "Información básica del estudio",
+      "titleLabel": "Título",
       "titlePlaceholder": "Introduce el título del estudio...",
-      "descriptionPlaceholder": "Introduce una descripción del caso clínico...",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional...",
+      "cases": "Casos",
+      "casesDescription": "Agregar casos al estudio",
+      "casesDesc": "Agrega casos publicados a este estudio para análisis multi-evaluador",
+      "selectCase": "Selecciona un caso para agregar...",
+      "noCasesAvailable": "No hay casos publicados disponibles",
+      "noCases": "Aún no hay casos en este estudio",
+      "addCasesHint": "Agrega casos publicados para comenzar",
+      "step": "Paso",
+      "activateConfirmTitle": "Activar Estudio",
+      "activateConfirmDescription": "Una vez activado, el estudio estará disponible para que los evaluadores asignados envíen clasificaciones. No se podrán agregar o eliminar casos después de la activación.",
+      "raters": {
+        "title": "Evaluadores",
+        "description": "Asignar evaluadores"
+      },
       "images": "Imágenes",
       "imagesDescription": "Sube imágenes de radiografía y TAC para este estudio",
       "uploadCategory": "Subir como",
@@ -571,7 +716,8 @@
       },
       "errors": {
         "titleRequired": "El título es obligatorio",
-        "imagesRequired": "Se requiere al menos una imagen para publicar"
+        "imagesRequired": "Se requiere al menos una imagen para publicar",
+        "casesRequired": "Se requiere al menos un caso para activar"
       },
       "users": {
         "title": "Acceso al Estudio",
@@ -668,6 +814,20 @@
           "4": "Tipo 4",
           "4Desc": "Posterolateral triangular grande"
         }
+      },
+      "backToStudy": "Volver al Estudio",
+      "reliability": {
+        "totalCases": "Casos Totales",
+        "completeRaters": "Evaluadores Completos",
+        "lowAgreementCases": "casos con bajo acuerdo",
+        "casesWithReference": "casos con referencia",
+        "totalComparisons": "comparaciones totales",
+        "fleissKappa": "Kappa de Fleiss (Fiabilidad Inter-Evaluador)",
+        "fleissKappaDescription": "El Kappa de Fleiss mide el acuerdo entre múltiples evaluadores en múltiples casos. Requiere 3+ evaluadores que completaron todos los casos.",
+        "notEnoughData": "No hay suficientes datos",
+        "perCaseAgreement": "Acuerdo por Caso",
+        "noCaseMetrics": "No hay métricas de casos disponibles",
+        "agreementNote": "El porcentaje de acuerdo muestra con qué frecuencia los evaluadores seleccionaron la misma clasificación para cada caso. Los casos con bajo acuerdo (< 60%) están resaltados."
       }
     },
     "analytics": {
@@ -677,6 +837,8 @@
       "responsesPerUser": "Respuestas/Usuario",
       "classificationDistribution": "Distribución de Clasificaciones",
       "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
+      "distributionTitle": "Distribución {{system}}",
+      "reliabilityMetrics": "Métricas de Fiabilidad",
       "noData": "No hay datos de respuestas disponibles",
       "unspecified": "No especificado",
       "summary": "{{system}}: {{types}} clasificaciones diferentes de {{total}} respuestas",
@@ -688,6 +850,7 @@
       "title": "Fiabilidad Inter-Evaluador",
       "hasGoldStandard": "Gold Standard Establecido",
       "exportDetailed": "Exportar CSV Detallado",
+      "viewDivergence": "Análisis de Divergencia",
       "totalResponses": "Total de Respuestas",
       "uniqueRaters": "Evaluadores Únicos",
       "correctResponses": "Correctas",
@@ -731,6 +894,7 @@
       "agreement": "acuerdo",
       "raters2": "2 evaluadores",
       "ratersMulti": "multi-evaluador",
+      "fleissKappaNote": "El Kappa de Fleiss requiere múltiples casos (sujetos) para calcular la fiabilidad inter-evaluador. El diseño actual tiene un único caso. Considere crear un estudio con múltiples casos para una evaluación de fiabilidad adecuada.",
       "systems": {
         "danisWeber": "Danis-Weber",
         "danisWeberDesc": "Nivel de fractura del peroné",
@@ -941,5 +1105,12 @@
       "resident": "Residente",
       "attending": "Adjunto"
     }
+  },
+  "errors": {
+    "invalid_input": "Entrada inválida: ",
+    "classification_error": "Error en la clasificación: ",
+    "no_fractures_found": "No se detectaron fracturas de maléolos",
+    "isolated_posterior": "Fractura aislada del maléolo posterior",
+    "chat_unavailable": "La clasificación por chat no está disponible temporalmente"
   }
 }

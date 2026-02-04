@@ -92,7 +92,6 @@ func setupProtectedRoutes(
 	{
 		protected.GET("/me", GetCurrentUser)
 		protected.POST("/classify", handler.ClassifyFracture)
-		protected.GET("/options", handler.GetOptions)
 		protected.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
 	}
 
@@ -143,7 +142,6 @@ func setupPublicRoutes(
 		})
 	})
 	api.POST("/classify", handler.ClassifyFracture)
-	api.GET("/options", handler.GetOptions)
 	api.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
 
 	// Chat session routes

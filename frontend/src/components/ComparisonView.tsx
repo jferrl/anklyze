@@ -1,6 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import type { ComparisonScenario } from '../types/fracture';
 import { cn } from '@/lib/utils';
+import {
+  getFractureDescription,
+  getDanisWeberDescription,
+  getLaugeHansenFullName,
+  getAOOTADescription,
+  getBartonicekDescription,
+} from '@/utils/classificationTranslations';
 
 interface ComparisonViewProps {
   scenarios: ComparisonScenario[];
@@ -89,7 +96,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
               {t('comparison.scenario')} {String.fromCharCode(65 + index)}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {scenario.result.fracture_description}
+              {getFractureDescription(t, scenario.result.fracture_type)}
             </p>
           </div>
         ))}
@@ -107,8 +114,8 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
           {scenarios.map((scenario) => (
             <ClassificationValue
               key={scenario.id}
-              value={scenario.result.lauge_hansen?.type}
-              subtitle={scenario.result.lauge_hansen?.full_name}
+              value={scenario.result.lauge_hansen?.type || getLaugeHansenFullName(t, '', scenario.result.lauge_hansen?.ambiguous)}
+              subtitle={scenario.result.lauge_hansen && getLaugeHansenFullName(t, scenario.result.lauge_hansen.type, scenario.result.lauge_hansen.ambiguous)}
               isDifferent={lhDifferent}
               colors={classificationColors.laugeHansen}
             />
@@ -129,7 +136,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.danis_weber?.type}
-              subtitle={scenario.result.danis_weber?.description}
+              subtitle={scenario.result.danis_weber && getDanisWeberDescription(t, scenario.result.danis_weber.type)}
               isDifferent={dwDifferent}
               colors={classificationColors.danisWeber}
             />
@@ -150,7 +157,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.ao_ota?.code}
-              subtitle={scenario.result.ao_ota?.description}
+              subtitle={scenario.result.ao_ota && getAOOTADescription(t, scenario.result.ao_ota.code)}
               isDifferent={aoDifferent}
               colors={classificationColors.aoota}
             />
@@ -171,7 +178,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.bartonicek?.type}
-              subtitle={scenario.result.bartonicek?.description}
+              subtitle={scenario.result.bartonicek && getBartonicekDescription(t, scenario.result.bartonicek.type)}
               isDifferent={bartDifferent}
               colors={classificationColors.bartonicek}
             />

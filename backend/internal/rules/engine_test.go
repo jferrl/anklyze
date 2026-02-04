@@ -43,16 +43,16 @@ func TestEngine_Classify_NoFractureSelected(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := engine.Classify(tt.input, tt.lang)
+			result, err := engine.Classify(tt.input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 			if result == nil {
 				t.Fatal("Classify() returned nil result")
 			}
-			expectedDesc := i18n.T(tt.lang, i18n.KeyNoFractureSelected)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "none_selected"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 		})
 	}
@@ -138,14 +138,14 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 				HasCTScan:             tt.hasCTScan,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureUnimaleolarPosterior)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "unimaleolar_posterior"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if result.AOOTA == nil {
@@ -228,14 +228,14 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 				MedialMorphology: tt.medialMorphology,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureUnimaleolarMedial)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "unimaleolar_medial"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if result.AOOTA == nil {
@@ -386,14 +386,14 @@ func TestEngine_Classify_LateralOnly(t *testing.T) {
 				FibulaTracePattern: tt.fibulaTracePattern,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureUnimaleolarLateral)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "unimaleolar_lateral"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if result.DanisWeber == nil {
@@ -478,14 +478,14 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 				PosteriorFractureType: tt.posteriorType,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureBimaleolarMedialPosterior)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "bimaleolar_medial_posterior"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if result.AOOTA == nil {
@@ -682,28 +682,28 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 				HasCTScan:             tt.hasCTScan,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureBimaleolarLateralPosterior)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "bimaleolar_lateral_posterior"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if tt.expectedImpossible {
 				if !result.Impossible {
 					t.Error("expected Impossible = true, got false")
 				}
-				if result.ImpossibleReason == "" {
+				if result.ImpossibleKey == "" {
 					t.Error("ImpossibleReason should not be empty for impossible cases")
 				}
 				return
 			}
 
 			if result.Impossible {
-				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleReason)
+				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleKey)
 			}
 
 			if result.DanisWeber == nil {
@@ -856,14 +856,14 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 				SuprasindesmalType:             tt.suprasindesmalType,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureBimaleolarLateralMedial)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "bimaleolar_lateral_medial"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if result.DanisWeber == nil {
@@ -991,28 +991,28 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 				SuprasindesmalType:        tt.suprasindesmalType,
 			}
 
-			result, err := engine.Classify(input, tt.lang)
+			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedDesc := i18n.T(tt.lang, i18n.KeyFractureTrimaleolar)
-			if result.FractureDescription != expectedDesc {
-				t.Errorf("FractureDescription = %q, want %q", result.FractureDescription, expectedDesc)
+			expectedType := "trimaleolar"
+			if result.FractureType != expectedType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
 			}
 
 			if tt.expectedImpossible {
 				if !result.Impossible {
 					t.Error("expected Impossible = true, got false")
 				}
-				if result.ImpossibleReason == "" {
+				if result.ImpossibleKey == "" {
 					t.Error("ImpossibleReason should not be empty for impossible cases")
 				}
 				return
 			}
 
 			if result.Impossible {
-				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleReason)
+				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleKey)
 			}
 
 			if result.DanisWeber == nil {
@@ -1075,7 +1075,7 @@ func BenchmarkEngine_Classify(b *testing.B) {
 	for _, input := range inputs {
 		b.Run(input.name, func(b *testing.B) {
 			for b.Loop() {
-				_, _ = engine.Classify(input.input, i18n.English)
+				_, _ = engine.Classify(input.input)
 			}
 		})
 	}

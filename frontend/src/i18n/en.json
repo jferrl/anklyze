@@ -116,7 +116,76 @@
     "draftRestored": "Previous progress restored",
     "linkCopied": "Link copied to clipboard",
     "copyFailed": "Failed to copy link",
-    "progress": "Progress"
+    "progress": "Progress",
+    "questions": {
+      "involved_malleoli": "Which malleoli are fractured?",
+      "posterior_fracture_type": "What type of fracture is it?",
+      "medial_morphology": "What morphology does it have?",
+      "medial_morphology_lm": "What is the morphology of the medial malleolus fracture?",
+      "fibular_level": "At what level is the fracture?",
+      "fibular_level_lm": "At what level is the fibular fracture?",
+      "fibular_level_tri": "At what level is the fibular fracture?",
+      "lateral_morphology": "What is the morphology of the fracture?",
+      "suprasindesmal_type": "What type?",
+      "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
+      "has_ct_scan": "Do you have a CT scan?",
+      "fibula_trace_pattern": "What is the fibula trace pattern?"
+    },
+    "options": {
+      "involvedMalleoli": {
+        "posterior_only": "Posterior malleolus",
+        "medial_only": "Medial malleolus",
+        "lateral_only": "Lateral malleolus",
+        "medial_posterior": "Medial and posterior malleoli",
+        "lateral_posterior": "Lateral and posterior malleoli",
+        "lateral_medial": "Lateral and medial malleoli",
+        "trimaleolar": "Medial, lateral and posterior malleoli"
+      },
+      "posteriorType": {
+        "extraincisural": "Extraincisural fragment",
+        "posterolateral": "Posterolateral fragment",
+        "posteromedial_posterolateral": "Posteromedial and posterolateral fragment",
+        "large_posterolateral": "Large posterolateral triangular fragment"
+      },
+      "medialMorphology": {
+        "oblique": "Oblique",
+        "transverse": "Transverse"
+      },
+      "medialMorphologyLM": {
+        "oblique": "Oblique/Vertical",
+        "transverse": "Transverse"
+      },
+      "fibularLevel": {
+        "infrasindesmal": "Infrasyndesmal",
+        "transindesmal": "Transsyndesmal",
+        "suprasindesmal": "Suprasyndesmal"
+      },
+      "lateralMorphology": {
+        "transverse": "Transverse",
+        "oblique": "Transverse/Oblique (Low medial, high lateral)/Comminuted",
+        "spiral": "Spiral (Low anterior, high posterior)"
+      },
+      "fibulaMorphologyLMTri": {
+        "transverse": "Transverse",
+        "oblique": "Oblique (Low medial, high lateral)/Comminuted",
+        "spiral": "Spiral (Low anterior, high posterior)"
+      },
+      "suprasindesmalType": {
+        "simple_diaphyseal": "Simple Diaphyseal",
+        "multifragmentary": "Multifragmentary",
+        "proximal": "Proximal"
+      },
+      "fibulaTracePattern": {
+        "parasindesmotic_short": "Parasyndesmotic short oblique/transverse/comminuted trace",
+        "parasindesmotic_long": "Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"
+      }
+    },
+    "labels": {
+      "yes": "Yes",
+      "no": "No",
+      "high": "High (Suprasyndesmotic)",
+      "low": "Low (Transsyndesmal / Infrasyndesmal)"
+    }
   },
   "results": {
     "title": "Classification Results",
@@ -139,7 +208,57 @@
     },
     "clinicalNotes": "Clinical Notes",
     "notPossible": "Not possible",
-    "possibleTypes": "Possible types"
+    "possibleTypes": "Possible types",
+    "fractureDescriptions": {
+      "none_selected": "No fracture selected",
+      "unimaleolar_posterior": "Unimalleolar posterior malleolus fracture",
+      "unimaleolar_medial": "Unimalleolar medial malleolus fracture",
+      "unimaleolar_lateral": "Unimalleolar lateral malleolus fracture",
+      "bimaleolar_medial_posterior": "Bimalleolar fracture (Medial + Posterior)",
+      "bimaleolar_lateral_posterior": "Bimalleolar fracture (Lateral + Posterior)",
+      "bimaleolar_lateral_medial": "Bimalleolar fracture (Lateral + Medial)",
+      "trimaleolar": "Trimalleolar fracture"
+    },
+    "classifications": {
+      "laugeHansen": {
+        "SA_name": "Supination-Adduction",
+        "SA_desc": "Supination mechanism with adduction force.",
+        "SER_name": "Supination-External Rotation",
+        "SER_desc": "Supination mechanism with external rotation of talus.",
+        "PER_name": "Pronation-External Rotation",
+        "PER_desc": "Pronation mechanism with external rotation.",
+        "PA_name": "Pronation-Abduction",
+        "PA_desc": "Pronation mechanism with abduction.",
+        "ambiguous_name": "Not classifiable",
+        "ambiguous_desc": "Lauge-Hansen not classifiable (could be PA/SER/PER)",
+        "unclassifiable_desc": "Isolated posterior malleolus fractures don't fit classic Lauge-Hansen injury mechanisms"
+      },
+      "danisWeber": {
+        "A_desc": "Weber A: Fracture below syndesmosis",
+        "B_desc": "Weber B: Fracture at syndesmosis level",
+        "C_desc": "Weber C: Fracture above syndesmosis"
+      },
+      "aoOta": {
+        "A1_desc": "44-A1: Isolated infrasyndesmal fracture",
+        "A2_desc": "44-A2: Infrasyndesmal fracture with medial involvement",
+        "B1_desc": "44-B1: Isolated transsyndesmal fracture",
+        "B2_desc": "44-B2: Transsyndesmal fracture with medial involvement",
+        "B3_desc": "44-B3: Transsyndesmal fracture with medial and posterior involvement",
+        "C1_desc": "44-C1: Simple diaphyseal suprasyndesmal fracture",
+        "C2_desc": "44-C2: Multifragmentary suprasyndesmal fracture",
+        "C3_desc": "44-C3: Proximal suprasyndesmal fracture (Maisonneuve)"
+      },
+      "bartonicek": {
+        "1_desc": "Bartonicek 1: Extraincisural fragment",
+        "2_desc": "Bartonicek 2: Posterolateral fragment",
+        "3_desc": "Bartonicek 3: Posteromedial and posterolateral fragment",
+        "4_desc": "Bartonicek 4: Large posterolateral triangular fragment"
+      }
+    },
+    "impossible": {
+      "sa_mechanism": "Not possible. SA mechanism does not involve the posterior malleolus. PA mechanism is transsyndesmotic or suprasyndesmotic.",
+      "exceptional": "Not possible (exceptional)"
+    }
   },
   "alerts": {
     "bimaleolarMedialPosterior": "Bimalleolar fracture (Medial + Posterior). Press classify to see the result.",
@@ -272,6 +391,8 @@
     "optional": "optional",
     "previous": "Previous",
     "next": "Next",
+    "of": "of",
+    "add": "Add",
     "loading": "Loading...",
     "home": "Home",
     "classify": "Classify",
@@ -519,7 +640,8 @@
       "selectClassification": "Select classification...",
       "saveReference": "Save Reference",
       "notClassifiable": "Not classifiable",
-      "notClassifiableDesc": "Cannot be classified with this system"
+      "notClassifiableDesc": "Cannot be classified with this system",
+      "backToCases": "Back to Cases"
     },
     "studies": {
       "title": "Studies Management",
@@ -527,25 +649,48 @@
       "create": "Create Study",
       "createFirst": "Create Your First Study",
       "createStudy": "Create New Study",
+      "createTitle": "Create Study",
       "editStudy": "Edit Study",
+      "editTitle": "Edit Study",
       "search": "Search studies...",
       "filterStatus": "Filter by status",
       "allStatuses": "All statuses",
       "noStudies": "No studies found",
       "noStudiesDesc": "Create your first study to get started.",
+      "titleRequired": "Title is required",
+      "activate": "Activate",
+      "viewReliability": "Reliability",
+      "close": "Close",
       "responses": "responses",
+      "case": "case",
+      "cases_plural": "cases",
       "analytics": "Analytics",
       "divergence": "Divergence Analysis",
       "publish": "Publish",
-      "close": "Close Study",
       "exportCSV": "Export CSV",
       "backToList": "Back to Studies",
       "notFound": "Study not found",
       "notFoundDescription": "The study you're looking for doesn't exist or has been removed.",
-      "details": "Study Details",
-      "detailsDescription": "Basic information about the study case",
+      "details": "Details",
+      "detailsDescription": "Basic study information",
+      "titleLabel": "Title",
       "titlePlaceholder": "Enter study title...",
-      "descriptionPlaceholder": "Enter a description of the patient case...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description...",
+      "cases": "Cases",
+      "casesDescription": "Add cases to the study",
+      "casesDesc": "Add published cases to this study for multi-rater analysis",
+      "selectCase": "Select a case to add...",
+      "noCasesAvailable": "No published cases available",
+      "noCases": "No cases in this study yet",
+      "addCasesHint": "Add published cases to get started",
+      "step": "Step",
+      "activateConfirmTitle": "Activate Study",
+      "activateConfirmDescription": "Once activated, the study will be available for assigned raters to submit classifications. Cases cannot be added or removed after activation.",
+      "raters": {
+        "title": "Raters",
+        "description": "Assign raters"
+      },
       "images": "Images",
       "imagesDescription": "Upload X-ray and CT scan images for this study",
       "uploadCategory": "Upload as",
@@ -565,7 +710,8 @@
       },
       "errors": {
         "titleRequired": "Title is required",
-        "imagesRequired": "At least one image is required to publish"
+        "imagesRequired": "At least one image is required to publish",
+        "casesRequired": "At least one case is required to activate"
       },
       "users": {
         "title": "Study Access",
@@ -662,6 +808,20 @@
           "4": "Type 4",
           "4Desc": "Large triangular posterolateral"
         }
+      },
+      "backToStudy": "Back to Study",
+      "reliability": {
+        "totalCases": "Total Cases",
+        "completeRaters": "Complete Raters",
+        "lowAgreementCases": "low agreement cases",
+        "casesWithReference": "cases with reference",
+        "totalComparisons": "total comparisons",
+        "fleissKappa": "Fleiss' Kappa (Inter-Rater Reliability)",
+        "fleissKappaDescription": "Fleiss' Kappa measures agreement among multiple raters across multiple cases. Requires 3+ raters who completed all cases.",
+        "notEnoughData": "Not enough data",
+        "perCaseAgreement": "Per-Case Agreement",
+        "noCaseMetrics": "No case metrics available",
+        "agreementNote": "Agreement percentage shows how often raters selected the same classification for each case. Cases with low agreement (< 60%) are highlighted."
       }
     },
     "analytics": {
@@ -671,6 +831,8 @@
       "responsesPerUser": "Responses/User",
       "classificationDistribution": "Classification Distribution",
       "distributionDescription": "How respondents classified this case across different systems",
+      "distributionTitle": "{{system}} Distribution",
+      "reliabilityMetrics": "Reliability Metrics",
       "noData": "No response data available",
       "unspecified": "Not specified",
       "summary": "{{system}}: {{types}} different classifications from {{total}} responses",
@@ -682,6 +844,7 @@
       "title": "Inter-Rater Reliability",
       "hasGoldStandard": "Gold Standard Set",
       "exportDetailed": "Export Detailed CSV",
+      "viewDivergence": "Divergence Analysis",
       "totalResponses": "Total Responses",
       "uniqueRaters": "Unique Raters",
       "correctResponses": "Correct",
@@ -725,6 +888,7 @@
       "agreement": "agreement",
       "raters2": "2 raters",
       "ratersMulti": "multi-rater",
+      "fleissKappaNote": "Fleiss' Kappa requires multiple cases (subjects) to calculate inter-rater reliability. Current case design has a single case. Consider creating a study with multiple cases for proper reliability assessment.",
       "systems": {
         "danisWeber": "Danis-Weber",
         "danisWeberDesc": "Fibula fracture level",
@@ -760,7 +924,7 @@
       "statusBreakdown": "Study Status Breakdown",
       "statusBreakdownDesc": "Distribution of studies by status"
     },
-"divergence": {
+    "divergence": {
       "title": "Divergence Analysis",
       "subtitle": "Analyze where users diverge from the gold standard classification path",
       "goldStandardRequired": "Gold Standard Required",
@@ -935,5 +1099,12 @@
       "resident": "Resident",
       "attending": "Attending Physician"
     }
+  },
+  "errors": {
+    "invalid_input": "Invalid input: ",
+    "classification_error": "Classification error: ",
+    "no_fractures_found": "No malleolus fractures detected",
+    "isolated_posterior": "Isolated posterior malleolus fracture",
+    "chat_unavailable": "Chat classification is temporarily unavailable"
   }
 }

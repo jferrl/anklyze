@@ -732,6 +732,20 @@ Triggers on push/PR to `main` when `frontend/**` changes:
 5. Build (`npm run build`)
 6. Upload build artifacts
 
+## Development Tools
+
+### Claude Code Configuration
+
+- `.claudeignore` - Controls which files Claude Code indexes and searches. Excludes:
+  - Dependencies: `node_modules/`, `vendor/`
+  - Build outputs: `dist/`, `bin/`, `backend/tmp/`
+  - Test artifacts: `playwright-report/`, `test-results/`, coverage files
+  - Version control: `.git/`
+  - IDE/OS files: `.vscode/`, `.DS_Store`
+  - Logs and temporary files
+
+This improves Claude Code's performance by focusing on source code and relevant configuration files.
+
 ## Language
 
 UI supports English and Spanish (i18n). Backend clinical notes are localized.

@@ -15,6 +15,15 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { cn } from '@/lib/utils';
+import {
+  getFractureDescription,
+  getDanisWeberDescription,
+  getLaugeHansenFullName,
+  getLaugeHansenDescription,
+  getAOOTADescription,
+  getBartonicekDescription,
+  getImpossibleReason,
+} from '@/utils/classificationTranslations';
 
 interface ClassificationResultProps {
   result: Result;
@@ -56,12 +65,16 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
     return (
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
-        {result.fracture_description && (
-          <p className="text-center text-lg text-muted-foreground">{result.fracture_description}</p>
+        {result.fracture_type && (
+          <p className="text-center text-lg text-muted-foreground">
+            {getFractureDescription(t, result.fracture_type)}
+          </p>
         )}
         <Alert variant="destructive" className="question-card-enter">
           <AlertTitle>{t('results.notPossible')}</AlertTitle>
-          <AlertDescription>{result.impossible_reason}</AlertDescription>
+          <AlertDescription>
+            {result.impossible_key && getImpossibleReason(t, result.impossible_key)}
+          </AlertDescription>
         </Alert>
       </div>
     );
@@ -85,8 +98,10 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       <h2 className="text-2xl font-bold text-center">{t('results.title')}</h2>
 
       {/* Fracture Description */}
-      {result.fracture_description && (
-        <p className="text-center text-lg font-medium question-card-enter">{result.fracture_description}</p>
+      {result.fracture_type && (
+        <p className="text-center text-lg font-medium question-card-enter">
+          {getFractureDescription(t, result.fracture_type)}
+        </p>
       )}
 
       {/* Lauge-Hansen */}
@@ -113,19 +128,27 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   "text-3xl font-bold mb-1 cursor-help inline-flex items-center gap-2 transition-colors",
                   classificationStyles.laugeHansen.hover
                 )}>
-                  {result.lauge_hansen.type}
+                  {result.lauge_hansen.type || getLaugeHansenFullName(t, '', result.lauge_hansen.ambiguous)}
                   <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">
                 <div className="space-y-2">
-                  <h4 className="font-semibold">{result.lauge_hansen.full_name}</h4>
-                  <p className="text-sm text-muted-foreground">{result.lauge_hansen.description}</p>
+                  <h4 className="font-semibold">
+                    {getLaugeHansenFullName(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    {getLaugeHansenDescription(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
+                  </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <p className="text-lg mb-2">{result.lauge_hansen.full_name}</p>
-            <p className="text-muted-foreground">{result.lauge_hansen.description}</p>
+            <p className="text-lg mb-2">
+              {getLaugeHansenFullName(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
+            </p>
+            <p className="text-muted-foreground">
+              {getLaugeHansenDescription(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
+            </p>
             {result.lauge_hansen.ambiguous && result.lauge_hansen.possible_types && (
               <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">
                 {t('results.possibleTypes')}: {result.lauge_hansen.possible_types.join(', ')}
@@ -166,11 +189,15 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
               <HoverCardContent className="w-80 glass-card">
                 <div className="space-y-2">
                   <h4 className="font-semibold">{result.danis_weber.type}</h4>
-                  <p className="text-sm text-muted-foreground">{result.danis_weber.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {getDanisWeberDescription(t, result.danis_weber.type)}
+                  </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <p className="text-muted-foreground">{result.danis_weber.description}</p>
+            <p className="text-muted-foreground">
+              {getDanisWeberDescription(t, result.danis_weber.type)}
+            </p>
           </CardContent>
         </Card>
       )}
@@ -206,11 +233,15 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
               <HoverCardContent className="w-80 glass-card">
                 <div className="space-y-2">
                   <h4 className="font-semibold">{result.ao_ota.code}</h4>
-                  <p className="text-sm text-muted-foreground">{result.ao_ota.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {getAOOTADescription(t, result.ao_ota.code)}
+                  </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <p className="text-muted-foreground">{result.ao_ota.description}</p>
+            <p className="text-muted-foreground">
+              {getAOOTADescription(t, result.ao_ota.code)}
+            </p>
           </CardContent>
         </Card>
       )}
@@ -246,11 +277,15 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
               <HoverCardContent className="w-80 glass-card">
                 <div className="space-y-2">
                   <h4 className="font-semibold">{result.bartonicek.type}</h4>
-                  <p className="text-sm text-muted-foreground">{result.bartonicek.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {getBartonicekDescription(t, result.bartonicek.type)}
+                  </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <p className="text-muted-foreground">{result.bartonicek.description}</p>
+            <p className="text-muted-foreground">
+              {getBartonicekDescription(t, result.bartonicek.type)}
+            </p>
           </CardContent>
         </Card>
       )}
