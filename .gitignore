@@ -44,3 +44,5 @@ test-results/
 node_modules/
 playwright-report/
 playwright-screenshots/
+coverage/
+.playwright-mcp/

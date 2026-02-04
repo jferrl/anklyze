@@ -36,27 +36,20 @@ export default defineConfig({
         chunkFileNames: 'chunks/[name]-[hash].js',
         entryFileNames: 'entries/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
-        manualChunks: (id) => {
-          // React vendor chunk
+manualChunks: (id) => {
+          // All React and React-dependent UI libraries in one chunk to avoid circular deps
           if (id.includes('node_modules/react') ||
               id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/react-router-dom')) {
+              id.includes('node_modules/scheduler') ||
+              id.includes('node_modules/react-router') ||
+              id.includes('node_modules/@tanstack/react-query') ||
+              id.includes('node_modules/react-i18next') ||
+              id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/sonner') ||
+              id.includes('node_modules/@radix-ui') ||
+              id.includes('node_modules/recharts') ||
+              id.includes('node_modules/d3-')) {
             return 'vendor-react'
-          }
-
-          // UI vendor chunk (Radix UI)
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-ui'
-          }
-
-          // Chart vendor
-          if (id.includes('node_modules/recharts')) {
-            return 'vendor-charts'
-          }
-
-          // Query vendor
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'vendor-query'
           }
 
           // Auth vendor
@@ -64,30 +57,16 @@ export default defineConfig({
             return 'vendor-auth'
           }
 
-          // i18n vendor
-          if (id.includes('node_modules/i18next') ||
-              id.includes('node_modules/react-i18next')) {
+          // i18n core
+          if (id.includes('node_modules/i18next') && !id.includes('react-i18next')) {
             return 'vendor-i18n'
           }
 
-          // Utils vendor
-          if (id.includes('node_modules/lucide-react') ||
-              id.includes('node_modules/sonner') ||
-              id.includes('node_modules/class-variance-authority') ||
+          // Utility libraries (no React dependency)
+          if (id.includes('node_modules/class-variance-authority') ||
               id.includes('node_modules/clsx') ||
               id.includes('node_modules/tailwind-merge')) {
             return 'vendor-utils'
-          }
-
-          // Admin pages chunked by function
-          if (id.includes('/src/pages/admin/dashboard')) {
-            return 'admin-dashboard'
-          }
-          if (id.includes('/src/pages/admin') && id.includes('editor')) {
-            return 'admin-editors'
-          }
-          if (id.includes('/src/pages/admin/analytics')) {
-            return 'admin-analytics'
           }
         },
       },

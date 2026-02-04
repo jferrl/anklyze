@@ -74,10 +74,10 @@ export interface ImagesStepProps {
  */
 export function ImagesStep({
   formData,
-  onChange,
-  onUpload,
-  onRemove,
-  disabled = false,
+  onChange: _onChange,
+  onUpload: _onUpload,
+  onRemove: _onRemove,
+  disabled: _disabled = false,
   className = '',
 }: ImagesStepProps) {
   const { t } = useTranslation();

@@ -367,8 +367,8 @@ export function FractureForm() {
 
     // Posterior fracture type
     if (formData.posterior_fracture_type) {
-      const option = options.posterior_types?.find(
-        opt => opt.value === formData.posterior_fracture_type
+      const option = options.posterior_fracture_types?.find(
+        (opt: { value: string; label: string }) => opt.value === formData.posterior_fracture_type
       );
       if (option) trail.push({ label: option.label, key: 'posterior_fracture_type' });
     }

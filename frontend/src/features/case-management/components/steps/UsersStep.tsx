@@ -40,7 +40,7 @@ export interface UsersStepProps {
  */
 export function UsersStep({
   caseId,
-  disabled = false,
+  disabled: _disabled = false,
   className = '',
 }: UsersStepProps) {
   const { t } = useTranslation();
