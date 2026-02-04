@@ -1,7 +1,6 @@
 import type {
   FractureInput,
   ClassificationResult,
-  FormOptions,
   ChatRequest,
   ChatResponse,
   ChatSessionResponse,
