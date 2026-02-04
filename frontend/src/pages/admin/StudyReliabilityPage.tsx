@@ -567,7 +567,7 @@ export function StudyReliabilityPage() {
               </div>
             )}
 
-            {(getActiveKappa()!.requires_multiple_cases || getActiveKappa()!.note) && (
+            {getActiveKappa()!.note && (
               <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                 <div className="flex items-start gap-2">
                   <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />

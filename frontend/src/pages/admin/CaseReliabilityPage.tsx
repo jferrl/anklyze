@@ -653,7 +653,7 @@ export function CaseReliabilityPage() {
                   )}
 
                   {getSystemAgreement.fleiss_kappa === undefined &&
-                   (getSystemAgreement.requires_multiple_cases || getSystemAgreement.fleiss_kappa_note) && (
+                   getSystemAgreement.fleiss_kappa_note && (
                     <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                       <div className="flex items-start gap-2">
                         <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
