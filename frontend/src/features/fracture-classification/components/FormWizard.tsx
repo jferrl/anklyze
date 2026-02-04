@@ -217,6 +217,7 @@ export function FormWizard({
  * @param options - Form options for translations and choices
  * @returns Array of FormStep configurations
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function createStepsFromFields(
   fields: Array<{
     field: keyof FractureInput;

@@ -18,7 +18,7 @@ function generateCacheKey(input: FractureInput): string {
     .reduce((acc, key) => {
       acc[key] = input[key as keyof FractureInput];
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, FractureInput[keyof FractureInput]>);
 
   return JSON.stringify(sortedInput);
 }

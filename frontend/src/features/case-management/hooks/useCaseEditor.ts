@@ -104,6 +104,7 @@ export function useCaseEditor(): UseCaseEditorResult {
     if (currentIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentIndex + 1]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   /**
@@ -114,6 +115,7 @@ export function useCaseEditor(): UseCaseEditorResult {
     if (currentIndex > 0) {
       setCurrentStep(STEPS[currentIndex - 1]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   /**

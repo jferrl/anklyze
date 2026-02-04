@@ -1,11 +1,12 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { ClassificationResult as ClassificationResultType } from '@/types';
 
 // Form draft stored in IndexedDB
 export interface FormDraft {
   id: string;
   formType: 'fracture' | 'case' | 'study';
-  data: Record<string, any>;
-  history: Record<string, any>[];
+  data: Record<string, unknown>;
+  history: Record<string, unknown>[];
   timestamp: number;
   expiresAt: number;
 }
@@ -14,7 +15,7 @@ export interface FormDraft {
 export interface ClassificationCache {
   id: string;
   input: string; // JSON stringified input for indexing
-  result: any;
+  result: ClassificationResultType;
   timestamp: number;
   expiresAt: number;
 }

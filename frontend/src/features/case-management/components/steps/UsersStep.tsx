@@ -40,6 +40,7 @@ export interface UsersStepProps {
  */
 export function UsersStep({
   caseId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   disabled: _disabled = false,
   className = '',
 }: UsersStepProps) {

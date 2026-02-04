@@ -74,9 +74,13 @@ export interface ImagesStepProps {
  */
 export function ImagesStep({
   formData,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange: _onChange,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUpload: _onUpload,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onRemove: _onRemove,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   disabled: _disabled = false,
   className = '',
 }: ImagesStepProps) {

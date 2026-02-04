@@ -1,6 +1,8 @@
+/// <reference types="vitest/globals" />
+/// <reference types="@testing-library/jest-dom" />
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { useFormPersistence } from './useFormPersistence'
+import { useFormPersistence, type RestoredDraft } from './useFormPersistence'
 import { db } from '@/lib/db'
 
 // Test data types - using Record to satisfy generic constraint
@@ -121,14 +123,14 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let restored: Awaited<ReturnType<typeof result.current.restore>> = null
+      let restored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         restored = await result.current.restore()
       })
 
       expect(restored).not.toBeNull()
-      expect(restored?.data).toEqual(savedData)
-      expect(restored?.history).toEqual(savedHistory)
+      expect(restored!.data).toEqual(savedData)
+      expect(restored!.history).toEqual(savedHistory)
     })
 
     it('should return null if no draft exists', async () => {
@@ -136,7 +138,7 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let restored: Awaited<ReturnType<typeof result.current.restore>> = null
+      let restored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         restored = await result.current.restore()
       })
@@ -159,7 +161,7 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let restored: Awaited<ReturnType<typeof result.current.restore>> = null
+      let restored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         restored = await result.current.restore()
       })
@@ -186,7 +188,7 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let restored: Awaited<ReturnType<typeof result.current.restore>> = null
+      let restored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         restored = await result.current.restore()
       })
@@ -259,24 +261,24 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let fractureRestored: Awaited<ReturnType<typeof fractureResult.current.restore>> = null
+      let fractureRestored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         fractureRestored = await fractureResult.current.restore()
       })
 
-      expect(fractureRestored?.data).toEqual({ field1: 'fracture data' })
+      expect(fractureRestored!.data).toEqual({ field1: 'fracture data' })
 
       // Restore case form
       const { result: caseResult } = renderHook(() =>
         useFormPersistence<TestFormData>('case', {}, [])
       )
 
-      let caseRestored: Awaited<ReturnType<typeof caseResult.current.restore>> = null
+      let caseRestored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         caseRestored = await caseResult.current.restore()
       })
 
-      expect(caseRestored?.data).toEqual({ field1: 'case data' })
+      expect(caseRestored!.data).toEqual({ field1: 'case data' })
     })
   })
 
@@ -353,7 +355,7 @@ describe('useFormPersistence', () => {
         useFormPersistence<TestFormData>('fracture', {}, [])
       )
 
-      let restored: Awaited<ReturnType<typeof result.current.restore>> = null
+      let restored: RestoredDraft<TestFormData> | null = null
       await act(async () => {
         restored = await result.current.restore()
       })

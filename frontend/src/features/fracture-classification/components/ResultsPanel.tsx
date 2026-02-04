@@ -99,7 +99,7 @@ export function ResultsPanel({
       } else {
         toast.error(t('share.failed'));
       }
-    } catch (error) {
+    } catch {
       toast.error(t('share.failed'));
     }
   };

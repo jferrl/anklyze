@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Sparkles, ArrowLeft, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
@@ -6,7 +6,16 @@ import { Button, FormSkeleton, Badge } from '@/components/ui';
 import { ComparisonView } from '@/components/ComparisonView';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { useClassification } from '@/hooks/useClassification';
-import type { FractureInput } from '@/types';
+import type {
+  FractureInput,
+  InvolvedMalleoli,
+  FibularLevel,
+  LateralMorphology,
+  SuprasindesmalType,
+  FibulaTracePattern,
+  MedialMorphology,
+  PosteriorFractureType,
+} from '@/types';
 
 // Import feature components
 import { QuestionStep } from './QuestionStep';
@@ -134,13 +143,14 @@ export function FractureForm() {
   const { formData, formHistory, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
   const { restore, clear: clearPersistence } = useFormPersistence('fracture', formData, formHistory);
 
-  // Track last successful classification
-  const lastInputRef = useRef<FractureInput | null>(null);
+  // Track last successful classification input (state for render access)
+  const [lastInput, setLastInput] = useState<FractureInput | null>(null);
 
   // Track if we've already restored from storage (prevent duplicate toasts in StrictMode)
   const hasRestoredRef = useRef(false);
 
-  // Load form options
+  // Load form options (re-compute when language changes)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
 
   // Classification hook
@@ -158,7 +168,7 @@ export function FractureForm() {
 
   // URL params loading (with auto-classification)
   const { isLoading: loadingFromUrl } = useUrlParams(async (input) => {
-    lastInputRef.current = input as FractureInput;
+    setLastInput(input as FractureInput);
     await classify(input as FractureInput);
   });
 
@@ -193,7 +203,7 @@ export function FractureForm() {
     if (!isFormComplete(formData) || loading) return;
 
     try {
-      lastInputRef.current = formData as FractureInput;
+      setLastInput(formData as FractureInput);
       await classify(formData as FractureInput);
       clearPersistence();
     } catch {
@@ -223,8 +233,8 @@ export function FractureForm() {
    * Start comparison mode
    */
   const handleStartComparison = () => {
-    if (!lastInputRef.current || !result) return;
-    addScenario(lastInputRef.current, result);
+    if (!lastInput || !result) return;
+    addScenario(lastInput, result);
     reset();
     clearFormData();
   };
@@ -268,12 +278,12 @@ export function FractureForm() {
   }
 
   // Show result with actions
-  if (result && lastInputRef.current) {
+  if (result && lastInput) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <ResultsPanel
           result={result}
-          input={lastInputRef.current}
+          input={lastInput}
           onReset={handleReset}
           onCompare={handleStartComparison}
         />
@@ -470,7 +480,7 @@ export function FractureForm() {
         }}
         value={formData.involved_malleoli}
         options={options.involved_malleoli || []}
-        onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as any })}
+        onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as InvolvedMalleoli })}
       />
 
       {showFibularLevel && (
@@ -481,7 +491,7 @@ export function FractureForm() {
           }}
           value={formData.fibular_level}
           options={options.fibular_levels || []}
-          onChange={(value) => updateFormData({ ...formData, fibular_level: value as any })}
+          onChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
         />
       )}
 
@@ -493,7 +503,7 @@ export function FractureForm() {
           }}
           value={formData.lateral_morphology}
           options={options.lateral_morphology || []}
-          onChange={(value) => updateFormData({ ...formData, lateral_morphology: value as any })}
+          onChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
         />
       )}
 
@@ -505,7 +515,7 @@ export function FractureForm() {
           }}
           value={formData.suprasindesmal_type}
           options={options.suprasindesmal_types || []}
-          onChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as any })}
+          onChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
         />
       )}
 
@@ -517,7 +527,7 @@ export function FractureForm() {
           }}
           value={formData.fibula_trace_pattern}
           options={options.fibula_trace_patterns || []}
-          onChange={(value) => updateFormData({ ...formData, fibula_trace_pattern: value as any })}
+          onChange={(value) => updateFormData({ ...formData, fibula_trace_pattern: value as FibulaTracePattern })}
         />
       )}
 
@@ -529,7 +539,7 @@ export function FractureForm() {
           }}
           value={formData.medial_morphology}
           options={options.medial_morphology || []}
-          onChange={(value) => updateFormData({ ...formData, medial_morphology: value as any })}
+          onChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
         />
       )}
 
@@ -553,7 +563,7 @@ export function FractureForm() {
           }}
           value={formData.fibular_level_for_transverse}
           options={options.fibular_levels || []}
-          onChange={(value) => updateFormData({ ...formData, fibular_level_for_transverse: value as any })}
+          onChange={(value) => updateFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
         />
       )}
 
@@ -577,7 +587,7 @@ export function FractureForm() {
           }}
           value={formData.posterior_fracture_type}
           options={options.posterior_fracture_types || []}
-          onChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as any })}
+          onChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
         />
       )}
 
