@@ -47,12 +47,12 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { caseApi } from '../../services/studyApi';
+import { caseApi } from '@/services';
 import { CaseUsersManager } from '../../components/admin/CaseUsersManager';
 import { GoldStandardInputDialog } from '../../components/cases';
 import { cn } from '@/lib/utils';
-import type { ImageCategory, CaseImage } from '../../types/study';
-import type { ClassificationResult, FractureInput } from '../../types/fracture';
+import type { ImageCategory, CaseImage } from '@/types';
+import type { ClassificationResult, FractureInput } from '@/types';
 import { Switch } from '../../components/ui/switch';
 import { Settings, Target, GitBranch } from 'lucide-react';
 

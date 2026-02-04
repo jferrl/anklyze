@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormInput, MessageSquare } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
-import { FractureForm } from '../components/FractureForm';
+import { FractureForm } from '../features/fracture-classification';
 import { ChatPanel } from '../components/ChatPanel';
 import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
 

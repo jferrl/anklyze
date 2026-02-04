@@ -24,7 +24,7 @@ import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Progress } from '../../components/ui/progress';
 import { StatCard } from '../../components/analytics';
-import { caseApi } from '../../services/studyApi';
+import { caseApi } from '@/services';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -32,7 +32,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../../components/ui/tooltip';
-import type { QuestionErrorStats } from '../../types/study';
+import type { QuestionErrorStats } from '@/types';
 
 // Get badge variant for error rate
 function getErrorRateBadgeClass(errorRate: number): string {

@@ -19,7 +19,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { useChat, type ChatMessage } from '../hooks/useChat';
 import { ClassificationResult as ClassificationResultComponent } from './ClassificationResult';
 import { ChatFeedback } from './ChatFeedback';
-import type { FractureInput, ClassificationResult, Clarification } from '../types/fracture';
+import type { FractureInput, ClassificationResult, Clarification } from '@/types';
 
 interface ChatPanelProps {
   onClassificationComplete?: (result: ClassificationResult, input: FractureInput) => void;

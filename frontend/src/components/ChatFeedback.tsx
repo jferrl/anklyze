@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ThumbsUp, ThumbsDown, Loader2, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import type { FeedbackRating } from '../types/fracture';
+import type { FeedbackRating } from '@/types';
 
 interface ChatFeedbackProps {
   onSubmit: (rating: FeedbackRating, comment?: string) => Promise<void>;

@@ -1,4 +1,4 @@
-import type { FractureInput } from '../types/fracture';
+import type { FractureInput } from '@/types';
 
 // Short keys for URL params to keep URLs compact
 const KEY_MAP = {

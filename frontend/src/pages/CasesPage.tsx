@@ -28,8 +28,8 @@ import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { listPublishedCases } from '../services/studyApi';
-import type { UserCaseItem } from '../types/study';
+import { listPublishedCases } from '@/services';
+import type { UserCaseItem } from '@/types';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 

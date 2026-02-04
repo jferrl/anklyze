@@ -12,8 +12,8 @@ import type {
   LateralMorphology,
   SuprasindesmalType,
   FibulaTracePattern,
-} from '../../types/fracture';
-import { classifyFracture } from '../../services/api';
+} from '@/types';
+import { classifyFracture } from '@/services';
 import { getLocalFormOptions } from '../../utils/formOptions';
 import { Button } from '@/components/ui/button';
 import {

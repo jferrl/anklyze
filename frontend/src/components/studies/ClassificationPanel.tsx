@@ -3,8 +3,8 @@ import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, B
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
-import type { ClassificationResult, FractureInput } from '../../types/fracture';
-import type { SubmitResponseResult } from '../../types/study';
+import type { ClassificationResult, FractureInput } from '@/types';
+import type { SubmitResponseResult } from '@/types';
 import { ClassificationResult as ClassificationResultComponent } from '../ClassificationResult';
 import { CaseClassificationForm, type AnswerTracking } from './StudyClassificationForm';
 import { cn } from '@/lib/utils';

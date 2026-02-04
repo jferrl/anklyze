@@ -1,20 +1,35 @@
 import { useState, useCallback } from 'react';
-import type { FractureInput, ClassificationResult, ComparisonScenario } from '../types/fracture';
-import { classifyFracture } from '../services/api';
+import type { FractureInput, ClassificationResult, ComparisonScenario } from '@/types';
+import { classifyFracture } from '@/services';
+import { useClassificationCache } from './useClassificationCache';
 
 export function useClassification() {
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scenarios, setScenarios] = useState<ComparisonScenario[]>([]);
+  const { getCache, setCache } = useClassificationCache();
 
   const classify = useCallback(async (input: FractureInput) => {
     setLoading(true);
     setError(null);
 
     try {
+      // Check cache first
+      const cachedResult = await getCache(input);
+      if (cachedResult) {
+        setResult(cachedResult);
+        setLoading(false);
+        return cachedResult;
+      }
+
+      // Cache miss, make API call
       const classification = await classifyFracture(input);
       setResult(classification);
+
+      // Save to cache for future use
+      await setCache(input, classification);
+
       return classification;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ha ocurrido un error');
@@ -23,7 +38,7 @@ export function useClassification() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getCache, setCache]);
 
   const addScenario = useCallback((input: FractureInput, result: ClassificationResult) => {
     const scenario: ComparisonScenario = {

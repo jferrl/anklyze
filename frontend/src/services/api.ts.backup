@@ -11,58 +11,26 @@ import type {
 } from '../types/fracture';
 import i18n, { getCurrentLanguage } from '../i18n/config';
 import { supabase } from '../lib/supabase';
+import {
+  RateLimitError,
+  SessionLimitError,
+  DailyQuotaError,
+  InputValidationError,
+  AuthRequiredError,
+  ForbiddenError,
+} from './core/errorHandling';
+
+// Re-export error classes for backward compatibility
+export {
+  RateLimitError,
+  SessionLimitError,
+  DailyQuotaError,
+  InputValidationError,
+  AuthRequiredError,
+  ForbiddenError,
+};
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-// Custom error for rate limiting
-export class RateLimitError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'RateLimitError';
-  }
-}
-
-// Custom error for session limit exceeded
-export class SessionLimitError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'SessionLimitError';
-  }
-}
-
-// Custom error for daily quota exceeded
-export class DailyQuotaError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'DailyQuotaError';
-  }
-}
-
-// Custom error for input validation failures
-export class InputValidationError extends Error {
-  code: string;
-  constructor(message: string, code: string) {
-    super(message);
-    this.name = 'InputValidationError';
-    this.code = code;
-  }
-}
-
-// Custom error for authentication required
-export class AuthRequiredError extends Error {
-  constructor(message: string = 'Authentication required') {
-    super(message);
-    this.name = 'AuthRequiredError';
-  }
-}
-
-// Custom error for forbidden access
-export class ForbiddenError extends Error {
-  constructor(message: string = 'Access denied') {
-    super(message);
-    this.name = 'ForbiddenError';
-  }
-}
 
 // Helper to get auth headers
 async function getAuthHeaders(): Promise<Record<string, string>> {

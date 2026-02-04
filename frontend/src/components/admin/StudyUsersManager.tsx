@@ -13,7 +13,7 @@ import {
 } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
-import { studyApi } from '../../services/studyApi';
+import { studyApi } from '@/services';
 import { cn } from '@/lib/utils';
 
 interface StudyUsersManagerProps {

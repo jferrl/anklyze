@@ -18,9 +18,9 @@ import {
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard, KappaGauge } from '../../components/analytics';
-import { studyApi } from '../../services/studyApi';
+import { studyApi } from '@/services';
 import { cn } from '@/lib/utils';
-import type { CaseMetrics } from '../../types/study';
+import type { CaseMetrics } from '@/types';
 import {
   Tooltip,
   TooltipContent,

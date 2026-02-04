@@ -54,8 +54,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { caseApi } from '../../services/studyApi';
-import type { Case, CaseStatus } from '../../types/study';
+import { caseApi } from '@/services';
+import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
 export function AdminCasesPage() {

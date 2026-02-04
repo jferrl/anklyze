@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ImageIcon, Loader2 } from 'lucide-react';
-import type { StudyImageInfo } from '../../types/study';
+import type { StudyImageInfo } from '@/types';
 
 interface ImageGridProps {
   images: StudyImageInfo[];

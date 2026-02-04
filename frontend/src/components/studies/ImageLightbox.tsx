@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
-import type { StudyImageInfo } from '../../types/study';
+import type { StudyImageInfo } from '@/types';
 import { Spinner } from '../ui/spinner';
 import {
   Carousel,

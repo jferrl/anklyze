@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef, type ReactNode 
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase, isSupabaseConfigured, type UserRole, type UserProfile } from '../lib/supabase';
-import { getCurrentUser } from '../services/api';
+import { getCurrentUser } from '@/services';
 
 interface AuthContextType {
   user: User | null;

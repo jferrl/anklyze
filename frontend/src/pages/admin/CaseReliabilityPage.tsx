@@ -19,9 +19,9 @@ import {
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard, KappaGauge, ConfusionMatrix } from '../../components/analytics';
-import { caseApi, downloadDetailedResponsesCSV } from '../../services/studyApi';
+import { caseApi, downloadDetailedResponsesCSV } from '@/services';
 import { cn } from '@/lib/utils';
-import type { SystemAgreement, ConfidenceInterval } from '../../types/study';
+import type { SystemAgreement, ConfidenceInterval } from '@/types';
 import {
   Tooltip,
   TooltipContent,

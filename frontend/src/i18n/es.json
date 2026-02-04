@@ -916,6 +916,7 @@
       "drafts": "borradores",
       "active": "activos",
       "avgPerStudy": "~{{count}} promedio por estudio",
+      "avgPerCase": "~{{count}} promedio por caso",
       "acrossAllStudies": "en todos los estudios",
       "stillActive": "aún activos",
       "recentActivity": "Actividad Reciente",

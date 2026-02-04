@@ -4,7 +4,7 @@
  */
 
 import i18n from '../i18n/config';
-import type { FormOptions, SelectOption, Question } from '../types/fracture';
+import type { FormOptions, SelectOption, Question } from '@/types';
 
 /**
  * Get all form options with translations from i18n

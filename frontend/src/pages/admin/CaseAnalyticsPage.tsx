@@ -17,7 +17,7 @@ import {
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard, ClassificationChart } from '../../components/analytics';
-import { caseApi, downloadCaseResponsesCSV } from '../../services/studyApi';
+import { caseApi, downloadCaseResponsesCSV } from '@/services';
 import { cn } from '@/lib/utils';
 
 const CLASSIFICATION_SYSTEMS = [

@@ -44,9 +44,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { studyApi, caseApi } from '../../services/studyApi';
+import { studyApi, caseApi } from '@/services';
 import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
-import type { StudyStatus, CaseStatus } from '../../types/study';
+import type { StudyStatus, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
 type Step = 'details' | 'cases' | 'raters';

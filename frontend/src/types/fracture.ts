@@ -1,228 +1,32 @@
-// Maléolos fracturados (primera pregunta - selección única)
-export type InvolvedMalleoli =
-  | 'posterior_only'        // Maléolo posterior
-  | 'medial_only'           // Maléolo medial
-  | 'lateral_only'          // Maléolo lateral
-  | 'medial_posterior'      // Maléolos medial y posterior
-  | 'lateral_posterior'     // Maléolos lateral y posterior
-  | 'lateral_medial'        // Maléolos lateral y medial
-  | 'trimaleolar';          // Maléolos medial, lateral y posterior
+/**
+ * Temporary re-export file for backward compatibility
+ *
+ * This file re-exports types from the new organized structure.
+ * All imports from './types/fracture' will continue to work during migration.
+ *
+ * After all imports are updated to use the new structure, this file can be removed.
+ *
+ * New import locations:
+ * - Domain types: './types/domain/fracture'
+ * - Classification API: './types/api/classification'
+ * - Chat API: './types/api/chat'
+ * - Analytics API: './types/api/analytics'
+ * - Form types: './types/ui/forms'
+ *
+ * @deprecated Import from specific modules instead
+ */
 
-// Tipo de fractura del maléolo posterior (Bartonicek)
-export type PosteriorFractureType =
-  | 'extraincisural'              // Fragmento extraincisural (Bartonicek 1)
-  | 'posterolateral'              // Fragmento posterolateral (Bartonicek 2)
-  | 'posteromedial_posterolateral' // Fragmento posteromedial y posterolateral (Bartonicek 3)
-  | 'large_posterolateral';       // Gran fragmento triangular posterolateral (Bartonicek 4)
+// Domain types - Core fracture classification types
+export * from './domain/fracture';
 
-// Morfología del maléolo medial
-export type MedialMorphology =
-  | 'oblique'    // Oblicuo
-  | 'transverse'; // Transverso
+// API types - Classification service
+export * from './api/classification';
 
-// Nivel de fractura del peroné
-export type FibularLevel =
-  | 'infrasindesmal'  // Infrasindesmal
-  | 'transindesmal'   // Transindesmal
-  | 'suprasindesmal'; // Suprasindesmal
+// API types - Chat service
+export * from './api/chat';
 
-// Morfología de fractura lateral/peroné
-export type LateralMorphology =
-  | 'transverse' // Transversa
-  | 'oblique'    // Oblicua (Baja medial, alta lateral)
-  | 'spiral';    // Espiroidea (Baja anterior, alta posterior)
+// API types - Analytics service
+export * from './api/analytics';
 
-// Tipo de fractura suprasindesmal (Weber C)
-export type SuprasindesmalType =
-  | 'simple_diaphyseal' // Diafisaria Simple
-  | 'multifragmentary'  // Multifragmentaria
-  | 'proximal';         // Proximal
-
-// Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
-export type FibulaTracePattern =
-  | 'parasindesmotic_short' // Parasindesmal de trazo oblicuo corto/transverso/conminuto
-  | 'parasindesmotic_long'; // Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo
-
-// Input para clasificación
-export interface FractureInput {
-  // Pregunta 1: ¿Qué maléolos tiene fracturados?
-  involved_malleoli: InvolvedMalleoli;
-
-  // Para maléolo posterior: tipo de fractura (Bartonicek)
-  posterior_fracture_type?: PosteriorFractureType;
-
-  // Para maléolo medial: morfología
-  medial_morphology?: MedialMorphology;
-
-  // Para maléolo lateral: nivel de fractura
-  fibular_level?: FibularLevel;
-
-  // Para maléolo lateral: morfología
-  lateral_morphology?: LateralMorphology;
-
-  // Para suprasindesmal: tipo de fractura
-  suprasindesmal_type?: SuprasindesmalType;
-
-  // Para bimaleolar lateral+medial: ¿fractura peroné infrasindesmal y transversa?
-  fibula_infrasindesmal_transverse?: boolean;
-
-  // Para bimaleolar lateral+medial con morfología transversa: nivel del peroné
-  fibular_level_for_transverse?: FibularLevel;
-
-  // ¿Tiene TAC? (para clasificación Bartonicek)
-  has_ct_scan?: boolean;
-
-  // Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
-  fibula_trace_pattern?: FibulaTracePattern;
-}
-
-// Danis-Weber classification result
-export interface DanisWeberClassification {
-  type: string;
-}
-
-// Lauge-Hansen type
-export type LaugeHansenType = 'SA' | 'SER' | 'PER' | 'PA';
-
-// Lauge-Hansen classification result
-export interface LaugeHansenClassification {
-  type: string;
-  ambiguous?: boolean;
-  possible_types?: string[];
-}
-
-// AO/OTA classification result
-export interface AOOTAClassification {
-  code: string;
-}
-
-// Bartonicek classification result
-export interface BartonicekClassification {
-  type: string;
-}
-
-// Combined classification result
-export interface ClassificationResult {
-  fracture_type: string;
-  danis_weber?: DanisWeberClassification;
-  lauge_hansen?: LaugeHansenClassification;
-  ao_ota?: AOOTAClassification;
-  bartonicek?: BartonicekClassification;
-  notes?: string[];
-  impossible?: boolean;
-  impossible_key?: string;
-}
-
-// Comparison scenario for side-by-side comparison
-export interface ComparisonScenario {
-  id: string;
-  input: FractureInput;
-  result: ClassificationResult;
-}
-
-// Form option
-export interface SelectOption {
-  value: string;
-  label: string;
-}
-
-// Question from backend
-export interface Question {
-  id: string;
-  title: string;
-  description?: string;
-}
-
-// All form options
-export interface FormOptions {
-  questions: Record<string, Question>;
-  involved_malleoli: SelectOption[];
-  posterior_fracture_types: SelectOption[];
-  medial_morphology: SelectOption[];
-  medial_morphology_lm: SelectOption[];
-  fibular_levels: SelectOption[];
-  lateral_morphology: SelectOption[];
-  fibula_morphology_lm_tri: SelectOption[];
-  suprasindesmal_types: SelectOption[];
-  fibula_trace_patterns: SelectOption[];
-  labels: Record<string, string>;
-}
-
-// Chat types
-export type ChatStatus = 'complete' | 'needs_clarification' | 'error';
-
-export interface Clarification {
-  field: string;
-  question: string;
-  options?: string[];
-}
-
-export interface ChatRequest {
-  message: string;
-  language: string;
-  session_id?: string;
-}
-
-export interface ChatResponse {
-  status: ChatStatus;
-  extracted_input?: FractureInput;
-  classification?: ClassificationResult;
-  confidence: number;
-  missing_fields?: string[];
-  clarifications?: Clarification[];
-  message: string;
-}
-
-// Chat session types
-export interface ChatSessionResponse {
-  session_id: string;
-}
-
-// Feedback types
-export type FeedbackRating = 'positive' | 'negative';
-
-export interface FeedbackRequest {
-  rating: FeedbackRating;
-  comment?: string;
-}
-
-// Analytics types
-export interface TimePeriod {
-  from: string;
-  to: string;
-}
-
-export interface ChatAnalyticsSummary {
-  period: TimePeriod;
-  total_sessions: number;
-  completed_sessions: number;
-  abandoned_sessions: number;
-  completion_rate: number;
-  avg_messages_per_session: number;
-  avg_clarifications_per_session: number;
-  avg_confidence: number;
-  avg_session_duration_ms: number;
-  language_distribution: Record<string, number>;
-  classification_distribution: Record<string, number>;
-}
-
-export interface ChatFeedbackSummary {
-  period: TimePeriod;
-  total_feedback: number;
-  positive_count: number;
-  negative_count: number;
-  positive_rate: number;
-  feedback_with_comment: number;
-}
-
-export interface ConfidenceBucket {
-  range: string;
-  count: number;
-  percentage: number;
-}
-
-export interface ConfidenceDistribution {
-  period: TimePeriod;
-  total: number;
-  distribution: ConfidenceBucket[];
-}
+// UI types - Form options and questions
+export * from './ui/forms';

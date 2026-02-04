@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { ComparisonScenario } from '../types/fracture';
+import type { ComparisonScenario } from '@/types';
 import { cn } from '@/lib/utils';
 import {
   getFractureDescription,

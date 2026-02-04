@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { FractureInput, ClassificationResult, ChatResponse, Clarification, FeedbackRating } from '../types/fracture';
+import type { FractureInput, ClassificationResult, ChatResponse, Clarification, FeedbackRating } from '@/types';
 import {
   sendChatMessage,
   classifyFracture,
@@ -12,7 +12,7 @@ import {
   SessionLimitError,
   DailyQuotaError,
   InputValidationError,
-} from '../services/api';
+} from '@/services';
 
 export interface ChatMessage {
   id: string;

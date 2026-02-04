@@ -12,10 +12,10 @@ import {
   getImageSignedURL,
   submitCaseResponse,
   getMyResponses,
-} from '../services/studyApi';
-import { classifyFracture } from '../services/api';
-import type { FractureInput, ClassificationResult } from '../types/fracture';
-import type { SubmitResponseResult, UserCaseDetail } from '../types/study';
+  classifyFracture,
+} from '@/services';
+import type { FractureInput, ClassificationResult } from '@/types';
+import type { SubmitResponseResult, UserCaseDetail } from '@/types';
 import {
   ImageGrid,
   ImageLightbox,

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { getKappaInterpretation } from '../../types/study';
+import { getKappaInterpretation } from '@/types';
 
 interface KappaGaugeProps {
   value: number | undefined | null;

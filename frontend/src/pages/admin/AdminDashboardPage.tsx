@@ -16,7 +16,7 @@ import {
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { StatCard } from '../../components/analytics';
-import { caseApi } from '../../services/studyApi';
+import { caseApi } from '@/services';
 import { cn } from '@/lib/utils';
 
 export function AdminDashboardPage() {

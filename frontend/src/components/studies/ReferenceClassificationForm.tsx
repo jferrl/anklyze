@@ -11,7 +11,7 @@ import {
 } from '../ui/select';
 import { Switch } from '../ui/switch';
 import { Check } from 'lucide-react';
-import type { ClassificationResult } from '../../types/fracture';
+import type { ClassificationResult } from '@/types';
 
 // Special value for not classifiable
 const NOT_CLASSIFIABLE = 'NOT_CLASSIFIABLE';

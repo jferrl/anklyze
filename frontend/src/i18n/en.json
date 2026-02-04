@@ -910,6 +910,7 @@
       "drafts": "drafts",
       "active": "active",
       "avgPerStudy": "~{{count}} per study average",
+      "avgPerCase": "~{{count}} per case average",
       "acrossAllStudies": "across all studies",
       "stillActive": "still active",
       "recentActivity": "Recent Activity",

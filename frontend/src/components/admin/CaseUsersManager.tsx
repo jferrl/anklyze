@@ -13,7 +13,7 @@ import {
 } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
-import { caseApi } from '../../services/studyApi';
+import { caseApi } from '@/services';
 import { cn } from '@/lib/utils';
 
 interface CaseUsersManagerProps {

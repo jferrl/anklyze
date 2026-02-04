@@ -13,7 +13,7 @@ import type {
   LateralMorphology,
   SuprasindesmalType,
   FibulaTracePattern,
-} from '../types/fracture';
+} from '@/types';
 import { getLocalFormOptions } from '../utils/formOptions';
 import { useClassification } from '../hooks/useClassification';
 import { ClassificationResult } from './ClassificationResult';

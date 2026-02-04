@@ -54,8 +54,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { studyApi } from '../../services/studyApi';
-import type { Study, StudyStatus } from '../../types/study';
+import { studyApi } from '@/services';
+import type { Study, StudyStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
 export function AdminStudiesPage() {

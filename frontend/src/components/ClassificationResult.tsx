@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Info, AlertTriangle } from 'lucide-react';
-import type { ClassificationResult as Result } from '../types/fracture';
+import type { ClassificationResult as Result } from '@/types';
 import {
   Card,
   CardContent,

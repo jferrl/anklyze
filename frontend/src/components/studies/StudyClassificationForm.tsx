@@ -12,7 +12,7 @@ import type {
   LateralMorphology,
   SuprasindesmalType,
   FibulaTracePattern,
-} from '../../types/fracture';
+} from '@/types';
 import { getLocalFormOptions } from '../../utils/formOptions';
 import { Button } from '@/components/ui/button';
 import { QuestionCard, QuestionCardHeader, QuestionCardTitle, QuestionCardContent } from '@/components/ui/question-card';

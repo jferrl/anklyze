@@ -12,8 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { getUserProfile, updateUserProfile } from '../../services/studyApi';
-import type { UpdateUserProfileRequest, Specialty, TrainingLevel } from '../../types/study';
+import { getUserProfile, updateUserProfile } from '@/services';
+import type { UpdateUserProfileRequest, Specialty, TrainingLevel } from '@/types';
 import { toast } from 'sonner';
 
 const SPECIALTIES: { value: Specialty; labelKey: string }[] = [

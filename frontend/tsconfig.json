@@ -14,7 +14,8 @@
       "@services/*": ["./src/services/*"],
       "@types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@/components/ui": ["./src/components/ui/index.ts"]
     }
   }
 }
