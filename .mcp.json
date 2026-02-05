@@ -3,10 +3,6 @@
     "playwright": {
       "command": "npx",
       "args": ["@anthropic-ai/mcp-server-playwright"]
-    },
-    "anklyze": {
-      "type": "sse",
-      "url": "https://anklyze-mcp.onrender.com/mcp/sse"
     }
   }
 }

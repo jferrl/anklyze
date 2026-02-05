@@ -1,4 +1,4 @@
-.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit swagger build-mcp run-mcp run-mcp-with-db run-mcp-sse run-mcp-sse-with-db
+.PHONY: run build test clean deps tidy db-start db-stop run-with-db db-shell db-audit swagger
 
 # Run the server
 run:
@@ -51,23 +51,3 @@ db-audit:
 # Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:
 	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/server/main.go -o docs
-
-# Build MCP server binary
-build-mcp:
-	go build -o bin/mcpserver cmd/mcpserver/main.go
-
-# Run MCP server (for testing)
-run-mcp:
-	go run cmd/mcpserver/main.go
-
-# Run MCP server with local database
-run-mcp-with-db:
-	DATABASE_URL="postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable" go run cmd/mcpserver/main.go
-
-# Run MCP server with SSE transport (for HTTP deployment testing)
-run-mcp-sse:
-	MCP_TRANSPORT=sse go run cmd/mcpserver/main.go
-
-# Run MCP server with SSE transport and local database
-run-mcp-sse-with-db:
-	MCP_TRANSPORT=sse DATABASE_URL="postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable" go run cmd/mcpserver/main.go

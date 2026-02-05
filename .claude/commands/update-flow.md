@@ -19,9 +19,8 @@ The application uses a **frontend-first translation approach**:
   - Classification descriptions: via `frontend/src/utils/classificationTranslations.ts`
   - Error messages: via `errors.*` keys in `frontend/src/i18n/en.json` and `es.json`
 - **Language Detection**: Uses standard HTTP `Accept-Language` header (no query parameters)
-- **Backend i18n**: **Only for LLM system prompts and MCP tools** (external Claude clients)
+- **Backend i18n**: **Only for LLM system prompts** (Gemini API)
   - `backend/internal/llm/prompts.go` - Language-specific prompts for Gemini API (MUST stay in backend)
-  - `backend/internal/mcp/tools.go` - Returns translated options for Claude/LLM clients
   - **NOT used for API error messages** - frontend handles all UI translations
 
 This architecture:
@@ -70,7 +69,6 @@ Update the classification logic in `backend/internal/rules/engine.go`:
 **Backend i18n usage (limited scope):**
 - `backend/internal/i18n/en.go` and `es.go` are **only for**:
   - LLM system prompts (in `backend/internal/llm/prompts.go`)
-  - MCP tool responses (in `backend/internal/mcp/tools.go`) for external Claude clients
 - **NOT used for API error messages** - API returns error codes (e.g., `"error_code": "invalid_input"`)
 - Error code constants defined in `backend/internal/domain/errors.go`
 
@@ -82,13 +80,6 @@ Update the LLM prompts in `backend/internal/llm/prompts.go`:
 - Update the "Decision Tree Questions" section to reflect any new decision points or changed logic
 - Update the few-shot examples in `fewShotExamplesEN` and `fewShotExamplesES` to reflect new classification paths
 - Ensure clarification questions match the updated flow diagram logic
-
-## 3.2 Update MCP Server Resources
-
-Update the MCP server resources in `backend/internal/mcp/resources.go`:
-
-- Update `decisionFlowchartHandler` with the new decision tree steps
-- Review classification system documentation if clinical notes changed
 
 ## 4. Update Backend Tests
 Update tests in `backend/internal/rules/engine_test.go` to match the new rules:
@@ -168,11 +159,9 @@ cd e2e && npm run test
 - `backend/internal/service/classifier.go` - Classifier service (no lang parameter)
 - `backend/internal/service/chat.go` - Chat service (no message translation, frontend handles via Status)
 - `backend/internal/service/statistics.go` - Statistics service (returns translation keys for notes)
-- `backend/internal/i18n/en.go` - English translations (LLM prompts + MCP tools only)
-- `backend/internal/i18n/es.go` - Spanish translations (LLM prompts + MCP tools only)
+- `backend/internal/i18n/en.go` - English translations (LLM prompts only)
+- `backend/internal/i18n/es.go` - Spanish translations (LLM prompts only)
 - `backend/internal/llm/prompts.go` - LLM system prompts (MUST use i18n for Gemini API)
-- `backend/internal/mcp/tools.go` - MCP tools (returns translated options for Claude clients)
-- `backend/internal/mcp/resources.go` - MCP server resources (decision flowchart, classification docs)
 
 ### Frontend
 - `frontend/src/components/FractureForm.tsx` - Form component
