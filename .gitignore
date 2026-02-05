@@ -46,3 +46,4 @@ playwright-report/
 playwright-screenshots/
 coverage/
 .playwright-mcp/
+bin/
