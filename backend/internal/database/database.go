@@ -11,6 +11,15 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// Connection pool configuration defaults.
+// These follow database/sql best practices for connection lifecycle management.
+const (
+	DefaultMaxOpenConns    = 10
+	DefaultMaxIdleConns    = 5
+	DefaultConnMaxLifetime = time.Hour        // Prevent stale connections
+	DefaultConnMaxIdleTime = 15 * time.Minute // Close idle connections
+)
+
 // Connect establishes a connection to PostgreSQL using GORM.
 func Connect(databaseURL string) (*gorm.DB, error) {
 	// Custom logger with higher slow query threshold for remote databases
@@ -41,8 +50,10 @@ func Connect(databaseURL string) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to get sql.DB: %w", err)
 	}
 
-	sqlDB.SetMaxOpenConns(10)
-	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetMaxOpenConns(DefaultMaxOpenConns)
+	sqlDB.SetMaxIdleConns(DefaultMaxIdleConns)
+	sqlDB.SetConnMaxLifetime(DefaultConnMaxLifetime)
+	sqlDB.SetConnMaxIdleTime(DefaultConnMaxIdleTime)
 
 	return db, nil
 }

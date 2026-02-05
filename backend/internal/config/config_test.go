@@ -249,22 +249,22 @@ func TestConfigLoad(t *testing.T) {
 			name: "default values",
 			envVars: map[string]string{
 				// Clear all env vars
-				"PORT":                     "",
-				"DATABASE_URL":             "",
-				"AUDIT_BUFFER_SIZE":        "",
-				"CORS_ALLOW_ORIGIN":        "",
-				"GEMINI_API_KEY":           "",
-				"GEMINI_MODEL":             "",
-				"LOG_LEVEL":                "",
-				"LOG_FORMAT":               "",
-				"RATE_LIMIT_RATE":          "",
-				"RATE_LIMIT_BURST":         "",
-				"SESSION_MESSAGE_LIMIT":    "",
-				"DAILY_QUOTA_PER_IP":       "",
-				"SUPABASE_URL":             "",
-				"SUPABASE_JWT_SECRET":      "",
+				"PORT":                      "",
+				"DATABASE_URL":              "",
+				"AUDIT_BUFFER_SIZE":         "",
+				"CORS_ALLOW_ORIGIN":         "",
+				"GEMINI_API_KEY":            "",
+				"GEMINI_MODEL":              "",
+				"LOG_LEVEL":                 "",
+				"LOG_FORMAT":                "",
+				"RATE_LIMIT_RATE":           "",
+				"RATE_LIMIT_BURST":          "",
+				"SESSION_MESSAGE_LIMIT":     "",
+				"DAILY_QUOTA_PER_IP":        "",
+				"SUPABASE_URL":              "",
+				"SUPABASE_JWT_SECRET":       "",
 				"SUPABASE_SERVICE_ROLE_KEY": "",
-				"STUDY_BUCKET_NAME":        "",
+				"STUDY_BUCKET_NAME":         "",
 			},
 			check: func(t *testing.T, cfg *Config) {
 				if cfg.Port != "8080" {
@@ -305,21 +305,21 @@ func TestConfigLoad(t *testing.T) {
 		{
 			name: "custom values",
 			envVars: map[string]string{
-				"PORT":                 "3000",
-				"DATABASE_URL":         "postgres://localhost/test",
-				"AUDIT_BUFFER_SIZE":    "200",
-				"CORS_ALLOW_ORIGIN":    "https://example.com",
-				"GEMINI_API_KEY":       "test-key",
-				"GEMINI_MODEL":         "gemini-4",
-				"LOG_LEVEL":            "debug",
-				"LOG_FORMAT":           "json",
-				"RATE_LIMIT_RATE":      "1.5",
-				"RATE_LIMIT_BURST":     "10",
+				"PORT":                  "3000",
+				"DATABASE_URL":          "postgres://localhost/test",
+				"AUDIT_BUFFER_SIZE":     "200",
+				"CORS_ALLOW_ORIGIN":     "https://example.com",
+				"GEMINI_API_KEY":        "test-key",
+				"GEMINI_MODEL":          "gemini-4",
+				"LOG_LEVEL":             "debug",
+				"LOG_FORMAT":            "json",
+				"RATE_LIMIT_RATE":       "1.5",
+				"RATE_LIMIT_BURST":      "10",
 				"SESSION_MESSAGE_LIMIT": "50",
-				"DAILY_QUOTA_PER_IP":   "500",
-				"SUPABASE_URL":         "https://test.supabase.co",
-				"SUPABASE_JWT_SECRET":  "secret",
-				"STUDY_BUCKET_NAME":    "custom-bucket",
+				"DAILY_QUOTA_PER_IP":    "500",
+				"SUPABASE_URL":          "https://test.supabase.co",
+				"SUPABASE_JWT_SECRET":   "secret",
+				"STUDY_BUCKET_NAME":     "custom-bucket",
 			},
 			check: func(t *testing.T, cfg *Config) {
 				if cfg.Port != "3000" {
@@ -387,12 +387,271 @@ func TestConfigLoad(t *testing.T) {
 			}()
 
 			// Execute
-			cfg := Load()
+			cfg, err := Load()
+			if err != nil {
+				t.Fatalf("Load() returned error: %v", err)
+			}
 
 			// Assert
 			tt.check(t, cfg)
 		})
 	}
+}
+
+func TestConfigValidate(t *testing.T) {
+	tests := []struct {
+		name    string
+		config  *Config
+		wantErr bool
+		errMsg  string
+	}{
+		{
+			name: "valid config",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid port - not a number",
+			config: &Config{
+				Port:                "abc",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "PORT must be 1-65535",
+		},
+		{
+			name: "invalid port - out of range",
+			config: &Config{
+				Port:                "70000",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "PORT must be 1-65535",
+		},
+		{
+			name: "invalid rate limit rate - negative",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       -1,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "RATE_LIMIT_RATE must be positive",
+		},
+		{
+			name: "invalid rate limit burst - zero",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      0,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "RATE_LIMIT_BURST must be >= 1",
+		},
+		{
+			name: "invalid audit buffer size - too small",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     5,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "AUDIT_BUFFER_SIZE must be >= 10",
+		},
+		{
+			name: "invalid session message limit - zero",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 0,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "SESSION_MESSAGE_LIMIT must be >= 1",
+		},
+		{
+			name: "invalid daily quota - zero",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     0,
+			},
+			wantErr: true,
+			errMsg:  "DAILY_QUOTA_PER_IP must be >= 1",
+		},
+		{
+			name: "invalid log level",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "invalid",
+				LogFormat:           "text",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "LOG_LEVEL must be debug|info|warn|error",
+		},
+		{
+			name: "invalid log format",
+			config: &Config{
+				Port:                "8080",
+				AuditBufferSize:     100,
+				LogLevel:            "info",
+				LogFormat:           "yaml",
+				RateLimitRate:       0.5,
+				RateLimitBurst:      5,
+				SessionMessageLimit: 20,
+				DailyQuotaPerIP:     100,
+			},
+			wantErr: true,
+			errMsg:  "LOG_FORMAT must be json|text",
+		},
+		{
+			name: "multiple errors",
+			config: &Config{
+				Port:                "invalid",
+				AuditBufferSize:     1,
+				LogLevel:            "wrong",
+				LogFormat:           "bad",
+				RateLimitRate:       -1,
+				RateLimitBurst:      0,
+				SessionMessageLimit: 0,
+				DailyQuotaPerIP:     0,
+			},
+			wantErr: true,
+			errMsg:  "configuration validation failed",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.config.Validate()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr && err != nil {
+				if !contains(err.Error(), tt.errMsg) {
+					t.Errorf("Validate() error = %v, want error containing %q", err, tt.errMsg)
+				}
+			}
+		})
+	}
+}
+
+func TestLoadWithInvalidConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		envVars map[string]string
+		wantErr bool
+		errMsg  string
+	}{
+		{
+			name: "invalid port",
+			envVars: map[string]string{
+				"PORT": "abc",
+			},
+			wantErr: true,
+			errMsg:  "PORT must be 1-65535",
+		},
+		{
+			name: "invalid log level",
+			envVars: map[string]string{
+				"LOG_LEVEL": "invalid",
+			},
+			wantErr: true,
+			errMsg:  "LOG_LEVEL must be debug|info|warn|error",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Setup environment
+			for key, value := range tt.envVars {
+				os.Setenv(key, value)
+			}
+
+			// Cleanup after test
+			defer func() {
+				for key := range tt.envVars {
+					os.Unsetenv(key)
+				}
+			}()
+
+			// Execute
+			_, err := Load()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Load() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr && err != nil {
+				if !contains(err.Error(), tt.errMsg) {
+					t.Errorf("Load() error = %v, want error containing %q", err, tt.errMsg)
+				}
+			}
+		})
+	}
+}
+
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsAt(s, substr))
+}
+
+func containsAt(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }
 
 func TestConfigHelperMethods(t *testing.T) {

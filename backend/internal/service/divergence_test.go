@@ -67,6 +67,9 @@ func (m *mockCaseRepository) RemoveUser(ctx context.Context, caseID, userID uuid
 func (m *mockCaseRepository) GetUsers(ctx context.Context, caseID uuid.UUID) ([]domain.CaseUser, error) {
 	return nil, nil
 }
+func (m *mockCaseRepository) GetImagesForCases(ctx context.Context, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
+	return make(map[uuid.UUID][]domain.CaseImage), nil
+}
 func (m *mockCaseRepository) GetByStudyID(ctx context.Context, studyID uuid.UUID) ([]domain.Case, error) {
 	return nil, nil
 }
@@ -90,6 +93,9 @@ func (m *mockCaseResponseRepository) GetByCase(ctx context.Context, caseID uuid.
 }
 func (m *mockCaseResponseRepository) GetByUserAndCase(ctx context.Context, userID, caseID uuid.UUID) ([]domain.CaseResponse, error) {
 	return nil, nil
+}
+func (m *mockCaseResponseRepository) GetByUserAndCases(ctx context.Context, userID uuid.UUID, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
+	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 func (m *mockCaseResponseRepository) CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error) {
 	return 0, nil

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
@@ -11,6 +13,9 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// defaultSignedURLDuration is the default duration for signed URLs (15 minutes).
+const defaultSignedURLDuration = 15 * time.Minute
 
 // Cleanup holds references to resources that need cleanup on shutdown.
 type Cleanup struct {
@@ -187,17 +192,20 @@ func SetupCaseRoutes(
 	storage storage.Storage,
 	statsService *service.StatisticsService,
 ) {
-	// Create case handler with statistics service
+	// Create specialized handlers for different concerns
+	adminHandler := NewCaseAdminHandler(caseRepo, storage)
+	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
+	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo, userRepo)
+	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyRepo, studyResponseRepo, storage, defaultSignedURLDuration)
+
+	// Create analytics handler with statistics service
 	var statsServicePtr *StatisticsService
 	if statsService != nil {
 		var s StatisticsService = statsService
 		statsServicePtr = &s
 	}
-	caseHandler := NewCaseHandler(caseRepo, responseRepo, analyticsRepo, studyRepo, studyResponseRepo, userRepo, storage, statsServicePtr)
-
-	// Add divergence service
 	divergenceService := service.NewDivergenceService(responseRepo, caseRepo)
-	caseHandler.WithDivergenceService(divergenceService)
+	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsServicePtr, divergenceService)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -205,9 +213,9 @@ func SetupCaseRoutes(
 	api := router.Group("/api")
 
 	if authValidator != nil {
-		setupProtectedCaseRoutes(api, authValidator, userRepo, caseHandler, userHandler)
+		setupProtectedCaseRoutes(api, authValidator, userRepo, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	} else {
-		setupPublicCaseRoutes(api, caseHandler, userHandler)
+		setupPublicCaseRoutes(api, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	}
 }
 
@@ -216,7 +224,11 @@ func setupProtectedCaseRoutes(
 	api *gin.RouterGroup,
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
-	caseHandler *CaseHandler,
+	adminHandler *CaseAdminHandler,
+	imageHandler *CaseImageHandler,
+	accessHandler *CaseAccessHandler,
+	responseHandler *CaseResponseHandler,
+	analyticsHandler *CaseAnalyticsHandler,
 	userHandler *UserHandler,
 ) {
 	// User case routes - require authentication
@@ -224,11 +236,11 @@ func setupProtectedCaseRoutes(
 	cases.Use(auth.AuthMiddleware(authValidator))
 	cases.Use(auth.UserSyncMiddleware(userRepo))
 	{
-		cases.GET("", caseHandler.ListPublishedCases)
-		cases.GET("/:id", caseHandler.GetPublishedCase)
-		cases.GET("/:id/images/:imageId/url", caseHandler.GetImageSignedURL)
-		cases.POST("/:id/responses", caseHandler.SubmitResponse)
-		cases.GET("/:id/my-responses", caseHandler.GetMyResponses)
+		cases.GET("", accessHandler.ListPublishedCases)
+		cases.GET("/:id", accessHandler.GetPublishedCase)
+		cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
+		cases.POST("/:id/responses", responseHandler.SubmitResponse)
+		cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
 	}
 
 	// User profile routes - require authentication
@@ -246,47 +258,56 @@ func setupProtectedCaseRoutes(
 	adminCases.Use(auth.UserSyncMiddleware(userRepo))
 	adminCases.Use(auth.RequireRole(auth.RoleAdmin))
 	{
-		adminCases.POST("", caseHandler.CreateCase)
-		adminCases.GET("", caseHandler.ListCases)
-		adminCases.GET("/:id", caseHandler.GetCase)
-		adminCases.PUT("/:id", caseHandler.UpdateCase)
-		adminCases.DELETE("/:id", caseHandler.DeleteCase)
-		adminCases.POST("/:id/images", caseHandler.UploadImage)
-		adminCases.GET("/:id/images", caseHandler.GetAdminCaseImages)
-		adminCases.GET("/:id/images/:imageId/url", caseHandler.GetAdminImageSignedURL)
-		adminCases.PATCH("/:id/images/:imageId", caseHandler.UpdateImage)
-		adminCases.DELETE("/:id/images/:imageId", caseHandler.DeleteImage)
-		adminCases.PUT("/:id/images/reorder", caseHandler.ReorderImages)
-		adminCases.PUT("/:id/publish", caseHandler.PublishCase)
-		adminCases.PUT("/:id/close", caseHandler.CloseCase)
-		adminCases.GET("/:id/analytics", caseHandler.GetCaseAnalytics)
-		adminCases.GET("/:id/reliability", caseHandler.GetReliabilityMetrics)
-		adminCases.GET("/:id/divergence", caseHandler.GetDivergenceAnalysis)
-		adminCases.GET("/:id/responses", caseHandler.ListCaseResponses)
-		adminCases.GET("/:id/export", caseHandler.ExportResponses)
-		adminCases.GET("/:id/export/detailed", caseHandler.ExportDetailedResponses)
+		// CRUD operations (CaseAdminHandler)
+		adminCases.POST("", adminHandler.CreateCase)
+		adminCases.GET("", adminHandler.ListCases)
+		adminCases.GET("/:id", adminHandler.GetCase)
+		adminCases.PUT("/:id", adminHandler.UpdateCase)
+		adminCases.DELETE("/:id", adminHandler.DeleteCase)
+		adminCases.PUT("/:id/publish", adminHandler.PublishCase)
+		adminCases.PUT("/:id/close", adminHandler.CloseCase)
 
-		// User access management
-		adminCases.GET("/:id/users", caseHandler.ListCaseUsers)
-		adminCases.POST("/:id/users", caseHandler.AddCaseUser)
-		adminCases.DELETE("/:id/users/:userId", caseHandler.RemoveCaseUser)
+		// Image management (CaseImageHandler)
+		adminCases.POST("/:id/images", imageHandler.UploadImage)
+		adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
+		adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
+		adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
+		adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
+		adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
+
+		// Analytics and export (CaseAnalyticsHandler)
+		adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
+		adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+		adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
+		adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
+		adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
+		adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
+
+		// User access management (CaseAccessHandler)
+		adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
+		adminCases.POST("/:id/users", accessHandler.AddCaseUser)
+		adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
 	}
 }
 
 // setupPublicCaseRoutes configures case routes without authentication (development mode).
 func setupPublicCaseRoutes(
 	api *gin.RouterGroup,
-	caseHandler *CaseHandler,
+	adminHandler *CaseAdminHandler,
+	imageHandler *CaseImageHandler,
+	accessHandler *CaseAccessHandler,
+	responseHandler *CaseResponseHandler,
+	analyticsHandler *CaseAnalyticsHandler,
 	userHandler *UserHandler,
 ) {
 	// User case routes
 	cases := api.Group("/cases")
 	{
-		cases.GET("", caseHandler.ListPublishedCases)
-		cases.GET("/:id", caseHandler.GetPublishedCase)
-		cases.GET("/:id/images/:imageId/url", caseHandler.GetImageSignedURL)
-		cases.POST("/:id/responses", caseHandler.SubmitResponse)
-		cases.GET("/:id/my-responses", caseHandler.GetMyResponses)
+		cases.GET("", accessHandler.ListPublishedCases)
+		cases.GET("/:id", accessHandler.GetPublishedCase)
+		cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
+		cases.POST("/:id/responses", responseHandler.SubmitResponse)
+		cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
 	}
 
 	// User profile routes (development mode)
@@ -299,30 +320,35 @@ func setupPublicCaseRoutes(
 	// Admin case routes
 	adminCases := api.Group("/admin/cases")
 	{
-		adminCases.POST("", caseHandler.CreateCase)
-		adminCases.GET("", caseHandler.ListCases)
-		adminCases.GET("/:id", caseHandler.GetCase)
-		adminCases.PUT("/:id", caseHandler.UpdateCase)
-		adminCases.DELETE("/:id", caseHandler.DeleteCase)
-		adminCases.POST("/:id/images", caseHandler.UploadImage)
-		adminCases.GET("/:id/images", caseHandler.GetAdminCaseImages)
-		adminCases.GET("/:id/images/:imageId/url", caseHandler.GetAdminImageSignedURL)
-		adminCases.PATCH("/:id/images/:imageId", caseHandler.UpdateImage)
-		adminCases.DELETE("/:id/images/:imageId", caseHandler.DeleteImage)
-		adminCases.PUT("/:id/images/reorder", caseHandler.ReorderImages)
-		adminCases.PUT("/:id/publish", caseHandler.PublishCase)
-		adminCases.PUT("/:id/close", caseHandler.CloseCase)
-		adminCases.GET("/:id/analytics", caseHandler.GetCaseAnalytics)
-		adminCases.GET("/:id/reliability", caseHandler.GetReliabilityMetrics)
-		adminCases.GET("/:id/divergence", caseHandler.GetDivergenceAnalysis)
-		adminCases.GET("/:id/responses", caseHandler.ListCaseResponses)
-		adminCases.GET("/:id/export", caseHandler.ExportResponses)
-		adminCases.GET("/:id/export/detailed", caseHandler.ExportDetailedResponses)
+		// CRUD operations (CaseAdminHandler)
+		adminCases.POST("", adminHandler.CreateCase)
+		adminCases.GET("", adminHandler.ListCases)
+		adminCases.GET("/:id", adminHandler.GetCase)
+		adminCases.PUT("/:id", adminHandler.UpdateCase)
+		adminCases.DELETE("/:id", adminHandler.DeleteCase)
+		adminCases.PUT("/:id/publish", adminHandler.PublishCase)
+		adminCases.PUT("/:id/close", adminHandler.CloseCase)
 
-		// User access management
-		adminCases.GET("/:id/users", caseHandler.ListCaseUsers)
-		adminCases.POST("/:id/users", caseHandler.AddCaseUser)
-		adminCases.DELETE("/:id/users/:userId", caseHandler.RemoveCaseUser)
+		// Image management (CaseImageHandler)
+		adminCases.POST("/:id/images", imageHandler.UploadImage)
+		adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
+		adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
+		adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
+		adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
+		adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
+
+		// Analytics and export (CaseAnalyticsHandler)
+		adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
+		adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+		adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
+		adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
+		adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
+		adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
+
+		// User access management (CaseAccessHandler)
+		adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
+		adminCases.POST("/:id/users", accessHandler.AddCaseUser)
+		adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
 	}
 }
 

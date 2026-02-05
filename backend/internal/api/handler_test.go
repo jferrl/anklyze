@@ -510,13 +510,13 @@ func TestHandler_ClassifyFracture_InvalidInput(t *testing.T) {
 		t.Errorf("ClassifyFracture() with invalid JSON: status = %d, want %d", w.Code, http.StatusBadRequest)
 	}
 
-	var errResp map[string]any
+	var errResp ErrorResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &errResp); err != nil {
 		t.Fatalf("failed to unmarshal error response: %v", err)
 	}
 
-	if _, ok := errResp["error_code"]; !ok {
-		t.Error("expected error_code field in response")
+	if errResp.Code != CodeInvalidInput {
+		t.Errorf("expected code %q, got %q", CodeInvalidInput, errResp.Code)
 	}
 }
 

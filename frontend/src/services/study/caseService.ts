@@ -25,6 +25,9 @@ import type {
   DivergenceReport,
 } from '@/types';
 import { apiRequest, getAuthHeaders, API_BASE_URL } from '../core/apiClient';
+import i18n from '../../i18n/config';
+
+const t = i18n.t.bind(i18n);
 
 // ================================
 // User Case Endpoints
@@ -56,7 +59,7 @@ export async function getPublishedCase(caseId: string): Promise<UserCaseDetail> 
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error('Case not found');
+      throw new Error(t('errors.caseNotFound'));
     }
     throw error;
   }
@@ -76,7 +79,7 @@ export async function getImageSignedURL(
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error('Image not found');
+      throw new Error(t('errors.imageNotFound'));
     }
     throw error;
   }

@@ -82,11 +82,13 @@ export async function sendChatMessage(
       throw new Error(t('errors.chat_unavailable'));
     }
 
-    // Handle other errors with i18n translation if error_code is present
+    // Handle other errors with i18n translation if error code is present (new: code, legacy: error_code)
     if (error instanceof Error) {
-      const apiError = error as Error & { error_code?: string };
-      if (apiError.error_code) {
-        throw new Error(t(`errors.${apiError.error_code}`, apiError.message));
+      const apiError = error as Error & { code?: string; error_code?: string };
+      const errorCode = apiError.code || apiError.error_code;
+      if (errorCode) {
+        // Normalize error code to lowercase for i18n lookup
+        throw new Error(t(`errors.${errorCode.toLowerCase()}`, apiError.message));
       }
     }
 

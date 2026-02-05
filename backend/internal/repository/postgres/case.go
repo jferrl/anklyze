@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"sync"
 	"time"
@@ -109,6 +110,29 @@ func (r *CaseRepository) GetImages(ctx context.Context, caseID uuid.UUID) ([]dom
 		Order("category ASC, display_order ASC").
 		Find(&images).Error
 	return images, err
+}
+
+// GetImagesForCases batch loads images for multiple cases.
+// Returns a map keyed by case ID for O(1) lookup.
+func (r *CaseRepository) GetImagesForCases(ctx context.Context, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
+	if len(caseIDs) == 0 {
+		return make(map[uuid.UUID][]domain.CaseImage), nil
+	}
+
+	var images []domain.CaseImage
+	if err := r.db.WithContext(ctx).
+		Where("case_id IN ?", caseIDs).
+		Order("case_id, category ASC, display_order ASC").
+		Find(&images).Error; err != nil {
+		return nil, fmt.Errorf("batch load images for %d cases: %w", len(caseIDs), err)
+	}
+
+	// Pre-allocate map with known capacity
+	result := make(map[uuid.UUID][]domain.CaseImage, len(caseIDs))
+	for _, img := range images {
+		result[img.CaseID] = append(result[img.CaseID], img)
+	}
+	return result, nil
 }
 
 // GetImageByID retrieves an image by its ID.
@@ -321,6 +345,29 @@ func (r *CaseResponseRepository) GetByUserAndCase(ctx context.Context, userID, c
 		Order("created_at DESC").
 		Find(&responses).Error
 	return responses, err
+}
+
+// GetByUserAndCases batch loads responses for a user across multiple cases.
+// Returns a map keyed by case ID for O(1) lookup.
+func (r *CaseResponseRepository) GetByUserAndCases(ctx context.Context, userID uuid.UUID, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
+	if len(caseIDs) == 0 {
+		return make(map[uuid.UUID][]domain.CaseResponse), nil
+	}
+
+	var responses []domain.CaseResponse
+	if err := r.db.WithContext(ctx).
+		Where("user_id = ? AND case_id IN ?", userID, caseIDs).
+		Order("case_id, created_at DESC").
+		Find(&responses).Error; err != nil {
+		return nil, fmt.Errorf("batch load user responses for %d cases: %w", len(caseIDs), err)
+	}
+
+	// Pre-allocate map with known capacity
+	result := make(map[uuid.UUID][]domain.CaseResponse, len(caseIDs))
+	for _, resp := range responses {
+		result[resp.CaseID] = append(result[resp.CaseID], resp)
+	}
+	return result, nil
 }
 
 // CountByCase counts the total responses for a case.

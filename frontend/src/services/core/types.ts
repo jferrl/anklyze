@@ -3,9 +3,19 @@
  */
 
 /**
- * Standard API error response structure
+ * Standard API error response structure (new unified format)
  */
 export interface ApiErrorResponse {
+  code: string;
+  message: string;
+  details?: string; // Only included in debug mode
+}
+
+/**
+ * Legacy API error response structure (for backwards compatibility)
+ * @deprecated Use ApiErrorResponse instead
+ */
+export interface LegacyApiErrorResponse {
   error: string;
   error_code?: string;
   details?: Record<string, unknown>;

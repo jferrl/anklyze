@@ -108,19 +108,13 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 
 	var input domain.FractureInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error_code": domain.ErrCodeInvalidInput,
-			"details":    err.Error(),
-		})
+		HandleError(c, domain.ErrInvalidInput, "Invalid request body")
 		return
 	}
 
 	result, err := h.classifier.Classify(input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error_code": domain.ErrCodeClassification,
-			"details":    err.Error(),
-		})
+		HandleError(c, err, "Classification failed")
 		return
 	}
 

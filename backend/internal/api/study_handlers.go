@@ -95,11 +95,6 @@ type StudyReliabilityResponse struct {
 	CalculatedAt time.Time `json:"calculated_at"`
 }
 
-// ErrorResponse represents an error response from the API.
-type ErrorResponse struct {
-	Error string `json:"error" example:"Invalid request body"`
-}
-
 // --- Handlers ---
 
 // CreateStudy creates a new study.

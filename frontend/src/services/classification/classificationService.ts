@@ -23,12 +23,14 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
       body: JSON.stringify(input),
     });
   } catch (error) {
-    // If the error has an error_code, translate it using i18n
+    // If the error has an error code (new format: code, legacy: error_code), translate it using i18n
     if (error instanceof Error) {
-      const apiError = error as Error & { error_code?: string };
-      if (apiError.error_code) {
+      const apiError = error as Error & { code?: string; error_code?: string };
+      const errorCode = apiError.code || apiError.error_code;
+      if (errorCode) {
         const t = i18n.t.bind(i18n);
-        throw new Error(t(`errors.${apiError.error_code}`, apiError.message));
+        // Normalize error code to lowercase for i18n lookup
+        throw new Error(t(`errors.${errorCode.toLowerCase()}`, apiError.message));
       }
     }
     throw error;

@@ -26,6 +26,9 @@ type CaseRepository interface {
 	AddImage(ctx context.Context, image *domain.CaseImage) error
 	// GetImages retrieves all images for a case.
 	GetImages(ctx context.Context, caseID uuid.UUID) ([]domain.CaseImage, error)
+	// GetImagesForCases batch loads images for multiple cases.
+	// Returns a map keyed by case ID for O(1) lookup.
+	GetImagesForCases(ctx context.Context, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error)
 	// GetImageByID retrieves an image by its ID.
 	GetImageByID(ctx context.Context, imageID uuid.UUID) (*domain.CaseImage, error)
 	// UpdateImage updates an image's mutable fields (display_order).
@@ -66,6 +69,9 @@ type CaseResponseRepository interface {
 	GetByCase(ctx context.Context, caseID uuid.UUID, limit, offset int) ([]domain.CaseResponse, int64, error)
 	// GetByUserAndCase retrieves all responses by a user for a case.
 	GetByUserAndCase(ctx context.Context, userID, caseID uuid.UUID) ([]domain.CaseResponse, error)
+	// GetByUserAndCases batch loads responses for a user across multiple cases.
+	// Returns a map keyed by case ID for O(1) lookup.
+	GetByUserAndCases(ctx context.Context, userID uuid.UUID, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
 	// CountByCase counts the total responses for a case.
 	CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error)
 	// CountUniqueUsersByCase counts unique users who responded to a case.
@@ -126,6 +132,10 @@ func (r *NoOpCaseRepository) AddImage(_ context.Context, _ *domain.CaseImage) er
 
 func (r *NoOpCaseRepository) GetImages(_ context.Context, _ uuid.UUID) ([]domain.CaseImage, error) {
 	return []domain.CaseImage{}, nil
+}
+
+func (r *NoOpCaseRepository) GetImagesForCases(_ context.Context, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
+	return make(map[uuid.UUID][]domain.CaseImage), nil
 }
 
 func (r *NoOpCaseRepository) GetImageByID(_ context.Context, _ uuid.UUID) (*domain.CaseImage, error) {
@@ -197,6 +207,10 @@ func (r *NoOpCaseResponseRepository) GetByCase(_ context.Context, _ uuid.UUID, _
 
 func (r *NoOpCaseResponseRepository) GetByUserAndCase(_ context.Context, _, _ uuid.UUID) ([]domain.CaseResponse, error) {
 	return []domain.CaseResponse{}, nil
+}
+
+func (r *NoOpCaseResponseRepository) GetByUserAndCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
+	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
 func (r *NoOpCaseResponseRepository) CountByCase(_ context.Context, _ uuid.UUID) (int64, error) {

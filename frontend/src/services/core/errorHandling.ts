@@ -49,14 +49,31 @@ export class ForbiddenError extends Error {
 }
 
 /**
+ * Extract error code from response, handling both new and legacy formats
+ * New format: { code: "INVALID_INPUT", message: "..." }
+ * Legacy format: { error_code: "invalid_input", error: "..." }
+ */
+function getErrorCode(error: Record<string, unknown>): string {
+  return (error.code as string) || (error.error_code as string) || '';
+}
+
+/**
+ * Extract error message from response, handling both new and legacy formats
+ */
+function getErrorMessage(error: Record<string, unknown>, fallback: string): string {
+  return (error.message as string) || (error.error as string) || fallback;
+}
+
+/**
  * Handle API errors and throw appropriate error types based on status code
+ * Supports both new unified format (code/message) and legacy format (error_code/error)
  * @param response - The Response object from the API call
  * @throws {AuthRequiredError} - When status is 401
  * @throws {ForbiddenError} - When status is 403
  * @throws {RateLimitError} - When status is 429
- * @throws {SessionLimitError} - When status is 429 and error_code is session_limit_exceeded
- * @throws {DailyQuotaError} - When status is 429 and error_code is daily_quota_exceeded
- * @throws {InputValidationError} - When status is 400 and error_code starts with INVALID_
+ * @throws {SessionLimitError} - When status is 429 and error code is session_limit_exceeded
+ * @throws {DailyQuotaError} - When status is 429 and error code is daily_quota_exceeded
+ * @throws {InputValidationError} - When status is 400 and error code indicates invalid input
  */
 export async function handleApiError(response: Response): Promise<never> {
   // Handle authentication errors
@@ -72,31 +89,39 @@ export async function handleApiError(response: Response): Promise<never> {
   // Handle rate limiting errors
   if (response.status === 429) {
     const error = await response.json();
-    const errorCode = error.error_code;
+    const errorCode = getErrorCode(error).toLowerCase();
 
     if (errorCode === 'session_limit_exceeded') {
-      throw new SessionLimitError(error.error || 'Session limit exceeded');
+      throw new SessionLimitError(getErrorMessage(error, 'Session limit exceeded'));
     }
-    if (errorCode === 'daily_quota_exceeded') {
-      throw new DailyQuotaError(error.error || 'Daily quota exceeded');
+    if (errorCode === 'daily_quota_exceeded' || errorCode === 'quota_exceeded') {
+      throw new DailyQuotaError(getErrorMessage(error, 'Daily quota exceeded'));
     }
-    throw new RateLimitError(error.error || 'Rate limit exceeded');
+    throw new RateLimitError(getErrorMessage(error, 'Rate limit exceeded'));
   }
 
   // Handle input validation errors
   if (response.status === 400) {
     const error = await response.json();
-    const errorCode = error.error_code || '';
+    const errorCode = getErrorCode(error);
 
-    if (errorCode.startsWith('INVALID_')) {
-      throw new InputValidationError(error.error || 'Invalid input', errorCode);
+    // Check for invalid input (both INVALID_INPUT and legacy formats)
+    if (errorCode.toUpperCase() === 'INVALID_INPUT' || errorCode.startsWith('INVALID_') || errorCode === 'invalid_input') {
+      throw new InputValidationError(getErrorMessage(error, 'Invalid input'), errorCode);
     }
+
+    // Re-throw with extracted message
+    const err = new Error(getErrorMessage(error, 'Bad request'));
+    (err as Error & { code?: string }).code = errorCode;
+    throw err;
   }
 
-  // For other errors, throw a generic error with error_code preserved
+  // For other errors, throw a generic error with code preserved
   const error = await response.json();
-  const err = new Error(error.error || 'An error occurred');
-  // Preserve error_code for i18n translation in service layers
-  (err as Error & { error_code?: string }).error_code = error.error_code;
+  const errorCode = getErrorCode(error);
+  const err = new Error(getErrorMessage(error, 'An error occurred'));
+  // Preserve code for i18n translation in service layers (support both formats)
+  (err as Error & { code?: string; error_code?: string }).code = errorCode;
+  (err as Error & { code?: string; error_code?: string }).error_code = errorCode;
   throw err;
 }

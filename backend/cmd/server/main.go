@@ -25,6 +25,7 @@ import (
 	"github.com/jferrl/anklyze/internal/storage"
 	"github.com/jferrl/anklyze/internal/supabase"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 
 	_ "github.com/jferrl/anklyze/docs"
 )
@@ -47,7 +48,11 @@ func main() {
 	// Load .env file if present (for local development)
 	_ = godotenv.Load()
 
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		slog.Error("invalid configuration", "error", err)
+		os.Exit(1)
+	}
 
 	// Initialize logger
 	logger.Setup(logger.Config{
@@ -68,6 +73,9 @@ func main() {
 	var studyRepo repository.StudyRepository
 	var studyResponseRepo repository.StudyResponseRepository
 
+	// Database connection (captured for shutdown)
+	var db *gorm.DB
+
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
 	if cfg.HasSupabaseStorage() {
@@ -76,7 +84,8 @@ func main() {
 	}
 
 	if cfg.HasDatabase() {
-		db, err := database.Connect(cfg.DatabaseURL)
+		var err error
+		db, err = database.Connect(cfg.DatabaseURL)
 		if err != nil {
 			slog.Warn("database connection failed, audit disabled", "error", err)
 			auditRepo = repository.NewNoOpAuditRepository()
@@ -192,20 +201,37 @@ func main() {
 		Handler: router,
 	}
 
-	// Start server in goroutine
+	// Start server in goroutine with error channel pattern (Uber Go Style Guide)
+	errChan := make(chan error, 1)
 	go func() {
 		slog.Info("server starting", "port", cfg.Port)
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("server failed to start", "error", err)
-			os.Exit(1)
-		}
+		errChan <- srv.ListenAndServe()
 	}()
+
+	// Check for immediate startup errors (e.g., port already in use)
+	select {
+	case err := <-errChan:
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			slog.Error("server failed to start", "error", err)
+			return
+		}
+	case <-time.After(100 * time.Millisecond):
+		slog.Info("server started successfully", "port", cfg.Port)
+	}
 
 	// Wait for interrupt signal for graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	slog.Info("shutting down server...")
+
+	// Wait for either shutdown signal or server error
+	select {
+	case <-quit:
+		slog.Info("shutting down server...")
+	case err := <-errChan:
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			slog.Error("server error", "error", err)
+		}
+	}
 
 	// Give outstanding requests 5 seconds to complete
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -235,6 +261,17 @@ func main() {
 
 	// Stop rate limiter and quota tracker goroutines
 	routeCleanup.Stop()
+
+	// Close database connection pool
+	if db != nil {
+		slog.Info("closing database connection")
+		sqlDB, err := db.DB()
+		if err != nil {
+			slog.Error("failed to get sql.DB for closing", "error", err)
+		} else if err := sqlDB.Close(); err != nil {
+			slog.Error("failed to close database", "error", err)
+		}
+	}
 
 	slog.Info("server exited")
 }
