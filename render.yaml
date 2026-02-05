@@ -7,6 +7,7 @@ services:
     rootDir: backend
     buildCommand: go build -o bin/server ./cmd/server
     startCommand: ./bin/server
+    region: frankfurt
     envVars:
       - key: PORT
         value: 8080
@@ -28,6 +29,7 @@ services:
     rootDir: backend
     buildCommand: go build -o bin/mcpserver ./cmd/mcpserver
     startCommand: ./bin/mcpserver
+    region: frankfurt
     envVars:
       - key: MCP_TRANSPORT
         value: sse
