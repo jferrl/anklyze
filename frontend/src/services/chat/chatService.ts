@@ -8,7 +8,6 @@ import { getCurrentLanguage } from '../../i18n/config';
 import i18n from '../../i18n/config';
 import {
   SessionLimitError,
-  DailyQuotaError,
   RateLimitError,
   InputValidationError,
 } from '../core/errorHandling';
@@ -22,7 +21,6 @@ export { submitFeedback } from '../feedback/feedbackService';
  * @param sessionId - Optional session ID to continue an existing conversation
  * @returns Promise resolving to chat response
  * @throws {SessionLimitError} - When session limit is exceeded
- * @throws {DailyQuotaError} - When daily quota is exceeded
  * @throws {RateLimitError} - When rate limit is exceeded
  * @throws {InputValidationError} - When message validation fails
  * @throws {AuthRequiredError} - When authentication is required
@@ -53,9 +51,6 @@ export async function sendChatMessage(
 
     if (error instanceof SessionLimitError) {
       throw new SessionLimitError(t('chat.errors.sessionLimit'));
-    }
-    if (error instanceof DailyQuotaError) {
-      throw new DailyQuotaError(t('chat.errors.dailyQuota'));
     }
     if (error instanceof RateLimitError) {
       throw new RateLimitError(t('chat.errors.rateLimit'));

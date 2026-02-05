@@ -14,14 +14,6 @@ export class SessionLimitError extends Error {
   }
 }
 
-// Custom error for daily quota exceeded
-export class DailyQuotaError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'DailyQuotaError';
-  }
-}
-
 // Custom error for input validation failures
 export class InputValidationError extends Error {
   code: string;
@@ -72,7 +64,6 @@ function getErrorMessage(error: Record<string, unknown>, fallback: string): stri
  * @throws {ForbiddenError} - When status is 403
  * @throws {RateLimitError} - When status is 429
  * @throws {SessionLimitError} - When status is 429 and error code is session_limit_exceeded
- * @throws {DailyQuotaError} - When status is 429 and error code is daily_quota_exceeded
  * @throws {InputValidationError} - When status is 400 and error code indicates invalid input
  */
 export async function handleApiError(response: Response): Promise<never> {
@@ -93,9 +84,6 @@ export async function handleApiError(response: Response): Promise<never> {
 
     if (errorCode === 'session_limit_exceeded') {
       throw new SessionLimitError(getErrorMessage(error, 'Session limit exceeded'));
-    }
-    if (errorCode === 'daily_quota_exceeded' || errorCode === 'quota_exceeded') {
-      throw new DailyQuotaError(getErrorMessage(error, 'Daily quota exceeded'));
     }
     throw new RateLimitError(getErrorMessage(error, 'Rate limit exceeded'));
   }

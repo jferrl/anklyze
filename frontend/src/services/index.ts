@@ -29,7 +29,6 @@ export * from './study';
 export {
   RateLimitError,
   SessionLimitError,
-  DailyQuotaError,
   InputValidationError,
   AuthRequiredError,
   ForbiddenError,

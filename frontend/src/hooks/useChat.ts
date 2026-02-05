@@ -10,7 +10,6 @@ import {
   submitFeedback as submitFeedbackAPI,
   RateLimitError,
   SessionLimitError,
-  DailyQuotaError,
   InputValidationError,
 } from '@/services';
 
@@ -120,8 +119,6 @@ export function useChat() {
         errorMessage = t('chat.errors.rateLimit');
       } else if (err instanceof SessionLimitError) {
         errorMessage = t('chat.errors.sessionLimit');
-      } else if (err instanceof DailyQuotaError) {
-        errorMessage = t('chat.errors.dailyQuota');
       } else if (err instanceof InputValidationError) {
         // Use the server-provided message which is already localized
         errorMessage = err.message;

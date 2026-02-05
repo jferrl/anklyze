@@ -294,9 +294,6 @@ func TestConfigLoad(t *testing.T) {
 				if cfg.SessionMessageLimit != 20 {
 					t.Errorf("SessionMessageLimit = %v, want 20", cfg.SessionMessageLimit)
 				}
-				if cfg.DailyQuotaPerIP != 100 {
-					t.Errorf("DailyQuotaPerIP = %v, want 100", cfg.DailyQuotaPerIP)
-				}
 				if cfg.StudyBucketName != "studies" {
 					t.Errorf("StudyBucketName = %v, want studies", cfg.StudyBucketName)
 				}
@@ -355,9 +352,6 @@ func TestConfigLoad(t *testing.T) {
 				if cfg.SessionMessageLimit != 50 {
 					t.Errorf("SessionMessageLimit = %v, want 50", cfg.SessionMessageLimit)
 				}
-				if cfg.DailyQuotaPerIP != 500 {
-					t.Errorf("DailyQuotaPerIP = %v, want 500", cfg.DailyQuotaPerIP)
-				}
 				if cfg.SupabaseURL != "https://test.supabase.co" {
 					t.Errorf("SupabaseURL = %v, want https://test.supabase.co", cfg.SupabaseURL)
 				}
@@ -415,7 +409,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: false,
 		},
@@ -429,7 +422,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "PORT must be 1-65535",
@@ -444,7 +436,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "PORT must be 1-65535",
@@ -459,7 +450,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       -1,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "RATE_LIMIT_RATE must be positive",
@@ -474,7 +464,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      0,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "RATE_LIMIT_BURST must be >= 1",
@@ -489,7 +478,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "AUDIT_BUFFER_SIZE must be >= 10",
@@ -504,25 +492,9 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 0,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "SESSION_MESSAGE_LIMIT must be >= 1",
-		},
-		{
-			name: "invalid daily quota - zero",
-			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     0,
-			},
-			wantErr: true,
-			errMsg:  "DAILY_QUOTA_PER_IP must be >= 1",
 		},
 		{
 			name: "invalid log level",
@@ -534,7 +506,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "LOG_LEVEL must be debug|info|warn|error",
@@ -549,7 +520,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       0.5,
 				RateLimitBurst:      5,
 				SessionMessageLimit: 20,
-				DailyQuotaPerIP:     100,
 			},
 			wantErr: true,
 			errMsg:  "LOG_FORMAT must be json|text",
@@ -564,7 +534,6 @@ func TestConfigValidate(t *testing.T) {
 				RateLimitRate:       -1,
 				RateLimitBurst:      0,
 				SessionMessageLimit: 0,
-				DailyQuotaPerIP:     0,
 			},
 			wantErr: true,
 			errMsg:  "configuration validation failed",

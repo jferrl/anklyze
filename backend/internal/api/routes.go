@@ -20,16 +20,12 @@ const defaultSignedURLDuration = 15 * time.Minute
 // Cleanup holds references to resources that need cleanup on shutdown.
 type Cleanup struct {
 	rateLimiter *IPRateLimiter
-	dailyQuota  *DailyQuota
 }
 
 // Stop gracefully stops all background goroutines.
 func (c *Cleanup) Stop() {
 	if c.rateLimiter != nil {
 		c.rateLimiter.Stop()
-	}
-	if c.dailyQuota != nil {
-		c.dailyQuota.Stop()
 	}
 }
 
@@ -57,9 +53,6 @@ func SetupRoutes(
 	// Rate limiter for chat endpoints (protects against excessive API costs)
 	rateLimiter, chatRateLimiter := RateLimitMiddlewareWithConfig(cfg.RateLimitRate, cfg.RateLimitBurst)
 
-	// Daily quota limiter per IP
-	dailyQuota, quotaMiddleware := DailyQuotaMiddleware(cfg.DailyQuotaPerIP)
-
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -69,15 +62,14 @@ func SetupRoutes(
 
 	if authValidator != nil {
 		// Auth is enabled - protect routes
-		setupProtectedRoutes(api, authValidator, userRepo, handler, quotaMiddleware, chatRateLimiter)
+		setupProtectedRoutes(api, authValidator, userRepo, handler, chatRateLimiter)
 	} else {
 		// Auth is disabled - all routes are public (development/backwards compatibility)
-		setupPublicRoutes(api, handler, quotaMiddleware, chatRateLimiter)
+		setupPublicRoutes(api, handler, chatRateLimiter)
 	}
 
 	return &Cleanup{
 		rateLimiter: rateLimiter,
-		dailyQuota:  dailyQuota,
 	}
 }
 
@@ -87,7 +79,6 @@ func setupProtectedRoutes(
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	handler *Handler,
-	dailyQuota gin.HandlerFunc,
 	chatRateLimiter gin.HandlerFunc,
 ) {
 	// Protected routes - require authentication (User or Admin)
@@ -97,7 +88,7 @@ func setupProtectedRoutes(
 	{
 		protected.GET("/me", GetCurrentUser)
 		protected.POST("/classify", handler.ClassifyFracture)
-		protected.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
+		protected.POST("/chat", chatRateLimiter, handler.ChatMessage)
 	}
 
 	// Chat session routes - require authentication
@@ -135,7 +126,6 @@ func setupProtectedRoutes(
 func setupPublicRoutes(
 	api *gin.RouterGroup,
 	handler *Handler,
-	dailyQuota gin.HandlerFunc,
 	chatRateLimiter gin.HandlerFunc,
 ) {
 	// In development mode, /me returns a mock admin user
@@ -147,7 +137,7 @@ func setupPublicRoutes(
 		})
 	})
 	api.POST("/classify", handler.ClassifyFracture)
-	api.POST("/chat", dailyQuota, chatRateLimiter, handler.ChatMessage)
+	api.POST("/chat", chatRateLimiter, handler.ChatMessage)
 
 	// Chat session routes
 	chat := api.Group("/chat")
@@ -455,7 +445,6 @@ func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		c.Writer.Header().Set("Access-Control-Expose-Headers", "X-Quota-Remaining")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)

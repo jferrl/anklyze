@@ -23,7 +23,6 @@ type Config struct {
 	RateLimitBurst int     // Maximum burst size
 	// Usage limits
 	SessionMessageLimit int // Maximum messages per chat session
-	DailyQuotaPerIP     int // Maximum requests per IP per day
 	// Supabase Auth configuration
 	SupabaseURL       string // Supabase project URL (e.g., https://xxx.supabase.co)
 	SupabaseJWTSecret string // Supabase JWT secret for token validation
@@ -47,7 +46,6 @@ func Load() (*Config, error) {
 		RateLimitRate:          getEnvFloat("RATE_LIMIT_RATE", 0.5),    // 1 request per 2 seconds
 		RateLimitBurst:         getEnvInt("RATE_LIMIT_BURST", 5),       // Allow burst of 5
 		SessionMessageLimit:    getEnvInt("SESSION_MESSAGE_LIMIT", 20), // Max messages per session
-		DailyQuotaPerIP:        getEnvInt("DAILY_QUOTA_PER_IP", 100),   // Max requests per IP per day
 		SupabaseURL:            os.Getenv("SUPABASE_URL"),
 		SupabaseJWTSecret:      os.Getenv("SUPABASE_JWT_SECRET"),
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
@@ -88,9 +86,6 @@ func (c *Config) Validate() error {
 	// Session limits
 	if c.SessionMessageLimit < 1 {
 		errs = append(errs, fmt.Sprintf("SESSION_MESSAGE_LIMIT must be >= 1, got: %d", c.SessionMessageLimit))
-	}
-	if c.DailyQuotaPerIP < 1 {
-		errs = append(errs, fmt.Sprintf("DAILY_QUOTA_PER_IP must be >= 1, got: %d", c.DailyQuotaPerIP))
 	}
 
 	// URL validation (if provided)
