@@ -1,0 +1,15 @@
+Edad;Sexo;Talla;Peso;IMC;Vitamina D;Fecha de fractura;Fecha urgencias;Fecha cirugia;Lateralidad;Mecanismo lesional;Energia;Abierta/cerrada;Lesiones asociadas;Tratamiento urgencia;Tipo de cirugia;Abordaje;Sindesmosis;TC prequirurgico;Anticoagulacion;Desplazamiento secundario;;
+65;Mujer;165;70;25.7;28;30 mayo 2025;30 mayo 2025;1 junio 2025;Izquierda;Torsion sin caida;Baja;Cerrada;No;Reduccion cerrada+inmovilizacion;placa Paragon lateral 8H;Lateral;No;Si;No;No;;
+72; Hombre ;170;85,5;#DIV/0!;15;01/06/2025;01/06/25;10 junio 25; Derecha ;Caida desde su altura;Alta;Cerrada;;Fijador externo;placa Arthrex posterolateral 7H + 2 tornillos canulados minimonster 3.5mm;Posterolateral;Si;No;No;No;;
+58;Mujer;160;65;25.4;N/A;15 enero 2025;15 enero 2025;20 enero 25;Derecha;Accidente de trafico;Alta;Gustilo I;luxacion autorreducida;RAFI;placa Pargagon 6H;Lateral+medial;No;Si;Adiro 100;No;;
+80;Hombre;175;90;29. 24;32;10 marzo 2025;10 marzo 2025;12 marzo 2025;Izquierda;Caida desde >1m;Alta;Abierta;luxacion?;Reduccion cerrada+fijador externo;placa Paragon Gorilla 10H;Lateral;Si;Si;No;Si;;
+45;Mujer;158;52;20.8;45;20 abril 2025;20 abril 2025;22 abril 2025;Derecha;Accidente deportivo;Baja;Cerrada;No;Inmovilizacion;tight rope Arthrex;Lateral;Si;No;No;No;;
+;;;;;;;;;;;;;;;;;;;;;;
+55;Hombre;180;95;29.3;Pendiente;1 febrero 2025;Pendiente;5 febrero 2025;Izquierda;Torsion y caida;Baja;Cerrada;subluxacion;Tratamiento conservador;2 tornillos canulados 3.5mm;Percutaneo medial;No;No;No;No;;
+70;Mujer;162;68;25.9;22;15 julio 2025;15 julio 2025;18 julio 2025;Derecha;Caida desde su propia altura;Baja;Cerrada;No;Reduccion cerrada+inmovilizacion;placa Synthes 8H;Lateral;No;Si;No;No;;
+70;Mujer;162;68;25.9;22;15 julio 2025;15 julio 2025;18 julio 2025;Derecha;Caida desde su propia altura;Baja;Cerrada;No;Reduccion cerrada+inmovilizacion;placa Synthes 8H;Lateral;No;Si;No;No;;
+62;Hombre;172;78;26.4;18;5 agosto 2025;5 agosto 2025;7 agosto 2025;Izquierda;Atropello;Alta;Cerrada;wagstaffe;Reduccion cerrada+inmovilizacion;placa Arthrex 7H;Lateral+medial ?el tornillo se puso por abordaje medial?;No;Si;No;No;;
+48;Mujer;;;; ;25 septiembre 2025;25 septiembre 2025;28 septiembre 2025;Derecha;Agresion;Alta;Cerrada;No;RAFI;clavo Phoenix 4mm x 200;Anterolateral;No;No;No;No;;
+77;Hombre;168;82;29.1;12;2025-10-15;2025-10-15;2025-10-18;Izquierda;Caida desde su altura;Baja;Cerrada;pilon tibial;Reduccion cerrada+inmovilizacion;placa Paragon 6H + juggerknot;Lateral y posterolateral;Si;Si;Si;No;;
+70;Mujer;162;68;25.9;22;15 julio 2025;15 julio 2025;20 julio 2025;Izquierda;Caida desde su propia altura;Baja;Cerrada;No;Reduccion cerrada+inmovilizacion;placa Synthes 6H;Medial;No;Si;No;No;;
+33;Mujer;165;58;21.3;35;01-11-2025;01-11-2025;03-11-2025;Derecha;Caida desde patinete, bicicleta...;Baja;Cerrada;No;Inmovilizacion;3 tornillos corticales 3.5mm;Percutaneo;No;No;No;No;;
