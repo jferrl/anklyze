@@ -27,21 +27,21 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock ResizeObserver
-globalThis.ResizeObserver = class ResizeObserver {
-  observe = vi.fn()
-  unobserve = vi.fn()
-  disconnect = vi.fn()
-} as unknown as typeof globalThis.ResizeObserver
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+})) as unknown as typeof ResizeObserver
 
 // Mock IntersectionObserver
-globalThis.IntersectionObserver = class IntersectionObserver {
-  observe = vi.fn()
-  unobserve = vi.fn()
-  disconnect = vi.fn()
-  root = null
-  rootMargin = ''
-  thresholds: number[] = []
-} as unknown as typeof globalThis.IntersectionObserver
+globalThis.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+  root: null,
+  rootMargin: '',
+  thresholds: [],
+})) as unknown as typeof IntersectionObserver
 
 // Mock scrollTo
 window.scrollTo = vi.fn()
