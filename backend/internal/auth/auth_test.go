@@ -17,7 +17,7 @@ func TestClaims_GetRole(t *testing.T) {
 		{
 			name: "role from app_metadata",
 			claims: Claims{
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "admin",
 				},
 			},
@@ -33,7 +33,7 @@ func TestClaims_GetRole(t *testing.T) {
 		{
 			name: "app_metadata takes precedence",
 			claims: Claims{
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "admin",
 				},
 				Role: "user",
@@ -48,14 +48,14 @@ func TestClaims_GetRole(t *testing.T) {
 		{
 			name: "default to user when app_metadata empty",
 			claims: Claims{
-				AppMetadata: map[string]interface{}{},
+				AppMetadata: map[string]any{},
 			},
 			expected: RoleUser,
 		},
 		{
 			name: "default to user when app_metadata role is empty string",
 			claims: Claims{
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "",
 				},
 			},
@@ -64,7 +64,7 @@ func TestClaims_GetRole(t *testing.T) {
 		{
 			name: "handle non-string role in app_metadata",
 			claims: Claims{
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": 123,
 				},
 				Role: "admin",
@@ -236,7 +236,7 @@ func TestValidator_ValidateToken(t *testing.T) {
 			name: "valid token with user role",
 			token: createToken(Claims{
 				Email: "user@example.com",
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "user",
 				},
 			}, false),
@@ -248,7 +248,7 @@ func TestValidator_ValidateToken(t *testing.T) {
 			name: "valid token with admin role",
 			token: createToken(Claims{
 				Email: "admin@example.com",
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "admin",
 				},
 			}, false),

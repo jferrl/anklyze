@@ -80,7 +80,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 
 // UpdateProfile updates a user's expertise profile fields.
 func (r *UserRepository) UpdateProfile(ctx context.Context, id uuid.UUID, profile domain.UserProfileUpdate) error {
-	updates := make(map[string]interface{})
+	updates := make(map[string]any)
 
 	if profile.DisplayName != nil {
 		updates["display_name"] = *profile.DisplayName

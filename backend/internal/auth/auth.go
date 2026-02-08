@@ -33,10 +33,10 @@ var (
 // Claims represents Supabase JWT claims.
 type Claims struct {
 	jwt.RegisteredClaims
-	Email        string                 `json:"email"`
-	Role         string                 `json:"role"`
-	AppMetadata  map[string]interface{} `json:"app_metadata"`
-	UserMetadata map[string]interface{} `json:"user_metadata"`
+	Email        string         `json:"email"`
+	Role         string         `json:"role"`
+	AppMetadata  map[string]any `json:"app_metadata"`
+	UserMetadata map[string]any `json:"user_metadata"`
 }
 
 // GetRole extracts role from claims.
@@ -124,7 +124,7 @@ func (v *Validator) ValidateToken(tokenString string) (*Claims, error) {
 	if v.jwks != nil {
 		keyFunc = v.jwks.Keyfunc
 	} else if len(v.jwtSecret) > 0 {
-		keyFunc = func(token *jwt.Token) (interface{}, error) {
+		keyFunc = func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}

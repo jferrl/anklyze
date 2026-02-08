@@ -55,7 +55,7 @@ func (r *StudyRepository) Delete(ctx context.Context, id uuid.UUID) error {
 		// Clear study_id from all cases in this study
 		if err := tx.Model(&domain.Case{}).
 			Where("study_id = ?", id).
-			Updates(map[string]interface{}{
+			Updates(map[string]any{
 				"study_id":   nil,
 				"case_order": 0,
 			}).Error; err != nil {
@@ -97,7 +97,7 @@ func (r *StudyRepository) AddCase(ctx context.Context, studyID, caseID uuid.UUID
 	return r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ?", caseID).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"study_id":   studyID,
 			"case_order": caseOrder,
 			"updated_at": time.Now(),
@@ -109,7 +109,7 @@ func (r *StudyRepository) RemoveCase(ctx context.Context, studyID, caseID uuid.U
 	return r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND study_id = ?", caseID, studyID).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"study_id":   nil,
 			"case_order": 0,
 			"updated_at": time.Now(),
@@ -132,7 +132,7 @@ func (r *StudyRepository) ReorderCases(ctx context.Context, studyID uuid.UUID, c
 		for i, caseID := range caseIDs {
 			if err := tx.Model(&domain.Case{}).
 				Where("id = ? AND study_id = ?", caseID, studyID).
-				Updates(map[string]interface{}{
+				Updates(map[string]any{
 					"case_order": i,
 					"updated_at": time.Now(),
 				}).Error; err != nil {
@@ -265,7 +265,7 @@ func (r *StudyRepository) UpdateRaterProgress(ctx context.Context, studyID, user
 	return r.db.WithContext(ctx).
 		Model(&domain.StudyRater{}).
 		Where("study_id = ? AND user_id = ?", studyID, userID).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"cases_completed":  casesCompleted,
 			"last_response_at": now,
 		}).Error
@@ -280,7 +280,7 @@ func (r *StudyRepository) Activate(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Study{}).
 		Where("id = ? AND status = ?", id, domain.StudyStatusDraft).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"status":     domain.StudyStatusActive,
 			"updated_at": time.Now(),
 		}).Error
@@ -291,7 +291,7 @@ func (r *StudyRepository) Close(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Study{}).
 		Where("id = ?", id).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"status":     domain.StudyStatusClosed,
 			"updated_at": time.Now(),
 		}).Error
@@ -362,7 +362,7 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 		// Update counters
 		return tx.Model(&domain.Study{}).
 			Where("id = ?", studyID).
-			Updates(map[string]interface{}{
+			Updates(map[string]any{
 				"case_count":      caseCount,
 				"total_responses": totalResponses,
 				"unique_raters":   uniqueRaters,

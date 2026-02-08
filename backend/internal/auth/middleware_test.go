@@ -104,7 +104,7 @@ func TestAuthMiddleware(t *testing.T) {
 					Subject: "user-123",
 				},
 				Email: "user@example.com",
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "user",
 				},
 			}, testSecret),
@@ -122,7 +122,7 @@ func TestAuthMiddleware(t *testing.T) {
 					Subject: "admin-456",
 				},
 				Email: "admin@example.com",
-				AppMetadata: map[string]interface{}{
+				AppMetadata: map[string]any{
 					"role": "admin",
 				},
 			}, testSecret),
@@ -172,7 +172,7 @@ func TestAuthMiddleware(t *testing.T) {
 			}
 
 			if tt.expectedError != "" {
-				var resp map[string]interface{}
+				var resp map[string]any
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("failed to unmarshal response: %v", err)
 				}
@@ -245,7 +245,7 @@ func TestRequireRole(t *testing.T) {
 			router.Use(func(c *gin.Context) {
 				if tt.userRole != "" {
 					claims := &Claims{
-						AppMetadata: map[string]interface{}{
+						AppMetadata: map[string]any{
 							"role": tt.userRole,
 						},
 					}
@@ -483,7 +483,7 @@ func TestHelperFunctions(t *testing.T) {
 				name: "has user role checking user",
 				setup: func(c *gin.Context) {
 					c.Set(ContextKeyClaims, &Claims{
-						AppMetadata: map[string]interface{}{"role": "user"},
+						AppMetadata: map[string]any{"role": "user"},
 					})
 				},
 				role:     RoleUser,
@@ -493,7 +493,7 @@ func TestHelperFunctions(t *testing.T) {
 				name: "has user role checking admin",
 				setup: func(c *gin.Context) {
 					c.Set(ContextKeyClaims, &Claims{
-						AppMetadata: map[string]interface{}{"role": "user"},
+						AppMetadata: map[string]any{"role": "user"},
 					})
 				},
 				role:     RoleAdmin,
@@ -530,7 +530,7 @@ func TestHelperFunctions(t *testing.T) {
 				name: "user role",
 				setup: func(c *gin.Context) {
 					c.Set(ContextKeyClaims, &Claims{
-						AppMetadata: map[string]interface{}{"role": "user"},
+						AppMetadata: map[string]any{"role": "user"},
 					})
 				},
 				expected: false,
@@ -539,7 +539,7 @@ func TestHelperFunctions(t *testing.T) {
 				name: "admin role",
 				setup: func(c *gin.Context) {
 					c.Set(ContextKeyClaims, &Claims{
-						AppMetadata: map[string]interface{}{"role": "admin"},
+						AppMetadata: map[string]any{"role": "admin"},
 					})
 				},
 				expected: true,

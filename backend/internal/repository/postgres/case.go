@@ -153,7 +153,7 @@ func (r *CaseRepository) UpdateImage(ctx context.Context, image *domain.CaseImag
 	return r.db.WithContext(ctx).
 		Model(&domain.CaseImage{}).
 		Where("id = ?", image.ID).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"display_order": image.DisplayOrder,
 		}).Error
 }
@@ -185,7 +185,7 @@ func (r *CaseRepository) Publish(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND status = ?", id, domain.CaseStatusDraft).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"status":       domain.CaseStatusPublished,
 			"published_at": now,
 			"updated_at":   now,
@@ -198,7 +198,7 @@ func (r *CaseRepository) Close(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND status = ?", id, domain.CaseStatusPublished).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"status":     domain.CaseStatusClosed,
 			"closed_at":  now,
 			"updated_at": now,

@@ -179,7 +179,7 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 
 			// Check error code if expected
 			if tt.wantError != "" {
-				var response map[string]interface{}
+				var response map[string]any
 				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 					t.Fatalf("failed to parse response: %v", err)
 				}
