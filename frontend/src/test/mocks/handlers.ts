@@ -12,7 +12,6 @@ import {
   mockReliabilityMetrics,
   mockUser,
 } from './mockData'
-import { researchHandlers } from './researchHandlers'
 
 const API_BASE_URL = 'http://localhost:8080'
 
@@ -284,5 +283,4 @@ export const handlers = [
   ...analyticsHandlers,
   ...userHandlers,
   ...feedbackHandlers,
-  ...researchHandlers,
 ]

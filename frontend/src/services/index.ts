@@ -36,11 +36,6 @@ export {
 } from './core/errorHandling';
 
 // ================================
-// Research Services (Datasets)
-// ================================
-export * from './research';
-
-// ================================
 // Core - API Configuration
 // ================================
 export { API_BASE_URL } from './core/apiClient';

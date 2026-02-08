@@ -28,7 +28,6 @@ import { CaseDivergencePage } from './pages/admin/CaseDivergencePage';
 import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
-import { DatasetImportPage } from './pages/admin/DatasetImportPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppShell } from './components/layout';
@@ -261,23 +260,6 @@ function App() {
                       ]}
                     >
                       <StudyReliabilityPage />
-                    </AppShell>
-                  </ProtectedRoute>
-                }
-              />
-              {/* Admin Research Dataset Routes */}
-              <Route
-                path="/admin/research/datasets/:id/import"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin', href: '/admin' },
-                        { labelKey: 'datasets', href: '/admin/research/datasets' },
-                        { labelKey: 'importData' },
-                      ]}
-                    >
-                      <DatasetImportPage />
                     </AppShell>
                   </ProtectedRoute>
                 }

@@ -73,7 +73,6 @@ func main() {
 	var caseAnalyticsRepo repository.CaseAnalyticsRepository
 	var studyRepo repository.StudyRepository
 	var studyResponseRepo repository.StudyResponseRepository
-	var datasetRepo repository.DatasetRepository
 
 	// Database connection (captured for shutdown)
 	var db *gorm.DB
@@ -100,7 +99,6 @@ func main() {
 			caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
 			studyRepo = repository.NewNoOpStudyRepository()
 			studyResponseRepo = repository.NewNoOpStudyResponseRepository()
-			datasetRepo = repository.NewNoOpDatasetRepository()
 		} else {
 			if err := db.AutoMigrate(
 				&domain.AuditEntry{},
@@ -132,7 +130,6 @@ func main() {
 			caseAnalyticsRepo = postgres.NewCaseAnalyticsRepository(db)
 			studyRepo = postgres.NewStudyRepository(db)
 			studyResponseRepo = postgres.NewStudyResponseRepository(db)
-			datasetRepo = postgres.NewDatasetRepository(db)
 		}
 	} else {
 		slog.Info("no DATABASE_URL configured, audit trail disabled")
@@ -146,7 +143,6 @@ func main() {
 		caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
 		studyRepo = repository.NewNoOpStudyRepository()
 		studyResponseRepo = repository.NewNoOpStudyResponseRepository()
-		datasetRepo = repository.NewNoOpDatasetRepository()
 	}
 
 	// Create user service that orchestrates DB and Supabase operations
@@ -204,10 +200,6 @@ func main() {
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, statsService)
-
-	// Initialize dataset service (nil LLM client = regex-only normalization)
-	datasetService := service.NewDatasetService(datasetRepo, nil)
-	api.SetupDatasetRoutes(router, authValidator, userService, datasetService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
