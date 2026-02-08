@@ -25,7 +25,9 @@
     "editStudy": "Edit Study",
     "analytics": "Analytics",
     "reliability": "Reliability",
-    "divergence": "Divergence"
+    "divergence": "Divergence",
+    "datasets": "Datasets",
+    "importData": "Import Data"
   },
   "app": {
     "title": "Ankle Fracture Classification",
@@ -1102,6 +1104,49 @@
     "trainingLevels": {
       "resident": "Resident",
       "attending": "Attending Physician"
+    }
+  },
+  "research": {
+    "datasetNotFound": "Dataset not found",
+    "import": {
+      "title": "Import CSV Data",
+      "subtitle": "Import patient records into \"{{name}}\"",
+      "selectFile": "Select file",
+      "dragOrClick": "Drag and drop a CSV file, or click to browse",
+      "dropHere": "Drop CSV file here",
+      "maxSize": "Max file size: 50MB. Only .csv files.",
+      "fileTooLarge": "File exceeds the 50MB limit",
+      "invalidFileType": "Only CSV files are accepted",
+      "startImport": "Start Import",
+      "processing": "Processing your CSV file...",
+      "processingDesc": "Normalizing dates, mapping enums, and validating records.",
+      "importFailed": "Import failed. Please try again.",
+      "blockingErrors": "{{count}} blocking error(s) found. These must be fixed in the CSV file before importing.",
+      "warningsOnly": "{{count}} warning(s) found. You can proceed, but review the items below.",
+      "noIssues": "Validation passed with no issues.",
+      "errors": "Errors",
+      "warnings": "Warnings",
+      "row": "Row",
+      "global": "Global",
+      "confirm": "Confirm Import",
+      "success": "Import completed successfully",
+      "totalRows": "Total Rows",
+      "validRecords": "Valid Records",
+      "cleaned": "Cells Cleaned",
+      "warningsCount": "Warnings",
+      "pipelineDetails": "Pipeline Details",
+      "datesNormalized": "Dates normalized",
+      "enumsMapped": "Enums mapped",
+      "emptyRowsRemoved": "Empty rows removed",
+      "partialRecords": "Partial records",
+      "aiUsed": "AI-assisted normalization",
+      "extractions": "extractions",
+      "warningsSummary": "{{count}} warning(s) were recorded during import. Review the import log for details.",
+      "done": "Done",
+      "stepUpload": "Upload",
+      "stepProcessing": "Processing",
+      "stepValidation": "Validation",
+      "stepSummary": "Summary"
     }
   },
   "errors": {
