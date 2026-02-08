@@ -112,6 +112,10 @@ func main() {
 				&domain.CaseUser{},
 				&domain.Study{},
 				&domain.StudyRater{},
+				&domain.Dataset{},
+				&domain.DatasetRecord{},
+				&domain.ImportLogEntry{},
+				&domain.DatasetFilter{},
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
