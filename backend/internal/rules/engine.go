@@ -298,8 +298,8 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 	// Path: Low - check morphology
 	switch input.LateralMorphology {
 	case domain.LateralMorphologyTransverse:
-		// Need to check fibular level
-		if input.FibularLevel == domain.FibularLevelInfrasindesmal {
+		// Need to check fibular level for transverse sub-level
+		if input.FibularLevelForTransverse == domain.FibularLevelInfrasindesmal {
 			result.DanisWeber = &domain.DanisWeberClassification{
 				Type: domain.DanisWeberA,
 			}

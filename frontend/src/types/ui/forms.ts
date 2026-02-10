@@ -109,6 +109,12 @@ export interface FormOptions {
   /** Options for suprasyndesmotic fracture types */
   suprasindesmal_types: FormOption[];
 
+  /** Options for fibular level High/Low (lateral+medial and trimaleolar per MMD) */
+  fibular_level_high_low: FormOption[];
+
+  /** Options for fibular level sub-question for transverse morphology (infra/trans only) */
+  fibular_level_for_transverse: FormOption[];
+
   /** Options for fibula trace patterns */
   fibula_trace_patterns: FormOption[];
 

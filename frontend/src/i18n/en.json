@@ -129,7 +129,8 @@
       "suprasindesmal_type": "What type?",
       "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
       "has_ct_scan": "Do you have a CT scan?",
-      "fibula_trace_pattern": "What is the fibula fracture pattern?"
+      "fibula_trace_pattern": "What is the fibula fracture pattern?",
+      "fibular_level_for_transverse": "At what level is the fibular fracture?"
     },
     "options": {
       "involvedMalleoli": {
@@ -160,8 +161,15 @@
         "transindesmal": "Transsyndesmal",
         "suprasindesmal": "Suprasyndesmal"
       },
+      "fibularLevelHighLow": {
+        "high": "High (Suprasyndesmotic)",
+        "low": "Low (Transsyndesmotic / Infrasyndesmotic)"
+      },
+      "fibularLevelForTransverse": {
+        "infrasindesmal": "Infrasyndesmotic",
+        "transindesmal": "Transsyndesmotic"
+      },
       "lateralMorphology": {
-        "transverse": "Transverse",
         "oblique": "Transverse/Oblique (Low medial, high lateral)/Comminuted",
         "spiral": "Spiral (Low anterior, high posterior)"
       },

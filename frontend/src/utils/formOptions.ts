@@ -63,6 +63,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'fibula_trace_pattern',
       title: t('form.questions.fibula_trace_pattern'),
     },
+    fibular_level_for_transverse: {
+      id: 'fibular_level_for_transverse',
+      title: t('form.questions.fibular_level_for_transverse'),
+    },
   };
 
   // Labels
@@ -111,9 +115,8 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'suprasindesmal', label: t('form.options.fibularLevel.suprasindesmal') },
   ];
 
-  // Lateral morphology options
+  // Lateral morphology options (lateral-only and lateral+posterior: 2 options per MMD)
   const lateral_morphology: SelectOption[] = [
-    { value: 'transverse', label: t('form.options.lateralMorphology.transverse') },
     { value: 'oblique', label: t('form.options.lateralMorphology.oblique') },
     { value: 'spiral', label: t('form.options.lateralMorphology.spiral') },
   ];
@@ -130,6 +133,18 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'simple_diaphyseal', label: t('form.options.suprasindesmalType.simple_diaphyseal') },
     { value: 'multifragmentary', label: t('form.options.suprasindesmalType.multifragmentary') },
     { value: 'proximal', label: t('form.options.suprasindesmalType.proximal') },
+  ];
+
+  // Fibular level options for lateral+medial and trimaleolar (High/Low per MMD)
+  const fibular_level_high_low: SelectOption[] = [
+    { value: 'suprasindesmal', label: t('form.options.fibularLevelHighLow.high') },
+    { value: 'transindesmal', label: t('form.options.fibularLevelHighLow.low') },
+  ];
+
+  // Fibular level for transverse morphology sub-level (only Infra/Trans)
+  const fibular_level_for_transverse: SelectOption[] = [
+    { value: 'infrasindesmal', label: t('form.options.fibularLevelForTransverse.infrasindesmal') },
+    { value: 'transindesmal', label: t('form.options.fibularLevelForTransverse.transindesmal') },
   ];
 
   // Fibula trace pattern options
@@ -149,6 +164,8 @@ export function getLocalFormOptions(): FormOptions {
     lateral_morphology,
     fibula_morphology_lm_tri,
     suprasindesmal_types,
+    fibular_level_high_low,
+    fibular_level_for_transverse,
     fibula_trace_patterns,
   };
 }
@@ -185,6 +202,7 @@ export function getFieldOptions(fieldName: string): SelectOption[] {
     'lateral_morphology': options.lateral_morphology,
     'fibula_morphology_lm_tri': options.fibula_morphology_lm_tri,
     'suprasindesmal_type': options.suprasindesmal_types,
+    'fibular_level_for_transverse': options.fibular_level_for_transverse,
     'fibula_trace_pattern': options.fibula_trace_patterns,
   };
 

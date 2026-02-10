@@ -135,7 +135,8 @@
       "suprasindesmal_type": "¿De qué tipo?",
       "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
       "has_ct_scan": "¿Tiene TAC?",
-      "fibula_trace_pattern": "¿Cuál es el patrón de fractura del peroné?"
+      "fibula_trace_pattern": "¿Cuál es el patrón de fractura del peroné?",
+      "fibular_level_for_transverse": "¿A qué nivel está la fractura del peroné?"
     },
     "options": {
       "involvedMalleoli": {
@@ -166,8 +167,15 @@
         "transindesmal": "Transindesmal",
         "suprasindesmal": "Suprasindesmal"
       },
+      "fibularLevelHighLow": {
+        "high": "Alta (Suprasindesmal)",
+        "low": "Baja (Transindesmal / Infrasindesmal)"
+      },
+      "fibularLevelForTransverse": {
+        "infrasindesmal": "Infrasindesmal",
+        "transindesmal": "Transindesmal"
+      },
       "lateralMorphology": {
-        "transverse": "Transversa",
         "oblique": "Transversa/Oblicua (Baja medial, alta lateral)/Conminuta",
         "spiral": "Espiroidea (Baja anterior, alta posterior)"
       },

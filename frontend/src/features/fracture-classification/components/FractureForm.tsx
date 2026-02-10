@@ -89,6 +89,7 @@ function isFormComplete(formData: Partial<FractureInput>): boolean {
         return true;
       }
       if (!formData.lateral_morphology) return false;
+      if (formData.lateral_morphology === 'transverse' && !formData.fibular_level_for_transverse) return false;
       return true;
 
     case 'trimaleolar':
@@ -101,7 +102,11 @@ function isFormComplete(formData: Partial<FractureInput>): boolean {
         return true;
       }
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'transverse' && !formData.fibular_level_for_transverse) return false;
+      if (formData.lateral_morphology === 'transverse') {
+        if (!formData.fibular_level_for_transverse) return false;
+        // Transverse + infrasindesmal is impossible/exceptional - form complete, no CT needed
+        if (formData.fibular_level_for_transverse === 'infrasindesmal') return true;
+      }
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
       return true;
@@ -312,8 +317,26 @@ export function FractureForm() {
   }
 
   // Determine which questions to show based on form data (matching MMD decision tree)
+  const showMedialMorphology = formData.involved_malleoli &&
+    ['medial_only', 'lateral_medial'].includes(formData.involved_malleoli);
+
+  const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
+    formData.medial_morphology === 'oblique';
+
+  // For lateral_medial, fibular level only shows after medial morphology path is resolved:
+  // - transverse → show immediately
+  // - oblique + infra_transverse=false → show
+  // - oblique + infra_transverse=true → SA result, don't show
+  const lateralMedialReadyForFibularLevel = formData.involved_malleoli === 'lateral_medial' && (
+    formData.medial_morphology === 'transverse' ||
+    (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false)
+  );
+
   const showFibularLevel = formData.involved_malleoli &&
-    ['lateral_only', 'lateral_posterior', 'lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli);
+    (
+      ['lateral_only', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli) ||
+      lateralMedialReadyForFibularLevel
+    );
 
   // Skip morphology for lateral-only infrasyndesmotic and lateral+posterior infrasyndesmotic
   const skipLateralOnlyInfra = formData.involved_malleoli === 'lateral_only' &&
@@ -330,19 +353,22 @@ export function FractureForm() {
     formData.suprasindesmal_type !== undefined &&
     formData.suprasindesmal_type !== 'proximal';
 
-  const showMedialMorphology = formData.involved_malleoli &&
-    ['medial_only', 'lateral_medial'].includes(formData.involved_malleoli);
-
-  const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
-    formData.medial_morphology === 'oblique';
+  // Trimaleolar + Low + Transverse + Infrasindesmal is impossible - skip CT scan
+  const skipTrimaleolarTransverseInfra = formData.involved_malleoli === 'trimaleolar' &&
+    formData.lateral_morphology === 'transverse' &&
+    formData.fibular_level_for_transverse === 'infrasindesmal';
 
   const showCTScan = formData.involved_malleoli &&
     ['posterior_only', 'medial_posterior', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli) &&
-    !skipLateralPosteriorInfra;
+    !skipLateralPosteriorInfra &&
+    !skipTrimaleolarTransverseInfra;
 
   const showPosteriorType = showCTScan && formData.has_ct_scan === true;
 
   const showTrimaleolarTransverseLevel = formData.involved_malleoli === 'trimaleolar' &&
+    formData.lateral_morphology === 'transverse';
+
+  const showLateralMedialTransverseLevel = formData.involved_malleoli === 'lateral_medial' &&
     formData.lateral_morphology === 'transverse';
 
   // Create yes/no options for boolean questions
@@ -368,7 +394,9 @@ export function FractureForm() {
 
     // Fibular level
     if (formData.fibular_level) {
-      const option = options.fibular_levels?.find(
+      const isLMOrTri = ['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '');
+      const levelOptions = isLMOrTri ? options.fibular_level_high_low : options.fibular_levels;
+      const option = levelOptions?.find(
         opt => opt.value === formData.fibular_level
       );
       if (option) trail.push({ label: option.label, key: 'fibular_level' });
@@ -376,7 +404,9 @@ export function FractureForm() {
 
     // Lateral morphology
     if (formData.lateral_morphology) {
-      const option = options.lateral_morphology?.find(
+      const isLMOrTri = ['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '');
+      const morphOptions = isLMOrTri ? options.fibula_morphology_lm_tri : options.lateral_morphology;
+      const option = morphOptions?.find(
         opt => opt.value === formData.lateral_morphology
       );
       if (option) trail.push({ label: option.label, key: 'lateral_morphology' });
@@ -428,7 +458,7 @@ export function FractureForm() {
 
     // Fibular level for transverse
     if (formData.fibular_level_for_transverse) {
-      const option = options.fibular_levels?.find(
+      const option = options.fibular_level_for_transverse?.find(
         opt => opt.value === formData.fibular_level_for_transverse
       );
       if (option) trail.push({ label: option.label, key: 'fibular_level_for_transverse' });
@@ -512,14 +542,54 @@ export function FractureForm() {
         onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as InvolvedMalleoli })}
       />
 
+      {showMedialMorphology && (
+        <QuestionStep
+          question={{
+            id: 'medial_morphology',
+            title: (formData.involved_malleoli === 'lateral_medial'
+              ? options.questions.medial_morphology_lm?.title
+              : options.questions.medial_morphology?.title) || 'Medial fracture morphology?',
+          }}
+          value={formData.medial_morphology}
+          options={
+            formData.involved_malleoli === 'lateral_medial'
+              ? (options.medial_morphology_lm || [])
+              : (options.medial_morphology || [])
+          }
+          onChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
+        />
+      )}
+
+      {showBimaleolarInfraQuestion && (
+        <QuestionStep
+          question={{
+            id: 'fibula_infrasindesmal_transverse',
+            title: options.questions.fibula_infrasindesmal_transverse?.title || 'Is fibula fracture infrasindesmal AND transverse?',
+          }}
+          value={formData.fibula_infrasindesmal_transverse?.toString()}
+          options={yesNoOptions}
+          onChange={(value) => updateFormData({ ...formData, fibula_infrasindesmal_transverse: value === 'true' })}
+        />
+      )}
+
       {showFibularLevel && (
         <QuestionStep
           question={{
             id: 'fibular_level',
-            title: options.questions.fibular_level?.title || 'Fibular fracture level?',
+            title: (
+              formData.involved_malleoli === 'lateral_medial'
+                ? options.questions.fibular_level_lm?.title
+                : formData.involved_malleoli === 'trimaleolar'
+                  ? options.questions.fibular_level_tri?.title
+                  : options.questions.fibular_level?.title
+            ) || 'Fibular fracture level?',
           }}
           value={formData.fibular_level}
-          options={options.fibular_levels || []}
+          options={
+            ['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
+              ? (options.fibular_level_high_low || [])
+              : (options.fibular_levels || [])
+          }
           onChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
         />
       )}
@@ -531,7 +601,11 @@ export function FractureForm() {
             title: options.questions.lateral_morphology?.title || 'Lateral fracture morphology?',
           }}
           value={formData.lateral_morphology}
-          options={options.lateral_morphology || []}
+          options={
+            ['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
+              ? (options.fibula_morphology_lm_tri || [])
+              : (options.lateral_morphology || [])
+          }
           onChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
         />
       )}
@@ -560,30 +634,6 @@ export function FractureForm() {
         />
       )}
 
-      {showMedialMorphology && (
-        <QuestionStep
-          question={{
-            id: 'medial_morphology',
-            title: options.questions.medial_morphology?.title || 'Medial fracture morphology?',
-          }}
-          value={formData.medial_morphology}
-          options={options.medial_morphology || []}
-          onChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
-        />
-      )}
-
-      {showBimaleolarInfraQuestion && (
-        <QuestionStep
-          question={{
-            id: 'fibula_infrasindesmal_transverse',
-            title: options.questions.fibula_infrasindesmal_transverse?.title || 'Is fibula fracture infrasindesmal AND transverse?',
-          }}
-          value={formData.fibula_infrasindesmal_transverse?.toString()}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, fibula_infrasindesmal_transverse: value === 'true' })}
-        />
-      )}
-
       {showTrimaleolarTransverseLevel && (
         <QuestionStep
           question={{
@@ -591,7 +641,19 @@ export function FractureForm() {
             title: options.questions.fibular_level_for_transverse?.title || 'Fibular level for transverse fracture?',
           }}
           value={formData.fibular_level_for_transverse}
-          options={options.fibular_levels || []}
+          options={options.fibular_level_for_transverse || []}
+          onChange={(value) => updateFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
+        />
+      )}
+
+      {showLateralMedialTransverseLevel && (
+        <QuestionStep
+          question={{
+            id: 'fibular_level_for_transverse',
+            title: options.questions.fibular_level_for_transverse?.title || 'Fibular level for transverse fracture?',
+          }}
+          value={formData.fibular_level_for_transverse}
+          options={options.fibular_level_for_transverse || []}
           onChange={(value) => updateFormData({ ...formData, fibular_level_for_transverse: value as FibularLevel })}
         />
       )}
