@@ -35,7 +35,7 @@ function isFormComplete(formData: Partial<FractureInput>): boolean {
   const { involved_malleoli } = formData;
   if (!involved_malleoli) return false;
 
-  // Each path has different required fields
+  // Each path has different required fields based on MMD decision tree
   switch (involved_malleoli) {
     case 'posterior_only':
       if (formData.has_ct_scan === undefined) return false;
@@ -47,40 +47,60 @@ function isFormComplete(formData: Partial<FractureInput>): boolean {
 
     case 'lateral_only':
       if (!formData.fibular_level) return false;
-      if (formData.fibular_level === 'suprasindesmal' && !formData.lateral_morphology) {
-        return !!formData.suprasindesmal_type;
+      if (formData.fibular_level === 'infrasindesmal') return true;
+      if (formData.fibular_level === 'suprasindesmal') {
+        if (!formData.suprasindesmal_type) return false;
+        if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
+        return true;
       }
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'spiral' && formData.fibular_level === 'suprasindesmal') {
-        return !!formData.fibula_trace_pattern;
-      }
       return true;
 
     case 'medial_posterior':
-      if (!formData.medial_morphology) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
       return true;
 
     case 'lateral_posterior':
-      if (!formData.fibular_level || !formData.lateral_morphology) return false;
-      if (formData.fibular_level === 'suprasindesmal' && !formData.lateral_morphology && !formData.suprasindesmal_type) return false;
+      if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'infrasindesmal') return true;
+      if (formData.fibular_level === 'suprasindesmal') {
+        if (!formData.suprasindesmal_type) return false;
+        if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
+        if (formData.has_ct_scan === undefined) return false;
+        if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
+        return true;
+      }
+      if (!formData.lateral_morphology) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
       return true;
 
     case 'lateral_medial':
       if (!formData.medial_morphology) return false;
-      if (formData.medial_morphology === 'transverse' && formData.fibula_infrasindesmal_transverse === undefined) return false;
-      if (!formData.fibular_level || !formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'spiral' && formData.fibular_level === 'suprasindesmal' && !formData.fibula_trace_pattern) return false;
+      if (formData.medial_morphology === 'oblique') {
+        if (formData.fibula_infrasindesmal_transverse === undefined) return false;
+        if (formData.fibula_infrasindesmal_transverse === true) return true;
+      }
+      if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'suprasindesmal') {
+        if (!formData.suprasindesmal_type) return false;
+        if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
+        return true;
+      }
+      if (!formData.lateral_morphology) return false;
       return true;
 
     case 'trimaleolar':
       if (!formData.fibular_level) return false;
-      if (formData.fibular_level === 'suprasindesmal' && !formData.lateral_morphology && !formData.suprasindesmal_type) return false;
+      if (formData.fibular_level === 'suprasindesmal') {
+        if (!formData.suprasindesmal_type) return false;
+        if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
+        if (formData.has_ct_scan === undefined) return false;
+        if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
+        return true;
+      }
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'spiral' && formData.fibular_level === 'suprasindesmal' && !formData.fibula_trace_pattern) return false;
       if (formData.lateral_morphology === 'transverse' && !formData.fibular_level_for_transverse) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
@@ -110,7 +130,7 @@ function calculateProgress(formData: Partial<FractureInput>): { currentStep: num
     if (['lateral_only', 'lateral_posterior', 'lateral_medial', 'trimaleolar'].includes(type)) {
       estimatedTotal += 2; // fibular_level + lateral_morphology
     }
-    if (['medial_only', 'medial_posterior', 'lateral_medial'].includes(type)) {
+    if (['medial_only', 'lateral_medial'].includes(type)) {
       estimatedTotal += 1; // medial_morphology
     }
     if (['posterior_only', 'medial_posterior', 'lateral_posterior', 'trimaleolar'].includes(type)) {
@@ -119,7 +139,7 @@ function calculateProgress(formData: Partial<FractureInput>): { currentStep: num
     if (formData.fibular_level === 'suprasindesmal') {
       estimatedTotal += 1; // suprasindesmal_type or trace pattern
     }
-    if (type === 'lateral_medial' && formData.medial_morphology === 'transverse') {
+    if (type === 'lateral_medial' && formData.medial_morphology === 'oblique') {
       estimatedTotal += 1; // bimaleolar infra question
     }
   }
@@ -291,27 +311,36 @@ export function FractureForm() {
     );
   }
 
-  // Determine which questions to show based on form data
+  // Determine which questions to show based on form data (matching MMD decision tree)
   const showFibularLevel = formData.involved_malleoli &&
     ['lateral_only', 'lateral_posterior', 'lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli);
 
-  const showLateralMorphology = showFibularLevel && formData.fibular_level;
+  // Skip morphology for lateral-only infrasyndesmotic and lateral+posterior infrasyndesmotic
+  const skipLateralOnlyInfra = formData.involved_malleoli === 'lateral_only' &&
+    formData.fibular_level === 'infrasindesmal';
+  const skipLateralPosteriorInfra = formData.involved_malleoli === 'lateral_posterior' &&
+    formData.fibular_level === 'infrasindesmal';
+
+  const showLateralMorphology = showFibularLevel && formData.fibular_level &&
+    !skipLateralOnlyInfra && !skipLateralPosteriorInfra;
 
   const showSuprasindesmalType = formData.fibular_level === 'suprasindesmal';
 
-  const showFibulaTracePattern = formData.lateral_morphology === 'spiral' &&
-    formData.fibular_level === 'suprasindesmal';
+  const showFibulaTracePattern = formData.fibular_level === 'suprasindesmal' &&
+    formData.suprasindesmal_type !== undefined &&
+    formData.suprasindesmal_type !== 'proximal';
 
   const showMedialMorphology = formData.involved_malleoli &&
-    ['medial_only', 'medial_posterior', 'lateral_medial'].includes(formData.involved_malleoli);
+    ['medial_only', 'lateral_medial'].includes(formData.involved_malleoli);
 
   const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
-    formData.medial_morphology === 'transverse';
+    formData.medial_morphology === 'oblique';
 
   const showCTScan = formData.involved_malleoli &&
-    ['posterior_only', 'medial_posterior', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli);
+    ['posterior_only', 'medial_posterior', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli) &&
+    !skipLateralPosteriorInfra;
 
-  const showPosteriorType = formData.has_ct_scan === true;
+  const showPosteriorType = showCTScan && formData.has_ct_scan === true;
 
   const showTrimaleolarTransverseLevel = formData.involved_malleoli === 'trimaleolar' &&
     formData.lateral_morphology === 'transverse';

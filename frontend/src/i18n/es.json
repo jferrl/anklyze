@@ -135,7 +135,7 @@
       "suprasindesmal_type": "¿De qué tipo?",
       "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
       "has_ct_scan": "¿Tiene TAC?",
-      "fibula_trace_pattern": "¿Cómo es el trazo del peroné?"
+      "fibula_trace_pattern": "¿Cuál es el patrón de fractura del peroné?"
     },
     "options": {
       "involvedMalleoli": {
@@ -154,7 +154,7 @@
         "large_posterolateral": "Gran fragmento triangular posterolateral"
       },
       "medialMorphology": {
-        "oblique": "Oblicuo",
+        "oblique": "Oblicuo/Vertical",
         "transverse": "Transverso"
       },
       "medialMorphologyLM": {

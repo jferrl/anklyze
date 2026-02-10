@@ -6,7 +6,7 @@ export const flowchartEN = `flowchart TB
     B --> n2["Medial and posterior malleoli"]
     B --> n3["Lateral and posterior malleoli"]
     B --> n4["Lateral and medial malleoli"]
-    B --> n5["Medial, lateral and posterior malleoli"]
+    B --> n5["Medial, lateral, and posterior malleoli"]
 
     %% Posterior malleolus branch
     C --> n218{"Do you have a CT scan?"}
@@ -24,8 +24,8 @@ export const flowchartEN = `flowchart TB
     n10 --> n14["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 4"]
 
     %% Medial malleolus branch
-    D --> n15{"What morphology does it have?"}
-    n15 --> n16["Oblique"]
+    D --> n15{"What is the morphology?"}
+    n15 --> n16["Oblique/Vertical"]
     n15 --> n17["Transverse"]
     n16 --> n18["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA"]
     n17 --> n19["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen unclassifiable<br/>(could be PA/SER/PER)"]
@@ -51,15 +51,15 @@ export const flowchartEN = `flowchart TB
 
     %% Suprasyndesmotic with fibula trace pattern (Simple)
     n35 --> n286{"What is the fibula fracture pattern?"}
-    n286 --> n287["Short/transverse/comminuted"]
-    n286 --> n288["Long oblique/spiral"]
+    n286 --> n287["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n286 --> n288["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n287 --> n289["Unimalleolar lateral malleolus<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n288 --> n39["Unimalleolar lateral malleolus<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
 
     %% Suprasyndesmotic with fibula trace pattern (Multifragmentary)
     n36 --> n290{"What is the fibula fracture pattern?"}
-    n290 --> n291["Short/transverse/comminuted"]
-    n290 --> n292["Long oblique/spiral"]
+    n290 --> n291["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n290 --> n292["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n291 --> n293["Unimalleolar lateral malleolus<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n292 --> n40["Unimalleolar lateral malleolus<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -113,15 +113,15 @@ export const flowchartEN = `flowchart TB
 
     %% Suprasyndesmotic Simple - fibula pattern
     n54 --> n307{"What is the fibula fracture pattern?"}
-    n307 --> n308["Short/transverse/comminuted"]
-    n307 --> n309["Long oblique/spiral"]
+    n307 --> n308["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n307 --> n309["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n309 --> n230{"Do you have a CT scan?"}
     n308 --> n303{"Do you have a CT scan?"}
 
     %% Suprasyndesmotic Multifragmentary - fibula pattern
     n55 --> n310{"What is the fibula fracture pattern?"}
-    n310 --> n311["Short/transverse/comminuted"]
-    n310 --> n312["Long oblique/spiral"]
+    n310 --> n311["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n310 --> n312["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n312 --> n233{"Do you have a CT scan?"}
     n311 --> n313{"Do you have a CT scan?"}
 
@@ -249,15 +249,15 @@ export const flowchartEN = `flowchart TB
 
     %% Suprasyndesmotic Simple - fibula pattern
     n123 --> n336{"What is the fibula fracture pattern?"}
-    n336 --> n337["Short/transverse/comminuted"]
-    n336 --> n338["Long oblique/spiral"]
+    n336 --> n337["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n336 --> n338["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n337 --> n339["Bimalleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n338 --> n126["Bimalleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
 
     %% Suprasyndesmotic Multifragmentary - fibula pattern
     n124 --> n340{"What is the fibula fracture pattern?"}
-    n340 --> n341["Short/transverse/comminuted"]
-    n340 --> n342["Long oblique/spiral"]
+    n340 --> n341["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n340 --> n342["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n341 --> n343["Bimalleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n342 --> n127["Bimalleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -288,15 +288,15 @@ export const flowchartEN = `flowchart TB
 
     %% Trimalleolar Suprasyndesmotic Simple - fibula pattern
     n146 --> n345{"What is the fibula fracture pattern?"}
-    n345 --> n346["Short/transverse/comminuted"]
-    n345 --> n347["Long oblique/spiral"]
+    n345 --> n346["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n345 --> n347["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n347 --> n241{"Do you have a CT scan?"}
     n346 --> n348{"Do you have a CT scan?"}
 
     %% Trimalleolar Suprasyndesmotic Multifrag - fibula pattern
     n147 --> n363{"What is the fibula fracture pattern?"}
-    n363 --> n364["Short/transverse/comminuted"]
-    n363 --> n365["Long oblique/spiral"]
+    n363 --> n364["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
+    n363 --> n365["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
     n365 --> n245{"Do you have a CT scan?"}
     n364 --> n366{"Do you have a CT scan?"}
 

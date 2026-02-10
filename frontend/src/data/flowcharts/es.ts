@@ -25,7 +25,7 @@ export const flowchartES = `flowchart TB
 
     %% Rama maléolo medial
     D --> n15{"¿Qué morfología tiene?"}
-    n15 --> n16["Oblicuo"]
+    n15 --> n16["Oblicuo/Vertical"]
     n15 --> n17["Transverso"]
     n16 --> n18["Unimaleolar maléolo medial<br/>AO 44 A1<br/>Lauge-Hansen SA"]
     n17 --> n19["Unimaleolar maléolo medial<br/>AO 44 A1<br/>Lauge-Hansen no clasificable<br/>(podría ser PA/SER/PER)"]
@@ -51,15 +51,15 @@ export const flowchartES = `flowchart TB
 
     %% Suprasindesmal con trazo del peroné (Simple)
     n35 --> n286{"¿Cómo es el trazo del peroné?"}
-    n286 --> n287["Corto/transverso/conminuto"]
-    n286 --> n288["Oblicuo largo/espiroideo"]
+    n286 --> n287["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n286 --> n288["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n287 --> n289["Unimaleolar maléolo lateral<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n288 --> n39["Unimaleolar maléolo lateral<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
 
     %% Suprasindesmal con trazo del peroné (Multifragmentaria)
     n36 --> n290{"¿Cómo es el trazo del peroné?"}
-    n290 --> n291["Corto/transverso/conminuto"]
-    n290 --> n292["Oblicuo largo/espiroideo"]
+    n290 --> n291["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n290 --> n292["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n291 --> n293["Unimaleolar maléolo lateral<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n292 --> n40["Unimaleolar maléolo lateral<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -113,15 +113,15 @@ export const flowchartES = `flowchart TB
 
     %% Suprasindesmal Simple - trazo peroné
     n54 --> n307{"¿Cómo es el trazo del peroné?"}
-    n307 --> n308["Corto/transverso/conminuto"]
-    n307 --> n309["Oblicuo largo/espiroideo"]
+    n307 --> n308["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n307 --> n309["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n309 --> n230{"¿Tiene TAC?"}
     n308 --> n303{"¿Tiene TAC?"}
 
     %% Suprasindesmal Multifragmentaria - trazo peroné
     n55 --> n310{"¿Cómo es el trazo del peroné?"}
-    n310 --> n311["Corto/transverso/conminuto"]
-    n310 --> n312["Oblicuo largo/espiroideo"]
+    n310 --> n311["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n310 --> n312["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n312 --> n233{"¿Tiene TAC?"}
     n311 --> n313{"¿Tiene TAC?"}
 
@@ -249,15 +249,15 @@ export const flowchartES = `flowchart TB
 
     %% Suprasindesmal Simple - trazo peroné
     n123 --> n336{"¿Cómo es el trazo del peroné?"}
-    n336 --> n337["Corto/transverso/conminuto"]
-    n336 --> n338["Oblicuo largo/espiroideo"]
+    n336 --> n337["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n336 --> n338["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n337 --> n339["Bimaleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n338 --> n126["Bimaleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
 
     %% Suprasindesmal Multifragmentaria - trazo peroné
     n124 --> n340{"¿Cómo es el trazo del peroné?"}
-    n340 --> n341["Corto/transverso/conminuto"]
-    n340 --> n342["Oblicuo largo/espiroideo"]
+    n340 --> n341["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n340 --> n342["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n341 --> n343["Bimaleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n342 --> n127["Bimaleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -288,15 +288,15 @@ export const flowchartES = `flowchart TB
 
     %% Trimaleolar Suprasindesmal Simple - trazo peroné
     n146 --> n345{"¿Cómo es el trazo del peroné?"}
-    n345 --> n346["Corto/transverso/conminuto"]
-    n345 --> n347["Oblicuo largo/espiroideo"]
+    n345 --> n346["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n345 --> n347["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n347 --> n241{"¿Tiene TAC?"}
     n346 --> n348{"¿Tiene TAC?"}
 
     %% Trimaleolar Suprasindesmal Multifrag - trazo peroné
     n147 --> n363{"¿Cómo es el trazo del peroné?"}
-    n363 --> n364["Corto/transverso/conminuto"]
-    n363 --> n365["Oblicuo largo/espiroideo"]
+    n363 --> n364["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
+    n363 --> n365["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
     n365 --> n245{"¿Tiene TAC?"}
     n364 --> n366{"¿Tiene TAC?"}
 

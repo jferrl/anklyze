@@ -129,7 +129,7 @@
       "suprasindesmal_type": "What type?",
       "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
       "has_ct_scan": "Do you have a CT scan?",
-      "fibula_trace_pattern": "What is the fibula trace pattern?"
+      "fibula_trace_pattern": "What is the fibula fracture pattern?"
     },
     "options": {
       "involvedMalleoli": {
@@ -148,7 +148,7 @@
         "large_posterolateral": "Large posterolateral triangular fragment"
       },
       "medialMorphology": {
-        "oblique": "Oblique",
+        "oblique": "Oblique/Vertical",
         "transverse": "Transverse"
       },
       "medialMorphologyLM": {

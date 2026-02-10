@@ -269,7 +269,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 	}
 
 	// Path: High (suprasindesmal)
-	if input.FibularLevelForTransverse == domain.FibularLevelSuprasindesmal {
+	if input.FibularLevel == domain.FibularLevelSuprasindesmal {
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberC,
 		}

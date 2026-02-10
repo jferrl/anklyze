@@ -66,6 +66,12 @@ Update the classification logic in `backend/internal/rules/engine.go`:
 - Update impossible case handling
 - **IMPORTANT**: Backend should return only codes/keys (e.g., `"type": "Weber A"`, `"fracture_type": "unimaleolar_lateral"`), NOT translated descriptions
 
+**Backend field mapping validation:**
+
+- For each `classify*()` function, verify that the `input.FieldName` references match the fields the form actually sends
+- Common pitfall: using `input.FibularLevelForTransverse` when the form sends `input.FibularLevel` (or vice versa)
+- Check that conditional branches use the correct field for each path (e.g., suprasyndesmotic paths should check `SuprasindesmalType` and `FibulaTracePattern`, NOT `LateralMorphology`)
+
 **Backend i18n usage (limited scope):**
 - `backend/internal/i18n/en.go` and `es.go` are **only for**:
   - LLM system prompts (in `backend/internal/llm/prompts.go`)
@@ -86,6 +92,7 @@ Update tests in `backend/internal/rules/engine_test.go` to match the new rules:
 - Test expectations should check for codes/keys, NOT translated descriptions
 - Example: `result.FractureType` should be `"unimaleolar_lateral"` (key), not `"Lateral malleolus fracture"` (translation)
 - Example: `result.ImpossibleKey` should be `"sa_mechanism"` (key), not `"SA mechanism not possible"` (translation)
+- **IMPORTANT**: When engine.go field references change, test input structs must match. If the engine checks `input.FibularLevel`, the test must set `fibularLevel` (not `fibularLevelForTransverse`)
 
 ## 5. Update Frontend Translation Utilities
 Update `frontend/src/utils/classificationTranslations.ts`:
@@ -105,10 +112,46 @@ Update translation files to include new keys:
 - `frontend/src/i18n/es.json`
 
 ## 6. Update Frontend Form Logic
-Update `frontend/src/components/FractureForm.tsx`:
-- Update visibility conditions (`showLateralMorphologyInfra`, `showLPMorphologyInfra`, etc.)
-- Update `isFormComplete()` validation logic
-- Update form UI rendering as needed
+Update `frontend/src/features/fracture-classification/components/FractureForm.tsx`:
+
+### 6.1 Show/Hide Flags - Path-by-Path MMD Validation
+
+For **each of the 7 `involved_malleoli` paths**, trace through the MMD decision tree and verify:
+
+- Which questions appear on that path in the MMD
+- Which questions the form shows via its `show*` flags
+
+**Critical checks (common sources of bugs):**
+
+- `showMedialMorphology`: Should ONLY include malleoli combinations where the MMD asks about medial morphology. Do NOT include `medial_posterior` (MMD skips medial morphology for that path).
+- `showBimaleolarInfraQuestion`: Triggers for `lateral_medial` when medial morphology is **oblique** (not transverse). The MMD asks "Is fibula fracture infrasyndesmotic and transverse?" only after the oblique/vertical branch.
+- `showFibulaTracePattern`: Should check `suprasindesmal_type` exists and is NOT `proximal`. Must NOT check `lateral_morphology === 'spiral'` — morphology is not asked for suprasyndesmotic paths.
+- `showLateralMorphology`: Must skip for infrasyndesmotic paths where the MMD goes directly to a result (lateral-only infra, lateral+posterior infra).
+- `showCTScan`: Must exclude paths where posterior malleolus is impossible (e.g., lateral+posterior infrasyndesmotic).
+- `showPosteriorType`: Must depend on `showCTScan` being true AND `has_ct_scan === true`, not just `has_ct_scan === true` alone.
+
+### 6.2 `isFormComplete()` - Terminal Node Validation
+
+For **each `involved_malleoli` case**, verify the function returns `true` exactly when the form has collected enough data to reach a terminal node (result) in the MMD.
+
+**Critical checks:**
+
+- **Infrasyndesmotic shortcuts**: `lateral_only` + infra and `lateral_posterior` + infra should return `true` immediately (no morphology needed).
+- **Suprasyndesmotic paths**: Should require `suprasindesmal_type`. If type is NOT `proximal`, also require `fibula_trace_pattern`. Should NOT require `lateral_morphology`.
+- **`lateral_medial` oblique shortcut**: If `medial_morphology === 'oblique'` and `fibula_infrasindesmal_transverse === true`, the form is complete (SA path).
+- **`lateral_medial` transverse path**: Transverse medial goes directly to fibular level question (no infra question).
+- **`medial_posterior`**: Does NOT require `medial_morphology` (MMD goes straight to CT scan).
+
+### 6.3 `calculateProgress()` Consistency
+
+Ensure the estimated step counts match the show/hide flags:
+
+- The malleoli lists in `calculateProgress` must match those in the show/hide flags (e.g., if `showMedialMorphology` excludes `medial_posterior`, so must `calculateProgress`).
+- The bimaleolar infra question condition must use the same morphology value as `showBimaleolarInfraQuestion`.
+
+### 6.4 Form Options
+
+Update `frontend/src/utils/formOptions.ts` if new options are added or existing ones change.
 
 ## 7. Update Frontend API Service
 Update `frontend/src/services/api.ts`:
@@ -118,12 +161,34 @@ Update `frontend/src/services/api.ts`:
 - **Error handling**: API returns `error_code` field (not `error`), frontend translates using `i18n.t(\`errors.\${error_code}\`)`
 - Example error codes: `invalid_input`, `classification_error`, `chat_unavailable`, `session_limit_exceeded`
 
-## 8. Update Frontend Flowcharts
+## 8. Update Frontend Flowcharts (Embedded MMD)
+
 Update flowchart diagrams in:
+
 - `frontend/src/data/flowcharts/en.ts`
 - `frontend/src/data/flowcharts/es.ts`
 
-## 9. Update E2E Tests
+**Label parity checks — compare embedded MMD against reference MMD node by node:**
+
+- Question text must match exactly (e.g., "What is the morphology?" not "What morphology does it have?")
+- Option labels must match exactly (e.g., "Oblique/Vertical" not just "Oblique")
+- Trace pattern labels must use full reference text (e.g., "Parasyndesmotic with short oblique/transverse/comminuted pattern" not just "Short/transverse/comminuted")
+- Check Oxford commas in lists (e.g., "Medial, lateral, and posterior malleoli")
+- Verify Bartonicek values on terminal nodes are correct (1-4 mapping)
+
+## 9. Update Translation Labels (i18n)
+
+Update `frontend/src/i18n/en.json` and `frontend/src/i18n/es.json`:
+
+**Cross-reference checks:**
+
+- `form.questions.*` keys must match the MMD question text for each node
+- `form.options.*` labels must match the MMD option labels for each node
+- Common pitfall: question uses "trace" when MMD says "fracture" (e.g., "fibula trace pattern" vs "fibula fracture pattern")
+- Common pitfall: medialMorphology.oblique says "Oblique" when MMD says "Oblique/Vertical"
+- Ensure both `medialMorphology` and `medialMorphologyLM` are consistent when they should be
+
+## 10. Update E2E Tests
 Update test expectations in:
 - `e2e/fixtures/test-data.ts` - Update expected results
 - `e2e/tests/classification/lateral-only.spec.ts`
@@ -131,14 +196,14 @@ Update test expectations in:
 - `e2e/tests/classification/lateral-medial.spec.ts`
 - `e2e/tests/classification/trimaleolar.spec.ts`
 
-## 10. Run Tests
+## 11. Run Tests
 Run all tests to verify changes:
 ```bash
 # Backend tests
 cd backend && go test ./...
 
-# E2E tests
-cd e2e && npm run test
+# Frontend type check
+cd frontend && npx tsc --noEmit
 ```
 
 ## Key Files Reference
@@ -164,16 +229,19 @@ cd e2e && npm run test
 - `backend/internal/llm/prompts.go` - LLM system prompts (MUST use i18n for Gemini API)
 
 ### Frontend
-- `frontend/src/components/FractureForm.tsx` - Form component
-- `frontend/src/components/ClassificationResult.tsx` - Results display component
+
+- `frontend/src/features/fracture-classification/components/FractureForm.tsx` - Form component (show/hide flags, isFormComplete, calculateProgress)
+- `frontend/src/features/fracture-classification/hooks/useFormState.ts` - Form state management with undo history
+- `frontend/src/utils/formOptions.ts` - Form question definitions and select options
 - `frontend/src/utils/classificationTranslations.ts` - Translation helper functions (maps backend codes to i18n keys)
 - `frontend/src/services/api.ts` - API service (translates `error_code` to user messages)
 - `frontend/src/i18n/en.json` - English translations (includes `errors.*` for API error codes, `results.*` for classifications, `admin.reliability.*` for stats)
 - `frontend/src/i18n/es.json` - Spanish translations (same structure as en.json)
 - `frontend/src/i18n/config.ts` - i18n configuration and utilities
-- `frontend/src/data/flowcharts/en.ts` - English flowchart
-- `frontend/src/data/flowcharts/es.ts` - Spanish flowchart
-- `frontend/src/types/fracture.ts` - TypeScript types
+- `frontend/src/data/flowcharts/en.ts` - English flowchart (embedded MMD)
+- `frontend/src/data/flowcharts/es.ts` - Spanish flowchart (embedded MMD)
+- `frontend/src/types/domain/fracture.ts` - TypeScript domain types (FractureInput interface)
+- `frontend/src/types/fracture.ts` - Re-export barrel file (deprecated, imports from domain/)
 
 ### E2E Tests
 - `e2e/fixtures/test-data.ts` - Expected results
