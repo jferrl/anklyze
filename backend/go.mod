@@ -3,7 +3,7 @@ module github.com/jferrl/anklyze
 go 1.25.0
 
 require (
-	github.com/MicahParks/keyfunc/v3 v3.7.0
+	github.com/MicahParks/keyfunc/v3 v3.8.0
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
@@ -12,7 +12,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/swaggo/swag v1.16.6
 	golang.org/x/time v0.14.0
-	google.golang.org/genai v1.45.0
+	google.golang.org/genai v1.46.0
 	gorm.io/datatypes v1.2.7
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/driver/sqlite v1.6.0
