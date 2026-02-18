@@ -287,7 +287,7 @@ function WelcomeScreen({
       <div className="w-full max-w-lg space-y-3">
         {examples.map((example, i) => (
           <button
-            key={i}
+            key={example}
             onClick={() => onSelectExample(example)}
             className="w-full text-left p-4 rounded-xl glass-card border border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 group card-hover"
             style={{ animationDelay: `${i * 100}ms` }}
@@ -510,7 +510,7 @@ function ClarificationCard({ clarifications, onAnswer, isLoading }: Clarificatio
       <CardContent className="pt-0 space-y-4">
         {clarifications.map((clarification, index) => (
           <div
-            key={`${clarification.field}-${index}`}
+            key={clarification.field}
             className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
             style={{ animationDelay: `${index * 100}ms` }}
           >

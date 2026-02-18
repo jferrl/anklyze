@@ -9,11 +9,6 @@ export * from './classification/classificationService';
 export * from './chat/chatService';
 
 // ================================
-// Analytics Service
-// ================================
-export * from './analytics/analyticsService';
-
-// ================================
 // Feedback Service
 // ================================
 export * from './feedback/feedbackService';

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -26,18 +26,14 @@ function SelectionCard({
   id,
 }: SelectionCardProps) {
   const [showPulse, setShowPulse] = useState(false)
+  const pulseTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
 
-  // Trigger pulse animation when selected
-  useEffect(() => {
-    if (selected) {
-      const startTimer = setTimeout(() => setShowPulse(true), 0)
-      const endTimer = setTimeout(() => setShowPulse(false), 400)
-      return () => {
-        clearTimeout(startTimer)
-        clearTimeout(endTimer)
-      }
-    }
-  }, [selected])
+  const handleSelect = () => {
+    onSelect()
+    setShowPulse(true)
+    if (pulseTimerRef.current) clearTimeout(pulseTimerRef.current)
+    pulseTimerRef.current = setTimeout(() => setShowPulse(false), 400)
+  }
 
   return (
     <button
@@ -45,7 +41,7 @@ function SelectionCard({
       role="radio"
       aria-checked={selected}
       disabled={disabled}
-      onClick={onSelect}
+      onClick={handleSelect}
       data-value={value}
       data-selected={selected}
       id={id}

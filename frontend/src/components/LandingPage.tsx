@@ -149,8 +149,8 @@ export function LandingPage() {
                 { value: '4', label: 'Classification Systems' },
                 { value: '100%', label: 'Accurate Results' },
                 { value: '<1s', label: 'Response Time' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center px-6">
+              ].map((stat) => (
+                <div key={stat.label} className="text-center px-6">
                   <div className="text-4xl font-bold text-gradient">{stat.value}</div>
                   <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                 </div>
@@ -175,9 +175,9 @@ export function LandingPage() {
 
           {/* Bento Grid */}
           <div className="grid md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <Card
-                key={index}
+                key={feature.title}
                 className={`group relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-500 card-hover spotlight ${feature.className}`}
               >
                 <CardContent className="p-6 h-full flex flex-col">
@@ -216,7 +216,7 @@ export function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {steps.map((step, index) => (
-              <div key={index} className="relative group">
+              <div key={step.number} className="relative group">
                 {/* Connector line */}
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-16 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-primary/50 to-transparent" />

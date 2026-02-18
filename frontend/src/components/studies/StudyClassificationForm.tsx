@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Loader2, Sparkles } from 'lucide-react';
 import type {
   FractureInput,
-  FormOptions,
   ClassificationResult,
   InvolvedMalleoli,
   PosteriorFractureType,
@@ -14,6 +13,7 @@ import type {
   FibulaTracePattern,
 } from '@/types';
 import { getLocalFormOptions } from '../../utils/formOptions';
+import { useQuestionVisibility } from './useQuestionVisibility';
 import { Button } from '@/components/ui/button';
 import { QuestionCard, QuestionCardHeader, QuestionCardTitle, QuestionCardContent } from '@/components/ui/question-card';
 import { SelectionCard } from '@/components/ui/selection-card';
@@ -44,31 +44,40 @@ interface CaseClassificationFormProps {
 
 export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassificationFormProps) {
   const { t, i18n } = useTranslation();
-  const [options, setOptions] = useState<FormOptions | null>(null);
-  const [formData, setFormData] = useState<Partial<FractureInput>>(() => {
-    // Auto-set has_ct_scan if study has TAC images
-    if (hasTACImages) {
-      return { has_ct_scan: true };
-    }
-    return {};
-  });
-  const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
+  const [formState, setFormState] = useState<{
+    data: Partial<FractureInput>;
+    history: Partial<FractureInput>[];
+    loading: boolean;
+    error: string | null;
+  }>(() => ({
+    data: hasTACImages ? { has_ct_scan: true } : {},
+    history: [],
+    loading: false,
+    error: null,
+  }));
+  const { data: formData, history: formHistory, loading, error } = formState;
+  const setFormData = (data: Partial<FractureInput>) => setFormState(prev => ({ ...prev, data }));
+  const setFormHistory = (updater: Partial<FractureInput>[] | ((prev: Partial<FractureInput>[]) => Partial<FractureInput>[])) =>
+    setFormState(prev => ({ ...prev, history: typeof updater === 'function' ? updater(prev.history) : updater }));
   const formEndRef = useRef<HTMLDivElement>(null);
 
-  // Answer tracking state for divergence analysis
+  // Answer tracking state consolidated for divergence analysis
   const startTimeRef = useRef<number>(Date.now());
-  const [answerPath, setAnswerPath] = useState<QuestionAnswer[]>([]);
-  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
-  const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({});
-  const [backClicks, setBackClicks] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
-
-  // Re-load options when language changes
-  useEffect(() => {
-    setOptions(getLocalFormOptions());
-  }, [i18n.language]);
+  const [tracking, setTracking] = useState<{
+    answerPath: QuestionAnswer[];
+    questionStartTime: number;
+    timePerQuestion: Record<string, number>;
+    backClicks: number;
+    currentQuestion: string | null;
+  }>(() => ({
+    answerPath: [],
+    questionStartTime: Date.now(),
+    timePerQuestion: {},
+    backClicks: 0,
+    currentQuestion: null,
+  }));
 
   // Smooth scroll to new question when form advances
   useEffect(() => {
@@ -90,7 +99,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
     if (formHistory.length === 0) return;
 
     // Track back click for divergence analysis
-    setBackClicks(prev => prev + 1);
+    setTracking(prev => ({ ...prev, backClicks: prev.backClicks + 1 }));
 
     const previousState = formHistory[formHistory.length - 1];
     setFormHistory(prev => prev.slice(0, -1));
@@ -102,134 +111,60 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
   // Update form data helper with answer tracking
   const updateFormData = useCallback((newData: Partial<FractureInput>) => {
     const now = Date.now();
-    const elapsed = now - questionStartTime;
 
-    // Record time spent on previous question
-    if (currentQuestion) {
-      setTimePerQuestion(prev => ({
-        ...prev,
-        [currentQuestion]: (prev[currentQuestion] || 0) + elapsed
-      }));
-    }
+    setTracking(prev => {
+      const elapsed = now - prev.questionStartTime;
+      const newTimePerQuestion = prev.currentQuestion
+        ? { ...prev.timePerQuestion, [prev.currentQuestion]: (prev.timePerQuestion[prev.currentQuestion] || 0) + elapsed }
+        : prev.timePerQuestion;
 
-    // Find what changed to record the answer
-    const changedKeys = Object.keys(newData).filter(
-      key => newData[key as keyof FractureInput] !== formData[key as keyof FractureInput]
-    );
+      // Find what changed to record the answer
+      const changedKeys = Object.keys(newData).filter(
+        key => newData[key as keyof FractureInput] !== formData[key as keyof FractureInput]
+      );
 
-    // Record each new answer
-    for (const key of changedKeys) {
-      const value = newData[key as keyof FractureInput];
-      if (value !== undefined && value !== null) {
-        setAnswerPath(prev => [...prev, {
-          question: key,
-          answer: String(value),
-          timestamp: now - startTimeRef.current
-        }]);
-        // Update current question for time tracking
-        setCurrentQuestion(key);
+      const newAnswers: QuestionAnswer[] = [];
+      let lastQuestion = prev.currentQuestion;
+      for (const key of changedKeys) {
+        const value = newData[key as keyof FractureInput];
+        if (value !== undefined && value !== null) {
+          newAnswers.push({ question: key, answer: String(value), timestamp: now - startTimeRef.current });
+          lastQuestion = key;
+        }
       }
-    }
 
-    // Reset timer for next question
-    setQuestionStartTime(now);
+      return {
+        answerPath: [...prev.answerPath, ...newAnswers],
+        questionStartTime: now,
+        timePerQuestion: newTimePerQuestion,
+        backClicks: prev.backClicks,
+        currentQuestion: lastQuestion,
+      };
+    });
 
     pushToHistory();
     setFormData(newData);
-  }, [pushToHistory, questionStartTime, currentQuestion, formData]);
+  }, [pushToHistory, formData]);
 
-  // Determine which questions to show
+  // Shared question visibility logic, isFormComplete, and calculateProgress
+  const {
+    showPosteriorHasCTScan, showPosteriorType,
+    showMedialMorphology,
+    showLateralLevel, showLateralMorphologyTrans, showSuprasindesmalType, showLateralFibulaTracePattern,
+    showLateralPosteriorLevel, showLPMorphologyTrans,
+    showLPHasCTScanTransSpiral, showLPPosteriorTypeTransSpiral,
+    showLPHasCTScanTransOblique, showLPPosteriorTypeTransOblique,
+    showLPSuprasindesmalType, showLPFibulaTracePattern,
+    showLPHasCTScanSupra, showLPPosteriorTypeSupra,
+    showLMMedialMorphology, showLMFibulaInfraTransverse, showLMFibularLevel,
+    showLMSuprasindesmalType, showLMFibulaTracePattern, showLMFibularMorphology,
+    showMedialPosteriorMorphology, showMPHasCTScan, showMPPosteriorType,
+    showTrimaleolarFibularHeight, showTrimaleolarSupraType, showTriFibulaTracePattern,
+    showTriHasCTScan, showTriPosteriorType, showTriLateralMorphologyTransComplete,
+    isFormComplete, calculateProgress,
+  } = useQuestionVisibility(formData, hasTACImages);
+
   const involvedMalleoli = formData.involved_malleoli;
-
-  // PATH: Posterior only - CT scan question (auto-answered if TAC images)
-  const showPosteriorHasCTScan = involvedMalleoli === 'posterior_only' && !hasTACImages;
-  const showPosteriorType = involvedMalleoli === 'posterior_only' && formData.has_ct_scan === true;
-
-  // PATH: Medial only
-  const showMedialMorphology = involvedMalleoli === 'medial_only';
-
-  // PATH: Lateral only
-  const showLateralLevel = involvedMalleoli === 'lateral_only';
-  const showLateralMorphologyTrans = showLateralLevel && formData.fibular_level === 'transindesmal';
-  const showSuprasindesmalType = showLateralLevel && formData.fibular_level === 'suprasindesmal';
-  const showLateralFibulaTracePattern = showSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-
-  // PATH: Lateral + Posterior
-  const showLateralPosteriorLevel = involvedMalleoli === 'lateral_posterior';
-  const showLPMorphologyTrans = showLateralPosteriorLevel && formData.fibular_level === 'transindesmal';
-  const showLPHasCTScanTransSpiral = showLPMorphologyTrans && formData.lateral_morphology === 'spiral' && !hasTACImages;
-  const showLPPosteriorTypeTransSpiral = showLPMorphologyTrans && formData.lateral_morphology === 'spiral' && formData.has_ct_scan === true;
-  const showLPHasCTScanTransOblique = showLPMorphologyTrans && formData.lateral_morphology === 'oblique' && !hasTACImages;
-  const showLPPosteriorTypeTransOblique = showLPMorphologyTrans && formData.lateral_morphology === 'oblique' && formData.has_ct_scan === true;
-  const showLPSuprasindesmalType = showLateralPosteriorLevel && formData.fibular_level === 'suprasindesmal';
-  const showLPFibulaTracePattern = showLPSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showLPHasCTScanSupra = (showLPFibulaTracePattern ||
-    (showLPSuprasindesmalType && formData.suprasindesmal_type === 'proximal')) && !hasTACImages;
-  const showLPPosteriorTypeSupra = (showLPFibulaTracePattern ||
-    (showLPSuprasindesmalType && formData.suprasindesmal_type === 'proximal')) && formData.has_ct_scan === true;
-
-  // PATH: Lateral + Medial
-  const showLMMedialMorphology = involvedMalleoli === 'lateral_medial';
-  const showLMFibulaInfraTransverse = showLMMedialMorphology && formData.medial_morphology === 'oblique';
-  const showLMFibularLevel = showLMMedialMorphology && (
-    (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false) ||
-    formData.medial_morphology === 'transverse'
-  );
-  const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level_for_transverse === 'suprasindesmal';
-  const showLMFibulaTracePattern = showLMSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showLMFibularMorphology = showLMFibularLevel &&
-    (formData.fibular_level_for_transverse === 'infrasindesmal' || formData.fibular_level_for_transverse === 'transindesmal');
-
-  // PATH: Medial + Posterior
-  const showMedialPosteriorMorphology = involvedMalleoli === 'medial_posterior';
-  const showMPHasCTScan = showMedialPosteriorMorphology && !hasTACImages;
-  const showMPPosteriorType = showMedialPosteriorMorphology && formData.has_ct_scan === true;
-
-  // PATH: Trimaleolar
-  const showTrimaleolarFibularHeight = involvedMalleoli === 'trimaleolar';
-  const showTrimaleolarSupraType = showTrimaleolarFibularHeight && formData.fibular_level === 'suprasindesmal';
-  const showTriFibulaTracePattern = showTrimaleolarSupraType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showTriHasCTScan = (showTriFibulaTracePattern ||
-    (showTrimaleolarSupraType && formData.suprasindesmal_type === 'proximal') ||
-    (showTrimaleolarFibularHeight && (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal'))) && !hasTACImages;
-  const showTriPosteriorType = showTriHasCTScan === false && showTrimaleolarFibularHeight && formData.has_ct_scan === true;
-  const showTriLateralMorphologyTrans = showTrimaleolarFibularHeight && formData.fibular_level === 'transindesmal';
-  const showTriLateralMorphologyTransComplete = showTriLateralMorphologyTrans && (formData.has_ct_scan === true || hasTACImages);
-
-  // Calculate progress
-  const calculateProgress = useCallback((): number => {
-    if (!involvedMalleoli) return 0;
-
-    let totalSteps = 1; // involved_malleoli is always step 1
-    let completedSteps = 1;
-
-    // Different paths have different numbers of steps
-    switch (involvedMalleoli) {
-      case 'posterior_only':
-        totalSteps = formData.has_ct_scan ? 3 : 2;
-        if (formData.has_ct_scan !== undefined) completedSteps++;
-        if (formData.posterior_fracture_type) completedSteps++;
-        break;
-      case 'medial_only':
-        totalSteps = 2;
-        if (formData.medial_morphology) completedSteps++;
-        break;
-      case 'lateral_only':
-        totalSteps = 3;
-        if (formData.fibular_level) completedSteps++;
-        if (formData.lateral_morphology || formData.suprasindesmal_type) completedSteps++;
-        break;
-      default:
-        totalSteps = 4;
-        completedSteps = Math.min(Object.keys(formData).length, totalSteps);
-    }
-
-    return Math.round((completedSteps / totalSteps) * 100);
-  }, [involvedMalleoli, formData]);
 
   // Build decision path string from form data
   const buildDecisionPath = useCallback((): string => {
@@ -251,88 +186,29 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
 
   // Get answer tracking data
   const getAnswerTracking = useCallback((): AnswerTracking => ({
-    answerPath,
+    answerPath: tracking.answerPath,
     decisionPath: buildDecisionPath(),
-    timePerQuestion,
-    backClicks
-  }), [answerPath, buildDecisionPath, timePerQuestion, backClicks]);
-
-  // Check if form is complete
-  const isFormComplete = useCallback((): boolean => {
-    if (!involvedMalleoli) return false;
-
-    // Simplified completion check based on path
-    switch (involvedMalleoli) {
-      case 'posterior_only':
-        if (formData.has_ct_scan === undefined) return false;
-        if (formData.has_ct_scan === false) return true;
-        return !!formData.posterior_fracture_type;
-
-      case 'medial_only':
-        return !!formData.medial_morphology;
-
-      case 'lateral_only':
-        if (!formData.fibular_level) return false;
-        if (formData.fibular_level === 'infrasindesmal') return true;
-        if (formData.fibular_level === 'transindesmal') return !!formData.lateral_morphology;
-        if (formData.fibular_level === 'suprasindesmal') {
-          if (!formData.suprasindesmal_type) return false;
-          if (formData.suprasindesmal_type === 'proximal') return true;
-          return !!formData.fibula_trace_pattern;
-        }
-        return false;
-
-      case 'medial_posterior':
-        if (formData.has_ct_scan === undefined) return false;
-        if (formData.has_ct_scan === false) return !!formData.medial_morphology;
-        return !!formData.medial_morphology && !!formData.posterior_fracture_type;
-
-      case 'lateral_posterior':
-        if (!formData.fibular_level) return false;
-        return true;
-
-      case 'lateral_medial':
-        if (!formData.medial_morphology) return false;
-        return true;
-
-      case 'trimaleolar':
-        if (!formData.fibular_level) return false;
-        return true;
-
-      default:
-        return false;
-    }
-  }, [involvedMalleoli, formData]);
+    timePerQuestion: tracking.timePerQuestion,
+    backClicks: tracking.backClicks,
+  }), [tracking, buildDecisionPath]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormComplete()) return;
 
-    setLoading(true);
-    setError(null);
+    setFormState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
       // Get answer tracking data for divergence analysis
-      const tracking = getAnswerTracking();
-      await onClassify(formData as FractureInput, tracking);
+      const answerTracking = getAnswerTracking();
+      await onClassify(formData as FractureInput, answerTracking);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Classification failed');
+      setFormState(prev => ({ ...prev, error: err instanceof Error ? err.message : 'Classification failed' }));
     } finally {
-      setLoading(false);
+      setFormState(prev => ({ ...prev, loading: false }));
     }
   };
-
-  if (!options) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
-  }
 
   const progress = calculateProgress();
 
@@ -655,7 +531,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
         type="submit"
         size="lg"
         className={cn(
-          "w-full font-semibold transition-all duration-300",
+          "w-full font-semibold transition-shadow duration-300",
           isFormComplete() && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
         )}
         disabled={!isFormComplete() || loading}

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import type { StudyResponse } from '@/types';
+import type { CaseResponse } from '@/types';
 
 interface PreviousResponsesProps {
-  responses: StudyResponse[];
+  responses: CaseResponse[];
 }
 
 export function PreviousResponses({ responses }: PreviousResponsesProps) {

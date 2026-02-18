@@ -10,7 +10,7 @@ import type { FormOption } from '@/types';
 /**
  * Question data structure
  */
-export interface Question {
+interface Question {
   /** Unique identifier for the question */
   id: string;
 
@@ -24,7 +24,7 @@ export interface Question {
 /**
  * Props for the QuestionStep component
  */
-export interface QuestionStepProps {
+interface QuestionStepProps {
   /** Question data */
   question: Question;
 
@@ -137,33 +137,3 @@ export function QuestionStep({
   );
 }
 
-/**
- * QuestionStepSkeleton component
- *
- * Loading skeleton for QuestionStep while data is being fetched
- *
- * @example
- * ```tsx
- * {loading ? <QuestionStepSkeleton /> : <QuestionStep {...props} />}
- * ```
- */
-export function QuestionStepSkeleton({ className = '' }: { className?: string }) {
-  return (
-    <QuestionCard className={className}>
-      <QuestionCardHeader>
-        <div className="h-6 w-3/4 bg-muted animate-pulse rounded" />
-        <div className="h-4 w-1/2 bg-muted animate-pulse rounded" />
-      </QuestionCardHeader>
-      <QuestionCardContent>
-        <div className="grid gap-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-16 bg-muted animate-pulse rounded-xl"
-            />
-          ))}
-        </div>
-      </QuestionCardContent>
-    </QuestionCard>
-  );
-}

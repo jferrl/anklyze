@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { ImageIcon, Loader2 } from 'lucide-react';
-import type { StudyImageInfo } from '@/types';
+import type { CaseImageInfo } from '@/types';
 
 interface ImageGridProps {
-  images: StudyImageInfo[];
+  images: CaseImageInfo[];
   imageUrls: Record<string, string>;
   loading: boolean;
   onImageClick: (index: number) => void;
@@ -33,8 +33,11 @@ export function ImageGrid({ images, imageUrls, loading, onImageClick }: ImageGri
       {images.map((image, index) => (
         <div
           key={image.id}
-          className="aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+          role="button"
+          tabIndex={0}
+          className="aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer hover:ring-2 hover:ring-primary transition-shadow"
           onClick={() => onImageClick(index)}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onImageClick(index)}
         >
           {imageUrls[image.id] ? (
             <img

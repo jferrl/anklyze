@@ -3,7 +3,7 @@ import { Progress } from '@/components/ui';
 /**
  * Props for the FormProgress component
  */
-export interface FormProgressProps {
+interface FormProgressProps {
   /** Current step number (1-indexed) */
   currentStep: number;
 

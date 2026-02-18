@@ -40,7 +40,7 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
             <Breadcrumb>
               <BreadcrumbList>
                 {breadcrumbs.map((item, index) => (
-                  <Fragment key={index}>
+                  <Fragment key={item.labelKey}>
                     <BreadcrumbItem>
                       {index < breadcrumbs.length - 1 && item.href ? (
                         <BreadcrumbLink asChild>

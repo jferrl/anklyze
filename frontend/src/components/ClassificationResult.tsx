@@ -332,8 +332,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
           <AlertTitle>{t('results.clinicalNotes')}</AlertTitle>
           <AlertDescription>
             <ul className="list-disc list-inside space-y-1 mt-2">
-              {result.notes.map((note, index) => (
-                <li key={index}>{note}</li>
+              {result.notes.map((note) => (
+                <li key={note}>{note}</li>
               ))}
             </ul>
           </AlertDescription>

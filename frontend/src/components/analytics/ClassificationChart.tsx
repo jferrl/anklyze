@@ -203,14 +203,14 @@ function DonutView({
           >
             {data.map((entry, index) => (
               <Cell
-                key={`cell-${index}`}
+                key={entry.name}
                 fill={entry.fill}
                 stroke="transparent"
                 style={{
                   filter: hoveredIndex === index ? 'brightness(1.1)' : 'none',
                   transform: hoveredIndex === index ? 'scale(1.02)' : 'scale(1)',
                   transformOrigin: 'center',
-                  transition: 'all 0.2s ease-out',
+                  transition: 'filter 0.2s ease-out, transform 0.2s ease-out',
                 }}
               />
             ))}
@@ -290,7 +290,7 @@ function BarView({
         >
           {data.map((entry, index) => (
             <Cell
-              key={`cell-${index}`}
+              key={entry.name}
               fill={entry.fill}
               style={{
                 opacity: hoveredIndex === null || hoveredIndex === index ? 1 : 0.4,

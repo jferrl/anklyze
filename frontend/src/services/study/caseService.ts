@@ -425,10 +425,10 @@ export interface UserProfileResponse {
 /**
  * Get the current authenticated user's basic information
  */
-export async function getCurrentUser(): Promise<UserProfileResponse> {
+export async function getCurrentUser(accessToken?: string): Promise<UserProfileResponse> {
   return apiRequest<UserProfileResponse>('/api/me', {
     method: 'GET',
-  });
+  }, accessToken);
 }
 
 /**

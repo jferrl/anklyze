@@ -31,18 +31,29 @@ export function CaseDetailPage() {
   const queryClient = useQueryClient();
 
   // Image gallery state
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-  const [loadingImages, setLoadingImages] = useState(true);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'xray' | 'tac'>('xray');
-  const [prevCaseId, setPrevCaseId] = useState<string | undefined>(undefined);
+  const [imageState, setImageState] = useState<{ urls: Record<string, string>; loading: boolean }>({ urls: {}, loading: true });
+  const [viewState, setViewState] = useState<{
+    selectedImageIndex: number | null;
+    activeTab: 'xray' | 'tac';
+    prevCaseId: string | undefined;
+  }>({ selectedImageIndex: null, activeTab: 'xray', prevCaseId: undefined });
+  const { selectedImageIndex, activeTab, prevCaseId } = viewState;
+  const setSelectedImageIndex = (idx: number | null) => setViewState(prev => ({ ...prev, selectedImageIndex: idx }));
+  const setActiveTab = (tab: 'xray' | 'tac') => setViewState(prev => ({ ...prev, activeTab: tab }));
+  const setPrevCaseId = (id: string | undefined) => setViewState(prev => ({ ...prev, prevCaseId: id }));
 
   // Classification state
-  const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
-  const [answerTracking, setAnswerTracking] = useState<AnswerTracking | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitResult, setSubmitResult] = useState<SubmitResponseResult | null>(null);
+  const [classification, setClassification] = useState<{
+    result: ClassificationResult | null;
+    tracking: AnswerTracking | null;
+  }>({ result: null, tracking: null });
+
+  // Submit state as discriminated union
+  type SubmitState =
+    | { status: 'idle' }
+    | { status: 'error'; error: string }
+    | { status: 'success'; result: SubmitResponseResult };
+  const [submitState, setSubmitState] = useState<SubmitState>({ status: 'idle' });
 
   // Time tracking - initialized in useEffect to avoid impure function call during render
   const startTimeRef = useRef<number>(0);
@@ -72,12 +83,15 @@ export function CaseDetailPage() {
     }
   }
 
+  // Derive shortcuts for readability
+  const { urls: imageUrls, loading: loadingImages } = imageState;
+
   // Fetch signed URLs for images
   useEffect(() => {
     async function fetchImageUrls() {
       if (!caseData || !id) return;
 
-      setLoadingImages(true);
+      setImageState(prev => ({ ...prev, loading: true }));
       const urls: Record<string, string> = {};
 
       await Promise.all(
@@ -91,8 +105,7 @@ export function CaseDetailPage() {
         })
       );
 
-      setImageUrls(urls);
-      setLoadingImages(false);
+      setImageState({ urls, loading: false });
     }
 
     fetchImageUrls();
@@ -115,33 +128,29 @@ export function CaseDetailPage() {
   // Handle classification form submission
   const handleClassify = useCallback(async (input: FractureInput, tracking?: AnswerTracking) => {
     const result = await classifyFracture(input);
-    setClassificationResult(result);
-    if (tracking) {
-      setAnswerTracking(tracking);
-    }
+    setClassification({ result, tracking: tracking ?? null });
     return result;
   }, []);
 
   // Handle response submission with mutation
   const submitMutation = useMutation({
     mutationFn: async () => {
-      if (!classificationResult || !id) throw new Error('Missing data');
+      if (!classification.result || !id) throw new Error('Missing data');
       const timeTakenMs = Date.now() - startTimeRef.current;
       return submitCaseResponse(id, {
-        classification: classificationResult,
+        classification: classification.result,
         time_taken_ms: timeTakenMs,
         // Include tracking data for divergence analysis
-        ...(answerTracking && {
-          answer_path: answerTracking.answerPath,
-          decision_path: answerTracking.decisionPath,
-          time_per_question: answerTracking.timePerQuestion,
-          back_clicks: answerTracking.backClicks,
+        ...(classification.tracking && {
+          answer_path: classification.tracking.answerPath,
+          decision_path: classification.tracking.decisionPath,
+          time_per_question: classification.tracking.timePerQuestion,
+          back_clicks: classification.tracking.backClicks,
         }),
       });
     },
     onSuccess: (result) => {
-      setSubmitSuccess(true);
-      setSubmitResult(result);
+      setSubmitState({ status: 'success', result });
 
       // Show different message based on gold standard comparison
       if (result.reference_classification) {
@@ -184,7 +193,7 @@ export function CaseDetailPage() {
     },
     onError: (err) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
-      setSubmitError(errorMessage);
+      setSubmitState({ status: 'error', error: errorMessage });
       toast.error(t('cases.submitError'), {
         description: errorMessage,
       });
@@ -192,18 +201,15 @@ export function CaseDetailPage() {
   });
 
   const handleSubmitResponse = useCallback(() => {
-    if (!classificationResult || !id) return;
-    setSubmitError(null);
+    if (!classification.result || !id) return;
+    setSubmitState({ status: 'idle' });
     submitMutation.mutate();
-  }, [classificationResult, id, submitMutation]);
+  }, [classification.result, id, submitMutation]);
 
   // Reset for re-answer
   const handleReanswer = useCallback(() => {
-    setClassificationResult(null);
-    setAnswerTracking(null);
-    setSubmitSuccess(false);
-    setSubmitError(null);
-    setSubmitResult(null);
+    setClassification({ result: null, tracking: null });
+    setSubmitState({ status: 'idle' });
     startTimeRef.current = Date.now();
   }, []);
 
@@ -211,14 +217,18 @@ export function CaseDetailPage() {
   const openLightbox = (index: number) => setSelectedImageIndex(index);
   const closeLightbox = () => setSelectedImageIndex(null);
   const nextImage = () => {
-    if (selectedImageIndex !== null && selectedImageIndex < currentImages.length - 1) {
-      setSelectedImageIndex(selectedImageIndex + 1);
-    }
+    setViewState(prev => ({
+      ...prev,
+      selectedImageIndex: prev.selectedImageIndex !== null && prev.selectedImageIndex < currentImages.length - 1
+        ? prev.selectedImageIndex + 1 : prev.selectedImageIndex,
+    }));
   };
   const prevImage = () => {
-    if (selectedImageIndex !== null && selectedImageIndex > 0) {
-      setSelectedImageIndex(selectedImageIndex - 1);
-    }
+    setViewState(prev => ({
+      ...prev,
+      selectedImageIndex: prev.selectedImageIndex !== null && prev.selectedImageIndex > 0
+        ? prev.selectedImageIndex - 1 : prev.selectedImageIndex,
+    }));
   };
 
   if (loading) {
@@ -335,14 +345,14 @@ export function CaseDetailPage() {
           <div className="lg:col-span-3">
             <ClassificationPanel
               hasTACImages={caseData.has_tac_images}
-              classificationResult={classificationResult}
+              classificationResult={classification.result}
               submitting={submitMutation.isPending}
-              submitError={submitError}
-              submitSuccess={submitSuccess}
+              submitError={submitState.status === 'error' ? submitState.error : null}
+              submitSuccess={submitState.status === 'success'}
               isExpired={!!isExpired}
               cannotSubmit={cannotSubmit}
               canReanswer={canReanswer}
-              submitResult={submitResult}
+              submitResult={submitState.status === 'success' ? submitState.result : null}
               onClassify={handleClassify}
               onSubmit={handleSubmitResponse}
               onReanswer={handleReanswer}

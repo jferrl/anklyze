@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +16,11 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
-import { StatCard, ClassificationChart } from '../../components/analytics';
+import { StatCard } from '../../components/analytics';
+
+const ClassificationChart = lazy(() =>
+  import('../../components/analytics/ClassificationChart').then(m => ({ default: m.ClassificationChart }))
+);
 import { caseApi, downloadCaseResponsesCSV } from '@/services';
 import { cn } from '@/lib/utils';
 
@@ -246,13 +250,15 @@ export function CaseAnalyticsPage() {
           </div>
 
           {/* Chart */}
-          <ClassificationChart
-            data={getDistributionData}
-            title={t('admin.analytics.distributionTitle', '{{system}} Distribution', {
-              system: activeSystemInfo?.label,
-            })}
-            systemLabel={activeSystemInfo?.label || ''}
-          />
+          <Suspense fallback={<div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>}>
+            <ClassificationChart
+              data={getDistributionData}
+              title={t('admin.analytics.distributionTitle', '{{system}} Distribution', {
+                system: activeSystemInfo?.label,
+              })}
+              systemLabel={activeSystemInfo?.label || ''}
+            />
+          </Suspense>
         </section>
       </div>
     </div>

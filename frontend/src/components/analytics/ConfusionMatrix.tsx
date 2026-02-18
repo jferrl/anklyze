@@ -92,7 +92,7 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
                 </td>
                 {row.map((value, j) => (
                   <td
-                    key={`${i}-${j}`}
+                    key={`${labels[i]}-${labels[j]}`}
                     className={cn(
                       'p-2 text-center text-sm border border-border/30 transition-colors',
                       getCellColor(value),

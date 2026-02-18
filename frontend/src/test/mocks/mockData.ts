@@ -4,14 +4,8 @@ import type {
   DanisWeberClassification,
   LaugeHansenClassification,
   AOOTAClassification,
-  BartonicekClassification,
 } from '@/types/domain/fracture'
 import type {
-  ClassifyFractureRequest,
-  ClassifyFractureResponse,
-} from '@/types/api/classification'
-import type {
-  ChatRequest,
   ChatResponse,
   ChatSessionResponse,
 } from '@/types/api/chat'
@@ -21,7 +15,6 @@ import type {
   CaseWithImages,
   UserCaseItem,
   UserCaseDetail,
-  CaseResponse,
   UserProfile,
   CaseAnalyticsSummary,
   ReliabilityMetrics,
@@ -31,70 +24,25 @@ import type {
 // Fracture Classification Mock Data
 // ============================================================================
 
-/**
- * Complete fracture input for a lateral malleolus fracture (Weber B, SER)
- */
 export const mockFractureInput: FractureInput = {
   involved_malleoli: 'lateral_only',
   fibular_level: 'transindesmal',
   lateral_morphology: 'oblique',
 }
 
-/**
- * Complete fracture input for a bimalleolar fracture
- */
-export const mockBimalleolarInput: FractureInput = {
-  involved_malleoli: 'lateral_medial',
-  fibular_level: 'transindesmal',
-  lateral_morphology: 'spiral',
-  medial_morphology: 'transverse',
-}
-
-/**
- * Complete fracture input for a trimalleolar fracture
- */
-export const mockTrimalleolarInput: FractureInput = {
-  involved_malleoli: 'trimaleolar',
-  fibular_level: 'suprasindesmal',
-  lateral_morphology: 'spiral',
-  medial_morphology: 'transverse',
-  suprasindesmal_type: 'simple_diaphyseal',
-  has_ct_scan: true,
-  posterior_fracture_type: 'posterolateral',
-}
-
-/**
- * Danis-Weber classification result
- */
-export const mockDanisWeber: DanisWeberClassification = {
+const mockDanisWeber: DanisWeberClassification = {
   type: 'Weber B',
 }
 
-/**
- * Lauge-Hansen classification result
- */
-export const mockLaugeHansen: LaugeHansenClassification = {
+const mockLaugeHansen: LaugeHansenClassification = {
   type: 'SER II',
   ambiguous: false,
 }
 
-/**
- * AO/OTA classification result
- */
-export const mockAOOTA: AOOTAClassification = {
+const mockAOOTA: AOOTAClassification = {
   code: '44-B1.1',
 }
 
-/**
- * Bartonicek classification result
- */
-export const mockBartonicek: BartonicekClassification = {
-  type: 'Bartonicek 2',
-}
-
-/**
- * Complete classification result
- */
 export const mockClassificationResult: ClassificationResult = {
   fracture_type: 'Lateral malleolus fracture',
   danis_weber: mockDanisWeber,
@@ -103,69 +51,14 @@ export const mockClassificationResult: ClassificationResult = {
   notes: ['Isolated lateral malleolus fracture at syndesmosis level'],
 }
 
-/**
- * Complete classification result for trimalleolar fracture
- */
-export const mockTrimalleolarResult: ClassificationResult = {
-  fracture_type: 'Trimalleolar fracture',
-  danis_weber: { type: 'Weber C' },
-  lauge_hansen: { type: 'PER IV', ambiguous: false },
-  ao_ota: { code: '44-C2.3' },
-  bartonicek: mockBartonicek,
-  notes: ['Complex trimalleolar fracture with posterior malleolus involvement'],
-}
-
-/**
- * Impossible classification result
- */
-export const mockImpossibleResult: ClassificationResult = {
-  fracture_type: 'Impossible combination',
-  impossible: true,
-  impossible_key: 'IMPOSSIBLE_INFRASINDESMAL_POSTERIOR',
-  notes: ['Infrasindesmal fractures cannot involve the posterior malleolus'],
-}
-
-/**
- * Classification API request
- */
-export const mockClassifyRequest: ClassifyFractureRequest = {
-  ...mockFractureInput,
-  language: 'en',
-}
-
-/**
- * Classification API response
- */
-export const mockClassifyResponse: ClassifyFractureResponse = {
-  classification: mockClassificationResult,
-  confidence: 0.95,
-  reasoning: 'Based on the provided characteristics, this is a Weber B fracture.',
-  timestamp: '2024-01-15T10:30:00Z',
-}
-
 // ============================================================================
 // Chat Mock Data
 // ============================================================================
 
-/**
- * Chat session response
- */
 export const mockChatSession: ChatSessionResponse = {
   session_id: 'chat-session-123',
 }
 
-/**
- * Chat request
- */
-export const mockChatRequest: ChatRequest = {
-  message: 'I have a patient with a lateral malleolus fracture at the syndesmosis level',
-  language: 'en',
-  session_id: 'chat-session-123',
-}
-
-/**
- * Chat response - needs clarification
- */
 export const mockChatResponseClarification: ChatResponse = {
   status: 'needs_clarification',
   confidence: 0.6,
@@ -180,9 +73,6 @@ export const mockChatResponseClarification: ChatResponse = {
   message: 'I need more information about the fracture morphology.',
 }
 
-/**
- * Chat response - complete
- */
 export const mockChatResponseComplete: ChatResponse = {
   status: 'complete',
   extracted_input: mockFractureInput,
@@ -195,9 +85,16 @@ export const mockChatResponseComplete: ChatResponse = {
 // Case Management Mock Data
 // ============================================================================
 
-/**
- * Basic case
- */
+const mockCaseImage: CaseImage = {
+  id: 'image-1',
+  case_id: 'case-123',
+  category: 'xray',
+  display_order: 1,
+  filename: 'lateral_view.jpg',
+  content_type: 'image/jpeg',
+  size_bytes: 1024000,
+}
+
 export const mockCase: Case = {
   id: 'case-123',
   created_at: '2024-01-01T00:00:00Z',
@@ -218,22 +115,6 @@ export const mockCase: Case = {
   case_order: 1,
 }
 
-/**
- * Case image
- */
-export const mockCaseImage: CaseImage = {
-  id: 'image-1',
-  case_id: 'case-123',
-  category: 'xray',
-  display_order: 1,
-  filename: 'lateral_view.jpg',
-  content_type: 'image/jpeg',
-  size_bytes: 1024000,
-}
-
-/**
- * Case with images
- */
 export const mockCaseWithImages: CaseWithImages = {
   ...mockCase,
   images: [
@@ -259,9 +140,6 @@ export const mockCaseWithImages: CaseWithImages = {
   ],
 }
 
-/**
- * User case item (list view)
- */
 export const mockUserCaseItem: UserCaseItem = {
   id: 'case-123',
   title: 'Lateral Malleolus Fracture Case',
@@ -276,9 +154,6 @@ export const mockUserCaseItem: UserCaseItem = {
   my_response_count: 0,
 }
 
-/**
- * User case detail
- */
 export const mockUserCaseDetail: UserCaseDetail = {
   id: 'case-123',
   title: 'Lateral Malleolus Fracture Case',
@@ -298,25 +173,10 @@ export const mockUserCaseDetail: UserCaseDetail = {
   is_expired: false,
 }
 
-/**
- * Case response
- */
-export const mockCaseResponse: CaseResponse = {
-  id: 'response-1',
-  case_id: 'case-123',
-  user_id: 'user-123',
-  created_at: '2024-01-15T10:00:00Z',
-  classification: mockClassificationResult,
-  time_taken_ms: 45000,
-}
-
 // ============================================================================
 // User Mock Data
 // ============================================================================
 
-/**
- * Regular user profile
- */
 export const mockUser: UserProfile = {
   id: 'user-123',
   email: 'doctor@example.com',
@@ -328,26 +188,10 @@ export const mockUser: UserProfile = {
   institution: 'City Hospital',
 }
 
-/**
- * Admin user profile
- */
-export const mockAdminUser: UserProfile = {
-  id: 'user-admin',
-  email: 'admin@example.com',
-  role: 'admin',
-  display_name: 'Admin User',
-  years_experience: 10,
-  specialty: 'foot_ankle',
-  training_level: 'attending',
-}
-
 // ============================================================================
 // Analytics Mock Data
 // ============================================================================
 
-/**
- * Case analytics summary
- */
 export const mockCaseAnalytics: CaseAnalyticsSummary = {
   case_id: 'case-123',
   title: 'Lateral Malleolus Fracture Case',
@@ -375,9 +219,6 @@ export const mockCaseAnalytics: CaseAnalyticsSummary = {
   bartonicek_distribution: {},
 }
 
-/**
- * Reliability metrics
- */
 export const mockReliabilityMetrics: ReliabilityMetrics = {
   case_id: 'case-123',
   total_responses: 50,
@@ -407,45 +248,4 @@ export const mockReliabilityMetrics: ReliabilityMetrics = {
     correct_responses: 41,
     incorrect_responses: 9,
   },
-}
-
-// ============================================================================
-// Form Options Mock Data (for testing form components)
-// ============================================================================
-
-export const mockFormOptions = {
-  involvedMalleoli: [
-    { value: 'posterior_only', label: 'Posterior only' },
-    { value: 'medial_only', label: 'Medial only' },
-    { value: 'lateral_only', label: 'Lateral only' },
-    { value: 'medial_posterior', label: 'Medial and posterior' },
-    { value: 'lateral_posterior', label: 'Lateral and posterior' },
-    { value: 'lateral_medial', label: 'Lateral and medial' },
-    { value: 'trimaleolar', label: 'Trimalleolar' },
-  ],
-  fibularLevels: [
-    { value: 'infrasindesmal', label: 'Infrasindesmal' },
-    { value: 'transindesmal', label: 'Transindesmal' },
-    { value: 'suprasindesmal', label: 'Suprasindesmal' },
-  ],
-  lateralMorphology: [
-    { value: 'transverse', label: 'Transverse' },
-    { value: 'oblique', label: 'Oblique' },
-    { value: 'spiral', label: 'Spiral' },
-  ],
-  medialMorphology: [
-    { value: 'oblique', label: 'Oblique' },
-    { value: 'transverse', label: 'Transverse' },
-  ],
-  posteriorFractureTypes: [
-    { value: 'extraincisural', label: 'Extraincisural (Bartonicek 1)' },
-    { value: 'posterolateral', label: 'Posterolateral (Bartonicek 2)' },
-    { value: 'posteromedial_posterolateral', label: 'Posteromedial and posterolateral (Bartonicek 3)' },
-    { value: 'large_posterolateral', label: 'Large posterolateral (Bartonicek 4)' },
-  ],
-  suprasindesmalTypes: [
-    { value: 'simple_diaphyseal', label: 'Simple diaphyseal' },
-    { value: 'multifragmentary', label: 'Multifragmentary' },
-    { value: 'proximal', label: 'Proximal' },
-  ],
 }

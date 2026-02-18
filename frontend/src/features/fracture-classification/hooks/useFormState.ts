@@ -4,7 +4,7 @@ import type { FractureInput } from '@/types';
 /**
  * Return type for the useFormState hook
  */
-export interface FormStateResult {
+interface FormStateResult {
   /** Current form data */
   formData: Partial<FractureInput>;
 

@@ -7,12 +7,14 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:80
  * Get authentication headers for API requests
  * @returns Promise resolving to headers object with auth token if available
  */
-export async function getAuthHeaders(): Promise<Record<string, string>> {
+export async function getAuthHeaders(accessToken?: string): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
 
-  if (supabase) {
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  } else if (supabase) {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.access_token) {
       headers['Authorization'] = `Bearer ${session.access_token}`;
@@ -34,10 +36,11 @@ export async function getAuthHeaders(): Promise<Record<string, string>> {
  */
 export async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  accessToken?: string,
 ): Promise<T> {
   // Get auth headers and merge with any provided headers
-  const authHeaders = await getAuthHeaders();
+  const authHeaders = await getAuthHeaders(accessToken);
   const headers = {
     ...authHeaders,
     ...options.headers,

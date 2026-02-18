@@ -290,7 +290,7 @@ export function AdminStudiesPage() {
                 variant="outline"
                 size="icon"
                 disabled={page === 1}
-                onClick={() => setPage(page - 1)}
+                onClick={() => setPage(prev => prev - 1)}
                 className="bg-card/50 border-border/50 hover:bg-muted/50"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -302,7 +302,7 @@ export function AdminStudiesPage() {
                 variant="outline"
                 size="icon"
                 disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
+                onClick={() => setPage(prev => prev + 1)}
                 className="bg-card/50 border-border/50 hover:bg-muted/50"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -360,12 +360,15 @@ function StudyCard({
 }: StudyRowProps) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       className={cn(
         'chart-card p-4 cursor-pointer hover:bg-muted/30 transition-colors',
         'opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]'
       )}
       style={{ animationDelay: `${index * 30}ms` }}
       onClick={onEdit}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onEdit()}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">

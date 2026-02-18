@@ -29,7 +29,7 @@ const AVATAR_COLORS = [
 /**
  * Get avatar colors based on a seed string
  */
-export function getAvatarColors(seed: string): { primary: string; secondary: string } {
+function getAvatarColors(seed: string): { primary: string; secondary: string } {
   const hash = hashString(seed);
   const colors = AVATAR_COLORS[hash % AVATAR_COLORS.length];
   return { primary: colors[0], secondary: colors[1] };
@@ -39,7 +39,7 @@ export function getAvatarColors(seed: string): { primary: string; secondary: str
  * Generate a DiceBear avatar URL
  * Uses the 'initials' style for a clean, professional look
  */
-export function generateAvatarUrl(
+function generateAvatarUrl(
   name?: string,
   email?: string,
   size: number = 128

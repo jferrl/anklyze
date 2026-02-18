@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Save, User } from 'lucide-react';
@@ -29,33 +29,44 @@ const TRAINING_LEVELS: { value: TrainingLevel; labelKey: string }[] = [
 export function UserProfileForm() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const initializedRef = useRef<string | null>(null);
 
-  const [displayName, setDisplayName] = useState('');
-  const [yearsExperience, setYearsExperience] = useState<string>('');
-  const [specialty, setSpecialty] = useState<string>('');
-  const [trainingLevel, setTrainingLevel] = useState<string>('');
-  const [institution, setInstitution] = useState('');
+  interface FormState {
+    displayName: string;
+    yearsExperience: string;
+    specialty: string;
+    trainingLevel: string;
+    institution: string;
+  }
+
+  const [form, setForm] = useState<FormState>({
+    displayName: '',
+    yearsExperience: '',
+    specialty: '',
+    trainingLevel: '',
+    institution: '',
+  });
+
+  const updateField = <K extends keyof FormState>(field: K, value: FormState[K]) =>
+    setForm(prev => ({ ...prev, [field]: value }));
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['userProfile'],
     queryFn: getUserProfile,
   });
 
-  // Sync profile data to form state when profile loads (only once per profile ID)
-  useEffect(() => {
-    if (profile && initializedRef.current !== profile.id) {
-      initializedRef.current = profile.id;
-      // Use setTimeout to avoid synchronous setState in effect
-      setTimeout(() => {
-        setDisplayName(profile.display_name || '');
-        setYearsExperience(profile.years_experience?.toString() || '');
-        setSpecialty(profile.specialty || '');
-        setTrainingLevel(profile.training_level || '');
-        setInstitution(profile.institution || '');
-      }, 0);
-    }
-  }, [profile]);
+  // Sync profile data to form state when profile loads (render-time state adjustment)
+  // See: https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  const [prevProfileId, setPrevProfileId] = useState<string | null>(null);
+  if (profile && prevProfileId !== profile.id) {
+    setPrevProfileId(profile.id);
+    setForm({
+      displayName: profile.display_name || '',
+      yearsExperience: profile.years_experience?.toString() || '',
+      specialty: profile.specialty || '',
+      trainingLevel: profile.training_level || '',
+      institution: profile.institution || '',
+    });
+  }
 
   const mutation = useMutation({
     mutationFn: (data: UpdateUserProfileRequest) => updateUserProfile(data),
@@ -74,25 +85,25 @@ export function UserProfileForm() {
 
     const data: UpdateUserProfileRequest = {};
 
-    if (displayName !== (profile?.display_name || '')) {
-      data.display_name = displayName || undefined;
+    if (form.displayName !== (profile?.display_name || '')) {
+      data.display_name = form.displayName || undefined;
     }
 
-    const years = yearsExperience ? parseInt(yearsExperience, 10) : undefined;
+    const years = form.yearsExperience ? parseInt(form.yearsExperience, 10) : undefined;
     if (years !== profile?.years_experience) {
       data.years_experience = years;
     }
 
-    if (specialty !== (profile?.specialty || '')) {
-      data.specialty = (specialty || undefined) as Specialty | undefined;
+    if (form.specialty !== (profile?.specialty || '')) {
+      data.specialty = (form.specialty || undefined) as Specialty | undefined;
     }
 
-    if (trainingLevel !== (profile?.training_level || '')) {
-      data.training_level = (trainingLevel || undefined) as TrainingLevel | undefined;
+    if (form.trainingLevel !== (profile?.training_level || '')) {
+      data.training_level = (form.trainingLevel || undefined) as TrainingLevel | undefined;
     }
 
-    if (institution !== (profile?.institution || '')) {
-      data.institution = institution || undefined;
+    if (form.institution !== (profile?.institution || '')) {
+      data.institution = form.institution || undefined;
     }
 
     mutation.mutate(data);
@@ -128,8 +139,8 @@ export function UserProfileForm() {
           </Label>
           <Input
             id="displayName"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            value={form.displayName}
+            onChange={(e) => updateField('displayName', e.target.value)}
             placeholder={t('profile.displayNamePlaceholder', 'Your name')}
           />
         </div>
@@ -144,8 +155,8 @@ export function UserProfileForm() {
             type="number"
             min={0}
             max={70}
-            value={yearsExperience}
-            onChange={(e) => setYearsExperience(e.target.value)}
+            value={form.yearsExperience}
+            onChange={(e) => updateField('yearsExperience', e.target.value)}
             placeholder="0"
           />
         </div>
@@ -155,7 +166,7 @@ export function UserProfileForm() {
           <Label htmlFor="specialty">
             {t('profile.specialty', 'Specialty')}
           </Label>
-          <Select value={specialty || '__none__'} onValueChange={(v) => setSpecialty(v === '__none__' ? '' : v)}>
+          <Select value={form.specialty || '__none__'} onValueChange={(v) => updateField('specialty', v === '__none__' ? '' : v)}>
             <SelectTrigger id="specialty">
               <SelectValue placeholder={t('profile.selectSpecialty', 'Select specialty')} />
             </SelectTrigger>
@@ -177,7 +188,7 @@ export function UserProfileForm() {
           <Label htmlFor="trainingLevel">
             {t('profile.trainingLevel', 'Training Level')}
           </Label>
-          <Select value={trainingLevel || '__none__'} onValueChange={(v) => setTrainingLevel(v === '__none__' ? '' : v)}>
+          <Select value={form.trainingLevel || '__none__'} onValueChange={(v) => updateField('trainingLevel', v === '__none__' ? '' : v)}>
             <SelectTrigger id="trainingLevel">
               <SelectValue placeholder={t('profile.selectTrainingLevel', 'Select level')} />
             </SelectTrigger>
@@ -201,8 +212,8 @@ export function UserProfileForm() {
           </Label>
           <Input
             id="institution"
-            value={institution}
-            onChange={(e) => setInstitution(e.target.value)}
+            value={form.institution}
+            onChange={(e) => updateField('institution', e.target.value)}
             placeholder={t('profile.institutionPlaceholder', 'Hospital or university name')}
             maxLength={255}
           />

@@ -4,9 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
 import {
-  Upload,
-  X,
-  Image as ImageIcon,
   Save,
   Send,
   AlertCircle,
@@ -18,16 +15,10 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  Calendar,
-  Type,
-  AlignLeft,
   Scan,
   Radio,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
 import {
   Card,
@@ -51,10 +42,12 @@ import { caseApi } from '@/services';
 import { CaseUsersManager } from '../../components/admin/CaseUsersManager';
 import { GoldStandardInputDialog } from '../../components/cases';
 import { cn } from '@/lib/utils';
-import type { ImageCategory, CaseImage } from '@/types';
+import type { ImageCategory } from '@/types';
 import type { ClassificationResult, FractureInput } from '@/types';
-import { Switch } from '../../components/ui/switch';
-import { Settings, Target, GitBranch } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { ImageGrid } from './components/CaseImageGrid';
+import { CaseDetailsStep } from './components/CaseDetailsStep';
+import { CaseSettingsStep } from './components/CaseSettingsStep';
 
 interface PendingUpload {
   id: string;
@@ -74,8 +67,20 @@ export function CaseEditorPage() {
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id && id !== 'new';
 
-  // Current step state
-  const [currentStep, setCurrentStep] = useState<Step>('details');
+  // Page state consolidated
+  const [pageState, setPageState] = useState<{
+    step: Step;
+    error: string | null;
+    showPublishDialog: boolean;
+    showGoldStandardInputDialog: boolean;
+    prevCaseId: string | undefined;
+  }>({ step: 'details', error: null, showPublishDialog: false, showGoldStandardInputDialog: false, prevCaseId: undefined });
+  const { step: currentStep, error, showPublishDialog, showGoldStandardInputDialog, prevCaseId } = pageState;
+  const setCurrentStep = (step: Step) => setPageState(prev => ({ ...prev, step }));
+  const setError = (error: string | null) => setPageState(prev => ({ ...prev, error }));
+  const setShowPublishDialog = (v: boolean) => setPageState(prev => ({ ...prev, showPublishDialog: v }));
+  const setShowGoldStandardInputDialog = (v: boolean) => setPageState(prev => ({ ...prev, showGoldStandardInputDialog: v }));
+  const setPrevCaseId = (id: string | undefined) => setPageState(prev => ({ ...prev, prevCaseId: id }));
 
   // Fetch existing case if editing - must be before state that depends on it
   const { data: existingCase, isLoading: isLoadingCase } = useQuery({
@@ -84,34 +89,40 @@ export function CaseEditorPage() {
     enabled: isEditing,
   });
 
-  // Form state
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState('');
+  // Consolidated form + settings state
+  interface CaseFormState {
+    title: string;
+    description: string;
+    deadline: string;
+    referenceClassification: ClassificationResult | undefined;
+    referenceInput: FractureInput | undefined;
+    showReferenceAfterSubmit: boolean;
+    allowMultipleResponses: boolean;
+  }
+  const [form, setForm] = useState<CaseFormState>({
+    title: '', description: '', deadline: '',
+    referenceClassification: undefined, referenceInput: undefined,
+    showReferenceAfterSubmit: false, allowMultipleResponses: true,
+  });
+  const updateForm = <K extends keyof CaseFormState>(field: K, value: CaseFormState[K]) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  // Derive shortcuts for readability
+  const { title, description, deadline, referenceClassification, referenceInput, showReferenceAfterSubmit, allowMultipleResponses } = form;
+
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
-  const [showPublishDialog, setShowPublishDialog] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Validation case settings
-  const [referenceClassification, setReferenceClassification] = useState<ClassificationResult | undefined>(undefined);
-  const [referenceInput, setReferenceInput] = useState<FractureInput | undefined>(undefined);
-  const [showReferenceAfterSubmit, setShowReferenceAfterSubmit] = useState(false);
-  const [allowMultipleResponses, setAllowMultipleResponses] = useState(true);
-  const [showGoldStandardInputDialog, setShowGoldStandardInputDialog] = useState(false);
-
-  // Track previous case ID to reset form when switching cases
-  const [prevCaseId, setPrevCaseId] = useState<string | undefined>(undefined);
   if (existingCase && existingCase.id !== prevCaseId) {
     setPrevCaseId(existingCase.id);
-    setTitle(existingCase.title);
-    setDescription(existingCase.description || '');
-    setDeadline(existingCase.deadline?.split('T')[0] || '');
+    setForm({
+      title: existingCase.title,
+      description: existingCase.description || '',
+      deadline: existingCase.deadline?.split('T')[0] || '',
+      referenceClassification: existingCase.reference_classification,
+      referenceInput: existingCase.reference_input,
+      showReferenceAfterSubmit: existingCase.show_reference_after_submit || false,
+      allowMultipleResponses: existingCase.allow_multiple_responses !== false,
+    });
     setPendingUploads([]);
-    // Validation case settings
-    setReferenceClassification(existingCase.reference_classification);
-    setReferenceInput(existingCase.reference_input);
-    setShowReferenceAfterSubmit(existingCase.show_reference_after_submit || false);
-    setAllowMultipleResponses(existingCase.allow_multiple_responses !== false);
   }
 
   // Create case mutation
@@ -483,257 +494,30 @@ export function CaseEditorPage() {
         <div className="space-y-6">
           {/* Details Step */}
           {currentStep === 'details' && (
-            <div className="animate-fade-in">
-              <Card className="chart-card">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>{t('admin.cases.details')}</CardTitle>
-                      <CardDescription>{t('admin.cases.detailsDescription')}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Title Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="flex items-center gap-2">
-                      <Type className="w-4 h-4 text-muted-foreground" />
-                      {t('cases.title')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder={t('admin.cases.titlePlaceholder')}
-                      disabled={!canEdit}
-                      className="h-12 text-base"
-                    />
-                  </div>
-
-                  {/* Description Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="flex items-center gap-2">
-                      <AlignLeft className="w-4 h-4 text-muted-foreground" />
-                      {t('cases.description')}
-                      <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
-                    </Label>
-                    <Textarea
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder={t('admin.cases.descriptionPlaceholder')}
-                      rows={4}
-                      disabled={!canEditAlways}
-                      className="resize-none"
-                    />
-                  </div>
-
-                  {/* Deadline Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="deadline" className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      {t('cases.deadline')}
-                      <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
-                    </Label>
-                    <Input
-                      id="deadline"
-                      type="date"
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
-                      disabled={!canEditAlways}
-                      className="h-12"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-end mt-6">
-                <Button onClick={goToNextStep} className="gap-2">
-                  {t('common.next')}
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+            <CaseDetailsStep
+              title={title}
+              description={description}
+              deadline={deadline}
+              canEdit={canEdit}
+              canEditAlways={canEditAlways}
+              onUpdateField={(field, value) => updateForm(field as keyof typeof form, value)}
+              onNext={goToNextStep}
+            />
           )}
 
           {/* Settings Step */}
           {currentStep === 'settings' && (
-            <div className="animate-fade-in">
-              <Card className="chart-card">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Settings className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>{t('admin.cases.validationSettings', 'Validation Settings')}</CardTitle>
-                      <CardDescription>
-                        {t('admin.cases.validationSettingsDescription', 'Configure how this case validates responses')}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Reference Classification */}
-                  <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-border/50">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center mt-0.5">
-                        <Target className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">
-                          {t('admin.cases.referenceClassification', 'Reference Classification (Gold Standard)')}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {t('admin.cases.referenceClassificationDescription',
-                            'Set the correct classification to compare against participant responses')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {referenceClassification ? (
-                      <div className="ml-11 space-y-3">
-                        <div className="p-3 rounded-lg bg-background border border-border/50">
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            {referenceClassification.danis_weber && (
-                              <div>
-                                <span className="text-muted-foreground">Danis-Weber:</span>{' '}
-                                <span className="font-medium">{referenceClassification.danis_weber.type}</span>
-                              </div>
-                            )}
-                            {referenceClassification.lauge_hansen && (
-                              <div>
-                                <span className="text-muted-foreground">Lauge-Hansen:</span>{' '}
-                                <span className="font-medium">{referenceClassification.lauge_hansen.type}</span>
-                              </div>
-                            )}
-                            {referenceClassification.ao_ota && (
-                              <div>
-                                <span className="text-muted-foreground">AO/OTA:</span>{' '}
-                                <span className="font-medium">{referenceClassification.ao_ota.code}</span>
-                              </div>
-                            )}
-                            {referenceClassification.bartonicek && (
-                              <div>
-                                <span className="text-muted-foreground">Bartonicek:</span>{' '}
-                                <span className="font-medium">{referenceClassification.bartonicek.type}</span>
-                              </div>
-                            )}
-                          </div>
-                          {referenceInput && (
-                            <div className="mt-3 pt-3 border-t border-border/50">
-                              <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
-                                <GitBranch className="w-3 h-3" />
-                                <span>{t('admin.cases.decisionPathConfigured', 'Decision path configured for divergence analysis')}</span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowGoldStandardInputDialog(true)}
-                            disabled={!canEdit}
-                            className="gap-1"
-                          >
-                            <GitBranch className="w-4 h-4" />
-                            {t('admin.cases.changeReference', 'Change')}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setReferenceClassification(undefined);
-                              setReferenceInput(undefined);
-                            }}
-                            disabled={!canEdit}
-                          >
-                            <X className="w-4 h-4 mr-1" />
-                            {t('admin.cases.clearReference', 'Clear')}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="ml-11">
-                        <Button
-                          type="button"
-                          onClick={() => setShowGoldStandardInputDialog(true)}
-                          disabled={!canEdit}
-                          className="gap-2"
-                        >
-                          <Target className="w-4 h-4" />
-                          {t('admin.cases.setReference', 'Set Reference Classification')}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Response Options */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-foreground">
-                      {t('admin.cases.responseOptions', 'Response Options')}
-                    </h3>
-
-                    {/* Allow Multiple Responses */}
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
-                      <div className="space-y-1">
-                        <Label htmlFor="allowMultiple" className="font-medium cursor-pointer">
-                          {t('admin.cases.allowMultipleResponses', 'Allow Multiple Responses')}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {t('admin.cases.allowMultipleResponsesDescription',
-                            'When disabled, each participant can only submit one response')}
-                        </p>
-                      </div>
-                      <Switch
-                        id="allowMultiple"
-                        checked={allowMultipleResponses}
-                        onCheckedChange={setAllowMultipleResponses}
-                        disabled={!canEdit}
-                      />
-                    </div>
-
-                    {/* Show Reference After Submit */}
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
-                      <div className="space-y-1">
-                        <Label htmlFor="showReference" className="font-medium cursor-pointer">
-                          {t('admin.cases.showReferenceAfterSubmit', 'Show Reference After Submit')}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {t('admin.cases.showReferenceAfterSubmitDescription',
-                            'Display the correct classification after participants submit their response')}
-                        </p>
-                      </div>
-                      <Switch
-                        id="showReference"
-                        checked={showReferenceAfterSubmit}
-                        onCheckedChange={setShowReferenceAfterSubmit}
-                        disabled={!canEdit || !referenceClassification}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" />
-                  {t('common.previous')}
-                </Button>
-                <Button onClick={goToNextStep} className="gap-2">
-                  {t('common.next')}
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+            <CaseSettingsStep
+              referenceClassification={referenceClassification}
+              referenceInput={referenceInput}
+              showReferenceAfterSubmit={showReferenceAfterSubmit}
+              allowMultipleResponses={allowMultipleResponses}
+              canEdit={canEdit}
+              onUpdateForm={(updates) => setForm(prev => ({ ...prev, ...updates }))}
+              onOpenGoldStandard={() => setShowGoldStandardInputDialog(true)}
+              onPrev={goToPrevStep}
+              onNext={goToNextStep}
+            />
           )}
 
           {/* Images Step */}
@@ -952,128 +736,10 @@ export function CaseEditorPage() {
         initialInput={referenceInput}
         initialClassification={referenceClassification}
         onSave={(input, classification) => {
-          setReferenceInput(input);
-          setReferenceClassification(classification);
+          setForm(prev => ({ ...prev, referenceInput: input, referenceClassification: classification }));
         }}
       />
     </div>
   );
 }
 
-interface ImageGridProps {
-  existingImages: CaseImage[];
-  pendingUploads: PendingUpload[];
-  onRemovePending: (id: string) => void;
-  onDeleteExisting: (imageId: string) => void;
-  canEdit: boolean;
-  caseId?: string;
-}
-
-function ImageGrid({
-  existingImages,
-  pendingUploads,
-  onRemovePending,
-  onDeleteExisting,
-  canEdit,
-  caseId,
-}: ImageGridProps) {
-  const { t } = useTranslation();
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-
-  const fetchImageUrl = async (image: CaseImage) => {
-    if (!caseId || imageUrls[image.id]) return;
-    try {
-      const url = await caseApi.getAdminImageUrl(caseId, image.id);
-      setImageUrls((prev) => ({ ...prev, [image.id]: url }));
-    } catch (error) {
-      console.error('Failed to fetch image URL:', error);
-    }
-  };
-
-  if (existingImages.length === 0 && pendingUploads.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-          <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-        </div>
-        <p className="text-muted-foreground font-medium">{t('admin.cases.noImages')}</p>
-        <p className="text-sm text-muted-foreground/70 mt-1">
-          {t('admin.cases.dragOrClick')}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {/* Existing images */}
-      {existingImages.map((image, index) => {
-        if (!imageUrls[image.id]) {
-          fetchImageUrl(image);
-        }
-        return (
-          <div
-            key={image.id}
-            className="relative group animate-fade-in"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-1 ring-border/50 transition-all group-hover:ring-primary/30 group-hover:shadow-lg">
-              {imageUrls[image.id] ? (
-                <img
-                  src={imageUrls[image.id]}
-                  alt={image.filename}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            {canEdit && (
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                onClick={() => onDeleteExisting(image.id)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        );
-      })}
-
-      {/* Pending uploads */}
-      {pendingUploads.map((upload, index) => (
-        <div
-          key={upload.id}
-          className="relative group animate-fade-in"
-          style={{ animationDelay: `${(existingImages.length + index) * 50}ms` }}
-        >
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-2 ring-dashed ring-primary/50">
-            <img
-              src={upload.preview}
-              alt="Pending upload"
-              className="w-full h-full object-cover opacity-75"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
-              <Badge className="bg-primary/90 text-primary-foreground shadow-lg">
-                <Upload className="w-3 h-3 mr-1" />
-                {t('admin.cases.pending')}
-              </Badge>
-            </div>
-          </div>
-          <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2 h-8 w-8 shadow-lg"
-            onClick={() => onRemovePending(upload.id)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      ))}
-    </div>
-  );
-}

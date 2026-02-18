@@ -31,11 +31,11 @@ function FormSkeleton({ className }: FormSkeletonProps) {
 
         {/* Options skeleton */}
         <div className="px-6 space-y-3">
-          {[1, 2, 3, 4].map((i) => (
+          {[0.1, 0.2, 0.3, 0.4].map((delay) => (
             <div
-              key={i}
+              key={`skeleton-${delay}`}
               className="flex items-center gap-4 p-4 rounded-xl border-2 border-transparent bg-muted/30"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              style={{ animationDelay: `${delay}s` }}
             >
               <Skeleton className="h-6 w-6 rounded-full shrink-0" />
               <Skeleton className="h-5 flex-1" />

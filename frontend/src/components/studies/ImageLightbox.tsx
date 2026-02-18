@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
-import type { StudyImageInfo } from '@/types';
+import type { CaseImageInfo } from '@/types';
 import { Spinner } from '../ui/spinner';
 import {
   Carousel,
@@ -12,7 +12,7 @@ import {
 } from '../ui/carousel';
 
 interface ImageLightboxProps {
-  images: StudyImageInfo[];
+  images: CaseImageInfo[];
   imageUrls: Record<string, string>;
   currentIndex: number;
   onClose: () => void;
@@ -58,8 +58,10 @@ export function ImageLightbox({
 
   return (
     <div
+      role="dialog"
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
       onClick={onClose}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
     >
       {/* Close button */}
       <button
@@ -72,6 +74,7 @@ export function ImageLightbox({
 
       {/* Carousel */}
       <div
+        role="presentation"
         className="w-full max-w-5xl px-12"
         onClick={(e) => e.stopPropagation()}
       >

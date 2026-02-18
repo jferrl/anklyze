@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useReducer, useRef, type ReactNode } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase, isSupabaseConfigured, type UserRole, type UserProfile } from '../lib/supabase';
@@ -38,7 +38,7 @@ function extractProfileFromSupabase(user: User): UserProfile {
 }
 
 // Fetch profile from backend API with timeout (has authoritative role from database)
-async function fetchBackendProfile(user: User): Promise<UserProfile> {
+async function fetchBackendProfile(user: User, accessToken?: string): Promise<UserProfile> {
   try {
     // Add timeout to prevent hanging if backend is slow/unavailable
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -46,7 +46,7 @@ async function fetchBackendProfile(user: User): Promise<UserProfile> {
     });
 
     const backendProfile = await Promise.race([
-      getCurrentUser(),
+      getCurrentUser(accessToken),
       timeoutPromise,
     ]);
 
@@ -64,11 +64,33 @@ async function fetchBackendProfile(user: User): Promise<UserProfile> {
   }
 }
 
+interface AuthState {
+  user: User | null;
+  session: Session | null;
+  profile: UserProfile | null;
+  loading: boolean;
+}
+
+type AuthAction =
+  | { type: 'SET_LOADED' }
+  | { type: 'SET_AUTH'; user: User; session: Session; profile: UserProfile }
+  | { type: 'CLEAR_AUTH'; session: Session | null };
+
+const initialAuthState: AuthState = { user: null, session: null, profile: null, loading: true };
+
+function authReducer(state: AuthState, action: AuthAction): AuthState {
+  switch (action.type) {
+    case 'SET_LOADED':
+      return { ...state, loading: false };
+    case 'SET_AUTH':
+      return { user: action.user, session: action.session, profile: action.profile, loading: false };
+    case 'CLEAR_AUTH':
+      return { user: null, session: action.session, profile: null, loading: false };
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authState, dispatch] = useReducer(authReducer, initialAuthState);
   const queryClient = useQueryClient();
   const previousUserIdRef = useRef<string | null>(null);
 
@@ -82,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('anklyze-form-draft');
     };
     if (!supabase) {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADED' });
       return;
     }
 
@@ -99,21 +121,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Track the initial user ID
         previousUserIdRef.current = session?.user?.id ?? null;
 
-        setSession(session);
-        setUser(session?.user ?? null);
-
         if (session?.user) {
           // Fetch profile from backend (has authoritative role)
-          const userProfile = await fetchBackendProfile(session.user);
+          // Pass access token directly to avoid calling getSession() again
+          const userProfile = await fetchBackendProfile(session.user, session.access_token);
           if (mounted) {
-            setProfile(userProfile);
+            dispatch({ type: 'SET_AUTH', user: session.user, session, profile: userProfile });
           }
+        } else {
+          dispatch({ type: 'CLEAR_AUTH', session });
         }
       } catch (error) {
         console.error('Failed to initialize auth:', error);
-      } finally {
         if (mounted) {
-          setLoading(false);
+          dispatch({ type: 'SET_LOADED' });
         }
       }
     };
@@ -135,23 +156,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       previousUserIdRef.current = currentUserId;
 
       try {
-        setSession(session);
-        setUser(session?.user ?? null);
-
         if (session?.user) {
           // Fetch profile from backend (has authoritative role)
-          const userProfile = await fetchBackendProfile(session.user);
+          // Pass access token directly to avoid calling getSession() inside onAuthStateChange
+          const userProfile = await fetchBackendProfile(session.user, session.access_token);
           if (mounted) {
-            setProfile(userProfile);
+            dispatch({ type: 'SET_AUTH', user: session.user, session, profile: userProfile });
           }
         } else {
-          setProfile(null);
+          dispatch({ type: 'CLEAR_AUTH', session });
         }
       } catch (error) {
         console.error('Failed to handle auth state change:', error);
         // Set basic profile from session if backend fails
         if (session?.user && mounted) {
-          setProfile(extractProfileFromSupabase(session.user));
+          dispatch({ type: 'SET_AUTH', user: session.user, session, profile: extractProfileFromSupabase(session.user) });
         }
       }
     });
@@ -200,6 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  const { user, session, profile, loading } = authState;
   const isAdmin = profile?.role === 'admin';
   const isAuthenticated = user !== null;
 

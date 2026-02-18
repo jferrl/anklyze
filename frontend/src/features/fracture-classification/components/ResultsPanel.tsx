@@ -9,7 +9,7 @@ import type { ClassificationResult as Result, FractureInput } from '@/types';
 /**
  * Props for the ResultsPanel component
  */
-export interface ResultsPanelProps {
+interface ResultsPanelProps {
   /** Classification result to display */
   result: Result;
 
@@ -165,48 +165,3 @@ export function ResultsPanel({
   );
 }
 
-/**
- * ResultsPanelSkeleton component
- *
- * Loading skeleton for ResultsPanel while classification is in progress
- *
- * @example
- * ```tsx
- * {classifying ? (
- *   <ResultsPanelSkeleton />
- * ) : (
- *   <ResultsPanel result={result} input={input} />
- * )}
- * ```
- */
-export function ResultsPanelSkeleton({ className = '' }: { className?: string }) {
-  return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Result skeleton */}
-      <Card>
-        <CardHeader>
-          <div className="h-6 w-48 bg-muted animate-pulse rounded" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="h-20 bg-muted animate-pulse rounded" />
-          <div className="h-20 bg-muted animate-pulse rounded" />
-          <div className="h-20 bg-muted animate-pulse rounded" />
-        </CardContent>
-      </Card>
-
-      {/* Actions skeleton */}
-      <Card>
-        <CardHeader>
-          <div className="h-5 w-24 bg-muted animate-pulse rounded" />
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="h-10 bg-muted animate-pulse rounded" />
-            <div className="h-10 bg-muted animate-pulse rounded" />
-            <div className="h-10 bg-muted animate-pulse rounded" />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}

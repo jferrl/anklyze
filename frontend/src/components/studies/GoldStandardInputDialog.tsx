@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Loader2, Target, Check, X } from 'lucide-react';
 import type {
   FractureInput,
-  FormOptions,
   ClassificationResult,
   InvolvedMalleoli,
   PosteriorFractureType,
@@ -15,6 +14,7 @@ import type {
 } from '@/types';
 import { classifyFracture } from '@/services';
 import { getLocalFormOptions } from '../../utils/formOptions';
+import { useQuestionVisibility } from './useQuestionVisibility';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -48,40 +48,60 @@ export function GoldStandardInputDialog({
   onSave,
 }: GoldStandardInputDialogProps) {
   const { t, i18n } = useTranslation();
-  const [options, setOptions] = useState<FormOptions | null>(null);
-  const [formData, setFormData] = useState<Partial<FractureInput>>(() => {
-    if (initialInput) return { ...initialInput };
-    if (hasTACImages) return { has_ct_scan: true };
-    return {};
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
+
+  // Consolidated wizard state: form data, history, and classify operation
+  type ClassifyState =
+    | { status: 'idle'; result: ClassificationResult | null }
+    | { status: 'loading'; result: null }
+    | { status: 'error'; error: string; result: null }
+    | { status: 'done'; result: ClassificationResult };
+
+  interface WizardState {
+    formData: Partial<FractureInput>;
+    formHistory: Partial<FractureInput>[];
+    classify: ClassifyState;
+  }
+
+  const buildInitialWizardState = (): WizardState => ({
+    formData: initialInput ? { ...initialInput } : hasTACImages ? { has_ct_scan: true } : {},
+    formHistory: [],
+    classify: initialClassification
+      ? { status: 'done', result: initialClassification }
+      : { status: 'idle', result: null },
   });
-  const [formHistory, setFormHistory] = useState<Partial<FractureInput>[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(
-    initialClassification || null
-  );
+
+  const [wizard, setWizard] = useState<WizardState>(buildInitialWizardState);
   const formEndRef = useRef<HTMLDivElement>(null);
 
-  // Reset form when dialog opens
-  useEffect(() => {
-    if (open) {
-      if (initialInput) {
-        setFormData({ ...initialInput });
-      } else if (hasTACImages) {
-        setFormData({ has_ct_scan: true });
-      } else {
-        setFormData({});
-      }
-      setFormHistory([]);
-      setClassificationResult(initialClassification || null);
-      setError(null);
-    }
-  }, [open, initialInput, initialClassification, hasTACImages]);
+  // Derive shortcuts for readability
+  const { formData, formHistory, classify: classifyState } = wizard;
 
-  // Re-load options when language changes
-  useEffect(() => {
-    setOptions(getLocalFormOptions());
-  }, [i18n.language]);
+  // Helper setters that update individual wizard fields
+  const setFormData = useCallback((data: Partial<FractureInput>) => {
+    setWizard(prev => ({ ...prev, formData: data }));
+  }, []);
+  const setFormHistory = useCallback((updater: Partial<FractureInput>[] | ((prev: Partial<FractureInput>[]) => Partial<FractureInput>[])) => {
+    setWizard(prev => ({
+      ...prev,
+      formHistory: typeof updater === 'function' ? updater(prev.formHistory) : updater,
+    }));
+  }, []);
+  const setClassifyState = useCallback((state: ClassifyState) => {
+    setWizard(prev => ({ ...prev, classify: state }));
+  }, []);
+
+  // Reset form when dialog opens — render-time state adjustment (React recommended pattern)
+  // See: https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
+    setWizard(buildInitialWizardState());
+  }
+  if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   // Smooth scroll to new question when form advances
   useEffect(() => {
@@ -96,7 +116,7 @@ export function GoldStandardInputDialog({
   // Push current state to history before making changes
   const pushToHistory = useCallback(() => {
     setFormHistory(prev => [...prev, { ...formData }]);
-  }, [formData]);
+  }, [formData, setFormHistory]);
 
   // Go back to previous state
   const goBack = useCallback(() => {
@@ -105,8 +125,8 @@ export function GoldStandardInputDialog({
     setFormHistory(prev => prev.slice(0, -1));
     setFormData(previousState);
     // Clear classification result when going back
-    setClassificationResult(null);
-  }, [formHistory]);
+    setClassifyState({ status: 'idle', result: null });
+  }, [formHistory, setFormHistory, setFormData, setClassifyState]);
 
   const canGoBack = formHistory.length > 0;
 
@@ -115,185 +135,49 @@ export function GoldStandardInputDialog({
     pushToHistory();
     setFormData(newData);
     // Clear classification result when form changes
-    setClassificationResult(null);
-  }, [pushToHistory]);
+    setClassifyState({ status: 'idle', result: null });
+  }, [pushToHistory, setFormData, setClassifyState]);
 
-  // Determine which questions to show (same logic as StudyClassificationForm)
+  // Shared question visibility logic, isFormComplete, and calculateProgress
+  const {
+    showPosteriorHasCTScan, showPosteriorType,
+    showMedialMorphology,
+    showLateralLevel, showLateralMorphologyTrans, showSuprasindesmalType, showLateralFibulaTracePattern,
+    showLateralPosteriorLevel, showLPMorphologyTrans,
+    showLPHasCTScanTransSpiral, showLPPosteriorTypeTransSpiral,
+    showLPHasCTScanTransOblique, showLPPosteriorTypeTransOblique,
+    showLPSuprasindesmalType, showLPFibulaTracePattern,
+    showLPHasCTScanSupra, showLPPosteriorTypeSupra,
+    showLMMedialMorphology, showLMFibulaInfraTransverse, showLMFibularLevel,
+    showLMSuprasindesmalType, showLMFibulaTracePattern, showLMFibularMorphology,
+    showMedialPosteriorMorphology, showMPHasCTScan, showMPPosteriorType,
+    showTrimaleolarFibularHeight, showTrimaleolarSupraType, showTriFibulaTracePattern,
+    showTriHasCTScan, showTriPosteriorType, showTriLateralMorphologyTransComplete,
+    isFormComplete, calculateProgress,
+  } = useQuestionVisibility(formData, hasTACImages);
+
   const involvedMalleoli = formData.involved_malleoli;
-
-  // PATH: Posterior only
-  const showPosteriorHasCTScan = involvedMalleoli === 'posterior_only' && !hasTACImages;
-  const showPosteriorType = involvedMalleoli === 'posterior_only' && formData.has_ct_scan === true;
-
-  // PATH: Medial only
-  const showMedialMorphology = involvedMalleoli === 'medial_only';
-
-  // PATH: Lateral only
-  const showLateralLevel = involvedMalleoli === 'lateral_only';
-  const showLateralMorphologyTrans = showLateralLevel && formData.fibular_level === 'transindesmal';
-  const showSuprasindesmalType = showLateralLevel && formData.fibular_level === 'suprasindesmal';
-  const showLateralFibulaTracePattern = showSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-
-  // PATH: Lateral + Posterior
-  const showLateralPosteriorLevel = involvedMalleoli === 'lateral_posterior';
-  const showLPMorphologyTrans = showLateralPosteriorLevel && formData.fibular_level === 'transindesmal';
-  const showLPHasCTScanTransSpiral = showLPMorphologyTrans && formData.lateral_morphology === 'spiral' && !hasTACImages;
-  const showLPPosteriorTypeTransSpiral = showLPMorphologyTrans && formData.lateral_morphology === 'spiral' && formData.has_ct_scan === true;
-  const showLPHasCTScanTransOblique = showLPMorphologyTrans && formData.lateral_morphology === 'oblique' && !hasTACImages;
-  const showLPPosteriorTypeTransOblique = showLPMorphologyTrans && formData.lateral_morphology === 'oblique' && formData.has_ct_scan === true;
-  const showLPSuprasindesmalType = showLateralPosteriorLevel && formData.fibular_level === 'suprasindesmal';
-  const showLPFibulaTracePattern = showLPSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showLPHasCTScanSupra = (showLPFibulaTracePattern ||
-    (showLPSuprasindesmalType && formData.suprasindesmal_type === 'proximal')) && !hasTACImages;
-  const showLPPosteriorTypeSupra = (showLPFibulaTracePattern ||
-    (showLPSuprasindesmalType && formData.suprasindesmal_type === 'proximal')) && formData.has_ct_scan === true;
-
-  // PATH: Lateral + Medial
-  const showLMMedialMorphology = involvedMalleoli === 'lateral_medial';
-  const showLMFibulaInfraTransverse = showLMMedialMorphology && formData.medial_morphology === 'oblique';
-  const showLMFibularLevel = showLMMedialMorphology && (
-    (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false) ||
-    formData.medial_morphology === 'transverse'
-  );
-  const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level_for_transverse === 'suprasindesmal';
-  const showLMFibulaTracePattern = showLMSuprasindesmalType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showLMFibularMorphology = showLMFibularLevel &&
-    (formData.fibular_level_for_transverse === 'infrasindesmal' || formData.fibular_level_for_transverse === 'transindesmal');
-
-  // PATH: Medial + Posterior
-  const showMedialPosteriorMorphology = involvedMalleoli === 'medial_posterior';
-  const showMPHasCTScan = showMedialPosteriorMorphology && !hasTACImages;
-  const showMPPosteriorType = showMedialPosteriorMorphology && formData.has_ct_scan === true;
-
-  // PATH: Trimaleolar
-  const showTrimaleolarFibularHeight = involvedMalleoli === 'trimaleolar';
-  const showTrimaleolarSupraType = showTrimaleolarFibularHeight && formData.fibular_level === 'suprasindesmal';
-  const showTriFibulaTracePattern = showTrimaleolarSupraType &&
-    (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-  const showTriHasCTScan = (showTriFibulaTracePattern ||
-    (showTrimaleolarSupraType && formData.suprasindesmal_type === 'proximal') ||
-    (showTrimaleolarFibularHeight && (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal'))) && !hasTACImages;
-  const showTriPosteriorType = showTriHasCTScan === false && showTrimaleolarFibularHeight && formData.has_ct_scan === true;
-  const showTriLateralMorphologyTrans = showTrimaleolarFibularHeight && formData.fibular_level === 'transindesmal';
-  const showTriLateralMorphologyTransComplete = showTriLateralMorphologyTrans && (formData.has_ct_scan === true || hasTACImages);
-
-  // Calculate progress
-  const calculateProgress = useCallback((): number => {
-    if (!involvedMalleoli) return 0;
-
-    let totalSteps = 1;
-    let completedSteps = 1;
-
-    switch (involvedMalleoli) {
-      case 'posterior_only':
-        totalSteps = formData.has_ct_scan ? 3 : 2;
-        if (formData.has_ct_scan !== undefined) completedSteps++;
-        if (formData.posterior_fracture_type) completedSteps++;
-        break;
-      case 'medial_only':
-        totalSteps = 2;
-        if (formData.medial_morphology) completedSteps++;
-        break;
-      case 'lateral_only':
-        totalSteps = 3;
-        if (formData.fibular_level) completedSteps++;
-        if (formData.lateral_morphology || formData.suprasindesmal_type) completedSteps++;
-        break;
-      default:
-        totalSteps = 4;
-        completedSteps = Math.min(Object.keys(formData).length, totalSteps);
-    }
-
-    return Math.round((completedSteps / totalSteps) * 100);
-  }, [involvedMalleoli, formData]);
-
-  // Check if form is complete
-  const isFormComplete = useCallback((): boolean => {
-    if (!involvedMalleoli) return false;
-
-    switch (involvedMalleoli) {
-      case 'posterior_only':
-        if (formData.has_ct_scan === undefined) return false;
-        if (formData.has_ct_scan === false) return true;
-        return !!formData.posterior_fracture_type;
-
-      case 'medial_only':
-        return !!formData.medial_morphology;
-
-      case 'lateral_only':
-        if (!formData.fibular_level) return false;
-        if (formData.fibular_level === 'infrasindesmal') return true;
-        if (formData.fibular_level === 'transindesmal') return !!formData.lateral_morphology;
-        if (formData.fibular_level === 'suprasindesmal') {
-          if (!formData.suprasindesmal_type) return false;
-          if (formData.suprasindesmal_type === 'proximal') return true;
-          return !!formData.fibula_trace_pattern;
-        }
-        return false;
-
-      case 'medial_posterior':
-        if (formData.has_ct_scan === undefined) return false;
-        if (formData.has_ct_scan === false) return !!formData.medial_morphology;
-        return !!formData.medial_morphology && !!formData.posterior_fracture_type;
-
-      case 'lateral_posterior':
-        if (!formData.fibular_level) return false;
-        return true;
-
-      case 'lateral_medial':
-        if (!formData.medial_morphology) return false;
-        return true;
-
-      case 'trimaleolar':
-        if (!formData.fibular_level) return false;
-        return true;
-
-      default:
-        return false;
-    }
-  }, [involvedMalleoli, formData]);
 
   // Handle classification
   const handleClassify = async () => {
     if (!isFormComplete()) return;
 
-    setLoading(true);
-    setError(null);
+    setClassifyState({ status: 'loading', result: null });
 
     try {
       const result = await classifyFracture(formData as FractureInput);
-      setClassificationResult(result);
+      setClassifyState({ status: 'done', result });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Classification failed');
-    } finally {
-      setLoading(false);
+      setClassifyState({ status: 'error', error: err instanceof Error ? err.message : 'Classification failed', result: null });
     }
   };
 
   // Handle save
   const handleSave = () => {
-    if (!classificationResult || !isFormComplete()) return;
-    onSave(formData as FractureInput, classificationResult);
+    if (classifyState.status !== 'done' || !isFormComplete()) return;
+    onSave(formData as FractureInput, classifyState.result);
     onOpenChange(false);
   };
-
-  if (!options) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-center py-12">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   const progress = calculateProgress();
 
@@ -312,7 +196,7 @@ export function GoldStandardInputDialog({
 
         <div className="space-y-6 py-4">
           {/* Progress indicator */}
-          {involvedMalleoli && !classificationResult && (
+          {involvedMalleoli && classifyState.status !== 'done' && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{t('form.progress')}</span>
@@ -323,7 +207,7 @@ export function GoldStandardInputDialog({
           )}
 
           {/* Back button */}
-          {canGoBack && !classificationResult && (
+          {canGoBack && classifyState.status !== 'done' && (
             <Button type="button" variant="ghost" size="sm" onClick={goBack} className="gap-1">
               <ChevronLeft className="h-4 w-4" />
               {t('form.back')}
@@ -331,7 +215,7 @@ export function GoldStandardInputDialog({
           )}
 
           {/* Show classification result if available */}
-          {classificationResult ? (
+          {classifyState.status === 'done' ? (
             <div className="space-y-6">
               <Alert className="border-emerald-500/30 bg-emerald-500/10">
                 <Check className="h-4 w-4 text-emerald-600" />
@@ -340,13 +224,13 @@ export function GoldStandardInputDialog({
                 </AlertDescription>
               </Alert>
 
-              <ClassificationResultComponent result={classificationResult} />
+              <ClassificationResultComponent result={classifyState.result} />
 
               <div className="flex gap-3 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setClassificationResult(null);
+                    setClassifyState({ status: 'idle', result: null });
                     setFormData({});
                     setFormHistory([]);
                   }}
@@ -639,9 +523,9 @@ export function GoldStandardInputDialog({
               {/* Scroll anchor */}
               <div ref={formEndRef} />
 
-              {error && (
+              {classifyState.status === 'error' && (
                 <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription>{classifyState.error}</AlertDescription>
                 </Alert>
               )}
 
@@ -650,13 +534,13 @@ export function GoldStandardInputDialog({
                 type="button"
                 size="lg"
                 className={cn(
-                  "w-full font-semibold transition-all duration-300",
+                  "w-full font-semibold transition-shadow duration-300",
                   isFormComplete() && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
                 )}
-                disabled={!isFormComplete() || loading}
+                disabled={!isFormComplete() || classifyState.status === 'loading'}
                 onClick={handleClassify}
               >
-                {loading ? (
+                {classifyState.status === 'loading' ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     {t('form.classifying')}

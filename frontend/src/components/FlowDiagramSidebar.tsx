@@ -141,8 +141,10 @@ export function FlowDiagramSidebar() {
       {/* Backdrop */}
       {isOpen && (
         <div
+          role="presentation"
           className="fixed inset-0 z-30 bg-black/20"
           onClick={() => setIsOpen(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setIsOpen(false)}
         />
       )}
     </>
