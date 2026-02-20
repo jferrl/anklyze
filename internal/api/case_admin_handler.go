@@ -262,15 +262,10 @@ func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
 		return
 	}
 
-	if cs.Status != domain.CaseStatusDraft {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "only draft cases can be published"})
-		return
-	}
-
-	// Check if case has at least one image
+	// Check if case has images and validate publish preconditions
 	images, _ := h.caseRepo.GetImages(c.Request.Context(), id)
-	if len(images) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "case must have at least one image before publishing"})
+	if err := cs.CanPublish(len(images) > 0); err != nil {
+		HandleError(c, err, "Cannot publish case")
 		return
 	}
 
@@ -304,8 +299,8 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 		return
 	}
 
-	if cs.Status != domain.CaseStatusPublished {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "only published cases can be closed"})
+	if err := cs.CanClose(); err != nil {
+		HandleError(c, err, "Cannot close case")
 		return
 	}
 

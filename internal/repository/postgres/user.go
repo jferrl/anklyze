@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func (r *UserRepository) SyncOnLogin(ctx context.Context, userID uuid.UUID, emai
 	`, userID, email, provider, now).Scan(&user).Error
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("sync on login: %w", err)
 	}
 
 	return &user, nil
@@ -55,14 +56,17 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get by id: %w", result.Error)
 	}
 	return &user, nil
 }
 
 // UpdateRole updates a user's role.
 func (r *UserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error {
-	return r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", id).Update("role", role).Error
+	if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", id).Update("role", role).Error; err != nil {
+		return fmt.Errorf("update role: %w", err)
+	}
+	return nil
 }
 
 // GetByEmail retrieves a user by their email address.
@@ -73,7 +77,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get by email: %w", result.Error)
 	}
 	return &user, nil
 }
@@ -104,8 +108,11 @@ func (r *UserRepository) UpdateProfile(ctx context.Context, id uuid.UUID, profil
 
 	updates["updated_at"] = time.Now()
 
-	return r.db.WithContext(ctx).
+	if err := r.db.WithContext(ctx).
 		Model(&domain.User{}).
 		Where("id = ?", id).
-		Updates(updates).Error
+		Updates(updates).Error; err != nil {
+		return fmt.Errorf("update profile: %w", err)
+	}
+	return nil
 }

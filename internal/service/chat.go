@@ -7,6 +7,7 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/llm"
+	"github.com/jferrl/anklyze/internal/rules"
 )
 
 // ChatStatus represents the status of a chat response.
@@ -20,9 +21,9 @@ const (
 
 // ChatRequest represents a chat message request.
 type ChatRequest struct {
-	Message       string               `json:"message"`
-	Language      string               `json:"language"`
-	SessionID     string               `json:"session_id,omitempty"`
+	Message       string                `json:"message"`
+	Language      string                `json:"language"`
+	SessionID     string                `json:"session_id,omitempty"`
 	PreviousInput *domain.FractureInput `json:"-"` // Previous extracted input for context continuity
 }
 
@@ -44,15 +45,17 @@ type ChatService interface {
 
 // chatService implements ChatService.
 type chatService struct {
-	llmClient  *llm.Client
-	classifier ClassifierService
+	llmClient           *llm.Client
+	engine              *rules.Engine
+	confidenceThreshold float64
 }
 
 // NewChatService creates a new ChatService.
-func NewChatService(llmClient *llm.Client, classifier ClassifierService) ChatService {
+func NewChatService(llmClient *llm.Client, engine *rules.Engine, confidenceThreshold float64) ChatService {
 	return &chatService{
-		llmClient:  llmClient,
-		classifier: classifier,
+		llmClient:           llmClient,
+		engine:              engine,
+		confidenceThreshold: confidenceThreshold,
 	}
 }
 
@@ -75,7 +78,7 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	}
 
 	// Check if we need clarification
-	if extraction.Confidence < 0.7 || len(extraction.Clarifications) > 0 {
+	if extraction.Confidence < s.confidenceThreshold || len(extraction.Clarifications) > 0 {
 		msg := "I need some clarification to classify this fracture accurately. Please answer the questions below."
 		if lang == i18n.Spanish {
 			msg = "Necesito algunas aclaraciones para clasificar esta fractura con precisión. Por favor, responde las siguientes preguntas."
@@ -91,7 +94,7 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	}
 
 	// Classify the extracted input
-	result, err := s.classifier.Classify(extraction.Input)
+	result, err := s.engine.Classify(extraction.Input)
 	if err != nil {
 		msg := "An error occurred while classifying the fracture. Please try again."
 		if lang == i18n.Spanish {

@@ -34,9 +34,11 @@ export class AuthRequiredError extends Error {
 
 // Custom error for forbidden access
 export class ForbiddenError extends Error {
-  constructor(message: string = 'Access denied') {
+  code: string;
+  constructor(message: string = 'Access denied', code: string = '') {
     super(message);
     this.name = 'ForbiddenError';
+    this.code = code;
   }
 }
 
@@ -72,9 +74,11 @@ export async function handleApiError(response: Response): Promise<never> {
     throw new AuthRequiredError();
   }
 
-  // Handle forbidden errors
+  // Handle forbidden errors (preserves code for DEADLINE_PASSED, CASE_NOT_ACCEPTING_RESPONSES)
   if (response.status === 403) {
-    throw new ForbiddenError();
+    const error = await response.json();
+    const errorCode = getErrorCode(error);
+    throw new ForbiddenError(getErrorMessage(error, 'Access denied'), errorCode);
   }
 
   // Handle rate limiting errors

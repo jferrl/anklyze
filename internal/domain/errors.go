@@ -11,7 +11,12 @@ var (
 	ErrForbidden     = errors.New("access forbidden")
 	ErrInvalidInput  = errors.New("invalid input")
 	ErrConflict      = errors.New("resource conflict")
-	ErrQuotaExceeded = errors.New("quota exceeded")
+	ErrQuotaExceeded             = errors.New("quota exceeded")
+	ErrInvalidStateTransition    = errors.New("invalid state transition")
+	ErrMissingImages             = errors.New("case must have at least one image before publishing")
+	ErrDeadlinePassed            = errors.New("case deadline has passed")
+	ErrCaseNotAcceptingResponses = errors.New("case is not accepting responses")
+	ErrAlreadyResponded          = errors.New("already submitted a response to this case")
 )
 
 // FieldError represents a validation error for a specific field.
@@ -59,4 +64,11 @@ const (
 	ErrCodeUnsupportedLanguage  = "unsupported_language"
 	ErrCodeNoWords              = "no_words"
 	ErrCodeSessionLimitExceeded = "session_limit_exceeded"
+
+	// Case state errors
+	ErrCodeInvalidStateTransition    = "INVALID_STATE_TRANSITION"
+	ErrCodeMissingImages             = "MISSING_IMAGES"
+	ErrCodeDeadlinePassed            = "DEADLINE_PASSED"
+	ErrCodeCaseNotAcceptingResponses = "CASE_NOT_ACCEPTING_RESPONSES"
+	ErrCodeAlreadyResponded          = "ALREADY_RESPONDED"
 )

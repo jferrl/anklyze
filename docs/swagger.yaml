@@ -33,8 +33,12 @@ definitions:
     type: object
   api.ErrorResponse:
     properties:
-      error:
-        example: Invalid request body
+      code:
+        type: string
+      details:
+        description: Only included in debug mode
+        type: string
+      message:
         type: string
     type: object
   api.FeedbackRequest:

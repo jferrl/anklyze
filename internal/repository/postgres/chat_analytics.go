@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jferrl/anklyze/internal/domain"
@@ -49,7 +50,7 @@ func (r *ChatAnalyticsRepository) GetSummary(from, to time.Time) (*domain.ChatAn
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Scan(&stats).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary stats: %w", err)
 	}
 
 	summary.TotalSessions = stats.TotalSessions
@@ -74,7 +75,7 @@ func (r *ChatAnalyticsRepository) GetSummary(from, to time.Time) (*domain.ChatAn
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Group("language").
 		Scan(&langRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary language distribution: %w", err)
 	}
 	for _, row := range langRows {
 		summary.LanguageDistribution[row.Language] = row.Count
@@ -90,7 +91,7 @@ func (r *ChatAnalyticsRepository) GetSummary(from, to time.Time) (*domain.ChatAn
 		Where("created_at >= ? AND created_at <= ? AND danis_weber_type IS NOT NULL", from, to).
 		Group("danis_weber_type").
 		Scan(&classRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary classification distribution: %w", err)
 	}
 	for _, row := range classRows {
 		summary.ClassificationDistribution[row.Type] = row.Count
@@ -122,7 +123,7 @@ func (r *ChatAnalyticsRepository) GetFeedbackSummary(from, to time.Time) (*domai
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Scan(&stats).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get feedback summary: %w", err)
 	}
 
 	summary.TotalFeedback = stats.TotalFeedback
@@ -164,7 +165,7 @@ func (r *ChatAnalyticsRepository) GetConfidenceDistribution(from, to time.Time) 
 		Order("bucket").
 		Scan(&rows).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get confidence distribution: %w", err)
 	}
 
 	var total int64
@@ -227,7 +228,7 @@ func (r *ChatAnalyticsRepository) GetTrends(from, to time.Time, granularity doma
 		Order("date ASC").
 		Scan(&rows).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get trends: %w", err)
 	}
 
 	// Get feedback data separately and merge

@@ -1492,9 +1492,15 @@ const docTemplate = `{
         "api.ErrorResponse": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "Invalid request body"
+                "code": {
+                    "type": "string"
+                },
+                "details": {
+                    "description": "Only included in debug mode",
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
                 }
             }
         },

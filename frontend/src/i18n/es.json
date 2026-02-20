@@ -1138,6 +1138,11 @@
     "dailyQuotaExceeded": "Cuota diaria excedida",
     "rateLimitExceeded": "Límite de velocidad excedido",
     "badRequest": "Solicitud incorrecta",
-    "genericError": "Ha ocurrido un error"
+    "genericError": "Ha ocurrido un error",
+    "INVALID_STATE_TRANSITION": "Esta operación no está permitida en el estado actual del caso",
+    "MISSING_IMAGES": "Se requiere al menos una imagen antes de publicar",
+    "DEADLINE_PASSED": "El plazo del caso ha expirado",
+    "CASE_NOT_ACCEPTING_RESPONSES": "Este caso no está aceptando respuestas actualmente",
+    "ALREADY_RESPONDED": "Ya has enviado una respuesta a este caso"
   }
 }

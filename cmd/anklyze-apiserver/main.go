@@ -152,8 +152,7 @@ func main() {
 			slog.Warn("Gemini client creation failed, chat disabled", "error", err)
 		} else {
 			ruleEngine := rules.NewEngine()
-			classifier := service.NewClassifierService(ruleEngine)
-			chatService = service.NewChatService(llmClient, classifier)
+			chatService = service.NewChatService(llmClient, ruleEngine, 0.7)
 			slog.Info("Gemini configured, chat classification enabled")
 		}
 	} else {

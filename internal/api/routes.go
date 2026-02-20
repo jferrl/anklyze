@@ -43,8 +43,7 @@ func SetupRoutes(
 ) *Cleanup {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
-	classifier := service.NewClassifierService(ruleEngine)
-	handler := NewHandler(classifier, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo).
+	handler := NewHandler(ruleEngine, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo).
 		WithSessionMessageLimit(cfg.SessionMessageLimit)
 
 	// CORS middleware

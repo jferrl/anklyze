@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
+	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/timeutil"
 )
@@ -49,7 +50,7 @@ type ChatAnalyticsRepository interface {
 
 // Handler handles HTTP requests
 type Handler struct {
-	classifier          service.ClassifierService
+	engine              *rules.Engine
 	chatService         service.ChatService
 	auditRepo           AuditRepository
 	analyticsRepo       AnalyticsRepository
@@ -61,7 +62,7 @@ type Handler struct {
 
 // NewHandler creates a new Handler
 func NewHandler(
-	classifier service.ClassifierService,
+	engine *rules.Engine,
 	chatService service.ChatService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
@@ -69,7 +70,7 @@ func NewHandler(
 	chatAnalyticsRepo ChatAnalyticsRepository,
 ) *Handler {
 	return &Handler{
-		classifier:          classifier,
+		engine:              engine,
 		chatService:         chatService,
 		auditRepo:           auditRepo,
 		analyticsRepo:       analyticsRepo,
@@ -112,7 +113,7 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		return
 	}
 
-	result, err := h.classifier.Classify(input)
+	result, err := h.engine.Classify(input)
 	if err != nil {
 		HandleError(c, err, "Classification failed")
 		return

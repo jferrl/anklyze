@@ -12,19 +12,17 @@ import (
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
-	"github.com/jferrl/anklyze/internal/service"
 )
 
 // setupTestHandler creates a handler with real implementations for integration testing.
 func setupTestHandler() *Handler {
 	ruleEngine := rules.NewEngine()
-	classifier := service.NewClassifierService(ruleEngine)
 	auditRepo := repository.NewNoOpAuditRepository()
 	analyticsRepo := repository.NewNoOpAnalyticsRepository()
 	chatAuditRepo := repository.NewNoOpChatAuditRepository()
 	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
 	// chatService is nil for tests - chat endpoint will return 503
-	return NewHandler(classifier, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo)
+	return NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.

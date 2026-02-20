@@ -25,7 +25,10 @@ func NewCaseRepository(db *gorm.DB) *CaseRepository {
 
 // Create creates a new case.
 func (r *CaseRepository) Create(ctx context.Context, cs *domain.Case) error {
-	return r.db.WithContext(ctx).Create(cs).Error
+	if err := r.db.WithContext(ctx).Create(cs).Error; err != nil {
+		return fmt.Errorf("create: %w", err)
+	}
+	return nil
 }
 
 // GetByID retrieves a case by its ID.
@@ -36,7 +39,7 @@ func (r *CaseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Cas
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get by id: %w", result.Error)
 	}
 	return &cs, nil
 }
@@ -44,30 +47,40 @@ func (r *CaseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Cas
 // Update updates a case.
 func (r *CaseRepository) Update(ctx context.Context, cs *domain.Case) error {
 	cs.UpdatedAt = time.Now()
-	return r.db.WithContext(ctx).Save(cs).Error
+	if err := r.db.WithContext(ctx).Save(cs).Error; err != nil {
+		return fmt.Errorf("update: %w", err)
+	}
+	return nil
 }
 
 // Delete deletes a case and all associated data (images, responses, users) by its ID.
 func (r *CaseRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// Delete all case users first
 		if err := tx.Delete(&domain.CaseUser{}, "case_id = ?", id).Error; err != nil {
-			return err
+			return fmt.Errorf("delete case users: %w", err)
 		}
 
 		// Delete all responses
 		if err := tx.Delete(&domain.CaseResponse{}, "case_id = ?", id).Error; err != nil {
-			return err
+			return fmt.Errorf("delete case responses: %w", err)
 		}
 
 		// Delete all images (storage files should be deleted separately)
 		if err := tx.Delete(&domain.CaseImage{}, "case_id = ?", id).Error; err != nil {
-			return err
+			return fmt.Errorf("delete case images: %w", err)
 		}
 
 		// Delete the case
-		return tx.Delete(&domain.Case{}, "id = ?", id).Error
+		if err := tx.Delete(&domain.Case{}, "id = ?", id).Error; err != nil {
+			return fmt.Errorf("delete case: %w", err)
+		}
+		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+	return nil
 }
 
 // List retrieves cases with optional status filter and pagination.
@@ -81,11 +94,11 @@ func (r *CaseRepository) List(ctx context.Context, status *domain.CaseStatus, li
 	}
 
 	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list count: %w", err)
 	}
 
 	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&cases).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list find: %w", err)
 	}
 
 	return cases, total, nil
@@ -99,7 +112,10 @@ func (r *CaseRepository) ListPublished(ctx context.Context, limit, offset int) (
 
 // AddImage adds an image to a case.
 func (r *CaseRepository) AddImage(ctx context.Context, image *domain.CaseImage) error {
-	return r.db.WithContext(ctx).Create(image).Error
+	if err := r.db.WithContext(ctx).Create(image).Error; err != nil {
+		return fmt.Errorf("add image: %w", err)
+	}
+	return nil
 }
 
 // GetImages retrieves all images for a case ordered by category and display order.
@@ -109,7 +125,10 @@ func (r *CaseRepository) GetImages(ctx context.Context, caseID uuid.UUID) ([]dom
 		Where("case_id = ?", caseID).
 		Order("category ASC, display_order ASC").
 		Find(&images).Error
-	return images, err
+	if err != nil {
+		return nil, fmt.Errorf("get images: %w", err)
+	}
+	return images, nil
 }
 
 // GetImagesForCases batch loads images for multiple cases.
@@ -143,24 +162,31 @@ func (r *CaseRepository) GetImageByID(ctx context.Context, imageID uuid.UUID) (*
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get image by id: %w", result.Error)
 	}
 	return &image, nil
 }
 
 // UpdateImage updates an image's mutable fields (display_order).
 func (r *CaseRepository) UpdateImage(ctx context.Context, image *domain.CaseImage) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.CaseImage{}).
 		Where("id = ?", image.ID).
 		Updates(map[string]any{
 			"display_order": image.DisplayOrder,
 		}).Error
+	if err != nil {
+		return fmt.Errorf("update image: %w", err)
+	}
+	return nil
 }
 
 // DeleteImage deletes an image by its ID.
 func (r *CaseRepository) DeleteImage(ctx context.Context, imageID uuid.UUID) error {
-	return r.db.WithContext(ctx).Delete(&domain.CaseImage{}, "id = ?", imageID).Error
+	if err := r.db.WithContext(ctx).Delete(&domain.CaseImage{}, "id = ?", imageID).Error; err != nil {
+		return fmt.Errorf("delete image: %w", err)
+	}
+	return nil
 }
 
 // UpdateHasTACImages recalculates and updates the has_tac_images flag for a case.
@@ -170,19 +196,22 @@ func (r *CaseRepository) UpdateHasTACImages(ctx context.Context, caseID uuid.UUI
 		Model(&domain.CaseImage{}).
 		Where("case_id = ? AND category = ?", caseID, domain.ImageCategoryTAC).
 		Count(&count).Error; err != nil {
-		return err
+		return fmt.Errorf("update has tac images count: %w", err)
 	}
 
-	return r.db.WithContext(ctx).
+	if err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ?", caseID).
-		Update("has_tac_images", count > 0).Error
+		Update("has_tac_images", count > 0).Error; err != nil {
+		return fmt.Errorf("update has tac images: %w", err)
+	}
+	return nil
 }
 
 // Publish changes a case status from draft to published.
 func (r *CaseRepository) Publish(ctx context.Context, id uuid.UUID) error {
 	now := time.Now()
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND status = ?", id, domain.CaseStatusDraft).
 		Updates(map[string]any{
@@ -190,12 +219,16 @@ func (r *CaseRepository) Publish(ctx context.Context, id uuid.UUID) error {
 			"published_at": now,
 			"updated_at":   now,
 		}).Error
+	if err != nil {
+		return fmt.Errorf("publish: %w", err)
+	}
+	return nil
 }
 
 // Close changes a case status to closed.
 func (r *CaseRepository) Close(ctx context.Context, id uuid.UUID) error {
 	now := time.Now()
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND status = ?", id, domain.CaseStatusPublished).
 		Updates(map[string]any{
@@ -203,34 +236,53 @@ func (r *CaseRepository) Close(ctx context.Context, id uuid.UUID) error {
 			"closed_at":  now,
 			"updated_at": now,
 		}).Error
+	if err != nil {
+		return fmt.Errorf("close: %w", err)
+	}
+	return nil
 }
 
 // IncrementResponseCount increments the response count for a case.
 func (r *CaseRepository) IncrementResponseCount(ctx context.Context, caseID uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ?", caseID).
 		UpdateColumn("response_count", gorm.Expr("response_count + 1")).Error
+	if err != nil {
+		return fmt.Errorf("increment response count: %w", err)
+	}
+	return nil
 }
 
 // UpdateUniqueUsers updates the unique users count for a case.
 func (r *CaseRepository) UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID, count int) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ?", caseID).
 		Update("unique_users", count).Error
+	if err != nil {
+		return fmt.Errorf("update unique users: %w", err)
+	}
+	return nil
 }
 
 // AddUser adds a user to a case (grants access).
 func (r *CaseRepository) AddUser(ctx context.Context, caseID, userID uuid.UUID, email string) error {
 	caseUser := domain.NewCaseUser(caseID, userID, email)
-	return r.db.WithContext(ctx).Create(caseUser).Error
+	if err := r.db.WithContext(ctx).Create(caseUser).Error; err != nil {
+		return fmt.Errorf("add user: %w", err)
+	}
+	return nil
 }
 
 // RemoveUser removes a user from a case (revokes access).
 func (r *CaseRepository) RemoveUser(ctx context.Context, caseID, userID uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Delete(&domain.CaseUser{}, "case_id = ? AND user_id = ?", caseID, userID).Error
+	if err != nil {
+		return fmt.Errorf("remove user: %w", err)
+	}
+	return nil
 }
 
 // GetUsers retrieves all users who have access to a case.
@@ -240,7 +292,10 @@ func (r *CaseRepository) GetUsers(ctx context.Context, caseID uuid.UUID) ([]doma
 		Where("case_id = ?", caseID).
 		Order("created_at ASC").
 		Find(&users).Error
-	return users, err
+	if err != nil {
+		return nil, fmt.Errorf("get users: %w", err)
+	}
+	return users, nil
 }
 
 // HasAccess checks if a user has access to a case.
@@ -250,7 +305,10 @@ func (r *CaseRepository) HasAccess(ctx context.Context, caseID, userID uuid.UUID
 		Model(&domain.CaseUser{}).
 		Where("case_id = ? AND user_id = ?", caseID, userID).
 		Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, fmt.Errorf("has access: %w", err)
+	}
+	return count > 0, nil
 }
 
 // ListForUser retrieves published cases accessible to a specific user with pagination.
@@ -264,12 +322,12 @@ func (r *CaseRepository) ListForUser(ctx context.Context, userID uuid.UUID, limi
 		Where("case_users.user_id = ? AND cases.status = ?", userID, domain.CaseStatusPublished)
 
 	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list for user count: %w", err)
 	}
 
 	if err := query.Order("cases.published_at DESC").
 		Limit(limit).Offset(offset).Find(&cases).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list for user find: %w", err)
 	}
 
 	return cases, total, nil
@@ -327,11 +385,11 @@ func (r *CaseResponseRepository) GetByCase(ctx context.Context, caseID uuid.UUID
 	query := r.db.WithContext(ctx).Model(&domain.CaseResponse{}).Where("case_id = ?", caseID)
 
 	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("get by case count: %w", err)
 	}
 
 	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&responses).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("get by case find: %w", err)
 	}
 
 	return responses, total, nil
@@ -344,7 +402,10 @@ func (r *CaseResponseRepository) GetByUserAndCase(ctx context.Context, userID, c
 		Where("user_id = ? AND case_id = ?", userID, caseID).
 		Order("created_at DESC").
 		Find(&responses).Error
-	return responses, err
+	if err != nil {
+		return nil, fmt.Errorf("get by user and case: %w", err)
+	}
+	return responses, nil
 }
 
 // GetByUserAndCases batch loads responses for a user across multiple cases.
@@ -377,7 +438,10 @@ func (r *CaseResponseRepository) CountByCase(ctx context.Context, caseID uuid.UU
 		Model(&domain.CaseResponse{}).
 		Where("case_id = ?", caseID).
 		Count(&count).Error
-	return count, err
+	if err != nil {
+		return 0, fmt.Errorf("count by case: %w", err)
+	}
+	return count, nil
 }
 
 // CountUniqueUsersByCase counts unique users who responded to a case.
@@ -388,7 +452,10 @@ func (r *CaseResponseRepository) CountUniqueUsersByCase(ctx context.Context, cas
 		Where("case_id = ?", caseID).
 		Distinct("user_id").
 		Count(&count).Error
-	return count, err
+	if err != nil {
+		return 0, fmt.Errorf("count unique users by case: %w", err)
+	}
+	return count, nil
 }
 
 // Close gracefully shuts down the background writer.
@@ -453,7 +520,10 @@ func (r *CaseResponseRepository) HasUserResponded(ctx context.Context, userID, c
 		Model(&domain.CaseResponse{}).
 		Where("user_id = ? AND case_id = ?", userID, caseID).
 		Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, fmt.Errorf("has user responded: %w", err)
+	}
+	return count > 0, nil
 }
 
 // GetAllByCase retrieves all responses for a case without pagination (for Kappa calculation).
@@ -463,7 +533,10 @@ func (r *CaseResponseRepository) GetAllByCase(ctx context.Context, caseID uuid.U
 		Where("case_id = ?", caseID).
 		Order("created_at ASC").
 		Find(&responses).Error
-	return responses, err
+	if err != nil {
+		return nil, fmt.Errorf("get all by case: %w", err)
+	}
+	return responses, nil
 }
 
 // GetResponsesWithUserExpertise retrieves responses joined with user expertise data.
@@ -483,7 +556,10 @@ func (r *CaseResponseRepository) GetResponsesWithUserExpertise(ctx context.Conte
 		Order("cr.created_at ASC").
 		Scan(&results).Error
 
-	return results, err
+	if err != nil {
+		return nil, fmt.Errorf("get responses with user expertise: %w", err)
+	}
+	return results, nil
 }
 
 // CaseAnalyticsRepository implements case analytics queries.
@@ -504,7 +580,7 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 		Model(&domain.CaseResponse{}).
 		Where("case_id = ?", caseID).
 		Count(&responseCount).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary response count: %w", err)
 	}
 
 	var uniqueUsers int64
@@ -513,7 +589,7 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 		Where("case_id = ?", caseID).
 		Distinct("user_id").
 		Count(&uniqueUsers).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary unique users: %w", err)
 	}
 
 	// Get average time taken
@@ -527,7 +603,7 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 	// Get case info
 	var cs domain.Case
 	if err := r.db.WithContext(ctx).First(&cs, "id = ?", caseID).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary case info: %w", err)
 	}
 
 	// Get distributions
@@ -584,7 +660,7 @@ func (r *CaseAnalyticsRepository) getDistribution(ctx context.Context, caseID uu
 		Scan(&rows).Error
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get distribution for %s: %w", columnName, err)
 	}
 
 	result := make(map[string]int64)

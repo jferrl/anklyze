@@ -84,18 +84,6 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	if !cs.CanAcceptResponses() {
-		if cs.IsExpired() {
-			c.JSON(http.StatusForbidden, gin.H{
-				"error": "case deadline has passed",
-				"code":  "DEADLINE_PASSED",
-			})
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "case is not accepting responses"})
-		}
-		return
-	}
-
 	// Check study access - if case belongs to a study, verify user is assigned
 	if cs.BelongsToStudy() {
 		hasStudyAccess, err := h.studyRepo.HasAccess(c.Request.Context(), *cs.StudyID, userID)
@@ -113,21 +101,22 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		}
 	}
 
-	// Check if single response mode and user already responded
+	// Check if user has already responded (needed for single-response check)
+	hasResponded := false
 	if !cs.AllowMultipleResponses {
-		hasResponded, err := h.responseRepo.HasUserResponded(c.Request.Context(), userID, caseID)
+		var err error
+		hasResponded, err = h.responseRepo.HasUserResponded(c.Request.Context(), userID, caseID)
 		if err != nil {
 			slog.Error("failed to check existing response", "error", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check response status"})
 			return
 		}
-		if hasResponded {
-			c.JSON(http.StatusConflict, gin.H{
-				"error": "you have already submitted a response to this case",
-				"code":  "ALREADY_RESPONDED",
-			})
-			return
-		}
+	}
+
+	// Validate response submission using domain logic
+	if err := cs.ValidateResponseSubmission(auth.IsAdmin(c), hasResponded); err != nil {
+		HandleError(c, err, "Cannot submit response")
+		return
 	}
 
 	var req SubmitResponseRequest
@@ -226,25 +215,11 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		if err == nil && refClass != nil {
 			result.ReferenceClassification = refClass
 
-			// Compare Danis-Weber
-			if req.Classification.DanisWeber != nil && refClass.DanisWeber != nil {
-				match := req.Classification.DanisWeber.Type == refClass.DanisWeber.Type
-				result.MatchesDanisWeber = &match
-			}
-			// Compare Lauge-Hansen
-			if req.Classification.LaugeHansen != nil && refClass.LaugeHansen != nil {
-				match := req.Classification.LaugeHansen.Type == refClass.LaugeHansen.Type
-				result.MatchesLaugeHansen = &match
-			}
-			// Compare AO/OTA
-			if req.Classification.AOOTA != nil && refClass.AOOTA != nil {
-				match := req.Classification.AOOTA.Code == refClass.AOOTA.Code
-				result.MatchesAOOTA = &match
-			}
-			// Compare Bartonicek
-			if req.Classification.Bartonicek != nil && refClass.Bartonicek != nil {
-				match := req.Classification.Bartonicek.Type == refClass.Bartonicek.Type
-				result.MatchesBartonicek = &match
+			if comparison := cs.CompareWithReference(&req.Classification); comparison != nil {
+				result.MatchesDanisWeber = &comparison.DanisWeberMatch
+				result.MatchesLaugeHansen = &comparison.LaugeHansenMatch
+				result.MatchesAOOTA = &comparison.AOOTAMatch
+				result.MatchesBartonicek = &comparison.BartonicekMatch
 			}
 		}
 	}
@@ -353,7 +328,7 @@ func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
 
 	// Verify case is published
 	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil || cs.Status != domain.CaseStatusPublished {
+	if err != nil || cs == nil || !cs.IsPublished() {
 		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
 		return
 	}

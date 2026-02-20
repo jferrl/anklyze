@@ -49,6 +49,16 @@ func HandleError(c *gin.Context, err error, fallbackMsg string) {
 		status, code, message = http.StatusForbidden, CodeForbidden, "Access denied"
 	case errors.Is(err, domain.ErrInvalidInput):
 		status, code, message = http.StatusBadRequest, CodeInvalidInput, err.Error()
+	case errors.Is(err, domain.ErrInvalidStateTransition):
+		status, code, message = http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, err.Error()
+	case errors.Is(err, domain.ErrMissingImages):
+		status, code, message = http.StatusBadRequest, domain.ErrCodeMissingImages, err.Error()
+	case errors.Is(err, domain.ErrDeadlinePassed):
+		status, code, message = http.StatusForbidden, domain.ErrCodeDeadlinePassed, err.Error()
+	case errors.Is(err, domain.ErrCaseNotAcceptingResponses):
+		status, code, message = http.StatusForbidden, domain.ErrCodeCaseNotAcceptingResponses, err.Error()
+	case errors.Is(err, domain.ErrAlreadyResponded):
+		status, code, message = http.StatusConflict, domain.ErrCodeAlreadyResponded, err.Error()
 	case errors.Is(err, domain.ErrConflict):
 		status, code, message = http.StatusConflict, CodeConflict, err.Error()
 	case errors.Is(err, domain.ErrQuotaExceeded):
