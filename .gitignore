@@ -30,15 +30,12 @@ go.work.sum
 .env
 .env.local
 .env.*.local
-backend/.env
-backend/.env.local
-
 # Editor/IDE
 # .idea/
 # .vscode/
 
 # Air (Go hot reload)
-backend/tmp/
+tmp/
 build-errors.log
 test-results/
 node_modules/

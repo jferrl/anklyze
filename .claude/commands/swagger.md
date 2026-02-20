@@ -7,13 +7,13 @@ Regenerate the Swagger/OpenAPI documentation for the backend API.
 1. Run the swag command to regenerate docs from Go annotations:
 
 ```bash
-cd backend && ~/go/bin/swag init -g cmd/server/main.go -o docs
+go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/anklyze-apiserver/main.go -o docs
 ```
 
 2. Verify the generated files:
-- `backend/docs/docs.go`
-- `backend/docs/swagger.json`
-- `backend/docs/swagger.yaml`
+- `docs/docs.go`
+- `docs/swagger.json`
+- `docs/swagger.yaml`
 
 ## When to Use
 
@@ -24,7 +24,7 @@ Run this command when you've:
 
 ## Swagger Annotations Reference
 
-Add these annotations above handler functions in `backend/internal/api/handler.go`:
+Add these annotations above handler functions in `internal/api/handler.go`:
 
 ```go
 // @Summary Short description

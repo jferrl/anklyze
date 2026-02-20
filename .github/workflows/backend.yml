@@ -4,17 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - "backend/**"
+      - "cmd/**"
+      - "internal/**"
+      - "go.mod"
+      - "go.sum"
       - ".github/workflows/backend.yml"
   pull_request:
     branches: [main]
     paths:
-      - "backend/**"
+      - "cmd/**"
+      - "internal/**"
+      - "go.mod"
+      - "go.sum"
       - ".github/workflows/backend.yml"
-
-defaults:
-  run:
-    working-directory: backend
 
 jobs:
   build:
@@ -28,8 +30,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: backend/go.mod
-          cache-dependency-path: backend/go.sum
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
 
       - name: Download dependencies
         run: go mod download
@@ -44,4 +46,4 @@ jobs:
         run: go test -v -race ./...
 
       - name: Build
-        run: go build -o bin/server cmd/server/main.go
+        run: go build -o bin/server ./cmd/anklyze-apiserver

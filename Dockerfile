@@ -12,7 +12,7 @@ RUN go mod download
 
 # Build the binary
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/anklyze-apiserver
 
 # Runtime stage
 FROM alpine:3.21

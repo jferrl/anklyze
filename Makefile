@@ -1,6 +1,6 @@
 .PHONY: all run run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification
+	e2e-classification deps tidy db-start db-stop run-with-db db-shell db-audit swagger
 
 # Default target - run both backend and frontend
 all: run
@@ -13,7 +13,7 @@ run:
 # Run backend only (with hot reload using air)
 run-backend:
 	@echo "Starting backend on http://localhost:8080 (hot reload enabled)"
-	@cd backend && air
+	@air
 
 # Run frontend only
 run-frontend:
@@ -26,7 +26,7 @@ build: build-backend build-frontend
 # Build backend
 build-backend:
 	@echo "Building backend..."
-	@cd backend && go build -o bin/server cmd/server/main.go
+	@go build -o bin/server ./cmd/anklyze-apiserver
 
 # Build frontend
 build-frontend:
@@ -36,14 +36,14 @@ build-frontend:
 # Install dependencies
 install:
 	@echo "Installing backend dependencies..."
-	@cd backend && go mod download
+	@go mod download
 	@echo "Installing frontend dependencies..."
 	@cd frontend && npm install
 
 # Clean build artifacts
 clean:
 	@echo "Cleaning..."
-	@rm -rf backend/bin
+	@rm -rf bin/
 	@rm -rf frontend/dist
 
 # Run tests
@@ -51,7 +51,7 @@ test: test-backend test-frontend
 
 test-backend:
 	@echo "Running backend tests..."
-	@cd backend && go test ./...
+	@go test ./...
 
 test-frontend:
 	@echo "Running frontend build check..."
@@ -108,3 +108,41 @@ e2e-codegen:
 e2e-classification:
 	@echo "Running classification E2E tests..."
 	@cd e2e && npx playwright test tests/classification/ --project=chromium
+
+# === Backend Utilities ===
+
+# Download dependencies
+deps:
+	@go mod download
+
+# Tidy dependencies
+tidy:
+	@go mod tidy
+
+# Start local PostgreSQL with Docker
+db-start:
+	docker run -d --name anklyze-pg \
+		-e POSTGRES_PASSWORD=postgres \
+		-e POSTGRES_DB=anklyze \
+		-p 5432:5432 \
+		postgres:16
+
+# Stop and remove local PostgreSQL
+db-stop:
+	docker stop anklyze-pg && docker rm anklyze-pg
+
+# Run with local database
+run-with-db:
+	DATABASE_URL="postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable" go run ./cmd/anklyze-apiserver
+
+# Connect to local database
+db-shell:
+	docker exec -it anklyze-pg psql -U postgres -d anklyze
+
+# Show audit entries
+db-audit:
+	docker exec anklyze-pg psql -U postgres -d anklyze -c "SELECT id, language, danis_weber_type, created_at FROM audit_entries ORDER BY created_at DESC LIMIT 10;"
+
+# Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
+swagger:
+	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/anklyze-apiserver/main.go -o docs

@@ -126,7 +126,7 @@ Posterior malleolus classification based on fragment size and location.
 
 ```bash
 # Backend
-cd backend && go run cmd/server/main.go
+go run ./cmd/anklyze-apiserver
 # → http://localhost:8080
 
 # Frontend
@@ -167,14 +167,14 @@ make run-frontend # Start frontend
 
 ```text
 anklyze/
-├── backend/
-│   ├── cmd/server/        # Entry point
-│   └── internal/
-│       ├── api/           # HTTP handlers
-│       ├── domain/        # Domain models
-│       ├── i18n/          # Translations
-│       ├── rules/         # Classification engine
-│       └── service/       # Business logic
+├── go.mod
+├── cmd/anklyze-apiserver/ # Entry point
+├── internal/
+│   ├── api/               # HTTP handlers
+│   ├── domain/            # Domain models
+│   ├── i18n/              # Translations
+│   ├── rules/             # Classification engine
+│   └── service/           # Business logic
 │
 └── frontend/
     └── src/

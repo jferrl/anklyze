@@ -39,7 +39,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'cd ../backend && go run cmd/server/main.go',
+      command: 'cd .. && go run ./cmd/anklyze-apiserver',
       url: 'http://localhost:8080/health',
       reuseExistingServer: true,
       timeout: 120000,
