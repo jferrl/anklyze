@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,7 +23,10 @@ func NewStudyRepository(db *gorm.DB) *StudyRepository {
 
 // Create creates a new study.
 func (r *StudyRepository) Create(ctx context.Context, study *domain.Study) error {
-	return r.db.WithContext(ctx).Create(study).Error
+	if err := r.db.WithContext(ctx).Create(study).Error; err != nil {
+		return fmt.Errorf("create: %w", err)
+	}
+	return nil
 }
 
 // GetByID retrieves a study by its ID.
@@ -33,7 +37,7 @@ func (r *StudyRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.St
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get by id: %w", result.Error)
 	}
 	return &study, nil
 }
@@ -41,15 +45,18 @@ func (r *StudyRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.St
 // Update updates a study.
 func (r *StudyRepository) Update(ctx context.Context, study *domain.Study) error {
 	study.UpdatedAt = time.Now()
-	return r.db.WithContext(ctx).Save(study).Error
+	if err := r.db.WithContext(ctx).Save(study).Error; err != nil {
+		return fmt.Errorf("update: %w", err)
+	}
+	return nil
 }
 
 // Delete deletes a study and removes all associated data.
 func (r *StudyRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// Delete all study raters first
 		if err := tx.Delete(&domain.StudyRater{}, "study_id = ?", id).Error; err != nil {
-			return err
+			return fmt.Errorf("delete study raters: %w", err)
 		}
 
 		// Clear study_id from all cases in this study
@@ -59,12 +66,19 @@ func (r *StudyRepository) Delete(ctx context.Context, id uuid.UUID) error {
 				"study_id":   nil,
 				"case_order": 0,
 			}).Error; err != nil {
-			return err
+			return fmt.Errorf("clear study cases: %w", err)
 		}
 
 		// Delete the study
-		return tx.Delete(&domain.Study{}, "id = ?", id).Error
+		if err := tx.Delete(&domain.Study{}, "id = ?", id).Error; err != nil {
+			return fmt.Errorf("delete study: %w", err)
+		}
+		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+	return nil
 }
 
 // List retrieves studies with optional status filter and pagination.
@@ -78,11 +92,11 @@ func (r *StudyRepository) List(ctx context.Context, status *domain.StudyStatus, 
 	}
 
 	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list count: %w", err)
 	}
 
 	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&studies).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("list find: %w", err)
 	}
 
 	return studies, total, nil
@@ -94,7 +108,7 @@ func (r *StudyRepository) List(ctx context.Context, status *domain.StudyStatus, 
 
 // AddCase assigns a case to a study with the given case order.
 func (r *StudyRepository) AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ?", caseID).
 		Updates(map[string]any{
@@ -102,11 +116,15 @@ func (r *StudyRepository) AddCase(ctx context.Context, studyID, caseID uuid.UUID
 			"case_order": caseOrder,
 			"updated_at": time.Now(),
 		}).Error
+	if err != nil {
+		return fmt.Errorf("add case: %w", err)
+	}
+	return nil
 }
 
 // RemoveCase removes a case from a study (clears study_id).
 func (r *StudyRepository) RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Case{}).
 		Where("id = ? AND study_id = ?", caseID, studyID).
 		Updates(map[string]any{
@@ -114,6 +132,10 @@ func (r *StudyRepository) RemoveCase(ctx context.Context, studyID, caseID uuid.U
 			"case_order": 0,
 			"updated_at": time.Now(),
 		}).Error
+	if err != nil {
+		return fmt.Errorf("remove case: %w", err)
+	}
+	return nil
 }
 
 // GetCases retrieves all cases in a study, ordered by case_order.
@@ -123,12 +145,15 @@ func (r *StudyRepository) GetCases(ctx context.Context, studyID uuid.UUID) ([]do
 		Where("study_id = ?", studyID).
 		Order("case_order ASC").
 		Find(&cases).Error
-	return cases, err
+	if err != nil {
+		return nil, fmt.Errorf("get cases: %w", err)
+	}
+	return cases, nil
 }
 
 // ReorderCases updates the case_order of cases in a study.
 func (r *StudyRepository) ReorderCases(ctx context.Context, studyID uuid.UUID, caseIDs []uuid.UUID) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		for i, caseID := range caseIDs {
 			if err := tx.Model(&domain.Case{}).
 				Where("id = ? AND study_id = ?", caseID, studyID).
@@ -136,11 +161,15 @@ func (r *StudyRepository) ReorderCases(ctx context.Context, studyID uuid.UUID, c
 					"case_order": i,
 					"updated_at": time.Now(),
 				}).Error; err != nil {
-				return err
+				return fmt.Errorf("reorder case %s: %w", caseID, err)
 			}
 		}
 		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("reorder cases: %w", err)
+	}
+	return nil
 }
 
 // GetStudyByCaseID retrieves the study that contains a case (if any).
@@ -151,7 +180,7 @@ func (r *StudyRepository) GetStudyByCaseID(ctx context.Context, caseID uuid.UUID
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, result.Error
+		return nil, fmt.Errorf("get study by case id: %w", result.Error)
 	}
 
 	if cs.StudyID == nil {
@@ -170,7 +199,7 @@ func (r *StudyRepository) GetNextCaseOrder(ctx context.Context, studyID uuid.UUI
 		Select("MAX(case_order)").
 		Scan(&maxOrder).Error
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("get next case order: %w", err)
 	}
 	if maxOrder == nil {
 		return 0, nil
@@ -185,13 +214,20 @@ func (r *StudyRepository) GetNextCaseOrder(ctx context.Context, studyID uuid.UUI
 // AddRater assigns a user as a rater to a study.
 func (r *StudyRepository) AddRater(ctx context.Context, studyID, userID uuid.UUID, email string) error {
 	rater := domain.NewStudyRater(studyID, userID, email)
-	return r.db.WithContext(ctx).Create(rater).Error
+	if err := r.db.WithContext(ctx).Create(rater).Error; err != nil {
+		return fmt.Errorf("add rater: %w", err)
+	}
+	return nil
 }
 
 // RemoveRater removes a user from a study.
 func (r *StudyRepository) RemoveRater(ctx context.Context, studyID, userID uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Delete(&domain.StudyRater{}, "study_id = ? AND user_id = ?", studyID, userID).Error
+	if err != nil {
+		return fmt.Errorf("remove rater: %w", err)
+	}
+	return nil
 }
 
 // GetRaters retrieves all raters assigned to a study.
@@ -201,7 +237,10 @@ func (r *StudyRepository) GetRaters(ctx context.Context, studyID uuid.UUID) ([]d
 		Where("study_id = ?", studyID).
 		Order("created_at ASC").
 		Find(&raters).Error
-	return raters, err
+	if err != nil {
+		return nil, fmt.Errorf("get raters: %w", err)
+	}
+	return raters, nil
 }
 
 // HasAccess checks if a user is assigned to a study.
@@ -211,7 +250,10 @@ func (r *StudyRepository) HasAccess(ctx context.Context, studyID, userID uuid.UU
 		Model(&domain.StudyRater{}).
 		Where("study_id = ? AND user_id = ?", studyID, userID).
 		Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, fmt.Errorf("has access: %w", err)
+	}
+	return count > 0, nil
 }
 
 // GetRaterProgress retrieves completion progress for all raters in a study.
@@ -222,7 +264,7 @@ func (r *StudyRepository) GetRaterProgress(ctx context.Context, studyID uuid.UUI
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Count(&totalCases).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get rater progress total cases: %w", err)
 	}
 
 	// Get all study raters with their progress
@@ -231,7 +273,7 @@ func (r *StudyRepository) GetRaterProgress(ctx context.Context, studyID uuid.UUI
 		Where("study_id = ?", studyID).
 		Order("created_at ASC").
 		Find(&raters).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get rater progress raters: %w", err)
 	}
 
 	// Build progress list
@@ -262,13 +304,17 @@ func (r *StudyRepository) GetRaterProgress(ctx context.Context, studyID uuid.UUI
 // UpdateRaterProgress updates a rater's progress in a study.
 func (r *StudyRepository) UpdateRaterProgress(ctx context.Context, studyID, userID uuid.UUID, casesCompleted int) error {
 	now := time.Now()
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.StudyRater{}).
 		Where("study_id = ? AND user_id = ?", studyID, userID).
 		Updates(map[string]any{
 			"cases_completed":  casesCompleted,
 			"last_response_at": now,
 		}).Error
+	if err != nil {
+		return fmt.Errorf("update rater progress: %w", err)
+	}
+	return nil
 }
 
 // ============================================================================
@@ -277,24 +323,32 @@ func (r *StudyRepository) UpdateRaterProgress(ctx context.Context, studyID, user
 
 // Activate changes a study from draft to active.
 func (r *StudyRepository) Activate(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Study{}).
 		Where("id = ? AND status = ?", id, domain.StudyStatusDraft).
 		Updates(map[string]any{
 			"status":     domain.StudyStatusActive,
 			"updated_at": time.Now(),
 		}).Error
+	if err != nil {
+		return fmt.Errorf("activate: %w", err)
+	}
+	return nil
 }
 
 // Close changes a study to closed status.
 func (r *StudyRepository) Close(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).
+	err := r.db.WithContext(ctx).
 		Model(&domain.Study{}).
 		Where("id = ?", id).
 		Updates(map[string]any{
 			"status":     domain.StudyStatusClosed,
 			"updated_at": time.Now(),
 		}).Error
+	if err != nil {
+		return fmt.Errorf("close: %w", err)
+	}
+	return nil
 }
 
 // ============================================================================
@@ -303,13 +357,13 @@ func (r *StudyRepository) Close(ctx context.Context, id uuid.UUID) error {
 
 // UpdateCounters recalculates and updates all denormalized counters.
 func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// Count cases in study
 		var caseCount int64
 		if err := tx.Model(&domain.Case{}).
 			Where("study_id = ?", studyID).
 			Count(&caseCount).Error; err != nil {
-			return err
+			return fmt.Errorf("count cases: %w", err)
 		}
 
 		// Get all case IDs in this study
@@ -317,7 +371,7 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 		if err := tx.Model(&domain.Case{}).
 			Where("study_id = ?", studyID).
 			Pluck("id", &caseIDs).Error; err != nil {
-			return err
+			return fmt.Errorf("pluck case ids: %w", err)
 		}
 
 		var totalResponses int64
@@ -329,7 +383,7 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 			if err := tx.Model(&domain.CaseResponse{}).
 				Where("case_id IN ?", caseIDs).
 				Count(&totalResponses).Error; err != nil {
-				return err
+				return fmt.Errorf("count total responses: %w", err)
 			}
 
 			// Count unique raters (users who responded to any case)
@@ -337,7 +391,7 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 				Where("case_id IN ?", caseIDs).
 				Distinct("user_id").
 				Count(&uniqueRaters).Error; err != nil {
-				return err
+				return fmt.Errorf("count unique raters: %w", err)
 			}
 
 			// Count complete raters (users who responded to ALL cases)
@@ -353,14 +407,14 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 					CaseCount int64
 				}
 				if err := subquery.Find(&completeUsers).Error; err != nil {
-					return err
+					return fmt.Errorf("find complete raters: %w", err)
 				}
 				completeRaters = int64(len(completeUsers))
 			}
 		}
 
 		// Update counters
-		return tx.Model(&domain.Study{}).
+		if err := tx.Model(&domain.Study{}).
 			Where("id = ?", studyID).
 			Updates(map[string]any{
 				"case_count":      caseCount,
@@ -368,8 +422,15 @@ func (r *StudyRepository) UpdateCounters(ctx context.Context, studyID uuid.UUID)
 				"unique_raters":   uniqueRaters,
 				"complete_raters": completeRaters,
 				"updated_at":      time.Now(),
-			}).Error
+			}).Error; err != nil {
+			return fmt.Errorf("update study counters: %w", err)
+		}
+		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("update counters: %w", err)
+	}
+	return nil
 }
 
 // ============================================================================
@@ -395,7 +456,7 @@ func (r *StudyResponseRepository) GetAllByStudy(ctx context.Context, studyID uui
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Pluck("id", &caseIDs).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get all by study pluck case ids: %w", err)
 	}
 
 	if len(caseIDs) == 0 {
@@ -408,7 +469,7 @@ func (r *StudyResponseRepository) GetAllByStudy(ctx context.Context, studyID uui
 		Where("case_id IN ?", caseIDs).
 		Order("created_at ASC").
 		Find(&responses).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get all by study find responses: %w", err)
 	}
 
 	// Group by case ID
@@ -459,7 +520,7 @@ func (r *StudyResponseRepository) CountUniqueRaters(ctx context.Context, studyID
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Pluck("id", &caseIDs).Error; err != nil {
-		return 0, err
+		return 0, fmt.Errorf("count unique raters pluck case ids: %w", err)
 	}
 
 	if len(caseIDs) == 0 {
@@ -472,7 +533,10 @@ func (r *StudyResponseRepository) CountUniqueRaters(ctx context.Context, studyID
 		Where("case_id IN ?", caseIDs).
 		Distinct("user_id").
 		Count(&count).Error
-	return count, err
+	if err != nil {
+		return 0, fmt.Errorf("count unique raters: %w", err)
+	}
+	return count, nil
 }
 
 // CountCompleteRaters counts users who responded to ALL cases in the study.
@@ -491,7 +555,7 @@ func (r *StudyResponseRepository) GetRaterCaseCompletion(ctx context.Context, st
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Pluck("id", &caseIDs).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get rater case completion pluck case ids: %w", err)
 	}
 
 	if len(caseIDs) == 0 {
@@ -509,7 +573,7 @@ func (r *StudyResponseRepository) GetRaterCaseCompletion(ctx context.Context, st
 		Select("DISTINCT user_id, case_id").
 		Where("case_id IN ?", caseIDs).
 		Find(&userCases).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get rater case completion find: %w", err)
 	}
 
 	// Group by user
@@ -529,7 +593,7 @@ func (r *StudyResponseRepository) getCompleteRaterIDs(ctx context.Context, study
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Count(&totalCases).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get complete rater ids total cases: %w", err)
 	}
 
 	if totalCases == 0 {
@@ -542,7 +606,7 @@ func (r *StudyResponseRepository) getCompleteRaterIDs(ctx context.Context, study
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Pluck("id", &caseIDs).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get complete rater ids pluck case ids: %w", err)
 	}
 
 	// Find users who responded to all cases
@@ -558,7 +622,7 @@ func (r *StudyResponseRepository) getCompleteRaterIDs(ctx context.Context, study
 		Group("user_id").
 		Having("COUNT(DISTINCT case_id) = ?", totalCases).
 		Find(&userCounts).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get complete rater ids find: %w", err)
 	}
 
 	result := make(map[uuid.UUID]bool)
@@ -577,7 +641,7 @@ func (r *StudyResponseRepository) CountUserCasesCompleted(ctx context.Context, s
 		Model(&domain.Case{}).
 		Where("study_id = ?", studyID).
 		Pluck("id", &caseIDs).Error; err != nil {
-		return 0, err
+		return 0, fmt.Errorf("count user cases completed pluck case ids: %w", err)
 	}
 
 	if len(caseIDs) == 0 {
@@ -591,6 +655,9 @@ func (r *StudyResponseRepository) CountUserCasesCompleted(ctx context.Context, s
 		Where("case_id IN ? AND user_id = ?", caseIDs, userID).
 		Distinct("case_id").
 		Count(&count).Error
+	if err != nil {
+		return 0, fmt.Errorf("count user cases completed: %w", err)
+	}
 
-	return int(count), err
+	return int(count), nil
 }

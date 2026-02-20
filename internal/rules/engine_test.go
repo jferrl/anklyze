@@ -1039,6 +1039,235 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 	}
 }
 
+// TestEngine_Classify_LateralMedial_SuprasindesmalTracePatterns tests the fibula trace
+// pattern differentiation for PA vs PER in suprasindesmal lateral+medial fractures.
+func TestEngine_Classify_LateralMedial_SuprasindesmalTracePatterns(t *testing.T) {
+	engine := NewEngine()
+
+	tests := []struct {
+		name                string
+		suprasindesmalType  domain.SuprasindesmalType
+		fibulaTracePattern  domain.FibulaTracePattern
+		expectedLaugeHansen domain.LaugeHansenType
+		expectedAOOTA       domain.AOOTACode
+	}{
+		{
+			name:                "simple diaphyseal with parasindesmotic short trace → PA",
+			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
+			fibulaTracePattern:  domain.FibulaTraceParasindesmoticShort,
+			expectedLaugeHansen: domain.LaugeHansenPA,
+			expectedAOOTA:       domain.AOOTAC1,
+		},
+		{
+			name:                "simple diaphyseal with parasindesmotic long trace → PER",
+			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
+			fibulaTracePattern:  domain.FibulaTraceParasindesmoticLong,
+			expectedLaugeHansen: domain.LaugeHansenPER,
+			expectedAOOTA:       domain.AOOTAC1,
+		},
+		{
+			name:                "multifragmentary with parasindesmotic short trace → PA",
+			suprasindesmalType:  domain.SuprasindesmalMultifragmentary,
+			fibulaTracePattern:  domain.FibulaTraceParasindesmoticShort,
+			expectedLaugeHansen: domain.LaugeHansenPA,
+			expectedAOOTA:       domain.AOOTAC2,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := domain.FractureInput{
+				InvolvedMalleoli:   domain.InvolvedLateralMedial,
+				FibularLevel:       domain.FibularLevelSuprasindesmal,
+				SuprasindesmalType: tt.suprasindesmalType,
+				FibulaTracePattern: tt.fibulaTracePattern,
+			}
+
+			result, err := engine.Classify(input)
+			if err != nil {
+				t.Fatalf("Classify() unexpected error: %v", err)
+			}
+
+			if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberC {
+				t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberC)
+			}
+			if result.AOOTA == nil || result.AOOTA.Code != tt.expectedAOOTA {
+				t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, tt.expectedAOOTA)
+			}
+			if result.LaugeHansen == nil || result.LaugeHansen.Type != tt.expectedLaugeHansen {
+				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, tt.expectedLaugeHansen)
+			}
+		})
+	}
+}
+
+// TestEngine_Classify_Trimaleolar_WithBartonicek tests Bartonicek classification
+// for trimaleolar fractures when CT scan is available.
+func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
+	engine := NewEngine()
+	boolTrue := true
+	boolFalse := false
+
+	tests := []struct {
+		name                string
+		fibularLevel        domain.FibularLevel
+		suprasindesmalType  domain.SuprasindesmalType
+		fibulaTracePattern  domain.FibulaTracePattern
+		lateralMorphology   domain.LateralMorphology
+		posteriorType       domain.PosteriorFractureType
+		hasCTScan           *bool
+		expectedBartonicek  domain.BartonicekType
+		expectBartonicekNil bool
+		expectedLaugeHansen domain.LaugeHansenType
+	}{
+		{
+			name:                "suprasindesmal proximal with CT → Bartonicek 1",
+			fibularLevel:        domain.FibularLevelSuprasindesmal,
+			suprasindesmalType:  domain.SuprasindesmalProximal,
+			posteriorType:       domain.PosteriorExtraincisural,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType1,
+			expectedLaugeHansen: domain.LaugeHansenPER,
+		},
+		{
+			name:                "suprasindesmal simple short trace with CT → Bartonicek 2",
+			fibularLevel:        domain.FibularLevelSuprasindesmal,
+			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
+			fibulaTracePattern:  domain.FibulaTraceParasindesmoticShort,
+			posteriorType:       domain.PosteriorPosterolateral,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType2,
+			expectedLaugeHansen: domain.LaugeHansenPA,
+		},
+		{
+			name:                "suprasindesmal simple default trace with CT → Bartonicek 3",
+			fibularLevel:        domain.FibularLevelSuprasindesmal,
+			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
+			fibulaTracePattern:  domain.FibulaTraceParasindesmoticLong,
+			posteriorType:       domain.PosteriorPosteromedialPosterolateral,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType3,
+			expectedLaugeHansen: domain.LaugeHansenPER,
+		},
+		{
+			name:                "suprasindesmal proximal without CT → no Bartonicek",
+			fibularLevel:        domain.FibularLevelSuprasindesmal,
+			suprasindesmalType:  domain.SuprasindesmalProximal,
+			posteriorType:       domain.PosteriorExtraincisural,
+			hasCTScan:           &boolFalse,
+			expectBartonicekNil: true,
+			expectedLaugeHansen: domain.LaugeHansenPER,
+		},
+		{
+			name:                "low oblique with CT → Bartonicek 4",
+			lateralMorphology:   domain.LateralMorphologyOblique,
+			posteriorType:       domain.PosteriorLargePosterolateral,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType4,
+			expectedLaugeHansen: domain.LaugeHansenPA,
+		},
+		{
+			name:                "low spiral with CT → Bartonicek 2",
+			lateralMorphology:   domain.LateralMorphologySpiral,
+			posteriorType:       domain.PosteriorPosterolateral,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType2,
+			expectedLaugeHansen: domain.LaugeHansenSER,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := domain.FractureInput{
+				InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+				FibularLevel:          tt.fibularLevel,
+				SuprasindesmalType:    tt.suprasindesmalType,
+				FibulaTracePattern:    tt.fibulaTracePattern,
+				LateralMorphology:     tt.lateralMorphology,
+				PosteriorFractureType: tt.posteriorType,
+				HasCTScan:             tt.hasCTScan,
+			}
+
+			result, err := engine.Classify(input)
+			if err != nil {
+				t.Fatalf("Classify() unexpected error: %v", err)
+			}
+			if result.FractureType != "trimaleolar" {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+			}
+			if result.Impossible {
+				t.Fatalf("unexpected Impossible = true")
+			}
+			if result.LaugeHansen == nil || result.LaugeHansen.Type != tt.expectedLaugeHansen {
+				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, tt.expectedLaugeHansen)
+			}
+			if tt.expectBartonicekNil {
+				if result.Bartonicek != nil {
+					t.Error("Bartonicek should be nil without CT scan")
+				}
+			} else {
+				if result.Bartonicek == nil {
+					t.Fatal("Bartonicek classification is nil")
+				}
+				if result.Bartonicek.Type != tt.expectedBartonicek {
+					t.Errorf("Bartonicek.Type = %q, want %q", result.Bartonicek.Type, tt.expectedBartonicek)
+				}
+			}
+		})
+	}
+}
+
+// TestEngine_Classify_ImpossibleCombinations_SpecificKeys verifies exact ImpossibleKey values
+// for anatomically impossible fracture combinations.
+func TestEngine_Classify_ImpossibleCombinations_SpecificKeys(t *testing.T) {
+	engine := NewEngine()
+
+	tests := []struct {
+		name              string
+		input             domain.FractureInput
+		expectedKey       string
+		expectedFracType  string
+	}{
+		{
+			name: "lateral+posterior infrasindesmal → sa_mechanism",
+			input: domain.FractureInput{
+				InvolvedMalleoli: domain.InvolvedLateralPosterior,
+				FibularLevel:     domain.FibularLevelInfrasindesmal,
+			},
+			expectedKey:      "sa_mechanism",
+			expectedFracType: "bimaleolar_lateral_posterior",
+		},
+		{
+			name: "trimaleolar transverse infrasindesmal → exceptional",
+			input: domain.FractureInput{
+				InvolvedMalleoli:          domain.InvolvedTrimaleolar,
+				LateralMorphology:         domain.LateralMorphologyTransverse,
+				FibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
+			},
+			expectedKey:      "exceptional",
+			expectedFracType: "trimaleolar",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := engine.Classify(tt.input)
+			if err != nil {
+				t.Fatalf("Classify() unexpected error: %v", err)
+			}
+			if !result.Impossible {
+				t.Fatal("expected Impossible = true, got false")
+			}
+			if result.ImpossibleKey != tt.expectedKey {
+				t.Errorf("ImpossibleKey = %q, want %q", result.ImpossibleKey, tt.expectedKey)
+			}
+			if result.FractureType != tt.expectedFracType {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, tt.expectedFracType)
+			}
+		})
+	}
+}
+
 // Benchmark tests for performance validation
 func BenchmarkEngine_Classify(b *testing.B) {
 	engine := NewEngine()

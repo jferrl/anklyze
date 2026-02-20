@@ -206,6 +206,107 @@ func (c *Case) RemoveFromStudy() {
 	c.CaseOrder = 0
 }
 
+// IsPublished returns true if the case is currently published.
+func (c *Case) IsPublished() bool {
+	return c.Status == CaseStatusPublished
+}
+
+// CanPublish checks whether this case can be published.
+// Returns nil if publishing is allowed, or a domain error explaining why not.
+func (c *Case) CanPublish(hasImages bool) error {
+	if c.Status != CaseStatusDraft {
+		return ErrInvalidStateTransition
+	}
+	if !hasImages {
+		return ErrMissingImages
+	}
+	return nil
+}
+
+// CanClose checks whether this case can be closed.
+// Returns nil if closing is allowed, or a domain error explaining why not.
+func (c *Case) CanClose() error {
+	if c.Status != CaseStatusPublished {
+		return ErrInvalidStateTransition
+	}
+	return nil
+}
+
+// ValidateResponseSubmission checks whether a user can submit a response to this case.
+// Admins always bypass validation. Returns nil if submission is allowed.
+func (c *Case) ValidateResponseSubmission(isAdmin, hasResponded bool) error {
+	if isAdmin {
+		return nil
+	}
+	if !c.CanAcceptResponses() {
+		if c.IsExpired() {
+			return ErrDeadlinePassed
+		}
+		return ErrCaseNotAcceptingResponses
+	}
+	if !c.AllowMultipleResponses && hasResponded {
+		return ErrAlreadyResponded
+	}
+	return nil
+}
+
+// ComparisonResult holds the comparison between a user's classification and the reference.
+type ComparisonResult struct {
+	DanisWeberMatch  bool    `json:"danis_weber_match"`
+	LaugeHansenMatch bool    `json:"lauge_hansen_match"`
+	AOOTAMatch       bool    `json:"ao_ota_match"`
+	BartonicekMatch  bool    `json:"bartonicek_match"`
+	OverallAccuracy  float64 `json:"overall_accuracy"`
+}
+
+// CompareWithReference compares the user's classification against the case's reference.
+// Returns nil if there is no reference classification.
+func (c *Case) CompareWithReference(userResult *ClassificationResult) *ComparisonResult {
+	refClass, err := c.GetReferenceClassification()
+	if err != nil || refClass == nil {
+		return nil
+	}
+
+	result := &ComparisonResult{}
+	matched := 0
+	total := 0
+
+	if userResult.DanisWeber != nil && refClass.DanisWeber != nil {
+		total++
+		if userResult.DanisWeber.Type == refClass.DanisWeber.Type {
+			result.DanisWeberMatch = true
+			matched++
+		}
+	}
+	if userResult.LaugeHansen != nil && refClass.LaugeHansen != nil {
+		total++
+		if userResult.LaugeHansen.Type == refClass.LaugeHansen.Type {
+			result.LaugeHansenMatch = true
+			matched++
+		}
+	}
+	if userResult.AOOTA != nil && refClass.AOOTA != nil {
+		total++
+		if userResult.AOOTA.Code == refClass.AOOTA.Code {
+			result.AOOTAMatch = true
+			matched++
+		}
+	}
+	if userResult.Bartonicek != nil && refClass.Bartonicek != nil {
+		total++
+		if userResult.Bartonicek.Type == refClass.Bartonicek.Type {
+			result.BartonicekMatch = true
+			matched++
+		}
+	}
+
+	if total > 0 {
+		result.OverallAccuracy = float64(matched) / float64(total)
+	}
+
+	return result
+}
+
 // CaseImage represents an image attached to a case.
 type CaseImage struct {
 	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
@@ -277,10 +378,10 @@ type CaseResponse struct {
 	BartonicekType  *string `gorm:"column:bartonicek_type;size:15;index" json:"-"`
 
 	// Answer path tracking for divergence analysis
-	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty" swaggertype:"array,object"`      // []QuestionAnswer
-	DecisionPath    string         `gorm:"size:500;index" json:"decision_path,omitempty"` // "lateral_only→transindesmal→spiral"
+	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty" swaggertype:"array,object"` // []QuestionAnswer
+	DecisionPath    string         `gorm:"size:500;index" json:"decision_path,omitempty"`                      // "lateral_only→transindesmal→spiral"
 	TimePerQuestion datatypes.JSON `gorm:"type:jsonb" json:"time_per_question,omitempty" swaggertype:"object"` // map[string]int64
-	BackClicks      int            `gorm:"default:0" json:"back_clicks,omitempty"`        // Back button usage count
+	BackClicks      int            `gorm:"default:0" json:"back_clicks,omitempty"`                             // Back button usage count
 }
 
 // TableName returns the table name for GORM.

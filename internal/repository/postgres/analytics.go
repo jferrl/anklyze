@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jferrl/anklyze/internal/domain"
@@ -41,7 +42,7 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Scan(&stats).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary stats: %w", err)
 	}
 
 	summary.TotalClassifications = stats.Total
@@ -61,7 +62,7 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Where("created_at >= ? AND created_at <= ?", from, to).
 		Group("language").
 		Scan(&langRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary language distribution: %w", err)
 	}
 	for _, row := range langRows {
 		summary.LanguageDistribution[row.Language] = row.Count
@@ -77,7 +78,7 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Where("created_at >= ? AND created_at <= ? AND danis_weber_type IS NOT NULL", from, to).
 		Group("danis_weber_type").
 		Scan(&dwRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary danis weber distribution: %w", err)
 	}
 	for _, row := range dwRows {
 		summary.DanisWeberDistribution[row.Type] = row.Count
@@ -93,7 +94,7 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Where("created_at >= ? AND created_at <= ? AND lauge_hansen_type IS NOT NULL", from, to).
 		Group("lauge_hansen_type").
 		Scan(&lhRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary lauge hansen distribution: %w", err)
 	}
 	for _, row := range lhRows {
 		summary.LaugeHansenDistribution[row.Type] = row.Count
@@ -109,7 +110,7 @@ func (r *AnalyticsRepository) GetSummary(from, to time.Time) (*domain.AnalyticsS
 		Where("created_at >= ? AND created_at <= ? AND ao_ota_code IS NOT NULL", from, to).
 		Group("ao_ota_code").
 		Scan(&aoRows).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get summary ao ota distribution: %w", err)
 	}
 	for _, row := range aoRows {
 		summary.AOOTADistribution[row.Code] = row.Count
@@ -152,7 +153,7 @@ func (r *AnalyticsRepository) GetTrends(from, to time.Time, granularity domain.G
 		Order("date ASC").
 		Scan(&rows).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get trends: %w", err)
 	}
 
 	for _, row := range rows {
@@ -199,7 +200,7 @@ func (r *AnalyticsRepository) GetDistribution(system string, from, to time.Time)
 		Order("count DESC").
 		Scan(&rows).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get distribution for %s: %w", system, err)
 	}
 
 	// Calculate total for percentages

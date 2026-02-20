@@ -62,3 +62,10 @@ Go module at repo root (`go.mod`), follows [go.dev/doc/modules/layout#server-pro
 - "Cohort" is **deprecated** — the codebase uses "Study" instead
 - Classification systems: Danis-Weber, Lauge-Hansen, AO/OTA, Bartonicek
 - Rater = a user who submits classification responses
+
+## Active Technologies
+- Go 1.21+ + Gin (HTTP), GORM (ORM), google/genai (Gemini LLM) (001-backend-arch-improvements)
+- PostgreSQL 14+ (GORM), Supabase (auth + file storage) (001-backend-arch-improvements)
+
+## Recent Changes
+- 001-backend-arch-improvements: Added Go 1.21+ + Gin (HTTP), GORM (ORM), google/genai (Gemini LLM)

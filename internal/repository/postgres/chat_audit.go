@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"sync"
 
@@ -65,7 +66,10 @@ func (r *ChatAuditRepository) CreateSession(ctx context.Context, session *domain
 
 // UpdateSession performs a synchronous update (needed for session state changes).
 func (r *ChatAuditRepository) UpdateSession(ctx context.Context, session *domain.ChatSession) error {
-	return r.db.WithContext(ctx).Save(session).Error
+	if err := r.db.WithContext(ctx).Save(session).Error; err != nil {
+		return fmt.Errorf("update session: %w", err)
+	}
+	return nil
 }
 
 // GetSession retrieves a session by ID.
@@ -73,7 +77,7 @@ func (r *ChatAuditRepository) GetSession(ctx context.Context, sessionID uuid.UUI
 	var session domain.ChatSession
 	err := r.db.WithContext(ctx).First(&session, "id = ?", sessionID).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get session: %w", err)
 	}
 	return &session, nil
 }
@@ -123,7 +127,7 @@ func (r *ChatAuditRepository) GetFeedbackBySession(ctx context.Context, sessionI
 	var feedback domain.ChatFeedback
 	err := r.db.WithContext(ctx).First(&feedback, "session_id = ?", sessionID).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get feedback by session: %w", err)
 	}
 	return &feedback, nil
 }
@@ -136,7 +140,7 @@ func (r *ChatAuditRepository) GetLastAssistantMessage(ctx context.Context, sessi
 		Order("created_at DESC").
 		First(&message).Error
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get last assistant message: %w", err)
 	}
 	return &message, nil
 }

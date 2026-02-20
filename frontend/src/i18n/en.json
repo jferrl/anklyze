@@ -1132,6 +1132,11 @@
     "dailyQuotaExceeded": "Daily quota exceeded",
     "rateLimitExceeded": "Rate limit exceeded",
     "badRequest": "Bad request",
-    "genericError": "An error occurred"
+    "genericError": "An error occurred",
+    "INVALID_STATE_TRANSITION": "This operation is not allowed in the current case state",
+    "MISSING_IMAGES": "At least one image is required before publishing",
+    "DEADLINE_PASSED": "The case deadline has passed",
+    "CASE_NOT_ACCEPTING_RESPONSES": "This case is not currently accepting responses",
+    "ALREADY_RESPONDED": "You have already submitted a response to this case"
   }
 }

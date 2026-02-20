@@ -144,10 +144,9 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 
 			// Setup handler with session limit
 			ruleEngine := rules.NewEngine()
-			classifier := service.NewClassifierService(ruleEngine)
 			chatService := &mockChatService{}
 			handler := NewHandler(
-				classifier,
+				ruleEngine,
 				chatService,
 				repository.NewNoOpAuditRepository(),
 				repository.NewNoOpAnalyticsRepository(),
@@ -197,10 +196,9 @@ func TestHandler_SessionMessageLimit_NoSession(t *testing.T) {
 	// Setup handler with session limit
 	mockRepo := newMockChatAuditRepository()
 	ruleEngine := rules.NewEngine()
-	classifier := service.NewClassifierService(ruleEngine)
 	chatService := &mockChatService{}
 	handler := NewHandler(
-		classifier,
+		ruleEngine,
 		chatService,
 		repository.NewNoOpAuditRepository(),
 		repository.NewNoOpAnalyticsRepository(),
