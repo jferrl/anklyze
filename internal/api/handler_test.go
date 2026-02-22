@@ -77,42 +77,36 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 		posteriorType      domain.PosteriorFractureType
 		acceptLanguage     string
 		expectedBartonicek domain.BartonicekType
-		expectedAOOTA      domain.AOOTACode
 	}{
 		{
 			name:               "extraincisural posterior fracture",
 			posteriorType:      domain.PosteriorExtraincisural,
 			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType1,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorPosterolateral,
 			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType2,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posteromedial and posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorPosteromedialPosterolateral,
 			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType3,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "large posterolateral posterior fracture",
 			posteriorType:      domain.PosteriorLargePosterolateral,
 			acceptLanguage:     "en",
 			expectedBartonicek: domain.BartonicekType4,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
 			name:               "posterior only in Spanish",
 			posteriorType:      domain.PosteriorExtraincisural,
 			acceptLanguage:     "es",
 			expectedBartonicek: domain.BartonicekType1,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 	}
 
@@ -125,8 +119,9 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 
 			input := domain.FractureInput{
 				InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
+				ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
 				PosteriorFractureType: tt.posteriorType,
-				HasCTScan:             boolPtr(true), // CT scan required for Bartonicek classification
+				HasCTScan:             boolPtr(true),
 			}
 
 			body, err := json.Marshal(input)
@@ -159,22 +154,17 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 				t.Errorf("Bartonicek.Type = %q, want %q", result.Bartonicek.Type, tt.expectedBartonicek)
 			}
 
-			if result.AOOTA == nil {
-				t.Fatal("AOOTA classification is nil")
-			}
-			if result.AOOTA.Code != tt.expectedAOOTA {
-				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
+			// small_without_extension: AO is unclassifiable (nil)
+			if result.AOOTA != nil {
+				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
 			}
 
-			// Posterior-only fractures are Lauge-Hansen unclassifiable
+			// small_without_extension: LH is PA
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
 			}
-			if !result.LaugeHansen.Ambiguous {
-				t.Error("LaugeHansen.Ambiguous should be true for posterior-only fractures")
-			}
-			if result.LaugeHansen.Type != "" {
-				t.Errorf("LaugeHansen.Type should be empty for unclassifiable, got %q", result.LaugeHansen.Type)
+			if result.LaugeHansen.Type != domain.LaugeHansenPA {
+				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
 		})
 	}
@@ -193,14 +183,14 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 		{
 			name:                "oblique medial morphology",
 			medialMorphology:    domain.MedialMorphologyOblique,
-			expectedAOOTA:       domain.AOOTAA1,
+			expectedAOOTA:       domain.AOOTAA2,
 			expectedLaugeHansen: domain.LaugeHansenSA,
 			expectedAmbiguous:   false,
 		},
 		{
 			name:                "transverse medial morphology - ambiguous",
 			medialMorphology:    domain.MedialMorphologyTransverse,
-			expectedAOOTA:       domain.AOOTAA1,
+			expectedAOOTA:       domain.AOOTAA2,
 			expectedLaugeHansen: "", // No specific type when ambiguous
 			expectedAmbiguous:   true,
 		},
@@ -214,8 +204,9 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 			router := setupTestRouter(h)
 
 			input := domain.FractureInput{
-				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: tt.medialMorphology,
+				InvolvedMalleoli:     domain.InvolvedMedialOnly,
+				ArticularInvolvement: domain.ArticularSmallWithoutExtension,
+				MedialMorphology:     tt.medialMorphology,
 			}
 
 			body, err := json.Marshal(input)
@@ -287,7 +278,7 @@ func TestHandler_ClassifyFracture_LateralOnly(t *testing.T) {
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB1,
+			expectedAOOTA:       domain.AOOTAB,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
@@ -295,7 +286,7 @@ func TestHandler_ClassifyFracture_LateralOnly(t *testing.T) {
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB1,
+			expectedAOOTA:       domain.AOOTAB,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{

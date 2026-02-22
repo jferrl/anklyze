@@ -118,6 +118,12 @@ export interface FormOptions {
   /** Options for fibula trace patterns */
   fibula_trace_patterns: FormOption[];
 
+  /** Options for articular involvement (posterior-only, medial-only) */
+  articular_involvement_options: FormOption[];
+
+  /** Options for posterior fracture types in medial+posterior path (5 options) */
+  posterior_fracture_types_medial_posterior: FormOption[];
+
   /** Additional labels and translations */
   labels: Record<string, string>;
 }

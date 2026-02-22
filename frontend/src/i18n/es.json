@@ -136,7 +136,10 @@
       "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
       "has_ct_scan": "¿Tiene TAC?",
       "fibula_trace_pattern": "¿Cuál es el patrón de fractura del peroné?",
-      "fibular_level_for_transverse": "¿A qué nivel está la fractura del peroné?"
+      "fibular_level_for_transverse": "¿A qué nivel está la fractura del peroné?",
+      "articularInvolvement": "¿Cuál es la afectación de la superficie articular?",
+      "articularDepression": "¿Existe depresión articular?",
+      "posteriorPosteromedial": "¿El fragmento posterior es posteromedial?"
     },
     "options": {
       "involvedMalleoli": {
@@ -152,7 +155,8 @@
         "extraincisural": "Fragmento extraincisural",
         "posterolateral": "Fragmento posterolateral",
         "posteromedial_posterolateral": "Fragmento posteromedial y posterolateral",
-        "large_posterolateral": "Gran fragmento triangular posterolateral"
+        "large_posterolateral": "Gran fragmento triangular posterolateral",
+        "extraincisural_posteromedial": "Fragmento extraincisural postero-medial"
       },
       "medialMorphology": {
         "oblique": "Oblicuo/Vertical",
@@ -191,7 +195,12 @@
       },
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasindesmal de trazo oblicuo corto/transverso/conminuto",
-        "parasindesmotic_long": "Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"
+        "parasindesmotic_long": "Parasindesmal de trazo oblicuo largo/espiroideo",
+        "suprasindesmotic_far": "Suprasindesmal (>6cm de superficie articular)"
+      },
+      "articularInvolvement": {
+        "large_with_extension": ">1/3 de superficie articular con extensión metafisaria",
+        "small_without_extension": "<1/3 de superficie articular sin extensión metafisaria"
       }
     },
     "labels": {
@@ -231,7 +240,8 @@
       "bimaleolar_medial_posterior": "Fractura bimaleolar (Medial + Posterior)",
       "bimaleolar_lateral_posterior": "Fractura bimaleolar (Lateral + Posterior)",
       "bimaleolar_lateral_medial": "Fractura bimaleolar (Lateral + Medial)",
-      "trimaleolar": "Fractura trimaleolar"
+      "trimaleolar": "Fractura trimaleolar",
+      "distal_tibia": "Fractura de tibia distal"
     },
     "classifications": {
       "laugeHansen": {
@@ -260,7 +270,11 @@
         "B3_desc": "44-B3: Fractura transindesmal con afectación medial y posterior",
         "C1_desc": "44-C1: Fractura suprasindesmal diafisaria simple",
         "C2_desc": "44-C2: Fractura suprasindesmal multifragmentaria",
-        "C3_desc": "44-C3: Fractura suprasindesmal proximal (Maisonneuve)"
+        "C3_desc": "44-C3: Fractura suprasindesmal proximal (Maisonneuve)",
+        "A3_desc": "44-A3: Infrasindesmal con fragmento posteromedial",
+        "B_desc": "44-B: Fractura transindesmal (subtipo no clasificable B1/B2)",
+        "43B1_desc": "43-B1: Fractura de tibia distal sin depresión articular",
+        "43B2_desc": "43-B2: Fractura de tibia distal con depresión articular"
       },
       "bartonicek": {
         "1_desc": "Bartonicek 1: Fragmento extraincisural",

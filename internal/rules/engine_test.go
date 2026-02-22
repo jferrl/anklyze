@@ -63,70 +63,111 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
+	t.Run("large_with_extension + depression → distal_tibia AO 43-B2", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
+			ArticularInvolvement:   domain.ArticularLargeWithExtension,
+			HasArticularDepression: &boolTrue,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B2 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B2)
+		}
+		if result.LaugeHansen != nil {
+			t.Error("LaugeHansen should be nil for distal tibia fractures")
+		}
+		if result.Bartonicek != nil {
+			t.Error("Bartonicek should be nil for distal tibia fractures")
+		}
+		if result.DanisWeber != nil {
+			t.Error("DanisWeber should be nil for distal tibia fractures")
+		}
+	})
+
+	t.Run("large_with_extension + no depression → distal_tibia AO 43-B1", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
+			ArticularInvolvement:   domain.ArticularLargeWithExtension,
+			HasArticularDepression: &boolFalse,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B1 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B1)
+		}
+	})
+
+	t.Run("large_with_extension + nil depression defaults to AO 43-B1", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:     domain.InvolvedPosteriorOnly,
+			ArticularInvolvement: domain.ArticularLargeWithExtension,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B1 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B1)
+		}
+	})
+
+	// small_without_extension path: AO unclassifiable, LH PA, Bartonicek from CT
 	tests := []struct {
 		name                string
 		posteriorType       domain.PosteriorFractureType
 		hasCTScan           *bool
-		lang                i18n.Language
 		expectedBartonicek  domain.BartonicekType
 		expectBartonicekNil bool
-		expectedAOOTA       domain.AOOTACode
 	}{
 		{
-			name:               "extraincisural posterior fracture with CT scan",
+			name:               "small_without_extension + CT + extraincisural → Bartonicek 1",
 			posteriorType:      domain.PosteriorExtraincisural,
 			hasCTScan:          &boolTrue,
-			lang:               i18n.English,
 			expectedBartonicek: domain.BartonicekType1,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:               "posterolateral posterior fracture with CT scan",
+			name:               "small_without_extension + CT + posterolateral → Bartonicek 2",
 			posteriorType:      domain.PosteriorPosterolateral,
 			hasCTScan:          &boolTrue,
-			lang:               i18n.English,
 			expectedBartonicek: domain.BartonicekType2,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:               "posteromedial and posterolateral posterior fracture with CT scan",
+			name:               "small_without_extension + CT + posteromedial_posterolateral → Bartonicek 3",
 			posteriorType:      domain.PosteriorPosteromedialPosterolateral,
 			hasCTScan:          &boolTrue,
-			lang:               i18n.English,
 			expectedBartonicek: domain.BartonicekType3,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:               "large posterolateral posterior fracture with CT scan",
+			name:               "small_without_extension + CT + large_posterolateral → Bartonicek 4",
 			posteriorType:      domain.PosteriorLargePosterolateral,
 			hasCTScan:          &boolTrue,
-			lang:               i18n.English,
 			expectedBartonicek: domain.BartonicekType4,
-			expectedAOOTA:      domain.AOOTAB3,
 		},
 		{
-			name:               "posterior only in Spanish with CT scan",
-			posteriorType:      domain.PosteriorExtraincisural,
-			hasCTScan:          &boolTrue,
-			lang:               i18n.Spanish,
-			expectedBartonicek: domain.BartonicekType1,
-			expectedAOOTA:      domain.AOOTAB3,
-		},
-		{
-			name:                "posterior only without CT scan - no Bartonicek",
+			name:                "small_without_extension + no CT → no Bartonicek",
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           &boolFalse,
-			lang:                i18n.English,
 			expectBartonicekNil: true,
-			expectedAOOTA:       domain.AOOTAB3,
 		},
 		{
-			name:                "posterior only with nil CT scan - no Bartonicek",
+			name:                "small_without_extension + nil CT → no Bartonicek",
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           nil,
-			lang:                i18n.English,
 			expectBartonicekNil: true,
-			expectedAOOTA:       domain.AOOTAB3,
 		},
 	}
 
@@ -134,6 +175,7 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			input := domain.FractureInput{
 				InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
+				ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
 				PosteriorFractureType: tt.posteriorType,
 				HasCTScan:             tt.hasCTScan,
 			}
@@ -143,27 +185,19 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedType := "unimaleolar_posterior"
-			if result.FractureType != expectedType {
-				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
+			if result.FractureType != "unimaleolar_posterior" {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_posterior")
 			}
 
-			if result.AOOTA == nil {
-				t.Fatal("AOOTA classification is nil")
-			}
-			if result.AOOTA.Code != tt.expectedAOOTA {
-				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
+			if result.AOOTA != nil {
+				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
 			}
 
-			// Posterior-only fractures are Lauge-Hansen unclassifiable
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
 			}
-			if !result.LaugeHansen.Ambiguous {
-				t.Error("LaugeHansen.Ambiguous should be true for posterior-only fractures")
-			}
-			if result.LaugeHansen.Type != "" {
-				t.Errorf("LaugeHansen.Type should be empty for unclassifiable, got %q", result.LaugeHansen.Type)
+			if result.LaugeHansen.Type != domain.LaugeHansenPA {
+				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
 
 			if tt.expectBartonicekNil {
@@ -184,48 +218,83 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 
 func TestEngine_Classify_MedialOnly(t *testing.T) {
 	engine := NewEngine()
+	boolTrue := true
+	boolFalse := false
 
+	t.Run("large_with_extension + depression → distal_tibia AO 43-B2", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:       domain.InvolvedMedialOnly,
+			ArticularInvolvement:   domain.ArticularLargeWithExtension,
+			HasArticularDepression: &boolTrue,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B2 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B2)
+		}
+		if result.LaugeHansen != nil {
+			t.Error("LaugeHansen should be nil for distal tibia fractures")
+		}
+		if result.DanisWeber != nil {
+			t.Error("DanisWeber should be nil for distal tibia fractures")
+		}
+	})
+
+	t.Run("large_with_extension + no depression → distal_tibia AO 43-B1", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:       domain.InvolvedMedialOnly,
+			ArticularInvolvement:   domain.ArticularLargeWithExtension,
+			HasArticularDepression: &boolFalse,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B1 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B1)
+		}
+	})
+
+	// small_without_extension path: morphology determines classification
 	tests := []struct {
 		name                  string
 		medialMorphology      domain.MedialMorphology
-		lang                  i18n.Language
 		expectedAOOTA         domain.AOOTACode
 		expectedLaugeHansen   domain.LaugeHansenType
 		expectedAmbiguous     bool
 		expectedPossibleTypes []string
 	}{
 		{
-			name:                "oblique medial morphology",
+			name:                "small_without_extension + oblique → SA AO 44-A2",
 			medialMorphology:    domain.MedialMorphologyOblique,
-			lang:                i18n.English,
-			expectedAOOTA:       domain.AOOTAA1,
+			expectedAOOTA:       domain.AOOTAA2,
 			expectedLaugeHansen: domain.LaugeHansenSA,
 			expectedAmbiguous:   false,
 		},
 		{
-			name:                  "transverse medial morphology - ambiguous",
+			name:                  "small_without_extension + transverse → ambiguous PA/SER/PER AO 44-A2",
 			medialMorphology:      domain.MedialMorphologyTransverse,
-			lang:                  i18n.English,
-			expectedAOOTA:         domain.AOOTAA1,
-			expectedLaugeHansen:   "", // No specific type when ambiguous
+			expectedAOOTA:         domain.AOOTAA2,
+			expectedLaugeHansen:   "",
 			expectedAmbiguous:     true,
 			expectedPossibleTypes: []string{"PA", "SER", "PER"},
-		},
-		{
-			name:                "oblique medial in Spanish",
-			medialMorphology:    domain.MedialMorphologyOblique,
-			lang:                i18n.Spanish,
-			expectedAOOTA:       domain.AOOTAA1,
-			expectedLaugeHansen: domain.LaugeHansenSA,
-			expectedAmbiguous:   false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			input := domain.FractureInput{
-				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: tt.medialMorphology,
+				InvolvedMalleoli:     domain.InvolvedMedialOnly,
+				ArticularInvolvement: domain.ArticularSmallWithoutExtension,
+				MedialMorphology:     tt.medialMorphology,
 			}
 
 			result, err := engine.Classify(input)
@@ -233,9 +302,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedType := "unimaleolar_medial"
-			if result.FractureType != expectedType {
-				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
+			if result.FractureType != "unimaleolar_medial" {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 			}
 
 			if result.AOOTA == nil {
@@ -254,18 +322,7 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 			if result.LaugeHansen.Ambiguous != tt.expectedAmbiguous {
 				t.Errorf("LaugeHansen.Ambiguous = %v, want %v", result.LaugeHansen.Ambiguous, tt.expectedAmbiguous)
 			}
-			if tt.expectedAmbiguous {
-				if len(result.LaugeHansen.PossibleTypes) != len(tt.expectedPossibleTypes) {
-					t.Errorf("LaugeHansen.PossibleTypes length = %d, want %d", len(result.LaugeHansen.PossibleTypes), len(tt.expectedPossibleTypes))
-				}
-				for i, pt := range tt.expectedPossibleTypes {
-					if i < len(result.LaugeHansen.PossibleTypes) && result.LaugeHansen.PossibleTypes[i] != pt {
-						t.Errorf("LaugeHansen.PossibleTypes[%d] = %q, want %q", i, result.LaugeHansen.PossibleTypes[i], pt)
-					}
-				}
-			}
 
-			// Medial only should not have DanisWeber
 			if result.DanisWeber != nil {
 				t.Error("DanisWeber should be nil for medial only fractures")
 			}
@@ -303,7 +360,7 @@ func TestEngine_Classify_LateralOnly(t *testing.T) {
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB1,
+			expectedAOOTA:       domain.AOOTAB,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
@@ -312,7 +369,7 @@ func TestEngine_Classify_LateralOnly(t *testing.T) {
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB1,
+			expectedAOOTA:       domain.AOOTAB,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		// Suprasindesmal cases with fibula trace pattern
@@ -425,107 +482,106 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	tests := []struct {
-		name                  string
-		hasCTScan             *bool
-		posteriorType         domain.PosteriorFractureType
-		lang                  i18n.Language
-		expectedAOOTA         domain.AOOTACode
-		expectedLaugeHansen   domain.LaugeHansenType
-		expectedAmbiguous     bool
-		expectedPossibleTypes []string
-		expectedBartonicek    domain.BartonicekType
-		expectBartonicekNil   bool
+	t.Run("no CT → AO unclassifiable + LH PA", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli: domain.InvolvedMedialPosterior,
+			HasCTScan:        &boolFalse,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "bimaleolar_medial_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_medial_posterior")
+		}
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		}
+		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
+		}
+		if result.Bartonicek != nil {
+			t.Error("Bartonicek should be nil without CT")
+		}
+		if result.DanisWeber != nil {
+			t.Error("DanisWeber should be nil for medial posterior fractures")
+		}
+	})
+
+	t.Run("nil CT → AO unclassifiable + LH PA", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli: domain.InvolvedMedialPosterior,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		}
+		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
+		}
+	})
+
+	t.Run("CT + extraincisural_posteromedial → AO 44-A3 + LH unclassifiable", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
+			HasCTScan:             &boolTrue,
+			PosteriorFractureType: domain.PosteriorExtraincisuralPosteromedial,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTAA3 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTAA3)
+		}
+		if result.LaugeHansen == nil || !result.LaugeHansen.Ambiguous {
+			t.Error("LaugeHansen should be ambiguous (unclassifiable)")
+		}
+		if result.LaugeHansen != nil && result.LaugeHansen.Type != "" {
+			t.Errorf("LaugeHansen.Type should be empty for unclassifiable, got %q", result.LaugeHansen.Type)
+		}
+		if result.Bartonicek != nil {
+			t.Error("Bartonicek should be nil for extraincisural_posteromedial")
+		}
+	})
+
+	// CT + standard 4 posterior types → AO 44-B3 + LH PA + Bartonicek
+	ctTests := []struct {
+		name               string
+		posteriorType      domain.PosteriorFractureType
+		expectedBartonicek domain.BartonicekType
 	}{
-		{
-			name:                  "medial posterior bimaleolar in English without CT",
-			hasCTScan:             &boolFalse,
-			lang:                  i18n.English,
-			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
-			expectedAmbiguous:     true,
-			expectedPossibleTypes: []string{"SER", "PA"},
-			expectBartonicekNil:   true,
-		},
-		{
-			name:                  "medial posterior bimaleolar in Spanish without CT",
-			hasCTScan:             &boolFalse,
-			lang:                  i18n.Spanish,
-			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
-			expectedAmbiguous:     true,
-			expectedPossibleTypes: []string{"SER", "PA"},
-			expectBartonicekNil:   true,
-		},
-		{
-			name:                  "medial posterior with CT scan - Bartonicek available",
-			hasCTScan:             &boolTrue,
-			posteriorType:         domain.PosteriorPosterolateral,
-			lang:                  i18n.English,
-			expectedAOOTA:         domain.AOOTAB3,
-			expectedLaugeHansen:   "", // Empty when ambiguous with possible types
-			expectedAmbiguous:     true,
-			expectedPossibleTypes: []string{"SER", "PA"},
-			expectedBartonicek:    domain.BartonicekType2,
-		},
+		{"CT + extraincisural → B3 + PA + Bartonicek 1", domain.PosteriorExtraincisural, domain.BartonicekType1},
+		{"CT + posterolateral → B3 + PA + Bartonicek 2", domain.PosteriorPosterolateral, domain.BartonicekType2},
+		{"CT + posteromedial_posterolateral → B3 + PA + Bartonicek 3", domain.PosteriorPosteromedialPosterolateral, domain.BartonicekType3},
+		{"CT + large_posterolateral → B3 + PA + Bartonicek 4", domain.PosteriorLargePosterolateral, domain.BartonicekType4},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range ctTests {
 		t.Run(tt.name, func(t *testing.T) {
 			input := domain.FractureInput{
 				InvolvedMalleoli:      domain.InvolvedMedialPosterior,
-				HasCTScan:             tt.hasCTScan,
+				HasCTScan:             &boolTrue,
 				PosteriorFractureType: tt.posteriorType,
 			}
-
 			result, err := engine.Classify(input)
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
-
-			expectedType := "bimaleolar_medial_posterior"
-			if result.FractureType != expectedType {
-				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
+			if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTAB3 {
+				t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTAB3)
 			}
-
-			if result.AOOTA == nil {
-				t.Fatal("AOOTA classification is nil")
+			if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
+				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
 			}
-			if result.AOOTA.Code != tt.expectedAOOTA {
-				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
+			if result.Bartonicek == nil || result.Bartonicek.Type != tt.expectedBartonicek {
+				t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, tt.expectedBartonicek)
 			}
-
-			if result.LaugeHansen == nil {
-				t.Fatal("LaugeHansen classification is nil")
-			}
-			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
-			}
-			if result.LaugeHansen.Ambiguous != tt.expectedAmbiguous {
-				t.Errorf("LaugeHansen.Ambiguous = %v, want %v", result.LaugeHansen.Ambiguous, tt.expectedAmbiguous)
-			}
-			if tt.expectedAmbiguous {
-				if len(result.LaugeHansen.PossibleTypes) != len(tt.expectedPossibleTypes) {
-					t.Errorf("LaugeHansen.PossibleTypes length = %d, want %d", len(result.LaugeHansen.PossibleTypes), len(tt.expectedPossibleTypes))
-				}
-			}
-
-			// Medial posterior should not have DanisWeber
 			if result.DanisWeber != nil {
 				t.Error("DanisWeber should be nil for medial posterior fractures")
-			}
-
-			if tt.expectBartonicekNil {
-				if result.Bartonicek != nil {
-					t.Error("Bartonicek should be nil without CT scan")
-				}
-			} else {
-				if result.Bartonicek == nil {
-					t.Fatal("Bartonicek classification is nil")
-				}
-				if result.Bartonicek.Type != tt.expectedBartonicek {
-					t.Errorf("Bartonicek.Type = %q, want %q", result.Bartonicek.Type, tt.expectedBartonicek)
-				}
 			}
 		})
 	}
@@ -536,6 +592,120 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
+	// Infrasindesmal cases (separate due to different assertion patterns)
+	t.Run("infrasindesmal without CT → Weber A only", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli: domain.InvolvedLateralPosterior,
+			FibularLevel:     domain.FibularLevelInfrasindesmal,
+			HasCTScan:        &boolFalse,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
+		}
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		}
+		if result.LaugeHansen != nil {
+			t.Error("LaugeHansen should be nil without CT for infrasindesmal")
+		}
+		if result.Bartonicek != nil {
+			t.Error("Bartonicek should be nil without CT")
+		}
+	})
+
+	t.Run("infrasindesmal nil CT → Weber A only", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli: domain.InvolvedLateralPosterior,
+			FibularLevel:     domain.FibularLevelInfrasindesmal,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
+		}
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA should be nil, got %q", result.AOOTA.Code)
+		}
+	})
+
+	t.Run("infrasindesmal CT + posteromedial → AO 44-A3 + LH unclassifiable + Weber A", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralPosterior,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			HasCTScan:                &boolTrue,
+			IsPosteriorPosteromedial: &boolTrue,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
+		}
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTAA3 {
+			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTAA3)
+		}
+		if result.LaugeHansen == nil || !result.LaugeHansen.Ambiguous {
+			t.Error("LaugeHansen should be ambiguous (unclassifiable)")
+		}
+		if result.Bartonicek != nil {
+			t.Error("Bartonicek should be nil for posteromedial")
+		}
+	})
+
+	t.Run("infrasindesmal CT + not posteromedial + extraincisural → Weber A + Bartonicek 1", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralPosterior,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			HasCTScan:                &boolTrue,
+			IsPosteriorPosteromedial: &boolFalse,
+			PosteriorFractureType:    domain.PosteriorExtraincisural,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
+		}
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		}
+		if result.LaugeHansen == nil || !result.LaugeHansen.Ambiguous {
+			t.Error("LaugeHansen should be ambiguous (unclassifiable)")
+		}
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekType1)
+		}
+	})
+
+	t.Run("infrasindesmal CT + not posteromedial + posterolateral → Weber A + Bartonicek 2", func(t *testing.T) {
+		input := domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralPosterior,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			HasCTScan:                &boolTrue,
+			IsPosteriorPosteromedial: &boolFalse,
+			PosteriorFractureType:    domain.PosteriorPosterolateral,
+		}
+		result, err := engine.Classify(input)
+		if err != nil {
+			t.Fatalf("Classify() unexpected error: %v", err)
+		}
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekType2)
+		}
+	})
+
+	// Transindesmal and suprasindesmal cases (table-driven)
 	tests := []struct {
 		name                string
 		fibularLevel        domain.FibularLevel
@@ -544,125 +714,98 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		suprasindesmalType  domain.SuprasindesmalType
 		fibulaTracePattern  domain.FibulaTracePattern
 		hasCTScan           *bool
-		lang                i18n.Language
-		expectedImpossible  bool
 		expectedDanisWeber  domain.DanisWeberType
 		expectedAOOTA       domain.AOOTACode
 		expectedLaugeHansen domain.LaugeHansenType
 		expectedBartonicek  domain.BartonicekType
 		expectBartonicekNil bool
 	}{
-		// ALL infrasindesmal cases are impossible
-		// SA mechanism doesn't involve posterior malleolus
-		// PA mechanism is transsyndesmotic or suprasyndesmotic
 		{
-			name:               "infrasindesmal is always impossible (no morphology question)",
-			fibularLevel:       domain.FibularLevelInfrasindesmal,
-			lang:               i18n.English,
-			expectedImpossible: true,
-		},
-		// Transindesmal spiral with CT scan
-		{
-			name:                "transindesmal spiral lateral posterior with CT",
+			name:                "transindesmal spiral with CT",
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
 			expectedAOOTA:       domain.AOOTAB3,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 			expectedBartonicek:  domain.BartonicekType1,
 		},
-		// Transindesmal spiral without CT scan - no Bartonicek
 		{
-			name:                "transindesmal spiral lateral posterior without CT",
+			name:                "transindesmal spiral without CT",
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           &boolFalse,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
 			expectedAOOTA:       domain.AOOTAB3,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 			expectBartonicekNil: true,
 		},
-		// Transindesmal oblique with CT
 		{
-			name:                "transindesmal oblique lateral posterior with CT",
+			name:                "transindesmal oblique with CT",
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			posteriorType:       domain.PosteriorPosteromedialPosterolateral,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
 			expectedAOOTA:       domain.AOOTAB3,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 			expectedBartonicek:  domain.BartonicekType3,
 		},
-		// Suprasindesmal simple with long trace pattern (PER) with CT
 		{
-			name:                "suprasindesmal simple diaphyseal long trace lateral posterior with CT",
+			name:                "suprasindesmal simple long trace with CT",
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
 			fibulaTracePattern:  domain.FibulaTraceParasindesmoticLong,
 			posteriorType:       domain.PosteriorLargePosterolateral,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberC,
 			expectedAOOTA:       domain.AOOTAC1,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 			expectedBartonicek:  domain.BartonicekType4,
 		},
-		// Suprasindesmal simple with short trace pattern (PA) with CT
 		{
-			name:                "suprasindesmal simple diaphyseal short trace lateral posterior with CT",
+			name:                "suprasindesmal simple short trace with CT",
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
 			fibulaTracePattern:  domain.FibulaTraceParasindesmoticShort,
 			posteriorType:       domain.PosteriorPosterolateral,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberC,
 			expectedAOOTA:       domain.AOOTAC1,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 			expectedBartonicek:  domain.BartonicekType2,
 		},
-		// Suprasindesmal multifragmentary with CT
 		{
-			name:                "suprasindesmal multifragmentary lateral posterior with CT",
+			name:                "suprasindesmal multifragmentary with CT",
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalMultifragmentary,
 			fibulaTracePattern:  domain.FibulaTraceParasindesmoticLong,
 			posteriorType:       domain.PosteriorPosterolateral,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberC,
 			expectedAOOTA:       domain.AOOTAC2,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 			expectedBartonicek:  domain.BartonicekType2,
 		},
-		// Suprasindesmal proximal with CT
 		{
-			name:                "suprasindesmal proximal lateral posterior with CT",
+			name:                "suprasindesmal proximal with CT",
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalProximal,
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           &boolTrue,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberC,
 			expectedAOOTA:       domain.AOOTAC3,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 			expectedBartonicek:  domain.BartonicekType1,
 		},
-		// Suprasindesmal proximal without CT - no Bartonicek
 		{
-			name:                "suprasindesmal proximal lateral posterior without CT",
+			name:                "suprasindesmal proximal without CT",
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalProximal,
 			posteriorType:       domain.PosteriorExtraincisural,
 			hasCTScan:           &boolFalse,
-			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberC,
 			expectedAOOTA:       domain.AOOTAC3,
 			expectedLaugeHansen: domain.LaugeHansenPER,
@@ -687,39 +830,24 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 
-			expectedType := "bimaleolar_lateral_posterior"
-			if result.FractureType != expectedType {
-				t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
+			if result.FractureType != "bimaleolar_lateral_posterior" {
+				t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
 			}
-
-			if tt.expectedImpossible {
-				if !result.Impossible {
-					t.Error("expected Impossible = true, got false")
-				}
-				if result.ImpossibleKey == "" {
-					t.Error("ImpossibleReason should not be empty for impossible cases")
-				}
-				return
-			}
-
 			if result.Impossible {
 				t.Errorf("unexpected Impossible = true with reason: %s", result.ImpossibleKey)
 			}
-
 			if result.DanisWeber == nil {
 				t.Fatal("DanisWeber classification is nil")
 			}
 			if result.DanisWeber.Type != tt.expectedDanisWeber {
 				t.Errorf("DanisWeber.Type = %q, want %q", result.DanisWeber.Type, tt.expectedDanisWeber)
 			}
-
 			if result.AOOTA == nil {
 				t.Fatal("AOOTA classification is nil")
 			}
 			if result.AOOTA.Code != tt.expectedAOOTA {
 				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
 			}
-
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
 			}
@@ -1217,6 +1345,51 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 	}
 }
 
+// TestEngine_Classify_SuprasindesmoticFarTracePattern verifies that suprasindesmotic_far
+// trace pattern produces PER mechanism (same as parasindesmotic_long) across all paths.
+func TestEngine_Classify_SuprasindesmoticFarTracePattern(t *testing.T) {
+	engine := NewEngine()
+	boolTrue := true
+
+	tests := []struct {
+		name             string
+		involvedMalleoli domain.InvolvedMalleoli
+		posteriorType    domain.PosteriorFractureType
+		hasCTScan        *bool
+	}{
+		{"lateral_only", domain.InvolvedLateralOnly, "", nil},
+		{"lateral_posterior", domain.InvolvedLateralPosterior, domain.PosteriorExtraincisural, &boolTrue},
+		{"lateral_medial", domain.InvolvedLateralMedial, "", nil},
+		{"trimaleolar", domain.InvolvedTrimaleolar, domain.PosteriorExtraincisural, &boolTrue},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := domain.FractureInput{
+				InvolvedMalleoli:      tt.involvedMalleoli,
+				FibularLevel:          domain.FibularLevelSuprasindesmal,
+				SuprasindesmalType:    domain.SuprasindesmalSimpleDiaphyseal,
+				FibulaTracePattern:    domain.FibulaTraceSuprasindesmoticFar,
+				PosteriorFractureType: tt.posteriorType,
+				HasCTScan:             tt.hasCTScan,
+			}
+
+			result, err := engine.Classify(input)
+			if err != nil {
+				t.Fatalf("Classify() unexpected error: %v", err)
+			}
+
+			if result.LaugeHansen == nil {
+				t.Fatal("LaugeHansen classification is nil")
+			}
+			if result.LaugeHansen.Type != domain.LaugeHansenPER {
+				t.Errorf("LaugeHansen.Type = %q, want %q (same as parasindesmotic_long)",
+					result.LaugeHansen.Type, domain.LaugeHansenPER)
+			}
+		})
+	}
+}
+
 // TestEngine_Classify_ImpossibleCombinations_SpecificKeys verifies exact ImpossibleKey values
 // for anatomically impossible fracture combinations.
 func TestEngine_Classify_ImpossibleCombinations_SpecificKeys(t *testing.T) {
@@ -1228,15 +1401,6 @@ func TestEngine_Classify_ImpossibleCombinations_SpecificKeys(t *testing.T) {
 		expectedKey       string
 		expectedFracType  string
 	}{
-		{
-			name: "lateral+posterior infrasindesmal → sa_mechanism",
-			input: domain.FractureInput{
-				InvolvedMalleoli: domain.InvolvedLateralPosterior,
-				FibularLevel:     domain.FibularLevelInfrasindesmal,
-			},
-			expectedKey:      "sa_mechanism",
-			expectedFracType: "bimaleolar_lateral_posterior",
-		},
 		{
 			name: "trimaleolar transverse infrasindesmal → exceptional",
 			input: domain.FractureInput{

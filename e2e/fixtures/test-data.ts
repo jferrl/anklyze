@@ -68,9 +68,11 @@ export const ExpectedResults = {
   },
 
   // Lateral + Posterior path
-  // NOTE: ALL infrasindesmal cases are now impossible (no morphology question)
+  // Infrasindesmal now has valid results with CT + posteromedial branching
   lateralPosterior: {
-    infra: { notPossible: true },
+    infraNoCT: { danisWeber: 'A' },
+    infraCTPosteromedial: { danisWeber: 'A' },
+    infraCTNotPosteromedial: { danisWeber: 'A' },
     transSpiral: { laugeHansen: 'SER', danisWeber: 'B' },
     transOblique: { laugeHansen: 'PA', danisWeber: 'B' },
     supra: { laugeHansen: 'PER', danisWeber: 'C' },

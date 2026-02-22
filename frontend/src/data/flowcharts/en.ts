@@ -9,26 +9,42 @@ export const flowchartEN = `flowchart TB
     B --> n5["Medial, lateral, and posterior malleoli"]
 
     %% Posterior malleolus branch
-    C --> n218{"Do you have a CT scan?"}
+    C --> n400{"What is the articular surface involvement?"}
+    n400 --> n401[">1/3 with metaphyseal extension"]
+    n400 --> n402["<1/3 without metaphyseal extension"]
+    n401 --> n403{"Is articular depression present?"}
+    n403 --> n404["Yes"]
+    n403 --> n405["No"]
+    n404 --> n406["Distal tibia fracture<br/>AO 43 B2"]
+    n405 --> n407["Distal tibia fracture<br/>AO 43 B1"]
+    n402 --> n218{"Do you have a CT scan?"}
     n218 --> n219["Yes"]
     n218 --> n220["No"]
-    n220 --> n221["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable"]
+    n220 --> n221["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA"]
     n219 --> n6{"What type of fracture is it?"}
     n6 --> n7["Extra-incisural fragment"]
     n6 --> n8["Posterolateral fragment"]
     n6 --> n9["Posteromedial and posterolateral fragment"]
     n6 --> n10["Large posterolateral triangular fragment"]
-    n7 --> n11["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 1"]
-    n8 --> n12["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 2"]
-    n9 --> n13["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 3"]
-    n10 --> n14["Unimalleolar posterior malleolus<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable<br/>Bartonicek 4"]
+    n7 --> n11["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA<br/>Bartonicek 1"]
+    n8 --> n12["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA<br/>Bartonicek 2"]
+    n9 --> n13["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA<br/>Bartonicek 3"]
+    n10 --> n14["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
 
     %% Medial malleolus branch
-    D --> n15{"What is the morphology?"}
-    n15 --> n16["Oblique/Vertical"]
-    n15 --> n17["Transverse"]
-    n16 --> n18["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen SA"]
-    n17 --> n19["Unimalleolar medial malleolus<br/>AO 44 A1<br/>Lauge-Hansen unclassifiable<br/>(could be PA/SER/PER)"]
+    D --> n410{"What is the articular surface involvement?"}
+    n410 --> n411[">1/3 with metaphyseal extension"]
+    n410 --> n412["<1/3 without metaphyseal extension"]
+    n411 --> n413{"Is articular depression present?"}
+    n413 --> n414["Yes"]
+    n413 --> n415["No"]
+    n414 --> n416["Distal tibia fracture<br/>AO 43 B2"]
+    n415 --> n417["Distal tibia fracture<br/>AO 43 B1"]
+    n412 --> n15{"What is the morphology?"}
+    n15 --> n16["Vertical"]
+    n15 --> n17["Transverse/Oblique"]
+    n16 --> n18["Unimalleolar medial malleolus<br/>AO 44 A2<br/>Lauge-Hansen SA"]
+    n17 --> n19["Unimalleolar medial malleolus<br/>AO 44 A2<br/>Lauge-Hansen unclassifiable"]
 
     %% Lateral malleolus branch
     n1 --> n20{"At what level is the fracture?"}
@@ -41,8 +57,8 @@ export const flowchartEN = `flowchart TB
     n22 --> n29{"What is the fracture morphology?"}
     n29 --> n30["Spiral (Low anterior, high posterior)"]
     n29 --> n31["Transverse/Oblique (Low medial, high lateral)/Comminuted"]
-    n30 --> n32["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
-    n31 --> n33["Unimalleolar lateral malleolus<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
+    n30 --> n32["Unimalleolar lateral malleolus<br/>AO 44 B (subtype unclassifiable B1/B2)<br/>Lauge-Hansen SER<br/>Weber B"]
+    n31 --> n33["Unimalleolar lateral malleolus<br/>AO 44 B (subtype unclassifiable B1/B2)<br/>Lauge-Hansen PA<br/>Weber B"]
 
     n23 --> n34{"What type?"}
     n34 --> n35["Simple Diaphyseal"]
@@ -53,15 +69,19 @@ export const flowchartEN = `flowchart TB
     n35 --> n286{"What is the fibula fracture pattern?"}
     n286 --> n287["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n286 --> n288["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n286 --> n420["Suprasyndesmotic (>6cm from articular surface)"]
     n287 --> n289["Unimalleolar lateral malleolus<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n288 --> n39["Unimalleolar lateral malleolus<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n420 --> n39
 
     %% Suprasyndesmotic with fibula trace pattern (Multifragmentary)
     n36 --> n290{"What is the fibula fracture pattern?"}
     n290 --> n291["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n290 --> n292["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n290 --> n422["Suprasyndesmotic (>6cm from articular surface)"]
     n291 --> n293["Unimalleolar lateral malleolus<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n292 --> n40["Unimalleolar lateral malleolus<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n422 --> n40
 
     n37 --> n41["Unimalleolar lateral malleolus<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -69,16 +89,18 @@ export const flowchartEN = `flowchart TB
     n2 --> n264{"Do you have a CT scan?"}
     n264 --> n265["Yes"]
     n264 --> n266["No"]
-    n266 --> n272["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable (SER/PA)"]
+    n266 --> n272["Bimalleolar (Medial + Posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen PA"]
     n265 --> n267{"What type is the posterior malleolus fracture?"}
     n267 --> n268["Extra-incisural fragment"]
     n267 --> n269["Posterolateral fragment"]
     n267 --> n270["Posteromedial and posterolateral"]
     n267 --> n271["Large posterolateral triangular fragment"]
-    n268 --> n273["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable (SER/PA)<br/>Bartonicek 1"]
-    n269 --> n274["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable (SER/PA)<br/>Bartonicek 2"]
-    n270 --> n275["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable (SER/PA)<br/>Bartonicek 3"]
-    n271 --> n276["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen unclassifiable (SER/PA)<br/>Bartonicek 4"]
+    n267 --> n440["Extraincisural postero-medial fragment"]
+    n268 --> n273["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 1"]
+    n269 --> n274["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 2"]
+    n270 --> n275["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 3"]
+    n271 --> n276["Bimalleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
+    n440 --> n441["Bimalleolar (Medial + Posterior)<br/>AO 44 A3<br/>Lauge-Hansen unclassifiable"]
 
     %% Lateral + Posterior branch
     n3 --> n43{"At what level is the fibula fracture?"}
@@ -86,7 +108,23 @@ export const flowchartEN = `flowchart TB
     n43 --> n45["Transsyndesmotic"]
     n43 --> n46["Suprasyndesmotic"]
 
-    n44 --> n66["Not possible: SA mechanism does not involve posterior malleolus.<br/>PA mechanism is transsyndesmotic or suprasyndesmotic."]
+    n44 --> n442{"Do you have a CT scan?"}
+    n442 --> n443["Yes"]
+    n442 --> n444["No"]
+    n444 --> n445["Bimalleolar (lateral + posterior)<br/>Weber A"]
+    n443 --> n446{"Is the posterior fragment posteromedial?"}
+    n446 --> n447["Yes"]
+    n446 --> n448["No"]
+    n447 --> n449["Bimalleolar (lateral + posterior)<br/>AO 44 A3<br/>Lauge-Hansen unclassifiable<br/>Weber A"]
+    n448 --> n450{"What type is the posterior malleolus?"}
+    n450 --> n451["Extra-incisural fragment"]
+    n450 --> n452["Posterolateral fragment"]
+    n450 --> n453["Posteromedial and posterolateral"]
+    n450 --> n454["Large posterolateral triangular"]
+    n451 --> n455["Bimalleolar (lateral + posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen unclassifiable<br/>Weber A<br/>Bartonicek 1"]
+    n452 --> n456["Bimalleolar (lateral + posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen unclassifiable<br/>Weber A<br/>Bartonicek 2"]
+    n453 --> n457["Bimalleolar (lateral + posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen unclassifiable<br/>Weber A<br/>Bartonicek 3"]
+    n454 --> n458["Bimalleolar (lateral + posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen unclassifiable<br/>Weber A<br/>Bartonicek 4"]
 
     n45 --> n48{"What is the fracture morphology?"}
     n48 --> n52["Spiral (Low anterior, high posterior)"]
@@ -115,14 +153,18 @@ export const flowchartEN = `flowchart TB
     n54 --> n307{"What is the fibula fracture pattern?"}
     n307 --> n308["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n307 --> n309["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n307 --> n424["Suprasyndesmotic (>6cm from articular surface)"]
     n309 --> n230{"Do you have a CT scan?"}
+    n424 --> n230
     n308 --> n303{"Do you have a CT scan?"}
 
     %% Suprasyndesmotic Multifragmentary - fibula pattern
     n55 --> n310{"What is the fibula fracture pattern?"}
     n310 --> n311["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n310 --> n312["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n310 --> n426["Suprasyndesmotic (>6cm from articular surface)"]
     n312 --> n233{"Do you have a CT scan?"}
+    n426 --> n233
     n311 --> n313{"Do you have a CT scan?"}
 
     n56 --> n237{"Do you have a CT scan?"}
@@ -251,15 +293,19 @@ export const flowchartEN = `flowchart TB
     n123 --> n336{"What is the fibula fracture pattern?"}
     n336 --> n337["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n336 --> n338["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n336 --> n428["Suprasyndesmotic (>6cm from articular surface)"]
     n337 --> n339["Bimalleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n338 --> n126["Bimalleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n428 --> n126
 
     %% Suprasyndesmotic Multifragmentary - fibula pattern
     n124 --> n340{"What is the fibula fracture pattern?"}
     n340 --> n341["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n340 --> n342["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n340 --> n430["Suprasyndesmotic (>6cm from articular surface)"]
     n341 --> n343["Bimalleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n342 --> n127["Bimalleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n430 --> n127
 
     n125 --> n128["Bimalleolar (lateral + medial)<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -290,14 +336,18 @@ export const flowchartEN = `flowchart TB
     n146 --> n345{"What is the fibula fracture pattern?"}
     n345 --> n346["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n345 --> n347["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n345 --> n432["Suprasyndesmotic (>6cm from articular surface)"]
     n347 --> n241{"Do you have a CT scan?"}
+    n432 --> n241
     n346 --> n348{"Do you have a CT scan?"}
 
     %% Trimalleolar Suprasyndesmotic Multifrag - fibula pattern
     n147 --> n363{"What is the fibula fracture pattern?"}
     n363 --> n364["Parasyndesmotic with short oblique/transverse/comminuted pattern"]
     n363 --> n365["Parasyndesmotic or suprasyndesmotic with long oblique/spiral pattern"]
+    n363 --> n434["Suprasyndesmotic (>6cm from articular surface)"]
     n365 --> n245{"Do you have a CT scan?"}
+    n434 --> n245
     n364 --> n366{"Do you have a CT scan?"}
 
     n148 --> n249{"Do you have a CT scan?"}
@@ -462,7 +512,17 @@ export const flowchartEN = `flowchart TB
     style n274 fill:#e8f5e9,stroke:#4caf50
     style n275 fill:#e8f5e9,stroke:#4caf50
     style n276 fill:#e8f5e9,stroke:#4caf50
-    style n66 fill:#ffebee,stroke:#f44336
+    style n406 fill:#e8f5e9,stroke:#4caf50
+    style n407 fill:#e8f5e9,stroke:#4caf50
+    style n416 fill:#e8f5e9,stroke:#4caf50
+    style n417 fill:#e8f5e9,stroke:#4caf50
+    style n441 fill:#e8f5e9,stroke:#4caf50
+    style n445 fill:#e8f5e9,stroke:#4caf50
+    style n449 fill:#e8f5e9,stroke:#4caf50
+    style n455 fill:#e8f5e9,stroke:#4caf50
+    style n456 fill:#e8f5e9,stroke:#4caf50
+    style n457 fill:#e8f5e9,stroke:#4caf50
+    style n458 fill:#e8f5e9,stroke:#4caf50
     style n72 fill:#e8f5e9,stroke:#4caf50
     style n73 fill:#e8f5e9,stroke:#4caf50
     style n74 fill:#e8f5e9,stroke:#4caf50

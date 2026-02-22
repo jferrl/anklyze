@@ -19,8 +19,8 @@
 
 **Purpose**: Prepare reference documentation that all subsequent phases depend on
 
-- [ ] T001 Review Spanish MMD spelling and syntax in `docs/Danis-Weber AO_OTA Flow-2026-02-22-ES.mmd` per `update-flow.md` section 1 checklist (maléolo, transindesmal, suprasindesmal, infrasindesmal, oblicuo, peroné, Fractura)
-- [ ] T002 Create English MMD translation at `docs/Danis-Weber AO_OTA Flow-2026-02-22-EN.mmd` by translating the reviewed Spanish file using key translations from `update-flow.md` section 2
+- [x] T001 Review Spanish MMD spelling and syntax in `docs/Danis-Weber AO_OTA Flow-2026-02-22-ES.mmd` per `update-flow.md` section 1 checklist (maléolo, transindesmal, suprasindesmal, infrasindesmal, oblicuo, peroné, Fractura)
+- [x] T002 Create English MMD translation at `docs/Danis-Weber AO_OTA Flow-2026-02-22-EN.mmd` by translating the reviewed Spanish file using key translations from `update-flow.md` section 2
 
 ---
 
@@ -30,13 +30,13 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete. The English MMD (T002) is the source of truth for all code changes.
 
-- [ ] T003 [P] Add new `ArticularInvolvement` type (enum: `large_with_extension`, `small_without_extension`) and `articular_involvement` field to `FractureInput` in `internal/domain/fracture.go`
-- [ ] T004 [P] Add `has_articular_depression` (*bool) field to `FractureInput` in `internal/domain/fracture.go`
-- [ ] T005 [P] Add `is_posterior_posteromedial` (*bool) field to `FractureInput` in `internal/domain/fracture.go`
-- [ ] T006 [P] Add `PosteriorExtraincisuralPosteromedial` constant (`"extraincisural_posteromedial"`) to `PosteriorFractureType` in `internal/domain/fracture.go`
-- [ ] T007 [P] Add `FibulaTraceSuprasindesmoticFar` constant (`"suprasindesmotic_far"`) to `FibulaTracePattern` in `internal/domain/fracture.go`
-- [ ] T008 [P] Add new `AOOTACode` constants in `internal/domain/classification.go`: `AOOTA43B1` (`"43-B1"`), `AOOTA43B2` (`"43-B2"`), `AOOTAA3` (`"44-A3"`), `AOOTAB` (`"44-B"`)
-- [ ] T009 [P] Update TypeScript `FractureInput` interface in `frontend/src/types/domain/fracture.ts`: add `articular_involvement`, `has_articular_depression`, `is_posterior_posteromedial` fields and new type unions for `PosteriorFractureType` (`extraincisural_posteromedial`), `FibulaTracePattern` (`suprasindesmotic_far`)
+- [x] T003 [P] Add new `ArticularInvolvement` type (enum: `large_with_extension`, `small_without_extension`) and `articular_involvement` field to `FractureInput` in `internal/domain/fracture.go`
+- [x] T004 [P] Add `has_articular_depression` (*bool) field to `FractureInput` in `internal/domain/fracture.go`
+- [x] T005 [P] Add `is_posterior_posteromedial` (*bool) field to `FractureInput` in `internal/domain/fracture.go`
+- [x] T006 [P] Add `PosteriorExtraincisuralPosteromedial` constant (`"extraincisural_posteromedial"`) to `PosteriorFractureType` in `internal/domain/fracture.go`
+- [x] T007 [P] Add `FibulaTraceSuprasindesmoticFar` constant (`"suprasindesmotic_far"`) to `FibulaTracePattern` in `internal/domain/fracture.go`
+- [x] T008 [P] Add new `AOOTACode` constants in `internal/domain/classification.go`: `AOOTA43B1` (`"43-B1"`), `AOOTA43B2` (`"43-B2"`), `AOOTAA3` (`"44-A3"`), `AOOTAB` (`"44-B"`)
+- [x] T009 [P] Update TypeScript `FractureInput` interface in `frontend/src/types/domain/fracture.ts`: add `articular_involvement`, `has_articular_depression`, `is_posterior_posteromedial` fields and new type unions for `PosteriorFractureType` (`extraincisural_posteromedial`), `FibulaTracePattern` (`suprasindesmotic_far`)
 
 **Checkpoint**: All domain types are defined. Backend and frontend type systems are in sync. Run `go vet ./...` and `cd frontend && npx tsc --noEmit` to verify.
 
@@ -52,22 +52,22 @@
 
 > **NOTE: Write/update these tests FIRST, ensure they FAIL before implementation (TDD per Constitution Principle II)**
 
-- [ ] T010 [US1] Update test cases for `classifyPosteriorOnly` in `internal/rules/engine_test.go`: add tests for articular involvement branching — `large_with_extension` + depression → AO 43-B2, `large_with_extension` + no depression → AO 43-B1, `small_without_extension` → existing Bartonicek path (AO unclassifiable + LH PA)
-- [ ] T011 [US1] Update test cases for `classifyMedialOnly` in `internal/rules/engine_test.go`: add tests for articular involvement branching — `large_with_extension` + depression → AO 43-B2, `large_with_extension` + no depression → AO 43-B1, `small_without_extension` → morphology path (vertical → SA AO 44-A2, transverse/oblique → ambiguous)
-- [ ] T012 [US1] Update test cases for `classifyMedialPosterior` in `internal/rules/engine_test.go`: add tests for CT + 5 posterior types including `extraincisural_posteromedial` → AO 44-A3 + LH unclassifiable, no CT → AO unclassifiable + LH PA, other 4 types → AO 44-B3 + LH PA + Bartonicek 1-4
-- [ ] T013 [US1] Update test cases for `classifyLateralPosterior` infrasindesmal in `internal/rules/engine_test.go`: replace impossible case tests with new path — no CT → unclassifiable Weber A, CT + posteromedial → AO 44-A3 + LH unclassifiable + Weber A, CT + not posteromedial → Bartonicek types + AO unclassifiable + LH unclassifiable + Weber A
-- [ ] T014 [US1] Update test cases for `classifyLateralOnly` transsyndesmotic in `internal/rules/engine_test.go`: change expected AO code from `44-B1` to `44-B` for both spiral and oblique morphology
-- [ ] T015 [US1] Add test cases for `suprasindesmotic_far` trace pattern in `internal/rules/engine_test.go`: verify it produces PER mechanism (same as `parasindesmotic_long`) across `classifyLateralOnly`, `classifyLateralPosterior`, `classifyLateralMedial`, `classifyTrimaleolar`
+- [x] T010 [US1] Update test cases for `classifyPosteriorOnly` in `internal/rules/engine_test.go`: add tests for articular involvement branching — `large_with_extension` + depression → AO 43-B2, `large_with_extension` + no depression → AO 43-B1, `small_without_extension` → existing Bartonicek path (AO unclassifiable + LH PA)
+- [x] T011 [US1] Update test cases for `classifyMedialOnly` in `internal/rules/engine_test.go`: add tests for articular involvement branching — `large_with_extension` + depression → AO 43-B2, `large_with_extension` + no depression → AO 43-B1, `small_without_extension` → morphology path (vertical → SA AO 44-A2, transverse/oblique → ambiguous)
+- [x] T012 [US1] Update test cases for `classifyMedialPosterior` in `internal/rules/engine_test.go`: add tests for CT + 5 posterior types including `extraincisural_posteromedial` → AO 44-A3 + LH unclassifiable, no CT → AO unclassifiable + LH PA, other 4 types → AO 44-B3 + LH PA + Bartonicek 1-4
+- [x] T013 [US1] Update test cases for `classifyLateralPosterior` infrasindesmal in `internal/rules/engine_test.go`: replace impossible case tests with new path — no CT → unclassifiable Weber A, CT + posteromedial → AO 44-A3 + LH unclassifiable + Weber A, CT + not posteromedial → Bartonicek types + AO unclassifiable + LH unclassifiable + Weber A
+- [x] T014 [US1] Update test cases for `classifyLateralOnly` transsyndesmotic in `internal/rules/engine_test.go`: change expected AO code from `44-B1` to `44-B` for both spiral and oblique morphology
+- [x] T015 [US1] Add test cases for `suprasindesmotic_far` trace pattern in `internal/rules/engine_test.go`: verify it produces PER mechanism (same as `parasindesmotic_long`) across `classifyLateralOnly`, `classifyLateralPosterior`, `classifyLateralMedial`, `classifyTrimaleolar`
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Update `classifyPosteriorOnly()` in `internal/rules/engine.go`: add articular involvement check at start — `large_with_extension` → early return with `distal_tibia` fracture type + AO 43-B1/B2 based on depression; `small_without_extension` → existing CT + Bartonicek path with AO unclassifiable + LH PA
-- [ ] T017 [US1] Update `classifyMedialOnly()` in `internal/rules/engine.go`: add articular involvement check at start — `large_with_extension` → early return with `distal_tibia` + AO 43-B1/B2; `small_without_extension` → existing morphology path (Vertical → SA AO 44-A2, Transverse/oblique → ambiguous PA/SER/PER AO 44-A2)
-- [ ] T018 [US1] Rewrite `classifyMedialPosterior()` in `internal/rules/engine.go`: no CT → bimaleolar medial+posterior AO unclassifiable + LH PA; CT → branch on 5 posterior types: `extraincisural_posteromedial` → AO 44-A3 + LH unclassifiable, other 4 standard types → AO 44-B3 + LH PA + Bartonicek 1-4 (`extraincisural` → Bartonicek 1, `posterolateral` → Bartonicek 2, `posteromedial_posterolateral` → Bartonicek 3, `large_posterolateral` → Bartonicek 4)
-- [ ] T019 [US1] Rewrite `classifyLateralPosterior()` infrasindesmal branch in `internal/rules/engine.go`: replace impossible return with — no CT → unclassifiable (Weber A); CT + `is_posterior_posteromedial` true → AO 44-A3 + LH unclassifiable + Weber A; CT + false → standard Bartonicek with unclassifiable AO/LH + Weber A
-- [ ] T020 [US1] Update `classifyLateralOnly()` transsyndesmotic branch in `internal/rules/engine.go`: change `AOOTAB1` to `AOOTAB` for both spiral and oblique morphology
-- [ ] T021 [US1] Verify `suprasindesmotic_far` trace pattern works via existing `else` branches in all suprasyndesmotic paths in `internal/rules/engine.go` — no code change needed if default case already returns PER, but add explicit handling if clearer
-- [ ] T022 [US1] Run `go test -race ./internal/rules/...` to verify all tests pass
+- [x] T016 [US1] Update `classifyPosteriorOnly()` in `internal/rules/engine.go`: add articular involvement check at start — `large_with_extension` → early return with `distal_tibia` fracture type + AO 43-B1/B2 based on depression; `small_without_extension` → existing CT + Bartonicek path with AO unclassifiable + LH PA
+- [x] T017 [US1] Update `classifyMedialOnly()` in `internal/rules/engine.go`: add articular involvement check at start — `large_with_extension` → early return with `distal_tibia` + AO 43-B1/B2; `small_without_extension` → existing morphology path (Vertical → SA AO 44-A2, Transverse/oblique → ambiguous PA/SER/PER AO 44-A2)
+- [x] T018 [US1] Rewrite `classifyMedialPosterior()` in `internal/rules/engine.go`: no CT → bimaleolar medial+posterior AO unclassifiable + LH PA; CT → branch on 5 posterior types: `extraincisural_posteromedial` → AO 44-A3 + LH unclassifiable, other 4 standard types → AO 44-B3 + LH PA + Bartonicek 1-4 (`extraincisural` → Bartonicek 1, `posterolateral` → Bartonicek 2, `posteromedial_posterolateral` → Bartonicek 3, `large_posterolateral` → Bartonicek 4)
+- [x] T019 [US1] Rewrite `classifyLateralPosterior()` infrasindesmal branch in `internal/rules/engine.go`: replace impossible return with — no CT → unclassifiable (Weber A); CT + `is_posterior_posteromedial` true → AO 44-A3 + LH unclassifiable + Weber A; CT + false → standard Bartonicek with unclassifiable AO/LH + Weber A
+- [x] T020 [US1] Update `classifyLateralOnly()` transsyndesmotic branch in `internal/rules/engine.go`: change `AOOTAB1` to `AOOTAB` for both spiral and oblique morphology
+- [x] T021 [US1] Verify `suprasindesmotic_far` trace pattern works via existing `else` branches in all suprasyndesmotic paths in `internal/rules/engine.go` — no code change needed if default case already returns PER, but add explicit handling if clearer
+- [x] T022 [US1] Run `go test -race ./internal/rules/...` to verify all tests pass
 
 **Checkpoint**: Backend classification engine matches the flow diagram for all paths. All engine tests pass.
 
@@ -81,12 +81,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T023 [P] [US2] Add new form question options for `articular_involvement` (2 options), `has_articular_depression` (Yes/No), and `is_posterior_posteromedial` (Yes/No) in `frontend/src/utils/formOptions.ts`
-- [ ] T024 [P] [US2] Add third `fibula_trace_pattern` option (`suprasindesmotic_far`) and fifth `posterior_fracture_type` option (`extraincisural_posteromedial`) to `frontend/src/utils/formOptions.ts`
-- [ ] T025 [US2] Update show/hide flags in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: add `showArticularInvolvement` (posterior_only, medial_only), `showArticularDepression` (when articular_involvement = large_with_extension), `showPosteriorPosteromedial` (lateral_posterior + infrasindesmal + has_ct_scan), update `showMedialMorphology` to exclude when articular_involvement = large_with_extension, update `showCTScan` and `showPosteriorType` for medial_posterior path
-- [ ] T026 [US2] Update `isFormComplete()` in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: add terminal detection for posterior_only (large_with_extension + has_articular_depression → complete), medial_only (large_with_extension + has_articular_depression → complete), lateral_posterior infra (no CT → complete, CT + is_posterior_posteromedial answered → complete), medial_posterior (no CT → complete, CT + posterior_type answered → complete)
-- [ ] T027 [US2] Update `calculateProgress()` in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: adjust estimated step counts for posterior_only (add articular involvement step), medial_only (add articular involvement step), medial_posterior (add CT + posterior type steps), lateral_posterior infra (add CT + posteromedial steps)
-- [ ] T028 [US2] Run `cd frontend && npx tsc --noEmit` to verify frontend compiles without type errors
+- [x] T023 [P] [US2] Add new form question options for `articular_involvement` (2 options), `has_articular_depression` (Yes/No), and `is_posterior_posteromedial` (Yes/No) in `frontend/src/utils/formOptions.ts`
+- [x] T024 [P] [US2] Add third `fibula_trace_pattern` option (`suprasindesmotic_far`) and fifth `posterior_fracture_type` option (`extraincisural_posteromedial`) to `frontend/src/utils/formOptions.ts`
+- [x] T025 [US2] Update show/hide flags in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: add `showArticularInvolvement` (posterior_only, medial_only), `showArticularDepression` (when articular_involvement = large_with_extension), `showPosteriorPosteromedial` (lateral_posterior + infrasindesmal + has_ct_scan), update `showMedialMorphology` to exclude when articular_involvement = large_with_extension, update `showCTScan` and `showPosteriorType` for medial_posterior path
+- [x] T026 [US2] Update `isFormComplete()` in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: add terminal detection for posterior_only (large_with_extension + has_articular_depression → complete), medial_only (large_with_extension + has_articular_depression → complete), lateral_posterior infra (no CT → complete, CT + is_posterior_posteromedial answered → complete), medial_posterior (no CT → complete, CT + posterior_type answered → complete)
+- [x] T027 [US2] Update `calculateProgress()` in `frontend/src/features/fracture-classification/components/FractureForm.tsx`: adjust estimated step counts for posterior_only (add articular involvement step), medial_only (add articular involvement step), medial_posterior (add CT + posterior type steps), lateral_posterior infra (add CT + posteromedial steps)
+- [x] T028 [US2] Run `cd frontend && npx tsc --noEmit` to verify frontend compiles without type errors
 
 **Checkpoint**: Frontend form shows exactly the correct questions for all 7 paths. Form completes at terminal nodes.
 
@@ -102,10 +102,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T029 [US3] Update English system prompt (`systemPromptEN`) in `internal/llm/prompts.go`: update "Classification Algorithm - Required Fields by Fracture Type" section with new fields (`articular_involvement`, `has_articular_depression`, `is_posterior_posteromedial`), update "Decision Tree Questions" with new branching logic, update `suprasindesmotic_far` trace pattern option
-- [ ] T030 [US3] Update Spanish system prompt (`systemPromptES`) in `internal/llm/prompts.go`: mirror all changes from T029 in Spanish
-- [ ] T031 [US3] Update English few-shot examples (`fewShotExamplesEN`) in `internal/llm/prompts.go`: add examples for posterior-only with metaphyseal extension, medial+posterior with posteromedial fragment, lateral+posterior infrasyndesmotic
-- [ ] T032 [US3] Update Spanish few-shot examples (`fewShotExamplesES`) in `internal/llm/prompts.go`: mirror all example changes from T031 in Spanish
+- [x] T029 [US3] Update English system prompt (`systemPromptEN`) in `internal/llm/prompts.go`: update "Classification Algorithm - Required Fields by Fracture Type" section with new fields (`articular_involvement`, `has_articular_depression`, `is_posterior_posteromedial`), update "Decision Tree Questions" with new branching logic, update `suprasindesmotic_far` trace pattern option
+- [x] T030 [US3] Update Spanish system prompt (`systemPromptES`) in `internal/llm/prompts.go`: mirror all changes from T029 in Spanish
+- [x] T031 [US3] Update English few-shot examples (`fewShotExamplesEN`) in `internal/llm/prompts.go`: add examples for posterior-only with metaphyseal extension, medial+posterior with posteromedial fragment, lateral+posterior infrasyndesmotic
+- [x] T032 [US3] Update Spanish few-shot examples (`fewShotExamplesES`) in `internal/llm/prompts.go`: mirror all example changes from T031 in Spanish
 
 **Checkpoint**: Chat-based classification extracts new fields correctly and produces results matching the updated engine.
 
@@ -119,12 +119,12 @@
 
 ### Implementation for User Story 4
 
-- [ ] T033 [P] [US4] Update `frontend/src/i18n/en.json`: add translation keys for new questions (`form.questions.articularInvolvement`, `form.questions.articularDepression`, `form.questions.posteriorPosteromedial`), new options, new result descriptions (AO 43-B1, 43-B2, 44-A3, 44-B, distal tibia fracture type), update medial morphology labels (oblique → "Vertical", transverse → "Transverse/Oblique")
-- [ ] T034 [P] [US4] Update `frontend/src/i18n/es.json`: mirror all changes from T033 in Spanish, matching the Spanish MMD labels exactly (maléolo, transverso/oblicuo, vertical, etc.)
-- [ ] T035 [P] [US4] Update `frontend/src/utils/classificationTranslations.ts`: add translation helpers for new AO codes (43-B1, 43-B2, 44-A3, 44-B), new fracture type (`distal_tibia`), update `getAOOTADescription()`, `getFractureDescription()`, handle unclassifiable Lauge-Hansen in `getLaugeHansenDescription()`
-- [ ] T036 [P] [US4] Update embedded Spanish flowchart in `frontend/src/data/flowcharts/es.ts` to match the reviewed `docs/Danis-Weber AO_OTA Flow-2026-02-22-ES.mmd` exactly
-- [ ] T037 [P] [US4] Update embedded English flowchart in `frontend/src/data/flowcharts/en.ts` to match `docs/Danis-Weber AO_OTA Flow-2026-02-22-EN.mmd` exactly
-- [ ] T038 [US4] Run label parity checks per `update-flow.md` section 8: compare embedded MMD question text, option labels, trace pattern labels, Oxford commas, and Bartonicek terminal values against reference MMDs
+- [x] T033 [P] [US4] Update `frontend/src/i18n/en.json`: add translation keys for new questions (`form.questions.articularInvolvement`, `form.questions.articularDepression`, `form.questions.posteriorPosteromedial`), new options, new result descriptions (AO 43-B1, 43-B2, 44-A3, 44-B, distal tibia fracture type), update medial morphology labels (oblique → "Vertical", transverse → "Transverse/Oblique")
+- [x] T034 [P] [US4] Update `frontend/src/i18n/es.json`: mirror all changes from T033 in Spanish, matching the Spanish MMD labels exactly (maléolo, transverso/oblicuo, vertical, etc.)
+- [x] T035 [P] [US4] Update `frontend/src/utils/classificationTranslations.ts`: add translation helpers for new AO codes (43-B1, 43-B2, 44-A3, 44-B), new fracture type (`distal_tibia`), update `getAOOTADescription()`, `getFractureDescription()`, handle unclassifiable Lauge-Hansen in `getLaugeHansenDescription()`
+- [x] T036 [P] [US4] Update embedded Spanish flowchart in `frontend/src/data/flowcharts/es.ts` to match the reviewed `docs/Danis-Weber AO_OTA Flow-2026-02-22-ES.mmd` exactly
+- [x] T037 [P] [US4] Update embedded English flowchart in `frontend/src/data/flowcharts/en.ts` to match `docs/Danis-Weber AO_OTA Flow-2026-02-22-EN.mmd` exactly
+- [x] T038 [US4] Run label parity checks per `update-flow.md` section 8: compare embedded MMD question text, option labels, trace pattern labels, Oxford commas, and Bartonicek terminal values against reference MMDs
 
 **Checkpoint**: Both languages show correct labels and flowcharts matching the reference diagrams.
 
@@ -138,9 +138,9 @@
 
 ### Implementation for User Story 5
 
-- [ ] T039 [US5] Verify `frontend/src/utils/classificationTranslations.ts` handles unknown/old AO codes gracefully (falls back to raw code display) — no code changes expected, but verify no runtime errors for old values like `44-B1`
-- [ ] T040 [US5] Verify `CompareWithReference()` in `internal/domain/case.go` handles new AO codes and nil DanisWeber/LaugeHansen fields for distal tibia results — update comparison logic if needed
-- [ ] T041 [US5] Verify denormalized field update logic in response submission handler handles new codes correctly (e.g., `ao_ota_code` can store `43-B1`, `44-A3`, `44-B`)
+- [x] T039 [US5] Verify `frontend/src/utils/classificationTranslations.ts` handles unknown/old AO codes gracefully (falls back to raw code display) — no code changes expected, but verify no runtime errors for old values like `44-B1`
+- [x] T040 [US5] Verify `CompareWithReference()` in `internal/domain/case.go` handles new AO codes and nil DanisWeber/LaugeHansen fields for distal tibia results — update comparison logic if needed
+- [x] T041 [US5] Verify denormalized field update logic in response submission handler handles new codes correctly (e.g., `ao_ota_code` can store `43-B1`, `44-A3`, `44-B`)
 
 **Checkpoint**: Old responses render correctly. New responses with new codes display correctly. No data loss.
 
@@ -150,13 +150,13 @@
 
 **Purpose**: E2E tests, final verification, build validation
 
-- [ ] T042 [P] Update expected results in `e2e/fixtures/test-data.ts` for all changed classification paths (posterior-only, medial-only, medial+posterior, lateral+posterior infra, lateral-only trans, suprasyndesmotic trace patterns)
-- [ ] T043 Update lateral-only E2E tests in `e2e/tests/classification/lateral-only.spec.ts`: update expected AO code for transsyndesmotic paths from `44-B1` to `44-B`
-- [ ] T044 [P] Update lateral-posterior E2E tests in `e2e/tests/classification/lateral-posterior.spec.ts`: replace impossible infrasyndesmotic tests with new CT + posteromedial branching tests
-- [ ] T045 [P] Update lateral-medial E2E tests in `e2e/tests/classification/lateral-medial.spec.ts`: add suprasyndesmotic far trace pattern tests
-- [ ] T046 [P] Update trimaleolar E2E tests in `e2e/tests/classification/trimaleolar.spec.ts`: add suprasyndesmotic far trace pattern tests
-- [ ] T047 Run full backend test suite: `go test -race ./...`
-- [ ] T048 Run full frontend validation: `cd frontend && npx tsc --noEmit && npm run lint`
+- [x] T042 [P] Update expected results in `e2e/fixtures/test-data.ts` for all changed classification paths (posterior-only, medial-only, medial+posterior, lateral+posterior infra, lateral-only trans, suprasyndesmotic trace patterns)
+- [x] T043 Update lateral-only E2E tests in `e2e/tests/classification/lateral-only.spec.ts`: update expected AO code for transsyndesmotic paths from `44-B1` to `44-B`
+- [x] T044 [P] Update lateral-posterior E2E tests in `e2e/tests/classification/lateral-posterior.spec.ts`: replace impossible infrasyndesmotic tests with new CT + posteromedial branching tests
+- [x] T045 [P] Update lateral-medial E2E tests in `e2e/tests/classification/lateral-medial.spec.ts`: add suprasyndesmotic far trace pattern tests
+- [x] T046 [P] Update trimaleolar E2E tests in `e2e/tests/classification/trimaleolar.spec.ts`: add suprasyndesmotic far trace pattern tests
+- [x] T047 Run full backend test suite: `go test -race ./...`
+- [x] T048 Run full frontend validation: `cd frontend && npx tsc --noEmit && npm run lint`
 
 ---
 

@@ -24,7 +24,10 @@ You MUST respond with valid JSON matching this exact schema:
     "fibula_infrasindesmal_transverse": true | false | null,
     "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
     "has_ct_scan": true | false | null,
-    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | null
+    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | "suprasindesmotic_far" | null,
+    "articular_involvement": "large_with_extension" | "small_without_extension" | null,
+    "has_articular_depression": true | false | null,
+    "is_posterior_posteromedial": true | false | null
   },
   "confidence": 0.0-1.0,
   "missing_fields": ["field_name"],
@@ -50,6 +53,7 @@ You MUST respond with valid JSON matching this exact schema:
 - posterolateral = Type 2: Posterolateral fragment
 - posteromedial_posterolateral = Type 3: Both posteromedial and posterolateral fragments
 - large_posterolateral = Type 4: Large triangular posterolateral fragment
+- extraincisural_posteromedial = Extraincisural postero-medial fragment (medial+posterior path only)
 
 ## Involved Malleoli Mapping
 - Only posterior → "posterior_only"
@@ -63,34 +67,46 @@ You MUST respond with valid JSON matching this exact schema:
 ## Classification Algorithm - Required Fields by Fracture Type
 
 ### posterior_only
-- Required: has_ct_scan (CT scan availability)
-- If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
-- Classification: Lauge-Hansen unclassifiable, AO-44-B3
+- Required: articular_involvement (large_with_extension or small_without_extension)
+- If large_with_extension → Required: has_articular_depression → AO 43-B1 (no) or 43-B2 (yes), distal tibia fracture
+- If small_without_extension → Required: has_ct_scan
+  - If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
+  - Classification: Lauge-Hansen PA, AO unclassifiable
 
 ### medial_only
-- Required: medial_morphology (oblique or transverse)
-- oblique → SA mechanism, Weber A, AO-44-A1
-- transverse → Lauge-Hansen not classifiable (could be PA/SER/PER), Weber A, AO-44-A1
+- Required: articular_involvement (large_with_extension or small_without_extension)
+- If large_with_extension → Required: has_articular_depression → AO 43-B1 (no) or 43-B2 (yes), distal tibia fracture
+- If small_without_extension → Required: medial_morphology (oblique or transverse)
+  - oblique → SA mechanism, AO-44-A2
+  - transverse → Lauge-Hansen ambiguous (could be PA/SER/PER), AO-44-A2
 
 ### lateral_only
 - Required: fibular_level
 - If infrasindesmal → SA mechanism, Weber A, AO-44-A1
-- If transindesmal → Required: lateral_morphology (spiral=SER, oblique=PA)
+- If transindesmal → Required: lateral_morphology (spiral=SER, oblique=PA), AO 44-B (subtype unclassifiable)
 - If suprasindesmal:
   - Required: suprasindesmal_type (simple/multifragmentary/proximal)
   - If proximal → PER mechanism, Weber C, AO-44-C3
   - If simple_diaphyseal or multifragmentary → Required: fibula_trace_pattern
     - parasindesmotic_short (short oblique/transverse/comminuted) → PA mechanism
     - parasindesmotic_long (long oblique/spiral) → PER mechanism
+    - suprasindesmotic_far (>6cm from articular surface) → PER mechanism (same as parasindesmotic_long)
 
 ### medial_posterior
 - Required: has_ct_scan (CT scan availability)
-- If has_ct_scan=true → Required: posterior_fracture_type (Bartonicek 1-4)
-- Classification: Lauge-Hansen unclassifiable (SER/PA), AO-44-B3
+- If has_ct_scan=false → Lauge-Hansen PA, AO unclassifiable
+- If has_ct_scan=true → Required: posterior_fracture_type (5 options including extraincisural_posteromedial)
+  - extraincisural_posteromedial → AO 44-A3, Lauge-Hansen unclassifiable
+  - Other 4 types → AO 44-B3, Lauge-Hansen PA, Bartonicek 1-4
 
 ### lateral_posterior
 - Required: fibular_level
-- If infrasindesmal → IMPOSSIBLE (SA mechanism does not involve posterior malleolus)
+- If infrasindesmal:
+  - Required: has_ct_scan
+  - If has_ct_scan=false → Weber A, AO/LH unclassifiable
+  - If has_ct_scan=true → Required: is_posterior_posteromedial
+    - If true → AO 44-A3, Lauge-Hansen unclassifiable, Weber A
+    - If false → Required: posterior_fracture_type (Bartonicek), Weber A, AO/LH unclassifiable
 - If transindesmal:
   - Required: lateral_morphology (spiral=SER, oblique=PA)
   - Required: has_ct_scan for Bartonicek classification
@@ -144,7 +160,18 @@ If unclear which malleoli are fractured:
 ### Step 2: Based on involved_malleoli, ask the NEXT required question
 
 #### For "posterior_only":
-First ask about CT scan:
+First ask articular involvement:
+- field: "articular_involvement"
+- question: "What is the articular surface involvement?"
+- options: [">1/3 with metaphyseal extension (large_with_extension)", "<1/3 without metaphyseal extension (small_without_extension)"]
+
+If large_with_extension, ask:
+- field: "has_articular_depression"
+- question: "Is articular depression present?"
+- options: ["Yes", "No"]
+→ Complete (distal tibia fracture, AO 43-B1 or 43-B2)
+
+If small_without_extension, ask CT scan:
 - field: "has_ct_scan"
 - question: "Do you have a CT scan?"
 - options: ["Yes", "No"]
@@ -155,9 +182,21 @@ If has_ct_scan=true, then ask:
 - options: ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]
 
 #### For "medial_only":
+First ask articular involvement:
+- field: "articular_involvement"
+- question: "What is the articular surface involvement?"
+- options: [">1/3 with metaphyseal extension (large_with_extension)", "<1/3 without metaphyseal extension (small_without_extension)"]
+
+If large_with_extension, ask:
+- field: "has_articular_depression"
+- question: "Is articular depression present?"
+- options: ["Yes", "No"]
+→ Complete (distal tibia fracture, AO 43-B1 or 43-B2)
+
+If small_without_extension, ask morphology:
 - field: "medial_morphology"
 - question: "What is the fracture line orientation of the medial malleolus?"
-- options: ["Oblique (diagonal line)", "Transverse (horizontal line)"]
+- options: ["Oblique/Vertical (diagonal line)", "Transverse/Oblique (horizontal line)"]
 
 #### For "lateral_only":
 First ask fibular level:
@@ -186,7 +225,18 @@ First ask fibular level:
 - question: "Where is the fibular fracture relative to the syndesmosis?"
 - options: ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]
 
-If infrasindesmal → IMPOSSIBLE (SA mechanism does not involve posterior malleolus)
+If infrasindesmal:
+1. Ask CT scan availability:
+   - field: "has_ct_scan"
+   - question: "Do you have a CT scan?"
+   - options: ["Yes", "No"]
+2. If has_ct_scan=false → Complete (Weber A only)
+3. If has_ct_scan=true, ask:
+   - field: "is_posterior_posteromedial"
+   - question: "Is the posterior fragment posteromedial?"
+   - options: ["Yes", "No"]
+4. If posteromedial=true → Complete (AO 44-A3)
+5. If posteromedial=false → ask posterior_fracture_type (Bartonicek)
 
 If transindesmal:
 1. Ask lateral morphology (spiral=SER, oblique=PA)
@@ -252,7 +302,10 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
     "fibula_infrasindesmal_transverse": true | false | null,
     "fibular_level_for_transverse": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
     "has_ct_scan": true | false | null,
-    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | null
+    "fibula_trace_pattern": "parasindesmotic_short" | "parasindesmotic_long" | "suprasindesmotic_far" | null,
+    "articular_involvement": "large_with_extension" | "small_without_extension" | null,
+    "has_articular_depression": true | false | null,
+    "is_posterior_posteromedial": true | false | null
   },
   "confidence": 0.0-1.0,
   "missing_fields": ["nombre_campo"],
@@ -278,6 +331,7 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 - posterolateral = Tipo 2: Fragmento posterolateral
 - posteromedial_posterolateral = Tipo 3: Fragmentos posteromedial y posterolateral
 - large_posterolateral = Tipo 4: Fragmento triangular posterolateral grande
+- extraincisural_posteromedial = Fragmento extraincisural postero-medial (solo en ruta medial+posterior)
 
 ## Mapeo de Maléolos Involucrados
 - Solo posterior → "posterior_only"
@@ -291,34 +345,46 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 ## Algoritmo de Clasificación - Campos Requeridos por Tipo de Fractura
 
 ### posterior_only
-- Requerido: has_ct_scan (disponibilidad de TAC)
-- Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
-- Clasificación: Lauge-Hansen no clasificable, AO-44-B3
+- Requerido: articular_involvement (large_with_extension o small_without_extension)
+- Si large_with_extension → Requerido: has_articular_depression → AO 43-B1 (no) o 43-B2 (sí), fractura de tibia distal
+- Si small_without_extension → Requerido: has_ct_scan
+  - Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
+  - Clasificación: Lauge-Hansen PA, AO no clasificable
 
 ### medial_only
-- Requerido: medial_morphology (oblicua o transversa)
-- oblicua → mecanismo SA, Weber A, AO-44-A1
-- transversa → Lauge-Hansen no clasificable (podría ser PA/SER/PER), Weber A, AO-44-A1
+- Requerido: articular_involvement (large_with_extension o small_without_extension)
+- Si large_with_extension → Requerido: has_articular_depression → AO 43-B1 (no) o 43-B2 (sí), fractura de tibia distal
+- Si small_without_extension → Requerido: medial_morphology (oblicua o transversa)
+  - oblicua → mecanismo SA, AO-44-A2
+  - transversa → Lauge-Hansen ambiguo (podría ser PA/SER/PER), AO-44-A2
 
 ### lateral_only
 - Requerido: fibular_level
 - Si infrasindesmal → mecanismo SA, Weber A, AO-44-A1
-- Si transindesmal → Requerido: lateral_morphology (espiral=SER, oblicua=PA)
+- Si transindesmal → Requerido: lateral_morphology (espiral=SER, oblicua=PA), AO 44-B (subtipo no clasificable)
 - Si suprasindesmal:
   - Requerido: suprasindesmal_type (simple/multifragmentaria/proximal)
   - Si proximal → mecanismo PER, Weber C, AO-44-C3
   - Si simple_diaphyseal o multifragmentary → Requerido: fibula_trace_pattern
     - parasindesmotic_short (trazo oblicuo corto/transverso/conminuto) → mecanismo PA
     - parasindesmotic_long (trazo oblicuo largo/espiroideo) → mecanismo PER
+    - suprasindesmotic_far (>6cm de superficie articular) → mecanismo PER (igual que parasindesmotic_long)
 
 ### medial_posterior
 - Requerido: has_ct_scan (disponibilidad de TAC)
-- Si has_ct_scan=true → Requerido: posterior_fracture_type (Bartonicek 1-4)
-- Clasificación: Lauge-Hansen no clasificable (SER/PA), AO-44-B3
+- Si has_ct_scan=false → Lauge-Hansen PA, AO no clasificable
+- Si has_ct_scan=true → Requerido: posterior_fracture_type (5 opciones incluyendo extraincisural_posteromedial)
+  - extraincisural_posteromedial → AO 44-A3, Lauge-Hansen no clasificable
+  - Otros 4 tipos → AO 44-B3, Lauge-Hansen PA, Bartonicek 1-4
 
 ### lateral_posterior
 - Requerido: fibular_level
-- Si infrasindesmal → IMPOSIBLE (mecanismo SA no involucra maléolo posterior)
+- Si infrasindesmal:
+  - Requerido: has_ct_scan
+  - Si has_ct_scan=false → Weber A, AO/LH no clasificable
+  - Si has_ct_scan=true → Requerido: is_posterior_posteromedial
+    - Si true → AO 44-A3, Lauge-Hansen no clasificable, Weber A
+    - Si false → Requerido: posterior_fracture_type (Bartonicek), Weber A, AO/LH no clasificable
 - Si transindesmal:
   - Requerido: lateral_morphology (espiral=SER, oblicua=PA)
   - Requerido: has_ct_scan para clasificación Bartonicek
@@ -372,7 +438,18 @@ Si no está claro qué maléolos están fracturados:
 ### Paso 2: Según involved_malleoli, preguntar la SIGUIENTE pregunta requerida
 
 #### Para "posterior_only":
-Primero preguntar sobre TAC:
+Primero preguntar afectación articular:
+- field: "articular_involvement"
+- question: "¿Cuál es la afectación de la superficie articular?"
+- options: [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]
+
+Si large_with_extension, preguntar:
+- field: "has_articular_depression"
+- question: "¿Existe depresión articular?"
+- options: ["Sí", "No"]
+→ Completo (fractura de tibia distal, AO 43-B1 o 43-B2)
+
+Si small_without_extension, preguntar TAC:
 - field: "has_ct_scan"
 - question: "¿Tiene TAC?"
 - options: ["Sí", "No"]
@@ -383,9 +460,21 @@ Si has_ct_scan=true, entonces preguntar:
 - options: ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]
 
 #### Para "medial_only":
+Primero preguntar afectación articular:
+- field: "articular_involvement"
+- question: "¿Cuál es la afectación de la superficie articular?"
+- options: [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]
+
+Si large_with_extension, preguntar:
+- field: "has_articular_depression"
+- question: "¿Existe depresión articular?"
+- options: ["Sí", "No"]
+→ Completo (fractura de tibia distal, AO 43-B1 o 43-B2)
+
+Si small_without_extension, preguntar morfología:
 - field: "medial_morphology"
 - question: "¿Cuál es la orientación de la línea de fractura del maléolo medial?"
-- options: ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]
+- options: ["Oblicua/Vertical (línea diagonal)", "Transversa/Oblicua (línea horizontal)"]
 
 #### Para "lateral_only":
 Primero preguntar nivel del peroné:
@@ -414,7 +503,18 @@ Primero preguntar nivel del peroné:
 - question: "¿Dónde está la fractura del peroné respecto a la sindesmosis?"
 - options: ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]
 
-Si infrasindesmal → IMPOSIBLE (mecanismo SA no involucra maléolo posterior)
+Si infrasindesmal:
+1. Preguntar disponibilidad de TAC:
+   - field: "has_ct_scan"
+   - question: "¿Tiene TAC?"
+   - options: ["Sí", "No"]
+2. Si has_ct_scan=false → Completo (Weber A solamente)
+3. Si has_ct_scan=true, preguntar:
+   - field: "is_posterior_posteromedial"
+   - question: "¿El fragmento posterior es posteromedial?"
+   - options: ["Sí", "No"]
+4. Si posteromedial=true → Completo (AO 44-A3)
+5. Si posteromedial=false → preguntar posterior_fracture_type (Bartonicek)
 
 Si transindesmal:
 1. Preguntar morfología lateral (espiral=SER, oblicua=PA)
@@ -509,11 +609,12 @@ Output:
 }
 
 Example 4 - Posterior only complete:
-Input: "Isolated posterior malleolus fracture, Bartonicek type 2"
+Input: "Isolated posterior malleolus fracture with less than 1/3 articular surface involvement, Bartonicek type 2"
 Output:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "posterior_fracture_type": "posterolateral"
   },
   "confidence": 0.95,
@@ -571,8 +672,8 @@ Output:
     "involved_malleoli": "medial_only"
   },
   "confidence": 0.5,
-  "missing_fields": ["medial_morphology"],
-  "clarifications": [{"field": "medial_morphology", "question": "What is the fracture line orientation of the medial malleolus?", "options": ["Oblique (diagonal line)", "Transverse (horizontal line)"]}]
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "What is the articular surface involvement?", "options": [">1/3 with metaphyseal extension (large_with_extension)", "<1/3 without metaphyseal extension (small_without_extension)"]}]
 }
 
 Example 9 - Vague description (needs involved malleoli first):
@@ -585,7 +686,7 @@ Output:
   "clarifications": [{"field": "involved_malleoli", "question": "Which malleoli are fractured?", "options": ["Posterior only", "Medial only", "Lateral/Fibula only", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimalleolar)", "All three (trimaleolar)"]}]
 }
 
-Example 10 - Posterior only incomplete (needs CT scan first):
+Example 10 - Posterior only incomplete (needs articular involvement first):
 Input: "Isolated posterior malleolar fracture"
 Output:
 {
@@ -593,16 +694,17 @@ Output:
     "involved_malleoli": "posterior_only"
   },
   "confidence": 0.5,
-  "missing_fields": ["has_ct_scan"],
-  "clarifications": [{"field": "has_ct_scan", "question": "Do you have a CT scan?", "options": ["Yes", "No"]}]
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "What is the articular surface involvement?", "options": [">1/3 with metaphyseal extension (large_with_extension)", "<1/3 without metaphyseal extension (small_without_extension)"]}]
 }
 
-Example 11 - Posterior only with CT scan (needs Bartonicek):
-Input: "Isolated posterior malleolar fracture with CT scan available"
+Example 11 - Posterior only with articular involvement and CT (needs Bartonicek):
+Input: "Posterior malleolus fracture, less than 1/3 articular involvement, CT scan available"
 Output:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "has_ct_scan": true
   },
   "confidence": 0.6,
@@ -611,14 +713,58 @@ Output:
 }
 
 Example 12 - Posterior only without CT (complete classification):
-Input: "Isolated posterior malleolar fracture, no CT available"
+Input: "Isolated posterior malleolar fracture, less than 1/3 articular involvement, no CT available"
 Output:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "has_ct_scan": false
   },
   "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 13 - Posterior with metaphyseal extension (large articular involvement):
+Input: "Posterior malleolus fracture with more than 1/3 articular surface involvement and metaphyseal extension, articular depression present"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "large_with_extension",
+    "has_articular_depression": true
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 14 - Medial+posterior with posteromedial fragment:
+Input: "Bimalleolar medial and posterior fracture, CT shows extraincisural posteromedial fragment"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_posterior",
+    "has_ct_scan": true,
+    "posterior_fracture_type": "extraincisural_posteromedial"
+  },
+  "confidence": 0.92,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 15 - Lateral+posterior infrasyndesmotic with posteromedial fragment:
+Input: "Lateral and posterior malleolus fracture, fibula below syndesmosis, CT available, posterior fragment is posteromedial"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_posterior",
+    "fibular_level": "infrasindesmal",
+    "has_ct_scan": true,
+    "is_posterior_posteromedial": true
+  },
+  "confidence": 0.90,
   "missing_fields": [],
   "clarifications": []
 }`
@@ -668,11 +814,12 @@ Salida:
 }
 
 Ejemplo 4 - Solo posterior completo:
-Entrada: "Fractura aislada de maléolo posterior, Bartonicek tipo 2"
+Entrada: "Fractura aislada de maléolo posterior con menos de 1/3 de afectación de la superficie articular, Bartonicek tipo 2"
 Salida:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "posterior_fracture_type": "posterolateral"
   },
   "confidence": 0.95,
@@ -730,8 +877,8 @@ Salida:
     "involved_malleoli": "medial_only"
   },
   "confidence": 0.5,
-  "missing_fields": ["medial_morphology"],
-  "clarifications": [{"field": "medial_morphology", "question": "¿Cuál es la orientación de la línea de fractura del maléolo medial?", "options": ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]}]
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "¿Cuál es la afectación de la superficie articular?", "options": [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]}]
 }
 
 Ejemplo 9 - Descripción vaga (necesita maléolos involucrados primero):
@@ -744,7 +891,7 @@ Salida:
   "clarifications": [{"field": "involved_malleoli", "question": "¿Qué maléolos están fracturados?", "options": ["Solo posterior", "Solo medial", "Solo lateral/Peroné", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimaleolar)", "Los tres (trimaleolar)"]}]
 }
 
-Ejemplo 10 - Solo posterior incompleta (necesita TAC primero):
+Ejemplo 10 - Solo posterior incompleta (necesita afectación articular primero):
 Entrada: "Fractura aislada del maléolo posterior"
 Salida:
 {
@@ -752,16 +899,17 @@ Salida:
     "involved_malleoli": "posterior_only"
   },
   "confidence": 0.5,
-  "missing_fields": ["has_ct_scan"],
-  "clarifications": [{"field": "has_ct_scan", "question": "¿Tiene TAC?", "options": ["Sí", "No"]}]
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "¿Cuál es la afectación de la superficie articular?", "options": [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]}]
 }
 
-Ejemplo 11 - Solo posterior con TAC (necesita Bartonicek):
-Entrada: "Fractura aislada del maléolo posterior con TAC disponible"
+Ejemplo 11 - Solo posterior con afectación articular y TAC (necesita Bartonicek):
+Entrada: "Fractura de maléolo posterior, menos de 1/3 de afectación articular, TAC disponible"
 Salida:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "has_ct_scan": true
   },
   "confidence": 0.6,
@@ -770,14 +918,58 @@ Salida:
 }
 
 Ejemplo 12 - Solo posterior sin TAC (clasificación completa):
-Entrada: "Fractura aislada del maléolo posterior, sin TAC disponible"
+Entrada: "Fractura aislada del maléolo posterior, menos de 1/3 de afectación articular, sin TAC disponible"
 Salida:
 {
   "extracted_input": {
     "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
     "has_ct_scan": false
   },
   "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 13 - Posterior con extensión metafisaria (afectación articular grande):
+Entrada: "Fractura de maléolo posterior con más de 1/3 de afectación de la superficie articular y extensión metafisaria, depresión articular presente"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "large_with_extension",
+    "has_articular_depression": true
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 14 - Medial+posterior con fragmento posteromedial:
+Entrada: "Fractura bimaleolar medial y posterior, TAC muestra fragmento extraincisural postero-medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_posterior",
+    "has_ct_scan": true,
+    "posterior_fracture_type": "extraincisural_posteromedial"
+  },
+  "confidence": 0.92,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 15 - Lateral+posterior infrasindesmal con fragmento posteromedial:
+Entrada: "Fractura de maléolo lateral y posterior, peroné por debajo de la sindesmosis, TAC disponible, fragmento posterior es posteromedial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_posterior",
+    "fibular_level": "infrasindesmal",
+    "has_ct_scan": true,
+    "is_posterior_posteromedial": true
+  },
+  "confidence": 0.90,
   "missing_fields": [],
   "clarifications": []
 }`

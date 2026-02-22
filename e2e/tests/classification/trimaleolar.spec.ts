@@ -42,6 +42,22 @@ test.describe('Trimaleolar Classification Path', () => {
         await classifyPage.expectAOOTAResult('C1');
         await classifyPage.expectBartonicekResult('1');
       });
+
+      test('should classify with suprasindesmotic far trace pattern as PER, Weber C, AO 44 C1', async () => {
+        await classifyPage.selectTrimaleolar();
+        await classifyPage.selectTrimaleolarLevelHigh();
+        await classifyPage.selectTrimaleolarSupraType('simple_diaphyseal');
+        await classifyPage.selectTriFibulaTracePatternFar();
+        await classifyPage.selectTriSupraCTScanYes();
+        await classifyPage.selectTriSupraPosteriorType('extraincisural');
+        await classifyPage.submitClassification();
+
+        await classifyPage.expectResultsVisible();
+        await classifyPage.expectLaugeHansenResult('PER');
+        await classifyPage.expectDanisWeberResult('C');
+        await classifyPage.expectAOOTAResult('C1');
+        await classifyPage.expectBartonicekResult('1');
+      });
     });
 
     test.describe('Multifragmentary Type with Fibula Trace Pattern', () => {

@@ -58,6 +58,21 @@ test.describe('Lateral + Medial Classification Path', () => {
       await classifyPage.expectAOOTAResult('C1');
     });
 
+    test('should classify with suprasindesmal level after No (suprasindesmotic far trace)', async () => {
+      await classifyPage.selectLateralMedial();
+      await classifyPage.selectLMMedialOblique();
+      await classifyPage.selectLMInfraTransverseNo();
+      await classifyPage.selectLMFibularLevelSuprasindesmal();
+      await classifyPage.selectLMSuprasindesmalType('simple_diaphyseal');
+      await classifyPage.selectLMFibulaTracePatternFar();
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
+      await classifyPage.expectLaugeHansenResult('PER');
+      await classifyPage.expectDanisWeberResult('C');
+      await classifyPage.expectAOOTAResult('C1');
+    });
+
     test('should classify with low fibular level and oblique morphology', async () => {
       await classifyPage.selectLateralMedial();
       await classifyPage.selectLMMedialOblique();

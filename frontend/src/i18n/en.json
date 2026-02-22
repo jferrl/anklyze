@@ -130,7 +130,10 @@
       "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
       "has_ct_scan": "Do you have a CT scan?",
       "fibula_trace_pattern": "What is the fibula fracture pattern?",
-      "fibular_level_for_transverse": "At what level is the fibular fracture?"
+      "fibular_level_for_transverse": "At what level is the fibular fracture?",
+      "articularInvolvement": "What is the articular surface involvement?",
+      "articularDepression": "Is articular depression present?",
+      "posteriorPosteromedial": "Is the posterior fragment posteromedial?"
     },
     "options": {
       "involvedMalleoli": {
@@ -146,7 +149,8 @@
         "extraincisural": "Extraincisural fragment",
         "posterolateral": "Posterolateral fragment",
         "posteromedial_posterolateral": "Posteromedial and posterolateral fragment",
-        "large_posterolateral": "Large posterolateral triangular fragment"
+        "large_posterolateral": "Large posterolateral triangular fragment",
+        "extraincisural_posteromedial": "Extraincisural postero-medial fragment"
       },
       "medialMorphology": {
         "oblique": "Oblique/Vertical",
@@ -185,7 +189,12 @@
       },
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasyndesmotic short oblique/transverse/comminuted trace",
-        "parasindesmotic_long": "Parasyndesmotic or suprasyndesmotic long oblique/spiral trace"
+        "parasindesmotic_long": "Parasyndesmotic long oblique/spiral trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
+      },
+      "articularInvolvement": {
+        "large_with_extension": ">1/3 articular surface with metaphyseal extension",
+        "small_without_extension": "<1/3 articular surface without metaphyseal extension"
       }
     },
     "labels": {
@@ -225,7 +234,8 @@
       "bimaleolar_medial_posterior": "Bimalleolar fracture (Medial + Posterior)",
       "bimaleolar_lateral_posterior": "Bimalleolar fracture (Lateral + Posterior)",
       "bimaleolar_lateral_medial": "Bimalleolar fracture (Lateral + Medial)",
-      "trimaleolar": "Trimalleolar fracture"
+      "trimaleolar": "Trimalleolar fracture",
+      "distal_tibia": "Distal tibia fracture"
     },
     "classifications": {
       "laugeHansen": {
@@ -254,7 +264,11 @@
         "B3_desc": "44-B3: Transsyndesmal fracture with medial and posterior involvement",
         "C1_desc": "44-C1: Simple diaphyseal suprasyndesmal fracture",
         "C2_desc": "44-C2: Multifragmentary suprasyndesmal fracture",
-        "C3_desc": "44-C3: Proximal suprasyndesmal fracture (Maisonneuve)"
+        "C3_desc": "44-C3: Proximal suprasyndesmal fracture (Maisonneuve)",
+        "A3_desc": "44-A3: Infrasyndesmal with posteromedial fragment",
+        "B_desc": "44-B: Transsyndesmal fracture (subtype unclassifiable B1/B2)",
+        "43B1_desc": "43-B1: Distal tibia fracture without articular depression",
+        "43B2_desc": "43-B2: Distal tibia fracture with articular depression"
       },
       "bartonicek": {
         "1_desc": "Bartonicek 1: Extraincisural fragment",
