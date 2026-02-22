@@ -44,10 +44,20 @@ const (
 	AOOTAB2 AOOTACode = "44-B2" // Lateral and medial
 	AOOTAB3 AOOTACode = "44-B3" // Lateral, medial and posterior
 
+	// Type B unclassifiable subtype (Weber B - Transsyndesmal lateral-only)
+	AOOTAB AOOTACode = "44-B" // Subtype unclassifiable B1/B2
+
 	// Type C (Weber C - Suprasyndesmal)
 	AOOTAC1 AOOTACode = "44-C1" // Simple diaphyseal
 	AOOTAC2 AOOTACode = "44-C2" // Multifragmentary
 	AOOTAC3 AOOTACode = "44-C3" // Proximal (Maisonneuve)
+
+	// Type A3 (Trifocal / special posterior types)
+	AOOTAA3 AOOTACode = "44-A3" // Medial+posterior posteromedial extraincisural / lateral+posterior infra posteromedial
+
+	// Distal tibia fractures (not ankle classification)
+	AOOTA43B1 AOOTACode = "43-B1" // Distal tibia without articular depression
+	AOOTA43B2 AOOTACode = "43-B2" // Distal tibia with articular depression
 )
 
 // AOOTAClassification holds the AO/OTA classification result

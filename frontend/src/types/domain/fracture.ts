@@ -13,7 +13,8 @@ export type PosteriorFractureType =
   | 'extraincisural'              // Fragmento extraincisural (Bartonicek 1)
   | 'posterolateral'              // Fragmento posterolateral (Bartonicek 2)
   | 'posteromedial_posterolateral' // Fragmento posteromedial y posterolateral (Bartonicek 3)
-  | 'large_posterolateral';       // Gran fragmento triangular posterolateral (Bartonicek 4)
+  | 'large_posterolateral'        // Gran fragmento triangular posterolateral (Bartonicek 4)
+  | 'extraincisural_posteromedial'; // Fragmento extraincisural postero-medial (medial+posterior path only)
 
 // Morfología del maléolo medial
 export type MedialMorphology =
@@ -41,7 +42,13 @@ export type SuprasindesmalType =
 // Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
 export type FibulaTracePattern =
   | 'parasindesmotic_short' // Parasindesmal de trazo oblicuo corto/transverso/conminuto
-  | 'parasindesmotic_long'; // Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo
+  | 'parasindesmotic_long'  // Parasindesmal de trazo oblicuo largo/espiroideo
+  | 'suprasindesmotic_far'; // Suprasindesmal (>6cm de superficie articular) → PER mechanism
+
+// Articular surface involvement for posterior-only and medial-only paths
+export type ArticularInvolvement =
+  | 'large_with_extension'    // >1/3 with metaphyseal extension
+  | 'small_without_extension'; // <1/3 without metaphyseal extension
 
 // Input para clasificación - características de la fractura
 export interface FractureInput {
@@ -74,6 +81,15 @@ export interface FractureInput {
 
   // Patrón de trazo del peroné (para suprasindesmal simple/multifragmentaria)
   fibula_trace_pattern?: FibulaTracePattern;
+
+  // Articular surface involvement for posterior-only and medial-only paths
+  articular_involvement?: ArticularInvolvement;
+
+  // Whether articular depression is present (when articular_involvement = large_with_extension)
+  has_articular_depression?: boolean;
+
+  // Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
+  is_posterior_posteromedial?: boolean;
 }
 
 // Lauge-Hansen type

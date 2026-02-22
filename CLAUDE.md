@@ -66,6 +66,8 @@ Go module at repo root (`go.mod`), follows [go.dev/doc/modules/layout#server-pro
 ## Active Technologies
 - Go 1.21+ + Gin (HTTP), GORM (ORM), google/genai (Gemini LLM) (001-backend-arch-improvements)
 - PostgreSQL 14+ (GORM), Supabase (auth + file storage) (001-backend-arch-improvements)
+- Go 1.21+ (backend), TypeScript strict mode (frontend) + Gin (HTTP), GORM (ORM), google/genai (Gemini LLM), React 19+, Vite, shadcn/ui + Tailwind CSS v4 (002-update-classification-algorithm)
+- PostgreSQL 14+ (GORM) — no schema migration needed (JSONB fields accommodate new codes) (002-update-classification-algorithm)
 
 ## Recent Changes
 - 001-backend-arch-improvements: Added Go 1.21+ + Gin (HTTP), GORM (ORM), google/genai (Gemini LLM)
