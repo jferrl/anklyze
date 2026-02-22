@@ -25,7 +25,7 @@ test.describe('Lateral Only Classification Path', () => {
   });
 
   test.describe('Transindesmal Level', () => {
-    test('should classify spiral morphology as SER, Weber B, AO 44 B1', async () => {
+    test('should classify spiral morphology as SER, Weber B, AO 44 B', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelTransindesmal();
       await classifyPage.selectLateralMorphologyTransSpiral();
@@ -34,10 +34,10 @@ test.describe('Lateral Only Classification Path', () => {
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('SER');
       await classifyPage.expectDanisWeberResult('B');
-      await classifyPage.expectAOOTAResult('B1');
+      await classifyPage.expectAOOTAResult('B');
     });
 
-    test('should classify oblique morphology as PA, Weber B, AO 44 B1', async () => {
+    test('should classify oblique morphology as PA, Weber B, AO 44 B', async () => {
       await classifyPage.selectLateralOnly();
       await classifyPage.selectLateralLevelTransindesmal();
       await classifyPage.selectLateralMorphologyTransOblique();
@@ -46,7 +46,7 @@ test.describe('Lateral Only Classification Path', () => {
       await classifyPage.expectResultsVisible();
       await classifyPage.expectLaugeHansenResult('PA');
       await classifyPage.expectDanisWeberResult('B');
-      await classifyPage.expectAOOTAResult('B1');
+      await classifyPage.expectAOOTAResult('B');
     });
   });
 

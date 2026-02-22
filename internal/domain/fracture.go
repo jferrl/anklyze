@@ -21,6 +21,7 @@ const (
 	PosteriorPosterolateral            PosteriorFractureType = "posterolateral"               // Fragmento posterolateral (Bartonicek 2)
 	PosteriorPosteromedialPosterolateral PosteriorFractureType = "posteromedial_posterolateral" // Fragmento posteromedial y posterolateral (Bartonicek 3)
 	PosteriorLargePosterolateral       PosteriorFractureType = "large_posterolateral"         // Gran fragmento triangular posterolateral (Bartonicek 4)
+	PosteriorExtraincisuralPosteromedial PosteriorFractureType = "extraincisural_posteromedial" // Fragmento extraincisural postero-medial (medial+posterior path only)
 )
 
 // MedialMorphology represents the morphology of the medial malleolus fracture
@@ -65,8 +66,19 @@ type FibulaTracePattern string
 const (
 	// FibulaTraceParasindesmoticShort - Parasyndesmotic short oblique/transverse/comminuted trace → PA mechanism
 	FibulaTraceParasindesmoticShort FibulaTracePattern = "parasindesmotic_short"
-	// FibulaTraceParasindesmoticLong - Parasyndesmotic or suprasyndesmotic long oblique/spiral trace → PER mechanism
+	// FibulaTraceParasindesmoticLong - Parasyndesmotic long oblique/spiral trace → PER mechanism
 	FibulaTraceParasindesmoticLong FibulaTracePattern = "parasindesmotic_long"
+	// FibulaTraceSuprasindesmoticFar - Suprasyndesmotic (>6cm from articular surface) → PER mechanism (same as parasindesmotic_long)
+	FibulaTraceSuprasindesmoticFar FibulaTracePattern = "suprasindesmotic_far"
+)
+
+// ArticularInvolvement represents the level of articular surface involvement
+// Used for posterior-only and medial-only paths to determine distal tibia vs ankle fracture
+type ArticularInvolvement string
+
+const (
+	ArticularLargeWithExtension    ArticularInvolvement = "large_with_extension"    // >1/3 with metaphyseal extension
+	ArticularSmallWithoutExtension ArticularInvolvement = "small_without_extension" // <1/3 without metaphyseal extension
 )
 
 // FractureInput represents the input data for classification
@@ -100,4 +112,13 @@ type FractureInput struct {
 
 	// Fibula trace pattern for suprasyndesmotic fractures (PA vs PER differentiation)
 	FibulaTracePattern FibulaTracePattern `json:"fibula_trace_pattern,omitempty"`
+
+	// Articular surface involvement for posterior-only and medial-only paths
+	ArticularInvolvement ArticularInvolvement `json:"articular_involvement,omitempty"`
+
+	// Whether articular depression is present (when articular_involvement = large_with_extension)
+	HasArticularDepression *bool `json:"has_articular_depression,omitempty"`
+
+	// Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
+	IsPosteriorPosteromedial *bool `json:"is_posterior_posteromedial,omitempty"`
 }

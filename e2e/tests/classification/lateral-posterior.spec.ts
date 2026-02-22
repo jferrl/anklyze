@@ -10,23 +10,39 @@ test.describe('Lateral + Posterior Classification Path', () => {
   });
 
   test.describe('Infrasindesmal Level', () => {
-    // NOTE: ALL infrasindesmal lateral+posterior cases are now impossible
-    // SA mechanism doesn't involve posterior malleolus
-    // PA mechanism is transsyndesmotic or suprasyndesmotic
-    test('should show "not possible" alert immediately (no morphology question)', async () => {
+    test('should classify as Weber A without CT scan', async () => {
       await classifyPage.selectLateralPosterior();
       await classifyPage.selectLPLevelInfrasindesmal();
-
-      await classifyPage.expectNotPossibleAlert();
-      await classifyPage.expectClassifyButtonEnabled();
-    });
-
-    test('should classify as not possible', async () => {
-      await classifyPage.selectLateralPosterior();
-      await classifyPage.selectLPLevelInfrasindesmal();
+      await classifyPage.selectLPInfraCTScanNo();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
+      await classifyPage.expectDanisWeberResult('A');
+    });
+
+    test('should classify as Weber A, AO 44 A3 when CT + posteromedial', async () => {
+      await classifyPage.selectLateralPosterior();
+      await classifyPage.selectLPLevelInfrasindesmal();
+      await classifyPage.selectLPInfraCTScanYes();
+      await classifyPage.selectLPInfraPosteromedialYes();
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
+      await classifyPage.expectDanisWeberResult('A');
+      await classifyPage.expectAOOTAResult('A3');
+    });
+
+    test('should classify as Weber A with Bartonicek when CT + not posteromedial', async () => {
+      await classifyPage.selectLateralPosterior();
+      await classifyPage.selectLPLevelInfrasindesmal();
+      await classifyPage.selectLPInfraCTScanYes();
+      await classifyPage.selectLPInfraPosteromedialNo();
+      await classifyPage.selectLPPosteriorTypeInfra('posterolateral');
+      await classifyPage.submitClassification();
+
+      await classifyPage.expectResultsVisible();
+      await classifyPage.expectDanisWeberResult('A');
+      await classifyPage.expectBartonicekResult('2');
     });
   });
 

@@ -15,6 +15,7 @@ import type {
   FibulaTracePattern,
   MedialMorphology,
   PosteriorFractureType,
+  ArticularInvolvement,
 } from '@/types';
 
 // Import feature components
@@ -194,16 +195,26 @@ export function FractureForm() {
   }
 
   // Determine which questions to show based on form data (matching MMD decision tree)
+
+  // Articular involvement: first question for posterior_only and medial_only
+  const showArticularInvolvement = formData.involved_malleoli &&
+    ['posterior_only', 'medial_only'].includes(formData.involved_malleoli);
+
+  // Articular depression: when articular_involvement = large_with_extension
+  const showArticularDepression = showArticularInvolvement &&
+    formData.articular_involvement === 'large_with_extension';
+
+  // Medial morphology: for medial_only (only after small_without_extension) and lateral_medial
   const showMedialMorphology = formData.involved_malleoli &&
-    ['medial_only', 'lateral_medial'].includes(formData.involved_malleoli);
+    (
+      formData.involved_malleoli === 'lateral_medial' ||
+      (formData.involved_malleoli === 'medial_only' &&
+        formData.articular_involvement === 'small_without_extension')
+    );
 
   const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
     formData.medial_morphology === 'oblique';
 
-  // For lateral_medial, fibular level only shows after medial morphology path is resolved:
-  // - transverse → show immediately
-  // - oblique + infra_transverse=false → show
-  // - oblique + infra_transverse=true → SA result, don't show
   const lateralMedialReadyForFibularLevel = formData.involved_malleoli === 'lateral_medial' && (
     formData.medial_morphology === 'transverse' ||
     (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false)
@@ -235,12 +246,29 @@ export function FractureForm() {
     formData.lateral_morphology === 'transverse' &&
     formData.fibular_level_for_transverse === 'infrasindesmal';
 
-  const showCTScan = formData.involved_malleoli &&
-    ['posterior_only', 'medial_posterior', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli) &&
-    !skipLateralPosteriorInfra &&
-    !skipTrimaleolarTransverseInfra;
+  const showCTScan = formData.involved_malleoli && (
+    // posterior_only: only after articular involvement resolved to small_without_extension
+    (formData.involved_malleoli === 'posterior_only' &&
+      formData.articular_involvement === 'small_without_extension') ||
+    // medial_posterior: always
+    formData.involved_malleoli === 'medial_posterior' ||
+    // lateral_posterior: all levels including infrasindesmal
+    (formData.involved_malleoli === 'lateral_posterior' && !!formData.fibular_level) ||
+    // trimaleolar: not transverse infrasindesmal
+    (formData.involved_malleoli === 'trimaleolar' && !skipTrimaleolarTransverseInfra)
+  );
 
-  const showPosteriorType = showCTScan && formData.has_ct_scan === true;
+  // Posterior posteromedial: lateral_posterior + infrasindesmal + CT=true
+  const showPosteriorPosteromedial = formData.involved_malleoli === 'lateral_posterior' &&
+    formData.fibular_level === 'infrasindesmal' &&
+    formData.has_ct_scan === true;
+
+  // Posterior type: after CT=true, but for lateral_posterior infra, only after posteromedial=false
+  const showPosteriorType = showCTScan && formData.has_ct_scan === true && (
+    !(formData.involved_malleoli === 'lateral_posterior' &&
+      formData.fibular_level === 'infrasindesmal') ||
+    formData.is_posterior_posteromedial === false
+  );
 
   const showTrimaleolarTransverseLevel = formData.involved_malleoli === 'trimaleolar' &&
     formData.lateral_morphology === 'transverse';
@@ -318,6 +346,30 @@ export function FractureForm() {
         options={options.involved_malleoli || []}
         onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as InvolvedMalleoli })}
       />
+
+      {showArticularInvolvement && (
+        <QuestionStep
+          question={{
+            id: 'articular_involvement',
+            title: options.questions.articular_involvement?.title || 'Articular surface involvement?',
+          }}
+          value={formData.articular_involvement}
+          options={options.articular_involvement_options || []}
+          onChange={(value) => updateFormData({ ...formData, articular_involvement: value as ArticularInvolvement })}
+        />
+      )}
+
+      {showArticularDepression && (
+        <QuestionStep
+          question={{
+            id: 'has_articular_depression',
+            title: options.questions.has_articular_depression?.title || 'Is articular depression present?',
+          }}
+          value={formData.has_articular_depression?.toString()}
+          options={yesNoOptions}
+          onChange={(value) => updateFormData({ ...formData, has_articular_depression: value === 'true' })}
+        />
+      )}
 
       {showMedialMorphology && (
         <QuestionStep
@@ -443,7 +495,19 @@ export function FractureForm() {
           }}
           value={formData.has_ct_scan?.toString()}
           options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, has_ct_scan: value === 'true', posterior_fracture_type: undefined })}
+          onChange={(value) => updateFormData({ ...formData, has_ct_scan: value === 'true', posterior_fracture_type: undefined, is_posterior_posteromedial: undefined })}
+        />
+      )}
+
+      {showPosteriorPosteromedial && (
+        <QuestionStep
+          question={{
+            id: 'is_posterior_posteromedial',
+            title: options.questions.is_posterior_posteromedial?.title || 'Is the posterior fragment posteromedial?',
+          }}
+          value={formData.is_posterior_posteromedial?.toString()}
+          options={yesNoOptions}
+          onChange={(value) => updateFormData({ ...formData, is_posterior_posteromedial: value === 'true' })}
         />
       )}
 
@@ -454,7 +518,11 @@ export function FractureForm() {
             title: options.questions.posterior_fracture_type?.title || 'Posterior fracture type (Bartoníček)?',
           }}
           value={formData.posterior_fracture_type}
-          options={options.posterior_fracture_types || []}
+          options={
+            formData.involved_malleoli === 'medial_posterior'
+              ? (options.posterior_fracture_types_medial_posterior || [])
+              : (options.posterior_fracture_types || [])
+          }
           onChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
         />
       )}

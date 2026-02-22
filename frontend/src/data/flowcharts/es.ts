@@ -9,26 +9,42 @@ export const flowchartES = `flowchart TB
     B --> n5["Maléolos medial, lateral y posterior"]
 
     %% Rama maléolo posterior
-    C --> n218{"¿Tiene TAC?"}
+    C --> n400{"¿Cuál es la afectación de la superficie articular?"}
+    n400 --> n401[">1/3 con extensión metafisaria"]
+    n400 --> n402["<1/3 sin extensión metafisaria"]
+    n401 --> n403{"¿Existe depresión articular?"}
+    n403 --> n404["Sí"]
+    n403 --> n405["No"]
+    n404 --> n406["Fractura de tibia distal<br/>AO 43 B2"]
+    n405 --> n407["Fractura de tibia distal<br/>AO 43 B1"]
+    n402 --> n218{"¿Tiene TAC?"}
     n218 --> n219["Sí"]
     n218 --> n220["No"]
-    n220 --> n221["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable"]
+    n220 --> n221["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA"]
     n219 --> n6{"¿Qué tipo de fractura es?"}
     n6 --> n7["Fragmento extraincisural"]
     n6 --> n8["Fragmento posterolateral"]
     n6 --> n9["Fragmento posteromedial y posterolateral"]
     n6 --> n10["Gran fragmento triangular posterolateral"]
-    n7 --> n11["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 1"]
-    n8 --> n12["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 2"]
-    n9 --> n13["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 3"]
-    n10 --> n14["Unimaleolar maléolo posterior<br/>AO 44 B3<br/>Lauge-Hansen no clasificable<br/>Bartonicek 4"]
+    n7 --> n11["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA<br/>Bartonicek 1"]
+    n8 --> n12["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA<br/>Bartonicek 2"]
+    n9 --> n13["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA<br/>Bartonicek 3"]
+    n10 --> n14["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
 
     %% Rama maléolo medial
-    D --> n15{"¿Qué morfología tiene?"}
-    n15 --> n16["Oblicuo/Vertical"]
-    n15 --> n17["Transverso"]
-    n16 --> n18["Unimaleolar maléolo medial<br/>AO 44 A1<br/>Lauge-Hansen SA"]
-    n17 --> n19["Unimaleolar maléolo medial<br/>AO 44 A1<br/>Lauge-Hansen no clasificable<br/>(podría ser PA/SER/PER)"]
+    D --> n410{"¿Cuál es la afectación de la superficie articular?"}
+    n410 --> n411[">1/3 con extensión metafisaria"]
+    n410 --> n412["<1/3 sin extensión metafisaria"]
+    n411 --> n413{"¿Existe depresión articular?"}
+    n413 --> n414["Sí"]
+    n413 --> n415["No"]
+    n414 --> n416["Fractura de tibia distal<br/>AO 43 B2"]
+    n415 --> n417["Fractura de tibia distal<br/>AO 43 B1"]
+    n412 --> n15{"¿Qué morfología tiene?"}
+    n15 --> n16["Vertical"]
+    n15 --> n17["Transverso/Oblicuo"]
+    n16 --> n18["Unimaleolar maléolo medial<br/>AO 44 A2<br/>Lauge-Hansen SA"]
+    n17 --> n19["Unimaleolar maléolo medial<br/>AO 44 A2<br/>Lauge-Hansen no clasificable"]
 
     %% Rama maléolo lateral
     n1 --> n20{"¿A qué nivel está la fractura?"}
@@ -41,8 +57,8 @@ export const flowchartES = `flowchart TB
     n22 --> n29{"¿De qué morfología es la fractura?"}
     n29 --> n30["Espiroidea (Baja anterior, alta posterior)"]
     n29 --> n31["Transversa/Oblicua (Baja medial, alta lateral)/Conminuta"]
-    n30 --> n32["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen SER<br/>Weber B"]
-    n31 --> n33["Unimaleolar maléolo lateral<br/>AO 44 B1<br/>Lauge-Hansen PA<br/>Weber B"]
+    n30 --> n32["Unimaleolar maléolo lateral<br/>AO 44 B (subtipo no clasificable B1/B2)<br/>Lauge-Hansen SER<br/>Weber B"]
+    n31 --> n33["Unimaleolar maléolo lateral<br/>AO 44 B (subtipo no clasificable B1/B2)<br/>Lauge-Hansen PA<br/>Weber B"]
 
     n23 --> n34{"¿De qué tipo?"}
     n34 --> n35["Diafisaria Simple"]
@@ -53,15 +69,19 @@ export const flowchartES = `flowchart TB
     n35 --> n286{"¿Cómo es el trazo del peroné?"}
     n286 --> n287["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n286 --> n288["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n286 --> n420["Suprasindesmal (>6cm de superficie articular)"]
     n287 --> n289["Unimaleolar maléolo lateral<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n288 --> n39["Unimaleolar maléolo lateral<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n420 --> n39
 
     %% Suprasindesmal con trazo del peroné (Multifragmentaria)
     n36 --> n290{"¿Cómo es el trazo del peroné?"}
     n290 --> n291["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n290 --> n292["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n290 --> n422["Suprasindesmal (>6cm de superficie articular)"]
     n291 --> n293["Unimaleolar maléolo lateral<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n292 --> n40["Unimaleolar maléolo lateral<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n422 --> n40
 
     n37 --> n41["Unimaleolar maléolo lateral<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -69,16 +89,18 @@ export const flowchartES = `flowchart TB
     n2 --> n264{"¿Tiene TAC?"}
     n264 --> n265["Sí"]
     n264 --> n266["No"]
-    n266 --> n272["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen no clasificable (SER/PA)"]
+    n266 --> n272["Bimaleolar (Medial + Posterior)<br/>AO No clasificable<br/>Lauge-Hansen PA"]
     n265 --> n267{"¿Qué tipo de fractura es el maléolo posterior?"}
     n267 --> n268["Fragmento extraincisural"]
     n267 --> n269["Fragmento posterolateral"]
     n267 --> n270["Posteromedial y posterolateral"]
     n267 --> n271["Gran fragmento triangular posterolateral"]
-    n268 --> n273["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen no clasificable (SER/PA)<br/>Bartonicek 1"]
-    n269 --> n274["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen no clasificable (SER/PA)<br/>Bartonicek 2"]
-    n270 --> n275["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen no clasificable (SER/PA)<br/>Bartonicek 3"]
-    n271 --> n276["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen no clasificable (SER/PA)<br/>Bartonicek 4"]
+    n267 --> n440["Fragmento extraincisural postero-medial"]
+    n268 --> n273["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 1"]
+    n269 --> n274["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 2"]
+    n270 --> n275["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 3"]
+    n271 --> n276["Bimaleolar (Medial + Posterior)<br/>AO 44 B3<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
+    n440 --> n441["Bimaleolar (Medial + Posterior)<br/>AO 44 A3<br/>Lauge-Hansen no clasificable"]
 
     %% Rama Lateral + Posterior
     n3 --> n43{"¿A qué nivel está la fractura de peroné?"}
@@ -86,7 +108,23 @@ export const flowchartES = `flowchart TB
     n43 --> n45["Transindesmal"]
     n43 --> n46["Suprasindesmal"]
 
-    n44 --> n66["No posible: El mecanismo SA no arranca el maléolo posterior.<br/>Mecanismo PA son transindesmales o suprasindesmales."]
+    n44 --> n442{"¿Tiene TAC?"}
+    n442 --> n443["Sí"]
+    n442 --> n444["No"]
+    n444 --> n445["Bimaleolar (lateral + posterior)<br/>Weber A"]
+    n443 --> n446{"¿El fragmento posterior es posteromedial?"}
+    n446 --> n447["Sí"]
+    n446 --> n448["No"]
+    n447 --> n449["Bimaleolar (lateral + posterior)<br/>AO 44 A3<br/>Lauge-Hansen no clasificable<br/>Weber A"]
+    n448 --> n450{"¿Qué tipo es el maléolo posterior?"}
+    n450 --> n451["Fragmento extraincisural"]
+    n450 --> n452["Fragmento posterolateral"]
+    n450 --> n453["Posteromedial y posterolateral"]
+    n450 --> n454["Gran fragmento triangular posterolateral"]
+    n451 --> n455["Bimaleolar (lateral + posterior)<br/>AO No clasificable<br/>Lauge-Hansen no clasificable<br/>Weber A<br/>Bartonicek 1"]
+    n452 --> n456["Bimaleolar (lateral + posterior)<br/>AO No clasificable<br/>Lauge-Hansen no clasificable<br/>Weber A<br/>Bartonicek 2"]
+    n453 --> n457["Bimaleolar (lateral + posterior)<br/>AO No clasificable<br/>Lauge-Hansen no clasificable<br/>Weber A<br/>Bartonicek 3"]
+    n454 --> n458["Bimaleolar (lateral + posterior)<br/>AO No clasificable<br/>Lauge-Hansen no clasificable<br/>Weber A<br/>Bartonicek 4"]
 
     n45 --> n48{"¿De qué morfología es la fractura?"}
     n48 --> n52["Espiroidea (Baja anterior, alta posterior)"]
@@ -115,14 +153,18 @@ export const flowchartES = `flowchart TB
     n54 --> n307{"¿Cómo es el trazo del peroné?"}
     n307 --> n308["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n307 --> n309["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n307 --> n424["Suprasindesmal (>6cm de superficie articular)"]
     n309 --> n230{"¿Tiene TAC?"}
+    n424 --> n230
     n308 --> n303{"¿Tiene TAC?"}
 
     %% Suprasindesmal Multifragmentaria - trazo peroné
     n55 --> n310{"¿Cómo es el trazo del peroné?"}
     n310 --> n311["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n310 --> n312["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n310 --> n426["Suprasindesmal (>6cm de superficie articular)"]
     n312 --> n233{"¿Tiene TAC?"}
+    n426 --> n233
     n311 --> n313{"¿Tiene TAC?"}
 
     n56 --> n237{"¿Tiene TAC?"}
@@ -251,15 +293,19 @@ export const flowchartES = `flowchart TB
     n123 --> n336{"¿Cómo es el trazo del peroné?"}
     n336 --> n337["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n336 --> n338["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n336 --> n428["Suprasindesmal (>6cm de superficie articular)"]
     n337 --> n339["Bimaleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PA<br/>Weber C"]
     n338 --> n126["Bimaleolar (lateral + medial)<br/>AO 44 C1<br/>Lauge-Hansen PER<br/>Weber C"]
+    n428 --> n126
 
     %% Suprasindesmal Multifragmentaria - trazo peroné
     n124 --> n340{"¿Cómo es el trazo del peroné?"}
     n340 --> n341["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n340 --> n342["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n340 --> n430["Suprasindesmal (>6cm de superficie articular)"]
     n341 --> n343["Bimaleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PA<br/>Weber C"]
     n342 --> n127["Bimaleolar (lateral + medial)<br/>AO 44 C2<br/>Lauge-Hansen PER<br/>Weber C"]
+    n430 --> n127
 
     n125 --> n128["Bimaleolar (lateral + medial)<br/>AO 44 C3<br/>Lauge-Hansen PER<br/>Weber C"]
 
@@ -290,14 +336,18 @@ export const flowchartES = `flowchart TB
     n146 --> n345{"¿Cómo es el trazo del peroné?"}
     n345 --> n346["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n345 --> n347["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n345 --> n432["Suprasindesmal (>6cm de superficie articular)"]
     n347 --> n241{"¿Tiene TAC?"}
+    n432 --> n241
     n346 --> n348{"¿Tiene TAC?"}
 
     %% Trimaleolar Suprasindesmal Multifrag - trazo peroné
     n147 --> n363{"¿Cómo es el trazo del peroné?"}
     n363 --> n364["Parasindesmal de trazo oblicuo corto/transverso/conminuto"]
     n363 --> n365["Parasindesmal o suprasindesmal de trazo oblicuo largo/espiroideo"]
+    n363 --> n434["Suprasindesmal (>6cm de superficie articular)"]
     n365 --> n245{"¿Tiene TAC?"}
+    n434 --> n245
     n364 --> n366{"¿Tiene TAC?"}
 
     n148 --> n249{"¿Tiene TAC?"}
@@ -462,7 +512,17 @@ export const flowchartES = `flowchart TB
     style n274 fill:#e8f5e9,stroke:#4caf50
     style n275 fill:#e8f5e9,stroke:#4caf50
     style n276 fill:#e8f5e9,stroke:#4caf50
-    style n66 fill:#ffebee,stroke:#f44336
+    style n406 fill:#e8f5e9,stroke:#4caf50
+    style n407 fill:#e8f5e9,stroke:#4caf50
+    style n416 fill:#e8f5e9,stroke:#4caf50
+    style n417 fill:#e8f5e9,stroke:#4caf50
+    style n441 fill:#e8f5e9,stroke:#4caf50
+    style n445 fill:#e8f5e9,stroke:#4caf50
+    style n449 fill:#e8f5e9,stroke:#4caf50
+    style n455 fill:#e8f5e9,stroke:#4caf50
+    style n456 fill:#e8f5e9,stroke:#4caf50
+    style n457 fill:#e8f5e9,stroke:#4caf50
+    style n458 fill:#e8f5e9,stroke:#4caf50
     style n72 fill:#e8f5e9,stroke:#4caf50
     style n73 fill:#e8f5e9,stroke:#4caf50
     style n74 fill:#e8f5e9,stroke:#4caf50

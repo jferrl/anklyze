@@ -38,19 +38,27 @@ func (e *Engine) Classify(input domain.FractureInput) (*domain.ClassificationRes
 
 // classifyPosteriorOnly handles posterior malleolus only fractures
 func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.ClassificationResult, error) {
+	if input.ArticularInvolvement == domain.ArticularLargeWithExtension {
+		aoCode := domain.AOOTA43B1
+		if input.HasArticularDepression != nil && *input.HasArticularDepression {
+			aoCode = domain.AOOTA43B2
+		}
+		return &domain.ClassificationResult{
+			FractureType: "distal_tibia",
+			AOOTA: &domain.AOOTAClassification{
+				Code: aoCode,
+			},
+		}, nil
+	}
+
+	// <1/3 without metaphyseal extension: AO unclassifiable, LH PA, Bartonicek from CT
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_posterior",
-		AOOTA: &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		},
-		// Posterior-only fractures are Lauge-Hansen unclassifiable
-		// as isolated posterior malleolus fractures don't fit the classic LH mechanisms
 		LaugeHansen: &domain.LaugeHansenClassification{
-			Ambiguous: true,
+			Type: domain.LaugeHansenPA,
 		},
 	}
 
-	// Bartonicek classification requires CT scan
 	if input.HasCTScan != nil && *input.HasCTScan {
 		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 	}
@@ -60,10 +68,24 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.Clas
 
 // classifyMedialOnly handles medial malleolus only fractures
 func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.ClassificationResult, error) {
+	if input.ArticularInvolvement == domain.ArticularLargeWithExtension {
+		aoCode := domain.AOOTA43B1
+		if input.HasArticularDepression != nil && *input.HasArticularDepression {
+			aoCode = domain.AOOTA43B2
+		}
+		return &domain.ClassificationResult{
+			FractureType: "distal_tibia",
+			AOOTA: &domain.AOOTAClassification{
+				Code: aoCode,
+			},
+		}, nil
+	}
+
+	// <1/3 without metaphyseal extension: morphology path
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_medial",
 		AOOTA: &domain.AOOTAClassification{
-			Code: domain.AOOTAA1,
+			Code: domain.AOOTAA2,
 		},
 	}
 
@@ -72,7 +94,7 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 			Type: domain.LaugeHansenSA,
 		}
 	} else {
-		// Transverse - ambiguous, could be PA, SER, or PER
+		// Transverse/oblique - ambiguous, could be PA, SER, or PER
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Ambiguous:     true,
 			PossibleTypes: []string{"PA", "SER", "PER"},
@@ -106,7 +128,7 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 			Type: domain.DanisWeberB,
 		}
 		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB1,
+			Code: domain.AOOTAB,
 		}
 		if input.LateralMorphology == domain.LateralMorphologySpiral {
 			result.LaugeHansen = &domain.LaugeHansenClassification{
@@ -151,19 +173,35 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.ClassificationResult, error) {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_medial_posterior",
-		AOOTA: &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		},
 	}
 
-	// Lauge-Hansen is ambiguous - could be SER or PA mechanism
-	if input.HasCTScan != nil && *input.HasCTScan {
-		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
+	if input.HasCTScan == nil || !*input.HasCTScan {
+		// No CT → AO unclassifiable, LH PA
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenPA,
+		}
+		return result, nil
+	}
+
+	// CT available → branch on posterior fragment type
+	if input.PosteriorFractureType == domain.PosteriorExtraincisuralPosteromedial {
+		result.AOOTA = &domain.AOOTAClassification{
+			Code: domain.AOOTAA3,
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Ambiguous: true,
+		}
+		return result, nil
+	}
+
+	// Standard 4 posterior types → AO 44-B3 + LH PA + Bartonicek
+	result.AOOTA = &domain.AOOTAClassification{
+		Code: domain.AOOTAB3,
 	}
 	result.LaugeHansen = &domain.LaugeHansenClassification{
-		Ambiguous:     true,
-		PossibleTypes: []string{"SER", "PA"},
+		Type: domain.LaugeHansenPA,
 	}
+	result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 
 	return result, nil
 }
@@ -176,14 +214,29 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 
 	switch input.FibularLevel {
 	case domain.FibularLevelInfrasindesmal:
-		// All infrasindesmal lateral+posterior combinations are impossible
-		// SA mechanism does not involve posterior malleolus
-		// PA mechanism is transsyndesmotic or suprasyndesmotic
-		return &domain.ClassificationResult{
-			FractureType:  "bimaleolar_lateral_posterior",
-			Impossible:    true,
-			ImpossibleKey: "sa_mechanism",
-		}, nil
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type: domain.DanisWeberA,
+		}
+
+		if input.HasCTScan == nil || !*input.HasCTScan {
+			return result, nil
+		}
+
+		if input.IsPosteriorPosteromedial != nil && *input.IsPosteriorPosteromedial {
+			result.AOOTA = &domain.AOOTAClassification{
+				Code: domain.AOOTAA3,
+			}
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Ambiguous: true,
+			}
+		} else {
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Ambiguous: true,
+			}
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
+		}
+
+		return result, nil
 
 	case domain.FibularLevelTransindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{

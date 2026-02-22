@@ -44,8 +44,12 @@ export function getLaugeHansenDescription(t: TFunction, type: string, ambiguous?
  * Get the translated AO/OTA description
  */
 export function getAOOTADescription(t: TFunction, code: string): string {
-  // Code comes as "44-A1", "44-B2", etc.
-  // Extract the part after "44-" and replace hyphen with underscore for translation key
+  // Handle 43-B1/43-B2 (distal tibia) codes
+  if (code.startsWith('43-')) {
+    const key = code.replace('-', '');
+    return t(`results.classifications.aoOta.${key}_desc`);
+  }
+  // Handle 44-B (unclassifiable subtype) and standard 44-XX codes
   const key = code.replace('44-', '').replace('-', '');
   return t(`results.classifications.aoOta.${key}_desc`);
 }

@@ -171,6 +171,24 @@ export class ClassifyPage {
     await this.page.locator('#lp-level-suprasindesmal').click();
   }
 
+  // LP infrasindesmal CT scan question
+  async selectLPInfraCTScanYes() {
+    await this.page.locator('#lp-infra-ct-yes').click();
+  }
+
+  async selectLPInfraCTScanNo() {
+    await this.page.locator('#lp-infra-ct-no').click();
+  }
+
+  // LP infrasindesmal posteromedial question (shown after CT=yes)
+  async selectLPInfraPosteromedialYes() {
+    await this.page.locator('#lp-infra-posteromedial-yes').click();
+  }
+
+  async selectLPInfraPosteromedialNo() {
+    await this.page.locator('#lp-infra-posteromedial-no').click();
+  }
+
   async selectLPMorphologyInfraTransverse() {
     await this.page.locator('#lp-morph-infra-transverse').click();
   }
@@ -364,12 +382,20 @@ export class ClassifyPage {
     await this.page.locator('#lm-trace-parasindesmotic_long').click();
   }
 
+  async selectLMFibulaTracePatternFar() {
+    await this.page.locator('#lm-trace-suprasindesmotic_far').click();
+  }
+
   async selectTriFibulaTracePatternShort() {
     await this.page.locator('#tri-trace-parasindesmotic_short').click();
   }
 
   async selectTriFibulaTracePatternLong() {
     await this.page.locator('#tri-trace-parasindesmotic_long').click();
+  }
+
+  async selectTriFibulaTracePatternFar() {
+    await this.page.locator('#tri-trace-suprasindesmotic_far').click();
   }
 
   // ==================== FORM SUBMISSION ====================

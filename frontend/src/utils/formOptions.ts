@@ -67,6 +67,18 @@ export function getLocalFormOptions(): FormOptions {
       id: 'fibular_level_for_transverse',
       title: t('form.questions.fibular_level_for_transverse'),
     },
+    articular_involvement: {
+      id: 'articular_involvement',
+      title: t('form.questions.articularInvolvement'),
+    },
+    has_articular_depression: {
+      id: 'has_articular_depression',
+      title: t('form.questions.articularDepression'),
+    },
+    is_posterior_posteromedial: {
+      id: 'is_posterior_posteromedial',
+      title: t('form.questions.posteriorPosteromedial'),
+    },
   };
 
   // Labels
@@ -88,12 +100,18 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'trimaleolar', label: t('form.options.involvedMalleoli.trimaleolar') },
   ];
 
-  // Posterior fracture types (Bartonicek)
+  // Posterior fracture types (Bartonicek) - 4 standard options
   const posterior_fracture_types: SelectOption[] = [
     { value: 'extraincisural', label: t('form.options.posteriorType.extraincisural') },
     { value: 'posterolateral', label: t('form.options.posteriorType.posterolateral') },
     { value: 'posteromedial_posterolateral', label: t('form.options.posteriorType.posteromedial_posterolateral') },
     { value: 'large_posterolateral', label: t('form.options.posteriorType.large_posterolateral') },
+  ];
+
+  // Posterior fracture types for medial+posterior path (5 options including extraincisural_posteromedial)
+  const posterior_fracture_types_medial_posterior: SelectOption[] = [
+    ...posterior_fracture_types,
+    { value: 'extraincisural_posteromedial', label: t('form.options.posteriorType.extraincisural_posteromedial') },
   ];
 
   // Medial morphology options
@@ -151,6 +169,13 @@ export function getLocalFormOptions(): FormOptions {
   const fibula_trace_patterns: SelectOption[] = [
     { value: 'parasindesmotic_short', label: t('form.options.fibulaTracePattern.parasindesmotic_short') },
     { value: 'parasindesmotic_long', label: t('form.options.fibulaTracePattern.parasindesmotic_long') },
+    { value: 'suprasindesmotic_far', label: t('form.options.fibulaTracePattern.suprasindesmotic_far') },
+  ];
+
+  // Articular involvement options (posterior-only, medial-only paths)
+  const articular_involvement_options: SelectOption[] = [
+    { value: 'large_with_extension', label: t('form.options.articularInvolvement.large_with_extension') },
+    { value: 'small_without_extension', label: t('form.options.articularInvolvement.small_without_extension') },
   ];
 
   return {
@@ -167,6 +192,8 @@ export function getLocalFormOptions(): FormOptions {
     fibular_level_high_low,
     fibular_level_for_transverse,
     fibula_trace_patterns,
+    articular_involvement_options,
+    posterior_fracture_types_medial_posterior,
   };
 }
 
