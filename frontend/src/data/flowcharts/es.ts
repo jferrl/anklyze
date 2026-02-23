@@ -32,9 +32,9 @@ export const flowchartES = `flowchart TB
     n10 --> n14["Unimaleolar maléolo posterior<br/>AO No clasificable<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
 
     %% Rama maléolo medial
-    D --> n410{"¿Cuál es la afectación de la superficie articular?"}
-    n410 --> n411[">1/3 con extensión metafisaria"]
-    n410 --> n412["<1/3 sin extensión metafisaria"]
+    D --> n410{"¿Tiene importante afectación articular con extensión metafisaria?"}
+    n410 --> n411["Sí"]
+    n410 --> n412["No"]
     n411 --> n413{"¿Existe depresión articular?"}
     n413 --> n414["Sí"]
     n413 --> n415["No"]

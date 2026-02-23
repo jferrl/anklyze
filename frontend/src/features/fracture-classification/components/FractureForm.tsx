@@ -196,12 +196,12 @@ export function FractureForm() {
 
   // Determine which questions to show based on form data (matching MMD decision tree)
 
-  // Articular involvement: first question for posterior_only and medial_only
-  const showArticularInvolvement = formData.involved_malleoli &&
-    ['posterior_only', 'medial_only'].includes(formData.involved_malleoli);
+  // Articular involvement: posterior_only uses 2-option select, medial_only uses Yes/No per reference MMD
+  const showArticularInvolvementSelect = formData.involved_malleoli === 'posterior_only';
+  const showArticularInvolvementYesNo = formData.involved_malleoli === 'medial_only';
 
-  // Articular depression: when articular_involvement = large_with_extension
-  const showArticularDepression = showArticularInvolvement &&
+  // Articular depression: when articular_involvement = large_with_extension (either path)
+  const showArticularDepression = (showArticularInvolvementSelect || showArticularInvolvementYesNo) &&
     formData.articular_involvement === 'large_with_extension';
 
   // Medial morphology: for medial_only (only after small_without_extension) and lateral_medial
@@ -347,7 +347,7 @@ export function FractureForm() {
         onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as InvolvedMalleoli })}
       />
 
-      {showArticularInvolvement && (
+      {showArticularInvolvementSelect && (
         <QuestionStep
           question={{
             id: 'articular_involvement',
@@ -356,6 +356,18 @@ export function FractureForm() {
           value={formData.articular_involvement}
           options={options.articular_involvement_options || []}
           onChange={(value) => updateFormData({ ...formData, articular_involvement: value as ArticularInvolvement })}
+        />
+      )}
+
+      {showArticularInvolvementYesNo && (
+        <QuestionStep
+          question={{
+            id: 'articular_involvement',
+            title: options.questions.articular_involvement_medial?.title || 'Is there significant articular involvement with metaphyseal extension?',
+          }}
+          value={formData.articular_involvement === 'large_with_extension' ? 'true' : formData.articular_involvement === 'small_without_extension' ? 'false' : undefined}
+          options={yesNoOptions}
+          onChange={(value) => updateFormData({ ...formData, articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
         />
       )}
 

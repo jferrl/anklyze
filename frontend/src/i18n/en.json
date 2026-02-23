@@ -132,6 +132,7 @@
       "fibula_trace_pattern": "What is the fibula fracture pattern?",
       "fibular_level_for_transverse": "At what level is the fibular fracture?",
       "articularInvolvement": "What is the articular surface involvement?",
+      "articularInvolvementMedial": "Is there significant articular involvement with metaphyseal extension?",
       "articularDepression": "Is articular depression present?",
       "posteriorPosteromedial": "Is the posterior fragment posteromedial?"
     },

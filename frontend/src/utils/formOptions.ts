@@ -71,6 +71,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'articular_involvement',
       title: t('form.questions.articularInvolvement'),
     },
+    articular_involvement_medial: {
+      id: 'articular_involvement_medial',
+      title: t('form.questions.articularInvolvementMedial'),
+    },
     has_articular_depression: {
       id: 'has_articular_depression',
       title: t('form.questions.articularDepression'),

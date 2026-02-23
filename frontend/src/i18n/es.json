@@ -138,6 +138,7 @@
       "fibula_trace_pattern": "¿Cuál es el patrón de fractura del peroné?",
       "fibular_level_for_transverse": "¿A qué nivel está la fractura del peroné?",
       "articularInvolvement": "¿Cuál es la afectación de la superficie articular?",
+      "articularInvolvementMedial": "¿Tiene importante afectación articular con extensión metafisaria?",
       "articularDepression": "¿Existe depresión articular?",
       "posteriorPosteromedial": "¿El fragmento posterior es posteromedial?"
     },

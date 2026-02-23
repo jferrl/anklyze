@@ -182,18 +182,18 @@ If has_ct_scan=true, then ask:
 - options: ["Type 1 - Small extraincisural fragment", "Type 2 - Posterolateral fragment", "Type 3 - Posteromedial and posterolateral", "Type 4 - Large triangular posterolateral"]
 
 #### For "medial_only":
-First ask articular involvement:
+First ask about significant articular involvement:
 - field: "articular_involvement"
-- question: "What is the articular surface involvement?"
-- options: [">1/3 with metaphyseal extension (large_with_extension)", "<1/3 without metaphyseal extension (small_without_extension)"]
+- question: "Is there significant articular involvement with metaphyseal extension?"
+- options: ["Yes (large_with_extension)", "No (small_without_extension)"]
 
-If large_with_extension, ask:
+If Yes (large_with_extension), ask:
 - field: "has_articular_depression"
 - question: "Is articular depression present?"
 - options: ["Yes", "No"]
 → Complete (distal tibia fracture, AO 43-B1 or 43-B2)
 
-If small_without_extension, ask morphology:
+If No (small_without_extension), ask morphology:
 - field: "medial_morphology"
 - question: "What is the fracture line orientation of the medial malleolus?"
 - options: ["Oblique/Vertical (diagonal line)", "Transverse/Oblique (horizontal line)"]
@@ -460,18 +460,18 @@ Si has_ct_scan=true, entonces preguntar:
 - options: ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]
 
 #### Para "medial_only":
-Primero preguntar afectación articular:
+Primero preguntar sobre afectación articular significativa:
 - field: "articular_involvement"
-- question: "¿Cuál es la afectación de la superficie articular?"
-- options: [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]
+- question: "¿Tiene importante afectación articular con extensión metafisaria?"
+- options: ["Sí (large_with_extension)", "No (small_without_extension)"]
 
-Si large_with_extension, preguntar:
+Si Sí (large_with_extension), preguntar:
 - field: "has_articular_depression"
 - question: "¿Existe depresión articular?"
 - options: ["Sí", "No"]
 → Completo (fractura de tibia distal, AO 43-B1 o 43-B2)
 
-Si small_without_extension, preguntar morfología:
+Si No (small_without_extension), preguntar morfología:
 - field: "medial_morphology"
 - question: "¿Cuál es la orientación de la línea de fractura del maléolo medial?"
 - options: ["Oblicua/Vertical (línea diagonal)", "Transversa/Oblicua (línea horizontal)"]

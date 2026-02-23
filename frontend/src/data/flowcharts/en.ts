@@ -32,9 +32,9 @@ export const flowchartEN = `flowchart TB
     n10 --> n14["Unimalleolar posterior malleolus<br/>AO Unclassifiable<br/>Lauge-Hansen PA<br/>Bartonicek 4"]
 
     %% Medial malleolus branch
-    D --> n410{"What is the articular surface involvement?"}
-    n410 --> n411[">1/3 with metaphyseal extension"]
-    n410 --> n412["<1/3 without metaphyseal extension"]
+    D --> n410{"Is there significant articular involvement with metaphyseal extension?"}
+    n410 --> n411["Yes"]
+    n410 --> n412["No"]
     n411 --> n413{"Is articular depression present?"}
     n413 --> n414["Yes"]
     n413 --> n415["No"]
