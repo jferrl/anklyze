@@ -612,15 +612,15 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.AOOTA != nil {
 			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
 		}
-		if result.LaugeHansen != nil {
-			t.Error("LaugeHansen should be nil without CT for infrasindesmal")
+		if result.LaugeHansen == nil || !result.LaugeHansen.Ambiguous {
+			t.Error("LaugeHansen should be ambiguous (unclassifiable) for infrasindesmal without CT")
 		}
 		if result.Bartonicek != nil {
 			t.Error("Bartonicek should be nil without CT")
 		}
 	})
 
-	t.Run("infrasindesmal nil CT → Weber A only", func(t *testing.T) {
+	t.Run("infrasindesmal nil CT → Weber A + LH unclassifiable", func(t *testing.T) {
 		input := domain.FractureInput{
 			InvolvedMalleoli: domain.InvolvedLateralPosterior,
 			FibularLevel:     domain.FibularLevelInfrasindesmal,
@@ -633,7 +633,10 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
 		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil, got %q", result.AOOTA.Code)
+			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		}
+		if result.LaugeHansen == nil || !result.LaugeHansen.Ambiguous {
+			t.Error("LaugeHansen should be ambiguous (unclassifiable) for infrasindesmal without CT")
 		}
 	})
 

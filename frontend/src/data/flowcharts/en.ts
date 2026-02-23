@@ -111,7 +111,7 @@ export const flowchartEN = `flowchart TB
     n44 --> n442{"Do you have a CT scan?"}
     n442 --> n443["Yes"]
     n442 --> n444["No"]
-    n444 --> n445["Bimalleolar (lateral + posterior)<br/>Weber A"]
+    n444 --> n445["Bimalleolar (lateral + posterior)<br/>AO Unclassifiable<br/>Lauge-Hansen unclassifiable<br/>Weber A"]
     n443 --> n446{"Is the posterior fragment posteromedial?"}
     n446 --> n447["Yes"]
     n446 --> n448["No"]
@@ -271,8 +271,8 @@ export const flowchartEN = `flowchart TB
 
     %% Lateral + Medial branch
     n4 --> n112{"What is the medial malleolus morphology?"}
-    n112 --> n113["Oblique/vertical"]
-    n112 --> n114["Transverse"]
+    n112 --> n113["Vertical"]
+    n112 --> n114["Transverse/Oblique"]
 
     n113 --> n115{"Is fibula fracture infrasyndesmotic and transverse?"}
     n115 --> n116["Yes"]

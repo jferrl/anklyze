@@ -111,7 +111,7 @@ export const flowchartES = `flowchart TB
     n44 --> n442{"¿Tiene TAC?"}
     n442 --> n443["Sí"]
     n442 --> n444["No"]
-    n444 --> n445["Bimaleolar (lateral + posterior)<br/>Weber A"]
+    n444 --> n445["Bimaleolar (lateral + posterior)<br/>AO no clasificable<br/>Lauge-Hansen no clasificable<br/>Weber A"]
     n443 --> n446{"¿El fragmento posterior es posteromedial?"}
     n446 --> n447["Sí"]
     n446 --> n448["No"]
@@ -271,8 +271,8 @@ export const flowchartES = `flowchart TB
 
     %% Rama Lateral + Medial
     n4 --> n112{"¿De qué morfología es la fractura del maléolo medial?"}
-    n112 --> n113["Oblicuo/vertical"]
-    n112 --> n114["Transverso"]
+    n112 --> n113["Vertical"]
+    n112 --> n114["Transverso/Oblicuo"]
 
     n113 --> n115{"¿La fractura del peroné es infrasindesmal y transversa?"}
     n115 --> n116["Sí"]

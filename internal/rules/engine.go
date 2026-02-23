@@ -219,6 +219,10 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		}
 
 		if input.HasCTScan == nil || !*input.HasCTScan {
+			// No CT → AO unclassifiable (nil), LH unclassifiable, Weber A
+			result.LaugeHansen = &domain.LaugeHansenClassification{
+				Ambiguous: true,
+			}
 			return result, nil
 		}
 
