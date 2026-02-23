@@ -89,7 +89,7 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 		},
 	}
 
-	if input.MedialMorphology == domain.MedialMorphologyOblique {
+	if input.MedialMorphology == domain.MedialMorphologyVertical {
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
 		}
@@ -307,7 +307,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 	}
 
 	// Path: Oblique medial + infrasindesmal transverse fibula
-	if input.MedialMorphology == domain.MedialMorphologyOblique &&
+	if input.MedialMorphology == domain.MedialMorphologyVertical &&
 		input.FibulaInfrasindesmalTransverse != nil && *input.FibulaInfrasindesmalTransverse {
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberA,

@@ -66,7 +66,7 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
 
     case 'lateral_medial':
       if (!formData.medial_morphology) return false;
-      if (formData.medial_morphology === 'oblique') {
+      if (formData.medial_morphology === 'vertical') {
         if (formData.fibula_infrasindesmal_transverse === undefined) return false;
         if (formData.fibula_infrasindesmal_transverse === true) return true;
       }
@@ -143,7 +143,7 @@ export function calculateProgress(formData: Partial<FractureInput>): { currentSt
     if (formData.fibular_level === 'suprasindesmal') {
       estimatedTotal += 1; // suprasindesmal_type or trace pattern
     }
-    if (type === 'lateral_medial' && formData.medial_morphology === 'oblique') {
+    if (type === 'lateral_medial' && formData.medial_morphology === 'vertical') {
       estimatedTotal += 1; // bimaleolar infra question
     }
     if (type === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal' && formData.has_ct_scan === true) {

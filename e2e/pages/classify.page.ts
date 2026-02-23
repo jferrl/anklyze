@@ -103,12 +103,12 @@ export class ClassifyPage {
 
   // ==================== MEDIAL MORPHOLOGY ====================
 
-  async selectMedialMorphologyOblique() {
-    await this.page.locator('#medial-morph-oblique').click();
+  async selectMedialMorphologyVertical() {
+    await this.page.locator('#medial-morph-vertical').click();
   }
 
-  async selectMedialMorphologyTransverse() {
-    await this.page.locator('#medial-morph-transverse').click();
+  async selectMedialMorphologyTransverseOblique() {
+    await this.page.locator('#medial-morph-transverse_oblique').click();
   }
 
   // ==================== LATERAL ONLY - FIBULAR LEVEL ====================
@@ -243,12 +243,12 @@ export class ClassifyPage {
 
   // ==================== LATERAL + MEDIAL ====================
 
-  async selectLMMedialOblique() {
-    await this.page.locator('#lm-medial-oblique').click();
+  async selectLMMedialVertical() {
+    await this.page.locator('#lm-medial-vertical').click();
   }
 
-  async selectLMMedialTransverse() {
-    await this.page.locator('#lm-medial-transverse').click();
+  async selectLMMedialTransverseOblique() {
+    await this.page.locator('#lm-medial-transverse_oblique').click();
   }
 
   async selectLMInfraTransverseYes() {

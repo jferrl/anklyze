@@ -28,8 +28,8 @@ const (
 type MedialMorphology string
 
 const (
-	MedialMorphologyOblique   MedialMorphology = "oblique"   // Oblicuo
-	MedialMorphologyTransverse MedialMorphology = "transverse" // Transverso
+	MedialMorphologyVertical   MedialMorphology = "vertical"          // Vertical
+	MedialMorphologyTransverse MedialMorphology = "transverse_oblique" // Transverso/oblicuo
 )
 
 // FibularLevel represents where the fibular fracture is located relative to syndesmosis

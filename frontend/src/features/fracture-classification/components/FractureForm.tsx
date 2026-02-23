@@ -213,11 +213,11 @@ export function FractureForm() {
     );
 
   const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
-    formData.medial_morphology === 'oblique';
+    formData.medial_morphology === 'vertical';
 
   const lateralMedialReadyForFibularLevel = formData.involved_malleoli === 'lateral_medial' && (
-    formData.medial_morphology === 'transverse' ||
-    (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false)
+    formData.medial_morphology === 'transverse_oblique' ||
+    (formData.medial_morphology === 'vertical' && formData.fibula_infrasindesmal_transverse === false)
   );
 
   const showFibularLevel = formData.involved_malleoli &&

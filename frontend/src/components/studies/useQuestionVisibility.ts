@@ -91,10 +91,10 @@ export function useQuestionVisibility(
 
     // PATH: Lateral + Medial
     const showLMMedialMorphology = involvedMalleoli === 'lateral_medial';
-    const showLMFibulaInfraTransverse = showLMMedialMorphology && formData.medial_morphology === 'oblique';
+    const showLMFibulaInfraTransverse = showLMMedialMorphology && formData.medial_morphology === 'vertical';
     const showLMFibularLevel = showLMMedialMorphology && (
-      (formData.medial_morphology === 'oblique' && formData.fibula_infrasindesmal_transverse === false) ||
-      formData.medial_morphology === 'transverse'
+      (formData.medial_morphology === 'vertical' && formData.fibula_infrasindesmal_transverse === false) ||
+      formData.medial_morphology === 'transverse_oblique'
     );
     const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level_for_transverse === 'suprasindesmal';
     const showLMFibulaTracePattern = showLMSuprasindesmalType &&

@@ -160,12 +160,12 @@
         "extraincisural_posteromedial": "Fragmento extraincisural postero-medial"
       },
       "medialMorphology": {
-        "oblique": "Oblicuo/Vertical",
-        "transverse": "Transverso"
+        "vertical": "Vertical",
+        "transverse_oblique": "Transverso/oblicuo"
       },
       "medialMorphologyLM": {
-        "oblique": "Oblicuo/Vertical",
-        "transverse": "Transverso"
+        "vertical": "Vertical",
+        "transverse_oblique": "Transverso/oblicuo"
       },
       "fibularLevel": {
         "infrasindesmal": "Infrasindesmal",

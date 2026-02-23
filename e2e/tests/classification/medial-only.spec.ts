@@ -17,7 +17,7 @@ test.describe('Medial Only Classification Path', () => {
 
     test('should enable button after selecting medial morphology', async () => {
       await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyOblique();
+      await classifyPage.selectMedialMorphologyVertical();
       await classifyPage.expectClassifyButtonEnabled();
     });
   });
@@ -25,7 +25,7 @@ test.describe('Medial Only Classification Path', () => {
   test.describe('Oblique Morphology', () => {
     test('should classify medial only with oblique morphology', async () => {
       await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyOblique();
+      await classifyPage.selectMedialMorphologyVertical();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
@@ -36,7 +36,7 @@ test.describe('Medial Only Classification Path', () => {
   test.describe('Transverse Morphology', () => {
     test('should classify medial only with transverse morphology', async () => {
       await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyTransverse();
+      await classifyPage.selectMedialMorphologyTransverseOblique();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
@@ -47,7 +47,7 @@ test.describe('Medial Only Classification Path', () => {
   test.describe('Form Reset', () => {
     test('should reset form after clicking Classify Another', async () => {
       await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyOblique();
+      await classifyPage.selectMedialMorphologyVertical();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();
 

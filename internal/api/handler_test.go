@@ -182,7 +182,7 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 	}{
 		{
 			name:                "oblique medial morphology",
-			medialMorphology:    domain.MedialMorphologyOblique,
+			medialMorphology:    domain.MedialMorphologyVertical,
 			expectedAOOTA:       domain.AOOTAA2,
 			expectedLaugeHansen: domain.LaugeHansenSA,
 			expectedAmbiguous:   false,
@@ -578,7 +578,7 @@ func TestHandler_ClassifyFracture_LanguageSupport(t *testing.T) {
 
 			input := domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: domain.MedialMorphologyOblique,
+				MedialMorphology: domain.MedialMorphologyVertical,
 			}
 			body, _ := json.Marshal(input)
 

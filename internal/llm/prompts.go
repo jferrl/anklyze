@@ -17,7 +17,7 @@ You MUST respond with valid JSON matching this exact schema:
   "extracted_input": {
     "involved_malleoli": "posterior_only" | "medial_only" | "lateral_only" | "medial_posterior" | "lateral_posterior" | "lateral_medial" | "trimaleolar",
     "posterior_fracture_type": "extraincisural" | "posterolateral" | "posteromedial_posterolateral" | "large_posterolateral" | null,
-    "medial_morphology": "oblique" | "transverse" | null,
+    "medial_morphology": "vertical" | "transverse_oblique" | null,
     "fibular_level": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
     "lateral_morphology": "transverse" | "oblique" | "spiral" | null,
     "suprasindesmal_type": "simple_diaphyseal" | "multifragmentary" | "proximal" | null,
@@ -77,8 +77,8 @@ You MUST respond with valid JSON matching this exact schema:
 - Required: articular_involvement (large_with_extension or small_without_extension)
 - If large_with_extension → Required: has_articular_depression → AO 43-B1 (no) or 43-B2 (yes), distal tibia fracture
 - If small_without_extension → Required: medial_morphology (oblique or transverse)
-  - oblique → SA mechanism, AO-44-A2
-  - transverse → Lauge-Hansen ambiguous (could be PA/SER/PER), AO-44-A2
+  - vertical → SA mechanism, AO-44-A2
+  - transverse_oblique → Lauge-Hansen ambiguous (could be PA/SER/PER), AO-44-A2
 
 ### lateral_only
 - Required: fibular_level
@@ -295,7 +295,7 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
   "extracted_input": {
     "involved_malleoli": "posterior_only" | "medial_only" | "lateral_only" | "medial_posterior" | "lateral_posterior" | "lateral_medial" | "trimaleolar",
     "posterior_fracture_type": "extraincisural" | "posterolateral" | "posteromedial_posterolateral" | "large_posterolateral" | null,
-    "medial_morphology": "oblique" | "transverse" | null,
+    "medial_morphology": "vertical" | "transverse_oblique" | null,
     "fibular_level": "infrasindesmal" | "transindesmal" | "suprasindesmal" | null,
     "lateral_morphology": "transverse" | "oblique" | "spiral" | null,
     "suprasindesmal_type": "simple_diaphyseal" | "multifragmentary" | "proximal" | null,
@@ -355,8 +355,8 @@ DEBES responder con JSON válido que coincida exactamente con este esquema:
 - Requerido: articular_involvement (large_with_extension o small_without_extension)
 - Si large_with_extension → Requerido: has_articular_depression → AO 43-B1 (no) o 43-B2 (sí), fractura de tibia distal
 - Si small_without_extension → Requerido: medial_morphology (oblicua o transversa)
-  - oblicua → mecanismo SA, AO-44-A2
-  - transversa → Lauge-Hansen ambiguo (podría ser PA/SER/PER), AO-44-A2
+  - vertical → mecanismo SA, AO-44-A2
+  - transverse_oblique → Lauge-Hansen ambiguo (podría ser PA/SER/PER), AO-44-A2
 
 ### lateral_only
 - Requerido: fibular_level

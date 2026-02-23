@@ -120,14 +120,14 @@ export function getLocalFormOptions(): FormOptions {
 
   // Medial morphology options
   const medial_morphology: SelectOption[] = [
-    { value: 'oblique', label: t('form.options.medialMorphology.oblique') },
-    { value: 'transverse', label: t('form.options.medialMorphology.transverse') },
+    { value: 'vertical', label: t('form.options.medialMorphology.vertical') },
+    { value: 'transverse_oblique', label: t('form.options.medialMorphology.transverse_oblique') },
   ];
 
   // Medial morphology options for lateral+medial path
   const medial_morphology_lm: SelectOption[] = [
-    { value: 'oblique', label: t('form.options.medialMorphologyLM.oblique') },
-    { value: 'transverse', label: t('form.options.medialMorphologyLM.transverse') },
+    { value: 'vertical', label: t('form.options.medialMorphologyLM.vertical') },
+    { value: 'transverse_oblique', label: t('form.options.medialMorphologyLM.transverse_oblique') },
   ];
 
   // Fibular level options

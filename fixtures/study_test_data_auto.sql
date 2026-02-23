@@ -109,7 +109,7 @@ BEGIN
          'Case A2: Bimalleolar Fracture', 'Both lateral and medial malleolus involvement.',
          'published', true, 4, 4, study_active_id, 2, false, true,
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B2"}, "bartonicek": {"type": "2"}}'::jsonb,
-         '{"involved_malleoli": "lateral_medial", "medial_morphology": "transverse", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "spiral"}'::jsonb),
+         '{"involved_malleoli": "lateral_medial", "medial_morphology": "transverse_oblique", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "spiral"}'::jsonb),
 
         (case_active_3_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A3: Weber C High Fibula', 'Proximal fibula fracture with syndesmotic injury.',
@@ -121,13 +121,13 @@ BEGIN
          'Case A4: Isolated Medial Malleolus', 'Medial malleolus fracture only.',
          'published', false, 3, 3, study_active_id, 4, false, true,
          '{"lauge_hansen": {"type": "PA", "stage": 1}, "ao_ota": {"code": "44-A1"}}'::jsonb,
-         '{"involved_malleoli": "medial_only", "medial_morphology": "oblique"}'::jsonb),
+         '{"involved_malleoli": "medial_only", "medial_morphology": "vertical"}'::jsonb),
 
         (case_active_5_id, NOW() - INTERVAL '14 days', NOW(), NOW() - INTERVAL '10 days', admin_user_id,
          'Case A5: Trimalleolar Fracture', 'Complex trimalleolar pattern with posterior fragment.',
          'published', true, 3, 3, study_active_id, 5, false, true,
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B3"}, "bartonicek": {"type": "3"}}'::jsonb,
-         '{"involved_malleoli": "lateral_medial_posterior", "medial_morphology": "transverse", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "spiral", "posterior_fracture_type": "type_3"}'::jsonb);
+         '{"involved_malleoli": "lateral_medial_posterior", "medial_morphology": "transverse_oblique", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "spiral", "posterior_fracture_type": "type_3"}'::jsonb);
 
     -- Closed Study Cases
     INSERT INTO cases (id, created_at, updated_at, published_at, closed_at, created_by, title, description, status, has_tac_images, response_count, unique_users, study_id, case_order, allow_multiple_responses, show_reference_after_submit, reference_classification, reference_input)
@@ -142,7 +142,7 @@ BEGIN
          'Validation Case 2: PAB Pattern', 'Pronation-abduction mechanism.',
          'closed', true, 3, 3, study_closed_id, 2, false, true,
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb,
-         '{"involved_malleoli": "lateral_medial", "medial_morphology": "transverse", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "oblique"}'::jsonb),
+         '{"involved_malleoli": "lateral_medial", "medial_morphology": "transverse_oblique", "fibular_level_for_transverse": "transindesmal", "lateral_morphology": "oblique"}'::jsonb),
 
         (case_closed_3_id, NOW() - INTERVAL '60 days', NOW() - INTERVAL '30 days', NOW() - INTERVAL '55 days', NOW() - INTERVAL '30 days', admin_user_id,
          'Validation Case 3: High Fibula PER', 'PER with high fibula fracture.',
@@ -228,28 +228,28 @@ BEGIN
         (gen_random_uuid(), case_active_2_id, rater1_id, NOW() - INTERVAL '1 day',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B2"}, "bartonicek": {"type": "2"}}'::jsonb,
          89000, 'B', 'SER', '44-B2', '2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 45000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 70000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 45000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 70000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→spiral',
          '{"involved_malleoli": 8000, "medial_morphology": 17000, "fibular_level_for_transverse": 20000, "lateral_morphology": 25000}'::jsonb, 0),
 
         (gen_random_uuid(), case_active_2_id, rater2_id, NOW() - INTERVAL '2 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B2"}, "bartonicek": {"type": "2"}}'::jsonb,
          95000, 'B', 'SER', '44-B2', '2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 10000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 30000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 55000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 85000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 10000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 30000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 55000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 85000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→spiral',
          '{"involved_malleoli": 10000, "medial_morphology": 20000, "fibular_level_for_transverse": 25000, "lateral_morphology": 30000}'::jsonb, 1),
 
         (gen_random_uuid(), case_active_2_id, rater3_id, NOW() - INTERVAL '3 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PER", "stage": 3}, "ao_ota": {"code": "44-B2"}, "bartonicek": {"type": "3"}}'::jsonb,
          72000, 'B', 'PER', '44-B2', '3',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 6000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 20000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 40000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 60000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 6000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 20000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 40000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 60000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→oblique',
          '{"involved_malleoli": 6000, "medial_morphology": 14000, "fibular_level_for_transverse": 20000, "lateral_morphology": 20000}'::jsonb, 2),
 
         (gen_random_uuid(), case_active_2_id, rater4_id, NOW() - INTERVAL '5 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B3"}, "bartonicek": {"type": "2"}}'::jsonb,
          110000, 'B', 'SER', '44-B3', '2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 15000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 40000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 70000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 100000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 15000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 40000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 70000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 100000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→spiral',
          '{"involved_malleoli": 15000, "medial_morphology": 25000, "fibular_level_for_transverse": 30000, "lateral_morphology": 30000}'::jsonb, 4);
 
@@ -290,21 +290,21 @@ BEGIN
         (gen_random_uuid(), case_active_4_id, rater1_id, NOW() - INTERVAL '1 day',
          '{"lauge_hansen": {"type": "PA", "stage": 1}, "ao_ota": {"code": "44-A1"}}'::jsonb,
          43000, 'PA', '44-A1',
-         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 6000}, {"question": "medial_morphology", "answer": "oblique", "timestamp": 35000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 6000}, {"question": "medial_morphology", "answer": "vertical", "timestamp": 35000}]'::jsonb,
          'medial_only→oblique',
          '{"involved_malleoli": 6000, "medial_morphology": 29000}'::jsonb, 0),
 
         (gen_random_uuid(), case_active_4_id, rater2_id, NOW() - INTERVAL '2 days',
          '{"lauge_hansen": {"type": "SA", "stage": 1}, "ao_ota": {"code": "44-A1"}}'::jsonb,
          51000, 'SA', '44-A1',
-         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 42000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 42000}]'::jsonb,
          'medial_only→transverse',
          '{"involved_malleoli": 8000, "medial_morphology": 34000}'::jsonb, 2),
 
         (gen_random_uuid(), case_active_4_id, rater3_id, NOW() - INTERVAL '3 days',
          '{"lauge_hansen": {"type": "PA", "stage": 1}, "ao_ota": {"code": "44-A2"}}'::jsonb,
          39000, 'PA', '44-A2',
-         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 5000}, {"question": "medial_morphology", "answer": "oblique", "timestamp": 30000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "medial_only", "timestamp": 5000}, {"question": "medial_morphology", "answer": "vertical", "timestamp": 30000}]'::jsonb,
          'medial_only→oblique',
          '{"involved_malleoli": 5000, "medial_morphology": 25000}'::jsonb, 1);
 
@@ -314,21 +314,21 @@ BEGIN
         (gen_random_uuid(), case_active_5_id, rater1_id, NOW() - INTERVAL '1 day',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B3"}, "bartonicek": {"type": "3"}}'::jsonb,
          125000, 'B', 'SER', '44-B3', '3',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 10000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 30000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 55000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 85000}, {"question": "posterior_fracture_type", "answer": "type_3", "timestamp": 115000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 10000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 30000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 55000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 85000}, {"question": "posterior_fracture_type", "answer": "type_3", "timestamp": 115000}]'::jsonb,
          'lateral_medial_posterior→transverse→transindesmal→spiral→type_3',
          '{"involved_malleoli": 10000, "medial_morphology": 20000, "fibular_level_for_transverse": 25000, "lateral_morphology": 30000, "posterior_fracture_type": 30000}'::jsonb, 1),
 
         (gen_random_uuid(), case_active_5_id, rater2_id, NOW() - INTERVAL '2 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 4}, "ao_ota": {"code": "44-B3"}, "bartonicek": {"type": "2"}}'::jsonb,
          98000, 'B', 'SER', '44-B3', '2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 48000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 72000}, {"question": "posterior_fracture_type", "answer": "type_2", "timestamp": 90000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 48000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 72000}, {"question": "posterior_fracture_type", "answer": "type_2", "timestamp": 90000}]'::jsonb,
          'lateral_medial_posterior→transverse→transindesmal→spiral→type_2',
          '{"involved_malleoli": 8000, "medial_morphology": 17000, "fibular_level_for_transverse": 23000, "lateral_morphology": 24000, "posterior_fracture_type": 18000}'::jsonb, 0),
 
         (gen_random_uuid(), case_active_5_id, rater3_id, NOW() - INTERVAL '3 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PER", "stage": 4}, "ao_ota": {"code": "44-B3"}, "bartonicek": {"type": "3"}}'::jsonb,
          112000, 'B', 'PER', '44-B3', '3',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 12000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 35000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 60000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 88000}, {"question": "posterior_fracture_type", "answer": "type_3", "timestamp": 105000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial_posterior", "timestamp": 12000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 35000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 60000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 88000}, {"question": "posterior_fracture_type", "answer": "type_3", "timestamp": 105000}]'::jsonb,
          'lateral_medial_posterior→transverse→transindesmal→oblique→type_3',
          '{"involved_malleoli": 12000, "medial_morphology": 23000, "fibular_level_for_transverse": 25000, "lateral_morphology": 28000, "posterior_fracture_type": 17000}'::jsonb, 3);
 
@@ -361,21 +361,21 @@ BEGIN
         (gen_random_uuid(), case_closed_2_id, rater1_id, NOW() - INTERVAL '32 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb,
          58000, 'B', 'PAB', '44-B2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 7000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 22000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 38000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 50000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 7000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 22000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 38000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 50000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→oblique',
          '{"involved_malleoli": 7000, "medial_morphology": 15000, "fibular_level_for_transverse": 16000, "lateral_morphology": 12000}'::jsonb, 0),
 
         (gen_random_uuid(), case_closed_2_id, rater2_id, NOW() - INTERVAL '35 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "SER", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb,
          65000, 'B', 'SER', '44-B2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 42000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 58000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 8000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 25000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 42000}, {"question": "lateral_morphology", "answer": "spiral", "timestamp": 58000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→spiral',
          '{"involved_malleoli": 8000, "medial_morphology": 17000, "fibular_level_for_transverse": 17000, "lateral_morphology": 16000}'::jsonb, 1),
 
         (gen_random_uuid(), case_closed_2_id, rater3_id, NOW() - INTERVAL '33 days',
          '{"danis_weber": {"type": "B"}, "lauge_hansen": {"type": "PAB", "stage": 3}, "ao_ota": {"code": "44-B2"}}'::jsonb,
          52000, 'B', 'PAB', '44-B2',
-         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 6000}, {"question": "medial_morphology", "answer": "transverse", "timestamp": 20000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 35000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 45000}]'::jsonb,
+         '[{"question": "involved_malleoli", "answer": "lateral_medial", "timestamp": 6000}, {"question": "medial_morphology", "answer": "transverse_oblique", "timestamp": 20000}, {"question": "fibular_level_for_transverse", "answer": "transindesmal", "timestamp": 35000}, {"question": "lateral_morphology", "answer": "oblique", "timestamp": 45000}]'::jsonb,
          'lateral_medial→transverse→transindesmal→oblique',
          '{"involved_malleoli": 6000, "medial_morphology": 14000, "fibular_level_for_transverse": 15000, "lateral_morphology": 10000}'::jsonb, 0),
 

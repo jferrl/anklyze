@@ -274,7 +274,7 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 	}{
 		{
 			name:                "small_without_extension + oblique → SA AO 44-A2",
-			medialMorphology:    domain.MedialMorphologyOblique,
+			medialMorphology:    domain.MedialMorphologyVertical,
 			expectedAOOTA:       domain.AOOTAA2,
 			expectedLaugeHansen: domain.LaugeHansenSA,
 			expectedAmbiguous:   false,
@@ -893,7 +893,7 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 		// Path: Oblique medial + infrasindesmal transverse fibula
 		{
 			name:                  "oblique medial with infrasindesmal transverse fibula",
-			medialMorphology:      domain.MedialMorphologyOblique,
+			medialMorphology:      domain.MedialMorphologyVertical,
 			fibulaInfraTransverse: &boolTrue,
 			lang:                  i18n.English,
 			expectedDanisWeber:    domain.DanisWeberA,
@@ -931,7 +931,7 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 		// Path: Low - transverse lateral morphology - infrasindesmal
 		{
 			name:                      "low transverse lateral infrasindesmal",
-			medialMorphology:          domain.MedialMorphologyOblique,
+			medialMorphology:          domain.MedialMorphologyVertical,
 			fibulaInfraTransverse:     &boolFalse,
 			lateralMorphology:         domain.LateralMorphologyTransverse,
 			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
@@ -943,7 +943,7 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 		// Path: Low - transverse lateral morphology - transindesmal
 		{
 			name:                      "low transverse lateral transindesmal",
-			medialMorphology:          domain.MedialMorphologyOblique,
+			medialMorphology:          domain.MedialMorphologyVertical,
 			fibulaInfraTransverse:     &boolFalse,
 			lateralMorphology:         domain.LateralMorphologyTransverse,
 			fibularLevelForTransverse: domain.FibularLevelTransindesmal,

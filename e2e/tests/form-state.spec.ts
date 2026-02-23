@@ -117,12 +117,12 @@ test.describe('Form State Management', () => {
 
     test('should reset dependent fields when changing medial morphology in lateral medial', async () => {
       await classifyPage.selectLateralMedial();
-      await classifyPage.selectLMMedialOblique();
+      await classifyPage.selectLMMedialVertical();
       await classifyPage.selectLMInfraTransverseYes();
       await classifyPage.expectClassifyButtonEnabled();
 
       // Change medial morphology
-      await classifyPage.selectLMMedialTransverse();
+      await classifyPage.selectLMMedialTransverseOblique();
 
       // Button should be disabled
       await classifyPage.expectClassifyButtonDisabled();
@@ -190,7 +190,7 @@ test.describe('Form State Management', () => {
 
       // Second classification with different path
       await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyOblique();
+      await classifyPage.selectMedialMorphologyVertical();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();

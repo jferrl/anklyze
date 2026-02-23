@@ -18,8 +18,8 @@ export type PosteriorFractureType =
 
 // Morfología del maléolo medial
 export type MedialMorphology =
-  | 'oblique'    // Oblicuo
-  | 'transverse'; // Transverso
+  | 'vertical'           // Vertical
+  | 'transverse_oblique'; // Transverso/oblicuo
 
 // Nivel de fractura del peroné
 export type FibularLevel =

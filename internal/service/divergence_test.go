@@ -159,14 +159,14 @@ func TestBuildAnswerPathFromInput(t *testing.T) {
 			},
 		},
 		{
-			name: "medial only with oblique morphology",
+			name: "medial only with vertical morphology",
 			input: &domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: domain.MedialMorphologyOblique,
+				MedialMorphology: domain.MedialMorphologyVertical,
 			},
 			expected: map[string]string{
 				"involved_malleoli": "medial_only",
-				"medial_morphology": "oblique",
+				"medial_morphology": "vertical",
 			},
 		},
 	}
@@ -217,9 +217,9 @@ func TestBuildDecisionPathString(t *testing.T) {
 			name: "medial only",
 			input: &domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: domain.MedialMorphologyOblique,
+				MedialMorphology: domain.MedialMorphologyVertical,
 			},
-			expected: "medial_only→oblique",
+			expected: "medial_only→vertical",
 		},
 	}
 

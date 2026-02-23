@@ -23,7 +23,7 @@ describe('shareUrl', () => {
       const input: FractureInput = {
         involved_malleoli: 'trimaleolar',
         posterior_fracture_type: 'posterolateral',
-        medial_morphology: 'transverse',
+        medial_morphology: 'transverse_oblique',
         fibular_level: 'suprasindesmal',
         lateral_morphology: 'spiral',
         suprasindesmal_type: 'simple_diaphyseal',
@@ -112,7 +112,7 @@ describe('shareUrl', () => {
       expect(input).toEqual({
         involved_malleoli: 'trimaleolar',
         posterior_fracture_type: 'posterolateral',
-        medial_morphology: 'transverse',
+        medial_morphology: 'transverse_oblique',
         fibular_level: 'suprasindesmal',
         lateral_morphology: 'spiral',
         suprasindesmal_type: 'simple_diaphyseal',
@@ -162,7 +162,7 @@ describe('shareUrl', () => {
       const original: FractureInput = {
         involved_malleoli: 'trimaleolar',
         posterior_fracture_type: 'posterolateral',
-        medial_morphology: 'oblique',
+        medial_morphology: 'vertical',
         fibular_level: 'transindesmal',
         lateral_morphology: 'oblique',
       }
