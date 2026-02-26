@@ -27,8 +27,8 @@ This milestone hardens the Anklyze codebase from a working prototype to producti
 **Plans**: 3 plans (Wave 1 — all parallel)
 
 Plans:
-- [ ] 01-01-PLAN.md — Surface ambiguous and impossible classification flags in API responses and frontend UI (BUG-01, BUG-02)
-- [ ] 01-02-PLAN.md — Enforce case state machine transitions with test coverage and frontend error handling (BUG-03)
+- [x] 01-01-PLAN.md — Surface ambiguous and impossible classification flags in API responses and frontend UI (BUG-01, BUG-02)
+- [x] 01-02-PLAN.md — Enforce case state machine transitions with test coverage and frontend error handling (BUG-03)
 - [ ] 01-03-PLAN.md — Make database fallback mode explicit in health endpoint and server startup logs (BUG-04)
 
 ### Phase 2: Security
@@ -124,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bug Fixes | 0/3 | Not started | - |
+| 1. Bug Fixes | 2/3 | In progress | - |
 | 2. Security | 0/4 | Not started | - |
 | 3. Backend Architecture | 0/3 | Not started | - |
 | 4. Backend Tech Debt | 0/5 | Not started | - |

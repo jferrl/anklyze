@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 ## Current Position
 
 Phase: 1 of 6 (Bug Fixes)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
-Last activity: 2026-02-26 — Roadmap created, phases derived from 25 requirements
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-26 — Completed 01-03: explicit database degraded mode in health endpoint
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 3
+- Average duration: ~3 minutes
+- Total execution time: 0.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-bug-fixes | 3 | ~9 min | ~3 min |
 
 **Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 01-01, 01-02, 01-03
+- Trend: Fast execution, minimal changes needed
 
 *Updated after each plan completion*
 
@@ -45,6 +45,9 @@ Recent decisions affecting current work:
 - [Init]: Harden before adding features — prevent compounding debt
 - [Init]: Full cleanup approach — moderate fixes leave architectural debt
 - [Init]: Defer test coverage to next milestone — keep scope focused
+- [01-02]: Use instanceof InputValidationError with code check for INVALID_STATE_TRANSITION — consistent with existing error pattern
+- [01-02]: Close publish dialog on error in CaseEditorPage — prevents stale dialog state after failed mutation
+- [01-02]: Separate publishFailed/closeFailed keys over generic operationFailed — clearer actionable feedback
 
 ### Pending Todos
 
@@ -58,5 +61,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Roadmap created, ROADMAP.md and STATE.md written, REQUIREMENTS.md traceability updated
+Stopped at: Completed 01-02-PLAN.md — case state machine error handling
 Resume file: None
