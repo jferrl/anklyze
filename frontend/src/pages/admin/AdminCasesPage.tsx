@@ -54,7 +54,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
-import { caseApi } from '@/services';
+import { toast } from 'sonner';
+import { caseApi, InputValidationError } from '@/services';
 import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -97,6 +98,13 @@ export function AdminCasesPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
     },
+    onError: (error: Error) => {
+      if (error instanceof InputValidationError && error.code === 'INVALID_STATE_TRANSITION') {
+        toast.error(t('errors.invalidStateTransition'));
+      } else {
+        toast.error(t('errors.publishFailed'));
+      }
+    },
   });
 
   const closeMutation = useMutation({
@@ -105,6 +113,13 @@ export function AdminCasesPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
+    },
+    onError: (error: Error) => {
+      if (error instanceof InputValidationError && error.code === 'INVALID_STATE_TRANSITION') {
+        toast.error(t('errors.invalidStateTransition'));
+      } else {
+        toast.error(t('errors.closeFailed'));
+      }
     },
   });
 

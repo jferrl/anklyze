@@ -38,7 +38,8 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { caseApi } from '@/services';
+import { toast } from 'sonner';
+import { caseApi, InputValidationError } from '@/services';
 import { CaseUsersManager } from '../../components/admin/CaseUsersManager';
 import { GoldStandardInputDialog } from '../../components/cases';
 import { cn } from '@/lib/utils';
@@ -186,6 +187,14 @@ export function CaseEditorPage() {
       queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
       setShowPublishDialog(false);
       navigate('/admin/cases');
+    },
+    onError: (error: Error) => {
+      if (error instanceof InputValidationError && error.code === 'INVALID_STATE_TRANSITION') {
+        toast.error(t('errors.invalidStateTransition'));
+      } else {
+        toast.error(t('errors.publishFailed'));
+      }
+      setShowPublishDialog(false);
     },
   });
 

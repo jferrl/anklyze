@@ -1158,6 +1158,9 @@
     "MISSING_IMAGES": "Se requiere al menos una imagen antes de publicar",
     "DEADLINE_PASSED": "El plazo del caso ha expirado",
     "CASE_NOT_ACCEPTING_RESPONSES": "Este caso no está aceptando respuestas actualmente",
-    "ALREADY_RESPONDED": "Ya has enviado una respuesta a este caso"
+    "ALREADY_RESPONDED": "Ya has enviado una respuesta a este caso",
+    "invalidStateTransition": "Esta accion no esta permitida en el estado actual del caso. Por favor, actualice y vuelva a intentarlo.",
+    "publishFailed": "Error al publicar el caso. Por favor, intentelo de nuevo.",
+    "closeFailed": "Error al cerrar el caso. Por favor, intentelo de nuevo."
   }
 }

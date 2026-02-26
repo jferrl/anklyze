@@ -1152,6 +1152,9 @@
     "MISSING_IMAGES": "At least one image is required before publishing",
     "DEADLINE_PASSED": "The case deadline has passed",
     "CASE_NOT_ACCEPTING_RESPONSES": "This case is not currently accepting responses",
-    "ALREADY_RESPONDED": "You have already submitted a response to this case"
+    "ALREADY_RESPONDED": "You have already submitted a response to this case",
+    "invalidStateTransition": "This action is not allowed in the current case status. Please refresh and try again.",
+    "publishFailed": "Failed to publish case. Please try again.",
+    "closeFailed": "Failed to close case. Please try again."
   }
 }
