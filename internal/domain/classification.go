@@ -26,9 +26,10 @@ type DanisWeberClassification struct {
 
 // LaugeHansenClassification holds the Lauge-Hansen classification result
 type LaugeHansenClassification struct {
-	Type          LaugeHansenType `json:"type"`                     // SA, SER, PER, PA
-	Ambiguous     bool            `json:"ambiguous,omitempty"`      // Whether classification is ambiguous
-	PossibleTypes []string        `json:"possible_types,omitempty"` // Alternative types when classification is ambiguous
+	Type               LaugeHansenType `json:"type"`                       // SA, SER, PER, PA
+	Ambiguous          bool            `json:"ambiguous,omitempty"`        // Whether classification is ambiguous
+	AmbiguousReasonKey string          `json:"ambiguous_reason_key,omitempty"` // i18n key explaining WHY classification is ambiguous
+	PossibleTypes      []string        `json:"possible_types,omitempty"`   // Alternative types when classification is ambiguous
 }
 
 // AOOTACode represents the AO/OTA classification code

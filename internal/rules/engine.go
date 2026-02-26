@@ -189,7 +189,8 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 			Code: domain.AOOTAA3,
 		}
 		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Ambiguous: true,
+			Ambiguous:          true,
+			AmbiguousReasonKey: "medial_posterior_extraincisural",
 		}
 		return result, nil
 	}
@@ -221,7 +222,8 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		if input.HasCTScan == nil || !*input.HasCTScan {
 			// No CT → AO unclassifiable (nil), LH unclassifiable, Weber A
 			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous: true,
+				Ambiguous:          true,
+				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
 			}
 			return result, nil
 		}
@@ -231,11 +233,13 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 				Code: domain.AOOTAA3,
 			}
 			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous: true,
+				Ambiguous:          true,
+				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
 			}
 		} else {
 			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous: true,
+				Ambiguous:          true,
+				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
 			}
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
