@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-26T21:16:52.566Z"
+last_updated: "2026-02-26T22:49:40.269Z"
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
 ---
 
 # Project State
@@ -47,6 +47,7 @@ Progress: [███░░░░░░░] 17%
 - Trend: Fast execution, minimal changes needed
 
 *Updated after each plan completion*
+| Phase 02-security P02 | 3 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,9 @@ Recent decisions affecting current work:
 - [01-03]: HTTP 200 in both healthy and degraded health responses — preserves monitoring that checks status code only
 - [01-03]: dbHealthy bool passed via constructor parameter, not runtime check — determined once at startup
 - [01-03]: SetupRoutes receives dbHealthy so main.go remains single source of truth for db connection state
+- [Phase 02-security]: jwtPattern applied before longCredentialPattern because JWT three-segment structure spans dots that break base64 contiguous match
+- [Phase 02-security]: 50-char minimum for longCredentialPattern ensures UUIDs (36 chars) are never redacted — case/study IDs remain readable in logs
+- [Phase 02-security]: RedactCredentials is a string helper, not custom slog.Handler — applied selectively at log call sites where credential values appear
 
 ### Pending Todos
 
