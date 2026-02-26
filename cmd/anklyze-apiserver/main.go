@@ -55,6 +55,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	if cfg.IsProduction() {
+		if err := cfg.ValidateProduction(); err != nil {
+			slog.Error("production security requirements not met — refusing to start", "error", err)
+			os.Exit(1)
+		}
+		slog.Info("production security validation passed")
+	}
+
 	// Initialize logger
 	logger.Setup(logger.Config{
 		Level:  cfg.LogLevel,

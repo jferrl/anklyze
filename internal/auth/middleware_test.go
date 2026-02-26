@@ -188,6 +188,72 @@ func TestAuthMiddleware(t *testing.T) {
 	}
 }
 
+// TestAuthMiddlewareStructuredErrors verifies that expired and invalid tokens
+// return structured JSON responses with the expected "code" field.
+func TestAuthMiddlewareStructuredErrors(t *testing.T) {
+	validator := createTestValidator(t)
+	defer validator.Close()
+
+	tests := []struct {
+		name           string
+		authHeader     string
+		expectedStatus int
+		expectedCode   string
+		expectedMsg    string
+	}{
+		{
+			name: "expired token returns TOKEN_EXPIRED code",
+			authHeader: "Bearer " + createExpiredToken(Claims{
+				Email: "user@example.com",
+			}, testSecret),
+			expectedStatus: http.StatusUnauthorized,
+			expectedCode:   "TOKEN_EXPIRED",
+			expectedMsg:    "token expired",
+		},
+		{
+			name:           "invalid token returns UNAUTHORIZED code",
+			authHeader:     "Bearer invalid-token",
+			expectedStatus: http.StatusUnauthorized,
+			expectedCode:   "UNAUTHORIZED",
+			expectedMsg:    "invalid token",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, router := gin.CreateTestContext(w)
+
+			router.Use(AuthMiddleware(validator))
+			router.GET("/test", func(c *gin.Context) {
+				c.Status(http.StatusOK)
+			})
+
+			c.Request = httptest.NewRequest("GET", "/test", nil)
+			c.Request.Header.Set("Authorization", tt.authHeader)
+
+			router.ServeHTTP(w, c.Request)
+
+			if w.Code != tt.expectedStatus {
+				t.Errorf("expected status %d, got %d", tt.expectedStatus, w.Code)
+			}
+
+			var resp map[string]any
+			if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+				t.Fatalf("failed to unmarshal response: %v", err)
+			}
+
+			if code, ok := resp["code"].(string); !ok || code != tt.expectedCode {
+				t.Errorf("expected code %q, got %q (body: %s)", tt.expectedCode, code, w.Body.String())
+			}
+
+			if msg, ok := resp["message"].(string); !ok || msg != tt.expectedMsg {
+				t.Errorf("expected message %q, got %q", tt.expectedMsg, msg)
+			}
+		})
+	}
+}
+
 func TestRequireRole(t *testing.T) {
 	validator := createTestValidator(t)
 	defer validator.Close()

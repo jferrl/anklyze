@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -66,19 +67,17 @@ func AuthMiddleware(validator *Validator) gin.HandlerFunc {
 			}
 			slog.Debug("JWT validation failed", "error", err, "token_prefix", tokenPrefix)
 
-			status := http.StatusUnauthorized
-			message := "invalid token"
-
-			switch err {
-			case ErrTokenExpired:
-				message = "token expired"
-			case ErrInvalidSignature:
-				message = "invalid token signature"
+			if errors.Is(err, ErrTokenExpired) {
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"code":    domain.ErrCodeTokenExpired,
+					"message": "token expired",
+				})
+				c.Abort()
+				return
 			}
-
-			c.JSON(status, gin.H{
-				"error":   "unauthorized",
-				"message": message,
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code":    "UNAUTHORIZED",
+				"message": "invalid token",
 			})
 			c.Abort()
 			return
