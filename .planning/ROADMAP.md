@@ -24,12 +24,12 @@ This milestone hardens the Anklyze codebase from a working prototype to producti
   2. When a fracture pattern produces an impossible classification, the API response includes an explicit impossible indicator and the frontend displays a visible error state
   3. Attempting to transition a case to an invalid state (e.g., closed → draft) returns a structured error response with a descriptive code, not a silent no-op
   4. When the database is unavailable, the API returns a response that identifies degraded mode; callers can distinguish a healthy response from a degraded one
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1 — all parallel)
 
 Plans:
-- [ ] 01-01: Surface ambiguous and impossible classification flags in API responses and frontend UI
-- [ ] 01-02: Enforce case state machine transitions in the service layer with structured error responses
-- [ ] 01-03: Make database fallback mode explicit in API responses and server startup logs
+- [ ] 01-01-PLAN.md — Surface ambiguous and impossible classification flags in API responses and frontend UI (BUG-01, BUG-02)
+- [ ] 01-02-PLAN.md — Enforce case state machine transitions with test coverage and frontend error handling (BUG-03)
+- [ ] 01-03-PLAN.md — Make database fallback mode explicit in health endpoint and server startup logs (BUG-04)
 
 ### Phase 2: Security
 **Goal**: Authentication, JWT validation, sensitive data protection, and service key access are enforced for production deployment
