@@ -40,13 +40,12 @@ Plans:
   2. If SUPABASE_JWT_SECRET is absent at startup, a WARN-level log entry is emitted that flags the missing secret before the server accepts requests
   3. Sensitive medical data in the audit trail is either field-level encrypted or sanitized so that raw PII does not appear in plaintext log records
   4. SUPABASE_SERVICE_ROLE_KEY usage is documented with a list of required permissions and an audit comment at each call site; overprivileged calls are restricted
-**Plans**: TBD
+**Plans**: 3 plans (Wave 1 — all parallel)
 
 Plans:
-- [ ] 02-01: Enforce authentication in production and add startup validation for auth configuration
-- [ ] 02-02: Harden JWT secret handling with warning logs and production enforcement
-- [ ] 02-03: Protect sensitive medical data in audit trail with field-level sanitization or encryption
-- [ ] 02-04: Audit service role key usage and document required permissions at each call site
+- [ ] 02-01-PLAN.md — Production startup validation (SEC-01, SEC-02): enforce SUPABASE_URL, SUPABASE_JWT_SECRET, and TOKEN_EXPIRED error code
+- [ ] 02-02-PLAN.md — Credential redaction helper (SEC-03): RedactCredentials() in internal/logger for JWT tokens and API keys
+- [ ] 02-03-PLAN.md — Service key governance (SEC-04): ServiceKeyOperation enum and LogServiceKeyUsage at all 4 call sites
 
 ### Phase 3: Backend Architecture
 **Goal**: Core classification and study operations are mediated by domain services with clear boundaries
@@ -125,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bug Fixes | 3/3 | Complete   | 2026-02-26 |
-| 2. Security | 0/4 | Not started | - |
+| 2. Security | 0/3 | Not started | - |
 | 3. Backend Architecture | 0/3 | Not started | - |
 | 4. Backend Tech Debt | 0/5 | Not started | - |
 | 5. Frontend Tech Debt | 0/4 | Not started | - |
