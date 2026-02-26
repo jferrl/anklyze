@@ -58,6 +58,7 @@ type Handler struct {
 	chatAnalyticsRepo   ChatAnalyticsRepository
 	sessionMessageLimit int
 	inputValidator      *InputValidator
+	dbHealthy           bool // Whether database connection succeeded at startup
 }
 
 // NewHandler creates a new Handler
@@ -68,6 +69,7 @@ func NewHandler(
 	analyticsRepo AnalyticsRepository,
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
+	dbHealthy bool,
 ) *Handler {
 	return &Handler{
 		engine:              engine,
@@ -78,6 +80,7 @@ func NewHandler(
 		chatAnalyticsRepo:   chatAnalyticsRepo,
 		sessionMessageLimit: 20, // Default limit
 		inputValidator:      NewInputValidator(),
+		dbHealthy:           dbHealthy,
 	}
 }
 
@@ -149,7 +152,11 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 // @Success 200 {object} map[string]string "Health status"
 // @Router /health [get]
 func (h *Handler) HealthCheck(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	dbStatus := "healthy"
+	if !h.dbHealthy {
+		dbStatus = "degraded"
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "db": dbStatus})
 }
 
 // parseDateRange parses from/to query parameters with defaults.

@@ -40,10 +40,11 @@ func SetupRoutes(
 	chatService service.ChatService,
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
+	dbHealthy bool,
 ) *Cleanup {
 	// Initialize dependencies
 	ruleEngine := rules.NewEngine()
-	handler := NewHandler(ruleEngine, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo).
+	handler := NewHandler(ruleEngine, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy).
 		WithSessionMessageLimit(cfg.SessionMessageLimit)
 
 	// CORS middleware

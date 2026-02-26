@@ -77,6 +77,10 @@ func main() {
 	// Database connection (captured for shutdown)
 	var db *gorm.DB
 
+	// dbHealthy tracks whether the database connection succeeded at startup.
+	// Used to report degraded mode in the /health endpoint.
+	var dbHealthy bool
+
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
 	if cfg.HasSupabaseStorage() {
@@ -88,7 +92,8 @@ func main() {
 		var err error
 		db, err = database.Connect(cfg.DatabaseURL)
 		if err != nil {
-			slog.Warn("database connection failed, audit disabled", "error", err)
+			slog.Warn("database connection failed, running in degraded mode (NoOp repositories)", "error", err)
+			dbHealthy = false
 			auditRepo = repository.NewNoOpAuditRepository()
 			analyticsRepo = repository.NewNoOpAnalyticsRepository()
 			chatAuditRepo = repository.NewNoOpChatAuditRepository()
@@ -115,6 +120,7 @@ func main() {
 			); err != nil {
 				slog.Warn("database migration failed", "error", err)
 			}
+			dbHealthy = true
 			slog.Info("database connected, audit trail and analytics enabled")
 			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
@@ -128,7 +134,8 @@ func main() {
 			studyResponseRepo = postgres.NewStudyResponseRepository(db)
 		}
 	} else {
-		slog.Info("no DATABASE_URL configured, audit trail disabled")
+		slog.Info("no DATABASE_URL configured, running in degraded mode (NoOp repositories)")
+		dbHealthy = false
 		auditRepo = repository.NewNoOpAuditRepository()
 		analyticsRepo = repository.NewNoOpAnalyticsRepository()
 		chatAuditRepo = repository.NewNoOpChatAuditRepository()
@@ -191,8 +198,14 @@ func main() {
 	// Initialize statistics service for reliability metrics
 	statsService := service.NewStatisticsService()
 
+	dbStatus := "connected"
+	if !dbHealthy {
+		dbStatus = "degraded (NoOp)"
+	}
+	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
+
 	router := gin.Default()
-	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo)
+	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, statsService)
 
@@ -204,7 +217,6 @@ func main() {
 	// Start server in goroutine with error channel pattern (Uber Go Style Guide)
 	errChan := make(chan error, 1)
 	go func() {
-		slog.Info("server starting", "port", cfg.Port)
 		errChan <- srv.ListenAndServe()
 	}()
 
