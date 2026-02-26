@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-26T22:49:40.269Z"
+last_updated: "2026-02-26T22:50:07.329Z"
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -48,6 +48,7 @@ Progress: [███░░░░░░░] 17%
 
 *Updated after each plan completion*
 | Phase 02-security P02 | 3 | 1 tasks | 2 files |
+| Phase 02-security P03 | 109 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Phase 02-security]: jwtPattern applied before longCredentialPattern because JWT three-segment structure spans dots that break base64 contiguous match
 - [Phase 02-security]: 50-char minimum for longCredentialPattern ensures UUIDs (36 chars) are never redacted — case/study IDs remain readable in logs
 - [Phase 02-security]: RedactCredentials is a string helper, not custom slog.Handler — applied selectively at log call sites where credential values appear
+- [Phase 02-security]: ServiceKeyOperation typed string enum exported from internal/supabase enumerates all permitted service key uses with required Supabase permission comments
+- [Phase 02-security]: LogServiceKeyUsage variadic attrs signature prevents callers from accidentally passing the service key value to log output
+- [Phase 02-security]: Timestamp embedded inside LogServiceKeyUsage so callers cannot omit it from audit records
 
 ### Pending Todos
 
