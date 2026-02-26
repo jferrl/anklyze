@@ -281,6 +281,21 @@
     "impossible": {
       "sa_mechanism": "Not possible. SA mechanism does not involve the posterior malleolus. PA mechanism is transsyndesmotic or suprasyndesmotic.",
       "exceptional": "Not possible (exceptional)"
+    },
+    "ambiguousBanner": {
+      "title": "Ambiguous Classification",
+      "genericReason": "This fracture pattern has multiple valid classification interpretations. Clinical correlation is recommended."
+    },
+    "ambiguousReasons": {
+      "medial_posterior_extraincisural": "Medial and posterior fracture with extraincisural posteromedial morphology — Lauge-Hansen classification cannot be uniquely determined.",
+      "lateral_posterior_infrasindesmal": "Lateral and posterior fracture at infrasindesmal level — this combination has multiple valid Lauge-Hansen interpretations."
+    },
+    "impossibleBanner": {
+      "title": "Classification Not Possible"
+    },
+    "impossibleReasons": {
+      "exceptional": "This fracture pattern falls outside standard classification systems.",
+      "trimaleolar_infrasindesmal": "Trimaleolar fracture with infrasindesmal fibular level cannot be classified using standard systems."
     }
   },
   "alerts": {

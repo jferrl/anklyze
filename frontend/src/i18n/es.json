@@ -287,6 +287,21 @@
     "impossible": {
       "sa_mechanism": "No posible. El mecanismo SA no arranca el maléolo posterior. Mecanismo PA son transindesmales o suprasindesmales.",
       "exceptional": "No posible (excepcional)"
+    },
+    "ambiguousBanner": {
+      "title": "Clasificacion Ambigua",
+      "genericReason": "Este patron de fractura tiene multiples interpretaciones de clasificacion validas. Se recomienda correlacion clinica."
+    },
+    "ambiguousReasons": {
+      "medial_posterior_extraincisural": "Fractura medial y posterior con morfologia posteromedial extraincisural — la clasificacion de Lauge-Hansen no puede determinarse de forma unica.",
+      "lateral_posterior_infrasindesmal": "Fractura lateral y posterior a nivel infrasindesmal — esta combinacion tiene multiples interpretaciones validas de Lauge-Hansen."
+    },
+    "impossibleBanner": {
+      "title": "Clasificacion No Posible"
+    },
+    "impossibleReasons": {
+      "exceptional": "Este patron de fractura esta fuera de los sistemas de clasificacion estandar.",
+      "trimaleolar_infrasindesmal": "La fractura trimaleolar con nivel fibular infrasindesmal no puede clasificarse mediante sistemas estandar."
     }
   },
   "alerts": {

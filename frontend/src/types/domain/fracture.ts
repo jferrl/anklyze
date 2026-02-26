@@ -104,6 +104,7 @@ export interface DanisWeberClassification {
 export interface LaugeHansenClassification {
   type: string;
   ambiguous?: boolean;
+  ambiguous_reason_key?: string;
   possible_types?: string[];
 }
 
