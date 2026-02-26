@@ -40,6 +40,7 @@ type updateUserRequest struct {
 // Note: Supabase performs a shallow merge on app_metadata, so only the "role"
 // field is updated while preserving all other existing metadata fields.
 func (a *AuthAdmin) UpdateUserRole(ctx context.Context, userID string, role string) error {
+	LogServiceKeyUsage(OpUpdateUserRole, "user_id", userID, "role", role)
 	reqBody := updateUserRequest{
 		AppMetadata: map[string]any{
 			"role": role,

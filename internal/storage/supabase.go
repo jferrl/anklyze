@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/jferrl/anklyze/internal/supabase"
 )
 
 // Note: Do not use url.JoinPath for signed URLs as it encodes query string characters
@@ -35,6 +37,7 @@ func NewSupabaseStorage(supabaseURL, serviceRoleKey, bucketName string) *Supabas
 
 // Upload uploads a file to the specified path in the bucket.
 func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Reader, contentType string, size int64) error {
+	supabase.LogServiceKeyUsage(supabase.OpUploadImage, "path", path)
 	// Read all content into memory for the request
 	content, err := io.ReadAll(reader)
 	if err != nil {
@@ -73,6 +76,7 @@ func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Rea
 
 // Delete removes a file at the specified path from the bucket.
 func (s *SupabaseStorage) Delete(ctx context.Context, path string) error {
+	supabase.LogServiceKeyUsage(supabase.OpDeleteImage, "path", path)
 	// Check context before making request
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("context cancelled before delete: %w", err)
@@ -113,6 +117,7 @@ type signedURLResponse struct {
 
 // GetSignedURL generates a time-limited URL for accessing the file.
 func (s *SupabaseStorage) GetSignedURL(ctx context.Context, path string, expiresIn time.Duration) (string, error) {
+	supabase.LogServiceKeyUsage(supabase.OpGetSignedURL, "path", path)
 	// Check context before making request
 	if err := ctx.Err(); err != nil {
 		return "", fmt.Errorf("context cancelled before creating signed URL: %w", err)
