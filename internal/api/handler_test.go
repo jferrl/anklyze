@@ -15,6 +15,8 @@ import (
 )
 
 // setupTestHandler creates a handler with real implementations for integration testing.
+// dbHealthy defaults to true — tests not specifically checking health degraded mode
+// should assume a healthy database state.
 func setupTestHandler() *Handler {
 	ruleEngine := rules.NewEngine()
 	auditRepo := repository.NewNoOpAuditRepository()
@@ -22,7 +24,7 @@ func setupTestHandler() *Handler {
 	chatAuditRepo := repository.NewNoOpChatAuditRepository()
 	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
 	// chatService is nil for tests - chat endpoint will return 503
-	return NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo)
+	return NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.
@@ -42,25 +44,57 @@ func setupTestRouter(h *Handler) *gin.Engine {
 func TestHandler_HealthCheck(t *testing.T) {
 	t.Parallel()
 
-	h := setupTestHandler()
-	router := setupTestRouter(h)
-
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	w := httptest.NewRecorder()
-
-	router.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Errorf("HealthCheck() status = %d, want %d", w.Code, http.StatusOK)
+	tests := []struct {
+		name      string
+		dbHealthy bool
+		wantDB    string
+	}{
+		{
+			name:      "healthy database returns db healthy",
+			dbHealthy: true,
+			wantDB:    "healthy",
+		},
+		{
+			name:      "degraded database returns db degraded",
+			dbHealthy: false,
+			wantDB:    "degraded",
+		},
 	}
 
-	var response map[string]string
-	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-		t.Fatalf("failed to unmarshal response: %v", err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	if response["status"] != "ok" {
-		t.Errorf("HealthCheck() status = %q, want %q", response["status"], "ok")
+			ruleEngine := rules.NewEngine()
+			auditRepo := repository.NewNoOpAuditRepository()
+			analyticsRepo := repository.NewNoOpAnalyticsRepository()
+			chatAuditRepo := repository.NewNoOpChatAuditRepository()
+			chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
+			h := NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy)
+			router := setupTestRouter(h)
+
+			req := httptest.NewRequest(http.MethodGet, "/health", nil)
+			w := httptest.NewRecorder()
+
+			router.ServeHTTP(w, req)
+
+			if w.Code != http.StatusOK {
+				t.Errorf("HealthCheck() status = %d, want %d", w.Code, http.StatusOK)
+			}
+
+			var response map[string]string
+			if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+				t.Fatalf("failed to unmarshal response: %v", err)
+			}
+
+			if response["status"] != "ok" {
+				t.Errorf("HealthCheck() status = %q, want %q", response["status"], "ok")
+			}
+
+			if response["db"] != tt.wantDB {
+				t.Errorf("HealthCheck() db = %q, want %q", response["db"], tt.wantDB)
+			}
+		})
 	}
 }
 
