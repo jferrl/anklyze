@@ -48,6 +48,9 @@ Recent decisions affecting current work:
 - [01-02]: Use instanceof InputValidationError with code check for INVALID_STATE_TRANSITION — consistent with existing error pattern
 - [01-02]: Close publish dialog on error in CaseEditorPage — prevents stale dialog state after failed mutation
 - [01-02]: Separate publishFailed/closeFailed keys over generic operationFailed — clearer actionable feedback
+- [01-03]: HTTP 200 in both healthy and degraded health responses — preserves monitoring that checks status code only
+- [01-03]: dbHealthy bool passed via constructor parameter, not runtime check — determined once at startup
+- [01-03]: SetupRoutes receives dbHealthy so main.go remains single source of truth for db connection state
 
 ### Pending Todos
 
@@ -61,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 01-02-PLAN.md — case state machine error handling
+Stopped at: Completed 01-03-PLAN.md — explicit database degraded mode in health endpoint
 Resume file: None
