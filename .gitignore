@@ -44,3 +44,4 @@ playwright-screenshots/
 coverage/
 .playwright-mcp/
 bin/
+.planning/
