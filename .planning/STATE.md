@@ -45,6 +45,9 @@ Recent decisions affecting current work:
 - [Init]: Harden before adding features — prevent compounding debt
 - [Init]: Full cleanup approach — moderate fixes leave architectural debt
 - [Init]: Defer test coverage to next milestone — keep scope focused
+- [01-01]: Ambiguous banner triggers on ambiguous===true regardless of possible_types presence — no silent failures
+- [01-01]: Impossible classification shows red banner at top AND continues rendering all available classification cards below
+- [01-01]: AmbiguousReasonKey uses i18n key pattern so frontend can display locale-appropriate clinical reason
 - [01-02]: Use instanceof InputValidationError with code check for INVALID_STATE_TRANSITION — consistent with existing error pattern
 - [01-02]: Close publish dialog on error in CaseEditorPage — prevents stale dialog state after failed mutation
 - [01-02]: Separate publishFailed/closeFailed keys over generic operationFailed — clearer actionable feedback
@@ -64,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 01-03-PLAN.md — explicit database degraded mode in health endpoint
+Stopped at: Completed 01-01-PLAN.md — surface ambiguous and impossible classification flags (AmbiguousReasonKey + frontend banners)
 Resume file: None

@@ -9,8 +9,8 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 
 ### Bug Fixes
 
-- [ ] **BUG-01**: Ambiguous classifications are clearly indicated to users in API responses and frontend UI
-- [ ] **BUG-02**: Impossible classifications are clearly indicated to users in API responses and frontend UI
+- [x] **BUG-01**: Ambiguous classifications are clearly indicated to users in API responses and frontend UI
+- [x] **BUG-02**: Impossible classifications are clearly indicated to users in API responses and frontend UI
 - [x] **BUG-03**: Case state transitions (draft → published → closed) are validated in service layer with proper error responses
 - [x] **BUG-04**: Database connection fallback behavior explicitly communicates degraded mode to users and API consumers
 
@@ -90,8 +90,8 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 1 | Pending |
-| BUG-02 | Phase 1 | Pending |
+| BUG-01 | Phase 1 | Complete |
+| BUG-02 | Phase 1 | Complete |
 | BUG-03 | Phase 1 | Pending |
 | BUG-04 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
