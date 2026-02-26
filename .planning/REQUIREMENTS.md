@@ -16,8 +16,8 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 
 ### Security
 
-- [ ] **SEC-01**: Authentication is enforced in production environments (REQUIRE_AUTH or equivalent mechanism)
-- [ ] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
+- [x] **SEC-01**: Authentication is enforced in production environments (REQUIRE_AUTH or equivalent mechanism)
+- [x] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
 - [x] **SEC-03**: Sensitive medical data in audit trail logs is protected with field-level encryption or sanitization
 - [x] **SEC-04**: Service role key usage is audited and restricted with clear documentation of required permissions
 
@@ -94,8 +94,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | BUG-02 | Phase 1 | Complete |
 | BUG-03 | Phase 1 | Pending |
 | BUG-04 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Pending |
-| SEC-02 | Phase 2 | Pending |
+| SEC-01 | Phase 2 | Complete |
+| SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
 | SEC-04 | Phase 2 | Complete |
 | ARCH-01 | Phase 3 | Pending |

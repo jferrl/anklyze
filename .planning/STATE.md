@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-26T22:50:07.329Z"
+last_updated: "2026-02-26T22:51:00Z"
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 4
 ---
 
 # Project State
@@ -18,21 +18,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** The classification engine must produce correct, reliable results for every fracture pattern — ambiguous and impossible cases must be clearly surfaced, never silently dropped.
-**Current focus:** Phase 1 — Bug Fixes
+**Current focus:** Phase 2 — Security
 
 ## Current Position
 
-Phase: 1 of 6 (Bug Fixes)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-26 — Completed 01-03: explicit database degraded mode in health endpoint
+Phase: 2 of 6 (Security)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-26 — Completed 02-01: production startup validation gate + TOKEN_EXPIRED structured error
 
-Progress: [███░░░░░░░] 17%
+Progress: [████░░░░░░] 22%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: ~3 minutes
 - Total execution time: 0.2 hours
 
@@ -41,14 +41,13 @@ Progress: [███░░░░░░░] 17%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-bug-fixes | 3 | ~9 min | ~3 min |
+| 02-security | 1 (so far) | ~3 min | ~3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01, 01-02, 01-03
+- Last 5 plans: 01-01, 01-02, 01-03, 02-01
 - Trend: Fast execution, minimal changes needed
 
 *Updated after each plan completion*
-| Phase 02-security P02 | 3 | 1 tasks | 2 files |
-| Phase 02-security P03 | 109 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -75,6 +74,10 @@ Recent decisions affecting current work:
 - [Phase 02-security]: ServiceKeyOperation typed string enum exported from internal/supabase enumerates all permitted service key uses with required Supabase permission comments
 - [Phase 02-security]: LogServiceKeyUsage variadic attrs signature prevents callers from accidentally passing the service key value to log output
 - [Phase 02-security]: Timestamp embedded inside LogServiceKeyUsage so callers cannot omit it from audit records
+- [02-01]: errors.Is(err, ErrTokenExpired) replaces == switch — safe against wrapping, idiomatic Go
+- [02-01]: Expired token gets own early return with {code:TOKEN_EXPIRED} — clearer control flow, distinct from other auth failures
+- [02-01]: ValidateProduction() accumulates all violations simultaneously — operator sees full picture on startup failure
+- [02-01]: IsProduction() gates ValidateProduction() in main.go — dev startup unaffected, no ENV required in non-production
 
 ### Pending Todos
 
@@ -88,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 01-01-PLAN.md — surface ambiguous and impossible classification flags (AmbiguousReasonKey + frontend banners)
+Stopped at: Completed 02-01-PLAN.md — production startup validation gate and TOKEN_EXPIRED structured error response
 Resume file: None

@@ -7,7 +7,7 @@ This milestone hardens the Anklyze codebase from a working prototype to producti
 ## Phases
 
 - [x] **Phase 1: Bug Fixes** - Correct classification surface, state machine enforcement, and DB fallback transparency (completed 2026-02-26)
-- [ ] **Phase 2: Security** - Auth enforcement, JWT hardening, sensitive data protection, and service key audit
+- [x] **Phase 2: Security** - Auth enforcement, JWT hardening, sensitive data protection, and service key audit (completed 2026-02-26)
 - [ ] **Phase 3: Backend Architecture** - ClassificationService, Study domain service, and model decoupling
 - [ ] **Phase 4: Backend Tech Debt** - Rule engine consolidation, statistics modularization, prompts extraction, JSONB validation, migrations
 - [ ] **Phase 5: Frontend Tech Debt** - API retry logic, page component decomposition, and event handler memoization
@@ -124,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bug Fixes | 3/3 | Complete   | 2026-02-26 |
-| 2. Security | 2/3 | In Progress|  |
+| 2. Security | 3/3 | Complete   | 2026-02-26 |
 | 3. Backend Architecture | 0/3 | Not started | - |
 | 4. Backend Tech Debt | 0/5 | Not started | - |
 | 5. Frontend Tech Debt | 0/4 | Not started | - |
