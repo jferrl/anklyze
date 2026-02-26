@@ -610,6 +610,110 @@ func TestLoadWithInvalidConfig(t *testing.T) {
 	}
 }
 
+func TestValidateProduction(t *testing.T) {
+	const validURL = "https://abc.supabase.co"
+	const validJWT = "this-is-a-valid-jwt-secret-that-is-long-enough"
+	const validKey = "service-role-key"
+
+	tests := []struct {
+		name    string
+		config  *Config
+		wantErr bool
+		errMsgs []string
+	}{
+		{
+			name: "valid production config",
+			config: &Config{
+				SupabaseURL:            validURL,
+				SupabaseJWTSecret:      validJWT,
+				SupabaseServiceRoleKey: validKey,
+			},
+			wantErr: false,
+		},
+		{
+			name: "missing SUPABASE_URL",
+			config: &Config{
+				SupabaseURL:            "",
+				SupabaseJWTSecret:      validJWT,
+				SupabaseServiceRoleKey: validKey,
+			},
+			wantErr: true,
+			errMsgs: []string{"SUPABASE_URL"},
+		},
+		{
+			name: "JWT secret shorter than 32 chars",
+			config: &Config{
+				SupabaseURL:            validURL,
+				SupabaseJWTSecret:      "short-secret",
+				SupabaseServiceRoleKey: validKey,
+			},
+			wantErr: true,
+			errMsgs: []string{"SUPABASE_JWT_SECRET must be >= 32"},
+		},
+		{
+			name: "missing SUPABASE_SERVICE_ROLE_KEY",
+			config: &Config{
+				SupabaseURL:            validURL,
+				SupabaseJWTSecret:      validJWT,
+				SupabaseServiceRoleKey: "",
+			},
+			wantErr: true,
+			errMsgs: []string{"SUPABASE_SERVICE_ROLE_KEY"},
+		},
+		{
+			name: "all three missing",
+			config: &Config{
+				SupabaseURL:            "",
+				SupabaseJWTSecret:      "",
+				SupabaseServiceRoleKey: "",
+			},
+			wantErr: true,
+			errMsgs: []string{"SUPABASE_URL", "SUPABASE_JWT_SECRET", "SUPABASE_SERVICE_ROLE_KEY"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.config.ValidateProduction()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateProduction() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr && err != nil {
+				for _, msg := range tt.errMsgs {
+					if !contains(err.Error(), msg) {
+						t.Errorf("ValidateProduction() error = %v, want error containing %q", err, msg)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestIsProduction(t *testing.T) {
+	tests := []struct {
+		name   string
+		appEnv string
+		want   bool
+	}{
+		{name: "production lowercase", appEnv: "production", want: true},
+		{name: "PRODUCTION uppercase", appEnv: "PRODUCTION", want: true},
+		{name: "Production mixed case", appEnv: "Production", want: true},
+		{name: "development", appEnv: "development", want: false},
+		{name: "empty string", appEnv: "", want: false},
+		{name: "staging", appEnv: "staging", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Config{AppEnv: tt.appEnv}
+			if got := c.IsProduction(); got != tt.want {
+				t.Errorf("IsProduction() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func contains(s, substr string) bool {
 	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsAt(s, substr))
 }

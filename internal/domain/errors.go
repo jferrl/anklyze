@@ -71,4 +71,7 @@ const (
 	ErrCodeDeadlinePassed            = "DEADLINE_PASSED"
 	ErrCodeCaseNotAcceptingResponses = "CASE_NOT_ACCEPTING_RESPONSES"
 	ErrCodeAlreadyResponded          = "ALREADY_RESPONDED"
+
+	// Auth errors
+	ErrCodeTokenExpired = "TOKEN_EXPIRED"
 )

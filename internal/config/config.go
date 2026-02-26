@@ -18,6 +18,7 @@ type Config struct {
 	GeminiModel     string
 	LogLevel        string
 	LogFormat       string
+	AppEnv          string // Application environment (e.g., "production", "development")
 	// Rate limiting configuration
 	RateLimitRate  float64 // Requests per second (e.g., 0.5 = 1 request per 2 seconds)
 	RateLimitBurst int     // Maximum burst size
@@ -43,6 +44,7 @@ func Load() (*Config, error) {
 		GeminiModel:            getEnv("GEMINI_MODEL", "gemini-3-flash-preview"),
 		LogLevel:               getEnv("LOG_LEVEL", "info"),
 		LogFormat:              getEnv("LOG_FORMAT", "text"),
+		AppEnv:                 os.Getenv("APP_ENV"),
 		RateLimitRate:          getEnvFloat("RATE_LIMIT_RATE", 0.5),    // 1 request per 2 seconds
 		RateLimitBurst:         getEnvInt("RATE_LIMIT_BURST", 5),       // Allow burst of 5
 		SessionMessageLimit:    getEnvInt("SESSION_MESSAGE_LIMIT", 20), // Max messages per session
@@ -131,6 +133,38 @@ func (c *Config) HasSupabase() bool {
 // HasSupabaseStorage returns true if Supabase Storage is configured.
 func (c *Config) HasSupabaseStorage() bool {
 	return c.SupabaseURL != "" && c.SupabaseServiceRoleKey != ""
+}
+
+// IsProduction returns true if the application is running in production mode.
+func (c *Config) IsProduction() bool {
+	return strings.ToLower(c.AppEnv) == "production"
+}
+
+// ValidateProduction checks that all required security secrets are present and valid
+// for production deployments. Returns an error listing all violations if any are found.
+// This must be called after Load() when IsProduction() is true.
+func (c *Config) ValidateProduction() error {
+	var errs []string
+
+	if c.SupabaseURL == "" {
+		errs = append(errs, "SUPABASE_URL is required in production (SEC-01: auth enforcement)")
+	}
+
+	if c.SupabaseJWTSecret == "" {
+		errs = append(errs, "SUPABASE_JWT_SECRET is required in production (SEC-02)")
+	} else if len(c.SupabaseJWTSecret) < 32 {
+		errs = append(errs, fmt.Sprintf("SUPABASE_JWT_SECRET must be >= 32 characters in production, got %d (SEC-02)", len(c.SupabaseJWTSecret)))
+	}
+
+	if c.SupabaseServiceRoleKey == "" {
+		errs = append(errs, "SUPABASE_SERVICE_ROLE_KEY is required in production (SEC-04)")
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("production security validation failed:\n  - %s", strings.Join(errs, "\n  - "))
+	}
+
+	return nil
 }
 
 func getEnv(key, defaultValue string) string {
