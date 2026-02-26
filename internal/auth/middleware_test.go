@@ -340,11 +340,11 @@ func TestOptionalAuth(t *testing.T) {
 	defer validator.Close()
 
 	tests := []struct {
-		name             string
-		authHeader       string
-		expectedStatus   int
-		expectClaims     bool
-		expectedUserID   string
+		name           string
+		authHeader     string
+		expectedStatus int
+		expectClaims   bool
+		expectedUserID string
 	}{
 		{
 			name:           "no auth header proceeds without claims",

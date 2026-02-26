@@ -262,7 +262,6 @@ func TestConfigLoad(t *testing.T) {
 				"SESSION_MESSAGE_LIMIT":     "",
 				"DAILY_QUOTA_PER_IP":        "",
 				"SUPABASE_URL":              "",
-				"SUPABASE_JWT_SECRET":       "",
 				"SUPABASE_SERVICE_ROLE_KEY": "",
 				"STUDY_BUCKET_NAME":         "",
 			},
@@ -315,7 +314,6 @@ func TestConfigLoad(t *testing.T) {
 				"SESSION_MESSAGE_LIMIT": "50",
 				"DAILY_QUOTA_PER_IP":    "500",
 				"SUPABASE_URL":          "https://test.supabase.co",
-				"SUPABASE_JWT_SECRET":   "secret",
 				"STUDY_BUCKET_NAME":     "custom-bucket",
 			},
 			check: func(t *testing.T, cfg *Config) {
@@ -612,7 +610,6 @@ func TestLoadWithInvalidConfig(t *testing.T) {
 
 func TestValidateProduction(t *testing.T) {
 	const validURL = "https://abc.supabase.co"
-	const validJWT = "this-is-a-valid-jwt-secret-that-is-long-enough"
 	const validKey = "service-role-key"
 
 	tests := []struct {
@@ -625,7 +622,6 @@ func TestValidateProduction(t *testing.T) {
 			name: "valid production config",
 			config: &Config{
 				SupabaseURL:            validURL,
-				SupabaseJWTSecret:      validJWT,
 				SupabaseServiceRoleKey: validKey,
 			},
 			wantErr: false,
@@ -634,41 +630,28 @@ func TestValidateProduction(t *testing.T) {
 			name: "missing SUPABASE_URL",
 			config: &Config{
 				SupabaseURL:            "",
-				SupabaseJWTSecret:      validJWT,
 				SupabaseServiceRoleKey: validKey,
 			},
 			wantErr: true,
 			errMsgs: []string{"SUPABASE_URL"},
 		},
 		{
-			name: "JWT secret shorter than 32 chars",
-			config: &Config{
-				SupabaseURL:            validURL,
-				SupabaseJWTSecret:      "short-secret",
-				SupabaseServiceRoleKey: validKey,
-			},
-			wantErr: true,
-			errMsgs: []string{"SUPABASE_JWT_SECRET must be >= 32"},
-		},
-		{
 			name: "missing SUPABASE_SERVICE_ROLE_KEY",
 			config: &Config{
 				SupabaseURL:            validURL,
-				SupabaseJWTSecret:      validJWT,
 				SupabaseServiceRoleKey: "",
 			},
 			wantErr: true,
 			errMsgs: []string{"SUPABASE_SERVICE_ROLE_KEY"},
 		},
 		{
-			name: "all three missing",
+			name: "both missing",
 			config: &Config{
 				SupabaseURL:            "",
-				SupabaseJWTSecret:      "",
 				SupabaseServiceRoleKey: "",
 			},
 			wantErr: true,
-			errMsgs: []string{"SUPABASE_URL", "SUPABASE_JWT_SECRET", "SUPABASE_SERVICE_ROLE_KEY"},
+			errMsgs: []string{"SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"},
 		},
 	}
 

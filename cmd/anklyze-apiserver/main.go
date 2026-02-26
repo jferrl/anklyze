@@ -177,12 +177,7 @@ func main() {
 	// Initialize Supabase Auth validator if configured
 	var authValidator *auth.Validator
 	if cfg.HasSupabase() {
-		var opts []auth.ValidatorOption
-		if cfg.SupabaseJWTSecret != "" {
-			opts = append(opts, auth.WithJWTSecret(cfg.SupabaseJWTSecret))
-		}
-
-		validator, err := auth.NewValidator(ctx, cfg.SupabaseURL, opts...)
+		validator, err := auth.NewValidator(ctx, cfg.SupabaseURL)
 		if err != nil {
 			slog.Warn("Supabase auth initialization failed, authentication disabled", "error", err)
 		} else {

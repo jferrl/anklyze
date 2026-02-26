@@ -47,7 +47,6 @@ export default defineConfig({
       env: {
         ...process.env,
         SUPABASE_URL: '',
-        SUPABASE_JWT_SECRET: '',
       },
     },
     {
