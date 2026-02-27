@@ -61,6 +61,9 @@ export async function apiRequest<T>(
     const response = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
 
     if (response.ok) {
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return undefined as T;
+      }
       return response.json();
     }
 
