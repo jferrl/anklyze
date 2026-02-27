@@ -84,7 +84,7 @@ const (
 // FractureInput represents the input data for classification
 type FractureInput struct {
 	// Question 1: Which malleoli are fractured?
-	InvolvedMalleoli InvolvedMalleoli `json:"involved_malleoli"`
+	InvolvedMalleoli InvolvedMalleoli `json:"involved_malleoli" validate:"required"`
 
 	// For posterior malleolus: fracture type (Bartonicek)
 	PosteriorFractureType PosteriorFractureType `json:"posterior_fracture_type,omitempty"`
