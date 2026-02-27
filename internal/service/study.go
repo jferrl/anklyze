@@ -96,6 +96,7 @@ type studyService struct {
 	caseRepo          repository.CaseRepository
 	responseRepo      repository.CaseResponseRepository
 	reliabilityCalc   ReliabilityCalculator
+	statsCache        StudyStatsCache
 }
 
 // NewStudyService creates a new StudyService.
@@ -105,6 +106,7 @@ func NewStudyService(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	reliabilityCalc ReliabilityCalculator,
+	statsCache StudyStatsCache,
 ) StudyService {
 	return &studyService{
 		studyRepo:         studyRepo,
@@ -112,6 +114,7 @@ func NewStudyService(
 		caseRepo:          caseRepo,
 		responseRepo:      responseRepo,
 		reliabilityCalc:   reliabilityCalc,
+		statsCache:        statsCache,
 	}
 }
 
@@ -194,7 +197,14 @@ func (s *studyService) ValidateResponseSubmission(ctx context.Context, caseID, u
 
 // GetReliabilityMetrics orchestrates data fetching and calculates study-level
 // reliability metrics by delegating to the ReliabilityCalculator.
+// Results are served from cache when available; cache is populated on miss.
 func (s *studyService) GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error) {
+	// Check cache first — avoids expensive DB reads and kappa computation on repeated calls.
+	if cached, ok := s.statsCache.Get(studyID); ok {
+		return cached, nil
+	}
+
+	// Cache miss — full DB fetch + calculation.
 	study, err := s.studyRepo.GetByID(ctx, studyID)
 	if err != nil {
 		return nil, err
@@ -213,7 +223,14 @@ func (s *studyService) GetReliabilityMetrics(ctx context.Context, studyID uuid.U
 		return nil, err
 	}
 
-	return s.reliabilityCalc.CalculateStudyReliabilityMetrics(study, cases, responsesByCase)
+	metrics, err := s.reliabilityCalc.CalculateStudyReliabilityMetrics(study, cases, responsesByCase)
+	if err != nil {
+		return nil, err
+	}
+
+	// Populate cache for subsequent requests.
+	s.statsCache.Set(studyID, metrics)
+	return metrics, nil
 }
 
 // GetDivergenceAnalysis generates a complete divergence report for a case.
@@ -397,7 +414,11 @@ func (s *studyService) GetDivergenceAnalysis(ctx context.Context, caseID uuid.UU
 
 // UpdateProgressAfterResponse updates rater progress in a study after a response is submitted.
 // This is intended to be called in a background goroutine.
+// The stats cache is invalidated first so the next read reflects the new response.
 func (s *studyService) UpdateProgressAfterResponse(ctx context.Context, studyID uuid.UUID, caseID, userID uuid.UUID) {
+	// Invalidate stats cache FIRST — ensures next GetReliabilityMetrics call recalculates.
+	s.statsCache.Invalidate(studyID)
+
 	casesCompleted, err := s.studyResponseRepo.CountUserCasesCompleted(ctx, studyID, userID)
 	if err != nil {
 		slog.Error("failed to count user cases completed",

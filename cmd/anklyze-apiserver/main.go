@@ -220,9 +220,13 @@ func main() {
 	// Initialize statistics service for reliability metrics
 	statsService := service.NewStatisticsService()
 
+	// Initialize TTL cache for study reliability metrics (5-minute TTL).
+	// Avoids recalculating kappa on every page load for the same study.
+	statsCache := service.NewTTLStatsCache(5 * time.Minute)
+
 	// Initialize study service — orchestrates case-study relationships, response validation,
 	// reliability metrics, and divergence analysis.
-	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService)
+	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService, statsCache)
 
 	dbStatus := "connected"
 	if !dbHealthy {

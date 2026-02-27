@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
@@ -244,7 +245,7 @@ func newStudyService(
 	responseRepo *mockCaseResponseRepository,
 	calc *mockReliabilityCalculator,
 ) StudyService {
-	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc)
+	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, noOpStatsCache{})
 }
 
 // --- Tests for ValidateResponseSubmission ---
@@ -457,6 +458,61 @@ func TestGetReliabilityMetrics(t *testing.T) {
 			t.Errorf("expected ErrNotFound, got %v", err)
 		}
 	})
+}
+
+// TestGetReliabilityMetrics_CacheHit verifies that GetReliabilityMetrics returns cached metrics
+// without hitting the database when the cache has a valid entry.
+func TestGetReliabilityMetrics_CacheHit(t *testing.T) {
+	studyID := uuid.New()
+	cached := &domain.StudyReliabilityMetrics{}
+
+	cache := NewTTLStatsCache(5 * time.Minute)
+	cache.Set(studyID, cached)
+
+	// Repos that always return errors — proves DB is not called when cache hits.
+	studyRepo := &mockStudyRepository{studyErr: errors.New("should not be called")}
+	calc := &mockReliabilityCalculator{err: errors.New("should not be called")}
+
+	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, cache)
+	result, err := svc.GetReliabilityMetrics(context.Background(), studyID)
+	if err != nil {
+		t.Errorf("unexpected error on cache hit: %v", err)
+	}
+	if result != cached {
+		t.Errorf("expected cached metrics pointer, got different value")
+	}
+}
+
+// TestGetReliabilityMetrics_CacheMissPopulates verifies that a cache miss triggers a DB fetch
+// and the result is stored in the cache for the next call.
+func TestGetReliabilityMetrics_CacheMissPopulates(t *testing.T) {
+	studyID := uuid.New()
+	study := &domain.Study{ID: studyID, Title: "Test Study"}
+	cases := []domain.Case{{ID: uuid.New()}}
+	computed := &domain.StudyReliabilityMetrics{}
+
+	cache := NewTTLStatsCache(5 * time.Minute)
+
+	studyRepo := &mockStudyRepository{study: study, cases: cases}
+	calc := &mockReliabilityCalculator{metrics: computed}
+
+	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, cache)
+	result, err := svc.GetReliabilityMetrics(context.Background(), studyID)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if result != computed {
+		t.Errorf("expected computed metrics, got different value")
+	}
+
+	// Verify the result was stored in cache.
+	cachedResult, ok := cache.Get(studyID)
+	if !ok {
+		t.Error("expected cache to be populated after miss, but got miss again")
+	}
+	if cachedResult != computed {
+		t.Errorf("expected cache to contain computed metrics pointer, got different value")
+	}
 }
 
 // --- Tests for GetDivergenceAnalysis (ported from divergence_test.go) ---
