@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -128,7 +129,7 @@ func setupPublicRoutes(
 ) {
 	// In development mode, /me returns a mock admin user
 	api.GET("/me", func(c *gin.Context) {
-		c.JSON(200, UserProfileResponse{
+		c.JSON(http.StatusOK, UserProfileResponse{
 			ID:    "dev-user",
 			Email: "dev@localhost",
 			Role:  "admin",
