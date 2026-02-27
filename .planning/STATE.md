@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 
 ## Current Position
 
-Phase: 6 of 7 (Gap Closure)
-Plan: 1 of 2 in current phase
+Phase: 7 of 7 (Performance)
+Plan: 2 of 4 in current phase
 Status: In Progress
-Last activity: 2026-02-27 — Completed 06-01: JWKS endpoint probe with background retry, health endpoint jwks status, deleted sanitize dead code
+Last activity: 2026-02-27 — Completed 07-02: PERF-02 requirement skipped (chat virtualization not needed for short conversations)
 
-Progress: [████████░░] 80%
+Progress: [████████░░] 85%
 
 ## Performance Metrics
 
@@ -122,6 +122,7 @@ Recent decisions affecting current work:
 - [06-01]: jwksReady nil = not tracked = ready in HealthCheck — preserves backwards compatibility for non-production callers
 - [06-01]: JWKS probe fires only when cfg.IsProduction() && authValidator != nil — avoids false noise in dev
 - [06-01]: ARCH-03 acknowledged but no work performed — PATCH retry dropped from scope per user decision
+- [07-02]: PERF-02 (chat virtualization) explicitly deferred — conversations in AI chat panel do not reach lengths requiring optimization; effort redirected to statistics caching and image loading
 
 ### Pending Todos
 

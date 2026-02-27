@@ -1,0 +1,2210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-27T00:00:00.000Z" agent="mmd_to_drawio.py" version="24.0.0">
+  <diagram name="Page-1" id="page1">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="43562" pageHeight="4000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="A" value="Danis-Weber AO/OTA Flow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="19969" y="50" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B" value="¿Qué maléolos tiene fracturados?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="19951" y="210" width="256" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="C" value="Maléolo posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="869" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="D" value="Maléolo medial" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="2725" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" value="Maléolo lateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4748" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="Maléolos medial y posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="8392" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="Maléolos lateral y posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="16278" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Maléolos lateral y medial" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="29172" y="390" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="Maléolos medial, lateral y posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39034" y="390" width="288" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n379" value="¿Cual es la afectacion?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="859" y="550" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="¿Qué tipo de fractura es?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1118" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="612" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="956" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="1490" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1594" y="1490" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="Fractura unimaleolar maleolo posterior&lt;br&gt;AO No clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="570" y="1710" width="304" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Fractura unimaleolar maleolo posterior&lt;br&gt;AO No clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="914" y="1710" width="304" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="Fractura unimaleolar maleolo posterior&lt;br&gt;AO No clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1258" y="1710" width="304" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="Fractura unimaleolar maleolo posterior&lt;br&gt;AO No clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1602" y="1710" width="304" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n388" value="¿Tiene importante afectación articular con extensión metafisaria?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="2635" y="550" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="¿Qué morfología tiene?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="3020" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="Vertical" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="2840" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="Transverso/oblicuo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="3220" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="Fractura unimaleolar maleolo medial&lt;br&gt;AO 44 A2&lt;br&gt;Lauge-Hansen SA" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="2810" y="1270" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="Fractura unimaleolar maleolo medial&lt;br&gt;AO 44 A2&lt;br&gt;Lauge-Hansen no clasificable (podría ser PA/SER/PER)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="3130" y="1270" width="400" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="¿A qué nivel está la fractura?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="4738" y="550" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="Infrasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="3604" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="Transindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4126" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" value="Suprasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="5891" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n27" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO 44 A1&lt;br&gt;Lauge-Hansen SA&lt;br&gt;Weber A" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="3570" y="890" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" value="¿De qué morfología es la fractura?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="4100" y="890" width="272" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="Espiroidea (Baja anterior, alta posterior)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="3890" y="1110" width="336" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" value="Transversa/Oblicua(Baja medial, alta lateral)/Conminuta" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4214" y="1110" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO 44 B (subtipo no clasificable. B1/B2)&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="3898" y="1270" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n33" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO 44 B (subtipo no clasificable B1/B2)&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="4258" y="1270" width="312" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n34" value="¿De qué tipo?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="5881" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n35" value="Diafisaria Simple" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4994" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n36" value="Multifragmentaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="6066" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" value="Proximal (1/3 proximal de peroné)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="6766" y="1110" width="264" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n286" value="¿Cómo es el trazo principal del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="4948" y="1270" width="312" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n290" value="¿Cómo es el trazo principal del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="6020" y="1270" width="312" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n41" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO-44-C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="6754" y="1270" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n264" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="8382" y="550" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" value="¿A qué nivel está la fractura de peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="16228" y="550" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n44" value="Infrasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="9986" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n45" value="Transindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="13804" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n46" value="Suprasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="22570" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n400" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="9976" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n48" value="¿De qué morfología es la fractura?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="13778" y="890" width="272" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n49" value="¿De qué tipo?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="22560" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n52" value="Espiroidea (Baja anterior, alta posterior)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="12666" y="1110" width="336" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n53" value="Transversa/Oblicua(Baja medial, alta lateral)/Conminuta" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="14794" y="1110" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n54" value="Diafisaria Simple" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18608" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n55" value="Multifragmentaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="23352" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n56" value="Proximal (1/3 proximal de peroné)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="26510" y="1110" width="264" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n67" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="12110" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n68" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="11536" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n69" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="11968" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n70" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="12350" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n71" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="12782" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n72" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="11450" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n73" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="11882" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n74" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="12314" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n75" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="12746" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n76" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="14270" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n77" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="13696" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n78" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="14128" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n79" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="14510" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n80" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="14942" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n81" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="13610" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n82" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="14042" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n83" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="14474" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n84" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="14906" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n223" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="12714" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n227" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="14874" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n85" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="18590" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n86" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18016" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n87" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18448" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n88" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18830" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n89" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="19262" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n90" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="17930" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n91" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="18362" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n92" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="18794" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n93" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="19226" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n94" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="23334" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n95" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="22760" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n96" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="23192" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n97" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="23574" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n98" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="24006" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n99" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="22674" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n100" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="23106" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n101" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="23538" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n102" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="23970" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n103" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="25918" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n104" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="25344" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n105" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="25776" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n106" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="26158" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n107" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="26590" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n108" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="25258" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n109" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="25690" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n110" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="26122" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n111" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="26554" y="2170" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n307" value="¿Cómo es el trazo del peroné?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18602" y="1270" width="232" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n310" value="¿Cómo es el trazo principal del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="23306" y="1270" width="312" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n237" value="¿Tiene TAC?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="26532" y="1270" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n112" value="¿De qué morfología es la fractura del maléolo medial?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="29082" y="550" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n113" value="Vertical" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="27659" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n114" value="Transverso/oblicuo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30684" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n115" value="¿La fractura del perone es infrasindesmal y transversa?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="27569" y="890" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n116" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="27492" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n117" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="27826" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n118" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 A2&lt;br&gt;Lauge-Hansen SA&lt;br&gt;Weber A" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="27418" y="1270" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n119" value="¿A qué nivel está la fractura de peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="30634" y="890" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n120" value="Alta (Suprasindesmal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="29606" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n121" value="Baja (Transindesmal / Infrasindesmal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="31724" y="1110" width="296" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n122" value="¿De qué tipo?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="29596" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n123" value="Diafisaria Simple" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="28572" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n124" value="Multifragmentaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="29812" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n125" value="Proximal (1/3 proximal de peroné)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30618" y="1490" width="264" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n336" value="¿Cómo es el trazo del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="28562" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n340" value="¿Cómo es el trazo principal del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="29766" y="1710" width="312" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n128" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="30566" y="1710" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n129" value="¿De qué morfología es la fractura del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="31692" y="1270" width="360" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n130" value="Transversa" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="31252" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n131" value="Oblicua(Baja medial, alta lateral)/Conminuta" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="31798" y="1490" width="352" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n132" value="Espiroidea (Baja anterior, alta posterior)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="32214" y="1490" width="336" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n133" value="¿A qué nivel está la fractura de peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="31202" y="1710" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n134" value="Infrasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="31048" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n135" value="Transindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="31456" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n136" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 A2&lt;br&gt;Lauge-Hansen SA&lt;br&gt;Weber A" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="30974" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n138" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 B2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="31382" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n139" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 B2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="31790" y="1710" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n140" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 B2&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="32198" y="1710" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n141" value="¿A qué nivel está la fractura de peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="39018" y="550" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n143" value="Alta (Suprasindesmal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36828" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n152" value="Baja (Transindesmal / Infrasindesmal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="41271" y="730" width="296" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n145" value="¿De qué tipo?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="36818" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n146" value="Diafisaria Simple" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34302" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n147" value="Multifragmentaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37318" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n148" value="Proximal (1/3 proximal de peroné)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39331" y="1110" width="264" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n345" value="¿Cómo es el trazo del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="34292" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n363" value="¿Cómo es el trazo principal del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="37272" y="1270" width="312" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n249" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="39343" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n153" value="¿De qué morfología es la fractura del peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="41239" y="890" width="360" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n154" value="Transversa" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40101" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n155" value="Oblicua(Baja medial, alta lateral)/Conminuta" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="41151" y="1110" width="352" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n156" value="Espiroidea (Baja anterior, alta posterior)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42459" y="1110" width="336" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n157" value="¿A qué nivel está la fractura de peroné?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40051" y="1270" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n158" value="Infrasindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39960" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n159" value="Transindesmal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40242" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n160" value="No posible, mecanismo excepcional" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="39938" y="1710" width="264" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n253" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="41207" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n260" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="42507" y="1270" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n164" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="34222" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n165" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="33906" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n166" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34166" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n167" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34376" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n168" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34636" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n169" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="33906" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n170" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="34166" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n171" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="34426" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n172" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="34686" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n173" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="37238" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n174" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36922" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n175" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37182" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n176" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37392" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n177" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37652" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n178" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="36922" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n179" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="37182" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n180" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="37442" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n181" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="37702" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n182" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="38954" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n183" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="38638" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n184" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="38898" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n185" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39108" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n186" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39368" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n187" value="Fractura trimaleolar&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="38638" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n188" value="Fractura trimaleolar&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="38898" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n189" value="Fractura trimaleolar&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="39158" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n190" value="Fractura trimaleolar&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="39418" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n191" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40818" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n192" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40502" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n193" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40762" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n194" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40972" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n195" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="41232" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n196" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40502" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n197" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40762" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n198" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="41022" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n199" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="41282" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n201" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="42118" y="1710" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n206" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="41802" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n207" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42062" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n208" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42272" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n209" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42532" y="1930" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n214" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="41802" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n215" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="42062" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n216" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="42322" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n217" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="42582" y="2170" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n218" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1548" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n219" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n387" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1988" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n224" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="12184" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n225" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="13264" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n226" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="13178" y="1710" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n228" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="14344" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n344" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="15424" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n230" value="¿Tiene TAC?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="19204" y="1710" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n231" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="18664" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n285" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="19744" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n233" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="23938" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n234" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="23408" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n235" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="24488" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n236" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="24402" y="2170" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n238" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="25992" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n239" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="27072" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n240" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="26986" y="1710" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n241" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="34611" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n242" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34296" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n243" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34946" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n244" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="34946" y="2170" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n245" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="37627" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n246" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37312" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n247" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37962" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n248" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="37962" y="2170" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n250" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39028" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n251" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="39678" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n252" value="Fractura trimaleolar&lt;br&gt;AO 44 C3&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="39678" y="1710" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n254" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40892" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n255" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="41542" y="1490" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n261" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42192" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n262" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="42842" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n263" value="Fractura trimaleolar&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen SER&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="42842" y="1710" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n265" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="7852" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n266" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="8932" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n267" value="¿Qué tipo de fractura es el maleolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="7778" y="890" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n268" value="Fragmento extraincisural postero-medial" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="7086" y="1110" width="312" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n269" value="Fragmento extraincisural posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="7466" y="1110" width="272" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n270" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="7852" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n271" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="8162" y="1110" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n398" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="8522" y="1110" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n272" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen PA" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="8882" y="890" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n232" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="19658" y="2170" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n287" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4554" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n288" value="Parasindesmal de trazo oblicuo largo/espiroideo (a &lt; de 6cm de la superfice articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="4882" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n396" value="Suprasindesmal (a &gt;6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="5266" y="1490" width="376" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n39" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO-44-C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="4938" y="1710" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n289" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO-44-C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="4610" y="1710" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n291" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso/conminuto" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="5626" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n292" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="5954" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n397" value="Suprasindesmal (a &gt;6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="6338" y="1490" width="376" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n40" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO-44-C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="6010" y="1710" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n293" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO-44-C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="5682" y="1710" width="288" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n294" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="16430" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n295" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="15856" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n296" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="16288" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n297" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="16670" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n298" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="17102" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n299" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="15770" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n300" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="16202" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n301" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="16634" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n302" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="17066" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n303" value="¿Tiene TAC?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="17044" y="1710" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n304" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="16504" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n305" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="17584" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n306" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="17498" y="2170" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n308" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="16954" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n309" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="19114" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n416" value="Suprasindesmal (a &gt; 6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20090" y="1490" width="384" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n311" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso/conminuto" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="21698" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n312" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="23858" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n417" value="Suprasindesmal (a &gt; 6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="24834" y="1490" width="384" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n313" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="21778" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n314" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="21248" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n315" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="22328" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n316" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="22242" y="2170" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n325" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="21174" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n326" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20600" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n329" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="21032" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n330" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="21414" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n331" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="21846" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n332" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="20514" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n333" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="20946" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n334" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="21378" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n335" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="21810" y="2570" width="392" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n337" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="28070" y="1930" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n338" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="28478" y="1930" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n420" value="Suprasindesmal (a &gt; 6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="28902" y="1930" width="384" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n126" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="28494" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n339" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="28086" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n341" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso/conminuto" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="29310" y="1930" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n342" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="29718" y="1930" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n421" value="Suprasindesmal (a &gt; 6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="30142" y="1930" width="384" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n127" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="29734" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n343" value="Fractura bimaleolar (maleolo lateral y medial)&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="29326" y="2170" width="368" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n229" value="Fractura bimaleolar (maleolo lateral y posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="15338" y="1710" width="392" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n346" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="33231" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n347" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="34531" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n418" value="Suprasindesmal (a &gt;6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="35206" y="1490" width="376" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n348" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="33311" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n349" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="32996" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n350" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="33646" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n351" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="32922" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n352" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="33646" y="2170" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n353" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="32606" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n354" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="32866" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n355" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="33076" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n356" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="33336" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n357" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="32606" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n358" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="32866" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n359" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="33126" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n362" value="Fractura trimaleolar&lt;br&gt;AO 44 C1&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="33386" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n364" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo corto/transverso/conminuto" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36247" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n365" value="Parasindesmal (a &lt;6cm de la superficie articular) de trazo oblicuo largo/espiroideo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="37547" y="1490" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n419" value="Suprasindesmal (a &gt;6cm de superficie articular)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="38222" y="1490" width="376" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n366" value="¿Tiene TAC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="36327" y="1710" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n367" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36012" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n368" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36662" y="1930" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n369" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="36662" y="2170" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n370" value="¿Qué tipo de fractura es el maléolo posterior?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="35938" y="2170" width="368" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n371" value="Fragmento extraincisural" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="35622" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n372" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="35882" y="2410" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n373" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36092" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n374" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="36352" y="2410" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n375" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="35622" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n376" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="35882" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n377" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="36142" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n378" value="Fractura trimaleolar&lt;br&gt;AO 44 C2&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="36402" y="2570" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n380" value="&gt;1/3 de superficie articular con extensión metafisaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="90" y="730" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n381" value="&lt;1/3 de superficie articular sin extensión metafisaria" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1468" y="730" width="400" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n382" value="¿Presenta depresión articular?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="170" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n383" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n384" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n385" value="Fractura de tibia distal&lt;br&gt;AO 43 B1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1270" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n386" value="Fractura de tibia distal&lt;br&gt;AO 43 B2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1270" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n221" value="Fractura unimaleolar maleolo posterior&lt;br&gt;AO No clasificable&lt;br&gt;Lauge-Hansen PA" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1946" y="1270" width="304" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n389" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="2420" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n390" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="3030" y="730" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n391" value="¿Tiene depresión articular?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="2410" y="890" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n392" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="2290" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n393" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="2550" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n394" value="Fractura de tibia distal&lt;br&gt;AO 43 B2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="2290" y="1270" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n395" value="Fractura de tibia distal&lt;br&gt;AO 43 B1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="2550" y="1270" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n276" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="8522" y="1270" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n275" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="8162" y="1270" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n274" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="7802" y="1270" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n273" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO 44 B3&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="7442" y="1270" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n399" value="Fractura bimaleolar (Medial + Posterior)&lt;br&gt;AO 44 A3&lt;br&gt;Lauge-Hansen No clasificable" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="7082" y="1270" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n401" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="9296" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n402" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="10676" y="1110" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n403" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="9242" y="1270" width="328" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n404" value="¿El frargmento posterior es posteromedial?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="10618" y="1270" width="336" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n405" value="No" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="10216" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n406" value="Si" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="11136" y="1490" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n407" value="Fragmento extraincisural posterior" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="9638" y="1710" width="272" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n408" value="Fragmento posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="10032" y="1710" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n409" value="Fragmento posteromedial y posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="10350" y="1710" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n410" value="Gran fragmento triangular posterolateral" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="10718" y="1710" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n411" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A&lt;br&gt;Bartonicek 1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="9610" y="1930" width="328" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n412" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A&lt;br&gt;Bartonicek 2" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="9978" y="1930" width="328" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n413" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A&lt;br&gt;Bartonicek 3" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="10346" y="1930" width="328" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n414" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A&lt;br&gt;Bartonicek 4" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="10714" y="1930" width="328" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n415" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO 44 A3&lt;br&gt;Lauge-Hansen no clasificable&lt;br&gt;Weber A" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="11082" y="1710" width="328" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="A" target="B" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="C" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="D" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="n1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="n2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="n3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="n4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="B" target="n5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="C" target="n379" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n6" target="n7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n6" target="n8" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n6" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n6" target="n10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n7" target="n11" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n8" target="n12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n9" target="n13" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n10" target="n14" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="D" target="n388" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n15" target="n16" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n15" target="n17" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n16" target="n18" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n17" target="n19" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n1" target="n20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n20" target="n21" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n20" target="n22" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n20" target="n23" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n21" target="n27" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n22" target="n29" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n29" target="n30" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e29" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n29" target="n31" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n30" target="n32" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e31" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n31" target="n33" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e32" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n23" target="n34" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e33" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n34" target="n35" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n34" target="n36" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e35" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n34" target="n37" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e36" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n35" target="n286" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e37" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n36" target="n290" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e38" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n37" target="n41" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e39" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n2" target="n264" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e40" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n3" target="n43" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e41" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n43" target="n44" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e42" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n43" target="n45" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e43" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n43" target="n46" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e44" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n44" target="n400" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n45" target="n48" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e46" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n46" target="n49" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e47" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n48" target="n52" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e48" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n48" target="n53" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n49" target="n54" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e50" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n49" target="n55" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e51" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n49" target="n56" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e52" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n67" target="n68" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e53" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n67" target="n69" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e54" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n67" target="n70" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e55" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n67" target="n71" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e56" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n68" target="n72" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e57" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n69" target="n73" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e58" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n70" target="n74" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e59" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n71" target="n75" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e60" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n76" target="n77" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e61" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n76" target="n78" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e62" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n76" target="n79" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e63" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n76" target="n80" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e64" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n77" target="n81" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e65" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n78" target="n82" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e66" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n79" target="n83" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e67" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n80" target="n84" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e68" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n52" target="n223" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e69" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n53" target="n227" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e70" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n85" target="n86" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e71" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n85" target="n87" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e72" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n85" target="n88" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e73" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n85" target="n89" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e74" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n86" target="n90" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e75" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n87" target="n91" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e76" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n88" target="n92" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e77" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n89" target="n93" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e78" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n94" target="n95" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e79" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n94" target="n96" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e80" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n94" target="n97" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e81" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n94" target="n98" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e82" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n95" target="n99" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e83" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n96" target="n100" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e84" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n97" target="n101" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e85" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n98" target="n102" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e86" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n103" target="n104" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e87" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n103" target="n105" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e88" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n103" target="n106" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e89" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n103" target="n107" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e90" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n104" target="n108" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e91" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n105" target="n109" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e92" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n106" target="n110" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e93" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n107" target="n111" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e94" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n54" target="n307" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e95" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n55" target="n310" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e96" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n56" target="n237" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e97" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n4" target="n112" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e98" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n112" target="n113" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e99" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n112" target="n114" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e100" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n113" target="n115" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e101" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n115" target="n116" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e102" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n115" target="n117" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e103" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n116" target="n118" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e104" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n114" target="n119" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e105" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n117" target="n119" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e106" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n119" target="n120" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e107" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n119" target="n121" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e108" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n120" target="n122" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e109" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n122" target="n123" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e110" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n122" target="n124" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e111" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n122" target="n125" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e112" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n123" target="n336" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e113" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n124" target="n340" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e114" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n125" target="n128" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e115" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n121" target="n129" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e116" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n129" target="n130" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e117" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n129" target="n131" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e118" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n129" target="n132" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e119" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n130" target="n133" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e120" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n133" target="n134" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e121" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n133" target="n135" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e122" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n134" target="n136" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e123" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n135" target="n138" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e124" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n131" target="n139" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e125" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n132" target="n140" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e126" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n5" target="n141" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e127" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n141" target="n143" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e128" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n141" target="n152" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e129" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n145" target="n146" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e130" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n145" target="n147" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e131" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n145" target="n148" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e132" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n146" target="n345" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e133" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n147" target="n363" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e134" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n148" target="n249" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e135" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n143" target="n145" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e136" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n152" target="n153" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e137" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n153" target="n154" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e138" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n153" target="n155" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e139" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n153" target="n156" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e140" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n154" target="n157" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e141" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n157" target="n158" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e142" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n157" target="n159" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e143" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n158" target="n160" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e144" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n159" target="n253" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e145" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n156" target="n260" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e146" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n164" target="n165" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e147" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n164" target="n166" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e148" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n164" target="n167" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e149" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n164" target="n168" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e150" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n165" target="n169" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e151" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n166" target="n170" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e152" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n167" target="n171" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e153" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n168" target="n172" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e154" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n173" target="n174" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e155" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n173" target="n175" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e156" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n173" target="n176" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e157" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n173" target="n177" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e158" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n174" target="n178" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e159" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n175" target="n179" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e160" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n176" target="n180" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e161" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n177" target="n181" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e162" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n182" target="n183" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e163" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n182" target="n184" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e164" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n182" target="n185" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e165" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n182" target="n186" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e166" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n183" target="n187" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e167" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n184" target="n188" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e168" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n185" target="n189" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e169" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n186" target="n190" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e170" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n191" target="n192" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e171" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n191" target="n193" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e172" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n191" target="n194" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e173" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n191" target="n195" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e174" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n192" target="n196" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e175" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n193" target="n197" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e176" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n194" target="n198" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e177" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n195" target="n199" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e178" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n201" target="n206" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e179" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n201" target="n207" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e180" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n201" target="n208" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e181" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n201" target="n209" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e182" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n206" target="n214" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e183" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n207" target="n215" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e184" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n208" target="n216" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e185" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n209" target="n217" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e186" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n218" target="n219" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e187" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n218" target="n387" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e188" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n219" target="n6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e189" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n223" target="n224" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e190" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n223" target="n225" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e191" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n225" target="n226" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e192" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n224" target="n67" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e193" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n227" target="n228" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e194" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n227" target="n344" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e195" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n228" target="n76" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e196" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n230" target="n231" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e197" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n230" target="n285" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e198" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n231" target="n85" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e199" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n233" target="n234" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e200" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n233" target="n235" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e201" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n234" target="n94" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e202" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n235" target="n236" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e203" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n237" target="n238" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e204" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n237" target="n239" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e205" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n238" target="n103" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e206" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n239" target="n240" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e207" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n241" target="n242" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e208" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n241" target="n243" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e209" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n242" target="n164" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e210" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n243" target="n244" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e211" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n245" target="n246" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e212" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n245" target="n247" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e213" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n246" target="n173" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e214" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n247" target="n248" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e215" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n249" target="n250" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e216" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n249" target="n251" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e217" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n250" target="n182" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e218" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n251" target="n252" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e219" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n253" target="n254" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e220" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n253" target="n255" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e221" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n254" target="n191" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e222" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n260" target="n261" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e223" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n260" target="n262" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e224" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n261" target="n201" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e225" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n262" target="n263" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e226" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n264" target="n265" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e227" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n264" target="n266" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e228" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n265" target="n267" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e229" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n267" target="n268" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e230" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n267" target="n269" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e231" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n267" target="n270" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e232" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n267" target="n271" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e233" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n267" target="n398" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e234" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n266" target="n272" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e235" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n285" target="n232" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e236" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n286" target="n287" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e237" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n286" target="n288" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e238" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n286" target="n396" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e239" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n288" target="n39" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e240" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n287" target="n289" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e241" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n290" target="n291" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e242" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n290" target="n292" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e243" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n290" target="n397" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e244" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n292" target="n40" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e245" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n291" target="n293" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e246" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n294" target="n295" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e247" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n294" target="n296" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e248" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n294" target="n297" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e249" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n294" target="n298" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e250" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n295" target="n299" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e251" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n296" target="n300" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e252" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n297" target="n301" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e253" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n298" target="n302" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e254" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n303" target="n304" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e255" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n303" target="n305" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e256" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n304" target="n294" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e257" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n305" target="n306" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e258" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n307" target="n308" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e259" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n307" target="n309" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e260" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n307" target="n416" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e261" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n309" target="n230" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e262" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n308" target="n303" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e263" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n310" target="n311" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e264" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n310" target="n312" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e265" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n310" target="n417" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e266" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n312" target="n233" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e267" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n311" target="n313" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e268" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n313" target="n314" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e269" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n313" target="n315" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e270" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n315" target="n316" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e271" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n314" target="n325" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e272" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n325" target="n326" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e273" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n325" target="n329" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e274" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n325" target="n330" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e275" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n325" target="n331" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e276" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n326" target="n332" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e277" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n329" target="n333" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e278" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n330" target="n334" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e279" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n331" target="n335" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e280" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n336" target="n337" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e281" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n336" target="n338" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e282" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n336" target="n420" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e283" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n338" target="n126" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e284" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n337" target="n339" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e285" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n340" target="n341" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e286" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n340" target="n342" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e287" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n340" target="n421" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e288" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n342" target="n127" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e289" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n341" target="n343" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e290" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n344" target="n229" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e291" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n345" target="n346" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e292" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n345" target="n347" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e293" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n345" target="n418" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e294" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n347" target="n241" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e295" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n346" target="n348" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e296" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n348" target="n349" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e297" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n348" target="n350" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e298" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n349" target="n351" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e299" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n350" target="n352" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e300" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n351" target="n353" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e301" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n351" target="n354" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e302" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n351" target="n355" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e303" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n351" target="n356" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e304" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n353" target="n357" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e305" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n354" target="n358" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e306" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n355" target="n359" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e307" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n356" target="n362" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e308" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n363" target="n364" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e309" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n363" target="n365" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e310" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n363" target="n419" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e311" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n365" target="n245" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e312" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n364" target="n366" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e313" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n366" target="n367" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e314" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n366" target="n368" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e315" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n368" target="n369" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e316" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n367" target="n370" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e317" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n370" target="n371" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e318" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n370" target="n372" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e319" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n370" target="n373" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e320" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n370" target="n374" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e321" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n371" target="n375" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e322" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n372" target="n376" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e323" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n373" target="n377" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e324" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n374" target="n378" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e325" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n155" target="n253" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e326" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n379" target="n380" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e327" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n379" target="n381" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e328" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n380" target="n382" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e329" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n381" target="n218" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e330" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n382" target="n383" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e331" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n382" target="n384" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e332" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n383" target="n385" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e333" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n384" target="n386" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e334" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n387" target="n221" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e335" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n388" target="n389" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e336" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n388" target="n390" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e337" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n389" target="n391" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e338" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n391" target="n392" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e339" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n391" target="n393" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e340" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n392" target="n394" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e341" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n393" target="n395" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e342" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n390" target="n15" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e343" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n396" target="n39" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e344" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n397" target="n40" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e345" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n398" target="n276" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e346" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n271" target="n275" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e347" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n270" target="n274" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e348" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n269" target="n273" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e349" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n268" target="n399" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e350" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n400" target="n401" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e351" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n400" target="n402" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e352" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n401" target="n403" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e353" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n402" target="n404" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e354" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n404" target="n405" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e355" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n404" target="n406" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e356" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n405" target="n407" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e357" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n405" target="n408" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e358" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n405" target="n409" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e359" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n405" target="n410" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e360" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n407" target="n411" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e361" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n408" target="n412" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e362" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n409" target="n413" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e363" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n410" target="n414" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e364" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n406" target="n415" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e365" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n416" target="n230" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e366" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n417" target="n233" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e367" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n418" target="n241" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e368" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n419" target="n245" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e369" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n420" target="n126" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e370" value="" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="n421" target="n127" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
