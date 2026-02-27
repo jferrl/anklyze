@@ -28,9 +28,9 @@ export function AdminDashboardPage() {
     refetchOnMount: 'always', // Refetch when component mounts
   });
 
-  const cases = casesData?.cases ?? [];
+  const cases = useMemo(() => casesData?.cases ?? [], [casesData]);
 
-  const stats = {
+  const stats = useMemo(() => ({
     totalCases: cases.length,
     draftCases: cases.filter((c) => c.status === 'draft').length,
     publishedCases: cases.filter((c) => c.status === 'published').length,
@@ -43,19 +43,25 @@ export function AdminDashboardPage() {
             cases.reduce((sum, c) => sum + c.response_count, 0) / cases.length
           )
         : 0,
-  };
+  }), [cases]);
 
-  const recentActiveCases = [...cases]
-    .filter((c) => c.response_count > 0)
-    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-    .slice(0, 5);
+  const recentActiveCases = useMemo(() =>
+    [...cases]
+      .filter((c) => c.response_count > 0)
+      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      .slice(0, 5),
+    [cases]
+  );
 
-  const casesNeedingAttention = cases.filter((c) => {
-    if (c.status === 'published' && c.response_count === 0) return true;
-    if (c.deadline && new Date(c.deadline) < new Date() && c.status === 'published')
-      return true;
-    return false;
-  });
+  const casesNeedingAttention = useMemo(() =>
+    cases.filter((c) => {
+      if (c.status === 'published' && c.response_count === 0) return true;
+      if (c.deadline && new Date(c.deadline) < new Date() && c.status === 'published')
+        return true;
+      return false;
+    }),
+    [cases]
+  );
 
   if (isLoading) {
     return (
