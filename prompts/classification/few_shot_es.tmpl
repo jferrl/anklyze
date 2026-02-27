@@ -1,0 +1,204 @@
+
+## Ejemplos
+
+Ejemplo 1 - Descripción completa:
+Entrada: "Fractura trimaleolar con peroné suprasindesmal multifragmentario"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar",
+    "fibular_level": "suprasindesmal",
+    "suprasindesmal_type": "multifragmentary"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 2 - Fractura lateral incompleta (necesita nivel del peroné):
+Entrada: "Fractura de maléolo lateral"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["fibular_level"],
+  "clarifications": [{"field": "fibular_level", "question": "¿Dónde está ubicada la fractura de peroné respecto a la sindesmosis?", "options": ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]}]
+}
+
+Ejemplo 3 - Bimaleolar con detalles completos:
+Entrada: "Fractura bimaleolar: maléolo medial transverso, peroné espirodeo a nivel de sindesmosis"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial",
+    "medial_morphology": "transverse",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral"
+  },
+  "confidence": 0.92,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 4 - Solo posterior completo:
+Entrada: "Fractura aislada de maléolo posterior con menos de 1/3 de afectación de la superficie articular, Bartonicek tipo 2"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
+    "posterior_fracture_type": "posterolateral"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 5 - Bimaleolar incompleta (necesita múltiples campos):
+Entrada: "Fractura bimaleolar que involucra maléolos lateral y medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["medial_morphology", "fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "medial_morphology", "question": "¿Cuál es la orientación de la fractura del maléolo medial?", "options": ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]},
+    {"field": "fibular_level", "question": "¿Dónde está la fractura del peroné respecto a la sindesmosis?", "options": ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]}
+  ]
+}
+
+Ejemplo 6 - Trimaleolar incompleta (necesita nivel y morfología):
+Entrada: "Fractura trimaleolar de tobillo"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar"
+  },
+  "confidence": 0.4,
+  "missing_fields": ["fibular_level", "lateral_morphology"],
+  "clarifications": [
+    {"field": "fibular_level", "question": "¿La fractura del peroné está por encima de la sindesmosis (alta) o a nivel/por debajo (baja)?", "options": ["Alta (suprasindesmal/Weber C)", "Baja (transindesmal o infrasindesmal)"]}
+  ]
+}
+
+Ejemplo 7 - Lateral con transindesmal (necesita morfología):
+Entrada: "Fractura Weber B de peroné a nivel de sindesmosis"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal"
+  },
+  "confidence": 0.6,
+  "missing_fields": ["lateral_morphology"],
+  "clarifications": [{"field": "lateral_morphology", "question": "¿Cuál es el patrón de fractura del peroné?", "options": ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)"]}]
+}
+
+Ejemplo 8 - Solo medial incompleta:
+Entrada: "Fractura del maléolo medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "¿Cuál es la afectación de la superficie articular?", "options": [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]}]
+}
+
+Ejemplo 9 - Descripción vaga (necesita maléolos involucrados primero):
+Entrada: "Fractura de tobillo después de torcedura"
+Salida:
+{
+  "extracted_input": {},
+  "confidence": 0.2,
+  "missing_fields": ["involved_malleoli"],
+  "clarifications": [{"field": "involved_malleoli", "question": "¿Qué maléolos están fracturados?", "options": ["Solo posterior", "Solo medial", "Solo lateral/Peroné", "Medial + Posterior", "Lateral + Posterior", "Lateral + Medial (bimaleolar)", "Los tres (trimaleolar)"]}]
+}
+
+Ejemplo 10 - Solo posterior incompleta (necesita afectación articular primero):
+Entrada: "Fractura aislada del maléolo posterior"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only"
+  },
+  "confidence": 0.5,
+  "missing_fields": ["articular_involvement"],
+  "clarifications": [{"field": "articular_involvement", "question": "¿Cuál es la afectación de la superficie articular?", "options": [">1/3 con extensión metafisaria (large_with_extension)", "<1/3 sin extensión metafisaria (small_without_extension)"]}]
+}
+
+Ejemplo 11 - Solo posterior con afectación articular y TAC (necesita Bartonicek):
+Entrada: "Fractura de maléolo posterior, menos de 1/3 de afectación articular, TAC disponible"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
+    "has_ct_scan": true
+  },
+  "confidence": 0.6,
+  "missing_fields": ["posterior_fracture_type"],
+  "clarifications": [{"field": "posterior_fracture_type", "question": "¿Qué tipo de fractura del maléolo posterior? (clasificación de Bartonicek)", "options": ["Tipo 1 - Fragmento extraincisural pequeño", "Tipo 2 - Fragmento posterolateral", "Tipo 3 - Posteromedial y posterolateral", "Tipo 4 - Gran fragmento triangular posterolateral"]}]
+}
+
+Ejemplo 12 - Solo posterior sin TAC (clasificación completa):
+Entrada: "Fractura aislada del maléolo posterior, menos de 1/3 de afectación articular, sin TAC disponible"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "small_without_extension",
+    "has_ct_scan": false
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 13 - Posterior con extensión metafisaria (afectación articular grande):
+Entrada: "Fractura de maléolo posterior con más de 1/3 de afectación de la superficie articular y extensión metafisaria, depresión articular presente"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "posterior_only",
+    "articular_involvement": "large_with_extension",
+    "has_articular_depression": true
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 14 - Medial+posterior con fragmento posteromedial:
+Entrada: "Fractura bimaleolar medial y posterior, TAC muestra fragmento extraincisural postero-medial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "medial_posterior",
+    "has_ct_scan": true,
+    "posterior_fracture_type": "extraincisural_posteromedial"
+  },
+  "confidence": 0.92,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 15 - Lateral+posterior infrasindesmal con fragmento posteromedial:
+Entrada: "Fractura de maléolo lateral y posterior, peroné por debajo de la sindesmosis, TAC disponible, fragmento posterior es posteromedial"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_posterior",
+    "fibular_level": "infrasindesmal",
+    "has_ct_scan": true,
+    "is_posterior_posteromedial": true
+  },
+  "confidence": 0.90,
+  "missing_fields": [],
+  "clarifications": []
+}
