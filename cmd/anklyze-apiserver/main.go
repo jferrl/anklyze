@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -187,6 +188,25 @@ func main() {
 		slog.Info("no SUPABASE_URL configured, authentication disabled (all routes public)")
 	}
 
+	// JWKS endpoint reachability probe (production only)
+	jwksReady := &atomic.Bool{}
+	jwksReady.Store(true) // default: ready (non-production or no auth)
+
+	if cfg.IsProduction() && authValidator != nil {
+		jwksURL := cfg.SupabaseURL + "/auth/v1/.well-known/jwks.json"
+		if err := auth.ProbeJWKS(ctx, jwksURL); err != nil {
+			jwksReady.Store(false)
+			slog.Warn("JWKS endpoint unreachable at startup — auth may reject tokens until resolved",
+				"url", jwksURL, "error", err)
+			// Create a cancellable context for the retry goroutine
+			probeCtx, probeCancel := context.WithCancel(context.Background())
+			defer probeCancel()
+			go auth.RetryJWKSProbe(probeCtx, jwksURL, jwksReady)
+		} else {
+			slog.Info("JWKS endpoint reachable", "url", jwksURL)
+		}
+	}
+
 	// Initialize storage
 	var caseStorage storage.Storage
 	if cfg.HasSupabaseStorage() {
@@ -212,7 +232,7 @@ func main() {
 	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
 
 	router := gin.Default()
-	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy)
+	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy, jwksReady)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, caseRepo, studyService)
 

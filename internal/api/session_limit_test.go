@@ -151,6 +151,7 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 				mockRepo,
 				repository.NewNoOpChatAnalyticsRepository(),
 				true,
+				nil,
 			).WithSessionMessageLimit(tt.sessionLimit)
 
 			// Setup router
@@ -203,6 +204,7 @@ func TestHandler_SessionMessageLimit_NoSession(t *testing.T) {
 		mockRepo,
 		repository.NewNoOpChatAnalyticsRepository(),
 		true,
+		nil,
 	).WithSessionMessageLimit(5)
 
 	// Setup router
@@ -240,7 +242,7 @@ func TestHandler_WithSessionMessageLimit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			handler := NewHandler(nil, nil, nil, nil, nil, nil, false).
+			handler := NewHandler(nil, nil, nil, nil, nil, nil, false, nil).
 				WithSessionMessageLimit(tt.limit)
 
 			if handler.sessionMessageLimit != tt.limit {

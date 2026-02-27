@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -42,8 +43,9 @@ func SetupRoutes(
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
 	dbHealthy bool,
+	jwksReady *atomic.Bool,
 ) *Cleanup {
-	handler := NewHandler(classificationService, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy).
+	handler := NewHandler(classificationService, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy, jwksReady).
 		WithSessionMessageLimit(cfg.SessionMessageLimit)
 
 	// CORS middleware

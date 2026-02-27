@@ -30,7 +30,8 @@ func setupTestHandler() *Handler {
 	chatAuditRepo := repository.NewNoOpChatAuditRepository()
 	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
 	// chatService is nil for tests - chat endpoint will return 503
-	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true)
+	// jwksReady is nil for tests - nil means not tracked, defaults to "ready" in health check
+	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true, nil)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.
@@ -76,7 +77,7 @@ func TestHandler_HealthCheck(t *testing.T) {
 			analyticsRepo := repository.NewNoOpAnalyticsRepository()
 			chatAuditRepo := repository.NewNoOpChatAuditRepository()
 			chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
-			h := NewHandler(classificationSvc, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy)
+			h := NewHandler(classificationSvc, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy, nil)
 			router := setupTestRouter(h)
 
 			req := httptest.NewRequest(http.MethodGet, "/health", nil)

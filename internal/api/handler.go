@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -57,7 +58,8 @@ type Handler struct {
 	chatAnalyticsRepo     ChatAnalyticsRepository
 	sessionMessageLimit   int
 	inputValidator        *InputValidator
-	dbHealthy             bool // Whether database connection succeeded at startup
+	dbHealthy             bool          // Whether database connection succeeded at startup
+	jwksReady             *atomic.Bool  // Whether JWKS endpoint is reachable; nil means not tracked (defaults to ready)
 }
 
 // NewHandler creates a new Handler
@@ -69,6 +71,7 @@ func NewHandler(
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
 	dbHealthy bool,
+	jwksReady *atomic.Bool,
 ) *Handler {
 	return &Handler{
 		classificationService: classificationService,
@@ -80,6 +83,7 @@ func NewHandler(
 		sessionMessageLimit:   20, // Default limit
 		inputValidator:        NewInputValidator(),
 		dbHealthy:             dbHealthy,
+		jwksReady:             jwksReady,
 	}
 }
 
@@ -155,7 +159,11 @@ func (h *Handler) HealthCheck(c *gin.Context) {
 	if !h.dbHealthy {
 		dbStatus = "degraded"
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "db": dbStatus})
+	jwksStatus := "ready"
+	if h.jwksReady != nil && !h.jwksReady.Load() {
+		jwksStatus = "pending"
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "db": dbStatus, "jwks": jwksStatus})
 }
 
 // parseDateRange parses from/to query parameters with defaults.
