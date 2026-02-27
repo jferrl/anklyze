@@ -135,8 +135,8 @@ export function AdminCasesPage() {
   const handleView = useCallback((id: string) => navigate(`/cases/${id}`), [navigate]);
   const handleEdit = useCallback((id: string) => navigate(`/admin/cases/${id}/edit`), [navigate]);
   const handleDelete = useCallback((id: string) => setDeleteId(id), []);
-  const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation.mutate]);
-  const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation.mutate]);
+  const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation]);
+  const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
   const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
   const handleViewDivergence = useCallback((id: string) => navigate(`/admin/cases/${id}/divergence`), [navigate]);
 

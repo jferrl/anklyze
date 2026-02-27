@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   Plus,
-  Search,
   MoreHorizontal,
   Pencil,
   Trash2,
@@ -12,24 +12,13 @@ import {
   Play,
   Lock,
   FolderOpen,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   Sparkles,
   Users,
   FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../../components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,13 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,6 +39,10 @@ import {
 import { studyApi } from '@/services';
 import type { Study, StudyStatus } from '@/types';
 import { cn } from '@/lib/utils';
+import { DataTable } from './components/DataTable';
+import { FilterBar } from './components/FilterBar';
+import { Pagination } from './components/Pagination';
+import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminStudiesPage() {
   const { t } = useTranslation();
@@ -110,14 +96,199 @@ export function AdminStudiesPage() {
     study.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
-  };
+  }, []);
+
+  // Memoized action handlers
+  const handleEdit = useCallback((id: string) => navigate(`/admin/studies/${id}/edit`), [navigate]);
+  const handleDelete = useCallback((id: string) => setDeleteId(id), []);
+  const handleActivate = useCallback((id: string) => activateMutation.mutate(id), [activateMutation]);
+  const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
+  const handleViewReliability = useCallback((id: string) => navigate(`/admin/studies/${id}/reliability`), [navigate]);
+
+  const studyStatusOptions = useMemo(() => [
+    { value: 'all', label: t('admin.studies.allStatuses', 'All statuses') },
+    { value: 'draft', label: t('studies.status.draft') },
+    { value: 'active', label: t('studies.status.active') },
+    { value: 'closed', label: t('studies.status.closed') },
+  ], [t]);
+
+  const columns = useMemo<ColumnDef<Study, unknown>[]>(() => [
+    {
+      id: 'title',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.studies.table.title', 'Study')}</span>
+      ),
+      size: 999,
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <div className="flex flex-col gap-1 min-w-0 max-w-0">
+            <span className="font-medium text-foreground truncate">{study.title}</span>
+            {study.description && (
+              <span className="text-sm text-muted-foreground truncate">
+                {study.description}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'status',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.studies.table.status', 'Status')}</span>
+      ),
+      size: 100,
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <Badge
+            variant="outline"
+            className={cn(
+              'font-medium whitespace-nowrap',
+              study.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+              study.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+              study.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+            )}
+          >
+            {t(`studies.status.${study.status}`)}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: 'cases',
+      header: () => (
+        <span className="text-muted-foreground font-medium text-center block">{t('admin.studies.table.cases', 'Cases')}</span>
+      ),
+      size: 80,
+      meta: { className: 'text-center' },
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <span className={cn(
+            'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+            study.case_count > 0
+              ? 'bg-primary/10 text-primary'
+              : 'bg-muted/50 text-muted-foreground'
+          )}>
+            {study.case_count}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'raters',
+      header: () => (
+        <span className="text-muted-foreground font-medium text-center block">{t('admin.studies.table.raters', 'Raters')}</span>
+      ),
+      size: 80,
+      meta: { className: 'text-center' },
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <span className={cn(
+            'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+            study.unique_raters > 0
+              ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+              : 'bg-muted/50 text-muted-foreground'
+          )}>
+            {study.unique_raters}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'responses',
+      header: () => (
+        <span className="text-muted-foreground font-medium text-center block">{t('admin.studies.table.responses', 'Responses')}</span>
+      ),
+      size: 100,
+      meta: { className: 'text-center hidden lg:table-cell' },
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <span className={cn(
+            'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+            study.total_responses > 0
+              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+              : 'bg-muted/50 text-muted-foreground'
+          )}>
+            {study.total_responses}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'created',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.studies.table.created', 'Created')}</span>
+      ),
+      size: 100,
+      meta: { className: 'hidden lg:table-cell text-muted-foreground text-sm' },
+      cell: ({ row }) => {
+        return <span>{formatDate(row.original.created_at)}</span>;
+      },
+    },
+    {
+      id: 'actions',
+      header: () => null,
+      size: 50,
+      cell: ({ row }) => {
+        const study = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="hover:bg-muted/50">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={() => handleEdit(study.id)}>
+                <Pencil className="h-4 w-4 mr-2" />
+                {t('common.edit')}
+              </DropdownMenuItem>
+              {study.status !== 'draft' && (
+                <DropdownMenuItem onClick={() => handleViewReliability(study.id)}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Reliability
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {study.status === 'draft' && study.case_count > 0 && (
+                <DropdownMenuItem onClick={() => handleActivate(study.id)} className="text-emerald-600 dark:text-emerald-400">
+                  <Play className="h-4 w-4 mr-2" />
+                  Activate
+                </DropdownMenuItem>
+              )}
+              {study.status === 'active' && (
+                <DropdownMenuItem onClick={() => handleClose(study.id)}>
+                  <Lock className="h-4 w-4 mr-2" />
+                  Close
+                </DropdownMenuItem>
+              )}
+              {study.status === 'draft' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleDelete(study.id)} className="text-destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t('common.delete')}
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ], [t, formatDate, handleEdit, handleActivate, handleClose, handleViewReliability, handleDelete]);
 
   if (isLoading) {
     return (
@@ -163,33 +334,15 @@ export function AdminStudiesPage() {
         </header>
 
         {/* Filters */}
-        <div className="chart-card mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('admin.studies.search', 'Search studies...')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-muted/30 border-border/50 focus:bg-background"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as StudyStatus | 'all')}
-            >
-              <SelectTrigger className="w-full sm:w-[180px] bg-muted/30 border-border/50">
-                <SelectValue placeholder={t('admin.studies.filterStatus', 'Filter by status')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('admin.studies.allStatuses', 'All statuses')}</SelectItem>
-                <SelectItem value="draft">{t('studies.status.draft')}</SelectItem>
-                <SelectItem value="active">{t('studies.status.active')}</SelectItem>
-                <SelectItem value="closed">{t('studies.status.closed')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <FilterBar
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder={t('admin.studies.search', 'Search studies...')}
+          filterValue={statusFilter}
+          onFilterChange={(v) => setStatusFilter(v as StudyStatus | 'all')}
+          filterPlaceholder={t('admin.studies.filterStatus', 'Filter by status')}
+          filterOptions={studyStatusOptions}
+        />
 
         {/* Studies Table */}
         {filteredStudies.length === 0 ? (
@@ -218,98 +371,37 @@ export function AdminStudiesPage() {
                   study={study}
                   index={index}
                   formatDate={formatDate}
-                  onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
-                  onDelete={() => setDeleteId(study.id)}
-                  onActivate={() => activateMutation.mutate(study.id)}
-                  onClose={() => closeMutation.mutate(study.id)}
-                  onViewReliability={() => navigate(`/admin/studies/${study.id}/reliability`)}
+                  onEdit={() => handleEdit(study.id)}
+                  onDelete={() => handleDelete(study.id)}
+                  onActivate={() => handleActivate(study.id)}
+                  onClose={() => handleClose(study.id)}
+                  onViewReliability={() => handleViewReliability(study.id)}
                   t={t}
                 />
               ))}
             </div>
 
             {/* Desktop: Table layout */}
-            <div className="hidden md:block chart-card p-0">
-              <Table className="table-fixed">
-                <TableHeader>
-                  <TableRow className="border-border/50 hover:bg-transparent">
-                    <TableHead className="w-[40%] text-muted-foreground font-medium">
-                      {t('admin.studies.table.title', 'Study')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium">
-                      {t('admin.studies.table.status', 'Status')}
-                    </TableHead>
-                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium">
-                      {t('admin.studies.table.cases', 'Cases')}
-                    </TableHead>
-                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium">
-                      {t('admin.studies.table.raters', 'Raters')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-center text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.studies.table.responses', 'Responses')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.studies.table.created', 'Created')}
-                    </TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredStudies.map((study, index) => (
-                    <StudyRow
-                      key={study.id}
-                      study={study}
-                      index={index}
-                      formatDate={formatDate}
-                      onEdit={() => navigate(`/admin/studies/${study.id}/edit`)}
-                      onDelete={() => setDeleteId(study.id)}
-                      onActivate={() => activateMutation.mutate(study.id)}
-                      onClose={() => closeMutation.mutate(study.id)}
-                      onViewReliability={() => navigate(`/admin/studies/${study.id}/reliability`)}
-                      t={t}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <SectionErrorBoundary>
+              <DataTable
+                columns={columns}
+                data={filteredStudies}
+                totalCount={total}
+                page={page}
+                pageSize={limit}
+                onRowClick={(row) => handleEdit(row.id)}
+              />
+            </SectionErrorBoundary>
           </>
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <p className="text-sm text-muted-foreground">
-              {t('admin.studies.table.showing', {
-                from: (page - 1) * limit + 1,
-                to: Math.min(page * limit, total),
-                total,
-              })}
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={page === 1}
-                onClick={() => setPage(prev => prev - 1)}
-                className="bg-card/50 border-border/50 hover:bg-muted/50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm text-muted-foreground px-3 py-2 bg-muted/30 rounded-lg">
-                {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={page === totalPages}
-                onClick={() => setPage(prev => prev + 1)}
-                className="bg-card/50 border-border/50 hover:bg-muted/50"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          showingText={t('admin.studies.table.showing', { from: (page - 1) * limit + 1, to: Math.min(page * limit, total), total })}
+        />
       </div>
 
       {/* Delete Confirmation Dialog */}
@@ -348,7 +440,7 @@ interface StudyRowProps {
   t: (key: string) => string;
 }
 
-function StudyCard({
+const StudyCard = memo(function StudyCard({
   study,
   index,
   onEdit,
@@ -453,131 +545,4 @@ function StudyCard({
       </div>
     </div>
   );
-}
-
-function StudyRow({
-  study,
-  index,
-  formatDate,
-  onEdit,
-  onDelete,
-  onActivate,
-  onClose,
-  onViewReliability,
-  t,
-}: StudyRowProps) {
-  return (
-    <TableRow
-      className={cn(
-        'cursor-pointer border-border/30 hover:bg-muted/30 transition-colors duration-200',
-        'opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]'
-      )}
-      style={{ animationDelay: `${index * 30}ms` }}
-      onClick={onEdit}
-    >
-      <TableCell className="max-w-0">
-        <div className="flex flex-col gap-1 min-w-0">
-          <span className="font-medium text-foreground truncate">{study.title}</span>
-          {study.description && (
-            <span className="text-sm text-muted-foreground truncate">
-              {study.description}
-            </span>
-          )}
-        </div>
-      </TableCell>
-      <TableCell>
-        <Badge
-          variant="outline"
-          className={cn(
-            'font-medium whitespace-nowrap',
-            study.status === 'active' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-            study.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-            study.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
-          )}
-        >
-          {t(`studies.status.${study.status}`)}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-center">
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          study.case_count > 0
-            ? 'bg-primary/10 text-primary'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          {study.case_count}
-        </span>
-      </TableCell>
-      <TableCell className="text-center">
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          study.unique_raters > 0
-            ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          {study.unique_raters}
-        </span>
-      </TableCell>
-      <TableCell className="text-center hidden lg:table-cell">
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          study.total_responses > 0
-            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          {study.total_responses}
-        </span>
-      </TableCell>
-      <TableCell className="text-muted-foreground text-sm hidden lg:table-cell">
-        {formatDate(study.created_at)}
-      </TableCell>
-      <TableCell>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-muted/50"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-            <DropdownMenuItem onClick={onEdit}>
-              <Pencil className="h-4 w-4 mr-2" />
-              {t('common.edit')}
-            </DropdownMenuItem>
-            {study.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewReliability}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Reliability
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
-            {study.status === 'draft' && study.case_count > 0 && (
-              <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
-                <Play className="h-4 w-4 mr-2" />
-                Activate
-              </DropdownMenuItem>
-            )}
-            {study.status === 'active' && (
-              <DropdownMenuItem onClick={onClose}>
-                <Lock className="h-4 w-4 mr-2" />
-                Close
-              </DropdownMenuItem>
-            )}
-            {study.status === 'draft' && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onDelete} className="text-destructive">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  {t('common.delete')}
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </TableCell>
-    </TableRow>
-  );
-}
+});
