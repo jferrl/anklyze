@@ -41,7 +41,7 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 - [x] **DEBT-06**: CaseEditorPage decomposed into custom hooks and compound components (target <300 lines per file)
 - [x] **DEBT-07**: AdminCasesPage decomposed into reusable table and filter components
 - [x] **DEBT-08**: AdminStudiesPage decomposed into reusable table and filter components
-- [ ] **DEBT-09**: Event handlers in page components wrapped with useCallback for consistent memoization
+- [x] **DEBT-09**: Event handlers in page components wrapped with useCallback for consistent memoization
 
 ### Performance
 
@@ -110,7 +110,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEBT-06 | Phase 5 | Complete |
 | DEBT-07 | Phase 5 | Complete |
 | DEBT-08 | Phase 5 | Complete |
-| DEBT-09 | Phase 5 | Pending |
+| DEBT-09 | Phase 5 | Complete |
 | PERF-01 | Phase 6 | Pending |
 | PERF-02 | Phase 6 | Pending |
 | PERF-03 | Phase 6 | Pending |
