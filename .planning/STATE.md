@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T23:48:00.000Z"
+last_updated: "2026-02-27T22:49:20.954Z"
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 20
   completed_plans: 20
 ---
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 ## Current Position
 
 Phase: 7 of 7 (Performance)
-Plan: 3 of 4 in current phase
-Status: In Progress
-Last activity: 2026-02-27 — Completed 07-03: Per-image lazy loading with Skeleton placeholders in ImageGrid, bulk useEffect removed from CaseDetailPage
+Plan: 4 of 4 in current phase (all plans complete)
+Status: Complete
+Last activity: 2026-02-27 — Completed 07-01: In-memory TTL cache for study reliability metrics, StudyStatsCache interface, integrated into StudyService
 
-Progress: [████████░░] 85%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -59,6 +59,8 @@ Progress: [████████░░] 85%
 | Phase 05 P03 | 283 | 2 tasks | 3 files |
 | Phase 06-gap-closure P01 | 208s | 2 tasks | 9 files |
 | Phase 07-performance P03 | 2 | 1 tasks | 2 files |
+| Phase 07-performance P01 | 160s | 2 tasks | 5 files |
+| Phase 07-performance P04 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -127,6 +129,13 @@ Recent decisions affecting current work:
 - [Phase 07-performance]: LazyImage is a non-exported internal component inside ImageGrid.tsx — encapsulates per-image URL fetch lifecycle with cancellation
 - [Phase 07-performance]: onUrlResolved with useCallback in CaseDetailPage provides stable reference to avoid re-triggering LazyImage useEffect on every render
 - [Phase 07-performance]: setImageUrls({}) reset placed in render-time sync block to preserve existing Phase 05-01 pattern
+- [Phase 07-04]: cases array wrapped in useMemo([casesData]) to provide stable reference — required so downstream useMemo hooks on stats/recentActiveCases/casesNeedingAttention are not invalidated by ?? [] new-array creation
+- [Phase 07-04]: formatDuration extracted as module-level function — pure function with no component state dependency, no useCallback needed
+- [Phase 07-04]: useCallback applied to handleExportCSV in analytics/reliability pages for consistency with admin page patterns, even on native Button onClick
+- [07-01]: StudyStatsCache.Get takes uuid.UUID not context.Context — in-memory access is instantaneous, no cancellation needed
+- [07-01]: Lazy eviction with double-check pattern under write lock prevents TOCTOU race in ttlStatsCache.Get
+- [07-01]: Cache invalidated at start of UpdateProgressAfterResponse (conservative) — ensures next read always recalculates after response submission
+- [07-01]: NewTTLStatsCache(5 * time.Minute) in main.go — bounds stale data without excessive recalculation
 
 ### Pending Todos
 
@@ -140,5 +149,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 06-01-PLAN.md — JWKS endpoint probe with background retry, health endpoint jwks status, deleted RedactCredentials dead code
+Stopped at: Completed 07-01-PLAN.md — In-memory TTL cache for study reliability metrics, StudyStatsCache interface and ttlStatsCache implementation
 Resume file: None
