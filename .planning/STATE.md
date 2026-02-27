@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T21:55:25.164Z"
+last_updated: "2026-02-27T23:48:00.000Z"
 progress:
   total_phases: 7
   completed_phases: 6
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 20
+  completed_plans: 20
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 ## Current Position
 
 Phase: 7 of 7 (Performance)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In Progress
-Last activity: 2026-02-27 — Completed 07-02: PERF-02 requirement skipped (chat virtualization not needed for short conversations)
+Last activity: 2026-02-27 — Completed 07-03: Per-image lazy loading with Skeleton placeholders in ImageGrid, bulk useEffect removed from CaseDetailPage
 
 Progress: [████████░░] 85%
 
@@ -58,6 +58,7 @@ Progress: [████████░░] 85%
 | Phase 05-frontend-tech-debt P01 | 12 | 2 tasks | 7 files |
 | Phase 05 P03 | 283 | 2 tasks | 3 files |
 | Phase 06-gap-closure P01 | 208s | 2 tasks | 9 files |
+| Phase 07-performance P03 | 2 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,9 @@ Recent decisions affecting current work:
 - [06-01]: JWKS probe fires only when cfg.IsProduction() && authValidator != nil — avoids false noise in dev
 - [06-01]: ARCH-03 acknowledged but no work performed — PATCH retry dropped from scope per user decision
 - [07-02]: PERF-02 (chat virtualization) explicitly deferred — conversations in AI chat panel do not reach lengths requiring optimization; effort redirected to statistics caching and image loading
+- [Phase 07-performance]: LazyImage is a non-exported internal component inside ImageGrid.tsx — encapsulates per-image URL fetch lifecycle with cancellation
+- [Phase 07-performance]: onUrlResolved with useCallback in CaseDetailPage provides stable reference to avoid re-triggering LazyImage useEffect on every render
+- [Phase 07-performance]: setImageUrls({}) reset placed in render-time sync block to preserve existing Phase 05-01 pattern
 
 ### Pending Todos
 

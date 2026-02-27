@@ -47,7 +47,7 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 
 - [ ] **PERF-01**: Statistics calculations cached with TTL and invalidated on new responses
 - [ ] **PERF-02**: Chat message history virtualized with pagination for long sessions
-- [ ] **PERF-03**: Batch image loading optimized with database-level grouping
+- [x] **PERF-03**: Batch image loading optimized with database-level grouping
 - [ ] **PERF-04**: Frontend useEffect dependencies optimized with proper useCallback/useMemo usage
 
 ## v2 Requirements
@@ -113,7 +113,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEBT-09 | Phase 5 | Complete |
 | PERF-01 | Phase 7 | Pending |
 | PERF-02 | Phase 7 | Pending |
-| PERF-03 | Phase 7 | Pending |
+| PERF-03 | Phase 7 | Complete |
 | PERF-04 | Phase 7 | Pending |
 
 **Coverage:**
