@@ -152,10 +152,17 @@ func main() {
 	ruleEngine := rules.NewEngine()
 	classificationService := service.NewClassificationService(ruleEngine, caseResponseRepo)
 
+	// Initialize prompt loader (independent of API key — loads from embedded templates)
+	promptLoader, err := llm.NewPromptLoader()
+	if err != nil {
+		slog.Error("failed to load prompt templates", "error", err)
+		os.Exit(1)
+	}
+
 	// Initialize chat service if Gemini is configured
 	var chatService service.ChatService
 	if cfg.HasGemini() {
-		llmClient, err := llm.NewClient(ctx, cfg.GeminiAPIKey, cfg.GeminiModel)
+		llmClient, err := llm.NewClient(ctx, cfg.GeminiAPIKey, cfg.GeminiModel, promptLoader)
 		if err != nil {
 			slog.Warn("Gemini client creation failed, chat disabled", "error", err)
 		} else {

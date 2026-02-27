@@ -191,10 +191,9 @@ func TestPromptLoaderBuildExtractionPromptWithContext(t *testing.T) {
 	}
 }
 
-// TestPromptLoaderOutputMatchesOldFunctions is a regression test verifying that
-// PromptLoader produces the same output as the old free functions (GetSystemPrompt,
-// BuildExtractionPrompt, BuildExtractionPromptWithContext).
-func TestPromptLoaderOutputMatchesOldFunctions(t *testing.T) {
+// TestPromptLoaderContentIntegrity verifies that the PromptLoader produces
+// output containing all expected content from the original hardcoded prompts.
+func TestPromptLoaderContentIntegrity(t *testing.T) {
 	t.Parallel()
 
 	loader, err := NewPromptLoader()
@@ -202,39 +201,62 @@ func TestPromptLoaderOutputMatchesOldFunctions(t *testing.T) {
 		t.Fatalf("NewPromptLoader() error = %v", err)
 	}
 
-	// Regression: GetSystemPrompt output must match
-	for _, lang := range []i18n.Language{i18n.English, i18n.Spanish} {
-		oldOut := GetSystemPrompt(lang)
-		newOut := loader.GetSystemPrompt(lang)
-		if oldOut != newOut {
-			t.Errorf("GetSystemPrompt(%s) output mismatch:\nold len=%d, new len=%d", lang, len(oldOut), len(newOut))
+	// Verify English system prompt contains key medical terminology
+	enPrompt := loader.GetSystemPrompt(i18n.English)
+	enKeywords := []string{
+		"medical data extraction assistant",
+		"ankle fracture classification",
+		"posterior_only",
+		"medial_only",
+		"lateral_only",
+		"trimaleolar",
+		"Weber A",
+		"Lauge-Hansen",
+		"AO-44",
+		"Bartonicek",
+		"infrasindesmal",
+		"transindesmal",
+		"suprasindesmal",
+		"Example",
+	}
+	for _, kw := range enKeywords {
+		if !containsSubstring(enPrompt, kw) {
+			t.Errorf("English system prompt missing expected content: %q", kw)
 		}
 	}
 
-	// Regression: BuildExtractionPrompt output must match
-	descriptions := []string{"Lateral malleolus fracture", "", "Fractura de maléolo lateral"}
-	for _, lang := range []i18n.Language{i18n.English, i18n.Spanish} {
-		for _, desc := range descriptions {
-			oldOut := BuildExtractionPrompt(desc, lang)
-			newOut := loader.BuildExtractionPrompt(desc, lang)
-			if oldOut != newOut {
-				t.Errorf("BuildExtractionPrompt(%q, %s) mismatch:\nold=%q\nnew=%q", desc, lang, oldOut, newOut)
-			}
+	// Verify Spanish system prompt contains key medical terminology
+	esPrompt := loader.GetSystemPrompt(i18n.Spanish)
+	esKeywords := []string{
+		"extracción de datos médicos",
+		"fracturas de tobillo",
+		"posterior_only",
+		"lateral_only",
+		"trimaleolar",
+		"Weber A",
+		"Lauge-Hansen",
+		"AO-44",
+		"Bartonicek",
+		"infrasindesmal",
+		"transindesmal",
+		"suprasindesmal",
+		"Ejemplo",
+	}
+	for _, kw := range esKeywords {
+		if !containsSubstring(esPrompt, kw) {
+			t.Errorf("Spanish system prompt missing expected content: %q", kw)
 		}
 	}
 
-	// Regression: BuildExtractionPromptWithContext (no previous input) must match
-	previousInput := &domain.FractureInput{
-		InvolvedMalleoli: domain.InvolvedLateralOnly,
-		FibularLevel:     domain.FibularLevelTransindesmal,
+	// Verify extraction prompts embed the description
+	desc := "test fracture description"
+	enExtract := loader.BuildExtractionPrompt(desc, i18n.English)
+	if !containsSubstring(enExtract, "Extract") || !containsSubstring(enExtract, desc) {
+		t.Errorf("English extraction prompt missing expected content")
 	}
-	for _, lang := range []i18n.Language{i18n.English, i18n.Spanish} {
-		for _, prev := range []*domain.FractureInput{nil, previousInput} {
-			oldOut := BuildExtractionPromptWithContext("test description", lang, prev)
-			newOut := loader.BuildExtractionPromptWithContext("test description", lang, prev)
-			if oldOut != newOut {
-				t.Errorf("BuildExtractionPromptWithContext(lang=%s, prev=%v) mismatch:\nold len=%d\nnew len=%d", lang, prev != nil, len(oldOut), len(newOut))
-			}
-		}
+
+	esExtract := loader.BuildExtractionPrompt(desc, i18n.Spanish)
+	if !containsSubstring(esExtract, "Extrae") || !containsSubstring(esExtract, desc) {
+		t.Errorf("Spanish extraction prompt missing expected content")
 	}
 }

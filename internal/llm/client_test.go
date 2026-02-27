@@ -12,6 +12,11 @@ import (
 func TestNewClient(t *testing.T) {
 	t.Parallel()
 
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
+
 	tests := []struct {
 		name    string
 		apiKey  string
@@ -41,7 +46,7 @@ func TestNewClient(t *testing.T) {
 			// Note: We can only test error cases that don't require
 			// a valid API key, as the genai.NewClient will fail validation
 			if tt.apiKey == "" {
-				_, err := NewClient(context.Background(), tt.apiKey, tt.model)
+				_, err := NewClient(context.Background(), tt.apiKey, tt.model, loader)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("NewClient() error = %v, wantErr %v", err, tt.wantErr)
 				}
@@ -252,6 +257,11 @@ func TestClarification_Fields(t *testing.T) {
 func TestGetSystemPrompt(t *testing.T) {
 	t.Parallel()
 
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
+
 	tests := []struct {
 		name     string
 		lang     i18n.Language
@@ -273,7 +283,7 @@ func TestGetSystemPrompt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := GetSystemPrompt(tt.lang)
+			got := loader.GetSystemPrompt(tt.lang)
 			if got == "" {
 				t.Error("GetSystemPrompt() returned empty string")
 			}
@@ -286,6 +296,11 @@ func TestGetSystemPrompt(t *testing.T) {
 
 func TestBuildExtractionPrompt(t *testing.T) {
 	t.Parallel()
+
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
 
 	tests := []struct {
 		name        string
@@ -317,7 +332,7 @@ func TestBuildExtractionPrompt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := BuildExtractionPrompt(tt.description, tt.lang)
+			got := loader.BuildExtractionPrompt(tt.description, tt.lang)
 			if got == "" {
 				t.Error("BuildExtractionPrompt() returned empty string")
 			}
@@ -332,6 +347,11 @@ func TestBuildExtractionPrompt(t *testing.T) {
 
 func TestBuildExtractionPromptWithContext(t *testing.T) {
 	t.Parallel()
+
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
 
 	previousInput := &domain.FractureInput{
 		InvolvedMalleoli: domain.InvolvedLateralOnly,
@@ -379,7 +399,7 @@ func TestBuildExtractionPromptWithContext(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := BuildExtractionPromptWithContext(tt.description, tt.lang, tt.previousInput)
+			got := loader.BuildExtractionPromptWithContext(tt.description, tt.lang, tt.previousInput)
 			if got == "" {
 				t.Error("BuildExtractionPromptWithContext() returned empty string")
 			}
@@ -394,6 +414,11 @@ func TestBuildExtractionPromptWithContext(t *testing.T) {
 
 func TestSystemPromptContainsClassificationRules(t *testing.T) {
 	t.Parallel()
+
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
 
 	tests := []struct {
 		name     string
@@ -444,7 +469,7 @@ func TestSystemPromptContainsClassificationRules(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			prompt := GetSystemPrompt(tt.lang)
+			prompt := loader.GetSystemPrompt(tt.lang)
 			for _, keyword := range tt.keywords {
 				if !containsSubstring(prompt, keyword) {
 					t.Errorf("System prompt should contain %q", keyword)
@@ -456,6 +481,11 @@ func TestSystemPromptContainsClassificationRules(t *testing.T) {
 
 func TestSystemPromptContainsFewShotExamples(t *testing.T) {
 	t.Parallel()
+
+	loader, err := NewPromptLoader()
+	if err != nil {
+		t.Fatalf("NewPromptLoader() error = %v", err)
+	}
 
 	tests := []struct {
 		name     string
@@ -478,7 +508,7 @@ func TestSystemPromptContainsFewShotExamples(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			prompt := GetSystemPrompt(tt.lang)
+			prompt := loader.GetSystemPrompt(tt.lang)
 			if !containsSubstring(prompt, tt.contains) {
 				t.Errorf("System prompt should contain few-shot examples (%q)", tt.contains)
 			}

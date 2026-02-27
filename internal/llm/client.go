@@ -38,10 +38,11 @@ type Client struct {
 	client  *genai.Client
 	model   string
 	timeout time.Duration
+	loader  *PromptLoader
 }
 
 // NewClient creates a new Gemini client.
-func NewClient(ctx context.Context, apiKey, model string) (*Client, error) {
+func NewClient(ctx context.Context, apiKey, model string, loader *PromptLoader) (*Client, error) {
 	if apiKey == "" {
 		return nil, fmt.Errorf("GEMINI_API_KEY is required")
 	}
@@ -62,6 +63,7 @@ func NewClient(ctx context.Context, apiKey, model string) (*Client, error) {
 		client:  client,
 		model:   model,
 		timeout: DefaultTimeout,
+		loader:  loader,
 	}, nil
 }
 
@@ -83,14 +85,14 @@ func (c *Client) ExtractFractureInput(ctx context.Context, description string, l
 	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
-	prompt := BuildExtractionPromptWithContext(description, lang, previousInput)
+	prompt := c.loader.BuildExtractionPromptWithContext(description, lang, previousInput)
 
 	config := &genai.GenerateContentConfig{
 		Temperature:      genai.Ptr(float32(0.1)),
 		ResponseMIMEType: "application/json",
 		SystemInstruction: &genai.Content{
 			Parts: []*genai.Part{
-				genai.NewPartFromText(GetSystemPrompt(lang)),
+				genai.NewPartFromText(c.loader.GetSystemPrompt(lang)),
 			},
 		},
 	}
