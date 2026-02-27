@@ -2,7 +2,7 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  bin = "./tmp/main"
+  entrypoint = "./tmp/main"
   cmd = "go build -o ./tmp/main ./cmd/anklyze-apiserver/main.go"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "node_modules", "frontend", "e2e", "docs", "fixtures", ".github", ".git"]

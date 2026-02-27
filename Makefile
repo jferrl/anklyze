@@ -1,14 +1,23 @@
-.PHONY: all run run-backend run-frontend build build-backend build-frontend clean install \
+.PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification deps tidy db-start db-stop run-with-db db-shell db-audit swagger
+	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger
 
-# Default target - run both backend and frontend
+LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
+
+# Default target - run with local PostgreSQL + fixtures
 all: run
 
-# Run both backend and frontend concurrently
+# Run with local PostgreSQL (starts DB, runs backend + frontend)
 run:
+	@echo "Starting PostgreSQL..."
+	@docker compose up -d --wait
 	@echo "Starting backend and frontend..."
-	@make -j2 run-backend run-frontend
+	@DATABASE_URL="$(LOCAL_DATABASE_URL)" $(MAKE) -j2 run-backend run-frontend
+
+# Run without database (degraded mode, NoOp repositories)
+run-no-db:
+	@echo "Starting backend and frontend (no database)..."
+	@$(MAKE) -j2 run-backend run-frontend
 
 # Run backend only (with hot reload using air)
 run-backend:
@@ -119,29 +128,36 @@ deps:
 tidy:
 	@go mod tidy
 
-# Start local PostgreSQL with Docker
+# Start local PostgreSQL (schema + fixtures loaded on first run)
 db-start:
-	docker run -d --name anklyze-pg \
-		-e POSTGRES_PASSWORD=postgres \
-		-e POSTGRES_DB=anklyze \
-		-p 5432:5432 \
-		postgres:16
+	@docker compose up -d --wait
 
-# Stop and remove local PostgreSQL
+# Stop local PostgreSQL (data persists)
 db-stop:
-	docker stop anklyze-pg && docker rm anklyze-pg
+	@docker compose down
 
-# Run with local database
-run-with-db:
-	DATABASE_URL="postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable" go run ./cmd/anklyze-apiserver
+# Reset database: wipe all data and re-seed fixtures
+db-reset:
+	@docker compose down -v
+	@docker compose up -d --wait
+	@echo "Database reset with fresh fixtures."
+
+# Promote a user to admin (usage: make db-make-admin EMAIL=you@example.com)
+db-make-admin:
+ifndef EMAIL
+	$(error Usage: make db-make-admin EMAIL=you@example.com)
+endif
+	@docker compose exec postgres psql -U postgres -d anklyze -c \
+		"UPDATE users SET role = 'admin', updated_at = NOW() WHERE email = '$(EMAIL)';" \
+		-c "SELECT id, email, role FROM users WHERE email = '$(EMAIL)';"
 
 # Connect to local database
 db-shell:
-	docker exec -it anklyze-pg psql -U postgres -d anklyze
+	@docker compose exec postgres psql -U postgres -d anklyze
 
 # Show audit entries
 db-audit:
-	docker exec anklyze-pg psql -U postgres -d anklyze -c "SELECT id, language, danis_weber_type, created_at FROM audit_entries ORDER BY created_at DESC LIMIT 10;"
+	@docker compose exec postgres psql -U postgres -d anklyze -c "SELECT id, language, danis_weber_type, created_at FROM audit_entries ORDER BY created_at DESC LIMIT 10;"
 
 # Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:

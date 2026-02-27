@@ -79,52 +79,52 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	tests := []struct {
-		name           string
-		sessionLimit   int
+		name            string
+		sessionLimit    int
 		sessionMsgCount int
-		wantStatus     int
-		wantError      string
-		description    string
+		wantStatus      int
+		wantError       string
+		description     string
 	}{
 		{
-			name:           "allows message when under limit",
-			sessionLimit:   10,
+			name:            "allows message when under limit",
+			sessionLimit:    10,
 			sessionMsgCount: 5,
-			wantStatus:     http.StatusOK,
-			wantError:      "",
-			description:    "Should allow messages when session is under limit",
+			wantStatus:      http.StatusOK,
+			wantError:       "",
+			description:     "Should allow messages when session is under limit",
 		},
 		{
-			name:           "allows message at limit minus one",
-			sessionLimit:   10,
+			name:            "allows message at limit minus one",
+			sessionLimit:    10,
 			sessionMsgCount: 9,
-			wantStatus:     http.StatusOK,
-			wantError:      "",
-			description:    "Should allow the last message before hitting limit",
+			wantStatus:      http.StatusOK,
+			wantError:       "",
+			description:     "Should allow the last message before hitting limit",
 		},
 		{
-			name:           "blocks message at limit",
-			sessionLimit:   10,
+			name:            "blocks message at limit",
+			sessionLimit:    10,
 			sessionMsgCount: 10,
-			wantStatus:     http.StatusTooManyRequests,
-			wantError:      "session_limit_exceeded",
-			description:    "Should block when session has reached limit",
+			wantStatus:      http.StatusTooManyRequests,
+			wantError:       "session_limit_exceeded",
+			description:     "Should block when session has reached limit",
 		},
 		{
-			name:           "blocks message over limit",
-			sessionLimit:   5,
+			name:            "blocks message over limit",
+			sessionLimit:    5,
 			sessionMsgCount: 20,
-			wantStatus:     http.StatusTooManyRequests,
-			wantError:      "session_limit_exceeded",
-			description:    "Should block when session is well over limit",
+			wantStatus:      http.StatusTooManyRequests,
+			wantError:       "session_limit_exceeded",
+			description:     "Should block when session is well over limit",
 		},
 		{
-			name:           "zero limit disables check",
-			sessionLimit:   0,
+			name:            "zero limit disables check",
+			sessionLimit:    0,
 			sessionMsgCount: 100,
-			wantStatus:     http.StatusOK,
-			wantError:      "",
-			description:    "Zero limit should disable the session limit feature",
+			wantStatus:      http.StatusOK,
+			wantError:       "",
+			description:     "Zero limit should disable the session limit feature",
 		},
 	}
 
@@ -248,16 +248,4 @@ func TestHandler_WithSessionMessageLimit(t *testing.T) {
 			}
 		})
 	}
-}
-
-// TestGetSessionLimitMessage removed - translations now handled on frontend
-// The API now returns error_code instead of translated messages
-
-func findSubstring(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }

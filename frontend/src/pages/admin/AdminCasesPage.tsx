@@ -153,11 +153,10 @@ export function AdminCasesPage() {
       header: () => (
         <span className="text-muted-foreground font-medium">{t('admin.cases.table.title')}</span>
       ),
-      size: 999,
       cell: ({ row }) => {
         const caseItem = row.original;
         return (
-          <div className="flex flex-col gap-1 min-w-0 max-w-0">
+          <div className="flex flex-col gap-1 min-w-0">
             <span className="font-medium text-foreground truncate">{caseItem.title}</span>
             {caseItem.description && (
               <span className="text-sm text-muted-foreground truncate">

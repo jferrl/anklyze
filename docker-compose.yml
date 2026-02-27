@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: anklyze-pg
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: anklyze
+    ports:
+      - "5432:5432"
+    volumes:
+      - anklyze-pgdata:/var/lib/postgresql
+      - ./migrations/000001_initial_schema.up.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./fixtures/local_admin.sql:/docker-entrypoint-initdb.d/02-admin.sql:ro
+      - ./fixtures/study_test_data_auto.sql:/docker-entrypoint-initdb.d/03-fixtures.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d anklyze"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  anklyze-pgdata:

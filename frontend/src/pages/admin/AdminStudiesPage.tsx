@@ -125,11 +125,10 @@ export function AdminStudiesPage() {
       header: () => (
         <span className="text-muted-foreground font-medium">{t('admin.studies.table.title', 'Study')}</span>
       ),
-      size: 999,
       cell: ({ row }) => {
         const study = row.original;
         return (
-          <div className="flex flex-col gap-1 min-w-0 max-w-0">
+          <div className="flex flex-col gap-1 min-w-0">
             <span className="font-medium text-foreground truncate">{study.title}</span>
             {study.description && (
               <span className="text-sm text-muted-foreground truncate">
