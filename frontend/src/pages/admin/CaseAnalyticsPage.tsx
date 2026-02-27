@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -31,6 +31,14 @@ const CLASSIFICATION_SYSTEMS = [
   { key: 'bartonicek', label: 'Bartonicek', description: 'Posterior malleolus' },
 ];
 
+function formatDuration(ms: number) {
+  const seconds = Math.floor(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
 export function CaseAnalyticsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -49,19 +57,11 @@ export function CaseAnalyticsPage() {
     enabled: !!id,
   });
 
-  const handleExportCSV = async () => {
+  const handleExportCSV = useCallback(async () => {
     if (id && caseData) {
       await downloadCaseResponsesCSV(id, `${caseData.title.replace(/\s+/g, '_')}_responses.csv`);
     }
-  };
-
-  const formatDuration = (ms: number) => {
-    const seconds = Math.floor(ms / 1000);
-    if (seconds < 60) return `${seconds}s`;
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-  };
+  }, [id, caseData]);
 
   const getDistributionData = useMemo(() => {
     if (!analytics) return {};
@@ -79,7 +79,10 @@ export function CaseAnalyticsPage() {
     }
   }, [analytics, activeSystem]);
 
-  const activeSystemInfo = CLASSIFICATION_SYSTEMS.find(s => s.key === activeSystem);
+  const activeSystemInfo = useMemo(
+    () => CLASSIFICATION_SYSTEMS.find(s => s.key === activeSystem),
+    [activeSystem]
+  );
 
   if (isLoadingCase || isLoadingAnalytics) {
     return (

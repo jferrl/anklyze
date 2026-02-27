@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -38,14 +39,14 @@ export function StudyReliabilityPage() {
     enabled: !!id,
   });
 
-  const handleExportCSV = async () => {
+  const handleExportCSV = useCallback(async () => {
     if (id && study) {
       await studyApi.downloadStudyResponsesCSV(
         id,
         `${study.title.replace(/\s+/g, '_')}_responses.csv`
       );
     }
-  };
+  }, [id, study]);
 
   const isLoading = isLoadingStudy || isLoadingReliability;
 

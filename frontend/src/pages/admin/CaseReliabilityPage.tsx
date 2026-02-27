@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -40,14 +41,14 @@ export function CaseReliabilityPage() {
     enabled: !!id,
   });
 
-  const handleExportCSV = async () => {
+  const handleExportCSV = useCallback(async () => {
     if (id && caseData) {
       await downloadDetailedResponsesCSV(
         id,
         `${caseData.title.replace(/\s+/g, '_')}_detailed_responses.csv`
       );
     }
-  };
+  }, [id, caseData]);
 
   if (isLoadingCase || isLoadingMetrics) {
     return (
