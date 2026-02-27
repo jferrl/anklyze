@@ -1,10 +1,9 @@
 package service
 
 import (
-	"math"
-
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/statistics"
 )
 
 // StatisticsService provides inter-rater reliability calculations.
@@ -22,8 +21,7 @@ func NewStatisticsService() *StatisticsService {
 //   - 0 = agreement expected by chance
 //   - < 0 = less than chance agreement
 func (s *StatisticsService) CohensKappa(ratings [][2]string) (float64, error) {
-	kappa, _, err := s.CohensKappaWithCI(ratings, 0.95)
-	return kappa, err
+	return statistics.CohensKappa(ratings)
 }
 
 // CohensKappaWithCI calculates Cohen's Kappa with confidence interval.
@@ -31,411 +29,55 @@ func (s *StatisticsService) CohensKappa(ratings [][2]string) (float64, error) {
 // confidenceLevel is typically 0.95 for 95% CI.
 // Returns the Kappa value, confidence interval, and any error.
 func (s *StatisticsService) CohensKappaWithCI(ratings [][2]string, confidenceLevel float64) (float64, *domain.ConfidenceInterval, error) {
-	n := len(ratings)
-	if n < 1 {
-		return 0, nil, nil
-	}
-
-	// Build contingency table
-	categories := s.extractCategories(ratings)
-	if len(categories) == 0 {
-		return 0, nil, nil
-	}
-
-	// Count agreements and category frequencies
-	observed := 0
-	rater1Counts := make(map[string]int)
-	rater2Counts := make(map[string]int)
-
-	for _, pair := range ratings {
-		if pair[0] == pair[1] {
-			observed++
-		}
-		rater1Counts[pair[0]]++
-		rater2Counts[pair[1]]++
-	}
-
-	// Calculate observed agreement (P_o)
-	po := float64(observed) / float64(n)
-
-	// Calculate expected agreement by chance (P_e)
-	pe := 0.0
-	for _, cat := range categories {
-		p1 := float64(rater1Counts[cat]) / float64(n)
-		p2 := float64(rater2Counts[cat]) / float64(n)
-		pe += p1 * p2
-	}
-
-	// Cohen's Kappa formula: K = (P_o - P_e) / (1 - P_e)
-	if pe == 1 {
-		return 1.0, nil, nil // Perfect agreement by definition
-	}
-
-	kappa := (po - pe) / (1 - pe)
-
-	// Calculate confidence interval
-	// Standard error formula (approximate): SE = sqrt((Po * (1 - Po)) / (n * (1 - Pe)^2))
-	// This is a simplified approximation; more complex formulas exist for small samples
-	var ci *domain.ConfidenceInterval
-	if n >= 2 {
-		denominator := float64(n) * math.Pow(1-pe, 2)
-		if denominator > 0 {
-			se := math.Sqrt((po * (1 - po)) / denominator)
-
-			// Z-score for confidence level (default 95% -> z = 1.96)
-			z := 1.96 // 95% CI
-			switch confidenceLevel {
-			case 0.99:
-				z = 2.576
-			case 0.90:
-				z = 1.645
-			}
-
-			lower := kappa - z*se
-			upper := kappa + z*se
-
-			// Clamp to valid Kappa range [-1, 1]
-			if lower < -1 {
-				lower = -1
-			}
-			if upper > 1 {
-				upper = 1
-			}
-
-			ci = &domain.ConfidenceInterval{
-				Lower: Round(lower, 4),
-				Upper: Round(upper, 4),
-				Level: confidenceLevel,
-			}
-		}
-	}
-
-	return kappa, ci, nil
+	return statistics.CohensKappaWithCI(ratings, confidenceLevel)
 }
 
 // WeightedKappa calculates weighted Cohen's Kappa for ordinal categories.
 // The ordering parameter defines the order of categories (e.g., ["44-A1", "44-A2", "44-B1"...]).
 // weightType can be "linear" or "quadratic".
-// Linear: w_ij = 1 - |i-j|/(k-1)
-// Quadratic: w_ij = 1 - (i-j)²/(k-1)²
 func (s *StatisticsService) WeightedKappa(ratings [][2]string, ordering []string, weightType domain.KappaWeightType) (float64, error) {
-	n := len(ratings)
-	if n < 1 || len(ordering) < 2 {
-		return 0, nil
-	}
-
-	// Create index map for ordering
-	orderIndex := make(map[string]int)
-	for i, cat := range ordering {
-		orderIndex[cat] = i
-	}
-
-	k := len(ordering)
-	kMinus1 := float64(k - 1)
-
-	// Build weight matrix
-	weights := make([][]float64, k)
-	for i := range k {
-		weights[i] = make([]float64, k)
-		for j := range k {
-			diff := math.Abs(float64(i - j))
-			switch weightType {
-			case domain.KappaWeightQuadratic:
-				weights[i][j] = 1 - (diff*diff)/(kMinus1*kMinus1)
-			default: // Linear
-				weights[i][j] = 1 - diff/kMinus1
-			}
-		}
-	}
-
-	// Build observed frequency matrix (contingency table)
-	observed := make([][]float64, k)
-	for i := range k {
-		observed[i] = make([]float64, k)
-	}
-
-	rater1Counts := make([]float64, k)
-	rater2Counts := make([]float64, k)
-
-	validPairs := 0
-	for _, pair := range ratings {
-		i, ok1 := orderIndex[pair[0]]
-		j, ok2 := orderIndex[pair[1]]
-		if ok1 && ok2 {
-			observed[i][j]++
-			rater1Counts[i]++
-			rater2Counts[j]++
-			validPairs++
-		}
-	}
-
-	if validPairs == 0 {
-		return 0, nil
-	}
-
-	nFloat := float64(validPairs)
-
-	// Calculate observed weighted agreement (P_o)
-	po := 0.0
-	for i := 0; i < k; i++ {
-		for j := 0; j < k; j++ {
-			po += weights[i][j] * observed[i][j] / nFloat
-		}
-	}
-
-	// Calculate expected weighted agreement (P_e)
-	pe := 0.0
-	for i := 0; i < k; i++ {
-		for j := 0; j < k; j++ {
-			pe += weights[i][j] * (rater1Counts[i] / nFloat) * (rater2Counts[j] / nFloat)
-		}
-	}
-
-	// Weighted Kappa formula: K_w = (P_o - P_e) / (1 - P_e)
-	if pe >= 1 {
-		return 1.0, nil
-	}
-
-	kappa := (po - pe) / (1 - pe)
-	return kappa, nil
-}
-
-// aoOTAOrdering defines the natural order of AO/OTA classifications.
-var aoOTAOrdering = []string{
-	"44-A1", "44-A2",
-	"44-B1", "44-B2", "44-B3",
-	"44-C1", "44-C2", "44-C3",
+	return statistics.WeightedKappa(ratings, ordering, weightType)
 }
 
 // FleissKappa calculates Fleiss' Kappa for multiple raters.
 // matrix[i][j] = number of raters who assigned subject i to category j
 // numRaters is the number of raters per subject (must be consistent).
-// Returns the Kappa value.
 func (s *StatisticsService) FleissKappa(matrix [][]int, numRaters int) (float64, error) {
-	if len(matrix) == 0 || numRaters < 2 {
-		return 0, nil
-	}
-
-	numSubjects := len(matrix)
-	numCategories := len(matrix[0])
-	n := float64(numRaters)
-	N := float64(numSubjects)
-
-	// Calculate P_j (proportion of all assignments to category j)
-	pj := make([]float64, numCategories)
-	totalAssignments := N * n
-	for j := range numCategories {
-		sum := 0
-		for i := range numSubjects {
-			if j < len(matrix[i]) {
-				sum += matrix[i][j]
-			}
-		}
-		pj[j] = float64(sum) / totalAssignments
-	}
-
-	// Calculate P_i (agreement for each subject)
-	Pi := make([]float64, numSubjects)
-	for i := 0; i < numSubjects; i++ {
-		sum := 0.0
-		for j := 0; j < numCategories; j++ {
-			if j < len(matrix[i]) {
-				nij := float64(matrix[i][j])
-				sum += nij * (nij - 1)
-			}
-		}
-		if n*(n-1) > 0 {
-			Pi[i] = sum / (n * (n - 1))
-		}
-	}
-
-	// Calculate P_bar (mean of P_i values)
-	Pbar := 0.0
-	for i := range numSubjects {
-		Pbar += Pi[i]
-	}
-	Pbar /= N
-
-	// Calculate P_e_bar (expected agreement by chance)
-	PeBar := 0.0
-	for j := 0; j < numCategories; j++ {
-		PeBar += pj[j] * pj[j]
-	}
-
-	// Fleiss' Kappa formula: K = (P_bar - P_e_bar) / (1 - P_e_bar)
-	if PeBar == 1 {
-		return 1.0, nil
-	}
-
-	kappa := (Pbar - PeBar) / (1 - PeBar)
-	return kappa, nil
+	return statistics.FleissKappa(matrix, numRaters)
 }
 
 // PercentAgreement calculates simple percentage agreement among all raters.
 // ratings is a slice of categories assigned by different raters to the same subject.
 func (s *StatisticsService) PercentAgreement(ratings []string) float64 {
-	if len(ratings) < 2 {
-		return 1.0
-	}
-
-	// Find most common rating
-	counts := make(map[string]int)
-	for _, r := range ratings {
-		counts[r]++
-	}
-
-	maxCount := 0
-	for _, c := range counts {
-		if c > maxCount {
-			maxCount = c
-		}
-	}
-
-	return float64(maxCount) / float64(len(ratings))
+	return statistics.PercentAgreement(ratings)
 }
 
 // ConfusionMatrix builds a confusion matrix comparing observed to expected classifications.
 // Returns map[expected][observed] = count
 func (s *StatisticsService) ConfusionMatrix(observed, expected []string) map[string]map[string]int64 {
-	matrix := make(map[string]map[string]int64)
-
-	for i := 0; i < len(observed) && i < len(expected); i++ {
-		exp := expected[i]
-		obs := observed[i]
-
-		if matrix[exp] == nil {
-			matrix[exp] = make(map[string]int64)
-		}
-		matrix[exp][obs]++
-	}
-
-	return matrix
+	return statistics.ConfusionMatrix(observed, expected)
 }
 
 // CategoryCounts counts occurrences of each category.
 func (s *StatisticsService) CategoryCounts(ratings []string) map[string]int64 {
-	counts := make(map[string]int64)
-	for _, r := range ratings {
-		if r != "" {
-			counts[r]++
-		}
-	}
-	return counts
+	return statistics.CategoryCounts(ratings)
 }
 
 // CalculateCategoryMetrics calculates diagnostic metrics (sensitivity, specificity, etc.)
 // for each category by comparing observed classifications against expected (gold standard).
 // Returns a map of category -> metrics.
 func (s *StatisticsService) CalculateCategoryMetrics(observed, expected []string) map[string]*domain.CategoryMetrics {
-	if len(observed) == 0 || len(expected) == 0 {
-		return nil
-	}
-
-	// Find all unique categories
-	categories := make(map[string]bool)
-	for _, cat := range observed {
-		if cat != "" {
-			categories[cat] = true
-		}
-	}
-	for _, cat := range expected {
-		if cat != "" {
-			categories[cat] = true
-		}
-	}
-
-	if len(categories) == 0 {
-		return nil
-	}
-
-	n := len(observed)
-	if len(expected) < n {
-		n = len(expected)
-	}
-
-	result := make(map[string]*domain.CategoryMetrics)
-
-	for cat := range categories {
-		// Calculate confusion matrix elements for this category (binary: cat vs not-cat)
-		var tp, tn, fp, fn int64
-
-		for i := range n {
-			actualPositive := expected[i] == cat
-			predictedPositive := observed[i] == cat
-
-			switch {
-			case actualPositive && predictedPositive:
-				tp++ // True Positive
-			case !actualPositive && !predictedPositive:
-				tn++ // True Negative
-			case !actualPositive && predictedPositive:
-				fp++ // False Positive
-			case actualPositive && !predictedPositive:
-				fn++ // False Negative
-			}
-		}
-
-		metrics := &domain.CategoryMetrics{
-			Category: cat,
-		}
-
-		// Sensitivity (True Positive Rate): TP / (TP + FN)
-		if tp+fn > 0 {
-			metrics.Sensitivity = float64(tp) / float64(tp+fn)
-		}
-
-		// Specificity (True Negative Rate): TN / (TN + FP)
-		if tn+fp > 0 {
-			metrics.Specificity = float64(tn) / float64(tn+fp)
-		}
-
-		// Positive Predictive Value (Precision): TP / (TP + FP)
-		if tp+fp > 0 {
-			metrics.PPV = float64(tp) / float64(tp+fp)
-		}
-
-		// Negative Predictive Value: TN / (TN + FN)
-		if tn+fn > 0 {
-			metrics.NPV = float64(tn) / float64(tn+fn)
-		}
-
-		// F1 Score: 2 * (PPV * Sensitivity) / (PPV + Sensitivity)
-		if metrics.PPV+metrics.Sensitivity > 0 {
-			metrics.F1Score = 2 * (metrics.PPV * metrics.Sensitivity) / (metrics.PPV + metrics.Sensitivity)
-		}
-
-		// Round to 4 decimal places
-		metrics.Sensitivity = Round(metrics.Sensitivity, 4)
-		metrics.Specificity = Round(metrics.Specificity, 4)
-		metrics.PPV = Round(metrics.PPV, 4)
-		metrics.NPV = Round(metrics.NPV, 4)
-		metrics.F1Score = Round(metrics.F1Score, 4)
-
-		result[cat] = metrics
-	}
-
-	return result
+	return statistics.CalculateCategoryMetrics(observed, expected)
 }
 
 // CalculateAccuracy calculates the accuracy (percentage correct) of predictions.
 func (s *StatisticsService) CalculateAccuracy(observed, expected []string) float64 {
-	if len(observed) == 0 || len(expected) == 0 {
-		return 0
-	}
+	return statistics.CalculateAccuracy(observed, expected)
+}
 
-	correct := 0
-	total := 0
-	for i := 0; i < len(observed) && i < len(expected); i++ {
-		total++
-		if observed[i] == expected[i] {
-			correct++
-		}
-	}
-
-	if total == 0 {
-		return 0
-	}
-	return float64(correct) / float64(total) * 100
+// Round rounds a float to the specified number of decimal places.
+func (s *StatisticsService) Round(val float64, precision int) float64 {
+	return statistics.Round(val, precision)
 }
 
 // CalculateReliabilityMetrics calculates all reliability metrics for a case.
@@ -503,12 +145,12 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 
 	agreement := &domain.SystemAgreement{
 		System:         system,
-		CategoryCounts: s.CategoryCounts(classifications),
+		CategoryCounts: statistics.CategoryCounts(classifications),
 	}
 
 	// Calculate percent agreement (mode frequency / total)
 	if len(classifications) > 1 {
-		agreement.PercentAgreement = s.PercentAgreement(classifications) * 100
+		agreement.PercentAgreement = statistics.PercentAgreement(classifications) * 100
 	} else {
 		agreement.PercentAgreement = 100
 	}
@@ -548,14 +190,14 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 			ratings := [][2]string{
 				{uniqueUsers[raters[0]][lastIdx0], uniqueUsers[raters[1]][lastIdx1]},
 			}
-			kappa, ci, _ := s.CohensKappaWithCI(ratings, 0.95)
+			kappa, ci, _ := statistics.CohensKappaWithCI(ratings, 0.95)
 			agreement.CohensKappa = &kappa
 			agreement.CohensKappaCI = ci
 
 			// For AO/OTA, also calculate weighted Kappa (ordinal categories)
 			if system == "ao_ota" {
 				weightType := domain.KappaWeightLinear
-				weightedKappa, _ := s.WeightedKappa(ratings, aoOTAOrdering, weightType)
+				weightedKappa, _ := statistics.WeightedKappa(ratings, statistics.AOOTAOrdering, weightType)
 				agreement.WeightedKappa = &weightedKappa
 				agreement.WeightedKappaType = &weightType
 			}
@@ -680,33 +322,10 @@ func (s *StatisticsService) calculateGoldStandardAccuracy(
 	}
 
 	if len(allObserved) > 0 {
-		accuracy.PerCategoryMetrics = s.CalculateCategoryMetrics(allObserved, allExpected)
+		accuracy.PerCategoryMetrics = statistics.CalculateCategoryMetrics(allObserved, allExpected)
 	}
 
 	return accuracy
-}
-
-// extractCategories extracts unique categories from rating pairs.
-func (s *StatisticsService) extractCategories(ratings [][2]string) []string {
-	seen := make(map[string]bool)
-	var categories []string
-	for _, pair := range ratings {
-		if pair[0] != "" && !seen[pair[0]] {
-			seen[pair[0]] = true
-			categories = append(categories, pair[0])
-		}
-		if pair[1] != "" && !seen[pair[1]] {
-			seen[pair[1]] = true
-			categories = append(categories, pair[1])
-		}
-	}
-	return categories
-}
-
-// Round rounds a float to the specified number of decimal places.
-func Round(val float64, precision int) float64 {
-	ratio := math.Pow(10, float64(precision))
-	return math.Round(val*ratio) / ratio
 }
 
 // ============================================================================
@@ -866,7 +485,7 @@ func (s *StatisticsService) calculateFleissForSystem(
 	}
 
 	// Calculate Fleiss' Kappa
-	kappa, err := s.FleissKappa(matrix, numRaters)
+	kappa, err := statistics.FleissKappa(matrix, numRaters)
 	if err != nil {
 		return nil
 	}
@@ -876,79 +495,11 @@ func (s *StatisticsService) calculateFleissForSystem(
 	// Add confidence interval if we have enough data
 	// Using the standard error approximation for Fleiss' Kappa
 	if numSubjects >= 2 && numRaters >= 2 {
-		ci := s.calculateFleissKappaCI(matrix, numRaters, kappa, 0.95)
+		ci := statistics.FleissKappaCI(matrix, numRaters, kappa, 0.95)
 		result.ConfidenceInterval = ci
 	}
 
 	return result
-}
-
-// calculateFleissKappaCI calculates confidence interval for Fleiss' Kappa.
-// Uses the approximate variance formula.
-func (s *StatisticsService) calculateFleissKappaCI(matrix [][]int, numRaters int, kappa float64, confidenceLevel float64) *domain.ConfidenceInterval {
-	// Simplified approximation for Fleiss' Kappa variance
-	// Based on Fleiss (1971) and later refinements
-	n := float64(len(matrix)) // Number of subjects
-	k := float64(numRaters)   // Number of raters
-
-	if n < 2 || k < 2 {
-		return nil
-	}
-
-	// Calculate P_e (expected agreement)
-	numCategories := len(matrix[0])
-	pj := make([]float64, numCategories)
-	totalAssignments := n * k
-
-	for j := 0; j < numCategories; j++ {
-		sum := 0
-		for i := 0; i < int(n); i++ {
-			if j < len(matrix[i]) {
-				sum += matrix[i][j]
-			}
-		}
-		pj[j] = float64(sum) / totalAssignments
-	}
-
-	pe := 0.0
-	for j := 0; j < numCategories; j++ {
-		pe += pj[j] * pj[j]
-	}
-
-	// Approximate standard error (simplified formula)
-	// SE ≈ sqrt(2 / (n * k * (k-1) * (1-Pe)^2))
-	denominator := n * k * (k - 1) * math.Pow(1-pe, 2)
-	if denominator <= 0 {
-		return nil
-	}
-
-	se := math.Sqrt(2 / denominator)
-
-	// Z-score for confidence level
-	z := 1.96 // 95% CI
-	switch confidenceLevel {
-	case 0.99:
-		z = 2.576
-	case 0.90:
-		z = 1.645
-	}
-
-	lower := kappa - z*se
-	upper := kappa + z*se
-
-	// Clamp to valid range
-	if lower < -1 {
-		lower = -1
-	}
-	if upper > 1 {
-		upper = 1
-	}
-
-	return &domain.ConfidenceInterval{
-		Lower: Round(lower, 4),
-		Upper: Round(upper, 4),
-		Level: confidenceLevel,
-	}
 }
 
 // getClassificationForSystem extracts the classification value for a given system from a response.
@@ -1031,7 +582,7 @@ func (s *StatisticsService) calculateCaseAgreement(responses []domain.CaseRespon
 		return 100.0 // Single response = 100% agreement with itself
 	}
 
-	return s.PercentAgreement(classifications) * 100
+	return statistics.PercentAgreement(classifications) * 100
 }
 
 // calculateGoldStandardMatchRate calculates the percentage of responses matching the gold standard.
