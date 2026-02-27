@@ -5,10 +5,10 @@ milestone_name: milestone
 status: unknown
 last_updated: "2026-02-27T16:12:50.028Z"
 progress:
-  total_phases: 5
+  total_phases: 7
   completed_phases: 5
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 17
+  completed_plans: 16
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 
 ## Current Position
 
-Phase: 5 of 5 (Frontend Tech Debt)
-Plan: 3 of 3 in current phase — COMPLETE
-Status: Complete
-Last activity: 2026-02-27 — Completed 05-03: AdminCasesPage and AdminStudiesPage refactored to shared DataTable, FilterBar, Pagination
+Phase: 6 of 7 (Gap Closure)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-27 — Completed 06-01: JWKS endpoint probe with background retry, health endpoint jwks status, deleted sanitize dead code
 
-Progress: [██████████] 100%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [██████████] 100%
 | Phase 05-frontend-tech-debt P02 | 78s | 2 tasks | 6 files |
 | Phase 05-frontend-tech-debt P01 | 12 | 2 tasks | 7 files |
 | Phase 05 P03 | 283 | 2 tasks | 3 files |
+| Phase 06-gap-closure P01 | 208s | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,11 @@ Recent decisions affecting current work:
 - [Phase 05-03]: Use whole mutation object not mutation.mutate in useCallback deps — React Compiler preserve-manual-memoization requires it
 - [Phase 05-03]: column meta.className in DataTable module augmentation enables hidden lg:table-cell via generic DataTable component
 - [Phase 05-03]: CaseRow and StudyRow deleted — ColumnDef arrays with useMemo replace them with no behavior change
+- [06-01]: ProbeJWKS uses http.NewRequestWithContext with 5s timeout — not bare http.Get — to honour context cancellation
+- [06-01]: retryJWKSProbeWithBackoff accepts initialBackoff for testability; RetryJWKSProbe calls it with default 5s
+- [06-01]: jwksReady nil = not tracked = ready in HealthCheck — preserves backwards compatibility for non-production callers
+- [06-01]: JWKS probe fires only when cfg.IsProduction() && authValidator != nil — avoids false noise in dev
+- [06-01]: ARCH-03 acknowledged but no work performed — PATCH retry dropped from scope per user decision
 
 ### Pending Todos
 
@@ -129,5 +135,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 05-03-PLAN.md — AdminCasesPage and AdminStudiesPage refactored to use shared DataTable, FilterBar, Pagination with useCallback and React.memo
+Stopped at: Completed 06-01-PLAN.md — JWKS endpoint probe with background retry, health endpoint jwks status, deleted RedactCredentials dead code
 Resume file: None

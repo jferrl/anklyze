@@ -11,7 +11,7 @@ This milestone hardens the Anklyze codebase from a working prototype to producti
 - [x] **Phase 3: Backend Architecture** - ClassificationService, Study domain service, and model decoupling (completed 2026-02-27)
 - [x] **Phase 4: Backend Tech Debt** - Rule engine consolidation, statistics modularization, prompts extraction, JSONB validation, migrations (completed 2026-02-27)
 - [x] **Phase 5: Frontend Tech Debt** - API retry logic, page component decomposition, and event handler memoization (completed 2026-02-27)
-- [ ] **Phase 6: Security & API Gap Closure** - JWT secret validation, RedactCredentials wiring, PATCH retry (audit gap closure)
+- [x] **Phase 6: Security & API Gap Closure** - JWT secret validation, RedactCredentials wiring, PATCH retry (audit gap closure) (completed 2026-02-27)
 - [ ] **Phase 7: Performance** - Statistics caching, chat virtualization, batch image loading, React memoization
 
 ## Phase Details
@@ -143,5 +143,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Backend Architecture | 2/2 | Complete   | 2026-02-27 |
 | 4. Backend Tech Debt | 4/4 | Complete   | 2026-02-27 |
 | 5. Frontend Tech Debt | 3/3 | Complete   | 2026-02-27 |
-| 6. Gap Closure | 0/1 | Not started | - |
+| 6. Gap Closure | 1/1 | Complete   | 2026-02-27 |
 | 7. Performance | 0/4 | Not started | - |

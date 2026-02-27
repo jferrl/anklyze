@@ -17,15 +17,15 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 ### Security
 
 - [x] **SEC-01**: Authentication is enforced in production environments (REQUIRE_AUTH or equivalent mechanism)
-- [ ] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
-- [ ] **SEC-03**: Sensitive medical data in audit trail logs is protected with field-level encryption or sanitization
+- [x] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
+- [x] **SEC-03**: Sensitive medical data in audit trail logs is protected with field-level encryption or sanitization
 - [x] **SEC-04**: Service role key usage is audited and restricted with clear documentation of required permissions
 
 ### Architecture
 
 - [x] **ARCH-01**: ClassificationService wraps rule engine with audit logging, caching, and error handling
 - [x] **ARCH-02**: Study domain service manages case-study relationships transparently
-- [ ] **ARCH-03**: Frontend API client implements exponential backoff retry for idempotent operations
+- [x] **ARCH-03**: Frontend API client implements exponential backoff retry for idempotent operations
 - [x] **ARCH-04**: Case and Study model coupling reduced through domain service abstraction
 
 ### Tech Debt — Backend
@@ -95,12 +95,12 @@ Deferred to future release. Tracked but not in current roadmap.
 | BUG-03 | Phase 1 | Complete |
 | BUG-04 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Complete |
-| SEC-02 | Phase 6 | Pending |
-| SEC-03 | Phase 6 | Pending |
+| SEC-02 | Phase 6 | Complete |
+| SEC-03 | Phase 6 | Complete |
 | SEC-04 | Phase 2 | Complete |
 | ARCH-01 | Phase 3 | Complete |
 | ARCH-02 | Phase 3 | Complete |
-| ARCH-03 | Phase 6 | Pending |
+| ARCH-03 | Phase 6 | Complete |
 | ARCH-04 | Phase 3 | Complete |
 | DEBT-01 | Phase 4 | Complete |
 | DEBT-02 | Phase 4 | Complete |
