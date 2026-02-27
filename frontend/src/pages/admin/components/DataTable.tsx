@@ -1,4 +1,4 @@
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +19,7 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({ columns, data, totalCount, page, pageSize, onRowClick }: DataTableProps<TData>) {
+  'use no memo';
   const table = useReactTable({
     data,
     columns,
