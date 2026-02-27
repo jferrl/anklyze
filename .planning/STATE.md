@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T16:00:48.083Z"
+last_updated: "2026-02-27T16:08:06.131Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 
 ## Current Position
 
-Phase: 5 of 6 (Frontend Tech Debt)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-27 — Completed 05-02: Shared admin UI components (DataTable, FilterBar, Pagination, SectionErrorBoundary)
+Phase: 5 of 5 (Frontend Tech Debt)
+Plan: 3 of 3 in current phase — COMPLETE
+Status: Complete
+Last activity: 2026-02-27 — Completed 05-03: AdminCasesPage and AdminStudiesPage refactored to shared DataTable, FilterBar, Pagination
 
-Progress: [████████░░] 77%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [████████░░] 77%
 | Phase 04-backend-tech-debt P02 | 12 | 2 tasks | 13 files |
 | Phase 05-frontend-tech-debt P02 | 78s | 2 tasks | 6 files |
 | Phase 05-frontend-tech-debt P01 | 12 | 2 tasks | 7 files |
+| Phase 05 P03 | 283 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase 05-01]: RETRYABLE_METHODS = Set(['GET','PUT','DELETE']) — POST excluded to preserve non-idempotent semantics; getAuthHeaders called fresh on each retry attempt for token refresh support
 - [Phase 05-01]: Render-time sync pattern preserved exactly (no useEffect conversion) — prevents form reset on re-render in useCaseEditorForm
 - [Phase 05-01]: useCaseEditorMutations receives getPendingUploads/clearPendingUploads callbacks to avoid stale closure in mutation onSuccess handlers
+- [Phase 05-03]: Use whole mutation object not mutation.mutate in useCallback deps — React Compiler preserve-manual-memoization requires it
+- [Phase 05-03]: column meta.className in DataTable module augmentation enables hidden lg:table-cell via generic DataTable component
+- [Phase 05-03]: CaseRow and StudyRow deleted — ColumnDef arrays with useMemo replace them with no behavior change
 
 ### Pending Todos
 
@@ -125,5 +129,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 05-01-PLAN.md — exponential backoff retry in apiClient + CaseEditorPage decomposition into colocated modules
+Stopped at: Completed 05-03-PLAN.md — AdminCasesPage and AdminStudiesPage refactored to use shared DataTable, FilterBar, Pagination with useCallback and React.memo
 Resume file: None
