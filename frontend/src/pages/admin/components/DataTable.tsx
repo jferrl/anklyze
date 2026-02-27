@@ -2,6 +2,14 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData, TValue> {
+    className?: string;
+  }
+}
+
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, unknown>[];
   data: TData[];
@@ -28,7 +36,11 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="border-border/50 hover:bg-transparent">
               {headerGroup.headers.map(header => (
-                <TableHead key={header.id} style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}>
+                <TableHead
+                  key={header.id}
+                  className={header.column.columnDef.meta?.className}
+                  style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
+                >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
@@ -48,7 +60,7 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
               onClick={() => onRowClick?.(row.original)}
             >
               {row.getVisibleCells().map(cell => (
-                <TableCell key={cell.id}>
+                <TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}

@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   Plus,
-  Search,
   MoreHorizontal,
   Eye,
   Pencil,
@@ -14,22 +14,11 @@ import {
   Send,
   Lock,
   FileText,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   Sparkles,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../../components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,13 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +40,10 @@ import { toast } from 'sonner';
 import { caseApi, InputValidationError } from '@/services';
 import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
+import { DataTable } from './components/DataTable';
+import { FilterBar } from './components/FilterBar';
+import { Pagination } from './components/Pagination';
+import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminCasesPage() {
   const { t } = useTranslation();
@@ -77,8 +63,8 @@ export function AdminCasesPage() {
         page,
         limit
       ),
-    staleTime: 0, // Always consider data stale
-    refetchOnMount: 'always', // Refetch when component mounts
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const deleteMutation = useMutation({
@@ -131,19 +117,200 @@ export function AdminCasesPage() {
     caseItem.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
-  };
+  }, []);
 
-  const isDeadlinePassed = (deadline?: string) => {
+  const isDeadlinePassed = useCallback((deadline?: string) => {
     if (!deadline) return false;
     return new Date(deadline) < new Date();
-  };
+  }, []);
+
+  // Memoized action handlers
+  const handleView = useCallback((id: string) => navigate(`/cases/${id}`), [navigate]);
+  const handleEdit = useCallback((id: string) => navigate(`/admin/cases/${id}/edit`), [navigate]);
+  const handleDelete = useCallback((id: string) => setDeleteId(id), []);
+  const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation.mutate]);
+  const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation.mutate]);
+  const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
+  const handleViewDivergence = useCallback((id: string) => navigate(`/admin/cases/${id}/divergence`), [navigate]);
+
+  const statusOptions = useMemo(() => [
+    { value: 'all', label: t('admin.cases.allStatuses') },
+    { value: 'draft', label: t('cases.status.draft') },
+    { value: 'published', label: t('cases.status.published') },
+    { value: 'closed', label: t('cases.status.closed') },
+  ], [t]);
+
+  const columns = useMemo<ColumnDef<Case, unknown>[]>(() => [
+    {
+      id: 'title',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.cases.table.title')}</span>
+      ),
+      size: 999,
+      cell: ({ row }) => {
+        const caseItem = row.original;
+        return (
+          <div className="flex flex-col gap-1 min-w-0 max-w-0">
+            <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+            {caseItem.description && (
+              <span className="text-sm text-muted-foreground truncate">
+                {caseItem.description}
+              </span>
+            )}
+            {caseItem.has_tac_images && (
+              <Badge variant="outline" className="w-fit text-xs border-primary/30 text-primary">
+                TAC
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'status',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.cases.table.status')}</span>
+      ),
+      size: 100,
+      cell: ({ row }) => {
+        const caseItem = row.original;
+        return (
+          <Badge
+            variant="outline"
+            className={cn(
+              'font-medium whitespace-nowrap',
+              caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
+              caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
+              caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+            )}
+          >
+            {t(`cases.status.${caseItem.status}`)}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: 'responses',
+      header: () => (
+        <span className="text-muted-foreground font-medium text-center block">{t('admin.cases.table.responses')}</span>
+      ),
+      size: 80,
+      meta: { className: 'text-center' },
+      cell: ({ row }) => {
+        const caseItem = row.original;
+        return (
+          <span className={cn(
+            'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
+            caseItem.response_count > 0
+              ? 'bg-primary/10 text-primary'
+              : 'bg-muted/50 text-muted-foreground'
+          )}>
+            {caseItem.response_count}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'created',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.cases.table.created')}</span>
+      ),
+      size: 100,
+      meta: { className: 'hidden lg:table-cell text-muted-foreground text-sm' },
+      cell: ({ row }) => {
+        return <span>{formatDate(row.original.created_at)}</span>;
+      },
+    },
+    {
+      id: 'deadline',
+      header: () => (
+        <span className="text-muted-foreground font-medium">{t('admin.cases.table.deadline')}</span>
+      ),
+      size: 100,
+      meta: { className: 'hidden lg:table-cell' },
+      cell: ({ row }) => {
+        const caseItem = row.original;
+        return caseItem.deadline ? (
+          <span
+            className={cn(
+              'text-sm',
+              isDeadlinePassed(caseItem.deadline)
+                ? 'text-destructive font-medium'
+                : 'text-muted-foreground'
+            )}
+          >
+            {formatDate(caseItem.deadline)}
+          </span>
+        ) : (
+          <span className="text-muted-foreground/50 text-sm">-</span>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      header: () => null,
+      size: 50,
+      cell: ({ row }) => {
+        const caseItem = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="hover:bg-muted/50">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={() => handleView(caseItem.id)}>
+                <Eye className="h-4 w-4 mr-2" />
+                {t('common.view')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleEdit(caseItem.id)}>
+                <Pencil className="h-4 w-4 mr-2" />
+                {t('common.edit')}
+              </DropdownMenuItem>
+              {caseItem.status !== 'draft' && (
+                <DropdownMenuItem onClick={() => handleViewAnalytics(caseItem.id)}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  {t('admin.cases.analytics')}
+                </DropdownMenuItem>
+              )}
+              {caseItem.status !== 'draft' && (
+                <DropdownMenuItem onClick={() => handleViewDivergence(caseItem.id)}>
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  {t('admin.cases.divergence')}
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {caseItem.status === 'draft' && (
+                <DropdownMenuItem onClick={() => handlePublish(caseItem.id)} className="text-emerald-600 dark:text-emerald-400">
+                  <Send className="h-4 w-4 mr-2" />
+                  {t('admin.cases.publish')}
+                </DropdownMenuItem>
+              )}
+              {caseItem.status === 'published' && (
+                <DropdownMenuItem onClick={() => handleClose(caseItem.id)}>
+                  <Lock className="h-4 w-4 mr-2" />
+                  {t('admin.cases.close')}
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleDelete(caseItem.id)} className="text-destructive">
+                <Trash2 className="h-4 w-4 mr-2" />
+                {t('common.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ], [t, formatDate, isDeadlinePassed, handleView, handleEdit, handlePublish, handleClose, handleViewAnalytics, handleViewDivergence, handleDelete]);
 
   if (isLoading) {
     return (
@@ -189,33 +356,15 @@ export function AdminCasesPage() {
         </header>
 
         {/* Filters */}
-        <div className="chart-card mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('admin.cases.search')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-muted/30 border-border/50 focus:bg-background"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as CaseStatus | 'all')}
-            >
-              <SelectTrigger className="w-full sm:w-[180px] bg-muted/30 border-border/50">
-                <SelectValue placeholder={t('admin.cases.filterStatus')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('admin.cases.allStatuses')}</SelectItem>
-                <SelectItem value="draft">{t('cases.status.draft')}</SelectItem>
-                <SelectItem value="published">{t('cases.status.published')}</SelectItem>
-                <SelectItem value="closed">{t('cases.status.closed')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <FilterBar
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder={t('admin.cases.search')}
+          filterValue={statusFilter}
+          onFilterChange={(v) => setStatusFilter(v as CaseStatus | 'all')}
+          filterPlaceholder={t('admin.cases.filterStatus')}
+          filterOptions={statusOptions}
+        />
 
         {/* Cases Table */}
         {filteredCases.length === 0 ? (
@@ -245,100 +394,39 @@ export function AdminCasesPage() {
                   index={index}
                   formatDate={formatDate}
                   isDeadlinePassed={isDeadlinePassed}
-                  onView={() => navigate(`/cases/${caseItem.id}`)}
-                  onEdit={() => navigate(`/admin/cases/${caseItem.id}/edit`)}
-                  onDelete={() => setDeleteId(caseItem.id)}
-                  onPublish={() => publishMutation.mutate(caseItem.id)}
-                  onClose={() => closeMutation.mutate(caseItem.id)}
-                  onViewAnalytics={() => navigate(`/admin/cases/${caseItem.id}/analytics`)}
-                  onViewDivergence={() => navigate(`/admin/cases/${caseItem.id}/divergence`)}
+                  onView={() => handleView(caseItem.id)}
+                  onEdit={() => handleEdit(caseItem.id)}
+                  onDelete={() => handleDelete(caseItem.id)}
+                  onPublish={() => handlePublish(caseItem.id)}
+                  onClose={() => handleClose(caseItem.id)}
+                  onViewAnalytics={() => handleViewAnalytics(caseItem.id)}
+                  onViewDivergence={() => handleViewDivergence(caseItem.id)}
                   t={t}
                 />
               ))}
             </div>
 
             {/* Desktop: Table layout */}
-            <div className="hidden md:block chart-card p-0">
-              <Table className="table-fixed">
-                <TableHeader>
-                  <TableRow className="border-border/50 hover:bg-transparent">
-                    <TableHead className="w-[45%] text-muted-foreground font-medium">
-                      {t('admin.cases.table.title')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium">
-                      {t('admin.cases.table.status')}
-                    </TableHead>
-                    <TableHead className="w-[80px] text-center text-muted-foreground font-medium">
-                      {t('admin.cases.table.responses')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.cases.table.created')}
-                    </TableHead>
-                    <TableHead className="w-[100px] text-muted-foreground font-medium hidden lg:table-cell">
-                      {t('admin.cases.table.deadline')}
-                    </TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCases.map((caseItem, index) => (
-                    <CaseRow
-                      key={caseItem.id}
-                      caseItem={caseItem}
-                      index={index}
-                      formatDate={formatDate}
-                      isDeadlinePassed={isDeadlinePassed}
-                      onView={() => navigate(`/cases/${caseItem.id}`)}
-                      onEdit={() => navigate(`/admin/cases/${caseItem.id}/edit`)}
-                      onDelete={() => setDeleteId(caseItem.id)}
-                      onPublish={() => publishMutation.mutate(caseItem.id)}
-                      onClose={() => closeMutation.mutate(caseItem.id)}
-                      onViewAnalytics={() => navigate(`/admin/cases/${caseItem.id}/analytics`)}
-                      onViewDivergence={() => navigate(`/admin/cases/${caseItem.id}/divergence`)}
-                      t={t}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <SectionErrorBoundary>
+              <DataTable
+                columns={columns}
+                data={filteredCases}
+                totalCount={total}
+                page={page}
+                pageSize={limit}
+                onRowClick={(row) => handleView(row.id)}
+              />
+            </SectionErrorBoundary>
           </>
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <p className="text-sm text-muted-foreground">
-              {t('admin.cases.table.showing', {
-                from: (page - 1) * limit + 1,
-                to: Math.min(page * limit, total),
-                total,
-              })}
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={page === 1}
-                onClick={() => setPage(prev => prev - 1)}
-                className="bg-card/50 border-border/50 hover:bg-muted/50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm text-muted-foreground px-3 py-2 bg-muted/30 rounded-lg">
-                {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={page === totalPages}
-                onClick={() => setPage(prev => prev + 1)}
-                className="bg-card/50 border-border/50 hover:bg-muted/50"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          showingText={t('admin.cases.table.showing', { from: (page - 1) * limit + 1, to: Math.min(page * limit, total), total })}
+        />
       </div>
 
       {/* Delete Confirmation Dialog */}
@@ -380,7 +468,7 @@ interface CaseRowProps {
   t: (key: string) => string;
 }
 
-function CaseCard({
+const CaseCard = memo(function CaseCard({
   caseItem,
   index,
   formatDate,
@@ -500,141 +588,4 @@ function CaseCard({
       </div>
     </div>
   );
-}
-
-function CaseRow({
-  caseItem,
-  index,
-  formatDate,
-  isDeadlinePassed,
-  onView,
-  onEdit,
-  onDelete,
-  onPublish,
-  onClose,
-  onViewAnalytics,
-  onViewDivergence,
-  t,
-}: CaseRowProps) {
-  return (
-    <TableRow
-      className={cn(
-        'cursor-pointer border-border/30 hover:bg-muted/30 transition-colors duration-200',
-        'opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]'
-      )}
-      style={{ animationDelay: `${index * 30}ms` }}
-      onClick={onView}
-    >
-      <TableCell className="max-w-0">
-        <div className="flex flex-col gap-1 min-w-0">
-          <span className="font-medium text-foreground truncate">{caseItem.title}</span>
-          {caseItem.description && (
-            <span className="text-sm text-muted-foreground truncate">
-              {caseItem.description}
-            </span>
-          )}
-          {caseItem.has_tac_images && (
-            <Badge variant="outline" className="w-fit text-xs border-primary/30 text-primary">
-              TAC
-            </Badge>
-          )}
-        </div>
-      </TableCell>
-      <TableCell>
-        <Badge
-          variant="outline"
-          className={cn(
-            'font-medium whitespace-nowrap',
-            caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-            caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-            caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
-          )}
-        >
-          {t(`cases.status.${caseItem.status}`)}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-center">
-        <span className={cn(
-          'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-          caseItem.response_count > 0
-            ? 'bg-primary/10 text-primary'
-            : 'bg-muted/50 text-muted-foreground'
-        )}>
-          {caseItem.response_count}
-        </span>
-      </TableCell>
-      <TableCell className="text-muted-foreground text-sm hidden lg:table-cell">
-        {formatDate(caseItem.created_at)}
-      </TableCell>
-      <TableCell className="hidden lg:table-cell">
-        {caseItem.deadline ? (
-          <span
-            className={cn(
-              'text-sm',
-              isDeadlinePassed(caseItem.deadline)
-                ? 'text-destructive font-medium'
-                : 'text-muted-foreground'
-            )}
-          >
-            {formatDate(caseItem.deadline)}
-          </span>
-        ) : (
-          <span className="text-muted-foreground/50 text-sm">-</span>
-        )}
-      </TableCell>
-      <TableCell>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-muted/50"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-            <DropdownMenuItem onClick={onView}>
-              <Eye className="h-4 w-4 mr-2" />
-              {t('common.view')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onEdit}>
-              <Pencil className="h-4 w-4 mr-2" />
-              {t('common.edit')}
-            </DropdownMenuItem>
-            {caseItem.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewAnalytics}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.cases.analytics')}
-              </DropdownMenuItem>
-            )}
-            {caseItem.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewDivergence}>
-                <TrendingUp className="h-4 w-4 mr-2" />
-                {t('admin.cases.divergence')}
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
-            {caseItem.status === 'draft' && (
-              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
-                <Send className="h-4 w-4 mr-2" />
-                {t('admin.cases.publish')}
-              </DropdownMenuItem>
-            )}
-            {caseItem.status === 'published' && (
-              <DropdownMenuItem onClick={onClose}>
-                <Lock className="h-4 w-4 mr-2" />
-                {t('admin.cases.close')}
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onDelete} className="text-destructive">
-              <Trash2 className="h-4 w-4 mr-2" />
-              {t('common.delete')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </TableCell>
-    </TableRow>
-  );
-}
+});
