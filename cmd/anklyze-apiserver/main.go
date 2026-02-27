@@ -159,6 +159,10 @@ func main() {
 	// Create user service that orchestrates DB and Supabase operations
 	userService := service.NewUserService(userRepo, authAdmin)
 
+	// Initialize classification service (wraps rule engine with caching hook and service boundary)
+	ruleEngine := rules.NewEngine()
+	classificationService := service.NewClassificationService(ruleEngine, caseResponseRepo)
+
 	// Initialize chat service if Gemini is configured
 	var chatService service.ChatService
 	if cfg.HasGemini() {
@@ -166,8 +170,7 @@ func main() {
 		if err != nil {
 			slog.Warn("Gemini client creation failed, chat disabled", "error", err)
 		} else {
-			ruleEngine := rules.NewEngine()
-			chatService = service.NewChatService(llmClient, ruleEngine, 0.7)
+			chatService = service.NewChatService(llmClient, classificationService, 0.7)
 			slog.Info("Gemini configured, chat classification enabled")
 		}
 	} else {
@@ -208,7 +211,7 @@ func main() {
 	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
 
 	router := gin.Default()
-	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy)
+	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, statsService)
 

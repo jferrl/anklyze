@@ -7,7 +7,6 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/llm"
-	"github.com/jferrl/anklyze/internal/rules"
 )
 
 // ChatStatus represents the status of a chat response.
@@ -46,15 +45,15 @@ type ChatService interface {
 // chatService implements ChatService.
 type chatService struct {
 	llmClient           *llm.Client
-	engine              *rules.Engine
+	classificationSvc   ClassificationService
 	confidenceThreshold float64
 }
 
 // NewChatService creates a new ChatService.
-func NewChatService(llmClient *llm.Client, engine *rules.Engine, confidenceThreshold float64) ChatService {
+func NewChatService(llmClient *llm.Client, classificationSvc ClassificationService, confidenceThreshold float64) ChatService {
 	return &chatService{
 		llmClient:           llmClient,
-		engine:              engine,
+		classificationSvc:   classificationSvc,
 		confidenceThreshold: confidenceThreshold,
 	}
 }
@@ -94,7 +93,7 @@ func (s *chatService) ProcessMessage(ctx context.Context, req ChatRequest) (*Cha
 	}
 
 	// Classify the extracted input
-	result, err := s.engine.Classify(extraction.Input)
+	result, err := s.classificationSvc.Classify(ctx, extraction.Input)
 	if err != nil {
 		msg := "An error occurred while classifying the fracture. Please try again."
 		if lang == i18n.Spanish {

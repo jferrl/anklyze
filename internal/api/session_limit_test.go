@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
-	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 )
 
@@ -143,10 +142,9 @@ func TestHandler_SessionMessageLimit(t *testing.T) {
 			mockRepo.sessions[sessionID] = session
 
 			// Setup handler with session limit
-			ruleEngine := rules.NewEngine()
 			chatService := &mockChatService{}
 			handler := NewHandler(
-				ruleEngine,
+				newTestClassificationSvc(),
 				chatService,
 				repository.NewNoOpAuditRepository(),
 				repository.NewNoOpAnalyticsRepository(),
@@ -196,10 +194,9 @@ func TestHandler_SessionMessageLimit_NoSession(t *testing.T) {
 
 	// Setup handler with session limit
 	mockRepo := newMockChatAuditRepository()
-	ruleEngine := rules.NewEngine()
 	chatService := &mockChatService{}
 	handler := NewHandler(
-		ruleEngine,
+		newTestClassificationSvc(),
 		chatService,
 		repository.NewNoOpAuditRepository(),
 		repository.NewNoOpAnalyticsRepository(),

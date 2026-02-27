@@ -10,7 +10,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
-	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/timeutil"
 )
@@ -50,20 +49,20 @@ type ChatAnalyticsRepository interface {
 
 // Handler handles HTTP requests
 type Handler struct {
-	engine              *rules.Engine
-	chatService         service.ChatService
-	auditRepo           AuditRepository
-	analyticsRepo       AnalyticsRepository
-	chatAuditRepo       ChatAuditRepository
-	chatAnalyticsRepo   ChatAnalyticsRepository
-	sessionMessageLimit int
-	inputValidator      *InputValidator
-	dbHealthy           bool // Whether database connection succeeded at startup
+	classificationService service.ClassificationService
+	chatService           service.ChatService
+	auditRepo             AuditRepository
+	analyticsRepo         AnalyticsRepository
+	chatAuditRepo         ChatAuditRepository
+	chatAnalyticsRepo     ChatAnalyticsRepository
+	sessionMessageLimit   int
+	inputValidator        *InputValidator
+	dbHealthy             bool // Whether database connection succeeded at startup
 }
 
 // NewHandler creates a new Handler
 func NewHandler(
-	engine *rules.Engine,
+	classificationService service.ClassificationService,
 	chatService service.ChatService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
@@ -72,15 +71,15 @@ func NewHandler(
 	dbHealthy bool,
 ) *Handler {
 	return &Handler{
-		engine:              engine,
-		chatService:         chatService,
-		auditRepo:           auditRepo,
-		analyticsRepo:       analyticsRepo,
-		chatAuditRepo:       chatAuditRepo,
-		chatAnalyticsRepo:   chatAnalyticsRepo,
-		sessionMessageLimit: 20, // Default limit
-		inputValidator:      NewInputValidator(),
-		dbHealthy:           dbHealthy,
+		classificationService: classificationService,
+		chatService:           chatService,
+		auditRepo:             auditRepo,
+		analyticsRepo:         analyticsRepo,
+		chatAuditRepo:         chatAuditRepo,
+		chatAnalyticsRepo:     chatAnalyticsRepo,
+		sessionMessageLimit:   20, // Default limit
+		inputValidator:        NewInputValidator(),
+		dbHealthy:             dbHealthy,
 	}
 }
 
@@ -116,7 +115,7 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		return
 	}
 
-	result, err := h.engine.Classify(input)
+	result, err := h.classificationService.Classify(c.Request.Context(), input)
 	if err != nil {
 		HandleError(c, err, "Classification failed")
 		return

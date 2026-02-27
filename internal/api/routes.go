@@ -7,7 +7,6 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/repository"
-	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 	swaggerFiles "github.com/swaggo/files"
@@ -37,14 +36,13 @@ func SetupRoutes(
 	userRepo auth.UserService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
+	classificationService service.ClassificationService,
 	chatService service.ChatService,
 	chatAuditRepo ChatAuditRepository,
 	chatAnalyticsRepo ChatAnalyticsRepository,
 	dbHealthy bool,
 ) *Cleanup {
-	// Initialize dependencies
-	ruleEngine := rules.NewEngine()
-	handler := NewHandler(ruleEngine, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy).
+	handler := NewHandler(classificationService, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy).
 		WithSessionMessageLimit(cfg.SessionMessageLimit)
 
 	// CORS middleware

@@ -12,19 +12,25 @@ import (
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
+	"github.com/jferrl/anklyze/internal/service"
 )
+
+// newTestClassificationSvc creates a ClassificationService backed by the real engine for API tests.
+func newTestClassificationSvc() service.ClassificationService {
+	return service.NewClassificationService(rules.NewEngine(), repository.NewNoOpCaseResponseRepository())
+}
 
 // setupTestHandler creates a handler with real implementations for integration testing.
 // dbHealthy defaults to true — tests not specifically checking health degraded mode
 // should assume a healthy database state.
 func setupTestHandler() *Handler {
-	ruleEngine := rules.NewEngine()
+	classificationService := newTestClassificationSvc()
 	auditRepo := repository.NewNoOpAuditRepository()
 	analyticsRepo := repository.NewNoOpAnalyticsRepository()
 	chatAuditRepo := repository.NewNoOpChatAuditRepository()
 	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
 	// chatService is nil for tests - chat endpoint will return 503
-	return NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true)
+	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.
@@ -65,12 +71,12 @@ func TestHandler_HealthCheck(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ruleEngine := rules.NewEngine()
+			classificationSvc := newTestClassificationSvc()
 			auditRepo := repository.NewNoOpAuditRepository()
 			analyticsRepo := repository.NewNoOpAnalyticsRepository()
 			chatAuditRepo := repository.NewNoOpChatAuditRepository()
 			chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
-			h := NewHandler(ruleEngine, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy)
+			h := NewHandler(classificationSvc, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy)
 			router := setupTestRouter(h)
 
 			req := httptest.NewRequest(http.MethodGet, "/health", nil)

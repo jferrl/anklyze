@@ -9,11 +9,16 @@ import (
 	"github.com/jferrl/anklyze/internal/rules"
 )
 
+// newTestClassificationService creates a ClassificationService backed by the real engine for tests.
+func newTestClassificationService() ClassificationService {
+	return NewClassificationService(rules.NewEngine(), &mockResponseRepoForClassification{})
+}
+
 func TestChatService_ProcessMessage_NilLLMClient(t *testing.T) {
 	t.Parallel()
 
-	// Create service with nil LLM client but real engine
-	svc := NewChatService(nil, rules.NewEngine(), 0.7)
+	// Create service with nil LLM client but real classification service
+	svc := NewChatService(nil, newTestClassificationService(), 0.7)
 
 	tests := []struct {
 		name       string
@@ -109,28 +114,28 @@ func TestChatStatus_Values(t *testing.T) {
 func TestNewChatService(t *testing.T) {
 	t.Parallel()
 
-	engine := rules.NewEngine()
+	classificationSvc := newTestClassificationService()
 
 	tests := []struct {
-		name      string
-		llmClient *llm.Client
-		engine    *rules.Engine
-		threshold float64
-		wantNil   bool
+		name              string
+		llmClient         *llm.Client
+		classificationSvc ClassificationService
+		threshold         float64
+		wantNil           bool
 	}{
 		{
-			name:      "creates service with nil LLM client",
-			llmClient: nil,
-			engine:    engine,
-			threshold: 0.7,
-			wantNil:   false,
+			name:              "creates service with nil LLM client",
+			llmClient:         nil,
+			classificationSvc: classificationSvc,
+			threshold:         0.7,
+			wantNil:           false,
 		},
 		{
-			name:      "creates service with nil engine",
-			llmClient: nil,
-			engine:    nil,
-			threshold: 0.7,
-			wantNil:   false,
+			name:              "creates service with nil classification service",
+			llmClient:         nil,
+			classificationSvc: nil,
+			threshold:         0.7,
+			wantNil:           false,
 		},
 	}
 
@@ -138,7 +143,7 @@ func TestNewChatService(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			svc := NewChatService(tt.llmClient, tt.engine, tt.threshold)
+			svc := NewChatService(tt.llmClient, tt.classificationSvc, tt.threshold)
 			if (svc == nil) != tt.wantNil {
 				t.Errorf("NewChatService() returned nil = %v, want nil = %v", svc == nil, tt.wantNil)
 			}
@@ -163,7 +168,7 @@ func TestNewChatService_ConfidenceThreshold(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			svc := NewChatService(nil, rules.NewEngine(), tt.threshold)
+			svc := NewChatService(nil, newTestClassificationService(), tt.threshold)
 			cs, ok := svc.(*chatService)
 			if !ok {
 				t.Fatal("NewChatService did not return *chatService")
@@ -171,8 +176,8 @@ func TestNewChatService_ConfidenceThreshold(t *testing.T) {
 			if cs.confidenceThreshold != tt.threshold {
 				t.Errorf("confidenceThreshold = %v, want %v", cs.confidenceThreshold, tt.threshold)
 			}
-			if cs.engine == nil {
-				t.Error("engine should not be nil")
+			if cs.classificationSvc == nil {
+				t.Error("classificationSvc should not be nil")
 			}
 		})
 	}
