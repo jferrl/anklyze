@@ -9,9 +9,10 @@ This milestone hardens the Anklyze codebase from a working prototype to producti
 - [x] **Phase 1: Bug Fixes** - Correct classification surface, state machine enforcement, and DB fallback transparency (completed 2026-02-26)
 - [x] **Phase 2: Security** - Auth enforcement, JWT hardening, sensitive data protection, and service key audit (completed 2026-02-26)
 - [x] **Phase 3: Backend Architecture** - ClassificationService, Study domain service, and model decoupling (completed 2026-02-27)
-- [ ] **Phase 4: Backend Tech Debt** - Rule engine consolidation, statistics modularization, prompts extraction, JSONB validation, migrations
+- [x] **Phase 4: Backend Tech Debt** - Rule engine consolidation, statistics modularization, prompts extraction, JSONB validation, migrations (completed 2026-02-27)
 - [x] **Phase 5: Frontend Tech Debt** - API retry logic, page component decomposition, and event handler memoization (completed 2026-02-27)
-- [ ] **Phase 6: Performance** - Statistics caching, chat virtualization, batch image loading, React memoization
+- [ ] **Phase 6: Security & API Gap Closure** - JWT secret validation, RedactCredentials wiring, PATCH retry (audit gap closure)
+- [ ] **Phase 7: Performance** - Statistics caching, chat virtualization, batch image loading, React memoization
 
 ## Phase Details
 
@@ -99,9 +100,23 @@ Plans:
 - [ ] 05-03: Extract reusable table and filter components from AdminCasesPage and AdminStudiesPage
 - [ ] 05-04: Wrap event handlers in page components with useCallback for consistent memoization
 
-### Phase 6: Performance
-**Goal**: Statistics calculations, chat rendering, image loading, and React re-renders perform efficiently under real-world load
+### Phase 6: Security & API Gap Closure
+**Goal**: Close all partial gaps identified by milestone audit — JWT secret startup validation, credential redaction wiring, and PATCH retry coverage
 **Depends on**: Phase 5
+**Requirements**: SEC-02, SEC-03, ARCH-03
+**Gap Closure**: Closes gaps from v1.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. ValidateProduction() checks SUPABASE_JWT_SECRET is present and >= 32 characters in production — server exits if absent
+  2. RedactCredentials() is called at production log call sites where credential values could appear — no raw JWT or API key values in structured log output
+  3. PATCH requests are included in RETRYABLE_METHODS — image metadata updates retry on transient 5xx like all other idempotent operations
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: Add JWT secret to Config and ValidateProduction, wire RedactCredentials at log sites, add PATCH to retry methods
+
+### Phase 7: Performance
+**Goal**: Statistics calculations, chat rendering, image loading, and React re-renders perform efficiently under real-world load
+**Depends on**: Phase 6
 **Requirements**: PERF-01, PERF-02, PERF-03, PERF-04
 **Success Criteria** (what must be TRUE):
   1. Statistics for a study are served from cache on repeated requests; the cache is invalidated when new responses are submitted — a large study does not trigger full recalculation on every page load
@@ -111,21 +126,22 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 06-01: Implement statistics caching with TTL and invalidation on new responses
-- [ ] 06-02: Virtualize chat message history in ChatPanel for long sessions
-- [ ] 06-03: Optimize batch image loading with database-level grouping
-- [ ] 06-04: Fix useEffect dependency arrays and apply useCallback/useMemo for stable references
+- [ ] 07-01: Implement statistics caching with TTL and invalidation on new responses
+- [ ] 07-02: Virtualize chat message history in ChatPanel for long sessions
+- [ ] 07-03: Optimize batch image loading with database-level grouping
+- [ ] 07-04: Fix useEffect dependency arrays and apply useCallback/useMemo for stable references
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bug Fixes | 3/3 | Complete   | 2026-02-26 |
 | 2. Security | 3/3 | Complete   | 2026-02-26 |
 | 3. Backend Architecture | 2/2 | Complete   | 2026-02-27 |
-| 4. Backend Tech Debt | 3/4 | In Progress|  |
+| 4. Backend Tech Debt | 4/4 | Complete   | 2026-02-27 |
 | 5. Frontend Tech Debt | 3/3 | Complete   | 2026-02-27 |
-| 6. Performance | 0/4 | Not started | - |
+| 6. Gap Closure | 0/1 | Not started | - |
+| 7. Performance | 0/4 | Not started | - |

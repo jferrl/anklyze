@@ -17,15 +17,15 @@ Requirements for production-grade hardening. Each maps to roadmap phases.
 ### Security
 
 - [x] **SEC-01**: Authentication is enforced in production environments (REQUIRE_AUTH or equivalent mechanism)
-- [x] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
-- [x] **SEC-03**: Sensitive medical data in audit trail logs is protected with field-level encryption or sanitization
+- [ ] **SEC-02**: JWT secret absence triggers a warning log and prevents silent fallback in production
+- [ ] **SEC-03**: Sensitive medical data in audit trail logs is protected with field-level encryption or sanitization
 - [x] **SEC-04**: Service role key usage is audited and restricted with clear documentation of required permissions
 
 ### Architecture
 
 - [x] **ARCH-01**: ClassificationService wraps rule engine with audit logging, caching, and error handling
 - [x] **ARCH-02**: Study domain service manages case-study relationships transparently
-- [x] **ARCH-03**: Frontend API client implements exponential backoff retry for idempotent operations
+- [ ] **ARCH-03**: Frontend API client implements exponential backoff retry for idempotent operations
 - [x] **ARCH-04**: Case and Study model coupling reduced through domain service abstraction
 
 ### Tech Debt — Backend
@@ -92,15 +92,15 @@ Deferred to future release. Tracked but not in current roadmap.
 |-------------|-------|--------|
 | BUG-01 | Phase 1 | Complete |
 | BUG-02 | Phase 1 | Complete |
-| BUG-03 | Phase 1 | Pending |
+| BUG-03 | Phase 1 | Complete |
 | BUG-04 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Complete |
-| SEC-02 | Phase 2 | Complete |
-| SEC-03 | Phase 2 | Complete |
+| SEC-02 | Phase 6 | Pending |
+| SEC-03 | Phase 6 | Pending |
 | SEC-04 | Phase 2 | Complete |
 | ARCH-01 | Phase 3 | Complete |
 | ARCH-02 | Phase 3 | Complete |
-| ARCH-03 | Phase 5 | Complete |
+| ARCH-03 | Phase 6 | Pending |
 | ARCH-04 | Phase 3 | Complete |
 | DEBT-01 | Phase 4 | Complete |
 | DEBT-02 | Phase 4 | Complete |
@@ -111,10 +111,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEBT-07 | Phase 5 | Complete |
 | DEBT-08 | Phase 5 | Complete |
 | DEBT-09 | Phase 5 | Complete |
-| PERF-01 | Phase 6 | Pending |
-| PERF-02 | Phase 6 | Pending |
-| PERF-03 | Phase 6 | Pending |
-| PERF-04 | Phase 6 | Pending |
+| PERF-01 | Phase 7 | Pending |
+| PERF-02 | Phase 7 | Pending |
+| PERF-03 | Phase 7 | Pending |
+| PERF-04 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 25 total
@@ -123,4 +123,4 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-26 after roadmap creation*
+*Last updated: 2026-02-27 after milestone audit gap closure planning*
