@@ -15,11 +15,11 @@ import (
 
 // CaseAnalyticsHandler handles analytics and export operations.
 type CaseAnalyticsHandler struct {
-	caseRepo          repository.CaseRepository
-	responseRepo      repository.CaseResponseRepository
-	analyticsRepo     repository.CaseAnalyticsRepository
-	statsService      *StatisticsService
-	divergenceService DivergenceService
+	caseRepo      repository.CaseRepository
+	responseRepo  repository.CaseResponseRepository
+	analyticsRepo repository.CaseAnalyticsRepository
+	statsService  *StatisticsService
+	studyService  StudyService
 }
 
 // NewCaseAnalyticsHandler creates a new case analytics handler.
@@ -28,14 +28,14 @@ func NewCaseAnalyticsHandler(
 	responseRepo repository.CaseResponseRepository,
 	analyticsRepo repository.CaseAnalyticsRepository,
 	statsService *StatisticsService,
-	divergenceService DivergenceService,
+	studyService StudyService,
 ) *CaseAnalyticsHandler {
 	return &CaseAnalyticsHandler{
-		caseRepo:          caseRepo,
-		responseRepo:      responseRepo,
-		analyticsRepo:     analyticsRepo,
-		statsService:      statsService,
-		divergenceService: divergenceService,
+		caseRepo:      caseRepo,
+		responseRepo:  responseRepo,
+		analyticsRepo: analyticsRepo,
+		statsService:  statsService,
+		studyService:  studyService,
 	}
 }
 
@@ -121,12 +121,12 @@ func (h *CaseAnalyticsHandler) GetDivergenceAnalysis(c *gin.Context) {
 		return
 	}
 
-	if h.divergenceService == nil {
+	if h.studyService == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "divergence analysis not available"})
 		return
 	}
 
-	report, err := h.divergenceService.AnalyzeDivergence(c.Request.Context(), caseID)
+	report, err := h.studyService.GetDivergenceAnalysis(c.Request.Context(), caseID)
 	if err != nil {
 		if err.Error() == "case has no gold standard input stored" {
 			c.JSON(http.StatusBadRequest, gin.H{

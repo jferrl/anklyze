@@ -13,9 +13,16 @@ import (
 
 // --- Service Interfaces ---
 
-// DivergenceService handles divergence analysis calculations.
-type DivergenceService interface {
-	AnalyzeDivergence(ctx context.Context, caseID uuid.UUID) (*service.DivergenceReport, error)
+// StudyService defines the study operations interface needed by handlers.
+type StudyService interface {
+	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
+	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
+	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
+	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
+	ValidateResponseSubmission(ctx context.Context, caseID, userID uuid.UUID) error
+	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
+	GetDivergenceAnalysis(ctx context.Context, caseID uuid.UUID) (*service.DivergenceReport, error)
+	UpdateProgressAfterResponse(ctx context.Context, studyID uuid.UUID, caseID, userID uuid.UUID)
 }
 
 // StatisticsService calculates reliability metrics.

@@ -175,8 +175,7 @@ func SetupCaseRoutes(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	analyticsRepo repository.CaseAnalyticsRepository,
-	studyRepo repository.StudyRepository,
-	studyResponseRepo repository.StudyResponseRepository,
+	studyService service.StudyService,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
 ) {
@@ -184,7 +183,7 @@ func SetupCaseRoutes(
 	adminHandler := NewCaseAdminHandler(caseRepo, storage)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
 	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo, userRepo)
-	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyRepo, studyResponseRepo, storage, defaultSignedURLDuration)
+	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)
 
 	// Create analytics handler with statistics service
 	var statsServicePtr *StatisticsService
@@ -192,8 +191,7 @@ func SetupCaseRoutes(
 		var s StatisticsService = statsService
 		statsServicePtr = &s
 	}
-	divergenceService := service.NewDivergenceService(responseRepo, caseRepo)
-	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsServicePtr, divergenceService)
+	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsServicePtr, studyService)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -347,11 +345,10 @@ func SetupStudyRoutes(
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	studyRepo repository.StudyRepository,
-	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
-	statsService *service.StatisticsService,
+	studyService service.StudyService,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, studyResponseRepo, caseRepo, userRepo, statsService)
+	studyHandler := NewStudyHandler(studyRepo, caseRepo, userRepo, studyService)
 
 	api := router.Group("/api")
 

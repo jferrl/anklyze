@@ -18,8 +18,7 @@ import (
 type CaseResponseHandler struct {
 	caseRepo          repository.CaseRepository
 	responseRepo      repository.CaseResponseRepository
-	studyRepo         repository.StudyRepository
-	studyResponseRepo repository.StudyResponseRepository
+	studyService      StudyService
 	storage           storage.Storage
 	signedURLDuration time.Duration
 }
@@ -28,16 +27,14 @@ type CaseResponseHandler struct {
 func NewCaseResponseHandler(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
-	studyRepo repository.StudyRepository,
-	studyResponseRepo repository.StudyResponseRepository,
+	studyService StudyService,
 	storage storage.Storage,
 	signedURLDuration time.Duration,
 ) *CaseResponseHandler {
 	return &CaseResponseHandler{
 		caseRepo:          caseRepo,
 		responseRepo:      responseRepo,
-		studyRepo:         studyRepo,
-		studyResponseRepo: studyResponseRepo,
+		studyService:      studyService,
 		storage:           storage,
 		signedURLDuration: signedURLDuration,
 	}
@@ -84,19 +81,11 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Check study access - if case belongs to a study, verify user is assigned
-	if cs.BelongsToStudy() {
-		hasStudyAccess, err := h.studyRepo.HasAccess(c.Request.Context(), *cs.StudyID, userID)
-		if err != nil {
-			slog.Error("failed to check study access", "error", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify study access"})
-			return
-		}
-		if !hasStudyAccess {
-			c.JSON(http.StatusForbidden, gin.H{
-				"error": "you are not assigned to this study",
-				"code":  "NOT_STUDY_MEMBER",
-			})
+	// Check study access - if case belongs to a study, verify user is assigned to it.
+	// StudyService.ValidateResponseSubmission is a no-op when the case is not in a study.
+	if h.studyService != nil {
+		if err := h.studyService.ValidateResponseSubmission(c.Request.Context(), caseID, userID); err != nil {
+			HandleError(c, err, "Cannot submit response")
 			return
 		}
 	}
@@ -184,24 +173,9 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 			)
 		}
 
-		// Update study user progress if case belongs to a study
-		if cs.BelongsToStudy() {
-			casesCompleted, err := h.studyResponseRepo.CountUserCasesCompleted(bgCtx, *cs.StudyID, userID)
-			if err != nil {
-				slog.Error("failed to count user cases completed",
-					"error", err,
-					"study_id", cs.StudyID,
-					"user_id", userID,
-				)
-				return
-			}
-			if err := h.studyRepo.UpdateRaterProgress(bgCtx, *cs.StudyID, userID, casesCompleted); err != nil {
-				slog.Error("failed to update study rater progress",
-					"error", err,
-					"study_id", cs.StudyID,
-					"user_id", userID,
-				)
-			}
+		// Update study user progress if case belongs to a study.
+		if cs.StudyID != nil && h.studyService != nil {
+			h.studyService.UpdateProgressAfterResponse(bgCtx, *cs.StudyID, caseID, userID)
 		}
 	}()
 

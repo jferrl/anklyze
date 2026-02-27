@@ -204,6 +204,10 @@ func main() {
 	// Initialize statistics service for reliability metrics
 	statsService := service.NewStatisticsService()
 
+	// Initialize study service — orchestrates case-study relationships, response validation,
+	// reliability metrics, and divergence analysis.
+	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService)
+
 	dbStatus := "connected"
 	if !dbHealthy {
 		dbStatus = "degraded (NoOp)"
@@ -212,8 +216,8 @@ func main() {
 
 	router := gin.Default()
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy)
-	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo, caseStorage, statsService)
-	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, statsService)
+	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
+	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, caseRepo, studyService)
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,

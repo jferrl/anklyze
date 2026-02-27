@@ -11,32 +11,28 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
-	"github.com/jferrl/anklyze/internal/service"
 )
 
 // StudyHandler handles study-related HTTP requests.
 type StudyHandler struct {
-	studyRepo         repository.StudyRepository
-	studyResponseRepo repository.StudyResponseRepository
-	caseRepo          repository.CaseRepository
-	userRepo          auth.UserService
-	statsService      *service.StatisticsService
+	studyRepo    repository.StudyRepository
+	caseRepo     repository.CaseRepository
+	userRepo     auth.UserService
+	studyService StudyService
 }
 
 // NewStudyHandler creates a new study handler.
 func NewStudyHandler(
 	studyRepo repository.StudyRepository,
-	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
 	userRepo auth.UserService,
-	statsService *service.StatisticsService,
+	studyService StudyService,
 ) *StudyHandler {
 	return &StudyHandler{
-		studyRepo:         studyRepo,
-		studyResponseRepo: studyResponseRepo,
-		caseRepo:          caseRepo,
-		userRepo:          userRepo,
-		statsService:      statsService,
+		studyRepo:    studyRepo,
+		caseRepo:     caseRepo,
+		userRepo:     userRepo,
+		studyService: studyService,
 	}
 }
 
@@ -374,8 +370,14 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 		return
 	}
 
-	// Check if case is already in a study
-	if cs.BelongsToStudy() {
+	// Check if case is already in a study via StudyService
+	inStudy, _, err := h.studyService.IsCaseInStudy(c.Request.Context(), caseID)
+	if err != nil {
+		slog.Error("failed to check study membership", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case study membership"})
+		return
+	}
+	if inStudy {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Case is already assigned to a study"})
 		return
 	}
@@ -395,15 +397,11 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 		caseOrder = nextOrder
 	}
 
-	if err := h.studyRepo.AddCase(c.Request.Context(), studyID, caseID, caseOrder); err != nil {
+	// Delegate AddCase + UpdateCounters to StudyService
+	if err := h.studyService.AddCase(c.Request.Context(), studyID, caseID, caseOrder); err != nil {
 		slog.Error("failed to add case", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add case to study"})
 		return
-	}
-
-	// Update counters
-	if err := h.studyRepo.UpdateCounters(c.Request.Context(), studyID); err != nil {
-		slog.Error("failed to update counters", "error", err)
 	}
 
 	// Return the updated case
@@ -433,15 +431,10 @@ func (h *StudyHandler) RemoveCase(c *gin.Context) {
 		return
 	}
 
-	if err := h.studyRepo.RemoveCase(c.Request.Context(), studyID, caseID); err != nil {
+	if err := h.studyService.RemoveCase(c.Request.Context(), studyID, caseID); err != nil {
 		slog.Error("failed to remove case", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove case from study"})
 		return
-	}
-
-	// Update counters
-	if err := h.studyRepo.UpdateCounters(c.Request.Context(), studyID); err != nil {
-		slog.Error("failed to update counters", "error", err)
 	}
 
 	c.Status(http.StatusNoContent)
@@ -780,6 +773,7 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 		return
 	}
 
+	// Verify study exists first for proper 404 handling
 	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
 	if err != nil {
 		slog.Error("failed to get study", "error", err)
@@ -791,29 +785,8 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 		return
 	}
 
-	// Get cases
-	cases, err := h.studyRepo.GetCases(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study cases"})
-		return
-	}
-
-	if len(cases) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Study has no cases"})
-		return
-	}
-
-	// Get responses for all cases
-	responsesByCase, err := h.studyResponseRepo.GetAllByStudy(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study responses"})
-		return
-	}
-
-	// Calculate metrics
-	metrics, err := h.statsService.CalculateStudyReliabilityMetrics(study, cases, responsesByCase)
+	// Delegate data fetching + metric calculation to StudyService
+	metrics, err := h.studyService.GetReliabilityMetrics(c.Request.Context(), id)
 	if err != nil {
 		slog.Error("failed to calculate metrics", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate reliability metrics"})
