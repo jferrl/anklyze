@@ -302,7 +302,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 			}
 		}
-		result.AOOTA = getAOOTAForSuprasindesmalBimaleolar(input.SuprasindesmalType)
+		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 	}
 
 	return result, nil
@@ -352,7 +352,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 				Type: domain.LaugeHansenPER,
 			}
 		}
-		result.AOOTA = getAOOTAForSuprasindesmalBimaleolar(input.SuprasindesmalType)
+		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 		return result, nil
 	}
 
@@ -450,7 +450,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 			}
 		}
-		result.AOOTA = getAOOTAForSuprasindesmalTrimaleolar(input.SuprasindesmalType)
+		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 		return result, nil
 	}
 
@@ -538,47 +538,10 @@ func getBartonicekFromPosteriorType(pt domain.PosteriorFractureType) *domain.Bar
 	return nil
 }
 
+// getAOOTAForSuprasindesmal maps SuprasindesmalType to the AO/OTA code.
+// Used for lateral-only, bimalleolar, and trimaleolar suprasyndesmotic fractures
+// (all variants produce the same mapping).
 func getAOOTAForSuprasindesmal(st domain.SuprasindesmalType) *domain.AOOTAClassification {
-	switch st {
-	case domain.SuprasindesmalSimpleDiaphyseal:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC1,
-		}
-	case domain.SuprasindesmalMultifragmentary:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC2,
-		}
-	case domain.SuprasindesmalProximal:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC3,
-		}
-	}
-	return &domain.AOOTAClassification{
-		Code: domain.AOOTAC1,
-	}
-}
-
-func getAOOTAForSuprasindesmalBimaleolar(st domain.SuprasindesmalType) *domain.AOOTAClassification {
-	switch st {
-	case domain.SuprasindesmalSimpleDiaphyseal:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC1,
-		}
-	case domain.SuprasindesmalMultifragmentary:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC2,
-		}
-	case domain.SuprasindesmalProximal:
-		return &domain.AOOTAClassification{
-			Code: domain.AOOTAC3,
-		}
-	}
-	return &domain.AOOTAClassification{
-		Code: domain.AOOTAC1,
-	}
-}
-
-func getAOOTAForSuprasindesmalTrimaleolar(st domain.SuprasindesmalType) *domain.AOOTAClassification {
 	switch st {
 	case domain.SuprasindesmalSimpleDiaphyseal:
 		return &domain.AOOTAClassification{
