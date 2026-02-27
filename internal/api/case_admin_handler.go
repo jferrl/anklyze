@@ -49,6 +49,26 @@ func (h *CaseAdminHandler) CreateCase(c *gin.Context) {
 		return
 	}
 
+	// Validate JSONB fields if provided
+	if req.ReferenceClassification != nil {
+		if err := validate.Struct(req.ReferenceClassification); err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error":  "invalid reference classification",
+				"fields": validationFieldErrors(err),
+			})
+			return
+		}
+	}
+	if req.ReferenceInput != nil {
+		if err := validate.Struct(req.ReferenceInput); err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error":  "invalid reference input",
+				"fields": validationFieldErrors(err),
+			})
+			return
+		}
+	}
+
 	cs := domain.NewCase(userID, req.Title, req.Description, req.Deadline)
 
 	// Set validation case options
@@ -161,6 +181,26 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
 		return
+	}
+
+	// Validate JSONB fields if provided
+	if req.ReferenceClassification != nil {
+		if err := validate.Struct(req.ReferenceClassification); err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error":  "invalid reference classification",
+				"fields": validationFieldErrors(err),
+			})
+			return
+		}
+	}
+	if req.ReferenceInput != nil {
+		if err := validate.Struct(req.ReferenceInput); err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error":  "invalid reference input",
+				"fields": validationFieldErrors(err),
+			})
+			return
+		}
 	}
 
 	// For draft cases, allow all fields to be edited

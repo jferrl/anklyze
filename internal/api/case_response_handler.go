@@ -114,6 +114,15 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
+	// Validate JSONB classification field
+	if err := validate.Struct(req.Classification); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":  "invalid classification data",
+			"fields": validationFieldErrors(err),
+		})
+		return
+	}
+
 	// Build answer tracking if provided
 	var tracking *domain.AnswerTracking
 	if len(req.AnswerPath) > 0 || req.DecisionPath != "" || len(req.TimePerQuestion) > 0 || req.BackClicks > 0 {
