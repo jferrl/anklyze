@@ -208,6 +208,7 @@ func main() {
 	if !dbHealthy {
 		dbStatus = "degraded (NoOp)"
 	}
+
 	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
 
 	router := gin.Default()
