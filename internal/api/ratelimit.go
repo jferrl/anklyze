@@ -129,12 +129,6 @@ func (rl *IPRateLimiter) Middleware() gin.HandlerFunc {
 	}
 }
 
-// RateLimitMiddleware creates a simple rate limiting middleware with default config
-func RateLimitMiddleware() (*IPRateLimiter, gin.HandlerFunc) {
-	rl := NewIPRateLimiter(DefaultRateLimiterConfig())
-	return rl, rl.Middleware()
-}
-
 // RateLimitMiddlewareWithConfig creates a rate limiting middleware with custom rate and burst
 func RateLimitMiddlewareWithConfig(ratePerSecond float64, burst int) (*IPRateLimiter, gin.HandlerFunc) {
 	config := RateLimiterConfig{
