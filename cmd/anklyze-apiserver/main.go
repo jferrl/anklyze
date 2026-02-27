@@ -16,7 +16,6 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/database"
-	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/llm"
 	"github.com/jferrl/anklyze/internal/logger"
 	"github.com/jferrl/anklyze/internal/repository"
@@ -25,6 +24,7 @@ import (
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 	"github.com/jferrl/anklyze/internal/supabase"
+	"github.com/jferrl/anklyze/migrations"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 
@@ -113,20 +113,9 @@ func main() {
 			studyRepo = repository.NewNoOpStudyRepository()
 			studyResponseRepo = repository.NewNoOpStudyResponseRepository()
 		} else {
-			if err := db.AutoMigrate(
-				&domain.AuditEntry{},
-				&domain.ChatSession{},
-				&domain.ChatMessage{},
-				&domain.ChatFeedback{},
-				&domain.User{},
-				&domain.Case{},
-				&domain.CaseImage{},
-				&domain.CaseResponse{},
-				&domain.CaseUser{},
-				&domain.Study{},
-				&domain.StudyRater{},
-			); err != nil {
-				slog.Warn("database migration failed", "error", err)
+			if err := database.RunMigrations(migrations.FS, cfg.DatabaseURL); err != nil {
+				slog.Error("database migration failed", "error", err)
+				os.Exit(1)
 			}
 			dbHealthy = true
 			slog.Info("database connected, audit trail and analytics enabled")
