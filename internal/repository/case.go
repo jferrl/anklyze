@@ -59,6 +59,8 @@ type CaseRepository interface {
 	HasAccess(ctx context.Context, caseID, userID uuid.UUID) (bool, error)
 	// ListForUser retrieves published cases accessible to a specific user with pagination.
 	ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Case, int64, error)
+	// GetByIDs batch loads cases by their IDs.
+	GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error)
 }
 
 // CaseResponseRepository defines the interface for case response persistence.
@@ -188,6 +190,10 @@ func (r *NoOpCaseRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool,
 
 func (r *NoOpCaseRepository) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Case, int64, error) {
 	return []domain.Case{}, 0, nil
+}
+
+func (r *NoOpCaseRepository) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domain.Case, error) {
+	return []domain.Case{}, nil
 }
 
 // NoOpCaseResponseRepository is a no-op implementation.

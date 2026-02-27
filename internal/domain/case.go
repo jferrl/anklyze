@@ -189,11 +189,6 @@ func (c *Case) IsExpired() bool {
 	return c.Deadline != nil && time.Now().After(*c.Deadline)
 }
 
-// BelongsToStudy returns true if the case is part of a study.
-func (c *Case) BelongsToStudy() bool {
-	return c.StudyID != nil
-}
-
 // SetStudy assigns this case to a study with a given case order.
 func (c *Case) SetStudy(studyID uuid.UUID, caseOrder int) {
 	c.StudyID = &studyID

@@ -17,6 +17,7 @@ var (
 	ErrDeadlinePassed            = errors.New("case deadline has passed")
 	ErrCaseNotAcceptingResponses = errors.New("case is not accepting responses")
 	ErrAlreadyResponded          = errors.New("already submitted a response to this case")
+	ErrNotStudyMember            = errors.New("you are not assigned to this study")
 )
 
 // FieldError represents a validation error for a specific field.
@@ -71,6 +72,7 @@ const (
 	ErrCodeDeadlinePassed            = "DEADLINE_PASSED"
 	ErrCodeCaseNotAcceptingResponses = "CASE_NOT_ACCEPTING_RESPONSES"
 	ErrCodeAlreadyResponded          = "ALREADY_RESPONDED"
+	ErrCodeNotStudyMember            = "NOT_STUDY_MEMBER"
 
 	// Auth errors
 	ErrCodeTokenExpired = "TOKEN_EXPIRED"

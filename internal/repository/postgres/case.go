@@ -333,6 +333,19 @@ func (r *CaseRepository) ListForUser(ctx context.Context, userID uuid.UUID, limi
 	return cases, total, nil
 }
 
+// GetByIDs batch loads cases by their IDs.
+// Returns results in unordered fashion (caller should sort if needed).
+func (r *CaseRepository) GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error) {
+	if len(ids) == 0 {
+		return []domain.Case{}, nil
+	}
+	var cases []domain.Case
+	if err := r.db.WithContext(ctx).Where("id IN ?", ids).Find(&cases).Error; err != nil {
+		return nil, fmt.Errorf("get by ids: %w", err)
+	}
+	return cases, nil
+}
+
 // CaseResponseRepository implements case response persistence with async writes.
 type CaseResponseRepository struct {
 	db      *gorm.DB

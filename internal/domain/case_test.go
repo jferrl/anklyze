@@ -227,35 +227,8 @@ func TestCase_CanBeDeleted(t *testing.T) {
 	}
 }
 
-func TestCase_BelongsToStudy(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name string
-		c    Case
-		want bool
-	}{
-		{
-			name: "nil StudyID does not belong to a study",
-			c:    newDraftCase(),
-			want: false,
-		},
-		{
-			name: "set StudyID belongs to a study",
-			c:    withStudyID(newDraftCase()),
-			want: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			if got := tt.c.BelongsToStudy(); got != tt.want {
-				t.Errorf("BelongsToStudy() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+// TestCase_BelongsToStudy was removed: BelongsToStudy() method was removed from Case domain model.
+// Study membership is now queried only through StudyService.IsCaseInStudy().
 
 // ---------------------------------------------------------------------------
 // T008 – CanPublish / CanClose

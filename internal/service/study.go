@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"sort"
 	"strings"
 
@@ -61,22 +62,163 @@ type DivergenceReport struct {
 	IncorrectWithHighBackCnt int     `json:"incorrect_with_high_back_count"`
 }
 
-// DivergenceService handles divergence analysis calculations.
-type DivergenceService struct {
-	responseRepo repository.CaseResponseRepository
-	caseRepo     repository.CaseRepository
+// ReliabilityCalculator computes study-level reliability metrics.
+// Defined here to break the direct dependency on *StatisticsService in handlers.
+type ReliabilityCalculator interface {
+	CalculateStudyReliabilityMetrics(study *domain.Study, cases []domain.Case, responsesByCase map[uuid.UUID][]domain.CaseResponse) (*domain.StudyReliabilityMetrics, error)
 }
 
-// NewDivergenceService creates a new divergence service.
-func NewDivergenceService(rr repository.CaseResponseRepository, cr repository.CaseRepository) *DivergenceService {
-	return &DivergenceService{
-		responseRepo: rr,
-		caseRepo:     cr,
+// StudyService manages all study-related business logic including case-study
+// relationship management, response validation, reliability metrics, and divergence analysis.
+type StudyService interface {
+	// Case-study relationship management
+	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
+	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
+	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
+
+	// Access control
+	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
+	ValidateResponseSubmission(ctx context.Context, caseID, userID uuid.UUID) error
+
+	// Reliability metrics (orchestrates data fetching + ReliabilityCalculator call)
+	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
+
+	// Divergence analysis (absorbed from DivergenceService)
+	GetDivergenceAnalysis(ctx context.Context, caseID uuid.UUID) (*DivergenceReport, error)
+
+	// Background updates after response submission
+	UpdateProgressAfterResponse(ctx context.Context, studyID uuid.UUID, caseID, userID uuid.UUID)
+}
+
+type studyService struct {
+	studyRepo         repository.StudyRepository
+	studyResponseRepo repository.StudyResponseRepository
+	caseRepo          repository.CaseRepository
+	responseRepo      repository.CaseResponseRepository
+	reliabilityCalc   ReliabilityCalculator
+}
+
+// NewStudyService creates a new StudyService.
+func NewStudyService(
+	studyRepo repository.StudyRepository,
+	studyResponseRepo repository.StudyResponseRepository,
+	caseRepo repository.CaseRepository,
+	responseRepo repository.CaseResponseRepository,
+	reliabilityCalc ReliabilityCalculator,
+) StudyService {
+	return &studyService{
+		studyRepo:         studyRepo,
+		studyResponseRepo: studyResponseRepo,
+		caseRepo:          caseRepo,
+		responseRepo:      responseRepo,
+		reliabilityCalc:   reliabilityCalc,
 	}
 }
 
-// AnalyzeDivergence generates a complete divergence report for a case.
-func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.UUID) (*DivergenceReport, error) {
+// AddCase adds a case to a study and updates the study counters.
+func (s *studyService) AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error {
+	if err := s.studyRepo.AddCase(ctx, studyID, caseID, caseOrder); err != nil {
+		return err
+	}
+	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
+		slog.Error("failed to update study counters after AddCase",
+			"error", err,
+			"study_id", studyID,
+			"case_id", caseID,
+		)
+		// Counter update failure is non-fatal — the case was added successfully.
+	}
+	return nil
+}
+
+// RemoveCase removes a case from a study and updates the study counters.
+func (s *studyService) RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error {
+	if err := s.studyRepo.RemoveCase(ctx, studyID, caseID); err != nil {
+		return err
+	}
+	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
+		slog.Error("failed to update study counters after RemoveCase",
+			"error", err,
+			"study_id", studyID,
+			"case_id", caseID,
+		)
+	}
+	return nil
+}
+
+// IsCaseInStudy checks whether a case belongs to any study.
+// Returns (true, &studyID, nil) if the case is in a study, (false, nil, nil) if not.
+func (s *studyService) IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error) {
+	study, err := s.studyRepo.GetStudyByCaseID(ctx, caseID)
+	if err != nil {
+		return false, nil, err
+	}
+	if study == nil {
+		return false, nil, nil
+	}
+	return true, &study.ID, nil
+}
+
+// HasAccess checks if a user has access to a study.
+func (s *studyService) HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error) {
+	return s.studyRepo.HasAccess(ctx, studyID, userID)
+}
+
+// ValidateResponseSubmission checks that the user is allowed to submit a response
+// for a case that belongs to a study. If the case is not in a study, this is a no-op.
+// Returns domain.ErrNotStudyMember if the user is not assigned to the study.
+func (s *studyService) ValidateResponseSubmission(ctx context.Context, caseID, userID uuid.UUID) error {
+	cs, err := s.caseRepo.GetByID(ctx, caseID)
+	if err != nil {
+		return err
+	}
+	if cs == nil {
+		// Case not found — let the handler deal with 404; don't block here.
+		return nil
+	}
+
+	// Only validate if the case belongs to a study.
+	if cs.StudyID == nil {
+		return nil
+	}
+
+	hasAccess, err := s.studyRepo.HasAccess(ctx, *cs.StudyID, userID)
+	if err != nil {
+		return err
+	}
+	if !hasAccess {
+		return domain.ErrNotStudyMember
+	}
+	return nil
+}
+
+// GetReliabilityMetrics orchestrates data fetching and calculates study-level
+// reliability metrics by delegating to the ReliabilityCalculator.
+func (s *studyService) GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error) {
+	study, err := s.studyRepo.GetByID(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+	if study == nil {
+		return nil, domain.ErrNotFound
+	}
+
+	cases, err := s.studyRepo.GetCases(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+
+	responsesByCase, err := s.studyResponseRepo.GetAllByStudy(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.reliabilityCalc.CalculateStudyReliabilityMetrics(study, cases, responsesByCase)
+}
+
+// GetDivergenceAnalysis generates a complete divergence report for a case.
+// This method absorbs the logic formerly in DivergenceService.AnalyzeDivergence.
+func (s *studyService) GetDivergenceAnalysis(ctx context.Context, caseID uuid.UUID) (*DivergenceReport, error) {
 	// 1. Get case with gold standard input
 	cs, err := s.caseRepo.GetByID(ctx, caseID)
 	if err != nil {
@@ -253,6 +395,27 @@ func (s *DivergenceService) AnalyzeDivergence(ctx context.Context, caseID uuid.U
 	return report, nil
 }
 
+// UpdateProgressAfterResponse updates rater progress in a study after a response is submitted.
+// This is intended to be called in a background goroutine.
+func (s *studyService) UpdateProgressAfterResponse(ctx context.Context, studyID uuid.UUID, caseID, userID uuid.UUID) {
+	casesCompleted, err := s.studyResponseRepo.CountUserCasesCompleted(ctx, studyID, userID)
+	if err != nil {
+		slog.Error("failed to count user cases completed",
+			"error", err,
+			"study_id", studyID,
+			"user_id", userID,
+		)
+		return
+	}
+	if err := s.studyRepo.UpdateRaterProgress(ctx, studyID, userID, casesCompleted); err != nil {
+		slog.Error("failed to update study rater progress",
+			"error", err,
+			"study_id", studyID,
+			"user_id", userID,
+		)
+	}
+}
+
 // buildAnswerPathFromInput converts a FractureInput to a map of question->answer.
 func buildAnswerPathFromInput(input *domain.FractureInput) map[string]string {
 	path := make(map[string]string)
@@ -329,16 +492,16 @@ func buildDecisionPathString(input *domain.FractureInput) string {
 // GetQuestionDisplayName returns a human-readable name for a question key.
 func GetQuestionDisplayName(key string) string {
 	names := map[string]string{
-		"involved_malleoli":               "Involved Malleoli",
-		"fibular_level":                   "Fibular Level",
-		"lateral_morphology":              "Lateral Morphology",
-		"medial_morphology":               "Medial Morphology",
-		"suprasindesmal_type":             "Suprasindesmal Type",
-		"fibula_trace_pattern":            "Fibula Trace Pattern",
-		"posterior_fracture_type":         "Posterior Fracture Type",
-		"has_ct_scan":                     "Has CT Scan",
-		"fibula_infrasindesmal_transverse": "Fibula Infrasindesmal Transverse",
-		"fibular_level_for_transverse":    "Fibular Level for Transverse",
+		"involved_malleoli":                "Involved Malleoli",
+		"fibular_level":                    "Fibular Level",
+		"lateral_morphology":               "Lateral Morphology",
+		"medial_morphology":                "Medial Morphology",
+		"suprasindesmal_type":              "Suprasindesmal Type",
+		"fibula_trace_pattern":             "Fibula Trace Pattern",
+		"posterior_fracture_type":          "Posterior Fracture Type",
+		"has_ct_scan":                      "Has CT Scan",
+		"fibula_infrasindesmal_transverse":  "Fibula Infrasindesmal Transverse",
+		"fibular_level_for_transverse":     "Fibular Level for Transverse",
 	}
 	if name, ok := names[key]; ok {
 		return name
