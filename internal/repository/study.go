@@ -94,82 +94,102 @@ func NewNoOpStudyRepository() *NoOpStudyRepository {
 	return &NoOpStudyRepository{}
 }
 
+// Create implements StudyRepository.
 func (r *NoOpStudyRepository) Create(_ context.Context, _ *domain.Study) error {
 	return nil
 }
 
+// GetByID implements StudyRepository.
 func (r *NoOpStudyRepository) GetByID(_ context.Context, _ uuid.UUID) (*domain.Study, error) {
 	return nil, nil
 }
 
+// Update implements StudyRepository.
 func (r *NoOpStudyRepository) Update(_ context.Context, _ *domain.Study) error {
 	return nil
 }
 
+// Delete implements StudyRepository.
 func (r *NoOpStudyRepository) Delete(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// List implements StudyRepository.
 func (r *NoOpStudyRepository) List(_ context.Context, _ *domain.StudyStatus, _, _ int) ([]domain.Study, int64, error) {
 	return []domain.Study{}, 0, nil
 }
 
+// AddCase implements StudyRepository.
 func (r *NoOpStudyRepository) AddCase(_ context.Context, _, _ uuid.UUID, _ int) error {
 	return nil
 }
 
+// RemoveCase implements StudyRepository.
 func (r *NoOpStudyRepository) RemoveCase(_ context.Context, _, _ uuid.UUID) error {
 	return nil
 }
 
+// GetCases implements StudyRepository.
 func (r *NoOpStudyRepository) GetCases(_ context.Context, _ uuid.UUID) ([]domain.Case, error) {
 	return []domain.Case{}, nil
 }
 
+// ReorderCases implements StudyRepository.
 func (r *NoOpStudyRepository) ReorderCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) error {
 	return nil
 }
 
+// GetStudyByCaseID implements StudyRepository.
 func (r *NoOpStudyRepository) GetStudyByCaseID(_ context.Context, _ uuid.UUID) (*domain.Study, error) {
 	return nil, nil
 }
 
+// GetNextCaseOrder implements StudyRepository.
 func (r *NoOpStudyRepository) GetNextCaseOrder(_ context.Context, _ uuid.UUID) (int, error) {
 	return 0, nil
 }
 
+// AddRater implements StudyRepository.
 func (r *NoOpStudyRepository) AddRater(_ context.Context, _, _ uuid.UUID, _ string) error {
 	return nil
 }
 
+// RemoveRater implements StudyRepository.
 func (r *NoOpStudyRepository) RemoveRater(_ context.Context, _, _ uuid.UUID) error {
 	return nil
 }
 
+// GetRaters implements StudyRepository.
 func (r *NoOpStudyRepository) GetRaters(_ context.Context, _ uuid.UUID) ([]domain.StudyRater, error) {
 	return []domain.StudyRater{}, nil
 }
 
+// HasAccess implements StudyRepository.
 func (r *NoOpStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
 	return false, nil
 }
 
+// GetRaterProgress implements StudyRepository.
 func (r *NoOpStudyRepository) GetRaterProgress(_ context.Context, _ uuid.UUID) ([]domain.RaterProgress, error) {
 	return []domain.RaterProgress{}, nil
 }
 
+// UpdateRaterProgress implements StudyRepository.
 func (r *NoOpStudyRepository) UpdateRaterProgress(_ context.Context, _, _ uuid.UUID, _ int) error {
 	return nil
 }
 
+// Activate implements StudyRepository.
 func (r *NoOpStudyRepository) Activate(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// Close implements StudyRepository.
 func (r *NoOpStudyRepository) Close(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// UpdateCounters implements StudyRepository.
 func (r *NoOpStudyRepository) UpdateCounters(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
@@ -182,26 +202,32 @@ func NewNoOpStudyResponseRepository() *NoOpStudyResponseRepository {
 	return &NoOpStudyResponseRepository{}
 }
 
+// GetAllByStudy implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
+// GetCompleteRaterResponses implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) GetCompleteRaterResponses(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
+// CountUniqueRaters implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) CountUniqueRaters(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
+// CountCompleteRaters implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) CountCompleteRaters(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
+// GetRaterCaseCompletion implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) GetRaterCaseCompletion(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
 	return make(map[uuid.UUID][]uuid.UUID), nil
 }
 
+// CountUserCasesCompleted implements StudyResponseRepository.
 func (r *NoOpStudyResponseRepository) CountUserCasesCompleted(_ context.Context, _, _ uuid.UUID) (int, error) {
 	return 0, nil
 }

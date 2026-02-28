@@ -1,6 +1,6 @@
 .PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger
+	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger lint-go
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
 
@@ -158,6 +158,18 @@ db-shell:
 # Show audit entries
 db-audit:
 	@docker compose exec postgres psql -U postgres -d anklyze -c "SELECT id, language, danis_weber_type, created_at FROM audit_entries ORDER BY created_at DESC LIMIT 10;"
+
+# Run Go linters: gofmt check, staticcheck (unused code), deadcode
+lint-go:
+	@echo "==> Checking gofmt..."
+	@test -z "$$(gofmt -l .)" || { echo "Files need formatting:"; gofmt -l .; exit 1; }
+	@echo "==> Running staticcheck (U1000 - unused code)..."
+	@staticcheck -checks U1000 ./...
+	@echo "==> Running deadcode..."
+	@go run golang.org/x/tools/cmd/deadcode@latest ./...
+	@echo "==> Running golangci-lint..."
+	@golangci-lint run ./...
+	@echo "All Go lint checks passed."
 
 # Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:

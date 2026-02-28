@@ -100,7 +100,7 @@ func (c *Client) ExtractFractureInput(ctx context.Context, description string, l
 	resp, err := c.client.Models.GenerateContent(ctx, c.model, genai.Text(prompt), config)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			return nil, fmt.Errorf("%w: %v", ErrTimeout, err)
+			return nil, fmt.Errorf("%w: %w", ErrTimeout, err)
 		}
 		if errors.Is(err, context.Canceled) {
 			return nil, fmt.Errorf("request cancelled: %w", err)

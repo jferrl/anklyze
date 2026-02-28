@@ -174,7 +174,9 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"case_%s_responses.csv\"", caseID.String()[:8]))
 
 	// Write CSV header
-	c.Writer.WriteString("response_id,user_id,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek\n")
+	if _, err := c.Writer.WriteString("response_id,user_id,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek\n"); err != nil {
+		return
+	}
 
 	// Write rows
 	for _, r := range responses {
@@ -202,7 +204,9 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 			r.TimeTakenMS,
 			dw, lh, ao, bt,
 		)
-		c.Writer.WriteString(line)
+		if _, err := c.Writer.WriteString(line); err != nil {
+			return
+		}
 	}
 }
 
@@ -244,7 +248,9 @@ func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
 	if refClass != nil {
 		header += ",dw_correct,lh_correct,ao_correct,bt_correct"
 	}
-	c.Writer.WriteString(header + "\n")
+	if _, err := c.Writer.WriteString(header + "\n"); err != nil {
+		return
+	}
 
 	// Write rows
 	for _, r := range responses {
@@ -330,6 +336,8 @@ func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
 			line += fmt.Sprintf(",%s,%s,%s,%s", dwCorrect, lhCorrect, aoCorrect, btCorrect)
 		}
 
-		c.Writer.WriteString(line + "\n")
+		if _, err := c.Writer.WriteString(line + "\n"); err != nil {
+			return
+		}
 	}
 }

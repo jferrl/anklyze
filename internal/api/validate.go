@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -12,8 +13,8 @@ var validate = validator.New(validator.WithRequiredStructEnabled())
 // validationFieldErrors converts validator.ValidationErrors into a slice of
 // field-level error details suitable for API responses.
 func validationFieldErrors(err error) []map[string]string {
-	validationErrors, ok := err.(validator.ValidationErrors)
-	if !ok {
+	var validationErrors validator.ValidationErrors
+	if !errors.As(err, &validationErrors) {
 		return []map[string]string{{"error": err.Error()}}
 	}
 	var out []map[string]string

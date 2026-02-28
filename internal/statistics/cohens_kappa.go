@@ -69,7 +69,7 @@ func CohensKappaWithCI(ratings [][2]string, confidenceLevel float64) (float64, *
 	// This is a simplified approximation; more complex formulas exist for small samples
 	var ci *domain.ConfidenceInterval
 	if n >= 2 {
-		denominator := float64(n) * math.Pow(1-pe, 2)
+		denominator := float64(n) * (1 - pe) * (1 - pe)
 		if denominator > 0 {
 			se := math.Sqrt((po * (1 - po)) / denominator)
 

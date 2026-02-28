@@ -4,9 +4,10 @@ import (
 	"strings"
 )
 
-// Language represents a supported language
+// Language represents a supported language.
 type Language string
 
+// English and related constants define the supported language codes.
 const (
 	English Language = "en"
 	Spanish Language = "es"

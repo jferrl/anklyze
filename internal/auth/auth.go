@@ -121,16 +121,17 @@ func (v *Validator) ValidateToken(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 
 	var keyFunc jwt.Keyfunc
-	if v.jwks != nil {
+	switch {
+	case v.jwks != nil:
 		keyFunc = v.jwks.Keyfunc
-	} else if len(v.jwtSecret) > 0 {
+	case len(v.jwtSecret) > 0:
 		keyFunc = func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 			return v.jwtSecret, nil
 		}
-	} else {
+	default:
 		return nil, errors.New("no key function configured")
 	}
 
@@ -156,7 +157,7 @@ func (v *Validator) ValidateToken(tokenString string) (*Claims, error) {
 		if errors.Is(err, jwt.ErrSignatureInvalid) {
 			return nil, ErrInvalidSignature
 		}
-		return nil, fmt.Errorf("%w: %v", ErrInvalidToken, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidToken, err)
 	}
 
 	if !token.Valid {

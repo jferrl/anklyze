@@ -69,7 +69,7 @@ func (a *AuthAdmin) UpdateUserRole(ctx context.Context, userID string, role stri
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		body, err := io.ReadAll(resp.Body)

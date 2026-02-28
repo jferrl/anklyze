@@ -54,9 +54,9 @@ func createTestValidator(t *testing.T) *Validator {
 	return v
 }
 
-func TestAuthMiddleware(t *testing.T) {
+func TestMiddleware(t *testing.T) {
 	validator := createTestValidator(t)
-	defer validator.Close()
+	defer func() { _ = validator.Close() }()
 
 	tests := []struct {
 		name           string
@@ -152,7 +152,7 @@ func TestAuthMiddleware(t *testing.T) {
 			c, router := gin.CreateTestContext(w)
 
 			var contextCheck bool
-			router.Use(AuthMiddleware(validator))
+			router.Use(Middleware(validator))
 			router.GET("/test", func(c *gin.Context) {
 				if tt.checkContext != nil {
 					contextCheck = tt.checkContext(c)
@@ -188,11 +188,11 @@ func TestAuthMiddleware(t *testing.T) {
 	}
 }
 
-// TestAuthMiddlewareStructuredErrors verifies that expired and invalid tokens
+// TestMiddlewareStructuredErrors verifies that expired and invalid tokens
 // return structured JSON responses with the expected "code" field.
-func TestAuthMiddlewareStructuredErrors(t *testing.T) {
+func TestMiddlewareStructuredErrors(t *testing.T) {
 	validator := createTestValidator(t)
-	defer validator.Close()
+	defer func() { _ = validator.Close() }()
 
 	tests := []struct {
 		name           string
@@ -224,7 +224,7 @@ func TestAuthMiddlewareStructuredErrors(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, router := gin.CreateTestContext(w)
 
-			router.Use(AuthMiddleware(validator))
+			router.Use(Middleware(validator))
 			router.GET("/test", func(c *gin.Context) {
 				c.Status(http.StatusOK)
 			})
@@ -256,7 +256,7 @@ func TestAuthMiddlewareStructuredErrors(t *testing.T) {
 
 func TestRequireRole(t *testing.T) {
 	validator := createTestValidator(t)
-	defer validator.Close()
+	defer func() { _ = validator.Close() }()
 
 	tests := []struct {
 		name           string
@@ -307,7 +307,7 @@ func TestRequireRole(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, router := gin.CreateTestContext(w)
 
-			// Middleware that sets claims (simulating AuthMiddleware)
+			// Middleware that sets claims (simulating Middleware)
 			router.Use(func(c *gin.Context) {
 				if tt.userRole != "" {
 					claims := &Claims{

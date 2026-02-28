@@ -12,6 +12,7 @@ import (
 // ChatStatus represents the status of a chat response.
 type ChatStatus string
 
+// ChatStatusComplete and related constants define the possible chat response statuses.
 const (
 	ChatStatusComplete           ChatStatus = "complete"
 	ChatStatusNeedsClarification ChatStatus = "needs_clarification"

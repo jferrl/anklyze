@@ -32,10 +32,10 @@ type UserService interface {
 	SyncRoleToSupabase(ctx context.Context, userID uuid.UUID, role domain.UserRole)
 }
 
-// AuthMiddleware creates a Gin middleware that validates JWT tokens.
+// Middleware creates a Gin middleware that validates JWT tokens.
 // It extracts the Bearer token from the Authorization header and validates it.
 // On success, it stores the user ID and claims in the Gin context.
-func AuthMiddleware(validator *Validator) gin.HandlerFunc {
+func Middleware(validator *Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -92,7 +92,7 @@ func AuthMiddleware(validator *Validator) gin.HandlerFunc {
 }
 
 // RequireRole creates a Gin middleware that checks if the user has one of the allowed roles.
-// It must be used after AuthMiddleware and UserSyncMiddleware.
+// It must be used after Middleware and UserSyncMiddleware.
 // It checks the database role (via synced user) first, falling back to JWT claims.
 func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -155,7 +155,7 @@ func IsAdmin(c *gin.Context) bool {
 }
 
 // UserSyncMiddleware creates a middleware that loads the authenticated user from the database.
-// It must be used after AuthMiddleware. On each authenticated request, it fetches the user.
+// It must be used after Middleware. On each authenticated request, it fetches the user.
 // If the user doesn't exist (first login), it creates them via SyncOnLogin.
 func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {

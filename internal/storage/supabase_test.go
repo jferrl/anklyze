@@ -58,7 +58,7 @@ func TestSupabaseStorage_Upload(t *testing.T) {
 			setupServer: func() *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusBadRequest)
-					w.Write([]byte("invalid request"))
+					_, _ = w.Write([]byte("invalid request"))
 				}))
 			},
 			path:        "test.txt",
@@ -72,7 +72,7 @@ func TestSupabaseStorage_Upload(t *testing.T) {
 			setupServer: func() *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusInternalServerError)
-					w.Write([]byte("server error"))
+					_, _ = w.Write([]byte("server error"))
 				}))
 			},
 			path:        "test.txt",
@@ -176,7 +176,7 @@ func TestSupabaseStorage_Delete(t *testing.T) {
 			setupServer: func() *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusInternalServerError)
-					w.Write([]byte("server error"))
+					_, _ = w.Write([]byte("server error"))
 				}))
 			},
 			path:        "test.txt",
@@ -248,7 +248,7 @@ func TestSupabaseStorage_GetSignedURL(t *testing.T) {
 					}
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte(`{"signedURL": "/object/sign/bucket/test.txt?token=abc123"}`))
+					_, _ = w.Write([]byte(`{"signedURL": "/object/sign/bucket/test.txt?token=abc123"}`))
 				}))
 			},
 			path:         "test.txt",
@@ -267,7 +267,7 @@ func TestSupabaseStorage_GetSignedURL(t *testing.T) {
 					}
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte(`{"signedURL": "/object/sign/bucket/test.txt?token=xyz"}`))
+					_, _ = w.Write([]byte(`{"signedURL": "/object/sign/bucket/test.txt?token=xyz"}`))
 				}))
 			},
 			path:         "test.txt",
@@ -280,7 +280,7 @@ func TestSupabaseStorage_GetSignedURL(t *testing.T) {
 			setupServer: func() *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusNotFound)
-					w.Write([]byte("file not found"))
+					_, _ = w.Write([]byte("file not found"))
 				}))
 			},
 			path:        "nonexistent.txt",
@@ -294,7 +294,7 @@ func TestSupabaseStorage_GetSignedURL(t *testing.T) {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte(`{invalid json`))
+					_, _ = w.Write([]byte(`{invalid json`))
 				}))
 			},
 			path:        "test.txt",
@@ -432,7 +432,7 @@ func TestBuildStoragePath(t *testing.T) {
 func TestSupabaseStorage_ErrorWrapping(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("internal error"))
+		_, _ = w.Write([]byte("internal error"))
 	}))
 	defer server.Close()
 

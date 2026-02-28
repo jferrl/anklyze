@@ -40,8 +40,7 @@ func TestGetEnv(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
 			if tt.envValue != "" {
-				os.Setenv(tt.key, tt.envValue)
-				defer os.Unsetenv(tt.key)
+				t.Setenv(tt.key, tt.envValue)
 			}
 
 			// Execute
@@ -126,10 +125,9 @@ func TestGetEnvInt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
 			if tt.envValue != "" {
-				os.Setenv(tt.key, tt.envValue)
-				defer os.Unsetenv(tt.key)
+				t.Setenv(tt.key, tt.envValue)
 			} else {
-				os.Unsetenv(tt.key)
+				_ = os.Unsetenv(tt.key)
 			}
 
 			// Execute
@@ -222,10 +220,9 @@ func TestGetEnvFloat(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
 			if tt.envValue != "" {
-				os.Setenv(tt.key, tt.envValue)
-				defer os.Unsetenv(tt.key)
+				t.Setenv(tt.key, tt.envValue)
 			} else {
-				os.Unsetenv(tt.key)
+				_ = os.Unsetenv(tt.key)
 			}
 
 			// Execute
@@ -365,18 +362,11 @@ func TestConfigLoad(t *testing.T) {
 			// Setup environment
 			for key, value := range tt.envVars {
 				if value == "" {
-					os.Unsetenv(key)
+					_ = os.Unsetenv(key)
 				} else {
-					os.Setenv(key, value)
+					t.Setenv(key, value)
 				}
 			}
-
-			// Cleanup after test
-			defer func() {
-				for key := range tt.envVars {
-					os.Unsetenv(key)
-				}
-			}()
 
 			// Execute
 			cfg, err := Load()
@@ -583,15 +573,8 @@ func TestLoadWithInvalidConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup environment
 			for key, value := range tt.envVars {
-				os.Setenv(key, value)
+				t.Setenv(key, value)
 			}
-
-			// Cleanup after test
-			defer func() {
-				for key := range tt.envVars {
-					os.Unsetenv(key)
-				}
-			}()
 
 			// Execute
 			_, err := Load()

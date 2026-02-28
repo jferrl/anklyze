@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -53,7 +54,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 	var user domain.User
 	result := r.db.WithContext(ctx).Take(&user, "id = ?", id)
 	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("get by id: %w", result.Error)
@@ -74,7 +75,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 	var user domain.User
 	result := r.db.WithContext(ctx).Take(&user, "email = ?", email)
 	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("get by email: %w", result.Error)

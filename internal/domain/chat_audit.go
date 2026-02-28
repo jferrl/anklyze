@@ -11,6 +11,7 @@ import (
 // ChatSessionStatus represents the state of a chat session.
 type ChatSessionStatus string
 
+// ChatSessionStatusActive and related constants define the possible states of a chat session.
 const (
 	ChatSessionStatusActive    ChatSessionStatus = "active"
 	ChatSessionStatusComplete  ChatSessionStatus = "complete"
@@ -109,6 +110,7 @@ func (s *ChatSession) IncrementClarifications() {
 // ChatRole represents the role of a message sender.
 type ChatRole string
 
+// ChatRoleUser and related constants define the possible message sender roles.
 const (
 	ChatRoleUser      ChatRole = "user"
 	ChatRoleAssistant ChatRole = "assistant"
@@ -117,6 +119,7 @@ const (
 // ChatMessageType classifies the type of chat message.
 type ChatMessageType string
 
+// ChatMessageTypeInitial and related constants define the possible chat message types.
 const (
 	ChatMessageTypeInitial              ChatMessageType = "initial"
 	ChatMessageTypeClarificationRequest ChatMessageType = "clarification_request"
@@ -209,6 +212,7 @@ func (m *ChatMessage) GetExtractedInput() (*FractureInput, error) {
 // FeedbackRating represents the type of feedback.
 type FeedbackRating string
 
+// FeedbackRatingPositive and related constants define the possible feedback rating values.
 const (
 	FeedbackRatingPositive FeedbackRating = "positive"
 	FeedbackRatingNegative FeedbackRating = "negative"

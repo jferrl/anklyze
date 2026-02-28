@@ -45,3 +45,4 @@ coverage/
 .playwright-mcp/
 bin/
 .planning/
+anklyze-apiserver

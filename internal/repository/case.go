@@ -100,98 +100,122 @@ type CaseAnalyticsRepository interface {
 // NoOpCaseRepository is a no-op implementation for when DB is not configured.
 type NoOpCaseRepository struct{}
 
+// NewNoOpCaseRepository returns a new NoOpCaseRepository.
 func NewNoOpCaseRepository() *NoOpCaseRepository {
 	return &NoOpCaseRepository{}
 }
 
+// Create implements CaseRepository.
 func (r *NoOpCaseRepository) Create(_ context.Context, _ *domain.Case) error {
 	return nil
 }
 
+// GetByID implements CaseRepository.
 func (r *NoOpCaseRepository) GetByID(_ context.Context, _ uuid.UUID) (*domain.Case, error) {
 	return nil, nil
 }
 
+// Update implements CaseRepository.
 func (r *NoOpCaseRepository) Update(_ context.Context, _ *domain.Case) error {
 	return nil
 }
 
+// Delete implements CaseRepository.
 func (r *NoOpCaseRepository) Delete(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// List implements CaseRepository.
 func (r *NoOpCaseRepository) List(_ context.Context, _ *domain.CaseStatus, _, _ int) ([]domain.Case, int64, error) {
 	return []domain.Case{}, 0, nil
 }
 
+// ListPublished implements CaseRepository.
 func (r *NoOpCaseRepository) ListPublished(_ context.Context, _, _ int) ([]domain.Case, int64, error) {
 	return []domain.Case{}, 0, nil
 }
 
+// AddImage implements CaseRepository.
 func (r *NoOpCaseRepository) AddImage(_ context.Context, _ *domain.CaseImage) error {
 	return nil
 }
 
+// GetImages implements CaseRepository.
 func (r *NoOpCaseRepository) GetImages(_ context.Context, _ uuid.UUID) ([]domain.CaseImage, error) {
 	return []domain.CaseImage{}, nil
 }
 
+// GetImagesForCases implements CaseRepository.
 func (r *NoOpCaseRepository) GetImagesForCases(_ context.Context, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
 	return make(map[uuid.UUID][]domain.CaseImage), nil
 }
 
+// GetImageByID implements CaseRepository.
 func (r *NoOpCaseRepository) GetImageByID(_ context.Context, _ uuid.UUID) (*domain.CaseImage, error) {
 	return nil, nil
 }
 
+// UpdateImage implements CaseRepository.
 func (r *NoOpCaseRepository) UpdateImage(_ context.Context, _ *domain.CaseImage) error {
 	return nil
 }
 
+// DeleteImage implements CaseRepository.
 func (r *NoOpCaseRepository) DeleteImage(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// UpdateHasTACImages implements CaseRepository.
 func (r *NoOpCaseRepository) UpdateHasTACImages(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// Publish implements CaseRepository.
 func (r *NoOpCaseRepository) Publish(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// Close implements CaseRepository.
 func (r *NoOpCaseRepository) Close(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// IncrementResponseCount implements CaseRepository.
 func (r *NoOpCaseRepository) IncrementResponseCount(_ context.Context, _ uuid.UUID) error {
 	return nil
 }
 
+// UpdateUniqueUsers implements CaseRepository.
 func (r *NoOpCaseRepository) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
 	return nil
 }
 
+// AddUser implements CaseRepository.
 func (r *NoOpCaseRepository) AddUser(_ context.Context, _, _ uuid.UUID, _ string) error {
 	return nil
 }
 
+// RemoveUser implements CaseRepository.
 func (r *NoOpCaseRepository) RemoveUser(_ context.Context, _, _ uuid.UUID) error {
 	return nil
 }
 
+// GetUsers implements CaseRepository.
 func (r *NoOpCaseRepository) GetUsers(_ context.Context, _ uuid.UUID) ([]domain.CaseUser, error) {
 	return []domain.CaseUser{}, nil
 }
 
+// HasAccess implements CaseRepository.
 func (r *NoOpCaseRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
 	return false, nil
 }
 
+// ListForUser implements CaseRepository.
 func (r *NoOpCaseRepository) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Case, int64, error) {
 	return []domain.Case{}, 0, nil
 }
 
+// GetByIDs implements CaseRepository.
 func (r *NoOpCaseRepository) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domain.Case, error) {
 	return []domain.Case{}, nil
 }
@@ -199,46 +223,57 @@ func (r *NoOpCaseRepository) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domai
 // NoOpCaseResponseRepository is a no-op implementation.
 type NoOpCaseResponseRepository struct{}
 
+// NewNoOpCaseResponseRepository returns a new NoOpCaseResponseRepository.
 func NewNoOpCaseResponseRepository() *NoOpCaseResponseRepository {
 	return &NoOpCaseResponseRepository{}
 }
 
+// Save implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) Save(_ context.Context, _ *domain.CaseResponse) error {
 	return nil
 }
 
+// GetByCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetByCase(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.CaseResponse, int64, error) {
 	return []domain.CaseResponse{}, 0, nil
 }
 
+// GetByUserAndCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetByUserAndCase(_ context.Context, _, _ uuid.UUID) ([]domain.CaseResponse, error) {
 	return []domain.CaseResponse{}, nil
 }
 
+// GetByUserAndCases implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetByUserAndCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
 
+// CountByCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) CountByCase(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
+// CountUniqueUsersByCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) CountUniqueUsersByCase(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
 
+// Close implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) Close() error {
 	return nil
 }
 
+// HasUserResponded implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) HasUserResponded(_ context.Context, _, _ uuid.UUID) (bool, error) {
 	return false, nil
 }
 
+// GetAllByCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetAllByCase(_ context.Context, _ uuid.UUID) ([]domain.CaseResponse, error) {
 	return []domain.CaseResponse{}, nil
 }
 
+// GetResponsesWithUserExpertise implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return []domain.ResponseWithExpertise{}, nil
 }
@@ -246,10 +281,12 @@ func (r *NoOpCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Con
 // NoOpCaseAnalyticsRepository is a no-op implementation.
 type NoOpCaseAnalyticsRepository struct{}
 
+// NewNoOpCaseAnalyticsRepository returns a new NoOpCaseAnalyticsRepository.
 func NewNoOpCaseAnalyticsRepository() *NoOpCaseAnalyticsRepository {
 	return &NoOpCaseAnalyticsRepository{}
 }
 
+// GetSummary implements CaseAnalyticsRepository.
 func (r *NoOpCaseAnalyticsRepository) GetSummary(_ context.Context, caseID uuid.UUID) (*domain.CaseAnalyticsSummary, error) {
 	return &domain.CaseAnalyticsSummary{
 		CaseID:          caseID,
@@ -260,6 +297,7 @@ func (r *NoOpCaseAnalyticsRepository) GetSummary(_ context.Context, caseID uuid.
 	}, nil
 }
 
+// GetClassificationDistribution implements CaseAnalyticsRepository.
 func (r *NoOpCaseAnalyticsRepository) GetClassificationDistribution(_ context.Context, _ uuid.UUID, _ string) (map[string]int64, error) {
 	return make(map[string]int64), nil
 }

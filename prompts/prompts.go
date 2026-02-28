@@ -3,5 +3,7 @@ package prompts
 
 import "embed"
 
+// FS embeds all LLM prompt template files.
+//
 //go:embed classification/*.tmpl chat/*.tmpl
 var FS embed.FS

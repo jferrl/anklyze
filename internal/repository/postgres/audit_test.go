@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -164,7 +165,7 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 	}
 
 	// Second save should return ErrBufferFull (non-blocking)
-	if err := repo.Save(ctx, entry2); err != ErrBufferFull {
+	if err := repo.Save(ctx, entry2); !errors.Is(err, ErrBufferFull) {
 		t.Errorf("second Save() error = %v, want ErrBufferFull", err)
 	}
 }

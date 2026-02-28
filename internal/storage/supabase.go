@@ -64,7 +64,7 @@ func (s *SupabaseStorage) Upload(ctx context.Context, path string, reader io.Rea
 	if err != nil {
 		return fmt.Errorf("failed to upload file to %s: %w", path, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		body, _ := io.ReadAll(resp.Body)
@@ -95,7 +95,7 @@ func (s *SupabaseStorage) Delete(ctx context.Context, path string) error {
 	if err != nil {
 		return fmt.Errorf("failed to delete file at %s: %w", path, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusNotFound {
 		body, _ := io.ReadAll(resp.Body)
@@ -151,7 +151,7 @@ func (s *SupabaseStorage) GetSignedURL(ctx context.Context, path string, expires
 	if err != nil {
 		return "", fmt.Errorf("failed to create signed URL for %s: %w", path, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

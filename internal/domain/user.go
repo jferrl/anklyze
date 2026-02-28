@@ -20,6 +20,7 @@ const (
 // All users are assumed to be from trauma, so this represents the branch within trauma.
 type Specialty string
 
+// SpecialtyFootAnkle and related constants define the supported trauma subspecialty values.
 const (
 	SpecialtyFootAnkle Specialty = "foot_ankle"
 	SpecialtyOther     Specialty = "other"
@@ -46,6 +47,7 @@ func IsValidSpecialty(s string) bool {
 // TrainingLevel represents the training level of a medical professional.
 type TrainingLevel string
 
+// TrainingLevelResident and related constants define the supported training level values.
 const (
 	TrainingLevelResident  TrainingLevel = "resident"
 	TrainingLevelAttending TrainingLevel = "attending"

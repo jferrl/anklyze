@@ -241,8 +241,9 @@ func main() {
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, caseRepo, studyService)
 
 	srv := &http.Server{
-		Addr:    ":" + cfg.Port,
-		Handler: router,
+		Addr:              ":" + cfg.Port,
+		Handler:           router,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	// Start server in goroutine with error channel pattern (Uber Go Style Guide)

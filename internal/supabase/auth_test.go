@@ -103,7 +103,7 @@ func TestAuthAdmin_UpdateUserRole(t *testing.T) {
 				}
 
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(`{"id":"user-123"}`))
+				_, _ = w.Write([]byte(`{"id":"user-123"}`))
 			},
 			wantErr: false,
 		},
@@ -113,7 +113,7 @@ func TestAuthAdmin_UpdateUserRole(t *testing.T) {
 			role:   "user",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
-				w.Write([]byte(`{"error":"User not found"}`))
+				_, _ = w.Write([]byte(`{"error":"User not found"}`))
 			},
 			wantErr:     true,
 			errContains: "404",
@@ -124,7 +124,7 @@ func TestAuthAdmin_UpdateUserRole(t *testing.T) {
 			role:   "admin",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte(`{"error":"Invalid token"}`))
+				_, _ = w.Write([]byte(`{"error":"Invalid token"}`))
 			},
 			wantErr:     true,
 			errContains: "401",
@@ -135,7 +135,7 @@ func TestAuthAdmin_UpdateUserRole(t *testing.T) {
 			role:   "user",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(`{"error":"Internal server error"}`))
+				_, _ = w.Write([]byte(`{"error":"Internal server error"}`))
 			},
 			wantErr:     true,
 			errContains: "500",
@@ -146,7 +146,7 @@ func TestAuthAdmin_UpdateUserRole(t *testing.T) {
 			role:   "user",
 			serverResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte(`{"message":"Invalid role value"}`))
+				_, _ = w.Write([]byte(`{"message":"Invalid role value"}`))
 			},
 			wantErr:     true,
 			errContains: "Invalid role value",

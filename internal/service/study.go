@@ -362,7 +362,7 @@ func (s *studyService) GetDivergenceAnalysis(ctx context.Context, caseID uuid.UU
 	for q, stats := range questionStats {
 		if stats.TotalAnswers > 0 {
 			stats.ErrorRate = float64(stats.IncorrectAnswers) / float64(stats.TotalAnswers)
-			stats.AvgTimeMS = stats.AvgTimeMS / float64(stats.TotalAnswers)
+			stats.AvgTimeMS /= float64(stats.TotalAnswers)
 
 			if stats.ErrorRate > maxErrorRate {
 				maxErrorRate = stats.ErrorRate
@@ -401,11 +401,12 @@ func (s *studyService) GetDivergenceAnalysis(ctx context.Context, caseID uuid.UU
 	// Back click correlation
 	report.CorrectWithHighBackCount = correctWithHighBack
 	report.IncorrectWithHighBackCnt = incorrectWithHighBack
-	if correctWithHighBack > incorrectWithHighBack {
+	switch {
+	case correctWithHighBack > incorrectWithHighBack:
 		report.BackClickCorrelation = "positive" // More back clicks = more correct
-	} else if incorrectWithHighBack > correctWithHighBack {
+	case incorrectWithHighBack > correctWithHighBack:
 		report.BackClickCorrelation = "negative" // More back clicks = more incorrect
-	} else {
+	default:
 		report.BackClickCorrelation = "none"
 	}
 

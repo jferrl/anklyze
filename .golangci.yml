@@ -1,0 +1,135 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    # Error handling
+    - errcheck
+    - errorlint
+
+    # Code quality
+    - staticcheck
+    - govet
+    - gocritic
+    - revive
+
+    # Complexity
+    - gocyclo
+    - gocognit
+    - funlen
+
+    # Code hygiene
+    - unconvert
+    - ineffassign
+    - unused
+    - unparam
+    - dupl
+
+    # Security
+    - gosec
+
+    # Best practices
+    - nolintlint
+    - misspell
+
+  settings:
+    gocyclo:
+      min-complexity: 15
+
+    gocognit:
+      min-complexity: 30
+
+    funlen:
+      lines: -1
+      statements: 50
+
+    dupl:
+      threshold: 150
+
+    gocritic:
+      enabled-checks:
+        - boolExprSimplify
+        - builtinShadow
+        - commentedOutCode
+        - deferInLoop
+        - nilValReturn
+        - regexpSimplify
+        - unnecessaryBlock
+        - unnecessaryDefer
+        - weakCond
+
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: exported
+        - name: indent-error-flow
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-naming
+        - name: var-declaration
+        - name: var-naming
+
+  exclusions:
+    presets:
+      - std-error-handling
+      - common-false-positives
+    rules:
+      - path: "_test\\.go$"
+        linters:
+          - dupl
+          - funlen
+          - gosec
+          - gocognit
+          - gocyclo
+      # Spanish text in LLM prompts triggers false positives
+      - path: "internal/llm/"
+        linters:
+          - misspell
+      # Statistical calculations have inherent algorithmic complexity
+      - path: "internal/statistics/"
+        linters:
+          - gocyclo
+          - gocognit
+      # Classification engine encodes medical decision trees
+      - path: "internal/rules/engine\\.go$"
+        linters:
+          - gocyclo
+          - gocognit
+      # Domain comparison logic is inherently branchy
+      - path: "internal/domain/case\\.go$"
+        linters:
+          - gocyclo
+      # Service-layer statistics/study have complex but correct aggregation logic
+      - path: "internal/service/statistics\\.go$"
+        linters:
+          - gocyclo
+          - gocognit
+          - funlen
+      - path: "internal/service/study\\.go$"
+        linters:
+          - gocognit
+          - gocyclo
+          - funlen
+      # HTTP handlers have validation + branching that inflates complexity scores
+      - path: "internal/api/"
+        linters:
+          - gocyclo
+          - gocognit
+          - funlen
+      # main bootstrap wires many components
+      - path: "cmd/"
+        linters:
+          - gocognit
+          - gocyclo
+          - funlen
+
+issues:
+  max-same-issues: 0
+  max-issues-per-linter: 0

@@ -42,6 +42,20 @@ jobs:
       - name: Run go vet
         run: go vet ./...
 
+      - name: Check gofmt
+        run: test -z "$(gofmt -l .)" || { echo "Files need formatting:"; gofmt -l .; exit 1; }
+
+      - name: Run staticcheck (U1000 - unused code)
+        run: go run honnef.co/go/tools/cmd/staticcheck@latest -checks U1000 ./...
+
+      - name: Run deadcode
+        run: go run golang.org/x/tools/cmd/deadcode@latest ./...
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: latest
+
       - name: Run tests
         run: go test -v -race ./...
 

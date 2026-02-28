@@ -18,11 +18,11 @@ func FleissKappa(matrix [][]int, numRaters int) (float64, error) {
 	numSubjects := len(matrix)
 	numCategories := len(matrix[0])
 	n := float64(numRaters)
-	N := float64(numSubjects)
+	nSubj := float64(numSubjects)
 
 	// Calculate P_j (proportion of all assignments to category j)
 	pj := make([]float64, numCategories)
-	totalAssignments := N * n
+	totalAssignments := nSubj * n
 	for j := range numCategories {
 		sum := 0
 		for i := range numSubjects {
@@ -34,7 +34,7 @@ func FleissKappa(matrix [][]int, numRaters int) (float64, error) {
 	}
 
 	// Calculate P_i (agreement for each subject)
-	Pi := make([]float64, numSubjects)
+	pi := make([]float64, numSubjects)
 	for i := 0; i < numSubjects; i++ {
 		sum := 0.0
 		for j := 0; j < numCategories; j++ {
@@ -44,29 +44,29 @@ func FleissKappa(matrix [][]int, numRaters int) (float64, error) {
 			}
 		}
 		if n*(n-1) > 0 {
-			Pi[i] = sum / (n * (n - 1))
+			pi[i] = sum / (n * (n - 1))
 		}
 	}
 
 	// Calculate P_bar (mean of P_i values)
-	Pbar := 0.0
+	pBar := 0.0
 	for i := range numSubjects {
-		Pbar += Pi[i]
+		pBar += pi[i]
 	}
-	Pbar /= N
+	pBar /= nSubj
 
 	// Calculate P_e_bar (expected agreement by chance)
-	PeBar := 0.0
+	peBar := 0.0
 	for j := 0; j < numCategories; j++ {
-		PeBar += pj[j] * pj[j]
+		peBar += pj[j] * pj[j]
 	}
 
 	// Fleiss' Kappa formula: K = (P_bar - P_e_bar) / (1 - P_e_bar)
-	if PeBar == 1 {
+	if peBar == 1 {
 		return 1.0, nil
 	}
 
-	kappa := (Pbar - PeBar) / (1 - PeBar)
+	kappa := (pBar - peBar) / (1 - peBar)
 	return kappa, nil
 }
 
@@ -104,7 +104,7 @@ func FleissKappaCI(matrix [][]int, numRaters int, kappa float64, confidenceLevel
 
 	// Approximate standard error (simplified formula)
 	// SE ≈ sqrt(2 / (n * k * (k-1) * (1-Pe)^2))
-	denominator := n * k * (k - 1) * math.Pow(1-pe, 2)
+	denominator := n * k * (k - 1) * (1 - pe) * (1 - pe)
 	if denominator <= 0 {
 		return nil
 	}

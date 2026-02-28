@@ -1,8 +1,9 @@
 package domain
 
-// InvolvedMalleoli represents which malleoli are fractured (first question)
+// InvolvedMalleoli represents which malleoli are fractured (first question).
 type InvolvedMalleoli string
 
+// InvolvedPosteriorOnly and related constants define the possible malleoli involvement patterns.
 const (
 	InvolvedPosteriorOnly    InvolvedMalleoli = "posterior_only"    // Maléolo posterior
 	InvolvedMedialOnly       InvolvedMalleoli = "medial_only"       // Maléolo medial
@@ -13,9 +14,10 @@ const (
 	InvolvedTrimaleolar      InvolvedMalleoli = "trimaleolar"       // Maléolos medial, lateral y posterior
 )
 
-// PosteriorFractureType represents the type of posterior malleolus fracture (Bartonicek)
+// PosteriorFractureType represents the type of posterior malleolus fracture (Bartonicek).
 type PosteriorFractureType string
 
+// PosteriorExtraincisural and related constants define the Bartonicek posterior malleolus fracture types.
 const (
 	PosteriorExtraincisural              PosteriorFractureType = "extraincisural"               // Fragmento extraincisural (Bartonicek 1)
 	PosteriorPosterolateral              PosteriorFractureType = "posterolateral"               // Fragmento posterolateral (Bartonicek 2)
@@ -24,58 +26,64 @@ const (
 	PosteriorExtraincisuralPosteromedial PosteriorFractureType = "extraincisural_posteromedial" // Fragmento extraincisural postero-medial (medial+posterior path only)
 )
 
-// MedialMorphology represents the morphology of the medial malleolus fracture
+// MedialMorphology represents the morphology of the medial malleolus fracture.
 type MedialMorphology string
 
+// MedialMorphologyVertical and related constants define the medial malleolus fracture morphology options.
 const (
 	MedialMorphologyVertical   MedialMorphology = "vertical"           // Vertical
 	MedialMorphologyTransverse MedialMorphology = "transverse_oblique" // Transverso/oblicuo
 )
 
-// FibularLevel represents where the fibular fracture is located relative to syndesmosis
+// FibularLevel represents where the fibular fracture is located relative to syndesmosis.
 type FibularLevel string
 
+// FibularLevelInfrasindesmal and related constants define the fibular fracture level options.
 const (
 	FibularLevelInfrasindesmal FibularLevel = "infrasindesmal" // Infrasindesmal
 	FibularLevelTransindesmal  FibularLevel = "transindesmal"  // Transindesmal
 	FibularLevelSuprasindesmal FibularLevel = "suprasindesmal" // Suprasindesmal
 )
 
-// LateralMorphology represents the morphology of the lateral/fibular fracture
+// LateralMorphology represents the morphology of the lateral/fibular fracture.
 type LateralMorphology string
 
+// LateralMorphologyTransverse and related constants define the lateral/fibular fracture morphology options.
 const (
 	LateralMorphologyTransverse LateralMorphology = "transverse" // Transversa
 	LateralMorphologyOblique    LateralMorphology = "oblique"    // Oblicua (Baja medial, alta lateral)
 	LateralMorphologySpiral     LateralMorphology = "spiral"     // Espiroidea (Baja anterior, alta posterior)
 )
 
-// SuprasindesmalType represents the fracture type for suprasindesmal fractures
+// SuprasindesmalType represents the fracture type for suprasindesmal fractures.
 type SuprasindesmalType string
 
+// SuprasindesmalSimpleDiaphyseal and related constants define the suprasindesmal fracture type options.
 const (
 	SuprasindesmalSimpleDiaphyseal SuprasindesmalType = "simple_diaphyseal" // Diafisaria Simple
 	SuprasindesmalMultifragmentary SuprasindesmalType = "multifragmentary"  // Multifragmentaria
 	SuprasindesmalProximal         SuprasindesmalType = "proximal"          // Proximal
 )
 
-// FibulaTracePattern represents the fibula trace pattern for suprasyndesmotic fractures
-// Used to differentiate between PA and PER mechanisms
+// FibulaTracePattern represents the fibula trace pattern for suprasyndesmotic fractures.
+// Used to differentiate between PA and PER mechanisms.
 type FibulaTracePattern string
 
+// FibulaTraceParasindesmoticShort and related constants define the fibula trace pattern options.
 const (
-	// FibulaTraceParasindesmoticShort - Parasyndesmotic short oblique/transverse/comminuted trace → PA mechanism
+	// FibulaTraceParasindesmoticShort is a parasyndesmotic short oblique/transverse/comminuted trace indicating a PA mechanism.
 	FibulaTraceParasindesmoticShort FibulaTracePattern = "parasindesmotic_short"
-	// FibulaTraceParasindesmoticLong - Parasyndesmotic long oblique/spiral trace → PER mechanism
+	// FibulaTraceParasindesmoticLong is a parasyndesmotic long oblique/spiral trace indicating a PER mechanism.
 	FibulaTraceParasindesmoticLong FibulaTracePattern = "parasindesmotic_long"
-	// FibulaTraceSuprasindesmoticFar - Suprasyndesmotic (>6cm from articular surface) → PER mechanism (same as parasindesmotic_long)
+	// FibulaTraceSuprasindesmoticFar is a suprasyndesmotic trace (>6cm from articular surface) indicating a PER mechanism.
 	FibulaTraceSuprasindesmoticFar FibulaTracePattern = "suprasindesmotic_far"
 )
 
-// ArticularInvolvement represents the level of articular surface involvement
-// Used for posterior-only and medial-only paths to determine distal tibia vs ankle fracture
+// ArticularInvolvement represents the level of articular surface involvement.
+// Used for posterior-only and medial-only paths to determine distal tibia vs ankle fracture.
 type ArticularInvolvement string
 
+// ArticularLargeWithExtension and related constants define the articular surface involvement levels.
 const (
 	ArticularLargeWithExtension    ArticularInvolvement = "large_with_extension"    // >1/3 with metaphyseal extension
 	ArticularSmallWithoutExtension ArticularInvolvement = "small_without_extension" // <1/3 without metaphyseal extension

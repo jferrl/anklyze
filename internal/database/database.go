@@ -45,7 +45,7 @@ func Connect(databaseURL string) (*gorm.DB, error) {
 	if err != nil {
 		// Close the gorm.DB connection to prevent resource leak
 		if closeErr := closeGormDB(db); closeErr != nil {
-			return nil, fmt.Errorf("failed to get sql.DB: %w (cleanup error: %v)", err, closeErr)
+			return nil, fmt.Errorf("failed to get sql.DB: %w (cleanup error: %w)", err, closeErr)
 		}
 		return nil, fmt.Errorf("failed to get sql.DB: %w", err)
 	}

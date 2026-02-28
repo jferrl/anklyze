@@ -53,6 +53,7 @@ type ClassificationDistribution struct {
 // Granularity represents time aggregation granularity.
 type Granularity string
 
+// GranularityDay and related constants define the supported time granularity options.
 const (
 	GranularityDay   Granularity = "day"
 	GranularityWeek  Granularity = "week"

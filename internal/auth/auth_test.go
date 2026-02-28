@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -181,7 +182,7 @@ func TestNewValidator(t *testing.T) {
 			}
 
 			if v != nil {
-				v.Close()
+				_ = v.Close()
 			}
 		})
 	}
@@ -263,7 +264,7 @@ func TestValidator_ValidateToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create validator: %v", err)
 	}
-	defer v.Close()
+	defer func() { _ = v.Close() }()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -274,12 +275,8 @@ func TestValidator_ValidateToken(t *testing.T) {
 					t.Errorf("ValidateToken() error = nil, wantErr %v", tt.wantErr)
 					return
 				}
-				// Check if error matches (using errors.Is for wrapped errors)
-				if err != tt.wantErr && err.Error() != tt.wantErr.Error() {
-					// Allow wrapped errors
-					if !containsError(err, tt.wantErr) {
-						t.Errorf("ValidateToken() error = %v, wantErr %v", err, tt.wantErr)
-					}
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("ValidateToken() error = %v, wantErr %v", err, tt.wantErr)
 				}
 				return
 			}
@@ -329,14 +326,4 @@ func TestValidator_Close(t *testing.T) {
 			}
 		})
 	}
-}
-
-// containsError checks if an error contains another error (for wrapped errors)
-func containsError(err, target error) bool {
-	if err == nil || target == nil {
-		return err == target
-	}
-	return err.Error() == target.Error() ||
-		(len(err.Error()) > len(target.Error()) &&
-			err.Error()[:len(target.Error())] == target.Error())
 }

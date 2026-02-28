@@ -86,7 +86,7 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Check actual file size from header
 	if header.Size > MaxImageSize {

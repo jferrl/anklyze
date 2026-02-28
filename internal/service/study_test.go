@@ -312,7 +312,7 @@ func TestValidateResponseSubmission(t *testing.T) {
 					t.Errorf("expected error %v, got nil", tt.expectedError)
 					return
 				}
-				if tt.expectedError == domain.ErrNotStudyMember {
+				if errors.Is(tt.expectedError, domain.ErrNotStudyMember) {
 					if !errors.Is(err, domain.ErrNotStudyMember) {
 						t.Errorf("expected ErrNotStudyMember, got %v", err)
 					}

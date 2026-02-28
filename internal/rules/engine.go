@@ -148,16 +148,17 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
-		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+		switch {
+		case input.SuprasindesmalType == domain.SuprasindesmalProximal:
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+		case input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort:
 			// Parasyndesmotic short oblique/transverse/comminuted → PA
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
 			}
-		} else {
+		default:
 			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
@@ -275,32 +276,25 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
-		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+		switch {
+		case input.SuprasindesmalType == domain.SuprasindesmalProximal:
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
-		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+		case input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort:
 			// Parasyndesmotic short oblique/transverse/comminuted → PA
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
-		} else {
+		default:
 			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
+		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
 		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 	}
@@ -337,16 +331,17 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
-		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+		switch {
+		case input.SuprasindesmalType == domain.SuprasindesmalProximal:
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+		case input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort:
 			// Parasyndesmotic short oblique/transverse/comminuted → PA
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
 			}
-		} else {
+		default:
 			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
@@ -423,32 +418,25 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
-		if input.SuprasindesmalType == domain.SuprasindesmalProximal {
+		switch {
+		case input.SuprasindesmalType == domain.SuprasindesmalProximal:
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
-		} else if input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort {
+		case input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort:
 			// Parasyndesmotic short oblique/transverse/comminuted → PA
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
-		} else {
+		default:
 			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
-			// Bartonicek requires CT scan
-			if input.HasCTScan != nil && *input.HasCTScan {
-				result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-			}
+		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
 		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 		return result, nil

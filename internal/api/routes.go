@@ -84,43 +84,35 @@ func setupProtectedRoutes(
 ) {
 	// Protected routes - require authentication (User or Admin)
 	protected := api.Group("")
-	protected.Use(auth.AuthMiddleware(authValidator))
+	protected.Use(auth.Middleware(authValidator))
 	protected.Use(auth.UserSyncMiddleware(userRepo))
-	{
-		protected.GET("/me", GetCurrentUser)
-		protected.POST("/classify", handler.ClassifyFracture)
-		protected.POST("/chat", chatRateLimiter, handler.ChatMessage)
-	}
+	protected.GET("/me", GetCurrentUser)
+	protected.POST("/classify", handler.ClassifyFracture)
+	protected.POST("/chat", chatRateLimiter, handler.ChatMessage)
 
 	// Chat session routes - require authentication
 	chat := protected.Group("/chat")
-	{
-		chat.POST("/session", handler.CreateChatSession)
-		chat.PUT("/session/:id/complete", handler.CompleteChatSession)
-		chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
-		chat.POST("/session/:id/feedback", handler.SubmitFeedback)
-		chat.GET("/session/:id/feedback", handler.GetFeedback)
-	}
+	chat.POST("/session", handler.CreateChatSession)
+	chat.PUT("/session/:id/complete", handler.CompleteChatSession)
+	chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
+	chat.POST("/session/:id/feedback", handler.SubmitFeedback)
+	chat.GET("/session/:id/feedback", handler.GetFeedback)
 
 	// Admin-only routes - require admin role
 	analytics := api.Group("/analytics")
-	analytics.Use(auth.AuthMiddleware(authValidator))
+	analytics.Use(auth.Middleware(authValidator))
 	analytics.Use(auth.UserSyncMiddleware(userRepo))
 	analytics.Use(auth.RequireRole(auth.RoleAdmin))
-	{
-		analytics.GET("/summary", handler.GetAnalyticsSummary)
-		analytics.GET("/trends", handler.GetAnalyticsTrends)
-		analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
-	}
+	analytics.GET("/summary", handler.GetAnalyticsSummary)
+	analytics.GET("/trends", handler.GetAnalyticsTrends)
+	analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
 
 	// Chat analytics - admin only
 	chatAnalytics := analytics.Group("/chat")
-	{
-		chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
-		chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
-		chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
-		chatAnalytics.GET("/trends", handler.GetChatTrends)
-	}
+	chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
+	chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
+	chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
+	chatAnalytics.GET("/trends", handler.GetChatTrends)
 }
 
 // setupPublicRoutes configures routes without authentication (development mode).
@@ -142,30 +134,24 @@ func setupPublicRoutes(
 
 	// Chat session routes
 	chat := api.Group("/chat")
-	{
-		chat.POST("/session", handler.CreateChatSession)
-		chat.PUT("/session/:id/complete", handler.CompleteChatSession)
-		chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
-		chat.POST("/session/:id/feedback", handler.SubmitFeedback)
-		chat.GET("/session/:id/feedback", handler.GetFeedback)
-	}
+	chat.POST("/session", handler.CreateChatSession)
+	chat.PUT("/session/:id/complete", handler.CompleteChatSession)
+	chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
+	chat.POST("/session/:id/feedback", handler.SubmitFeedback)
+	chat.GET("/session/:id/feedback", handler.GetFeedback)
 
 	// Analytics routes
 	analytics := api.Group("/analytics")
-	{
-		analytics.GET("/summary", handler.GetAnalyticsSummary)
-		analytics.GET("/trends", handler.GetAnalyticsTrends)
-		analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
-	}
+	analytics.GET("/summary", handler.GetAnalyticsSummary)
+	analytics.GET("/trends", handler.GetAnalyticsTrends)
+	analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
 
 	// Chat analytics routes
 	chatAnalytics := analytics.Group("/chat")
-	{
-		chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
-		chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
-		chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
-		chatAnalytics.GET("/trends", handler.GetChatTrends)
-	}
+	chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
+	chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
+	chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
+	chatAnalytics.GET("/trends", handler.GetChatTrends)
 }
 
 // SetupCaseRoutes configures case-related routes.
@@ -222,61 +208,55 @@ func setupProtectedCaseRoutes(
 ) {
 	// User case routes - require authentication
 	cases := api.Group("/cases")
-	cases.Use(auth.AuthMiddleware(authValidator))
+	cases.Use(auth.Middleware(authValidator))
 	cases.Use(auth.UserSyncMiddleware(userRepo))
-	{
-		cases.GET("", accessHandler.ListPublishedCases)
-		cases.GET("/:id", accessHandler.GetPublishedCase)
-		cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
-		cases.POST("/:id/responses", responseHandler.SubmitResponse)
-		cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
-	}
+	cases.GET("", accessHandler.ListPublishedCases)
+	cases.GET("/:id", accessHandler.GetPublishedCase)
+	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
+	cases.POST("/:id/responses", responseHandler.SubmitResponse)
+	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
 
 	// User profile routes - require authentication
 	profile := api.Group("/me")
-	profile.Use(auth.AuthMiddleware(authValidator))
+	profile.Use(auth.Middleware(authValidator))
 	profile.Use(auth.UserSyncMiddleware(userRepo))
-	{
-		profile.GET("/profile", userHandler.GetUserProfile)
-		profile.PUT("/profile", userHandler.UpdateUserProfile)
-	}
+	profile.GET("/profile", userHandler.GetUserProfile)
+	profile.PUT("/profile", userHandler.UpdateUserProfile)
 
 	// Admin case routes - require admin role
 	adminCases := api.Group("/admin/cases")
-	adminCases.Use(auth.AuthMiddleware(authValidator))
+	adminCases.Use(auth.Middleware(authValidator))
 	adminCases.Use(auth.UserSyncMiddleware(userRepo))
 	adminCases.Use(auth.RequireRole(auth.RoleAdmin))
-	{
-		// CRUD operations (CaseAdminHandler)
-		adminCases.POST("", adminHandler.CreateCase)
-		adminCases.GET("", adminHandler.ListCases)
-		adminCases.GET("/:id", adminHandler.GetCase)
-		adminCases.PUT("/:id", adminHandler.UpdateCase)
-		adminCases.DELETE("/:id", adminHandler.DeleteCase)
-		adminCases.PUT("/:id/publish", adminHandler.PublishCase)
-		adminCases.PUT("/:id/close", adminHandler.CloseCase)
+	// CRUD operations (CaseAdminHandler)
+	adminCases.POST("", adminHandler.CreateCase)
+	adminCases.GET("", adminHandler.ListCases)
+	adminCases.GET("/:id", adminHandler.GetCase)
+	adminCases.PUT("/:id", adminHandler.UpdateCase)
+	adminCases.DELETE("/:id", adminHandler.DeleteCase)
+	adminCases.PUT("/:id/publish", adminHandler.PublishCase)
+	adminCases.PUT("/:id/close", adminHandler.CloseCase)
 
-		// Image management (CaseImageHandler)
-		adminCases.POST("/:id/images", imageHandler.UploadImage)
-		adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
-		adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
-		adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
-		adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
-		adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
+	// Image management (CaseImageHandler)
+	adminCases.POST("/:id/images", imageHandler.UploadImage)
+	adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
+	adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
+	adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
+	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
+	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
 
-		// Analytics and export (CaseAnalyticsHandler)
-		adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
-		adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
-		adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
-		adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
-		adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
-		adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
+	// Analytics and export (CaseAnalyticsHandler)
+	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
+	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
+	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
+	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
+	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
 
-		// User access management (CaseAccessHandler)
-		adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
-		adminCases.POST("/:id/users", accessHandler.AddCaseUser)
-		adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
-	}
+	// User access management (CaseAccessHandler)
+	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
+	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
+	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
 }
 
 // setupPublicCaseRoutes configures case routes without authentication (development mode).
@@ -291,54 +271,48 @@ func setupPublicCaseRoutes(
 ) {
 	// User case routes
 	cases := api.Group("/cases")
-	{
-		cases.GET("", accessHandler.ListPublishedCases)
-		cases.GET("/:id", accessHandler.GetPublishedCase)
-		cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
-		cases.POST("/:id/responses", responseHandler.SubmitResponse)
-		cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
-	}
+	cases.GET("", accessHandler.ListPublishedCases)
+	cases.GET("/:id", accessHandler.GetPublishedCase)
+	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
+	cases.POST("/:id/responses", responseHandler.SubmitResponse)
+	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
 
 	// User profile routes (development mode)
 	profile := api.Group("/me")
-	{
-		profile.GET("/profile", userHandler.GetUserProfile)
-		profile.PUT("/profile", userHandler.UpdateUserProfile)
-	}
+	profile.GET("/profile", userHandler.GetUserProfile)
+	profile.PUT("/profile", userHandler.UpdateUserProfile)
 
 	// Admin case routes
 	adminCases := api.Group("/admin/cases")
-	{
-		// CRUD operations (CaseAdminHandler)
-		adminCases.POST("", adminHandler.CreateCase)
-		adminCases.GET("", adminHandler.ListCases)
-		adminCases.GET("/:id", adminHandler.GetCase)
-		adminCases.PUT("/:id", adminHandler.UpdateCase)
-		adminCases.DELETE("/:id", adminHandler.DeleteCase)
-		adminCases.PUT("/:id/publish", adminHandler.PublishCase)
-		adminCases.PUT("/:id/close", adminHandler.CloseCase)
+	// CRUD operations (CaseAdminHandler)
+	adminCases.POST("", adminHandler.CreateCase)
+	adminCases.GET("", adminHandler.ListCases)
+	adminCases.GET("/:id", adminHandler.GetCase)
+	adminCases.PUT("/:id", adminHandler.UpdateCase)
+	adminCases.DELETE("/:id", adminHandler.DeleteCase)
+	adminCases.PUT("/:id/publish", adminHandler.PublishCase)
+	adminCases.PUT("/:id/close", adminHandler.CloseCase)
 
-		// Image management (CaseImageHandler)
-		adminCases.POST("/:id/images", imageHandler.UploadImage)
-		adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
-		adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
-		adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
-		adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
-		adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
+	// Image management (CaseImageHandler)
+	adminCases.POST("/:id/images", imageHandler.UploadImage)
+	adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
+	adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
+	adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
+	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
+	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
 
-		// Analytics and export (CaseAnalyticsHandler)
-		adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
-		adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
-		adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
-		adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
-		adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
-		adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
+	// Analytics and export (CaseAnalyticsHandler)
+	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
+	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
+	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
+	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
+	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
 
-		// User access management (CaseAccessHandler)
-		adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
-		adminCases.POST("/:id/users", accessHandler.AddCaseUser)
-		adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
-	}
+	// User access management (CaseAccessHandler)
+	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
+	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
+	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
 }
 
 // SetupStudyRoutes configures study-related routes.
@@ -371,35 +345,33 @@ func setupProtectedStudyRoutes(
 ) {
 	// Admin study routes - require admin role
 	adminStudies := api.Group("/admin/studies")
-	adminStudies.Use(auth.AuthMiddleware(authValidator))
+	adminStudies.Use(auth.Middleware(authValidator))
 	adminStudies.Use(auth.UserSyncMiddleware(userRepo))
 	adminStudies.Use(auth.RequireRole(auth.RoleAdmin))
-	{
-		// CRUD
-		adminStudies.POST("", studyHandler.CreateStudy)
-		adminStudies.GET("", studyHandler.ListStudies)
-		adminStudies.GET("/:id", studyHandler.GetStudy)
-		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
-		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
+	// CRUD
+	adminStudies.POST("", studyHandler.CreateStudy)
+	adminStudies.GET("", studyHandler.ListStudies)
+	adminStudies.GET("/:id", studyHandler.GetStudy)
+	adminStudies.PUT("/:id", studyHandler.UpdateStudy)
+	adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
 
-		// Case management
-		adminStudies.POST("/:id/cases", studyHandler.AddCase)
-		adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
-		adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
+	// Case management
+	adminStudies.POST("/:id/cases", studyHandler.AddCase)
+	adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
+	adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
 
-		// Rater management
-		adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
-		adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
-		adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
-		adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
+	// Rater management
+	adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
+	adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
+	adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
+	adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
 
-		// Status
-		adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
-		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
+	// Status
+	adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
+	adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 
-		// Analytics
-		adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
-	}
+	// Analytics
+	adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
 }
 
 // setupPublicStudyRoutes configures study routes without authentication (development mode).
@@ -409,32 +381,30 @@ func setupPublicStudyRoutes(
 ) {
 	// Admin study routes (development mode - no auth)
 	adminStudies := api.Group("/admin/studies")
-	{
-		// CRUD
-		adminStudies.POST("", studyHandler.CreateStudy)
-		adminStudies.GET("", studyHandler.ListStudies)
-		adminStudies.GET("/:id", studyHandler.GetStudy)
-		adminStudies.PUT("/:id", studyHandler.UpdateStudy)
-		adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
+	// CRUD
+	adminStudies.POST("", studyHandler.CreateStudy)
+	adminStudies.GET("", studyHandler.ListStudies)
+	adminStudies.GET("/:id", studyHandler.GetStudy)
+	adminStudies.PUT("/:id", studyHandler.UpdateStudy)
+	adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
 
-		// Case management
-		adminStudies.POST("/:id/cases", studyHandler.AddCase)
-		adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
-		adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
+	// Case management
+	adminStudies.POST("/:id/cases", studyHandler.AddCase)
+	adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
+	adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
 
-		// Rater management
-		adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
-		adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
-		adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
-		adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
+	// Rater management
+	adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
+	adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
+	adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
+	adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
 
-		// Status
-		adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
-		adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
+	// Status
+	adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
+	adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 
-		// Analytics
-		adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
-	}
+	// Analytics
+	adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
 }
 
 // CORSMiddleware handles Cross-Origin Resource Sharing
