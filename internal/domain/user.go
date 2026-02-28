@@ -113,12 +113,3 @@ type UserProfileUpdate struct {
 	Institution     *string `json:"institution,omitempty"`
 }
 
-// IsValidRole checks if a role string is valid.
-func IsValidRole(role string) bool {
-	switch UserRole(role) {
-	case UserRoleUser, UserRoleAdmin:
-		return true
-	default:
-		return false
-	}
-}

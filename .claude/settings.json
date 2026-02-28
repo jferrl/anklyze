@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(deadcode ./...)",
+      "Bash(staticcheck --unused.whole-program=true -- ./...)",
+      "Bash(staticcheck --version)",
+      "Bash(staticcheck ./...)"
+    ]
+  }
+}

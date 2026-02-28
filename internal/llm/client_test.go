@@ -526,14 +526,3 @@ func containsSubstring(s, substr string) bool {
 	}
 	return false
 }
-
-func ptrString(s string) *string {
-	return &s
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}

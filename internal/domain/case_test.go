@@ -10,12 +10,6 @@ import (
 	"gorm.io/datatypes"
 )
 
-// ptr returns a pointer to the given value. Used as a concise helper in table
-// test definitions where taking the address of a literal is not permitted.
-func ptr[T any](v T) *T {
-	return &v
-}
-
 // newDraftCase returns a minimal draft Case suitable for use in tests.
 func newDraftCase() Case {
 	return Case{
@@ -47,13 +41,6 @@ func newClosedCase() Case {
 // withDeadline returns a copy of c with the given deadline set.
 func withDeadline(c Case, d time.Time) Case {
 	c.Deadline = &d
-	return c
-}
-
-// withStudyID returns a copy of c with a non-nil StudyID.
-func withStudyID(c Case) Case {
-	id := uuid.New()
-	c.StudyID = &id
 	return c
 }
 

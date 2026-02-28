@@ -510,22 +510,3 @@ func buildDecisionPathString(input *domain.FractureInput) string {
 	return strings.Join(parts, "→")
 }
 
-// GetQuestionDisplayName returns a human-readable name for a question key.
-func GetQuestionDisplayName(key string) string {
-	names := map[string]string{
-		"involved_malleoli":                "Involved Malleoli",
-		"fibular_level":                    "Fibular Level",
-		"lateral_morphology":               "Lateral Morphology",
-		"medial_morphology":                "Medial Morphology",
-		"suprasindesmal_type":              "Suprasindesmal Type",
-		"fibula_trace_pattern":             "Fibula Trace Pattern",
-		"posterior_fracture_type":          "Posterior Fracture Type",
-		"has_ct_scan":                      "Has CT Scan",
-		"fibula_infrasindesmal_transverse":  "Fibula Infrasindesmal Transverse",
-		"fibular_level_for_transverse":     "Fibular Level for Transverse",
-	}
-	if name, ok := names[key]; ok {
-		return name
-	}
-	return key
-}

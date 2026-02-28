@@ -16,13 +16,6 @@ type StudyStatsCache interface {
 	Invalidate(studyID uuid.UUID)
 }
 
-// noOpStatsCache is the default no-op cache for tests and non-production use.
-type noOpStatsCache struct{}
-
-func (noOpStatsCache) Get(_ uuid.UUID) (*domain.StudyReliabilityMetrics, bool) { return nil, false }
-func (noOpStatsCache) Set(_ uuid.UUID, _ *domain.StudyReliabilityMetrics)      {}
-func (noOpStatsCache) Invalidate(_ uuid.UUID)                                  {}
-
 // ttlStatsCache is an in-memory cache with per-entry TTL expiry.
 // Uses sync.RWMutex for thread-safe concurrent reads with exclusive writes.
 // Expired entries are lazily evicted on Get — no background goroutine needed.

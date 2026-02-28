@@ -26,25 +26,6 @@ type FieldError struct {
 	Message string `json:"message"`
 }
 
-// ValidationError aggregates multiple field errors.
-// It wraps ErrInvalidInput so errors.Is(validationErr, ErrInvalidInput) returns true.
-type ValidationError struct {
-	Errors []FieldError `json:"errors"`
-}
-
-// Error implements the error interface.
-func (e *ValidationError) Error() string {
-	if len(e.Errors) == 0 {
-		return "validation failed"
-	}
-	return e.Errors[0].Message
-}
-
-// Unwrap allows errors.Is(validationErr, ErrInvalidInput) to return true.
-func (e *ValidationError) Unwrap() error {
-	return ErrInvalidInput
-}
-
 // Error codes for API responses.
 // These codes are translated on the frontend using the i18n system.
 const (

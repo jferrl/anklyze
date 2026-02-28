@@ -134,14 +134,3 @@ func TestIPRateLimiter_Cleanup(t *testing.T) {
 	}
 }
 
-func TestDefaultRateLimiterConfig(t *testing.T) {
-	config := DefaultRateLimiterConfig()
-
-	if config.Rate != rate.Limit(0.5) {
-		t.Errorf("Expected rate 0.5, got %v", config.Rate)
-	}
-
-	if config.Burst != 5 {
-		t.Errorf("Expected burst 5, got %d", config.Burst)
-	}
-}

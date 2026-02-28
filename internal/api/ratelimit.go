@@ -21,16 +21,6 @@ type RateLimiterConfig struct {
 	MaxAge time.Duration
 }
 
-// DefaultRateLimiterConfig returns sensible defaults for chat API
-func DefaultRateLimiterConfig() RateLimiterConfig {
-	return RateLimiterConfig{
-		Rate:            rate.Limit(0.5), // 1 request per 2 seconds
-		Burst:           5,               // Allow burst of 5 requests
-		CleanupInterval: 5 * time.Minute,
-		MaxAge:          10 * time.Minute,
-	}
-}
-
 type clientLimiter struct {
 	limiter  *rate.Limiter
 	lastSeen time.Time

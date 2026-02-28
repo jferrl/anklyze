@@ -110,7 +110,7 @@ func TestAuthMiddleware(t *testing.T) {
 			}, testSecret),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
-				return GetUserID(c) == "user-123" &&
+				return c.GetString(ContextKeyUserID) == "user-123" &&
 					GetClaims(c).GetEmail() == "user@example.com" &&
 					GetClaims(c).GetRole() == RoleUser
 			},
@@ -128,7 +128,7 @@ func TestAuthMiddleware(t *testing.T) {
 			}, testSecret),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
-				return GetUserID(c) == "admin-456" &&
+				return c.GetString(ContextKeyUserID) == "admin-456" &&
 					GetClaims(c).GetRole() == RoleAdmin
 			},
 		},
@@ -141,7 +141,7 @@ func TestAuthMiddleware(t *testing.T) {
 			}, testSecret),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
-				return GetUserID(c) == "user-789"
+				return c.GetString(ContextKeyUserID) == "user-789"
 			},
 		},
 	}
@@ -335,128 +335,7 @@ func TestRequireRole(t *testing.T) {
 	}
 }
 
-func TestOptionalAuth(t *testing.T) {
-	validator := createTestValidator(t)
-	defer validator.Close()
-
-	tests := []struct {
-		name           string
-		authHeader     string
-		expectedStatus int
-		expectClaims   bool
-		expectedUserID string
-	}{
-		{
-			name:           "no auth header proceeds without claims",
-			authHeader:     "",
-			expectedStatus: http.StatusOK,
-			expectClaims:   false,
-		},
-		{
-			name:           "invalid auth format proceeds without claims",
-			authHeader:     "Basic sometoken",
-			expectedStatus: http.StatusOK,
-			expectClaims:   false,
-		},
-		{
-			name:           "invalid token proceeds without claims",
-			authHeader:     "Bearer invalid-token",
-			expectedStatus: http.StatusOK,
-			expectClaims:   false,
-		},
-		{
-			name: "valid token sets claims",
-			authHeader: "Bearer " + createTestToken(Claims{
-				RegisteredClaims: jwt.RegisteredClaims{
-					Subject: "user-123",
-				},
-				Email: "user@example.com",
-			}, testSecret),
-			expectedStatus: http.StatusOK,
-			expectClaims:   true,
-			expectedUserID: "user-123",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, router := gin.CreateTestContext(w)
-
-			var hasClaims bool
-			var userID string
-
-			router.Use(OptionalAuth(validator))
-			router.GET("/test", func(c *gin.Context) {
-				hasClaims = GetClaims(c) != nil
-				userID = GetUserID(c)
-				c.Status(http.StatusOK)
-			})
-
-			c.Request = httptest.NewRequest("GET", "/test", nil)
-			if tt.authHeader != "" {
-				c.Request.Header.Set("Authorization", tt.authHeader)
-			}
-
-			router.ServeHTTP(w, c.Request)
-
-			if w.Code != tt.expectedStatus {
-				t.Errorf("expected status %d, got %d", tt.expectedStatus, w.Code)
-			}
-
-			if hasClaims != tt.expectClaims {
-				t.Errorf("expected claims present = %v, got %v", tt.expectClaims, hasClaims)
-			}
-
-			if tt.expectClaims && userID != tt.expectedUserID {
-				t.Errorf("expected userID %q, got %q", tt.expectedUserID, userID)
-			}
-		})
-	}
-}
-
 func TestHelperFunctions(t *testing.T) {
-	t.Run("GetUserID", func(t *testing.T) {
-		tests := []struct {
-			name     string
-			setup    func(*gin.Context)
-			expected string
-		}{
-			{
-				name:     "no user ID set",
-				setup:    func(c *gin.Context) {},
-				expected: "",
-			},
-			{
-				name: "user ID set",
-				setup: func(c *gin.Context) {
-					c.Set(ContextKeyUserID, "user-123")
-				},
-				expected: "user-123",
-			},
-			{
-				name: "wrong type set",
-				setup: func(c *gin.Context) {
-					c.Set(ContextKeyUserID, 123)
-				},
-				expected: "",
-			},
-		}
-
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				w := httptest.NewRecorder()
-				c, _ := gin.CreateTestContext(w)
-				tt.setup(c)
-
-				got := GetUserID(c)
-				if got != tt.expected {
-					t.Errorf("GetUserID() = %q, want %q", got, tt.expected)
-				}
-			})
-		}
-	})
-
 	t.Run("GetClaims", func(t *testing.T) {
 		tests := []struct {
 			name      string

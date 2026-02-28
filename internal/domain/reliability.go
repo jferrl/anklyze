@@ -120,24 +120,6 @@ func KappaInterpretation(kappa float64) string {
 	}
 }
 
-// KappaInterpretationLabel returns a human-readable label for a Kappa value.
-func KappaInterpretationLabel(kappa float64) string {
-	switch {
-	case kappa < 0:
-		return "Poor (< 0)"
-	case kappa <= 0.20:
-		return "Slight (0.01-0.20)"
-	case kappa <= 0.40:
-		return "Fair (0.21-0.40)"
-	case kappa <= 0.60:
-		return "Moderate (0.41-0.60)"
-	case kappa <= 0.80:
-		return "Substantial (0.61-0.80)"
-	default:
-		return "Almost Perfect (0.81-1.00)"
-	}
-}
-
 // ResponseWithExpertise combines a case response with the user's expertise data.
 // Used for detailed exports and stratified analysis.
 type ResponseWithExpertise struct {

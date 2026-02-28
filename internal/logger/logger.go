@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"context"
 	"io"
 	"log/slog"
 	"os"
@@ -58,54 +57,4 @@ func parseLevel(level string) slog.Level {
 	default:
 		return slog.LevelInfo
 	}
-}
-
-// Debug logs at debug level.
-func Debug(msg string, args ...any) {
-	slog.Debug(msg, args...)
-}
-
-// Info logs at info level.
-func Info(msg string, args ...any) {
-	slog.Info(msg, args...)
-}
-
-// Warn logs at warn level.
-func Warn(msg string, args ...any) {
-	slog.Warn(msg, args...)
-}
-
-// Error logs at error level.
-func Error(msg string, args ...any) {
-	slog.Error(msg, args...)
-}
-
-// DebugContext logs at debug level with context.
-func DebugContext(ctx context.Context, msg string, args ...any) {
-	slog.DebugContext(ctx, msg, args...)
-}
-
-// InfoContext logs at info level with context.
-func InfoContext(ctx context.Context, msg string, args ...any) {
-	slog.InfoContext(ctx, msg, args...)
-}
-
-// WarnContext logs at warn level with context.
-func WarnContext(ctx context.Context, msg string, args ...any) {
-	slog.WarnContext(ctx, msg, args...)
-}
-
-// ErrorContext logs at error level with context.
-func ErrorContext(ctx context.Context, msg string, args ...any) {
-	slog.ErrorContext(ctx, msg, args...)
-}
-
-// With returns a logger with the given attributes.
-func With(args ...any) *slog.Logger {
-	return slog.Default().With(args...)
-}
-
-// WithGroup returns a logger with the given group name.
-func WithGroup(name string) *slog.Logger {
-	return slog.Default().WithGroup(name)
 }

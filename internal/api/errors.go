@@ -87,17 +87,3 @@ func HandleError(c *gin.Context, err error, fallbackMsg string) {
 	c.JSON(status, resp)
 }
 
-// HandleValidationError handles validation errors with field details.
-// This provides structured field-level error information to clients.
-func HandleValidationError(c *gin.Context, err *domain.ValidationError) {
-	slog.Warn("validation failed",
-		"errors", err.Errors,
-		"path", c.Request.URL.Path,
-	)
-
-	c.JSON(http.StatusBadRequest, gin.H{
-		"code":    CodeInvalidInput,
-		"message": "Validation failed",
-		"errors":  err.Errors,
-	})
-}

@@ -112,30 +112,3 @@ func TestTTLStatsCache_DifferentStudies(t *testing.T) {
 	}
 }
 
-func TestNoOpStatsCache(t *testing.T) {
-	t.Parallel()
-	var c StudyStatsCache = noOpStatsCache{}
-
-	studyID := uuid.New()
-
-	result, ok := c.Get(studyID)
-	if ok {
-		t.Error("expected noOpStatsCache.Get to always return false")
-	}
-	if result != nil {
-		t.Errorf("expected nil from noOpStatsCache.Get, got %v", result)
-	}
-
-	// Set and Invalidate must not panic.
-	c.Set(studyID, &domain.StudyReliabilityMetrics{})
-	c.Invalidate(studyID)
-
-	// Get still returns miss after Set on no-op.
-	result, ok = c.Get(studyID)
-	if ok {
-		t.Error("expected noOpStatsCache.Get to always return false after Set")
-	}
-	if result != nil {
-		t.Errorf("expected nil from noOpStatsCache.Get after Set, got %v", result)
-	}
-}

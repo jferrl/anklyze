@@ -49,12 +49,6 @@ func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Con
 }
 func (m *mockCaseResponseRepository) Close() error { return nil }
 
-// --- Test helper functions ---
-
-func boolPtr(b bool) *bool {
-	return &b
-}
-
 func createResponseWithPath(caseID uuid.UUID, decisionPath string, answers []domain.QuestionAnswer, backClicks int) domain.CaseResponse {
 	answersJSON, _ := json.Marshal(answers)
 	return domain.CaseResponse{
@@ -245,7 +239,7 @@ func newStudyService(
 	responseRepo *mockCaseResponseRepository,
 	calc *mockReliabilityCalculator,
 ) StudyService {
-	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, noOpStatsCache{})
+	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, NewTTLStatsCache(time.Hour))
 }
 
 // --- Tests for ValidateResponseSubmission ---
@@ -724,22 +718,3 @@ func TestBuildAnswerPathFromInputStudy(t *testing.T) {
 	}
 }
 
-func TestGetQuestionDisplayNameStudy(t *testing.T) {
-	tests := []struct {
-		key      string
-		expected string
-	}{
-		{"involved_malleoli", "Involved Malleoli"},
-		{"fibular_level", "Fibular Level"},
-		{"unknown_key", "unknown_key"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.key, func(t *testing.T) {
-			result := GetQuestionDisplayName(tt.key)
-			if result != tt.expected {
-				t.Errorf("expected %q, got %q", tt.expected, result)
-			}
-		})
-	}
-}

@@ -122,45 +122,6 @@ func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 	}
 }
 
-// OptionalAuth creates a Gin middleware that optionally validates JWT tokens.
-// If a valid token is present, it stores the claims; otherwise, it continues without error.
-// This is useful for endpoints that behave differently for authenticated vs anonymous users.
-func OptionalAuth(validator *Validator) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.Next()
-			return
-		}
-
-		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") {
-			c.Next()
-			return
-		}
-
-		token := parts[1]
-		claims, err := validator.ValidateToken(token)
-		if err == nil {
-			c.Set(ContextKeyClaims, claims)
-			c.Set(ContextKeyUserID, claims.GetUserID())
-		}
-
-		c.Next()
-	}
-}
-
-// GetUserID retrieves the user ID from the Gin context.
-// Returns an empty string if not authenticated.
-func GetUserID(c *gin.Context) string {
-	if userID, exists := c.Get(ContextKeyUserID); exists {
-		if id, ok := userID.(string); ok {
-			return id
-		}
-	}
-	return ""
-}
-
 // GetClaims retrieves the JWT claims from the Gin context.
 // Returns nil if not authenticated.
 func GetClaims(c *gin.Context) *Claims {
