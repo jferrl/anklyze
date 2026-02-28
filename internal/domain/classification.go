@@ -26,10 +26,10 @@ type DanisWeberClassification struct {
 
 // LaugeHansenClassification holds the Lauge-Hansen classification result
 type LaugeHansenClassification struct {
-	Type               LaugeHansenType `json:"type" validate:"required"`                  // SA, SER, PER, PA
-	Ambiguous          bool            `json:"ambiguous,omitempty"`                        // Whether classification is ambiguous
-	AmbiguousReasonKey string          `json:"ambiguous_reason_key,omitempty"`             // i18n key explaining WHY classification is ambiguous
-	PossibleTypes      []string        `json:"possible_types,omitempty"`                   // Alternative types when classification is ambiguous
+	Type               LaugeHansenType `json:"type" validate:"required"`       // SA, SER, PER, PA
+	Ambiguous          bool            `json:"ambiguous,omitempty"`            // Whether classification is ambiguous
+	AmbiguousReasonKey string          `json:"ambiguous_reason_key,omitempty"` // i18n key explaining WHY classification is ambiguous
+	PossibleTypes      []string        `json:"possible_types,omitempty"`       // Alternative types when classification is ambiguous
 }
 
 // AOOTACode represents the AO/OTA classification code
@@ -83,7 +83,7 @@ type BartonicekClassification struct {
 
 // ClassificationResult contains the classification result
 type ClassificationResult struct {
-	FractureType  string                     `json:"fracture_type" validate:"required"`      // Key for frontend translation
+	FractureType  string                     `json:"fracture_type" validate:"required"` // Key for frontend translation
 	DanisWeber    *DanisWeberClassification  `json:"danis_weber,omitempty" validate:"omitempty"`
 	LaugeHansen   *LaugeHansenClassification `json:"lauge_hansen,omitempty" validate:"omitempty"`
 	AOOTA         *AOOTAClassification       `json:"ao_ota,omitempty" validate:"omitempty"`

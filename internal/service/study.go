@@ -34,10 +34,10 @@ type QuestionErrorStats struct {
 
 // DivergenceReport is the complete analysis output.
 type DivergenceReport struct {
-	CaseID            uuid.UUID            `json:"case_id"`
-	CaseTitle         string               `json:"case_title"`
-	TotalResponses    int                  `json:"total_responses"`
-	ResponsesWithPath int                  `json:"responses_with_path"`
+	CaseID            uuid.UUID `json:"case_id"`
+	CaseTitle         string    `json:"case_title"`
+	TotalResponses    int       `json:"total_responses"`
+	ResponsesWithPath int       `json:"responses_with_path"`
 
 	// Per-question analysis
 	QuestionStats     []QuestionErrorStats `json:"question_stats"`
@@ -509,4 +509,3 @@ func buildDecisionPathString(input *domain.FractureInput) string {
 
 	return strings.Join(parts, "→")
 }
-

@@ -58,8 +58,8 @@ type Handler struct {
 	chatAnalyticsRepo     ChatAnalyticsRepository
 	sessionMessageLimit   int
 	inputValidator        *InputValidator
-	dbHealthy             bool          // Whether database connection succeeded at startup
-	jwksReady             *atomic.Bool  // Whether JWKS endpoint is reachable; nil means not tracked (defaults to ready)
+	dbHealthy             bool         // Whether database connection succeeded at startup
+	jwksReady             *atomic.Bool // Whether JWKS endpoint is reachable; nil means not tracked (defaults to ready)
 }
 
 // NewHandler creates a new Handler

@@ -356,11 +356,11 @@ func TestSupabaseStorage_GetSignedURL(t *testing.T) {
 
 func TestSupabaseStorage_GetPublicURL(t *testing.T) {
 	tests := []struct {
-		name         string
-		supabaseURL  string // The Supabase project URL (without /storage/v1)
-		bucketName   string
-		path         string
-		expectedURL  string
+		name        string
+		supabaseURL string // The Supabase project URL (without /storage/v1)
+		bucketName  string
+		path        string
+		expectedURL string
 	}{
 		{
 			name:        "simple path",

@@ -111,4 +111,3 @@ func TestTTLStatsCache_DifferentStudies(t *testing.T) {
 		t.Errorf("expected same metrics pointer for studyA, got different")
 	}
 }
-

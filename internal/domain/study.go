@@ -21,10 +21,10 @@ const (
 // Study groups multiple cases for multi-case reliability analysis.
 // This enables proper Fleiss' Kappa calculation which requires multiple subjects.
 type Study struct {
-	ID        uuid.UUID   `gorm:"type:uuid;primaryKey" json:"id"`
-	CreatedAt time.Time   `gorm:"index" json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
-	CreatedBy uuid.UUID   `gorm:"type:uuid;not null;index" json:"created_by"`
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	CreatedAt time.Time `gorm:"index" json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy uuid.UUID `gorm:"type:uuid;not null;index" json:"created_by"`
 
 	Title       string      `gorm:"size:255;not null" json:"title"`
 	Description string      `gorm:"type:text" json:"description,omitempty"`

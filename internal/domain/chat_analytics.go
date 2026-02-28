@@ -55,13 +55,13 @@ type ClarificationPatterns struct {
 
 // ChatTrendDataPoint represents a single point in a chat analytics time series.
 type ChatTrendDataPoint struct {
-	Date              string  `json:"date"`
-	SessionCount      int64   `json:"session_count"`
-	CompletedCount    int64   `json:"completed_count"`
-	AbandonedCount    int64   `json:"abandoned_count"`
-	AvgConfidence     float64 `json:"avg_confidence"`
-	FeedbackCount     int64   `json:"feedback_count"`
-	PositiveFeedback  int64   `json:"positive_feedback"`
+	Date             string  `json:"date"`
+	SessionCount     int64   `json:"session_count"`
+	CompletedCount   int64   `json:"completed_count"`
+	AbandonedCount   int64   `json:"abandoned_count"`
+	AvgConfidence    float64 `json:"avg_confidence"`
+	FeedbackCount    int64   `json:"feedback_count"`
+	PositiveFeedback int64   `json:"positive_feedback"`
 }
 
 // ChatTrendData contains time-series chat analytics data.

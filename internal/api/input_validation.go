@@ -11,9 +11,9 @@ var wordSplitRegex = regexp.MustCompile(`[^\p{L}\p{N}\s]+`)
 
 // InputValidationResult contains the result of input validation
 type InputValidationResult struct {
-	Valid   bool
-	Reason  string
-	Code    string
+	Valid  bool
+	Reason string
+	Code   string
 }
 
 // InputValidator validates chat input before sending to LLM

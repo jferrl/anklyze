@@ -133,4 +133,3 @@ func TestIPRateLimiter_Cleanup(t *testing.T) {
 		t.Errorf("Expected 0 clients after cleanup, got %d", afterCount)
 	}
 }
-

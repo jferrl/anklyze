@@ -86,4 +86,3 @@ func HandleError(c *gin.Context, err error, fallbackMsg string) {
 
 	c.JSON(status, resp)
 }
-

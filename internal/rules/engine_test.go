@@ -1399,10 +1399,10 @@ func TestEngine_Classify_ImpossibleCombinations_SpecificKeys(t *testing.T) {
 	engine := NewEngine()
 
 	tests := []struct {
-		name              string
-		input             domain.FractureInput
-		expectedKey       string
-		expectedFracType  string
+		name             string
+		input            domain.FractureInput
+		expectedKey      string
+		expectedFracType string
 	}{
 		{
 			name: "trimaleolar transverse infrasindesmal → exceptional",

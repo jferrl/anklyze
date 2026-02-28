@@ -258,9 +258,9 @@ func TestAnalyticsRepository_GetDistribution(t *testing.T) {
 		wantValues map[string]int64
 	}{
 		{
-			name:       "danis-weber distribution",
-			system:     "danis-weber",
-			entries:    []*domain.AuditEntry{
+			name:   "danis-weber distribution",
+			system: "danis-weber",
+			entries: []*domain.AuditEntry{
 				createAnalyticsTestEntry(yesterday, "en", false, strPtr("Weber A"), nil, nil),
 				createAnalyticsTestEntry(yesterday, "en", false, strPtr("Weber A"), nil, nil),
 				createAnalyticsTestEntry(yesterday, "en", false, strPtr("Weber B"), nil, nil),
@@ -270,9 +270,9 @@ func TestAnalyticsRepository_GetDistribution(t *testing.T) {
 			wantValues: map[string]int64{"Weber A": 2, "Weber B": 1},
 		},
 		{
-			name:       "lauge-hansen distribution",
-			system:     "lauge-hansen",
-			entries:    []*domain.AuditEntry{
+			name:   "lauge-hansen distribution",
+			system: "lauge-hansen",
+			entries: []*domain.AuditEntry{
 				createAnalyticsTestEntry(yesterday, "en", false, nil, strPtr("SA"), nil),
 				createAnalyticsTestEntry(yesterday, "en", false, nil, strPtr("SER"), nil),
 				createAnalyticsTestEntry(yesterday, "en", false, nil, strPtr("SER"), nil),
@@ -282,9 +282,9 @@ func TestAnalyticsRepository_GetDistribution(t *testing.T) {
 			wantValues: map[string]int64{"SA": 1, "SER": 2},
 		},
 		{
-			name:       "ao-ota distribution",
-			system:     "ao-ota",
-			entries:    []*domain.AuditEntry{
+			name:   "ao-ota distribution",
+			system: "ao-ota",
+			entries: []*domain.AuditEntry{
 				createAnalyticsTestEntry(yesterday, "en", false, nil, nil, strPtr("44-A1")),
 				createAnalyticsTestEntry(yesterday, "en", false, nil, nil, strPtr("44-B1")),
 				createAnalyticsTestEntry(yesterday, "en", false, nil, nil, strPtr("44-C1")),
@@ -294,9 +294,9 @@ func TestAnalyticsRepository_GetDistribution(t *testing.T) {
 			wantValues: map[string]int64{"44-A1": 1, "44-B1": 1, "44-C1": 1},
 		},
 		{
-			name:       "unknown system returns empty",
-			system:     "unknown",
-			entries:    []*domain.AuditEntry{
+			name:   "unknown system returns empty",
+			system: "unknown",
+			entries: []*domain.AuditEntry{
 				createAnalyticsTestEntry(yesterday, "en", false, strPtr("Weber A"), strPtr("SA"), strPtr("44-A1")),
 			},
 			wantTotal:  0,

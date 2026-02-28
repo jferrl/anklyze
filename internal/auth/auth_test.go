@@ -338,5 +338,5 @@ func containsError(err, target error) bool {
 	}
 	return err.Error() == target.Error() ||
 		(len(err.Error()) > len(target.Error()) &&
-		err.Error()[:len(target.Error())] == target.Error())
+			err.Error()[:len(target.Error())] == target.Error())
 }

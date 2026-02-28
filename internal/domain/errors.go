@@ -6,11 +6,11 @@ import "errors"
 // Use errors.Is() to check for these errors.
 // These follow Google Go Best Practices: "Use sentinel error values or structured error types"
 var (
-	ErrNotFound      = errors.New("resource not found")
-	ErrUnauthorized  = errors.New("unauthorized")
-	ErrForbidden     = errors.New("access forbidden")
-	ErrInvalidInput  = errors.New("invalid input")
-	ErrConflict      = errors.New("resource conflict")
+	ErrNotFound                  = errors.New("resource not found")
+	ErrUnauthorized              = errors.New("unauthorized")
+	ErrForbidden                 = errors.New("access forbidden")
+	ErrInvalidInput              = errors.New("invalid input")
+	ErrConflict                  = errors.New("resource conflict")
 	ErrQuotaExceeded             = errors.New("quota exceeded")
 	ErrInvalidStateTransition    = errors.New("invalid state transition")
 	ErrMissingImages             = errors.New("case must have at least one image before publishing")
@@ -30,11 +30,11 @@ type FieldError struct {
 // These codes are translated on the frontend using the i18n system.
 const (
 	// Classification errors
-	ErrCodeInvalidInput       = "invalid_input"
-	ErrCodeClassification     = "classification_error"
-	ErrCodeNoFractures        = "no_fractures_found"
-	ErrCodeIsolatedPosterior  = "isolated_posterior"
-	ErrCodeChatUnavailable    = "chat_unavailable"
+	ErrCodeInvalidInput      = "invalid_input"
+	ErrCodeClassification    = "classification_error"
+	ErrCodeNoFractures       = "no_fractures_found"
+	ErrCodeIsolatedPosterior = "isolated_posterior"
+	ErrCodeChatUnavailable   = "chat_unavailable"
 
 	// Chat validation errors
 	ErrCodeInputTooShort        = "input_too_short"

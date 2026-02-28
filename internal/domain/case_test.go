@@ -512,9 +512,9 @@ func TestCase_CompareWithReference(t *testing.T) {
 
 	// User result that matches only DanisWeber and LaugeHansen (2 of 4).
 	partialMatchResult := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},   // match
+		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},     // match
 		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenSER}, // match
-		AOOTA:       &AOOTAClassification{Code: AOOTAC1},             // mismatch
+		AOOTA:       &AOOTAClassification{Code: AOOTAC1},              // mismatch
 		Bartonicek:  &BartonicekClassification{Type: BartonicekType4}, // mismatch
 	}
 
@@ -531,51 +531,51 @@ func TestCase_CompareWithReference(t *testing.T) {
 		c          Case
 		userResult *ClassificationResult
 		// wantNil signals the test expects CompareWithReference to return nil.
-		wantNil         bool
-		wantDW          bool
-		wantLH          bool
-		wantAOOTA       bool
-		wantBartonicek  bool
-		wantAccuracy    float64
+		wantNil        bool
+		wantDW         bool
+		wantLH         bool
+		wantAOOTA      bool
+		wantBartonicek bool
+		wantAccuracy   float64
 	}{
 		{
-			name:           "nil reference classification returns nil",
-			c:              newPublishedCase(), // no ReferenceClassification set
+			name:       "nil reference classification returns nil",
+			c:          newPublishedCase(), // no ReferenceClassification set
+			userResult: fullMatchResult,
+			wantNil:    true,
+		},
+		{
+			name:           "full match across all four systems yields accuracy 1.0",
+			c:              caseWithRef(reference),
 			userResult:     fullMatchResult,
-			wantNil:        true,
+			wantNil:        false,
+			wantDW:         true,
+			wantLH:         true,
+			wantAOOTA:      true,
+			wantBartonicek: true,
+			wantAccuracy:   1.0,
 		},
 		{
-			name:            "full match across all four systems yields accuracy 1.0",
-			c:               caseWithRef(reference),
-			userResult:      fullMatchResult,
-			wantNil:         false,
-			wantDW:          true,
-			wantLH:          true,
-			wantAOOTA:       true,
-			wantBartonicek:  true,
-			wantAccuracy:    1.0,
+			name:           "partial match of 2 of 4 systems yields accuracy 0.5",
+			c:              caseWithRef(reference),
+			userResult:     partialMatchResult,
+			wantNil:        false,
+			wantDW:         true,
+			wantLH:         true,
+			wantAOOTA:      false,
+			wantBartonicek: false,
+			wantAccuracy:   0.5,
 		},
 		{
-			name:            "partial match of 2 of 4 systems yields accuracy 0.5",
-			c:               caseWithRef(reference),
-			userResult:      partialMatchResult,
-			wantNil:         false,
-			wantDW:          true,
-			wantLH:          true,
-			wantAOOTA:       false,
-			wantBartonicek:  false,
-			wantAccuracy:    0.5,
-		},
-		{
-			name:            "no system matches yields accuracy 0.0",
-			c:               caseWithRef(reference),
-			userResult:      noMatchResult,
-			wantNil:         false,
-			wantDW:          false,
-			wantLH:          false,
-			wantAOOTA:       false,
-			wantBartonicek:  false,
-			wantAccuracy:    0.0,
+			name:           "no system matches yields accuracy 0.0",
+			c:              caseWithRef(reference),
+			userResult:     noMatchResult,
+			wantNil:        false,
+			wantDW:         false,
+			wantLH:         false,
+			wantAOOTA:      false,
+			wantBartonicek: false,
+			wantAccuracy:   0.0,
 		},
 	}
 

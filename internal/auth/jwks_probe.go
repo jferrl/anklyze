@@ -53,10 +53,7 @@ func retryJWKSProbeWithBackoff(ctx context.Context, jwksURL string, jwksReady *a
 		}
 
 		if err := ProbeJWKS(ctx, jwksURL); err != nil {
-			nextBackoff := backoff * 2
-			if nextBackoff > maxBackoff {
-				nextBackoff = maxBackoff
-			}
+			nextBackoff := min(backoff*2, maxBackoff)
 			slog.Warn("JWKS endpoint still unreachable",
 				"url", jwksURL,
 				"error", err,

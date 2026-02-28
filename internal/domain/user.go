@@ -112,4 +112,3 @@ type UserProfileUpdate struct {
 	TrainingLevel   *string `json:"training_level,omitempty"`
 	Institution     *string `json:"institution,omitempty"`
 }
-

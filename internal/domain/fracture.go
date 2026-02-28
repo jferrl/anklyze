@@ -4,23 +4,23 @@ package domain
 type InvolvedMalleoli string
 
 const (
-	InvolvedPosteriorOnly   InvolvedMalleoli = "posterior_only"   // Maléolo posterior
-	InvolvedMedialOnly      InvolvedMalleoli = "medial_only"      // Maléolo medial
-	InvolvedLateralOnly     InvolvedMalleoli = "lateral_only"     // Maléolo lateral
-	InvolvedMedialPosterior InvolvedMalleoli = "medial_posterior" // Maléolos medial y posterior
+	InvolvedPosteriorOnly    InvolvedMalleoli = "posterior_only"    // Maléolo posterior
+	InvolvedMedialOnly       InvolvedMalleoli = "medial_only"       // Maléolo medial
+	InvolvedLateralOnly      InvolvedMalleoli = "lateral_only"      // Maléolo lateral
+	InvolvedMedialPosterior  InvolvedMalleoli = "medial_posterior"  // Maléolos medial y posterior
 	InvolvedLateralPosterior InvolvedMalleoli = "lateral_posterior" // Maléolos lateral y posterior
-	InvolvedLateralMedial   InvolvedMalleoli = "lateral_medial"   // Maléolos lateral y medial
-	InvolvedTrimaleolar     InvolvedMalleoli = "trimaleolar"      // Maléolos medial, lateral y posterior
+	InvolvedLateralMedial    InvolvedMalleoli = "lateral_medial"    // Maléolos lateral y medial
+	InvolvedTrimaleolar      InvolvedMalleoli = "trimaleolar"       // Maléolos medial, lateral y posterior
 )
 
 // PosteriorFractureType represents the type of posterior malleolus fracture (Bartonicek)
 type PosteriorFractureType string
 
 const (
-	PosteriorExtraincisural            PosteriorFractureType = "extraincisural"               // Fragmento extraincisural (Bartonicek 1)
-	PosteriorPosterolateral            PosteriorFractureType = "posterolateral"               // Fragmento posterolateral (Bartonicek 2)
+	PosteriorExtraincisural              PosteriorFractureType = "extraincisural"               // Fragmento extraincisural (Bartonicek 1)
+	PosteriorPosterolateral              PosteriorFractureType = "posterolateral"               // Fragmento posterolateral (Bartonicek 2)
 	PosteriorPosteromedialPosterolateral PosteriorFractureType = "posteromedial_posterolateral" // Fragmento posteromedial y posterolateral (Bartonicek 3)
-	PosteriorLargePosterolateral       PosteriorFractureType = "large_posterolateral"         // Gran fragmento triangular posterolateral (Bartonicek 4)
+	PosteriorLargePosterolateral         PosteriorFractureType = "large_posterolateral"         // Gran fragmento triangular posterolateral (Bartonicek 4)
 	PosteriorExtraincisuralPosteromedial PosteriorFractureType = "extraincisural_posteromedial" // Fragmento extraincisural postero-medial (medial+posterior path only)
 )
 
@@ -28,7 +28,7 @@ const (
 type MedialMorphology string
 
 const (
-	MedialMorphologyVertical   MedialMorphology = "vertical"          // Vertical
+	MedialMorphologyVertical   MedialMorphology = "vertical"           // Vertical
 	MedialMorphologyTransverse MedialMorphology = "transverse_oblique" // Transverso/oblicuo
 )
 
@@ -36,9 +36,9 @@ const (
 type FibularLevel string
 
 const (
-	FibularLevelInfrasindesmal  FibularLevel = "infrasindesmal"  // Infrasindesmal
-	FibularLevelTransindesmal   FibularLevel = "transindesmal"   // Transindesmal
-	FibularLevelSuprasindesmal  FibularLevel = "suprasindesmal"  // Suprasindesmal
+	FibularLevelInfrasindesmal FibularLevel = "infrasindesmal" // Infrasindesmal
+	FibularLevelTransindesmal  FibularLevel = "transindesmal"  // Transindesmal
+	FibularLevelSuprasindesmal FibularLevel = "suprasindesmal" // Suprasindesmal
 )
 
 // LateralMorphology represents the morphology of the lateral/fibular fracture

@@ -63,14 +63,14 @@ func createResponseWithPath(caseID uuid.UUID, decisionPath string, answers []dom
 
 // mockStudyRepository is a minimal mock for StudyRepository.
 type mockStudyRepository struct {
-	study        *domain.Study
-	studyErr     error
-	cases        []domain.Case
-	casesErr     error
-	hasAccess    bool
-	hasAccessErr error
-	addCaseErr   error
-	removeCaseErr error
+	study             *domain.Study
+	studyErr          error
+	cases             []domain.Case
+	casesErr          error
+	hasAccess         bool
+	hasAccessErr      error
+	addCaseErr        error
+	removeCaseErr     error
 	updateCountersErr error
 }
 
@@ -125,9 +125,9 @@ func (m *mockStudyRepository) UpdateCounters(_ context.Context, _ uuid.UUID) err
 
 // mockStudyResponseRepository is a minimal mock for StudyResponseRepository.
 type mockStudyResponseRepository struct {
-	responsesByCase   map[uuid.UUID][]domain.CaseResponse
-	casesCompleted    int
-	err               error
+	responsesByCase map[uuid.UUID][]domain.CaseResponse
+	casesCompleted  int
+	err             error
 }
 
 func (m *mockStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
@@ -331,9 +331,9 @@ func TestIsCaseInStudy(t *testing.T) {
 	study := &domain.Study{ID: studyID}
 
 	tests := []struct {
-		name           string
-		study          *domain.Study
-		studyErr       error
+		name            string
+		study           *domain.Study
+		studyErr        error
 		expectedInStudy bool
 		expectedStudyID *uuid.UUID
 	}{
@@ -717,4 +717,3 @@ func TestBuildAnswerPathFromInputStudy(t *testing.T) {
 		})
 	}
 }
-

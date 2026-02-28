@@ -4,7 +4,10 @@
       "Bash(deadcode ./...)",
       "Bash(staticcheck --unused.whole-program=true -- ./...)",
       "Bash(staticcheck --version)",
-      "Bash(staticcheck ./...)"
+      "Bash(staticcheck ./...)",
+      "Bash(gofmt -l ./...)",
+      "Bash(gofmt -l .)",
+      "Bash(gofmt -w .)"
     ]
   }
 }

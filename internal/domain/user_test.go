@@ -65,4 +65,3 @@ func TestUser_TableName(t *testing.T) {
 		t.Errorf("TableName() = %q, want %q", got, expected)
 	}
 }
-

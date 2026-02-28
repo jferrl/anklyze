@@ -162,8 +162,8 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 	if req.Specialty != nil && *req.Specialty != "" {
 		if !domain.IsValidSpecialty(*req.Specialty) {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":           "invalid specialty",
-				"valid_values":    domain.ValidSpecialties(),
+				"error":        "invalid specialty",
+				"valid_values": domain.ValidSpecialties(),
 			})
 			return
 		}
@@ -173,8 +173,8 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 	if req.TrainingLevel != nil && *req.TrainingLevel != "" {
 		if !domain.IsValidTrainingLevel(*req.TrainingLevel) {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":           "invalid training level",
-				"valid_values":    domain.ValidTrainingLevels(),
+				"error":        "invalid training level",
+				"valid_values": domain.ValidTrainingLevels(),
 			})
 			return
 		}
