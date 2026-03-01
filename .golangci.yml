@@ -97,6 +97,11 @@ linters:
         linters:
           - gocyclo
           - gocognit
+      # G602: loop indices bounded by len(slice) — gosec can't prove statically
+      - path: "internal/statistics/"
+        linters:
+          - gosec
+        text: "G602"
       # Classification engine encodes medical decision trees
       - path: "internal/rules/engine\\.go$"
         linters:
@@ -123,6 +128,20 @@ linters:
           - gocyclo
           - gocognit
           - funlen
+      # G706: slog structured logging handles escaping — not a real injection risk
+      - linters:
+          - gosec
+        text: "G706"
+      # G704: URLs from config/constructor, not user input — not real SSRF
+      - path: "(internal/auth|internal/storage|internal/supabase)/"
+        linters:
+          - gosec
+        text: "G704"
+      # api is a standard Go package name
+      - path: "internal/api/"
+        linters:
+          - revive
+        text: "meaningless package names"
       # main bootstrap wires many components
       - path: "cmd/"
         linters:
