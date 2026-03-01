@@ -2,19 +2,13 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"sync"
 
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
-
-// ErrBufferFull is returned when the audit buffer is full and cannot accept more entries.
-var ErrBufferFull = errors.New("audit buffer full")
-
-// ErrRepositoryClosed is returned when Save is called after Close.
-var ErrRepositoryClosed = errors.New("audit repository closed")
 
 // AuditRepository implements audit persistence with PostgreSQL.
 type AuditRepository struct {
@@ -50,7 +44,7 @@ func (r *AuditRepository) Save(ctx context.Context, entry *domain.AuditEntry) er
 	r.mu.RLock()
 	if r.closed {
 		r.mu.RUnlock()
-		return ErrRepositoryClosed
+		return repository.ErrRepositoryClosed
 	}
 	r.mu.RUnlock()
 
@@ -61,7 +55,7 @@ func (r *AuditRepository) Save(ctx context.Context, entry *domain.AuditEntry) er
 		return nil
 	default:
 		slog.Warn("audit buffer full, dropping entry", "entry_id", entry.ID)
-		return ErrBufferFull
+		return repository.ErrBufferFull
 	}
 }
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
 
@@ -49,7 +50,7 @@ func (r *ChatAuditRepository) CreateSession(ctx context.Context, session *domain
 	r.mu.RLock()
 	if r.closed {
 		r.mu.RUnlock()
-		return ErrRepositoryClosed
+		return repository.ErrRepositoryClosed
 	}
 	r.mu.RUnlock()
 
@@ -60,7 +61,7 @@ func (r *ChatAuditRepository) CreateSession(ctx context.Context, session *domain
 		return nil
 	default:
 		slog.Warn("chat session buffer full, dropping session", "session_id", session.ID)
-		return ErrBufferFull
+		return repository.ErrBufferFull
 	}
 }
 
@@ -87,7 +88,7 @@ func (r *ChatAuditRepository) SaveMessage(ctx context.Context, message *domain.C
 	r.mu.RLock()
 	if r.closed {
 		r.mu.RUnlock()
-		return ErrRepositoryClosed
+		return repository.ErrRepositoryClosed
 	}
 	r.mu.RUnlock()
 
@@ -98,7 +99,7 @@ func (r *ChatAuditRepository) SaveMessage(ctx context.Context, message *domain.C
 		return nil
 	default:
 		slog.Warn("chat message buffer full, dropping message", "message_id", message.ID)
-		return ErrBufferFull
+		return repository.ErrBufferFull
 	}
 }
 
@@ -107,7 +108,7 @@ func (r *ChatAuditRepository) SaveFeedback(ctx context.Context, feedback *domain
 	r.mu.RLock()
 	if r.closed {
 		r.mu.RUnlock()
-		return ErrRepositoryClosed
+		return repository.ErrRepositoryClosed
 	}
 	r.mu.RUnlock()
 
@@ -118,7 +119,7 @@ func (r *ChatAuditRepository) SaveFeedback(ctx context.Context, feedback *domain
 		return nil
 	default:
 		slog.Warn("chat feedback buffer full, dropping feedback", "feedback_id", feedback.ID)
-		return ErrBufferFull
+		return repository.ErrBufferFull
 	}
 }
 

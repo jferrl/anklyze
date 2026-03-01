@@ -97,6 +97,13 @@ type CaseAnalyticsRepository interface {
 	GetClassificationDistribution(ctx context.Context, caseID uuid.UUID, system string) (map[string]int64, error)
 }
 
+// Compile-time interface checks for NoOp implementations.
+var (
+	_ CaseRepository          = (*NoOpCaseRepository)(nil)
+	_ CaseResponseRepository  = (*NoOpCaseResponseRepository)(nil)
+	_ CaseAnalyticsRepository = (*NoOpCaseAnalyticsRepository)(nil)
+)
+
 // NoOpCaseRepository is a no-op implementation for when DB is not configured.
 type NoOpCaseRepository struct{}
 

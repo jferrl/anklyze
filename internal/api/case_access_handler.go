@@ -37,14 +37,9 @@ func NewCaseAccessHandler(
 func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 	page, limit, offset := getPagination(c)
 
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
-		return
-	}
-	uid, err := uuid.Parse(userIDStr.(string))
+	uid, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
 		return
 	}
 
@@ -125,14 +120,9 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 	}
 
 	// Get user ID
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
-		return
-	}
-	uid, err := uuid.Parse(userIDStr.(string))
+	uid, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
 		return
 	}
 
@@ -161,10 +151,18 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 		return
 	}
 
-	images, _ := h.caseRepo.GetImages(c.Request.Context(), id)
+	images, err := h.caseRepo.GetImages(c.Request.Context(), id)
+	if err != nil {
+		slog.Warn("failed to get case images", "case_id", id, "error", err)
+		images = []domain.CaseImage{}
+	}
 
 	// Get user's responses
-	responses, _ := h.responseRepo.GetByUserAndCase(c.Request.Context(), uid, id)
+	responses, err := h.responseRepo.GetByUserAndCase(c.Request.Context(), uid, id)
+	if err != nil {
+		slog.Warn("failed to get user responses", "case_id", id, "user_id", uid, "error", err)
+		responses = []domain.CaseResponse{}
+	}
 	hasResponded := len(responses) > 0
 	myResponseCount := len(responses)
 

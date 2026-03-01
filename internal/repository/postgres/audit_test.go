@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -165,8 +166,8 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 	}
 
 	// Second save should return ErrBufferFull (non-blocking)
-	if err := repo.Save(ctx, entry2); !errors.Is(err, ErrBufferFull) {
-		t.Errorf("second Save() error = %v, want ErrBufferFull", err)
+	if err := repo.Save(ctx, entry2); !errors.Is(err, repository.ErrBufferFull) {
+		t.Errorf("second Save() error = %v, want repository.ErrBufferFull", err)
 	}
 }
 

@@ -166,12 +166,6 @@ func (c *Case) CanBeEdited() bool {
 	return c.Status == CaseStatusDraft
 }
 
-// CanBeDeleted returns true if the case can be deleted.
-// Admins can delete cases in any status.
-func (c *Case) CanBeDeleted() bool {
-	return true
-}
-
 // CanAcceptResponses returns true if the case is accepting responses.
 func (c *Case) CanAcceptResponses() bool {
 	if c.Status != CaseStatusPublished {

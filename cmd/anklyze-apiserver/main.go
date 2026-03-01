@@ -103,16 +103,7 @@ func main() {
 		if err != nil {
 			slog.Warn("database connection failed, running in degraded mode (NoOp repositories)", "error", err)
 			dbHealthy = false
-			auditRepo = repository.NewNoOpAuditRepository()
-			analyticsRepo = repository.NewNoOpAnalyticsRepository()
-			chatAuditRepo = repository.NewNoOpChatAuditRepository()
-			chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
-			userRepo = repository.NewNoOpUserRepository()
-			caseRepo = repository.NewNoOpCaseRepository()
-			caseResponseRepo = repository.NewNoOpCaseResponseRepository()
-			caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
-			studyRepo = repository.NewNoOpStudyRepository()
-			studyResponseRepo = repository.NewNoOpStudyResponseRepository()
+			auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
 		} else {
 			if err := database.RunMigrations(migrations.FS, cfg.DatabaseURL); err != nil {
 				slog.Error("database migration failed", "error", err)
@@ -134,16 +125,7 @@ func main() {
 	} else {
 		slog.Info("no DATABASE_URL configured, running in degraded mode (NoOp repositories)")
 		dbHealthy = false
-		auditRepo = repository.NewNoOpAuditRepository()
-		analyticsRepo = repository.NewNoOpAnalyticsRepository()
-		chatAuditRepo = repository.NewNoOpChatAuditRepository()
-		chatAnalyticsRepo = repository.NewNoOpChatAnalyticsRepository()
-		userRepo = repository.NewNoOpUserRepository()
-		caseRepo = repository.NewNoOpCaseRepository()
-		caseResponseRepo = repository.NewNoOpCaseResponseRepository()
-		caseAnalyticsRepo = repository.NewNoOpCaseAnalyticsRepository()
-		studyRepo = repository.NewNoOpStudyRepository()
-		studyResponseRepo = repository.NewNoOpStudyResponseRepository()
+		auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
 	}
 
 	// Create user service that orchestrates DB and Supabase operations
@@ -237,7 +219,7 @@ func main() {
 
 	router := gin.Default()
 	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy, jwksReady)
-	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
+	responseHandler := api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, caseRepo, studyService)
 
 	srv := &http.Server{
@@ -285,6 +267,9 @@ func main() {
 		slog.Error("server forced to shutdown", "error", err)
 	}
 
+	// Wait for background goroutines in response handler to finish
+	responseHandler.Close()
+
 	// Close audit repositories to flush pending writes
 	if err := auditRepo.Close(); err != nil {
 		slog.Error("failed to close audit repository", "error", err)
@@ -318,4 +303,29 @@ func main() {
 	}
 
 	slog.Info("server exited")
+}
+
+// initNoOpRepositories creates all NoOp repository implementations for degraded mode.
+func initNoOpRepositories() (
+	api.AuditRepository,
+	api.AnalyticsRepository,
+	api.ChatAuditRepository,
+	api.ChatAnalyticsRepository,
+	repository.UserRepository,
+	repository.CaseRepository,
+	repository.CaseResponseRepository,
+	repository.CaseAnalyticsRepository,
+	repository.StudyRepository,
+	repository.StudyResponseRepository,
+) {
+	return repository.NewNoOpAuditRepository(),
+		repository.NewNoOpAnalyticsRepository(),
+		repository.NewNoOpChatAuditRepository(),
+		repository.NewNoOpChatAnalyticsRepository(),
+		repository.NewNoOpUserRepository(),
+		repository.NewNoOpCaseRepository(),
+		repository.NewNoOpCaseResponseRepository(),
+		repository.NewNoOpCaseAnalyticsRepository(),
+		repository.NewNoOpStudyRepository(),
+		repository.NewNoOpStudyResponseRepository()
 }

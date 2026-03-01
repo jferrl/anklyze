@@ -86,6 +86,12 @@ type StudyResponseRepository interface {
 // No-Op Implementations (for when database is not configured)
 // ============================================================================
 
+// Compile-time interface checks for NoOp implementations.
+var (
+	_ StudyRepository         = (*NoOpStudyRepository)(nil)
+	_ StudyResponseRepository = (*NoOpStudyResponseRepository)(nil)
+)
+
 // NoOpStudyRepository is a no-op implementation for when DB is not configured.
 type NoOpStudyRepository struct{}
 

@@ -27,7 +27,11 @@ type FieldError struct {
 }
 
 // Error codes for API responses.
-// These codes are translated on the frontend using the i18n system.
+// Two conventions coexist intentionally:
+//   - snake_case codes (e.g. "classification_error") are used as i18n translation keys
+//     in the frontend (frontend/src/i18n/{en,es}.json).
+//   - SCREAMING_SNAKE_CASE codes (e.g. "INVALID_STATE_TRANSITION") are programmatic
+//     error codes for case state and auth errors.
 const (
 	// Classification errors
 	ErrCodeInvalidInput      = "invalid_input"

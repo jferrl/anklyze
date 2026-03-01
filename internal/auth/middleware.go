@@ -217,6 +217,20 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 	}
 }
 
+// ParseUserID extracts and parses the authenticated user's ID from the Gin context.
+// Returns an error if the user ID is missing, not a string, or not a valid UUID.
+func ParseUserID(c *gin.Context) (uuid.UUID, error) {
+	val, exists := c.Get(ContextKeyUserID)
+	if !exists {
+		return uuid.Nil, errors.New("missing user ID in context")
+	}
+	str, ok := val.(string)
+	if !ok {
+		return uuid.Nil, errors.New("user ID is not a string")
+	}
+	return uuid.Parse(str)
+}
+
 // GetUser retrieves the synced user from the Gin context.
 // Returns nil if not authenticated or user sync is disabled.
 func GetUser(c *gin.Context) *domain.User {

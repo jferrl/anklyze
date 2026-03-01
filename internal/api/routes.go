@@ -90,29 +90,14 @@ func setupProtectedRoutes(
 	protected.POST("/classify", handler.ClassifyFracture)
 	protected.POST("/chat", chatRateLimiter, handler.ChatMessage)
 
-	// Chat session routes - require authentication
-	chat := protected.Group("/chat")
-	chat.POST("/session", handler.CreateChatSession)
-	chat.PUT("/session/:id/complete", handler.CompleteChatSession)
-	chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
-	chat.POST("/session/:id/feedback", handler.SubmitFeedback)
-	chat.GET("/session/:id/feedback", handler.GetFeedback)
+	registerChatSessionRoutes(protected.Group("/chat"), handler)
 
 	// Admin-only routes - require admin role
 	analytics := api.Group("/analytics")
 	analytics.Use(auth.Middleware(authValidator))
 	analytics.Use(auth.UserSyncMiddleware(userRepo))
 	analytics.Use(auth.RequireRole(auth.RoleAdmin))
-	analytics.GET("/summary", handler.GetAnalyticsSummary)
-	analytics.GET("/trends", handler.GetAnalyticsTrends)
-	analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
-
-	// Chat analytics - admin only
-	chatAnalytics := analytics.Group("/chat")
-	chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
-	chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
-	chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
-	chatAnalytics.GET("/trends", handler.GetChatTrends)
+	registerAnalyticsRoutes(analytics, handler)
 }
 
 // setupPublicRoutes configures routes without authentication (development mode).
@@ -132,26 +117,8 @@ func setupPublicRoutes(
 	api.POST("/classify", handler.ClassifyFracture)
 	api.POST("/chat", chatRateLimiter, handler.ChatMessage)
 
-	// Chat session routes
-	chat := api.Group("/chat")
-	chat.POST("/session", handler.CreateChatSession)
-	chat.PUT("/session/:id/complete", handler.CompleteChatSession)
-	chat.PUT("/session/:id/abandon", handler.AbandonChatSession)
-	chat.POST("/session/:id/feedback", handler.SubmitFeedback)
-	chat.GET("/session/:id/feedback", handler.GetFeedback)
-
-	// Analytics routes
-	analytics := api.Group("/analytics")
-	analytics.GET("/summary", handler.GetAnalyticsSummary)
-	analytics.GET("/trends", handler.GetAnalyticsTrends)
-	analytics.GET("/distribution/:system", handler.GetAnalyticsDistribution)
-
-	// Chat analytics routes
-	chatAnalytics := analytics.Group("/chat")
-	chatAnalytics.GET("/summary", handler.GetChatAnalyticsSummary)
-	chatAnalytics.GET("/feedback", handler.GetChatFeedbackSummary)
-	chatAnalytics.GET("/confidence", handler.GetChatConfidenceDistribution)
-	chatAnalytics.GET("/trends", handler.GetChatTrends)
+	registerChatSessionRoutes(api.Group("/chat"), handler)
+	registerAnalyticsRoutes(api.Group("/analytics"), handler)
 }
 
 // SetupCaseRoutes configures case-related routes.
@@ -167,7 +134,7 @@ func SetupCaseRoutes(
 	studyService service.StudyService,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
-) {
+) *CaseResponseHandler {
 	// Create specialized handlers for different concerns
 	adminHandler := NewCaseAdminHandler(caseRepo, storage)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
@@ -175,12 +142,7 @@ func SetupCaseRoutes(
 	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)
 
 	// Create analytics handler with statistics service
-	var statsServicePtr *StatisticsService
-	if statsService != nil {
-		var s StatisticsService = statsService
-		statsServicePtr = &s
-	}
-	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsServicePtr, studyService)
+	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsService, studyService)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -192,6 +154,8 @@ func SetupCaseRoutes(
 	} else {
 		setupPublicCaseRoutes(api, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	}
+
+	return responseHandler
 }
 
 // setupProtectedCaseRoutes configures case routes with authentication.
@@ -210,53 +174,20 @@ func setupProtectedCaseRoutes(
 	cases := api.Group("/cases")
 	cases.Use(auth.Middleware(authValidator))
 	cases.Use(auth.UserSyncMiddleware(userRepo))
-	cases.GET("", accessHandler.ListPublishedCases)
-	cases.GET("/:id", accessHandler.GetPublishedCase)
-	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
-	cases.POST("/:id/responses", responseHandler.SubmitResponse)
-	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
+	registerUserCaseRoutes(cases, accessHandler, responseHandler)
 
 	// User profile routes - require authentication
 	profile := api.Group("/me")
 	profile.Use(auth.Middleware(authValidator))
 	profile.Use(auth.UserSyncMiddleware(userRepo))
-	profile.GET("/profile", userHandler.GetUserProfile)
-	profile.PUT("/profile", userHandler.UpdateUserProfile)
+	registerProfileRoutes(profile, userHandler)
 
 	// Admin case routes - require admin role
 	adminCases := api.Group("/admin/cases")
 	adminCases.Use(auth.Middleware(authValidator))
 	adminCases.Use(auth.UserSyncMiddleware(userRepo))
 	adminCases.Use(auth.RequireRole(auth.RoleAdmin))
-	// CRUD operations (CaseAdminHandler)
-	adminCases.POST("", adminHandler.CreateCase)
-	adminCases.GET("", adminHandler.ListCases)
-	adminCases.GET("/:id", adminHandler.GetCase)
-	adminCases.PUT("/:id", adminHandler.UpdateCase)
-	adminCases.DELETE("/:id", adminHandler.DeleteCase)
-	adminCases.PUT("/:id/publish", adminHandler.PublishCase)
-	adminCases.PUT("/:id/close", adminHandler.CloseCase)
-
-	// Image management (CaseImageHandler)
-	adminCases.POST("/:id/images", imageHandler.UploadImage)
-	adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
-	adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
-	adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
-	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
-	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
-
-	// Analytics and export (CaseAnalyticsHandler)
-	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
-	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
-	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
-	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
-	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
-	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
-
-	// User access management (CaseAccessHandler)
-	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
-	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
-	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
+	registerAdminCaseRoutes(adminCases, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler)
 }
 
 // setupPublicCaseRoutes configures case routes without authentication (development mode).
@@ -269,50 +200,9 @@ func setupPublicCaseRoutes(
 	analyticsHandler *CaseAnalyticsHandler,
 	userHandler *UserHandler,
 ) {
-	// User case routes
-	cases := api.Group("/cases")
-	cases.GET("", accessHandler.ListPublishedCases)
-	cases.GET("/:id", accessHandler.GetPublishedCase)
-	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
-	cases.POST("/:id/responses", responseHandler.SubmitResponse)
-	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
-
-	// User profile routes (development mode)
-	profile := api.Group("/me")
-	profile.GET("/profile", userHandler.GetUserProfile)
-	profile.PUT("/profile", userHandler.UpdateUserProfile)
-
-	// Admin case routes
-	adminCases := api.Group("/admin/cases")
-	// CRUD operations (CaseAdminHandler)
-	adminCases.POST("", adminHandler.CreateCase)
-	adminCases.GET("", adminHandler.ListCases)
-	adminCases.GET("/:id", adminHandler.GetCase)
-	adminCases.PUT("/:id", adminHandler.UpdateCase)
-	adminCases.DELETE("/:id", adminHandler.DeleteCase)
-	adminCases.PUT("/:id/publish", adminHandler.PublishCase)
-	adminCases.PUT("/:id/close", adminHandler.CloseCase)
-
-	// Image management (CaseImageHandler)
-	adminCases.POST("/:id/images", imageHandler.UploadImage)
-	adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
-	adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
-	adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
-	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
-	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
-
-	// Analytics and export (CaseAnalyticsHandler)
-	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
-	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
-	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
-	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
-	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
-	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
-
-	// User access management (CaseAccessHandler)
-	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
-	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
-	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
+	registerUserCaseRoutes(api.Group("/cases"), accessHandler, responseHandler)
+	registerProfileRoutes(api.Group("/me"), userHandler)
+	registerAdminCaseRoutes(api.Group("/admin/cases"), adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler)
 }
 
 // SetupStudyRoutes configures study-related routes.
@@ -343,35 +233,11 @@ func setupProtectedStudyRoutes(
 	userRepo auth.UserService,
 	studyHandler *StudyHandler,
 ) {
-	// Admin study routes - require admin role
 	adminStudies := api.Group("/admin/studies")
 	adminStudies.Use(auth.Middleware(authValidator))
 	adminStudies.Use(auth.UserSyncMiddleware(userRepo))
 	adminStudies.Use(auth.RequireRole(auth.RoleAdmin))
-	// CRUD
-	adminStudies.POST("", studyHandler.CreateStudy)
-	adminStudies.GET("", studyHandler.ListStudies)
-	adminStudies.GET("/:id", studyHandler.GetStudy)
-	adminStudies.PUT("/:id", studyHandler.UpdateStudy)
-	adminStudies.DELETE("/:id", studyHandler.DeleteStudy)
-
-	// Case management
-	adminStudies.POST("/:id/cases", studyHandler.AddCase)
-	adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
-	adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
-
-	// Rater management
-	adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
-	adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
-	adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
-	adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
-
-	// Status
-	adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
-	adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
-
-	// Analytics
-	adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
+	registerAdminStudyRoutes(adminStudies, studyHandler)
 }
 
 // setupPublicStudyRoutes configures study routes without authentication (development mode).
@@ -379,8 +245,96 @@ func setupPublicStudyRoutes(
 	api *gin.RouterGroup,
 	studyHandler *StudyHandler,
 ) {
-	// Admin study routes (development mode - no auth)
-	adminStudies := api.Group("/admin/studies")
+	registerAdminStudyRoutes(api.Group("/admin/studies"), studyHandler)
+}
+
+// ============================================================================
+// Shared route registration helpers
+// ============================================================================
+
+// registerChatSessionRoutes registers chat session routes on the given group.
+func registerChatSessionRoutes(chat *gin.RouterGroup, h *Handler) {
+	chat.POST("/session", h.CreateChatSession)
+	chat.PUT("/session/:id/complete", h.CompleteChatSession)
+	chat.PUT("/session/:id/abandon", h.AbandonChatSession)
+	chat.POST("/session/:id/feedback", h.SubmitFeedback)
+	chat.GET("/session/:id/feedback", h.GetFeedback)
+}
+
+// registerAnalyticsRoutes registers analytics and chat analytics routes on the given group.
+func registerAnalyticsRoutes(analytics *gin.RouterGroup, h *Handler) {
+	analytics.GET("/summary", h.GetAnalyticsSummary)
+	analytics.GET("/trends", h.GetAnalyticsTrends)
+	analytics.GET("/distribution/:system", h.GetAnalyticsDistribution)
+
+	chatAnalytics := analytics.Group("/chat")
+	chatAnalytics.GET("/summary", h.GetChatAnalyticsSummary)
+	chatAnalytics.GET("/feedback", h.GetChatFeedbackSummary)
+	chatAnalytics.GET("/confidence", h.GetChatConfidenceDistribution)
+	chatAnalytics.GET("/trends", h.GetChatTrends)
+}
+
+// registerUserCaseRoutes registers user-facing case routes on the given group.
+func registerUserCaseRoutes(
+	cases *gin.RouterGroup,
+	accessHandler *CaseAccessHandler,
+	responseHandler *CaseResponseHandler,
+) {
+	cases.GET("", accessHandler.ListPublishedCases)
+	cases.GET("/:id", accessHandler.GetPublishedCase)
+	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
+	cases.POST("/:id/responses", responseHandler.SubmitResponse)
+	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)
+}
+
+// registerProfileRoutes registers user profile routes on the given group.
+func registerProfileRoutes(profile *gin.RouterGroup, userHandler *UserHandler) {
+	profile.GET("/profile", userHandler.GetUserProfile)
+	profile.PUT("/profile", userHandler.UpdateUserProfile)
+}
+
+// registerAdminCaseRoutes registers all admin case routes on the given group.
+func registerAdminCaseRoutes(
+	adminCases *gin.RouterGroup,
+	adminHandler *CaseAdminHandler,
+	imageHandler *CaseImageHandler,
+	accessHandler *CaseAccessHandler,
+	responseHandler *CaseResponseHandler,
+	analyticsHandler *CaseAnalyticsHandler,
+) {
+	// CRUD operations (CaseAdminHandler)
+	adminCases.POST("", adminHandler.CreateCase)
+	adminCases.GET("", adminHandler.ListCases)
+	adminCases.GET("/:id", adminHandler.GetCase)
+	adminCases.PUT("/:id", adminHandler.UpdateCase)
+	adminCases.DELETE("/:id", adminHandler.DeleteCase)
+	adminCases.PUT("/:id/publish", adminHandler.PublishCase)
+	adminCases.PUT("/:id/close", adminHandler.CloseCase)
+
+	// Image management (CaseImageHandler)
+	adminCases.POST("/:id/images", imageHandler.UploadImage)
+	adminCases.GET("/:id/images", imageHandler.GetAdminCaseImages)
+	adminCases.GET("/:id/images/:imageId/url", imageHandler.GetAdminImageSignedURL)
+	adminCases.PATCH("/:id/images/:imageId", imageHandler.UpdateImage)
+	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
+	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
+
+	// Analytics and export (CaseAnalyticsHandler)
+	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
+	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
+	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
+	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
+	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
+
+	// User access management (CaseAccessHandler)
+	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
+	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
+	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
+}
+
+// registerAdminStudyRoutes registers all admin study routes on the given group.
+func registerAdminStudyRoutes(adminStudies *gin.RouterGroup, studyHandler *StudyHandler) {
 	// CRUD
 	adminStudies.POST("", studyHandler.CreateStudy)
 	adminStudies.GET("", studyHandler.ListStudies)

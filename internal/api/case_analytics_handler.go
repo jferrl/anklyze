@@ -18,7 +18,7 @@ type CaseAnalyticsHandler struct {
 	caseRepo      repository.CaseRepository
 	responseRepo  repository.CaseResponseRepository
 	analyticsRepo repository.CaseAnalyticsRepository
-	statsService  *StatisticsService
+	statsService  StatisticsService
 	studyService  StudyService
 }
 
@@ -27,7 +27,7 @@ func NewCaseAnalyticsHandler(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	analyticsRepo repository.CaseAnalyticsRepository,
-	statsService *StatisticsService,
+	statsService StatisticsService,
 	studyService StudyService,
 ) *CaseAnalyticsHandler {
 	return &CaseAnalyticsHandler{
@@ -99,7 +99,7 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 		return
 	}
 
-	metrics, err := (*h.statsService).CalculateReliabilityMetrics(responses, cs)
+	metrics, err := h.statsService.CalculateReliabilityMetrics(responses, cs)
 	if err != nil {
 		slog.Error("failed to calculate reliability metrics", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate metrics"})

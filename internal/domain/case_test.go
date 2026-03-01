@@ -179,41 +179,6 @@ func TestCase_IsExpired(t *testing.T) {
 	}
 }
 
-func TestCase_CanBeDeleted(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name string
-		c    Case
-		want bool
-	}{
-		{
-			name: "draft case can always be deleted",
-			c:    newDraftCase(),
-			want: true,
-		},
-		{
-			name: "published case can always be deleted",
-			c:    newPublishedCase(),
-			want: true,
-		},
-		{
-			name: "closed case can always be deleted",
-			c:    newClosedCase(),
-			want: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			if got := tt.c.CanBeDeleted(); got != tt.want {
-				t.Errorf("CanBeDeleted() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 // TestCase_BelongsToStudy was removed: BelongsToStudy() method was removed from Case domain model.
 // Study membership is now queried only through StudyService.IsCaseInStudy().
 

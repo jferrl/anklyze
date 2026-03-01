@@ -205,13 +205,11 @@ func getPagination(c *gin.Context) (int, int, int) {
 
 // isValidImageType checks if the content type is a valid image type.
 func isValidImageType(contentType string) bool {
-	validTypes := map[string]bool{
-		"image/jpeg":               true,
-		"image/png":                true,
-		"image/gif":                true,
-		"image/webp":               true,
-		"application/dicom":        true,
-		"application/octet-stream": true, // Often used for DICOM
+	switch contentType {
+	case "image/jpeg", "image/png", "image/gif", "image/webp",
+		"application/dicom", "application/octet-stream":
+		return true
+	default:
+		return false
 	}
-	return validTypes[contentType]
 }

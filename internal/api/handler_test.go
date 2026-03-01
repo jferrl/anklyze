@@ -20,6 +20,16 @@ func newTestClassificationSvc() service.ClassificationService {
 	return service.NewClassificationService(rules.NewEngine(), repository.NewNoOpCaseResponseRepository())
 }
 
+// setupTestHandlerWithDB creates a handler with the specified dbHealthy flag.
+func setupTestHandlerWithDB(dbHealthy bool) *Handler {
+	classificationService := newTestClassificationSvc()
+	auditRepo := repository.NewNoOpAuditRepository()
+	analyticsRepo := repository.NewNoOpAnalyticsRepository()
+	chatAuditRepo := repository.NewNoOpChatAuditRepository()
+	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
+	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy, nil)
+}
+
 // setupTestHandler creates a handler with real implementations for integration testing.
 // dbHealthy defaults to true — tests not specifically checking health degraded mode
 // should assume a healthy database state.
@@ -72,12 +82,7 @@ func TestHandler_HealthCheck(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			classificationSvc := newTestClassificationSvc()
-			auditRepo := repository.NewNoOpAuditRepository()
-			analyticsRepo := repository.NewNoOpAnalyticsRepository()
-			chatAuditRepo := repository.NewNoOpChatAuditRepository()
-			chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
-			h := NewHandler(classificationSvc, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, tt.dbHealthy, nil)
+			h := setupTestHandlerWithDB(tt.dbHealthy)
 			router := setupTestRouter(h)
 
 			req := httptest.NewRequest(http.MethodGet, "/health", nil)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ type CaseResponseHandler struct {
 	studyService      StudyService
 	storage           storage.Storage
 	signedURLDuration time.Duration
+	wg                sync.WaitGroup
 }
 
 // NewCaseResponseHandler creates a new case response handler.
@@ -40,6 +42,12 @@ func NewCaseResponseHandler(
 	}
 }
 
+// Close waits for all background goroutines to finish.
+// Should be called during shutdown before closing the database.
+func (h *CaseResponseHandler) Close() {
+	h.wg.Wait()
+}
+
 // SubmitResponse handles POST /api/cases/:id/responses
 // Requires user to have access to the case.
 func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
@@ -49,14 +57,9 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-	userID, err := uuid.Parse(userIDStr.(string))
+	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
@@ -152,7 +155,7 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 	// Update case counters in background with detached context
 	// Use context.Background() since these operations must complete after response is sent
 	// (request context gets cancelled when the HTTP response is sent)
-	go func() {
+	h.wg.Go(func() {
 		// Create background context with timeout to prevent infinite hangs
 		bgCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
@@ -186,7 +189,7 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		if cs.StudyID != nil && h.studyService != nil {
 			h.studyService.UpdateProgressAfterResponse(bgCtx, *cs.StudyID, caseID, userID)
 		}
-	}()
+	})
 
 	// Build result with reference comparison if enabled
 	result := SubmitResponseResult{
@@ -219,14 +222,9 @@ func (h *CaseResponseHandler) GetMyResponses(c *gin.Context) {
 		return
 	}
 
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-	userID, err := uuid.Parse(userIDStr.(string))
+	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
@@ -290,14 +288,9 @@ func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
 	}
 
 	// Get user ID and check access (admins bypass this check)
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
-		return
-	}
-	uid, err := uuid.Parse(userIDStr.(string))
+	uid, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
 		return
 	}
 

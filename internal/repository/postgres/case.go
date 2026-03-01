@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
 
@@ -375,7 +376,7 @@ func (r *CaseResponseRepository) Save(ctx context.Context, response *domain.Case
 	r.mu.RLock()
 	if r.closed {
 		r.mu.RUnlock()
-		return ErrRepositoryClosed
+		return repository.ErrRepositoryClosed
 	}
 	r.mu.RUnlock()
 
@@ -386,7 +387,7 @@ func (r *CaseResponseRepository) Save(ctx context.Context, response *domain.Case
 		return nil
 	default:
 		slog.Warn("case response buffer full, dropping entry", "response_id", response.ID)
-		return ErrBufferFull
+		return repository.ErrBufferFull
 	}
 }
 
@@ -607,11 +608,13 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 
 	// Get average time taken
 	var avgTimeTaken float64
-	r.db.WithContext(ctx).
+	if err := r.db.WithContext(ctx).
 		Model(&domain.CaseResponse{}).
 		Where("case_id = ?", caseID).
 		Select("COALESCE(AVG(time_taken_ms), 0)").
-		Scan(&avgTimeTaken)
+		Scan(&avgTimeTaken).Error; err != nil {
+		return nil, fmt.Errorf("get summary avg time: %w", err)
+	}
 
 	// Get case info
 	var cs domain.Case
@@ -619,11 +622,23 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 		return nil, fmt.Errorf("get summary case info: %w", err)
 	}
 
-	// Get distributions
-	dwDist, _ := r.getDistribution(ctx, caseID, "danis_weber_type")
-	lhDist, _ := r.getDistribution(ctx, caseID, "lauge_hansen_type")
-	aoDist, _ := r.getDistribution(ctx, caseID, "ao_ota_code")
-	btDist, _ := r.getDistribution(ctx, caseID, "bartonicek_type")
+	// Get distributions (non-critical: log failures but don't fail the whole summary)
+	dwDist, err := r.getDistribution(ctx, caseID, "danis_weber_type")
+	if err != nil {
+		slog.Warn("failed to get danis_weber distribution", "case_id", caseID, "error", err)
+	}
+	lhDist, err := r.getDistribution(ctx, caseID, "lauge_hansen_type")
+	if err != nil {
+		slog.Warn("failed to get lauge_hansen distribution", "case_id", caseID, "error", err)
+	}
+	aoDist, err := r.getDistribution(ctx, caseID, "ao_ota_code")
+	if err != nil {
+		slog.Warn("failed to get ao_ota distribution", "case_id", caseID, "error", err)
+	}
+	btDist, err := r.getDistribution(ctx, caseID, "bartonicek_type")
+	if err != nil {
+		slog.Warn("failed to get bartonicek distribution", "case_id", caseID, "error", err)
+	}
 
 	return &domain.CaseAnalyticsSummary{
 		CaseID:            caseID,

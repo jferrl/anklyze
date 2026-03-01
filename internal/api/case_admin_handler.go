@@ -38,14 +38,9 @@ func (h *CaseAdminHandler) CreateCase(c *gin.Context) {
 	}
 
 	// Get user ID from context (set by auth middleware)
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-	userID, err := uuid.Parse(userIDStr.(string))
+	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
@@ -316,7 +311,12 @@ func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
 	}
 
 	// Refresh case data
-	cs, _ = h.caseRepo.GetByID(c.Request.Context(), id)
+	cs, err = h.caseRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to refresh case after publish", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "case published but failed to refresh"})
+		return
+	}
 	c.JSON(http.StatusOK, cs)
 }
 
@@ -351,6 +351,11 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 	}
 
 	// Refresh case data
-	cs, _ = h.caseRepo.GetByID(c.Request.Context(), id)
+	cs, err = h.caseRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to refresh case after close", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "case closed but failed to refresh"})
+		return
+	}
 	c.JSON(http.StatusOK, cs)
 }
