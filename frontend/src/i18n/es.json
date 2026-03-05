@@ -359,7 +359,9 @@
       "title": "Flujo de Clasificación",
       "description": "Guía visual del proceso de decisión de clasificación",
       "show": "Mostrar Flujo",
-      "hide": "Ocultar Flujo"
+      "hide": "Ocultar Flujo",
+      "resetZoom": "Restablecer zoom",
+      "loading": "Cargando diagrama..."
     }
   },
   "chat": {

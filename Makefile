@@ -1,6 +1,7 @@
 .PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger lint-go
+	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger lint-go \
+	export-diagram
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
 
@@ -170,6 +171,14 @@ lint-go:
 	@echo "==> Running golangci-lint..."
 	@golangci-lint run ./...
 	@echo "All Go lint checks passed."
+
+# Export draw.io diagram to SVG (requires: brew install --cask drawio)
+export-diagram:
+	@echo "Exporting classification flow diagram to SVG..."
+	@drawio --export --format svg --embed-svg-fonts false \
+		--output frontend/public/classification-flow.svg \
+		"docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
+	@echo "Done: frontend/public/classification-flow.svg"
 
 # Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:

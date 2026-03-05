@@ -353,7 +353,9 @@
       "title": "Classification Flow",
       "description": "Visual guide for the classification decision process",
       "show": "Show Flow",
-      "hide": "Hide Flow"
+      "hide": "Hide Flow",
+      "resetZoom": "Reset zoom",
+      "loading": "Loading diagram..."
     }
   },
   "chat": {

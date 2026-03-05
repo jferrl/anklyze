@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanelRightOpen, PanelRightClose, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { DrawioViewer } from './DrawioViewer';
+import { SvgDiagramViewer } from './SvgDiagramViewer';
 
-const DIAGRAM_SRC = '/classification-flow.drawio';
+const DIAGRAM_SRC = '/classification-flow.svg';
 
 export function FlowDiagramSidebar() {
   const { t } = useTranslation();
@@ -59,15 +59,13 @@ export function FlowDiagramSidebar() {
             </Button>
           </div>
 
-          {/* Diagram Content — draw.io viewer handles zoom/pan/toolbar */}
-          <div className="flex-1 overflow-auto">
-            {isOpen && (
-              <DrawioViewer
-                src={DIAGRAM_SRC}
-                className="h-full"
-              />
-            )}
-          </div>
+          {/* Diagram Content — SVG viewer with pan/zoom */}
+          {isOpen && (
+            <SvgDiagramViewer
+              src={DIAGRAM_SRC}
+              className="flex-1 flex flex-col overflow-hidden"
+            />
+          )}
         </div>
       </div>
 
