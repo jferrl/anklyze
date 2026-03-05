@@ -1,28 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PanelRightOpen, PanelRightClose, X, ZoomIn, ZoomOut, RotateCcw, Maximize } from 'lucide-react';
+import { PanelRightOpen, PanelRightClose, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { MermaidDiagram } from './MermaidDiagram';
-import { flowchartEN } from '../data/flowcharts/en';
-import { flowchartES } from '../data/flowcharts/es';
+import { DrawioViewer } from './DrawioViewer';
+
+const DIAGRAM_SRC = '/classification-flow.drawio';
 
 export function FlowDiagramSidebar() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const currentChart = i18n.language === 'es' ? flowchartES : flowchartEN;
-
-  const handleZoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
-  const handleZoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.25));
-  const handleResetZoom = () => setZoom(1);
-  const handleFitToScreen = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      setZoom(0.5);
-    }
-  };
 
   return (
     <>
@@ -73,67 +59,14 @@ export function FlowDiagramSidebar() {
             </Button>
           </div>
 
-          {/* Toolbar */}
-          <div className="px-4 py-2 border-b bg-muted/10 flex items-center gap-2 shrink-0">
-            <div className="flex items-center gap-1 border rounded-md p-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={handleZoomOut}
-                disabled={zoom <= 0.25}
-                title="Zoom Out"
-              >
-                <ZoomOut className="h-4 w-4" />
-              </Button>
-              <span className="text-sm font-medium w-14 text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={handleZoomIn}
-                disabled={zoom >= 3}
-                title="Zoom In"
-              >
-                <ZoomIn className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={handleResetZoom}
-              title="Reset Zoom (100%)"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={handleFitToScreen}
-              title="Fit to Screen"
-            >
-              <Maximize className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Diagram Content - Scrollable in both directions */}
-          <div ref={containerRef} className="flex-1 overflow-auto p-4">
-            <div
-              style={{
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top left',
-                transition: 'transform 0.2s ease-out',
-              }}
-            >
-              <MermaidDiagram
-                chart={currentChart}
-                className="min-w-max"
+          {/* Diagram Content — draw.io viewer handles zoom/pan/toolbar */}
+          <div className="flex-1 overflow-auto">
+            {isOpen && (
+              <DrawioViewer
+                src={DIAGRAM_SRC}
+                className="h-full"
               />
-            </div>
+            )}
           </div>
         </div>
       </div>
