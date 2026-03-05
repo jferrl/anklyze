@@ -107,6 +107,12 @@ linters:
         linters:
           - gocyclo
           - gocognit
+          - funlen
+      # AO/OTA medical classification codes use ALL_CAPS with underscores by convention
+      - path: "internal/domain/classification\\.go$"
+        linters:
+          - revive
+        text: "var-naming"
       # Domain comparison logic is inherently branchy
       - path: "internal/domain/case\\.go$"
         linters:

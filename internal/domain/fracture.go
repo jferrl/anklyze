@@ -83,6 +83,7 @@ const (
 // LateralSubtype represents the subtype of lateral fracture for transindesmal paths.
 type LateralSubtype string
 
+// LateralSubtype constants define the possible subtypes for lateral fractures.
 const (
 	LateralSubtypeSimple             LateralSubtype = "simple"              // Simple
 	LateralSubtypeSyndesmosisRupture LateralSubtype = "syndesmosis_rupture" // Rotura sindesmosis
@@ -94,6 +95,7 @@ const (
 // MedialSubtype represents the subtype of medial involvement for bimalleolar paths.
 type MedialSubtype string
 
+// MedialSubtype constants define the possible subtypes for medial involvement.
 const (
 	MedialSubtypeOpenMortise       MedialSubtype = "open_mortise"       // Abierta mortaja
 	MedialSubtypeMalleolusFracture MedialSubtype = "malleolus_fracture" // Fractura maléolo
