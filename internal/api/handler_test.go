@@ -222,23 +222,21 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 	tests := []struct {
 		name                string
 		medialMorphology    domain.MedialMorphology
-		expectedAOOTA       domain.AOOTACode
+		expectedAOOTANil    bool
 		expectedLaugeHansen domain.LaugeHansenType
-		expectedAmbiguous   bool
+		expectedLHNil       bool
 	}{
 		{
 			name:                "oblique medial morphology",
 			medialMorphology:    domain.MedialMorphologyVertical,
-			expectedAOOTA:       domain.AOOTAA2,
+			expectedAOOTANil:    true, // AO not classifiable for medial-only
 			expectedLaugeHansen: domain.LaugeHansenSA,
-			expectedAmbiguous:   false,
 		},
 		{
-			name:                "transverse medial morphology - ambiguous",
-			medialMorphology:    domain.MedialMorphologyTransverse,
-			expectedAOOTA:       domain.AOOTAA2,
-			expectedLaugeHansen: "", // No specific type when ambiguous
-			expectedAmbiguous:   true,
+			name:             "transverse medial morphology",
+			medialMorphology: domain.MedialMorphologyTransverse,
+			expectedAOOTANil: true, // AO not classifiable for medial-only
+			expectedLHNil:    true, // LH not classifiable for transverse medial
 		},
 	}
 
@@ -275,21 +273,23 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 				t.Fatalf("failed to unmarshal response: %v", err)
 			}
 
-			if result.AOOTA == nil {
-				t.Fatal("AOOTA classification is nil")
-			}
-			if result.AOOTA.Code != tt.expectedAOOTA {
-				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
+			if tt.expectedAOOTANil {
+				if result.AOOTA != nil {
+					t.Errorf("AOOTA should be nil for medial-only, got %q", result.AOOTA.Code)
+				}
 			}
 
-			if result.LaugeHansen == nil {
-				t.Fatal("LaugeHansen classification is nil")
-			}
-			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
-			}
-			if result.LaugeHansen.Ambiguous != tt.expectedAmbiguous {
-				t.Errorf("LaugeHansen.Ambiguous = %v, want %v", result.LaugeHansen.Ambiguous, tt.expectedAmbiguous)
+			if tt.expectedLHNil {
+				if result.LaugeHansen != nil {
+					t.Errorf("LaugeHansen should be nil, got %q", result.LaugeHansen.Type)
+				}
+			} else {
+				if result.LaugeHansen == nil {
+					t.Fatal("LaugeHansen classification is nil")
+				}
+				if result.LaugeHansen.Type != tt.expectedLaugeHansen {
+					t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
+				}
 			}
 
 			// Medial only should not have DanisWeber
@@ -324,7 +324,7 @@ func TestHandler_ClassifyFracture_LateralOnly(t *testing.T) {
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB,
+			expectedAOOTA:       domain.AOOTAB1,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
@@ -332,7 +332,7 @@ func TestHandler_ClassifyFracture_LateralOnly(t *testing.T) {
 			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			expectedDanisWeber:  domain.DanisWeberB,
-			expectedAOOTA:       domain.AOOTAB,
+			expectedAOOTA:       domain.AOOTAB1,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{
@@ -438,7 +438,7 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 			fibularLevel:        domain.FibularLevelSuprasindesmal,
 			suprasindesmalType:  domain.SuprasindesmalSimpleDiaphyseal,
 			expectedDanisWeber:  domain.DanisWeberC,
-			expectedAOOTA:       domain.AOOTAC1,
+			expectedAOOTA:       domain.AOOTAC1_3,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
 		{
@@ -449,10 +449,11 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
-			name:                      "low transverse infrasindesmal trimaleolar - impossible",
+			name:                      "low transverse infrasindesmal trimaleolar",
 			lateralMorphology:         domain.LateralMorphologyTransverse,
 			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
-			expectedImpossible:        true,
+			expectedDanisWeber:        domain.DanisWeberA,
+			expectedAOOTA:             domain.AOOTAA3_3,
 		},
 	}
 
@@ -519,11 +520,13 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
 			}
 
-			if result.LaugeHansen == nil {
-				t.Fatal("LaugeHansen classification is nil")
-			}
-			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
+			if tt.expectedLaugeHansen != "" {
+				if result.LaugeHansen == nil {
+					t.Fatal("LaugeHansen classification is nil")
+				}
+				if result.LaugeHansen.Type != tt.expectedLaugeHansen {
+					t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
+				}
 			}
 		})
 	}
