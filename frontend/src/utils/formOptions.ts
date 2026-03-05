@@ -159,12 +159,18 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'spiral', label: t('form.options.lateralMorphology.spiral') },
   ];
 
-  // Fibula morphology for lateral+medial and trimaleolar paths
-  const fibula_morphology_lm_tri: SelectOption[] = [
-    { value: 'transverse', label: t('form.options.fibulaMorphologyLMTri.transverse') },
-    { value: 'oblique', label: t('form.options.fibulaMorphologyLMTri.oblique') },
-    { value: 'spiral', label: t('form.options.fibulaMorphologyLMTri.spiral') },
-    { value: 'conminuta', label: t('form.options.fibulaMorphologyLMTri.conminuta') },
+  // Fibula morphology for lateral+medial transindesmal (3 options per drawio)
+  const fibula_morphology_lm: SelectOption[] = [
+    { value: 'transverse', label: t('form.options.fibulaMorphologyLM.transverse') },
+    { value: 'spiral', label: t('form.options.fibulaMorphologyLM.spiral') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyLM.conminuta') },
+  ];
+
+  // Fibula morphology for trimaleolar transindesmal (3 options per drawio)
+  const fibula_morphology_tri: SelectOption[] = [
+    { value: 'transverse', label: t('form.options.fibulaMorphologyTri.transverse') },
+    { value: 'oblique', label: t('form.options.fibulaMorphologyTri.oblique') },
+    { value: 'spiral', label: t('form.options.fibulaMorphologyTri.spiral') },
   ];
 
   // Infrasindesmal morphology options (avulsion vs malleolus fracture)
@@ -227,7 +233,8 @@ export function getLocalFormOptions(): FormOptions {
     medial_morphology_lm,
     fibular_levels,
     lateral_morphology,
-    fibula_morphology_lm_tri,
+    fibula_morphology_lm,
+    fibula_morphology_tri,
     suprasindesmal_types,
     fibular_level_high_low,
     fibular_level_for_transverse,

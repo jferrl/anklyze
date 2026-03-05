@@ -36,8 +36,11 @@ function getBreadcrumbTrail(
 
   // Lateral morphology
   if (formData.lateral_morphology) {
-    const isLMOrTri = ['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '');
-    const morphOptions = isLMOrTri ? options.fibula_morphology_lm_tri : options.lateral_morphology;
+    const morphOptions = formData.involved_malleoli === 'lateral_medial'
+      ? options.fibula_morphology_lm
+      : formData.involved_malleoli === 'trimaleolar'
+        ? options.fibula_morphology_tri
+        : options.lateral_morphology;
     const option = morphOptions?.find(
       opt => opt.value === formData.lateral_morphology
     );

@@ -183,11 +183,15 @@
         "oblique": "Transverse/Oblique (Low medial, high lateral)/Comminuted",
         "spiral": "Spiral (Low anterior, high posterior)"
       },
-      "fibulaMorphologyLMTri": {
-        "transverse": "Transverse",
-        "oblique": "Oblique (Low medial, high lateral)/Comminuted",
+      "fibulaMorphologyLM": {
+        "transverse": "Transverse/Oblique (Low medial, high lateral)",
         "spiral": "Spiral (Low anterior, high posterior)",
-        "conminuta": "Comminuted"
+        "conminuta": "Comminuted/butterfly"
+      },
+      "fibulaMorphologyTri": {
+        "transverse": "Transverse/Oblique (Low medial, high lateral)",
+        "oblique": "Comminuted/butterfly",
+        "spiral": "Spiral (Low anterior, high posterior)"
       },
       "infrasindesmalMorphology": {
         "avulsion": "Fibula tip avulsion",

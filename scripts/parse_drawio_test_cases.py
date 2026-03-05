@@ -19,6 +19,87 @@ import sys
 DRAWIO_PATH = sys.argv[1] if len(sys.argv) > 1 else "docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
 OUTPUT_PATH = sys.argv[2] if len(sys.argv) > 2 else "/tmp/classification_test_cases.json"
 
+# --- Form labels from i18n/es.json (source of truth for E2E click targets) ---
+# These MUST match the actual form UI labels exactly.
+FORM_LABELS = {
+    'involved_malleoli': {
+        'posterior_only': 'Maléolo posterior',
+        'medial_only': 'Maléolo medial',
+        'lateral_only': 'Maléolo lateral',
+        'medial_posterior': 'Maléolos medial y posterior',
+        'lateral_posterior': 'Maléolos lateral y posterior',
+        'lateral_medial': 'Maléolos lateral y medial',
+        'trimaleolar': 'Maléolos medial, lateral y posterior',
+    },
+    'fibular_level': {
+        'infrasindesmal': 'Infrasindesmal',
+        'transindesmal': 'Transindesmal',
+        'suprasindesmal': 'Suprasindesmal',
+    },
+    'lateral_morphology': {
+        'oblique': 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta',
+        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
+    },
+    'fibula_morphology_lm': {
+        'transverse': 'Transversa/Oblicua (Baja medial, alta lateral)',
+        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
+        'conminuta': 'Conminuta/ala de mariposa',
+    },
+    'fibula_morphology_tri': {
+        'transverse': 'Transversa/Oblicua (Baja medial, alta lateral)',
+        'oblique': 'Conminuta/ala de mariposa',
+        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
+    },
+    'infrasindesmal_morphology': {
+        'avulsion': 'Avulsión punta del peroné',
+        'malleolus_fracture': 'Fractura del maléolo',
+    },
+    'lateral_subtype': {
+        'simple': 'Simple',
+        'syndesmosis_rupture': 'Rotura de sindesmosis',
+        'butterfly': 'Ala de mariposa / cuña',
+    },
+    'medial_subtype': {
+        'open_mortise': 'Abierta mortaja',
+        'malleolus_fracture': 'Fractura del maléolo',
+    },
+    'suprasindesmal_type': {
+        'simple_diaphyseal': 'Diafisaria Simple',
+        'multifragmentary': 'Multifragmentaria',
+        'proximal': 'Proximal',
+    },
+    'fibula_trace_pattern': {
+        'parasindesmotic_short': 'Parasindesmal de trazo oblicuo corto/transverso/conminuto',
+        'parasindesmotic_long': 'Parasindesmal de trazo oblicuo largo/espiroideo',
+        'suprasindesmotic_far': 'Suprasindesmal (>6cm de superficie articular)',
+    },
+    'articular_involvement': {
+        'large_with_extension': '>1/3 de superficie articular con extensión metafisaria',
+        'small_without_extension': '<1/3 de superficie articular sin extensión metafisaria',
+    },
+    'medial_morphology': {
+        'vertical': 'Vertical',
+        'transverse_oblique': 'Transverso/oblicuo',
+    },
+    'posterior_fracture_type': {
+        'extraincisural': 'Fragmento extraincisural',
+        'posterolateral': 'Fragmento posterolateral',
+        'posteromedial_posterolateral': 'Fragmento posteromedial y posterolateral',
+        'large_posterolateral': 'Gran fragmento triangular posterolateral',
+        'extraincisural_posteromedial': 'Fragmento extraincisural postero-medial',
+    },
+    'yes_no': {
+        'true': 'Sí',
+        'false': 'No',
+    },
+}
+
+# Collect all valid form labels for validation
+ALL_VALID_LABELS = set()
+for group in FORM_LABELS.values():
+    for label in group.values():
+        ALL_VALID_LABELS.add(label)
+
 tree = ET.parse(DRAWIO_PATH)
 root = tree.getroot()
 
@@ -173,7 +254,7 @@ def parse_terminal_value(text):
 
 
 def trace_path_to_root(terminal_id):
-    """Trace path from terminal node back to root, collecting decision→option pairs."""
+    """Trace path from terminal node back to root, collecting decision->option pairs."""
     path = []
     visited = set()
     current = terminal_id
@@ -237,6 +318,19 @@ def normalize_labels(branch, clicks):
 
     The drawio has raw labels that don't always match the form's UI labels.
     This function normalizes them so test cases match what the form displays.
+
+    IMPORTANT: The drawio has 3 morphology options for LM/tri transindesmal:
+      1. "Transversa/Oblicua (Baja medial, alta lateral)" -> combined transverse+oblique
+      2. "Conminuta/ala de mariposa" -> conminuta/butterfly
+      3. "Espiroidea (Baja anterior, alta posterior)" -> spiral
+
+    The form has 4 options: Transversa, Oblicua/Conminuta, Espiroidea, Conminuta.
+
+    Mapping differs by branch:
+    - lateral_medial: drawio "Conminuta/ala de mariposa" -> form "Conminuta"
+      (B2.3 direct, no medial subtype)
+    - trimaleolar: drawio "Conminuta/ala de mariposa" -> form "Oblicua/Conminuta"
+      (has medial subtype, gives B3.3/nil — matches engine's oblique path)
     """
     result = []
     for click in clicks:
@@ -246,14 +340,28 @@ def normalize_labels(branch, clicks):
             result.append(click)
             continue
 
+        # --- Involved malleoli accent normalization ---
+        # Drawio uses "Maleolo"/"Maleolos"/"maleolos" without accent;
+        # form uses "Maléolo"/"Maléolos" with accent.
+        if q == '¿Qué maleolos tiene fracturados?':
+            label = label.replace('Maleolo ', 'Maléolo ')
+            label = label.replace('Maleolos ', 'Maléolos ')
+            label = label.replace('maleolos ', 'Maléolos ')
+            # Capitalize first letter after replacement
+            if label and label[0].islower():
+                label = label[0].upper() + label[1:]
+
+        # --- Yes/No accent normalization ---
+        # Drawio uses "Si" without accent; form uses "Sí"
+        if label == 'Si':
+            label = 'Sí'
+
         # --- Fibular level mapping for lateral_medial and trimaleolar ---
-        # These branches use a 2-option question (Alta/Baja) instead of 3-option
+        # These branches now use 3-option (Infrasindesmal/Transindesmal/Suprasindesmal)
         if branch in ('lateral_medial', 'trimaleolar'):
             if q == '¿A qué nivel está la fractura de peroné?':
-                if label in ('Infrasindesmal', 'Transindesmal'):
-                    label = 'Baja (Transindesmal / Infrasindesmal)'
-                elif label in ('Suprasindesmal', 'Alta (Suprasindesmal)'):
-                    label = 'Alta (Suprasindesmal)'
+                if label == 'Alta (Suprasindesmal)':
+                    label = 'Suprasindesmal'
 
         # --- Suprasindesmal type mapping ---
         if q == '¿De qué tipo?':
@@ -271,20 +379,40 @@ def normalize_labels(branch, clicks):
             if label.startswith('Parasindesmal conminuta'):
                 label = 'Parasindesmal de trazo oblicuo corto/transverso/conminuto'
 
-        # --- Lateral morphology mapping for lateral_medial and trimaleolar ---
-        # These branches use 3-option morphology (Transversa / Oblicua / Espiroidea)
-        if branch in ('lateral_medial', 'trimaleolar'):
+        # --- Lateral morphology mapping for lateral_medial ---
+        # Drawio has 3 options; form has 3 matching options.
+        # Labels match directly after the form split.
+        if branch == 'lateral_medial':
             if q == '¿De qué morfología es la fractura del peroné?':
                 if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
-                    label = 'Transversa'
+                    label = 'Transversa/Oblicua (Baja medial, alta lateral)'
                 elif label == 'Conminuta/ala de mariposa':
-                    label = 'Oblicua (Baja medial, alta lateral)/Conminuta'
+                    label = 'Conminuta/ala de mariposa'
+
+        # --- Lateral morphology mapping for trimaleolar ---
+        # Drawio has 3 options; form has 3 matching options.
+        if branch == 'trimaleolar':
+            if q == '¿De qué morfología es la fractura del peroné?':
+                if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
+                    label = 'Transversa/Oblicua (Baja medial, alta lateral)'
+                elif label == 'Conminuta/ala de mariposa':
+                    label = 'Conminuta/ala de mariposa'
 
         # --- Lateral morphology mapping for lateral_only, lateral_posterior ---
+        # These branches use a different question text: "¿De qué morfología es la fractura?"
+        # (without "del peroné"), and also "¿De qué morfología es la fractura del peroné?"
         if branch in ('lateral_only', 'lateral_posterior'):
-            if q == '¿De qué morfología es la fractura del peroné?':
+            if q in ('¿De qué morfología es la fractura?',
+                     '¿De qué morfología es la fractura del peroné?'):
                 if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
                     label = 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta'
+                elif label == 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta':
+                    pass  # Already correct
+                # Infrasindesmal morphology in lateral_only (different question used)
+                elif label == 'Avulsión de la punta del maleolo':
+                    label = 'Avulsión punta del peroné'
+                elif label == 'Fractura de maleolo lateral':
+                    label = 'Fractura del maléolo'
 
         # --- Fibula trace pattern mapping (all variants) ---
         # Drawio uses long descriptions; form uses shorter standard labels
@@ -367,27 +495,100 @@ def determine_branch(path):
     return 'unknown'
 
 
+# --- Required form questions per branch ---
+# These define which questions the form ALWAYS asks for each branch+level.
+# Used to detect shortcut paths in the drawio that skip required form questions.
+REQUIRED_QUESTIONS = {
+    # Trimaleolar always asks CT scan
+    ('trimaleolar', 'infrasindesmal'): {'¿Tiene TAC?'},
+    ('trimaleolar', 'transindesmal'): {'¿Tiene TAC?'},
+    ('trimaleolar', 'suprasindesmal'): {'¿Tiene TAC?'},
+    # Lateral+posterior always asks CT scan
+    ('lateral_posterior', 'infrasindesmal'): {'¿Tiene TAC?'},
+    ('lateral_posterior', 'transindesmal'): {'¿Tiene TAC?'},
+    ('lateral_posterior', 'suprasindesmal'): {'¿Tiene TAC?'},
+}
+
+
+def detect_fibular_level(clicks):
+    """Extract the fibular level from clicks (Infrasindesmal/Transindesmal/Suprasindesmal)."""
+    for click in clicks:
+        label = click.get('label', '')
+        if not label:
+            continue
+        ll = label.lower()
+        if ll in ('infrasindesmal',):
+            return 'infrasindesmal'
+        if ll in ('transindesmal',):
+            return 'transindesmal'
+        if ll in ('suprasindesmal',):
+            return 'suprasindesmal'
+        # Normalized labels
+        if 'infrasindesmal' in ll and 'suprasindesmal' not in ll:
+            return 'infrasindesmal'
+    return None
+
+
+def is_shortcut_path(branch, clicks):
+    """Detect if a test case is a drawio shortcut that skips required form questions.
+
+    The drawio sometimes has terminal nodes reachable via shorter paths that skip
+    questions the form always asks (e.g., CT scan for trimaleolar). These paths
+    produce the same classification as the longer path with the skipped question
+    answered "No", so they are redundant for E2E testing.
+    """
+    level = detect_fibular_level(clicks)
+    key = (branch, level)
+    required = REQUIRED_QUESTIONS.get(key)
+    if not required:
+        return False
+
+    questions_in_path = {c['question'] for c in clicks if c.get('label') is not None}
+    missing = required - questions_in_path
+    return len(missing) > 0
+
+
 # Trace all paths and generate test cases
 terminals = [c for c in cells.values() if c['type'] == 'terminal']
 all_test_cases = {}
 branch_counts = {}
+shortcut_count = 0
+label_warnings = []
 
 for terminal in terminals:
     path = trace_path_to_root(terminal['id'])
     parsed = parse_terminal_value(terminal['text'])
     branch = determine_branch(path)
 
-    all_test_cases.setdefault(branch, [])
-    branch_counts[branch] = branch_counts.get(branch, 0) + 1
-    idx = branch_counts[branch]
-
     clicks = [{'question': step['question'], 'label': step['answer']} for step in path]
     clicks.append({'question': 'Clasificar Fractura', 'label': None})
     clicks = normalize_labels(branch, clicks)
 
+    # Filter shortcut paths that skip required form questions
+    if is_shortcut_path(branch, clicks):
+        shortcut_count += 1
+        continue
+
+    all_test_cases.setdefault(branch, [])
+    branch_counts[branch] = branch_counts.get(branch, 0) + 1
+    idx = branch_counts[branch]
+
+    # Validate all normalized labels against known form labels
+    for click in clicks:
+        label = click.get('label')
+        if label is None:
+            continue
+        if label not in ALL_VALID_LABELS:
+            label_warnings.append({
+                'test_id': f'{branch}_{idx}',
+                'question': click['question'],
+                'label': label,
+                'terminal_id': terminal['id'],
+            })
+
     all_test_cases[branch].append({
         'id': f'{branch}_{idx}',
-        'description': ' → '.join([s['answer'] for s in path]),
+        'description': ' -> '.join([s['answer'] for s in path]),
         'clicks': clicks,
         'expected': parsed,
         'terminal_id': terminal['id'],
@@ -402,6 +603,8 @@ for branch in sorted(all_test_cases.keys()):
     total += count
     print(f"  {branch}: {count}")
 print(f"  TOTAL: {total}")
+if shortcut_count:
+    print(f"  Filtered shortcut paths: {shortcut_count}")
 
 # Check for parsing issues
 issues = 0
@@ -414,11 +617,82 @@ for branch, cases in all_test_cases.items():
 
 print(f"\nParsing issues: {issues}")
 
+# Report label validation warnings
+if label_warnings:
+    print(f"\n{'='*60}")
+    print(f"LABEL VALIDATION WARNINGS: {len(label_warnings)} labels don't match form i18n")
+    print(f"{'='*60}")
+    for w in label_warnings:
+        print(f"  {w['test_id']}: question=\"{w['question']}\" label=\"{w['label']}\"")
+    print(f"{'='*60}")
+else:
+    print(f"\nLabel validation: all labels match form i18n")
+
+# --- Drawio vs Form structure validation ---
+print(f"\n{'='*60}")
+print("DRAWIO vs FORM STRUCTURE VALIDATION")
+print(f"{'='*60}")
+
+# Collect unique drawio morphology options per branch
+drawio_morphology_options = {}
+for branch, cases in all_test_cases.items():
+    morph_labels = set()
+    for case in cases:
+        for click in case['clicks']:
+            q = click.get('question', '')
+            label = click.get('label', '')
+            if label and 'morfología' in q.lower() and 'fractura' in q.lower():
+                # Only lateral/fibula morphology questions, not medial morphology
+                if 'medial' not in q.lower():
+                    morph_labels.add(label)
+    if morph_labels:
+        drawio_morphology_options[branch] = morph_labels
+
+form_morphology_options = {
+    'lateral_only': set(FORM_LABELS['lateral_morphology'].values()),
+    'lateral_posterior': set(FORM_LABELS['lateral_morphology'].values()),
+    'lateral_medial': set(FORM_LABELS['fibula_morphology_lm'].values()),
+    'trimaleolar': set(FORM_LABELS['fibula_morphology_tri'].values()),
+}
+
+for branch in sorted(set(drawio_morphology_options) | set(form_morphology_options)):
+    drawio_opts = drawio_morphology_options.get(branch, set())
+    form_opts = form_morphology_options.get(branch, set())
+
+    if drawio_opts == form_opts:
+        print(f"  {branch} morphology: OK ({len(drawio_opts)} options)")
+    else:
+        extra_in_form = form_opts - drawio_opts
+        extra_in_drawio = drawio_opts - form_opts
+        print(f"  {branch} morphology: MISMATCH")
+        print(f"    Drawio options ({len(drawio_opts)}): {sorted(drawio_opts)}")
+        print(f"    Form options ({len(form_opts)}):   {sorted(form_opts)}")
+        if extra_in_form:
+            print(f"    Extra in form (not in drawio): {sorted(extra_in_form)}")
+        if extra_in_drawio:
+            print(f"    Extra in drawio (not in form): {sorted(extra_in_drawio)}")
+
+print(f"{'='*60}")
+
+# --- Check for duplicate paths ---
+print(f"\nDuplicate path check:")
+dup_count = 0
+for branch, cases in all_test_cases.items():
+    paths = {}
+    for case in cases:
+        path_key = ' -> '.join([c['label'] or 'CLASSIFY' for c in case['clicks']])
+        if path_key in paths:
+            dup_count += 1
+            print(f"  DUPLICATE in {branch}: {case['id']} duplicates {paths[path_key]}")
+        paths[path_key] = case['id']
+if dup_count == 0:
+    print("  No duplicates found")
+
 # Write output
 with open(OUTPUT_PATH, 'w') as f:
     json.dump(all_test_cases, f, indent=2, ensure_ascii=False)
 
-print(f"Test cases written to {OUTPUT_PATH}")
+print(f"\nTest cases written to {OUTPUT_PATH}")
 
 # Also write summary
 summary_path = OUTPUT_PATH.replace('.json', '_summary.txt')
@@ -427,4 +701,10 @@ with open(summary_path, 'w') as f:
     for branch in sorted(all_test_cases.keys()):
         f.write(f"{branch}: {len(all_test_cases[branch])} terminals\n")
     f.write(f"\nTotal: {total}\n")
+    if shortcut_count:
+        f.write(f"Filtered shortcut paths: {shortcut_count}\n")
+    if label_warnings:
+        f.write(f"\nLabel warnings: {len(label_warnings)}\n")
+        for w in label_warnings:
+            f.write(f"  {w['test_id']}: {w['question']} -> {w['label']}\n")
 print(f"Summary written to {summary_path}")

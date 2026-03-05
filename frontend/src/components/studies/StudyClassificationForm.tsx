@@ -392,7 +392,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
           </QuestionCardHeader>
           <QuestionCardContent>
             <div className="grid gap-3" role="radiogroup" aria-label={options.questions.lateral_morphology?.title}>
-              {((showLMFibularMorphology || showTriLateralMorphologyTransComplete) ? options.fibula_morphology_lm_tri : options.lateral_morphology).map((option, index) => (
+              {(showLMFibularMorphology ? options.fibula_morphology_lm : showTriLateralMorphologyTransComplete ? options.fibula_morphology_tri : options.lateral_morphology).map((option, index) => (
                 <SelectionCard
                   key={option.value}
                   value={option.value}

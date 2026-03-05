@@ -870,7 +870,7 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 	engine := NewEngine()
 
 	boolTrue := true
-	boolFalse := false
+	_ = boolTrue
 
 	tests := []struct {
 		name                      string
@@ -923,42 +923,39 @@ func TestEngine_Classify_LateralMedial(t *testing.T) {
 			expectedAOOTA:       domain.AOOTAC3,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
-		// Path: Low - transverse lateral morphology - infrasindesmal
+		// Path: Infrasindesmal - direct infrasindesmal morphology
 		{
-			name:                      "low transverse lateral infrasindesmal",
-			medialMorphology:          domain.MedialMorphologyVertical,
-			fibulaInfraTransverse:     &boolFalse,
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberA,
-			expectedAOOTA:             domain.AOOTAA2,
-			expectedLaugeHansen:       domain.LaugeHansenSA,
+			name:                "infrasindesmal lateral medial",
+			fibularLevel:        domain.FibularLevelInfrasindesmal,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberA,
+			expectedAOOTA:       domain.AOOTAA2,
+			expectedLaugeHansen: domain.LaugeHansenSA,
 		},
-		// Path: Low - transverse lateral morphology - transindesmal
+		// Path: Transindesmal - transverse lateral morphology
 		{
-			name:                      "low transverse lateral transindesmal",
-			medialMorphology:          domain.MedialMorphologyVertical,
-			fibulaInfraTransverse:     &boolFalse,
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelTransindesmal,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberB,
-			expectedAOOTA:             domain.AOOTAB2,
-			expectedLaugeHansen:       domain.LaugeHansenPA,
+			name:                "transindesmal transverse lateral",
+			fibularLevel:        domain.FibularLevelTransindesmal,
+			lateralMorphology:   domain.LateralMorphologyTransverse,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberB,
+			expectedAOOTA:       domain.AOOTAB2,
+			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
-		// Path: Low - oblique lateral morphology
+		// Path: Transindesmal - oblique lateral morphology
 		{
-			name:                "low oblique lateral",
+			name:                "transindesmal oblique lateral",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
 			expectedAOOTA:       domain.AOOTAB2,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
-		// Path: Low - spiral lateral morphology
+		// Path: Transindesmal - spiral lateral morphology
 		{
-			name:                "low spiral lateral",
+			name:                "transindesmal spiral lateral",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
@@ -1059,50 +1056,50 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedAOOTA:       domain.AOOTAC3_3,
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
-		// Path: Low - transverse - infrasindesmal (valid classification per drawio 2026-02-28)
+		// Path: Infrasindesmal — direct infrasindesmal morphology
 		{
-			name:                      "low transverse infrasindesmal trimaleolar → A3.3 Weber A",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberA,
-			expectedAOOTA:             domain.AOOTAA3_3,
-			expectedLHNil:             true,
+			name:                "infrasindesmal trimaleolar → A3.3 Weber A",
+			fibularLevel:        domain.FibularLevelInfrasindesmal,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberA,
+			expectedAOOTA:       domain.AOOTAA3_3,
+			expectedLHNil:       true,
 		},
-		// Path: Low - transverse - transindesmal — B3 subtype by medial subtype
+		// Path: Transindesmal - transverse — B3 subtype by medial subtype
 		{
-			name:                      "low transverse transindesmal trimaleolar no medial subtype → B3",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelTransindesmal,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberB,
-			expectedAOOTA:             domain.AOOTAB3,
-			expectedLaugeHansen:       domain.LaugeHansenPA,
-		},
-		{
-			name:                      "low transverse transindesmal trimaleolar open mortise → B3.1",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelTransindesmal,
-			medialSubtype:             domain.MedialSubtypeOpenMortise,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberB,
-			expectedAOOTA:             domain.AOOTAB3_1,
-			expectedLaugeHansen:       domain.LaugeHansenPA,
+			name:                "transindesmal transverse trimaleolar no medial subtype → B3",
+			fibularLevel:        domain.FibularLevelTransindesmal,
+			lateralMorphology:   domain.LateralMorphologyTransverse,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberB,
+			expectedAOOTA:       domain.AOOTAB3,
+			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{
-			name:                      "low transverse transindesmal trimaleolar malleolus fracture → B3.2",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelTransindesmal,
-			medialSubtype:             domain.MedialSubtypeMalleolusFracture,
-			lang:                      i18n.English,
-			expectedDanisWeber:        domain.DanisWeberB,
-			expectedAOOTA:             domain.AOOTAB3_2,
-			expectedLaugeHansen:       domain.LaugeHansenPA,
+			name:                "transindesmal transverse trimaleolar open mortise → B3.1",
+			fibularLevel:        domain.FibularLevelTransindesmal,
+			lateralMorphology:   domain.LateralMorphologyTransverse,
+			medialSubtype:       domain.MedialSubtypeOpenMortise,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberB,
+			expectedAOOTA:       domain.AOOTAB3_1,
+			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
-		// Path: Low - oblique — B3 subtype depends on medial subtype per drawio 2026-02-28
+		{
+			name:                "transindesmal transverse trimaleolar malleolus fracture → B3.2",
+			fibularLevel:        domain.FibularLevelTransindesmal,
+			lateralMorphology:   domain.LateralMorphologyTransverse,
+			medialSubtype:       domain.MedialSubtypeMalleolusFracture,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberB,
+			expectedAOOTA:       domain.AOOTAB3_2,
+			expectedLaugeHansen: domain.LaugeHansenPA,
+		},
+		// Path: Transindesmal - oblique — B3 subtype depends on medial subtype per drawio 2026-02-28
 		// Oblique + malleolus_fracture → B3.3; oblique + open_mortise → nil (no clasificable)
 		{
-			name:                "low oblique trimaleolar malleolus fracture → B3.3",
+			name:                "transindesmal oblique trimaleolar malleolus fracture → B3.3",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			medialSubtype:       domain.MedialSubtypeMalleolusFracture,
 			lang:                i18n.English,
@@ -1111,7 +1108,8 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{
-			name:                "low oblique trimaleolar open mortise → nil AO (no clasificable)",
+			name:                "transindesmal oblique trimaleolar open mortise → nil AO (no clasificable)",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			medialSubtype:       domain.MedialSubtypeOpenMortise,
 			lang:                i18n.English,
@@ -1119,9 +1117,10 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedAOOTANil:    true,
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
-		// Path: Low - spiral — B3 subtype by medial subtype
+		// Path: Transindesmal - spiral — B3 subtype by medial subtype
 		{
-			name:                "low spiral trimaleolar no medial subtype → B3",
+			name:                "transindesmal spiral trimaleolar no medial subtype → B3",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
@@ -1129,7 +1128,8 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
-			name:                "low spiral trimaleolar open mortise → B3.1",
+			name:                "transindesmal spiral trimaleolar open mortise → B3.1",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			medialSubtype:       domain.MedialSubtypeOpenMortise,
 			lang:                i18n.English,
@@ -1138,7 +1138,8 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
-			name:                "low spiral trimaleolar malleolus fracture → B3.2",
+			name:                "transindesmal spiral trimaleolar malleolus fracture → B3.2",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			medialSubtype:       domain.MedialSubtypeMalleolusFracture,
 			lang:                i18n.English,
@@ -1351,16 +1352,16 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
 		{
-			name:                      "low transverse infrasindesmal with CT → Bartonicek 1",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
-			posteriorType:             domain.PosteriorExtraincisural,
-			hasCTScan:                 &boolTrue,
-			expectedBartonicek:        domain.BartonicekType1,
-			expectedLHNil:             true,
+			name:               "infrasindesmal with CT → Bartonicek 1",
+			fibularLevel:       domain.FibularLevelInfrasindesmal,
+			posteriorType:      domain.PosteriorExtraincisural,
+			hasCTScan:          &boolTrue,
+			expectedBartonicek: domain.BartonicekType1,
+			expectedLHNil:      true,
 		},
 		{
-			name:                "low oblique with CT → Bartonicek 4",
+			name:                "transindesmal oblique with CT → Bartonicek 4",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologyOblique,
 			posteriorType:       domain.PosteriorLargePosterolateral,
 			hasCTScan:           &boolTrue,
@@ -1368,7 +1369,8 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{
-			name:                "low spiral with CT → Bartonicek 2",
+			name:                "transindesmal spiral with CT → Bartonicek 2",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			posteriorType:       domain.PosteriorPosterolateral,
 			hasCTScan:           &boolTrue,
@@ -1475,11 +1477,10 @@ func TestEngine_Classify_SuprasindesmoticFarTracePattern(t *testing.T) {
 func TestEngine_Classify_TrimaleolarInfrasindesmal(t *testing.T) {
 	engine := NewEngine()
 
-	t.Run("trimaleolar transverse infrasindesmal → 44-A3.3 Weber A", func(t *testing.T) {
+	t.Run("trimaleolar infrasindesmal → 44-A3.3 Weber A", func(t *testing.T) {
 		input := domain.FractureInput{
-			InvolvedMalleoli:          domain.InvolvedTrimaleolar,
-			LateralMorphology:         domain.LateralMorphologyTransverse,
-			FibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
+			InvolvedMalleoli: domain.InvolvedTrimaleolar,
+			FibularLevel:     domain.FibularLevelInfrasindesmal,
 		}
 		result, err := engine.Classify(input)
 		if err != nil {
@@ -1634,17 +1635,7 @@ func TestEngine_Classify_AOSubtypes(t *testing.T) {
 			},
 			expectedAO: domain.AOOTAC3_2,
 		},
-		// Conminuta morphology → AO nil
-		{
-			name: "trimaleolar conminuta → AO nil",
-			input: domain.FractureInput{
-				InvolvedMalleoli:  domain.InvolvedTrimaleolar,
-				FibularLevel:      domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyConminuta,
-				HasCTScan:         boolPtr(false),
-			},
-			expectedNil: true,
-		},
+		// Conminuta morphology
 		{
 			name: "lateral_medial conminuta → 44-B2.3",
 			input: domain.FractureInput{

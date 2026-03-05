@@ -189,11 +189,15 @@
         "oblique": "Transversa/Oblicua (Baja medial, alta lateral)/Conminuta",
         "spiral": "Espiroidea (Baja anterior, alta posterior)"
       },
-      "fibulaMorphologyLMTri": {
-        "transverse": "Transversa",
-        "oblique": "Oblicua (Baja medial, alta lateral)/Conminuta",
+      "fibulaMorphologyLM": {
+        "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
         "spiral": "Espiroidea (Baja anterior, alta posterior)",
-        "conminuta": "Conminuta"
+        "conminuta": "Conminuta/ala de mariposa"
+      },
+      "fibulaMorphologyTri": {
+        "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
+        "oblique": "Conminuta/ala de mariposa",
+        "spiral": "Espiroidea (Baja anterior, alta posterior)"
       },
       "infrasindesmalMorphology": {
         "avulsion": "Avulsión punta del peroné",

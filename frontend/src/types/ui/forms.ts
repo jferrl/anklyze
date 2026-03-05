@@ -103,8 +103,11 @@ export interface FormOptions {
   /** Options for lateral fracture morphology */
   lateral_morphology: FormOption[];
 
-  /** Options for fibula morphology in lateral+medial and trimaleolar cases */
-  fibula_morphology_lm_tri: FormOption[];
+  /** Options for fibula morphology in lateral+medial transindesmal cases */
+  fibula_morphology_lm: FormOption[];
+
+  /** Options for fibula morphology in trimaleolar transindesmal cases */
+  fibula_morphology_tri: FormOption[];
 
   /** Options for suprasyndesmotic fracture types */
   suprasindesmal_types: FormOption[];

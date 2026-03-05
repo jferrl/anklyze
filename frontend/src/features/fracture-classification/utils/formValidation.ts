@@ -29,8 +29,7 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
     case 'lateral_only':
       if (!formData.fibular_level) return false;
       if (formData.fibular_level === 'infrasindesmal') {
-        // Optional subtype question - complete once answered (or skipped)
-        return formData.infrasindesmal_morphology !== undefined || true;
+        return !!formData.infrasindesmal_morphology;
       }
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
@@ -52,8 +51,6 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
       if (formData.fibular_level === 'infrasindesmal') {
         if (formData.has_ct_scan === undefined) return false;
         if (formData.has_ct_scan === false) return true;
-        if (formData.is_posterior_posteromedial === undefined) return false;
-        if (formData.is_posterior_posteromedial === true) return true;
         return !!formData.posterior_fracture_type;
       }
       if (formData.fibular_level === 'suprasindesmal') {
@@ -75,6 +72,9 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         if (formData.fibula_infrasindesmal_transverse === true) return true;
       }
       if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'infrasindesmal') {
+        return !!formData.infrasindesmal_morphology;
+      }
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
         if (formData.suprasindesmal_type === 'proximal') {
@@ -85,14 +85,21 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         // Medial subtype is optional
         return true;
       }
+      // Transindesmal
       if (!formData.lateral_morphology) return false;
       if (formData.lateral_morphology === 'conminuta') return true; // Conminuta → AO nil, no more questions
-      if (formData.lateral_morphology === 'transverse' && !formData.fibular_level_for_transverse) return false;
       // Medial subtype is optional
       return true;
 
     case 'trimaleolar':
       if (!formData.fibular_level) return false;
+      if (formData.fibular_level === 'infrasindesmal') {
+        // Infrasindesmal → infrasindesmal morphology + CT + Bartonicek
+        if (!formData.infrasindesmal_morphology) return false;
+        if (formData.has_ct_scan === undefined) return false;
+        if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
+        return true;
+      }
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
         if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
@@ -100,23 +107,9 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
         return true;
       }
+      // Transindesmal → morphology + medial subtype + CT + Bartonicek
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'conminuta') {
-        // Conminuta → AO nil, still need CT + Bartonicek
-        if (formData.has_ct_scan === undefined) return false;
-        if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
-        return true;
-      }
-      if (formData.lateral_morphology === 'transverse') {
-        if (!formData.fibular_level_for_transverse) return false;
-        if (formData.fibular_level_for_transverse === 'infrasindesmal') {
-          // Infrasindesmal still needs CT + Bartonicek
-          if (formData.has_ct_scan === undefined) return false;
-          if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
-          return true;
-        }
-      }
-      // Transindesmal paths (transverse-transindesmal, oblique, spiral) need medial_subtype
+      // All trimaleolar transindesmal paths need medial_subtype
       if (!formData.medial_subtype) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
@@ -168,9 +161,6 @@ export function calculateProgress(formData: Partial<FractureInput>): { currentSt
     }
     if (type === 'lateral_medial' && formData.medial_morphology === 'vertical') {
       estimatedTotal += 1; // bimaleolar infra question
-    }
-    if (type === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal' && formData.has_ct_scan === true) {
-      estimatedTotal += 1; // is_posterior_posteromedial
     }
   }
 

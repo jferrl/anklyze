@@ -96,11 +96,10 @@ export function useQuestionVisibility(
       (formData.medial_morphology === 'vertical' && formData.fibula_infrasindesmal_transverse === false) ||
       formData.medial_morphology === 'transverse_oblique'
     );
-    const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level_for_transverse === 'suprasindesmal';
+    const showLMSuprasindesmalType = showLMFibularLevel && formData.fibular_level === 'suprasindesmal';
     const showLMFibulaTracePattern = showLMSuprasindesmalType &&
       (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
-    const showLMFibularMorphology = showLMFibularLevel &&
-      (formData.fibular_level_for_transverse === 'infrasindesmal' || formData.fibular_level_for_transverse === 'transindesmal');
+    const showLMFibularMorphology = showLMFibularLevel && formData.fibular_level === 'transindesmal';
 
     // PATH: Medial + Posterior
     const showMedialPosteriorMorphology = involvedMalleoli === 'medial_posterior';
@@ -114,7 +113,8 @@ export function useQuestionVisibility(
       (formData.suprasindesmal_type === 'simple_diaphyseal' || formData.suprasindesmal_type === 'multifragmentary');
     const showTriHasCTScan = (showTriFibulaTracePattern ||
       (showTrimaleolarSupraType && formData.suprasindesmal_type === 'proximal') ||
-      (showTrimaleolarFibularHeight && (formData.fibular_level === 'infrasindesmal' || formData.fibular_level === 'transindesmal'))) && !hasTACImages;
+      (showTrimaleolarFibularHeight && formData.fibular_level === 'infrasindesmal') ||
+      (showTrimaleolarFibularHeight && formData.fibular_level === 'transindesmal')) && !hasTACImages;
     const showTriPosteriorType = showTriHasCTScan === false && showTrimaleolarFibularHeight && formData.has_ct_scan === true;
     const showTriLateralMorphologyTrans = showTrimaleolarFibularHeight && formData.fibular_level === 'transindesmal';
     const showTriLateralMorphologyTransComplete = showTriLateralMorphologyTrans && (formData.has_ct_scan === true || hasTACImages);

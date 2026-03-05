@@ -442,18 +442,18 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
 		{
-			name:                "low spiral trimaleolar",
+			name:                "transindesmal spiral trimaleolar",
+			fibularLevel:        domain.FibularLevelTransindesmal,
 			lateralMorphology:   domain.LateralMorphologySpiral,
 			expectedDanisWeber:  domain.DanisWeberB,
 			expectedAOOTA:       domain.AOOTAB3,
 			expectedLaugeHansen: domain.LaugeHansenSER,
 		},
 		{
-			name:                      "low transverse infrasindesmal trimaleolar",
-			lateralMorphology:         domain.LateralMorphologyTransverse,
-			fibularLevelForTransverse: domain.FibularLevelInfrasindesmal,
-			expectedDanisWeber:        domain.DanisWeberA,
-			expectedAOOTA:             domain.AOOTAA3_3,
+			name:               "infrasindesmal trimaleolar",
+			fibularLevel:       domain.FibularLevelInfrasindesmal,
+			expectedDanisWeber: domain.DanisWeberA,
+			expectedAOOTA:      domain.AOOTAA3_3,
 		},
 	}
 
