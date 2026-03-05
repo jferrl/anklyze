@@ -31,7 +31,21 @@ export type FibularLevel =
 export type LateralMorphology =
   | 'transverse' // Transversa
   | 'oblique'    // Oblicua (Baja medial, alta lateral)
-  | 'spiral';    // Espiroidea (Baja anterior, alta posterior)
+  | 'spiral'     // Espiroidea (Baja anterior, alta posterior)
+  | 'conminuta'; // Conminuta
+
+// Subtipo lateral para transindesmal lateral-only
+export type LateralSubtype =
+  | 'simple'              // Simple
+  | 'syndesmosis_rupture' // Rotura sindesmosis
+  | 'butterfly'           // Ala de mariposa / cuña
+  | 'avulsion'            // Avulsión punta peroné
+  | 'malleolus_fracture'; // Fractura maléolo
+
+// Subtipo medial para bimalleolar
+export type MedialSubtype =
+  | 'open_mortise'       // Abierta mortaja
+  | 'malleolus_fracture'; // Fractura maléolo
 
 // Tipo de fractura suprasindesmal (Weber C)
 export type SuprasindesmalType =
@@ -90,6 +104,18 @@ export interface FractureInput {
 
   // Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
   is_posterior_posteromedial?: boolean;
+
+  // Lateral subtype for transindesmal lateral-only paths
+  lateral_subtype?: LateralSubtype;
+
+  // Infrasindesmal morphology subtype (avulsion, malleolus_fracture)
+  infrasindesmal_morphology?: LateralSubtype;
+
+  // Medial subtype for bimalleolar paths
+  medial_subtype?: MedialSubtype;
+
+  // Whether fibula head shortening is present (proximal/Maisonneuve path)
+  has_fibula_head_shortening?: boolean;
 }
 
 // Lauge-Hansen type

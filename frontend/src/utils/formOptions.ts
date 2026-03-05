@@ -83,6 +83,22 @@ export function getLocalFormOptions(): FormOptions {
       id: 'is_posterior_posteromedial',
       title: t('form.questions.posteriorPosteromedial'),
     },
+    infrasindesmal_morphology: {
+      id: 'infrasindesmal_morphology',
+      title: t('form.questions.infrasindesmalMorphology'),
+    },
+    lateral_subtype: {
+      id: 'lateral_subtype',
+      title: t('form.questions.lateralSubtype'),
+    },
+    medial_subtype: {
+      id: 'medial_subtype',
+      title: t('form.questions.medialSubtype'),
+    },
+    has_fibula_head_shortening: {
+      id: 'has_fibula_head_shortening',
+      title: t('form.questions.hasFibulaHeadShortening'),
+    },
   };
 
   // Labels
@@ -148,6 +164,26 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'transverse', label: t('form.options.fibulaMorphologyLMTri.transverse') },
     { value: 'oblique', label: t('form.options.fibulaMorphologyLMTri.oblique') },
     { value: 'spiral', label: t('form.options.fibulaMorphologyLMTri.spiral') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyLMTri.conminuta') },
+  ];
+
+  // Infrasindesmal morphology options (avulsion vs malleolus fracture)
+  const infrasindesmal_morphology: SelectOption[] = [
+    { value: 'avulsion', label: t('form.options.infrasindesmalMorphology.avulsion') },
+    { value: 'malleolus_fracture', label: t('form.options.infrasindesmalMorphology.malleolus_fracture') },
+  ];
+
+  // Lateral subtype options for transindesmal lateral-only
+  const lateral_subtype: SelectOption[] = [
+    { value: 'simple', label: t('form.options.lateralSubtype.simple') },
+    { value: 'syndesmosis_rupture', label: t('form.options.lateralSubtype.syndesmosis_rupture') },
+    { value: 'butterfly', label: t('form.options.lateralSubtype.butterfly') },
+  ];
+
+  // Medial subtype options for bimalleolar paths
+  const medial_subtype: SelectOption[] = [
+    { value: 'open_mortise', label: t('form.options.medialSubtype.open_mortise') },
+    { value: 'malleolus_fracture', label: t('form.options.medialSubtype.malleolus_fracture') },
   ];
 
   // Suprasindesmal type options
@@ -198,6 +234,9 @@ export function getLocalFormOptions(): FormOptions {
     fibula_trace_patterns,
     articular_involvement_options,
     posterior_fracture_types_medial_posterior,
+    infrasindesmal_morphology,
+    lateral_subtype,
+    medial_subtype,
   };
 }
 

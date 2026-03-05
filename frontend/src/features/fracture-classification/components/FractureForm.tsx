@@ -16,6 +16,8 @@ import type {
   MedialMorphology,
   PosteriorFractureType,
   ArticularInvolvement,
+  LateralSubtype,
+  MedialSubtype,
 } from '@/types';
 
 // Import feature components
@@ -235,16 +237,54 @@ export function FractureForm() {
   const showLateralMorphology = showFibularLevel && formData.fibular_level &&
     !skipLateralOnlyInfra && !skipLateralPosteriorInfra;
 
+  // Infrasindesmal morphology subtype: lateral_only + infrasindesmal, or trimaleolar + transverse + infrasindesmal,
+  // or lateral_medial + transverse + infrasindesmal
+  const showInfrasindesmalMorphology =
+    (formData.involved_malleoli === 'lateral_only' && formData.fibular_level === 'infrasindesmal') ||
+    (formData.involved_malleoli === 'trimaleolar' && formData.lateral_morphology === 'transverse' &&
+      formData.fibular_level_for_transverse === 'infrasindesmal') ||
+    (formData.involved_malleoli === 'lateral_medial' && formData.lateral_morphology === 'transverse' &&
+      formData.fibular_level_for_transverse === 'infrasindesmal');
+
+  // Lateral subtype: lateral_only + transindesmal + morphology selected
+  const showLateralSubtype = formData.involved_malleoli === 'lateral_only' &&
+    formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology;
+
+  // Medial subtype: lateral_medial or trimaleolar transindesmal paths
+  const showMedialSubtype = (
+    // lateral_medial paths
+    formData.involved_malleoli === 'lateral_medial' && (
+      // Low path with non-conminuta morphology
+      (formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology &&
+        formData.lateral_morphology !== 'conminuta') ||
+      // Suprasindesmal path (for C1/C2 subtypes)
+      (formData.fibular_level === 'suprasindesmal' && !!formData.suprasindesmal_type &&
+        formData.suprasindesmal_type !== 'proximal')
+    )
+  ) || (
+    // trimaleolar transindesmal paths (oblique, spiral, or transverse+transindesmal)
+    formData.involved_malleoli === 'trimaleolar' &&
+    formData.fibular_level === 'transindesmal' &&
+    !!formData.lateral_morphology &&
+    formData.lateral_morphology !== 'conminuta' && (
+      formData.lateral_morphology !== 'transverse' ||
+      formData.fibular_level_for_transverse === 'transindesmal'
+    )
+  );
+
+  // Fibula head shortening: lateral_medial + suprasindesmal + proximal
+  const showFibulaHeadShortening = formData.involved_malleoli === 'lateral_medial' &&
+    formData.fibular_level === 'suprasindesmal' &&
+    formData.suprasindesmal_type === 'proximal';
+
   const showSuprasindesmalType = formData.fibular_level === 'suprasindesmal';
 
   const showFibulaTracePattern = formData.fibular_level === 'suprasindesmal' &&
     formData.suprasindesmal_type !== undefined &&
     formData.suprasindesmal_type !== 'proximal';
 
-  // Trimaleolar + Low + Transverse + Infrasindesmal is impossible - skip CT scan
-  const skipTrimaleolarTransverseInfra = formData.involved_malleoli === 'trimaleolar' &&
-    formData.lateral_morphology === 'transverse' &&
-    formData.fibular_level_for_transverse === 'infrasindesmal';
+  // No longer skip CT for trimaleolar transverse infrasindesmal - it needs CT + Bartonicek
+  const skipTrimaleolarTransverseInfra = false;
 
   const showCTScan = formData.involved_malleoli && (
     // posterior_only: only after articular involvement resolved to small_without_extension
@@ -448,6 +488,54 @@ export function FractureForm() {
               : (options.lateral_morphology || [])
           }
           onChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
+        />
+      )}
+
+      {showInfrasindesmalMorphology && (
+        <QuestionStep
+          question={{
+            id: 'infrasindesmal_morphology',
+            title: options.questions.infrasindesmal_morphology?.title || 'Infrasyndesmal fracture morphology?',
+          }}
+          value={formData.infrasindesmal_morphology}
+          options={options.infrasindesmal_morphology || []}
+          onChange={(value) => updateFormData({ ...formData, infrasindesmal_morphology: value as LateralSubtype })}
+        />
+      )}
+
+      {showLateralSubtype && (
+        <QuestionStep
+          question={{
+            id: 'lateral_subtype',
+            title: options.questions.lateral_subtype?.title || 'Lateral fracture subtype?',
+          }}
+          value={formData.lateral_subtype}
+          options={options.lateral_subtype || []}
+          onChange={(value) => updateFormData({ ...formData, lateral_subtype: value as LateralSubtype })}
+        />
+      )}
+
+      {showMedialSubtype && (
+        <QuestionStep
+          question={{
+            id: 'medial_subtype',
+            title: options.questions.medial_subtype?.title || 'Medial involvement subtype?',
+          }}
+          value={formData.medial_subtype}
+          options={options.medial_subtype || []}
+          onChange={(value) => updateFormData({ ...formData, medial_subtype: value as MedialSubtype })}
+        />
+      )}
+
+      {showFibulaHeadShortening && (
+        <QuestionStep
+          question={{
+            id: 'has_fibula_head_shortening',
+            title: options.questions.has_fibula_head_shortening?.title || 'Is there fibula head shortening?',
+          }}
+          value={formData.has_fibula_head_shortening?.toString()}
+          options={yesNoOptions}
+          onChange={(value) => updateFormData({ ...formData, has_fibula_head_shortening: value === 'true' })}
         />
       )}
 

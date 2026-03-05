@@ -117,6 +117,7 @@
     "selectAtLeastOne": "Seleccione al menos un maléolo fracturado",
     "step": "Paso",
     "back": "Atrás",
+    "actions": "Acciones",
     "reset": "Empezar de Nuevo",
     "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás",
     "draftRestored": "Progreso anterior restaurado",
@@ -140,7 +141,11 @@
       "articularInvolvement": "¿Cuál es la afectación de la superficie articular?",
       "articularInvolvementMedial": "¿Tiene importante afectación articular con extensión metafisaria?",
       "articularDepression": "¿Existe depresión articular?",
-      "posteriorPosteromedial": "¿El fragmento posterior es posteromedial?"
+      "posteriorPosteromedial": "¿El fragmento posterior es posteromedial?",
+      "infrasindesmalMorphology": "¿Cuál es la morfología de la fractura infrasindesmal?",
+      "lateralSubtype": "¿Cuál es el subtipo de la fractura lateral?",
+      "medialSubtype": "¿Cuál es el subtipo de la afectación medial?",
+      "hasFibulaHeadShortening": "¿Existe acortamiento de la cabeza del peroné?"
     },
     "options": {
       "involvedMalleoli": {
@@ -187,7 +192,21 @@
       "fibulaMorphologyLMTri": {
         "transverse": "Transversa",
         "oblique": "Oblicua (Baja medial, alta lateral)/Conminuta",
-        "spiral": "Espiroidea (Baja anterior, alta posterior)"
+        "spiral": "Espiroidea (Baja anterior, alta posterior)",
+        "conminuta": "Conminuta"
+      },
+      "infrasindesmalMorphology": {
+        "avulsion": "Avulsión punta del peroné",
+        "malleolus_fracture": "Fractura del maléolo"
+      },
+      "lateralSubtype": {
+        "simple": "Simple",
+        "syndesmosis_rupture": "Rotura de sindesmosis",
+        "butterfly": "Ala de mariposa / cuña"
+      },
+      "medialSubtype": {
+        "open_mortise": "Abierta mortaja",
+        "malleolus_fracture": "Fractura del maléolo"
       },
       "suprasindesmalType": {
         "simple_diaphyseal": "Diafisaria Simple",
@@ -265,15 +284,38 @@
       },
       "aoOta": {
         "A1_desc": "44-A1: Fractura infrasindesmal aislada",
+        "A1.2_desc": "44-A1.2: Fractura infrasindesmal por avulsión",
+        "A1.3_desc": "44-A1.3: Fractura infrasindesmal del maléolo",
         "A2_desc": "44-A2: Fractura infrasindesmal con afectación medial",
-        "B1_desc": "44-B1: Fractura transindesmal aislada",
-        "B2_desc": "44-B2: Fractura transindesmal con afectación medial",
-        "B3_desc": "44-B3: Fractura transindesmal con afectación medial y posterior",
-        "C1_desc": "44-C1: Fractura suprasindesmal diafisaria simple",
-        "C2_desc": "44-C2: Fractura suprasindesmal multifragmentaria",
-        "C3_desc": "44-C3: Fractura suprasindesmal proximal (Maisonneuve)",
+        "A2.2_desc": "44-A2.2: Fractura infrasindesmal bifocal por avulsión",
+        "A2.3_desc": "44-A2.3: Fractura infrasindesmal bifocal del maléolo",
         "A3_desc": "44-A3: Infrasindesmal con fragmento posteromedial",
+        "A3.2_desc": "44-A3.2: Fractura infrasindesmal trifocal por avulsión",
+        "A3.3_desc": "44-A3.3: Fractura infrasindesmal trifocal del maléolo",
         "B_desc": "44-B: Fractura transindesmal (subtipo no clasificable B1/B2)",
+        "B1_desc": "44-B1: Fractura transindesmal aislada",
+        "B1.1_desc": "44-B1.1: Fractura transindesmal lateral simple",
+        "B1.2_desc": "44-B1.2: Fractura transindesmal lateral con rotura de sindesmosis",
+        "B1.3_desc": "44-B1.3: Fractura transindesmal lateral en mariposa/cuña",
+        "B2_desc": "44-B2: Fractura transindesmal con afectación medial",
+        "B2.1_desc": "44-B2.1: Fractura transindesmal con mortaja medial abierta",
+        "B2.2_desc": "44-B2.2: Fractura transindesmal con fractura del maléolo medial",
+        "B2.3_desc": "44-B2.3: Fractura transindesmal con conminución medial",
+        "B3_desc": "44-B3: Fractura transindesmal con afectación medial y posterior",
+        "B3.1_desc": "44-B3.1: Fractura trimaleolar transindesmal con mortaja abierta",
+        "B3.2_desc": "44-B3.2: Fractura trimaleolar transindesmal del maléolo",
+        "C1_desc": "44-C1: Fractura suprasindesmal diafisaria simple",
+        "C1.1_desc": "44-C1.1: Fractura suprasindesmal diafisaria simple con mortaja abierta",
+        "C1.2_desc": "44-C1.2: Fractura suprasindesmal diafisaria simple del maléolo",
+        "C1.3_desc": "44-C1.3: Fractura trimaleolar suprasindesmal diafisaria simple",
+        "C2_desc": "44-C2: Fractura suprasindesmal multifragmentaria",
+        "C2.1_desc": "44-C2.1: Fractura suprasindesmal multifragmentaria con mortaja abierta",
+        "C2.2_desc": "44-C2.2: Fractura suprasindesmal multifragmentaria del maléolo",
+        "C2.3_desc": "44-C2.3: Fractura trimaleolar suprasindesmal multifragmentaria",
+        "C3_desc": "44-C3: Fractura suprasindesmal proximal (Maisonneuve)",
+        "C3.1_desc": "44-C3.1: Fractura suprasindesmal proximal sin acortamiento del peroné",
+        "C3.2_desc": "44-C3.2: Fractura suprasindesmal proximal con acortamiento del peroné",
+        "C3.3_desc": "44-C3.3: Fractura trimaleolar suprasindesmal proximal",
         "43B1_desc": "43-B1: Fractura de tibia distal sin depresión articular",
         "43B2_desc": "43-B2: Fractura de tibia distal con depresión articular"
       },

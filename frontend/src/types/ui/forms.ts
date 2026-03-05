@@ -124,6 +124,15 @@ export interface FormOptions {
   /** Options for posterior fracture types in medial+posterior path (5 options) */
   posterior_fracture_types_medial_posterior: FormOption[];
 
+  /** Options for infrasindesmal morphology (avulsion vs malleolus fracture) */
+  infrasindesmal_morphology: FormOption[];
+
+  /** Options for lateral subtype (transindesmal lateral-only) */
+  lateral_subtype: FormOption[];
+
+  /** Options for medial subtype (bimalleolar paths) */
+  medial_subtype: FormOption[];
+
   /** Additional labels and translations */
   labels: Record<string, string>;
 }

@@ -53,6 +53,7 @@ const (
 	LateralMorphologyTransverse LateralMorphology = "transverse" // Transversa
 	LateralMorphologyOblique    LateralMorphology = "oblique"    // Oblicua (Baja medial, alta lateral)
 	LateralMorphologySpiral     LateralMorphology = "spiral"     // Espiroidea (Baja anterior, alta posterior)
+	LateralMorphologyConminuta  LateralMorphology = "conminuta"  // Conminuta
 )
 
 // SuprasindesmalType represents the fracture type for suprasindesmal fractures.
@@ -77,6 +78,25 @@ const (
 	FibulaTraceParasindesmoticLong FibulaTracePattern = "parasindesmotic_long"
 	// FibulaTraceSuprasindesmoticFar is a suprasyndesmotic trace (>6cm from articular surface) indicating a PER mechanism.
 	FibulaTraceSuprasindesmoticFar FibulaTracePattern = "suprasindesmotic_far"
+)
+
+// LateralSubtype represents the subtype of lateral fracture for transindesmal paths.
+type LateralSubtype string
+
+const (
+	LateralSubtypeSimple             LateralSubtype = "simple"              // Simple
+	LateralSubtypeSyndesmosisRupture LateralSubtype = "syndesmosis_rupture" // Rotura sindesmosis
+	LateralSubtypeButterfly          LateralSubtype = "butterfly"           // Ala de mariposa / cuña
+	LateralSubtypeAvulsion           LateralSubtype = "avulsion"            // Avulsión punta peroné
+	LateralSubtypeMalleolusFracture  LateralSubtype = "malleolus_fracture"  // Fractura maléolo
+)
+
+// MedialSubtype represents the subtype of medial involvement for bimalleolar paths.
+type MedialSubtype string
+
+const (
+	MedialSubtypeOpenMortise       MedialSubtype = "open_mortise"       // Abierta mortaja
+	MedialSubtypeMalleolusFracture MedialSubtype = "malleolus_fracture" // Fractura maléolo
 )
 
 // ArticularInvolvement represents the level of articular surface involvement.
@@ -129,4 +149,16 @@ type FractureInput struct {
 
 	// Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
 	IsPosteriorPosteromedial *bool `json:"is_posterior_posteromedial,omitempty"`
+
+	// Lateral subtype for transindesmal lateral-only paths (simple, syndesmosis_rupture, butterfly)
+	LateralSubtype LateralSubtype `json:"lateral_subtype,omitempty"`
+
+	// Infrasindesmal morphology subtype (avulsion, malleolus_fracture)
+	InfrasindesmalMorphology LateralSubtype `json:"infrasindesmal_morphology,omitempty"`
+
+	// Medial subtype for bimalleolar paths (open_mortise, malleolus_fracture)
+	MedialSubtype MedialSubtype `json:"medial_subtype,omitempty"`
+
+	// Whether fibula head shortening is present (proximal/Maisonneuve path)
+	HasFibulaHeadShortening *bool `json:"has_fibula_head_shortening,omitempty"`
 }

@@ -111,6 +111,7 @@
     "selectAtLeastOne": "Select at least one fractured malleolus",
     "step": "Step",
     "back": "Back",
+    "actions": "Actions",
     "reset": "Start Over",
     "keyboardHint": "Keyboard: 1-9 select, Enter submit, Backspace back",
     "draftRestored": "Previous progress restored",
@@ -134,7 +135,11 @@
       "articularInvolvement": "What is the articular surface involvement?",
       "articularInvolvementMedial": "Is there significant articular involvement with metaphyseal extension?",
       "articularDepression": "Is articular depression present?",
-      "posteriorPosteromedial": "Is the posterior fragment posteromedial?"
+      "posteriorPosteromedial": "Is the posterior fragment posteromedial?",
+      "infrasindesmalMorphology": "What is the infrasyndesmal fracture morphology?",
+      "lateralSubtype": "What is the lateral fracture subtype?",
+      "medialSubtype": "What is the medial involvement subtype?",
+      "hasFibulaHeadShortening": "Is there fibula head shortening?"
     },
     "options": {
       "involvedMalleoli": {
@@ -181,7 +186,21 @@
       "fibulaMorphologyLMTri": {
         "transverse": "Transverse",
         "oblique": "Oblique (Low medial, high lateral)/Comminuted",
-        "spiral": "Spiral (Low anterior, high posterior)"
+        "spiral": "Spiral (Low anterior, high posterior)",
+        "conminuta": "Comminuted"
+      },
+      "infrasindesmalMorphology": {
+        "avulsion": "Fibula tip avulsion",
+        "malleolus_fracture": "Malleolus fracture"
+      },
+      "lateralSubtype": {
+        "simple": "Simple",
+        "syndesmosis_rupture": "Syndesmosis rupture",
+        "butterfly": "Butterfly / wedge"
+      },
+      "medialSubtype": {
+        "open_mortise": "Open mortise",
+        "malleolus_fracture": "Malleolus fracture"
       },
       "suprasindesmalType": {
         "simple_diaphyseal": "Simple Diaphyseal",
@@ -259,15 +278,38 @@
       },
       "aoOta": {
         "A1_desc": "44-A1: Isolated infrasyndesmal fracture",
+        "A1.2_desc": "44-A1.2: Infrasyndesmal avulsion fracture",
+        "A1.3_desc": "44-A1.3: Infrasyndesmal malleolus fracture",
         "A2_desc": "44-A2: Infrasyndesmal fracture with medial involvement",
-        "B1_desc": "44-B1: Isolated transsyndesmal fracture",
-        "B2_desc": "44-B2: Transsyndesmal fracture with medial involvement",
-        "B3_desc": "44-B3: Transsyndesmal fracture with medial and posterior involvement",
-        "C1_desc": "44-C1: Simple diaphyseal suprasyndesmal fracture",
-        "C2_desc": "44-C2: Multifragmentary suprasyndesmal fracture",
-        "C3_desc": "44-C3: Proximal suprasyndesmal fracture (Maisonneuve)",
+        "A2.2_desc": "44-A2.2: Bifocal infrasyndesmal avulsion fracture",
+        "A2.3_desc": "44-A2.3: Bifocal infrasyndesmal malleolus fracture",
         "A3_desc": "44-A3: Infrasyndesmal with posteromedial fragment",
+        "A3.2_desc": "44-A3.2: Trifocal infrasyndesmal avulsion fracture",
+        "A3.3_desc": "44-A3.3: Trifocal infrasyndesmal malleolus fracture",
         "B_desc": "44-B: Transsyndesmal fracture (subtype unclassifiable B1/B2)",
+        "B1_desc": "44-B1: Isolated transsyndesmal fracture",
+        "B1.1_desc": "44-B1.1: Transsyndesmal simple lateral fracture",
+        "B1.2_desc": "44-B1.2: Transsyndesmal lateral with syndesmosis rupture",
+        "B1.3_desc": "44-B1.3: Transsyndesmal lateral butterfly/wedge fracture",
+        "B2_desc": "44-B2: Transsyndesmal fracture with medial involvement",
+        "B2.1_desc": "44-B2.1: Transsyndesmal with medial open mortise",
+        "B2.2_desc": "44-B2.2: Transsyndesmal with medial malleolus fracture",
+        "B2.3_desc": "44-B2.3: Transsyndesmal with medial comminuted fracture",
+        "B3_desc": "44-B3: Transsyndesmal fracture with medial and posterior involvement",
+        "B3.1_desc": "44-B3.1: Trimaleolar transsyndesmal open mortise",
+        "B3.2_desc": "44-B3.2: Trimaleolar transsyndesmal malleolus fracture",
+        "C1_desc": "44-C1: Simple diaphyseal suprasyndesmal fracture",
+        "C1.1_desc": "44-C1.1: Simple diaphyseal suprasyndesmal open mortise",
+        "C1.2_desc": "44-C1.2: Simple diaphyseal suprasyndesmal malleolus fracture",
+        "C1.3_desc": "44-C1.3: Trimaleolar simple diaphyseal suprasyndesmal fracture",
+        "C2_desc": "44-C2: Multifragmentary suprasyndesmal fracture",
+        "C2.1_desc": "44-C2.1: Multifragmentary suprasyndesmal open mortise",
+        "C2.2_desc": "44-C2.2: Multifragmentary suprasyndesmal malleolus fracture",
+        "C2.3_desc": "44-C2.3: Trimaleolar multifragmentary suprasyndesmal fracture",
+        "C3_desc": "44-C3: Proximal suprasyndesmal fracture (Maisonneuve)",
+        "C3.1_desc": "44-C3.1: Proximal suprasyndesmal without fibula head shortening",
+        "C3.2_desc": "44-C3.2: Proximal suprasyndesmal with fibula head shortening",
+        "C3.3_desc": "44-C3.3: Trimaleolar proximal suprasyndesmal fracture",
         "43B1_desc": "43-B1: Distal tibia fracture without articular depression",
         "43B2_desc": "43-B2: Distal tibia fracture with articular depression"
       },

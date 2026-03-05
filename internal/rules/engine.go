@@ -82,24 +82,17 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 	}
 
 	// <1/3 without metaphyseal extension: morphology path
+	// AO = nil (no clasificable per drawio 2026-02-28)
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_medial",
-		AOOTA: &domain.AOOTAClassification{
-			Code: domain.AOOTAA2,
-		},
 	}
 
 	if input.MedialMorphology == domain.MedialMorphologyVertical {
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
 		}
-	} else {
-		// Transverse/oblique - ambiguous, could be PA, SER, or PER
-		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Ambiguous:     true,
-			PossibleTypes: []string{"PA", "SER", "PER"},
-		}
 	}
+	// Transverse/oblique → LH not classifiable (nil) per drawio 2026-02-28
 
 	return result, nil
 }
@@ -112,12 +105,19 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 
 	switch input.FibularLevel {
 	case domain.FibularLevelInfrasindesmal:
-		// Infrasindesmal lateral-only always results in SA (no morphology question needed)
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberA,
 		}
+		// Subtype: avulsion → 44-A1.2, malleolus_fracture → 44-A1.3, fallback → 44-A1
+		aoCode := domain.AOOTAA1
+		switch input.InfrasindesmalMorphology {
+		case domain.LateralSubtypeAvulsion:
+			aoCode = domain.AOOTAA1_2
+		case domain.LateralSubtypeMalleolusFracture:
+			aoCode = domain.AOOTAA1_3
+		}
 		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAA1,
+			Code: aoCode,
 		}
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
@@ -127,8 +127,18 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
+		// Subtype: simple → B1.1, syndesmosis_rupture → B1.2, butterfly → B1.3, fallback → B1
+		aoCode := domain.AOOTAB1
+		switch input.LateralSubtype {
+		case domain.LateralSubtypeSimple:
+			aoCode = domain.AOOTAB1_1
+		case domain.LateralSubtypeSyndesmosisRupture:
+			aoCode = domain.AOOTAB1_2
+		case domain.LateralSubtypeButterfly:
+			aoCode = domain.AOOTAB1_3
+		}
 		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB,
+			Code: aoCode,
 		}
 		if input.LateralMorphology == domain.LateralMorphologySpiral {
 			result.LaugeHansen = &domain.LaugeHansenClassification{
@@ -186,20 +196,14 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 
 	// CT available → branch on posterior fragment type
 	if input.PosteriorFractureType == domain.PosteriorExtraincisuralPosteromedial {
-		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAA3,
-		}
+		// Per drawio 2026-02-28: AO = nil (no clasificable), LH = PA
 		result.LaugeHansen = &domain.LaugeHansenClassification{
-			Ambiguous:          true,
-			AmbiguousReasonKey: "medial_posterior_extraincisural",
+			Type: domain.LaugeHansenPA,
 		}
 		return result, nil
 	}
 
-	// Standard 4 posterior types → AO 44-B3 + LH PA + Bartonicek
-	result.AOOTA = &domain.AOOTAClassification{
-		Code: domain.AOOTAB3,
-	}
+	// Standard 4 posterior types → AO unclassifiable (nil) + LH PA + Bartonicek (per 2026-02-28 flow)
 	result.LaugeHansen = &domain.LaugeHansenClassification{
 		Type: domain.LaugeHansenPA,
 	}
@@ -219,13 +223,12 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberA,
 		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenSA,
+		}
 
 		if input.HasCTScan == nil || !*input.HasCTScan {
-			// No CT → AO unclassifiable (nil), LH unclassifiable, Weber A
-			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous:          true,
-				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
-			}
+			// No CT → AO unclassifiable (nil), LH SA, Weber A
 			return result, nil
 		}
 
@@ -233,15 +236,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 			result.AOOTA = &domain.AOOTAClassification{
 				Code: domain.AOOTAA3,
 			}
-			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous:          true,
-				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
-			}
 		} else {
-			result.LaugeHansen = &domain.LaugeHansenClassification{
-				Ambiguous:          true,
-				AmbiguousReasonKey: "lateral_posterior_infrasindesmal",
-			}
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
 
@@ -251,9 +246,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
-		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		}
+		// AO not classifiable for lateral+posterior transindesmal per drawio 2026-02-28
 		if input.LateralMorphology == domain.LateralMorphologySpiral {
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenSER,
@@ -273,6 +266,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberC,
 		}
+		// AO unclassifiable (nil) per 2026-02-28 flow for all lateral+posterior suprasindesmal paths
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
@@ -296,7 +290,6 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		if input.HasCTScan != nil && *input.HasCTScan {
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
-		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 	}
 
 	return result, nil
@@ -336,18 +329,29 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
+			// Proximal subtypes: HasFibulaHeadShortening → C3.1/C3.2
+			aoCode := domain.AOOTAC3
+			if input.HasFibulaHeadShortening != nil {
+				if *input.HasFibulaHeadShortening {
+					aoCode = domain.AOOTAC3_2
+				} else {
+					aoCode = domain.AOOTAC3_1
+				}
+			}
+			result.AOOTA = &domain.AOOTAClassification{Code: aoCode}
 		case input.FibulaTracePattern == domain.FibulaTraceParasindesmoticShort:
 			// Parasyndesmotic short oblique/transverse/comminuted → PA
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
 			}
+			result.AOOTA = getAOOTAForSuprasindesmalWithMedialSubtype(input.SuprasindesmalType, input.MedialSubtype)
 		default:
 			// Parasyndesmotic or suprasyndesmotic long oblique/spiral → PER (default)
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPER,
 			}
+			result.AOOTA = getAOOTAForSuprasindesmalWithMedialSubtype(input.SuprasindesmalType, input.MedialSubtype)
 		}
-		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 		return result, nil
 	}
 
@@ -359,8 +363,16 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 			result.DanisWeber = &domain.DanisWeberClassification{
 				Type: domain.DanisWeberA,
 			}
+			// Subtype: avulsion → A2.2, malleolus_fracture → A2.3, fallback → A2
+			aoCode := domain.AOOTAA2
+			switch input.InfrasindesmalMorphology {
+			case domain.LateralSubtypeAvulsion:
+				aoCode = domain.AOOTAA2_2
+			case domain.LateralSubtypeMalleolusFracture:
+				aoCode = domain.AOOTAA2_3
+			}
 			result.AOOTA = &domain.AOOTAClassification{
-				Code: domain.AOOTAA2,
+				Code: aoCode,
 			}
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenSA,
@@ -370,8 +382,16 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 			result.DanisWeber = &domain.DanisWeberClassification{
 				Type: domain.DanisWeberB,
 			}
+			// Subtype: open_mortise → B2.1, malleolus_fracture → B2.2, fallback → B2
+			aoCode := domain.AOOTAB2
+			switch input.MedialSubtype {
+			case domain.MedialSubtypeOpenMortise:
+				aoCode = domain.AOOTAB2_1
+			case domain.MedialSubtypeMalleolusFracture:
+				aoCode = domain.AOOTAB2_2
+			}
 			result.AOOTA = &domain.AOOTAClassification{
-				Code: domain.AOOTAB2,
+				Code: aoCode,
 			}
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenPA,
@@ -382,8 +402,16 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
+		// Subtype: open_mortise → B2.1, malleolus_fracture → B2.2, fallback → B2
+		aoCode := domain.AOOTAB2
+		switch input.MedialSubtype {
+		case domain.MedialSubtypeOpenMortise:
+			aoCode = domain.AOOTAB2_1
+		case domain.MedialSubtypeMalleolusFracture:
+			aoCode = domain.AOOTAB2_2
+		}
 		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB2,
+			Code: aoCode,
 		}
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
@@ -393,11 +421,31 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
+		// Subtype: open_mortise → B2.1, malleolus_fracture → B2.2, fallback → B2
+		aoCode := domain.AOOTAB2
+		switch input.MedialSubtype {
+		case domain.MedialSubtypeOpenMortise:
+			aoCode = domain.AOOTAB2_1
+		case domain.MedialSubtypeMalleolusFracture:
+			aoCode = domain.AOOTAB2_2
+		}
 		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB2,
+			Code: aoCode,
 		}
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSER,
+		}
+
+	case domain.LateralMorphologyConminuta:
+		// Conminuta morphology in lateral+medial → B2.3 per drawio 2026-02-28
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type: domain.DanisWeberB,
+		}
+		result.AOOTA = &domain.AOOTAClassification{
+			Code: domain.AOOTAB2_3,
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenPA,
 		}
 	}
 
@@ -438,7 +486,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		if input.HasCTScan != nil && *input.HasCTScan {
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
-		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
+		result.AOOTA = getAOOTAForSuprasindesmalTrimaleolar(input.SuprasindesmalType)
 		return result, nil
 	}
 
@@ -447,19 +495,34 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 	case domain.LateralMorphologyTransverse:
 		// Need to check fibular level
 		if input.FibularLevelForTransverse == domain.FibularLevelInfrasindesmal {
-			return &domain.ClassificationResult{
-				FractureType:  "trimaleolar",
-				Impossible:    true,
-				ImpossibleKey: "exceptional",
-			}, nil
+			// Per drawio 2026-02-28: valid classification → 44-A3.3, Weber A, LH nil
+			aoCode := domain.AOOTAA3_3
+			switch input.InfrasindesmalMorphology {
+			case domain.LateralSubtypeAvulsion:
+				aoCode = domain.AOOTAA3_2
+			case domain.LateralSubtypeMalleolusFracture:
+				aoCode = domain.AOOTAA3_3
+			}
+			infraResult := &domain.ClassificationResult{
+				FractureType: "trimaleolar",
+				DanisWeber: &domain.DanisWeberClassification{
+					Type: domain.DanisWeberA,
+				},
+				AOOTA: &domain.AOOTAClassification{
+					Code: aoCode,
+				},
+			}
+			// Bartonicek requires CT scan
+			if input.HasCTScan != nil && *input.HasCTScan {
+				infraResult.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
+			}
+			return infraResult, nil
 		}
 		// Transindesmal
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
-		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		}
+		result.AOOTA = getAOOTAB3ForTrimaleolar(input.LateralMorphology, input.MedialSubtype)
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
@@ -472,9 +535,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
-		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		}
+		result.AOOTA = getAOOTAB3ForTrimaleolar(input.LateralMorphology, input.MedialSubtype)
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
@@ -487,12 +548,24 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
-		result.AOOTA = &domain.AOOTAClassification{
-			Code: domain.AOOTAB3,
-		}
+		result.AOOTA = getAOOTAB3ForTrimaleolar(input.LateralMorphology, input.MedialSubtype)
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSER,
 		}
+		// Bartonicek requires CT scan
+		if input.HasCTScan != nil && *input.HasCTScan {
+			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
+		}
+
+	case domain.LateralMorphologyConminuta:
+		// Conminuta morphology in trimaleolar → AO not classifiable per drawio 2026-02-28
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type: domain.DanisWeberB,
+		}
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenPA,
+		}
+		// AO = nil (no clasificable)
 		// Bartonicek requires CT scan
 		if input.HasCTScan != nil && *input.HasCTScan {
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
@@ -527,8 +600,7 @@ func getBartonicekFromPosteriorType(pt domain.PosteriorFractureType) *domain.Bar
 }
 
 // getAOOTAForSuprasindesmal maps SuprasindesmalType to the AO/OTA code.
-// Used for lateral-only, bimalleolar, and trimaleolar suprasyndesmotic fractures
-// (all variants produce the same mapping).
+// Used for lateral-only and trimaleolar suprasyndesmotic fractures.
 func getAOOTAForSuprasindesmal(st domain.SuprasindesmalType) *domain.AOOTAClassification {
 	switch st {
 	case domain.SuprasindesmalSimpleDiaphyseal:
@@ -547,4 +619,73 @@ func getAOOTAForSuprasindesmal(st domain.SuprasindesmalType) *domain.AOOTAClassi
 	return &domain.AOOTAClassification{
 		Code: domain.AOOTAC1,
 	}
+}
+
+// getAOOTAForSuprasindesmalTrimaleolar maps SuprasindesmalType to the AO/OTA .3 subtype code.
+// Used for trimaleolar suprasyndesmotic fractures per drawio 2026-02-28.
+func getAOOTAForSuprasindesmalTrimaleolar(st domain.SuprasindesmalType) *domain.AOOTAClassification {
+	switch st {
+	case domain.SuprasindesmalSimpleDiaphyseal:
+		return &domain.AOOTAClassification{Code: domain.AOOTAC1_3}
+	case domain.SuprasindesmalMultifragmentary:
+		return &domain.AOOTAClassification{Code: domain.AOOTAC2_3}
+	case domain.SuprasindesmalProximal:
+		return &domain.AOOTAClassification{Code: domain.AOOTAC3_3}
+	}
+	return &domain.AOOTAClassification{Code: domain.AOOTAC1_3}
+}
+
+// getAOOTAB3ForTrimaleolar maps LateralMorphology + MedialSubtype to the B3 subtype code
+// for trimaleolar transyndesmotic fractures per drawio 2026-02-28.
+//
+// Oblique morphology:
+//   - malleolus_fracture → B3.3
+//   - open_mortise       → nil (no clasificable)
+//
+// Non-oblique (Transverse, Spiral):
+//   - open_mortise       → B3.1
+//   - malleolus_fracture → B3.2
+//   - fallback           → B3
+func getAOOTAB3ForTrimaleolar(lm domain.LateralMorphology, ms domain.MedialSubtype) *domain.AOOTAClassification {
+	if lm == domain.LateralMorphologyOblique {
+		if ms == domain.MedialSubtypeMalleolusFracture {
+			return &domain.AOOTAClassification{Code: domain.AOOTAB3_3}
+		}
+		// Oblique + open_mortise (or no medial subtype) → no clasificable
+		return nil
+	}
+	// Transverse, Spiral: standard mapping
+	switch ms {
+	case domain.MedialSubtypeOpenMortise:
+		return &domain.AOOTAClassification{Code: domain.AOOTAB3_1}
+	case domain.MedialSubtypeMalleolusFracture:
+		return &domain.AOOTAClassification{Code: domain.AOOTAB3_2}
+	}
+	return &domain.AOOTAClassification{Code: domain.AOOTAB3}
+}
+
+// getAOOTAForSuprasindesmalWithMedialSubtype maps SuprasindesmalType + MedialSubtype to AO/OTA code.
+// Used for lateral+medial suprasyndesmotic fractures where C1/C2 have subtypes.
+func getAOOTAForSuprasindesmalWithMedialSubtype(st domain.SuprasindesmalType, ms domain.MedialSubtype) *domain.AOOTAClassification {
+	switch st {
+	case domain.SuprasindesmalSimpleDiaphyseal:
+		switch ms {
+		case domain.MedialSubtypeOpenMortise:
+			return &domain.AOOTAClassification{Code: domain.AOOTAC1_1}
+		case domain.MedialSubtypeMalleolusFracture:
+			return &domain.AOOTAClassification{Code: domain.AOOTAC1_2}
+		}
+		return &domain.AOOTAClassification{Code: domain.AOOTAC1}
+	case domain.SuprasindesmalMultifragmentary:
+		switch ms {
+		case domain.MedialSubtypeOpenMortise:
+			return &domain.AOOTAClassification{Code: domain.AOOTAC2_1}
+		case domain.MedialSubtypeMalleolusFracture:
+			return &domain.AOOTAClassification{Code: domain.AOOTAC2_2}
+		}
+		return &domain.AOOTAClassification{Code: domain.AOOTAC2}
+	case domain.SuprasindesmalProximal:
+		return &domain.AOOTAClassification{Code: domain.AOOTAC3}
+	}
+	return &domain.AOOTAClassification{Code: domain.AOOTAC1}
 }

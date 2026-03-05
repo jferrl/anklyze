@@ -64,6 +64,38 @@ const (
 	// AOOTAA3 is the 44-A3 trifocal/special posterior infrasyndesmotic code.
 	AOOTAA3 AOOTACode = "44-A3"
 
+	// A-group subtypes
+	AOOTAA1_2 AOOTACode = "44-A1.2" // Infrasindesmal avulsion
+	AOOTAA1_3 AOOTACode = "44-A1.3" // Infrasindesmal malleolus fracture
+	AOOTAA2_2 AOOTACode = "44-A2.2" // Bifocal infrasindesmal avulsion
+	AOOTAA2_3 AOOTACode = "44-A2.3" // Bifocal infrasindesmal malleolus fracture
+	AOOTAA3_2 AOOTACode = "44-A3.2" // Trifocal infrasindesmal avulsion
+	AOOTAA3_3 AOOTACode = "44-A3.3" // Trifocal infrasindesmal malleolus fracture
+
+	// B-group subtypes
+	AOOTAB1_1 AOOTACode = "44-B1.1" // Lateral-only transindesmal simple
+	AOOTAB1_2 AOOTACode = "44-B1.2" // Lateral-only transindesmal with syndesmosis rupture
+	AOOTAB1_3 AOOTACode = "44-B1.3" // Lateral-only transindesmal butterfly/wedge
+	AOOTAB2_1 AOOTACode = "44-B2.1" // Lateral+medial transindesmal open mortise
+	AOOTAB2_2 AOOTACode = "44-B2.2" // Lateral+medial transindesmal malleolus fracture
+	AOOTAB2_3 AOOTACode = "44-B2.3" // Lateral+medial transindesmal comminuted
+
+	// C-group subtypes
+	AOOTAC1_1 AOOTACode = "44-C1.1" // Simple diaphyseal open mortise
+	AOOTAC1_2 AOOTACode = "44-C1.2" // Simple diaphyseal malleolus fracture
+	AOOTAC1_3 AOOTACode = "44-C1.3" // Trimaleolar simple diaphyseal suprasyndesmotic
+	AOOTAC2_1 AOOTACode = "44-C2.1" // Multifragmentary open mortise
+	AOOTAC2_2 AOOTACode = "44-C2.2" // Multifragmentary malleolus fracture
+	AOOTAC2_3 AOOTACode = "44-C2.3" // Trimaleolar multifragmentary suprasyndesmotic
+	AOOTAC3_1 AOOTACode = "44-C3.1" // Proximal without fibula head shortening
+	AOOTAC3_2 AOOTACode = "44-C3.2" // Proximal with fibula head shortening
+	AOOTAC3_3 AOOTACode = "44-C3.3" // Trimaleolar proximal suprasyndesmotic
+
+	// B3 subtypes (trimaleolar transyndesmotic)
+	AOOTAB3_1 AOOTACode = "44-B3.1" // Trimaleolar transyndesmotic open mortise
+	AOOTAB3_2 AOOTACode = "44-B3.2" // Trimaleolar transyndesmotic malleolus fracture
+	AOOTAB3_3 AOOTACode = "44-B3.3" // Trimaleolar transyndesmotic comminuted/oblique
+
 	// AOOTA43B1 is the 43-B1 distal tibia without articular depression code.
 	AOOTA43B1 AOOTACode = "43-B1"
 	// AOOTA43B2 is the 43-B2 distal tibia with articular depression code.

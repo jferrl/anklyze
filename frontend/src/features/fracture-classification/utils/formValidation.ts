@@ -28,13 +28,17 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
 
     case 'lateral_only':
       if (!formData.fibular_level) return false;
-      if (formData.fibular_level === 'infrasindesmal') return true;
+      if (formData.fibular_level === 'infrasindesmal') {
+        // Optional subtype question - complete once answered (or skipped)
+        return formData.infrasindesmal_morphology !== undefined || true;
+      }
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
         if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
         return true;
       }
       if (!formData.lateral_morphology) return false;
+      // Transindesmal: lateral_subtype is optional
       return true;
 
     case 'medial_posterior':
@@ -73,11 +77,18 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
       if (!formData.fibular_level) return false;
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
-        if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
+        if (formData.suprasindesmal_type === 'proximal') {
+          // Fibula head shortening is optional subtype
+          return true;
+        }
+        if (!formData.fibula_trace_pattern) return false;
+        // Medial subtype is optional
         return true;
       }
       if (!formData.lateral_morphology) return false;
+      if (formData.lateral_morphology === 'conminuta') return true; // Conminuta → AO nil, no more questions
       if (formData.lateral_morphology === 'transverse' && !formData.fibular_level_for_transverse) return false;
+      // Medial subtype is optional
       return true;
 
     case 'trimaleolar':
@@ -90,11 +101,23 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         return true;
       }
       if (!formData.lateral_morphology) return false;
+      if (formData.lateral_morphology === 'conminuta') {
+        // Conminuta → AO nil, still need CT + Bartonicek
+        if (formData.has_ct_scan === undefined) return false;
+        if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
+        return true;
+      }
       if (formData.lateral_morphology === 'transverse') {
         if (!formData.fibular_level_for_transverse) return false;
-        // Transverse + infrasindesmal is impossible/exceptional - form complete, no CT needed
-        if (formData.fibular_level_for_transverse === 'infrasindesmal') return true;
+        if (formData.fibular_level_for_transverse === 'infrasindesmal') {
+          // Infrasindesmal still needs CT + Bartonicek
+          if (formData.has_ct_scan === undefined) return false;
+          if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
+          return true;
+        }
       }
+      // Transindesmal paths (transverse-transindesmal, oblique, spiral) need medial_subtype
+      if (!formData.medial_subtype) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
       return true;
