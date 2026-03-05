@@ -29,7 +29,7 @@ type InputValidator struct {
 // NewInputValidator creates a new input validator with default settings
 func NewInputValidator() *InputValidator {
 	return &InputValidator{
-		minWords:         3,
+		minWords:         2,
 		maxRepeatedChars: 4,
 		minAlphaRatio:    0.7,
 		medicalKeywords:  buildMedicalKeywords(),

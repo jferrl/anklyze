@@ -28,14 +28,15 @@ Output:
 }
 
 Example 3 - Bimalleolar with complete details:
-Input: "Bimalleolar fracture: transverse medial malleolus, spiral fibula at syndesmosis level"
+Input: "Bimalleolar fracture: transverse medial malleolus, spiral fibula at syndesmosis level, malleolus fracture"
 Output:
 {
   "extracted_input": {
     "involved_malleoli": "lateral_medial",
-    "medial_morphology": "transverse",
+    "medial_morphology": "transverse_oblique",
     "fibular_level": "transindesmal",
-    "lateral_morphology": "spiral"
+    "lateral_morphology": "spiral",
+    "medial_subtype": "malleolus_fracture"
   },
   "confidence": 0.92,
   "missing_fields": [],
@@ -49,6 +50,7 @@ Output:
   "extracted_input": {
     "involved_malleoli": "posterior_only",
     "articular_involvement": "small_without_extension",
+    "has_ct_scan": true,
     "posterior_fracture_type": "posterolateral"
   },
   "confidence": 0.95,
@@ -56,7 +58,7 @@ Output:
   "clarifications": []
 }
 
-Example 5 - Incomplete bimalleolar (needs multiple fields):
+Example 5 - Incomplete bimalleolar (needs medial morphology first):
 Input: "Bimalleolar fracture involving lateral and medial malleoli"
 Output:
 {
@@ -64,10 +66,9 @@ Output:
     "involved_malleoli": "lateral_medial"
   },
   "confidence": 0.4,
-  "missing_fields": ["medial_morphology", "fibular_level", "lateral_morphology"],
+  "missing_fields": ["medial_morphology"],
   "clarifications": [
-    {"field": "medial_morphology", "question": "What is the medial malleolus fracture orientation?", "options": ["Oblique (diagonal line)", "Transverse (horizontal line)"]},
-    {"field": "fibular_level", "question": "Where is the fibular fracture relative to the syndesmosis?", "options": ["Below syndesmosis (infrasindesmal)", "At syndesmosis level (transindesmal)", "Above syndesmosis (suprasindesmal)"]}
+    {"field": "medial_morphology", "question": "What is the medial malleolus fracture orientation?", "options": ["Oblique/Vertical (diagonal line)", "Transverse/Oblique (horizontal line)"]}
   ]
 }
 
@@ -85,7 +86,7 @@ Output:
   ]
 }
 
-Example 7 - Lateral with transindesmal (needs morphology):
+Example 7 - Lateral with transindesmal (needs morphology and subtype):
 Input: "Weber B fibula fracture at syndesmosis level"
 Output:
 {
@@ -93,9 +94,9 @@ Output:
     "involved_malleoli": "lateral_only",
     "fibular_level": "transindesmal"
   },
-  "confidence": 0.6,
-  "missing_fields": ["lateral_morphology"],
-  "clarifications": [{"field": "lateral_morphology", "question": "What is the fracture pattern of the fibula?", "options": ["Spiral (twisting pattern)", "Oblique (diagonal line)"]}]
+  "confidence": 0.5,
+  "missing_fields": ["lateral_morphology", "lateral_subtype"],
+  "clarifications": [{"field": "lateral_morphology", "question": "What is the fracture pattern of the fibula?", "options": ["Spiral (twisting pattern)", "Oblique/Transverse/Comminuted (diagonal or horizontal line)"]}]
 }
 
 Example 8 - Medial only incomplete:
@@ -199,6 +200,99 @@ Output:
     "is_posterior_posteromedial": true
   },
   "confidence": 0.90,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 16 - Lateral infrasindesmal with avulsion:
+Input: "Lateral malleolus fracture below syndesmosis, avulsion of the fibular tip"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "infrasindesmal",
+    "infrasindesmal_morphology": "avulsion"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 17 - Lateral transindesmal with subtype:
+Input: "Spiral fibula fracture at syndesmosis level, simple fracture"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral",
+    "lateral_subtype": "simple"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 17b - Lateral transindesmal with morphology but missing subtype (MUST ask clarification):
+Input: "Spiral fibula fracture at syndesmosis level"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral"
+  },
+  "confidence": 0.6,
+  "missing_fields": ["lateral_subtype"],
+  "clarifications": [{"field": "lateral_subtype", "question": "What type of transindesmal fracture?", "options": ["Simple fracture", "Associated syndesmosis rupture", "Butterfly wing / wedge"]}]
+}
+
+Example 18 - Bimalleolar lateral+medial suprasindesmal with medial subtype:
+Input: "Bimalleolar lateral and medial fracture, suprasindesmal simple diaphyseal fibula, long oblique trace, open mortise"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial",
+    "medial_morphology": "transverse_oblique",
+    "fibular_level": "suprasindesmal",
+    "suprasindesmal_type": "simple_diaphyseal",
+    "fibula_trace_pattern": "parasindesmotic_long",
+    "medial_subtype": "open_mortise"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 19 - Trimaleolar transindesmal with details:
+Input: "Trimaleolar fracture, spiral transindesmal fibula, medial malleolus fracture, CT shows Bartonicek type 2"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral",
+    "medial_subtype": "malleolus_fracture",
+    "has_ct_scan": true,
+    "posterior_fracture_type": "posterolateral"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Example 20 - Bimalleolar lateral+medial proximal with shortening:
+Input: "Bimalleolar fracture, Maisonneuve (proximal 1/3 fibula) with fibula head shortening"
+Output:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial",
+    "medial_morphology": "transverse_oblique",
+    "fibular_level": "suprasindesmal",
+    "suprasindesmal_type": "proximal",
+    "has_fibula_head_shortening": true
+  },
+  "confidence": 0.92,
   "missing_fields": [],
   "clarifications": []
 }

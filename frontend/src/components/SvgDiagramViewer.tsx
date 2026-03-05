@@ -19,8 +19,10 @@ export function SvgDiagramViewer({ src, className }: SvgDiagramViewerProps) {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const scaleRef = useRef(scale);
   const translateRef = useRef(translate);
-  scaleRef.current = scale;
-  translateRef.current = translate;
+  useEffect(() => {
+    scaleRef.current = scale;
+    translateRef.current = translate;
+  }, [scale, translate]);
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef({ x: 0, y: 0 });
   const translateStart = useRef({ x: 0, y: 0 });

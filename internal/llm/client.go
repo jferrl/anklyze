@@ -73,8 +73,12 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	return c
 }
 
+// maxRetries is the number of times to retry on transient LLM failures (empty/unparseable responses).
+const maxRetries = 2
+
 // ExtractFractureInput extracts structured FractureInput from a natural language description.
 // If previousInput is provided, it will be included as context for multi-turn conversations.
+// Retries up to maxRetries times on transient failures (empty or unparseable JSON responses).
 func (c *Client) ExtractFractureInput(ctx context.Context, description string, lang i18n.Language, previousInput *domain.FractureInput) (*ExtractionResult, error) {
 	// Check context cancellation before starting
 	if err := ctx.Err(); err != nil {
@@ -97,32 +101,45 @@ func (c *Client) ExtractFractureInput(ctx context.Context, description string, l
 		},
 	}
 
-	resp, err := c.client.Models.GenerateContent(ctx, c.model, genai.Text(prompt), config)
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			return nil, fmt.Errorf("%w: %w", ErrTimeout, err)
+	var lastErr error
+	for attempt := range maxRetries + 1 {
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("context cancelled during retry %d: %w", attempt, err)
 		}
-		if errors.Is(err, context.Canceled) {
-			return nil, fmt.Errorf("request cancelled: %w", err)
+
+		resp, err := c.client.Models.GenerateContent(ctx, c.model, genai.Text(prompt), config)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return nil, fmt.Errorf("%w: %w", ErrTimeout, err)
+			}
+			if errors.Is(err, context.Canceled) {
+				return nil, fmt.Errorf("request cancelled: %w", err)
+			}
+			lastErr = fmt.Errorf("failed to generate content: %w", err)
+			continue
 		}
-		return nil, fmt.Errorf("failed to generate content: %w", err)
+
+		if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
+			lastErr = fmt.Errorf("empty response from Gemini (attempt %d)", attempt+1)
+			continue
+		}
+
+		text := resp.Candidates[0].Content.Parts[0].Text
+		if text == "" {
+			lastErr = fmt.Errorf("empty text in response (attempt %d)", attempt+1)
+			continue
+		}
+
+		var result ExtractionResult
+		if err := json.Unmarshal([]byte(text), &result); err != nil {
+			lastErr = fmt.Errorf("failed to parse response JSON (attempt %d): %w (response: %s)", attempt+1, err, text)
+			continue
+		}
+
+		return &result, nil
 	}
 
-	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
-		return nil, fmt.Errorf("empty response from Gemini")
-	}
-
-	text := resp.Candidates[0].Content.Parts[0].Text
-	if text == "" {
-		return nil, fmt.Errorf("empty text in response")
-	}
-
-	var result ExtractionResult
-	if err := json.Unmarshal([]byte(text), &result); err != nil {
-		return nil, fmt.Errorf("failed to parse response JSON: %w (response: %s)", err, text)
-	}
-
-	return &result, nil
+	return nil, lastErr
 }
 
 // Close closes the Gemini client.

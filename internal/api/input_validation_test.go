@@ -147,13 +147,10 @@ func TestInputValidation(t *testing.T) {
 			wantValid: true,
 		},
 		{
-			// Two words containing a medical term: passes length and alpha checks but
-			// has only 2 words, so trips too_few_words.
-			name:       "invalid: two words is below minimum word count",
-			input:      "fracture here",
-			wantValid:  false,
-			wantCode:   "too_few_words",
-			wantReason: "Input has too few words",
+			// Two words containing a medical term: passes all checks (minWords=2).
+			name:      "valid: two medical words passes minimum word count",
+			input:     "fracture here",
+			wantValid: true,
 		},
 		{
 			// Single long word containing a medical keyword still has only 1 word.
@@ -164,12 +161,10 @@ func TestInputValidation(t *testing.T) {
 			wantReason: "Input has too few words",
 		},
 		{
-			// Two words with punctuation still yields 2 words after splitting.
-			name:       "invalid: two comma-separated words still too few",
-			input:      "fracture, ankle",
-			wantValid:  false,
-			wantCode:   "too_few_words",
-			wantReason: "Input has too few words",
+			// Two words with punctuation yields 2 words after splitting, now passes (minWords=2).
+			name:      "valid: two comma-separated medical words passes minimum word count",
+			input:     "fracture, ankle",
+			wantValid: true,
 		},
 
 		// ---- Rule 5: keyboard_smash ----
@@ -753,8 +748,8 @@ func TestNewInputValidator(t *testing.T) {
 		t.Fatal("NewInputValidator() returned nil")
 	}
 
-	if validator.minWords != 3 {
-		t.Errorf("minWords = %d, want 3", validator.minWords)
+	if validator.minWords != 2 {
+		t.Errorf("minWords = %d, want 2", validator.minWords)
 	}
 
 	if validator.maxRepeatedChars != 4 {

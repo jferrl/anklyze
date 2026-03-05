@@ -28,14 +28,15 @@ Salida:
 }
 
 Ejemplo 3 - Bimaleolar con detalles completos:
-Entrada: "Fractura bimaleolar: maléolo medial transverso, peroné espirodeo a nivel de sindesmosis"
+Entrada: "Fractura bimaleolar: maléolo medial transverso, peroné espirodeo a nivel de sindesmosis, fractura del maléolo medial"
 Salida:
 {
   "extracted_input": {
     "involved_malleoli": "lateral_medial",
-    "medial_morphology": "transverse",
+    "medial_morphology": "transverse_oblique",
     "fibular_level": "transindesmal",
-    "lateral_morphology": "spiral"
+    "lateral_morphology": "spiral",
+    "medial_subtype": "malleolus_fracture"
   },
   "confidence": 0.92,
   "missing_fields": [],
@@ -49,6 +50,7 @@ Salida:
   "extracted_input": {
     "involved_malleoli": "posterior_only",
     "articular_involvement": "small_without_extension",
+    "has_ct_scan": true,
     "posterior_fracture_type": "posterolateral"
   },
   "confidence": 0.95,
@@ -64,10 +66,9 @@ Salida:
     "involved_malleoli": "lateral_medial"
   },
   "confidence": 0.4,
-  "missing_fields": ["medial_morphology", "fibular_level", "lateral_morphology"],
+  "missing_fields": ["medial_morphology"],
   "clarifications": [
-    {"field": "medial_morphology", "question": "¿Cuál es la orientación de la fractura del maléolo medial?", "options": ["Oblicua (línea diagonal)", "Transversa (línea horizontal)"]},
-    {"field": "fibular_level", "question": "¿Dónde está la fractura del peroné respecto a la sindesmosis?", "options": ["Por debajo de la sindesmosis (infrasindesmal)", "A nivel de la sindesmosis (transindesmal)", "Por encima de la sindesmosis (suprasindesmal)"]}
+    {"field": "medial_morphology", "question": "¿Cuál es la orientación de la fractura del maléolo medial?", "options": ["Oblicua/Vertical (línea diagonal)", "Transversa/Oblicua (línea horizontal)"]}
   ]
 }
 
@@ -85,7 +86,7 @@ Salida:
   ]
 }
 
-Ejemplo 7 - Lateral con transindesmal (necesita morfología):
+Ejemplo 7 - Lateral con transindesmal (necesita morfología y subtipo):
 Entrada: "Fractura Weber B de peroné a nivel de sindesmosis"
 Salida:
 {
@@ -93,9 +94,9 @@ Salida:
     "involved_malleoli": "lateral_only",
     "fibular_level": "transindesmal"
   },
-  "confidence": 0.6,
-  "missing_fields": ["lateral_morphology"],
-  "clarifications": [{"field": "lateral_morphology", "question": "¿Cuál es el patrón de fractura del peroné?", "options": ["Espiroidea (patrón en espiral)", "Oblicua (línea diagonal)"]}]
+  "confidence": 0.5,
+  "missing_fields": ["lateral_morphology", "lateral_subtype"],
+  "clarifications": [{"field": "lateral_morphology", "question": "¿Cuál es el patrón de fractura del peroné?", "options": ["Espiroidea (patrón en espiral)", "Oblicua/Transversa/Conminuta (línea diagonal u horizontal)"]}]
 }
 
 Ejemplo 8 - Solo medial incompleta:
@@ -199,6 +200,99 @@ Salida:
     "is_posterior_posteromedial": true
   },
   "confidence": 0.90,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 16 - Lateral infrasindesmal con avulsión:
+Entrada: "Fractura de maléolo lateral por debajo de la sindesmosis, avulsión de la punta del peroné"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "infrasindesmal",
+    "infrasindesmal_morphology": "avulsion"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 17 - Lateral transindesmal con subtipo:
+Entrada: "Fractura espiroidea del peroné a nivel de sindesmosis, fractura simple"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral",
+    "lateral_subtype": "simple"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 17b - Lateral transindesmal con morfología pero sin subtipo (DEBE pedir clarificación):
+Entrada: "Fractura espiroidea del peroné a nivel de sindesmosis"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_only",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral"
+  },
+  "confidence": 0.6,
+  "missing_fields": ["lateral_subtype"],
+  "clarifications": [{"field": "lateral_subtype", "question": "¿Qué tipo de fractura transindesmal?", "options": ["Fractura simple", "Rotura de sindesmosis asociada", "Ala de mariposa / cuña"]}]
+}
+
+Ejemplo 18 - Bimaleolar lateral+medial suprasindesmal con subtipo medial:
+Entrada: "Fractura bimaleolar lateral y medial, peroné suprasindesmal diafisario simple, trazo oblicuo largo, abierta mortaja"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial",
+    "medial_morphology": "transverse_oblique",
+    "fibular_level": "suprasindesmal",
+    "suprasindesmal_type": "simple_diaphyseal",
+    "fibula_trace_pattern": "parasindesmotic_long",
+    "medial_subtype": "open_mortise"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 19 - Trimaleolar transindesmal con detalles:
+Entrada: "Fractura trimaleolar, peroné espirodeo transindesmal, fractura del maléolo medial, TAC con Bartonicek tipo 2"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "trimaleolar",
+    "fibular_level": "transindesmal",
+    "lateral_morphology": "spiral",
+    "medial_subtype": "malleolus_fracture",
+    "has_ct_scan": true,
+    "posterior_fracture_type": "posterolateral"
+  },
+  "confidence": 0.95,
+  "missing_fields": [],
+  "clarifications": []
+}
+
+Ejemplo 20 - Bimaleolar lateral+medial proximal con acortamiento:
+Entrada: "Fractura bimaleolar, Maisonneuve (1/3 proximal peroné) con acortamiento de cabeza de peroné"
+Salida:
+{
+  "extracted_input": {
+    "involved_malleoli": "lateral_medial",
+    "medial_morphology": "transverse_oblique",
+    "fibular_level": "suprasindesmal",
+    "suprasindesmal_type": "proximal",
+    "has_fibula_head_shortening": true
+  },
+  "confidence": 0.92,
   "missing_fields": [],
   "clarifications": []
 }
