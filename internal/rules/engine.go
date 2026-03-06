@@ -233,13 +233,8 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 			return result, nil
 		}
 
-		if input.IsPosteriorPosteromedial != nil && *input.IsPosteriorPosteromedial {
-			result.AOOTA = &domain.AOOTAClassification{
-				Code: domain.AOOTAA3,
-			}
-		} else {
-			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
-		}
+		// CT available → Bartonicek from posterior fracture type per drawio 2026-02-28
+		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 
 		return result, nil
 

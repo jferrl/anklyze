@@ -629,12 +629,12 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("infrasindesmal CT + posteromedial → AO 44-A3 + LH SA + Weber A", func(t *testing.T) {
+	t.Run("infrasindesmal CT + posterolateral → Bartonicek 2 + LH SA + Weber A (no AO)", func(t *testing.T) {
 		input := domain.FractureInput{
-			InvolvedMalleoli:         domain.InvolvedLateralPosterior,
-			FibularLevel:             domain.FibularLevelInfrasindesmal,
-			HasCTScan:                &boolTrue,
-			IsPosteriorPosteromedial: &boolTrue,
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelInfrasindesmal,
+			HasCTScan:             &boolTrue,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
 		}
 		result, err := engine.Classify(input)
 		if err != nil {
@@ -643,24 +643,23 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
-		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTAA3 {
-			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTAA3)
+		if result.AOOTA != nil {
+			t.Errorf("AOOTA = %v, want nil (no clasificable per drawio)", result.AOOTA)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
 		}
-		if result.Bartonicek != nil {
-			t.Error("Bartonicek should be nil for posteromedial")
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %v, want Bartonicek 2", result.Bartonicek)
 		}
 	})
 
-	t.Run("infrasindesmal CT + not posteromedial + extraincisural → Weber A + LH SA + Bartonicek 1", func(t *testing.T) {
+	t.Run("infrasindesmal CT + extraincisural → Weber A + LH SA + Bartonicek 1", func(t *testing.T) {
 		input := domain.FractureInput{
-			InvolvedMalleoli:         domain.InvolvedLateralPosterior,
-			FibularLevel:             domain.FibularLevelInfrasindesmal,
-			HasCTScan:                &boolTrue,
-			IsPosteriorPosteromedial: &boolFalse,
-			PosteriorFractureType:    domain.PosteriorExtraincisural,
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelInfrasindesmal,
+			HasCTScan:             &boolTrue,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
 		}
 		result, err := engine.Classify(input)
 		if err != nil {
