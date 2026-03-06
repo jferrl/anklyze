@@ -37,7 +37,8 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         return true;
       }
       if (!formData.lateral_morphology) return false;
-      // Transindesmal: lateral_subtype is optional
+      // Transindesmal: lateral_subtype required per drawio (determines B1.1/B1.2/B1.3)
+      if (!formData.lateral_subtype) return false;
       return true;
 
     case 'medial_posterior':
@@ -78,17 +79,19 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
       if (formData.fibular_level === 'suprasindesmal') {
         if (!formData.suprasindesmal_type) return false;
         if (formData.suprasindesmal_type === 'proximal') {
-          // Fibula head shortening is optional subtype
-          return true;
+          // Fibula head shortening required per drawio (determines C3.1/C3.2)
+          return formData.has_fibula_head_shortening !== undefined;
         }
         if (!formData.fibula_trace_pattern) return false;
-        // Medial subtype is optional
+        // Medial subtype required per drawio (determines C1.1/C1.2/C2.1/C2.2)
+        if (!formData.medial_subtype) return false;
         return true;
       }
       // Transindesmal
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'conminuta') return true; // Conminuta → AO nil, no more questions
-      // Medial subtype is optional
+      if (formData.lateral_morphology === 'conminuta') return true; // Conminuta → B2.3 direct, no medial subtype
+      // Medial subtype required per drawio (determines B2.1/B2.2)
+      if (!formData.medial_subtype) return false;
       return true;
 
     case 'trimaleolar':
