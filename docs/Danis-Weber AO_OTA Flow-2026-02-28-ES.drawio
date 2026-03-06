@@ -213,7 +213,7 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-69" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Gran fragmento triangular posterolateral" vertex="1">
           <mxGeometry height="60" width="320" x="25409.78965163429" y="1300" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-70" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-70" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 1" vertex="1">
           <mxGeometry height="140" width="392" x="24077.78965163429" y="1420" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-71" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;div&gt;Lauge-Hansen PA&lt;br&gt;Weber B&lt;br&gt;Bartonicek 2&lt;/div&gt;" vertex="1">
