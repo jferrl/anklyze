@@ -162,7 +162,9 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                       "text-3xl font-bold mb-1 cursor-help inline-flex items-center gap-2 transition-colors",
                       classificationStyles.laugeHansen.hover
                     )}>
-                      {result.lauge_hansen.type || getLaugeHansenFullName(t, '', result.lauge_hansen.ambiguous)}
+                      {result.lauge_hansen.type === 'not_classifiable'
+                        ? getLaugeHansenFullName(t, result.lauge_hansen.type)
+                        : result.lauge_hansen.type || getLaugeHansenFullName(t, '', result.lauge_hansen.ambiguous)}
                       <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                     </p>
                   </HoverCardTrigger>

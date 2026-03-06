@@ -121,11 +121,11 @@
     "questions": {
       "involved_malleoli": "Which malleoli are fractured?",
       "posterior_fracture_type": "What type of fracture is it?",
-      "posterior_fracture_type_posterior": "What type of fracture is the posterior malleolus?",
+      "posterior_fracture_type_posterior": "What type of fracture is it?",
       "posterior_fracture_type_lp_infra": "What is the morphology of the posterior malleolus?",
       "medial_morphology": "What morphology does it have?",
       "medial_morphology_lm": "What is the morphology of the medial malleolus fracture?",
-      "fibular_level": "At what level is the fracture?",
+      "fibular_level": "At what level is the fibular fracture?",
       "fibular_level_lm": "At what level is the fibular fracture?",
       "fibular_level_tri": "At what level is the fibular fracture?",
       "lateral_morphology": "What is the morphology of the fracture?",
@@ -133,7 +133,7 @@
       "suprasindesmal_type": "What type?",
       "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
       "has_ct_scan": "Do you have a CT scan?",
-      "fibula_trace_pattern": "What is the fibular trace pattern?",
+      "fibula_trace_pattern": "What is the main fibular trace pattern?",
       "fibula_trace_pattern_multi": "What is the main fibular trace pattern?",
       "fibular_level_for_transverse": "At what level is the fibular fracture?",
       "articularInvolvement": "What is the involvement?",
@@ -279,7 +279,9 @@
         "PA_desc": "Pronation mechanism with abduction.",
         "ambiguous_name": "Not classifiable",
         "ambiguous_desc": "Lauge-Hansen not classifiable (could be PA/SER/PER)",
-        "unclassifiable_desc": "Isolated posterior malleolus fractures don't fit classic Lauge-Hansen injury mechanisms"
+        "unclassifiable_desc": "Isolated posterior malleolus fractures don't fit classic Lauge-Hansen injury mechanisms",
+        "not_classifiable_name": "Not classifiable",
+        "not_classifiable_desc": "Cannot be classified with this system"
       },
       "danisWeber": {
         "A_desc": "Weber A: Fracture below syndesmosis",

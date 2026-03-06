@@ -92,8 +92,12 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
 		}
+	} else {
+		// Transverse/oblique → LH not classifiable per drawio 2026-02-28
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenNotClassifiable,
+		}
 	}
-	// Transverse/oblique → LH not classifiable (nil) per drawio 2026-02-28
 
 	return result, nil
 }
@@ -466,7 +470,10 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		result.AOOTA = &domain.AOOTAClassification{
 			Code: aoCode,
 		}
-		// LH = no clasificable (nil)
+		// LH = no clasificable per drawio 2026-02-28
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenNotClassifiable,
+		}
 		// Bartonicek requires CT scan
 		if input.HasCTScan != nil && *input.HasCTScan {
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)

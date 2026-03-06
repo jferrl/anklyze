@@ -224,7 +224,6 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 		medialMorphology    domain.MedialMorphology
 		expectedAOOTANil    bool
 		expectedLaugeHansen domain.LaugeHansenType
-		expectedLHNil       bool
 	}{
 		{
 			name:                "oblique medial morphology",
@@ -234,9 +233,9 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 		},
 		{
 			name:             "transverse medial morphology",
-			medialMorphology: domain.MedialMorphologyTransverse,
-			expectedAOOTANil: true, // AO not classifiable for medial-only
-			expectedLHNil:    true, // LH not classifiable for transverse medial
+			medialMorphology:    domain.MedialMorphologyTransverse,
+			expectedAOOTANil:    true,                               // AO not classifiable for medial-only
+			expectedLaugeHansen: domain.LaugeHansenNotClassifiable,  // LH not classifiable for transverse medial
 		},
 	}
 
@@ -279,17 +278,11 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 				}
 			}
 
-			if tt.expectedLHNil {
-				if result.LaugeHansen != nil {
-					t.Errorf("LaugeHansen should be nil, got %q", result.LaugeHansen.Type)
-				}
-			} else {
-				if result.LaugeHansen == nil {
-					t.Fatal("LaugeHansen classification is nil")
-				}
-				if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-					t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
-				}
+			if result.LaugeHansen == nil {
+				t.Fatal("LaugeHansen classification is nil")
+			}
+			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
+				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
 			}
 
 			// Medial only should not have DanisWeber

@@ -15,10 +15,11 @@ type LaugeHansenType string
 
 // LaugeHansenSA and related constants define the Lauge-Hansen classification types.
 const (
-	LaugeHansenSA  LaugeHansenType = "SA"
-	LaugeHansenSER LaugeHansenType = "SER"
-	LaugeHansenPER LaugeHansenType = "PER"
-	LaugeHansenPA  LaugeHansenType = "PA"
+	LaugeHansenSA              LaugeHansenType = "SA"
+	LaugeHansenSER             LaugeHansenType = "SER"
+	LaugeHansenPER             LaugeHansenType = "PER"
+	LaugeHansenPA              LaugeHansenType = "PA"
+	LaugeHansenNotClassifiable LaugeHansenType = "not_classifiable"
 )
 
 // DanisWeberClassification holds the Danis-Weber classification result

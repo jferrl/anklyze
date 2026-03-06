@@ -127,11 +127,11 @@
     "questions": {
       "involved_malleoli": "¿Qué maléolos tiene fracturados?",
       "posterior_fracture_type": "¿Qué tipo de fractura es?",
-      "posterior_fracture_type_posterior": "¿Qué tipo de fractura es el maléolo posterior?",
+      "posterior_fracture_type_posterior": "¿Qué tipo de fractura es?",
       "posterior_fracture_type_lp_infra": "¿Cuál es la morfología del maléolo posterior?",
       "medial_morphology": "¿Qué morfología tiene?",
       "medial_morphology_lm": "¿De qué morfología es la fractura del maléolo medial?",
-      "fibular_level": "¿A qué nivel está la fractura?",
+      "fibular_level": "¿A qué nivel está la fractura de peroné?",
       "fibular_level_lm": "¿A qué nivel está la fractura de peroné?",
       "fibular_level_tri": "¿A qué nivel está la fractura de peroné?",
       "lateral_morphology": "¿De qué morfología es la fractura?",
@@ -139,7 +139,7 @@
       "suprasindesmal_type": "¿De qué tipo?",
       "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
       "has_ct_scan": "¿Tiene TAC?",
-      "fibula_trace_pattern": "¿Cómo es el trazo del peroné?",
+      "fibula_trace_pattern": "¿Cómo es el trazo principal del peroné?",
       "fibula_trace_pattern_multi": "¿Cómo es el trazo principal del peroné?",
       "fibular_level_for_transverse": "¿A qué nivel está la fractura de peroné?",
       "articularInvolvement": "¿Cuál es la afectación?",
@@ -285,7 +285,9 @@
         "PA_desc": "Mecanismo de pronación con abducción.",
         "ambiguous_name": "No clasificable",
         "ambiguous_desc": "Lauge-Hansen no clasificable (podría ser PA/SER/PER)",
-        "unclassifiable_desc": "Las fracturas aisladas del maléolo posterior no encajan en los mecanismos clásicos de Lauge-Hansen"
+        "unclassifiable_desc": "Las fracturas aisladas del maléolo posterior no encajan en los mecanismos clásicos de Lauge-Hansen",
+        "not_classifiable_name": "No clasificable",
+        "not_classifiable_desc": "No se puede clasificar con este sistema"
       },
       "danisWeber": {
         "A_desc": "Weber A: Fractura por debajo de la sindesmosis",

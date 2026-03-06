@@ -2902,8 +2902,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 		if result.DanisWeber != nil {
 			t.Errorf("DanisWeber = %q, want nil", result.DanisWeber.Type)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA != nil {
 			t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
@@ -5825,8 +5828,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.2")
@@ -5862,8 +5868,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.2")
@@ -5902,8 +5911,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.2")
@@ -5942,8 +5954,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.2")
@@ -5982,8 +5997,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.2")
@@ -6021,8 +6039,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.3")
@@ -6058,8 +6079,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.3")
@@ -6098,8 +6122,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.3")
@@ -6138,8 +6165,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.3")
@@ -6178,8 +6208,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		if result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.AOOTA == nil {
 			t.Fatal("AOOTA is nil, want 44-A3.3")

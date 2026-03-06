@@ -292,8 +292,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		}
 	})
 
-	// small_without_extension + transverse → LH nil (no clasificable per drawio 2026-02-28), AO nil
-	t.Run("small_without_extension + transverse → LH nil, AO nil", func(t *testing.T) {
+	// small_without_extension + transverse → LH not_classifiable per drawio 2026-02-28, AO nil
+	t.Run("small_without_extension + transverse → LH not_classifiable, AO nil", func(t *testing.T) {
 		input := domain.FractureInput{
 			InvolvedMalleoli:     domain.InvolvedMedialOnly,
 			ArticularInvolvement: domain.ArticularSmallWithoutExtension,
@@ -310,9 +310,12 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.AOOTA != nil {
 			t.Errorf("AOOTA should be nil, got %v", result.AOOTA.Code)
 		}
-		// LH should be nil (no clasificable) per drawio 2026-02-28
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen should be nil for transverse medial-only, got %+v", result.LaugeHansen)
+		// LH should be not_classifiable per drawio 2026-02-28
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen classification is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 		if result.DanisWeber != nil {
 			t.Error("DanisWeber should be nil for medial only fractures")
@@ -1025,7 +1028,6 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 		expectedAOOTA             domain.AOOTACode
 		expectedAOOTANil          bool
 		expectedLaugeHansen       domain.LaugeHansenType
-		expectedLHNil             bool
 	}{
 		// Path: High (suprasindesmal) — trimaleolar uses .3 subtypes per drawio 2026-02-28
 		{
@@ -1057,12 +1059,12 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 		},
 		// Path: Infrasindesmal — direct infrasindesmal morphology
 		{
-			name:               "infrasindesmal trimaleolar → A3.3 Weber A",
-			fibularLevel:       domain.FibularLevelInfrasindesmal,
-			lang:               i18n.English,
-			expectedDanisWeber: domain.DanisWeberA,
-			expectedAOOTA:      domain.AOOTAA3_3,
-			expectedLHNil:      true,
+			name:                "infrasindesmal trimaleolar → A3.3 Weber A LH not_classifiable",
+			fibularLevel:        domain.FibularLevelInfrasindesmal,
+			lang:                i18n.English,
+			expectedDanisWeber:  domain.DanisWeberA,
+			expectedAOOTA:       domain.AOOTAA3_3,
+			expectedLaugeHansen: domain.LaugeHansenNotClassifiable,
 		},
 		// Path: Transindesmal - transverse — B3 subtype by medial subtype
 		{
@@ -1213,17 +1215,11 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 				}
 			}
 
-			if tt.expectedLHNil {
-				if result.LaugeHansen != nil {
-					t.Errorf("LaugeHansen should be nil, got %v", result.LaugeHansen.Type)
-				}
-			} else {
-				if result.LaugeHansen == nil {
-					t.Fatal("LaugeHansen classification is nil")
-				}
-				if result.LaugeHansen.Type != tt.expectedLaugeHansen {
-					t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
-				}
+			if result.LaugeHansen == nil {
+				t.Fatal("LaugeHansen classification is nil")
+			}
+			if result.LaugeHansen.Type != tt.expectedLaugeHansen {
+				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
 			}
 		})
 	}
@@ -1310,7 +1306,6 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 		expectedBartonicek        domain.BartonicekType
 		expectBartonicekNil       bool
 		expectedLaugeHansen       domain.LaugeHansenType
-		expectedLHNil             bool
 	}{
 		{
 			name:                "suprasindesmal proximal with CT → Bartonicek 1",
@@ -1351,12 +1346,12 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPER,
 		},
 		{
-			name:               "infrasindesmal with CT → Bartonicek 1",
-			fibularLevel:       domain.FibularLevelInfrasindesmal,
-			posteriorType:      domain.PosteriorExtraincisural,
-			hasCTScan:          &boolTrue,
-			expectedBartonicek: domain.BartonicekType1,
-			expectedLHNil:      true,
+			name:                "infrasindesmal with CT → Bartonicek 1 LH not_classifiable",
+			fibularLevel:        domain.FibularLevelInfrasindesmal,
+			posteriorType:       domain.PosteriorExtraincisural,
+			hasCTScan:           &boolTrue,
+			expectedBartonicek:  domain.BartonicekType1,
+			expectedLaugeHansen: domain.LaugeHansenNotClassifiable,
 		},
 		{
 			name:                "transindesmal oblique with CT → Bartonicek 4",
@@ -1401,14 +1396,8 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 			if result.Impossible {
 				t.Fatalf("unexpected Impossible = true")
 			}
-			if tt.expectedLHNil {
-				if result.LaugeHansen != nil {
-					t.Errorf("LaugeHansen should be nil, got %v", result.LaugeHansen.Type)
-				}
-			} else {
-				if result.LaugeHansen == nil || result.LaugeHansen.Type != tt.expectedLaugeHansen {
-					t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, tt.expectedLaugeHansen)
-				}
+			if result.LaugeHansen == nil || result.LaugeHansen.Type != tt.expectedLaugeHansen {
+				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, tt.expectedLaugeHansen)
 			}
 			if tt.expectBartonicekNil {
 				if result.Bartonicek != nil {
@@ -1497,8 +1486,11 @@ func TestEngine_Classify_TrimaleolarInfrasindesmal(t *testing.T) {
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTAA3_3 {
 			t.Errorf("AOOTA = %v, want 44-A3.3", result.AOOTA)
 		}
-		if result.LaugeHansen != nil {
-			t.Errorf("LaugeHansen should be nil, got %v", result.LaugeHansen.Type)
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen classification is nil, want not_classifiable")
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
 	})
 }
