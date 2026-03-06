@@ -23,6 +23,14 @@ export function getLocalFormOptions(): FormOptions {
       id: 'posterior_fracture_type',
       title: t('form.questions.posterior_fracture_type'),
     },
+    posterior_fracture_type_posterior: {
+      id: 'posterior_fracture_type_posterior',
+      title: t('form.questions.posterior_fracture_type_posterior'),
+    },
+    posterior_fracture_type_lp_infra: {
+      id: 'posterior_fracture_type_lp_infra',
+      title: t('form.questions.posterior_fracture_type_lp_infra'),
+    },
     medial_morphology: {
       id: 'medial_morphology',
       title: t('form.questions.medial_morphology'),
@@ -47,6 +55,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'lateral_morphology',
       title: t('form.questions.lateral_morphology'),
     },
+    lateral_morphology_lm_tri: {
+      id: 'lateral_morphology_lm_tri',
+      title: t('form.questions.lateral_morphology_lm_tri'),
+    },
     suprasindesmal_type: {
       id: 'suprasindesmal_type',
       title: t('form.questions.suprasindesmal_type'),
@@ -62,6 +74,10 @@ export function getLocalFormOptions(): FormOptions {
     fibula_trace_pattern: {
       id: 'fibula_trace_pattern',
       title: t('form.questions.fibula_trace_pattern'),
+    },
+    fibula_trace_pattern_multi: {
+      id: 'fibula_trace_pattern_multi',
+      title: t('form.questions.fibula_trace_pattern_multi'),
     },
     fibular_level_for_transverse: {
       id: 'fibular_level_for_transverse',
@@ -79,6 +95,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'has_articular_depression',
       title: t('form.questions.articularDepression'),
     },
+    has_articular_depression_medial: {
+      id: 'has_articular_depression_medial',
+      title: t('form.questions.articularDepressionMedial'),
+    },
     is_posterior_posteromedial: {
       id: 'is_posterior_posteromedial',
       title: t('form.questions.posteriorPosteromedial'),
@@ -86,6 +106,10 @@ export function getLocalFormOptions(): FormOptions {
     infrasindesmal_morphology: {
       id: 'infrasindesmal_morphology',
       title: t('form.questions.infrasindesmalMorphology'),
+    },
+    infrasindesmal_morphology_lm_tri: {
+      id: 'infrasindesmal_morphology_lm_tri',
+      title: t('form.questions.infrasindesmalMorphologyLMTri'),
     },
     lateral_subtype: {
       id: 'lateral_subtype',

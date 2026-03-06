@@ -270,16 +270,31 @@ export function FractureForm() {
     formData.suprasindesmal_type !== undefined &&
     formData.suprasindesmal_type !== 'proximal';
 
+  // CT scan: show only after ALL preceding questions for the current path are answered.
+  // For infrasindesmal: CT shows right after fibular_level (no intermediate questions).
+  // For transindesmal: CT shows after lateral_morphology (and medial_subtype for trimaleolar).
+  // For suprasindesmal: CT shows after suprasindesmal_type + fibula_trace_pattern (or proximal).
   const showCTScan = formData.involved_malleoli && (
     // posterior_only: only after articular involvement resolved to small_without_extension
     (formData.involved_malleoli === 'posterior_only' &&
       formData.articular_involvement === 'small_without_extension') ||
     // medial_posterior: always
     formData.involved_malleoli === 'medial_posterior' ||
-    // lateral_posterior: all levels including infrasindesmal
-    (formData.involved_malleoli === 'lateral_posterior' && !!formData.fibular_level) ||
-    // trimaleolar: after fibular level is selected
-    (formData.involved_malleoli === 'trimaleolar' && !!formData.fibular_level)
+    // lateral_posterior: depends on fibular level sub-path
+    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal') ||
+    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'transindesmal' &&
+      !!formData.lateral_morphology) ||
+    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'suprasindesmal' &&
+      !!formData.suprasindesmal_type &&
+      (formData.suprasindesmal_type === 'proximal' || !!formData.fibula_trace_pattern)) ||
+    // trimaleolar: depends on fibular level sub-path
+    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'infrasindesmal' &&
+      !!formData.infrasindesmal_morphology) ||
+    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'transindesmal' &&
+      !!formData.lateral_morphology && !!formData.medial_subtype) ||
+    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'suprasindesmal' &&
+      !!formData.suprasindesmal_type &&
+      (formData.suprasindesmal_type === 'proximal' || !!formData.fibula_trace_pattern))
   );
 
   // Posterior type: after CT=true
@@ -384,7 +399,9 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'has_articular_depression',
-            title: options.questions.has_articular_depression?.title || 'Is articular depression present?',
+            title: (formData.involved_malleoli === 'medial_only'
+              ? options.questions.has_articular_depression_medial?.title
+              : options.questions.has_articular_depression?.title) || 'Is articular depression present?',
           }}
           value={formData.has_articular_depression?.toString()}
           options={yesNoOptions}
@@ -442,7 +459,9 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'lateral_morphology',
-            title: options.questions.lateral_morphology?.title || 'Lateral fracture morphology?',
+            title: (['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
+              ? options.questions.lateral_morphology_lm_tri?.title
+              : options.questions.lateral_morphology?.title) || 'Lateral fracture morphology?',
           }}
           value={formData.lateral_morphology}
           options={
@@ -460,7 +479,9 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'infrasindesmal_morphology',
-            title: options.questions.infrasindesmal_morphology?.title || 'Infrasyndesmal fracture morphology?',
+            title: (['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
+              ? options.questions.infrasindesmal_morphology_lm_tri?.title
+              : options.questions.infrasindesmal_morphology?.title) || 'Infrasyndesmal fracture morphology?',
           }}
           value={formData.infrasindesmal_morphology}
           options={options.infrasindesmal_morphology || []}
@@ -472,7 +493,7 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'lateral_subtype',
-            title: options.questions.lateral_subtype?.title || 'Lateral fracture subtype?',
+            title: options.questions.lateral_subtype?.title || 'Lateral fracture type?',
           }}
           value={formData.lateral_subtype}
           options={options.lateral_subtype || []}
@@ -484,7 +505,7 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'medial_subtype',
-            title: options.questions.medial_subtype?.title || 'Medial involvement subtype?',
+            title: options.questions.medial_subtype?.title || 'Medial malleolus type?',
           }}
           value={formData.medial_subtype}
           options={options.medial_subtype || []}
@@ -520,7 +541,9 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'fibula_trace_pattern',
-            title: options.questions.fibula_trace_pattern?.title || 'Fibula trace pattern?',
+            title: (formData.suprasindesmal_type === 'multifragmentary'
+              ? options.questions.fibula_trace_pattern_multi?.title
+              : options.questions.fibula_trace_pattern?.title) || 'Fibula trace pattern?',
           }}
           value={formData.fibula_trace_pattern}
           options={options.fibula_trace_patterns || []}
@@ -544,7 +567,13 @@ export function FractureForm() {
         <QuestionStep
           question={{
             id: 'posterior_fracture_type',
-            title: options.questions.posterior_fracture_type?.title || 'Posterior fracture type (Bartoníček)?',
+            title: (
+              formData.involved_malleoli === 'posterior_only'
+                ? options.questions.posterior_fracture_type?.title
+                : formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal'
+                  ? options.questions.posterior_fracture_type_lp_infra?.title
+                  : options.questions.posterior_fracture_type_posterior?.title
+            ) || 'Posterior fracture type (Bartoníček)?',
           }}
           value={formData.posterior_fracture_type}
           options={
