@@ -373,6 +373,13 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\tif result.LaugeHansen.Type != {go_val} {{')
         checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, {go_val})')
         checks.append(f'\t\t\t}}')
+    elif lh == 'no clasificable':
+        checks.append(f'\t\t\tif result.LaugeHansen == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("LaugeHansen is nil, want not_classifiable")')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)')
+        checks.append(f'\t\t\t}}')
     else:
         checks.append(f'\t\t\tif result.LaugeHansen != nil {{')
         checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)')
