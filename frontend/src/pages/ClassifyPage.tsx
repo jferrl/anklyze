@@ -5,11 +5,13 @@ import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
 import { FractureForm } from '../features/fracture-classification';
 import { ChatPanel } from '../components/ChatPanel';
 import { FlowDiagramSidebar } from '../components/FlowDiagramSidebar';
+import { useAuth } from '../contexts/AuthContext';
 
 type InputMode = 'form' | 'chat';
 
 export function ClassifyPage() {
   const { t } = useTranslation();
+  const { isAdmin } = useAuth();
   const [mode, setMode] = useState<InputMode>('form');
 
   return (
@@ -51,7 +53,7 @@ export function ClassifyPage() {
       </section>
 
       {/* Flow Diagram Sidebar - only show for form mode */}
-      {mode === 'form' && <FlowDiagramSidebar />}
+      {mode === 'form' && isAdmin && <FlowDiagramSidebar />}
     </div>
   );
 }
