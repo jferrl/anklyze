@@ -39,7 +39,7 @@ type ChatSession struct {
 
 	// Denormalized classification results for analytics queries
 	DanisWeberType  *string `gorm:"column:danis_weber_type;size:10;index"`
-	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:5;index"`
+	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:20;index"`
 	AOOTACode       *string `gorm:"column:ao_ota_code;size:10;index"`
 
 	// Total session duration in milliseconds

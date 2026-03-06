@@ -362,7 +362,7 @@ type CaseResponse struct {
 
 	// Denormalized fields for analytics queries
 	DanisWeberType  *string `gorm:"column:danis_weber_type;size:10;index" json:"-"`
-	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:5;index" json:"-"`
+	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:20;index" json:"-"`
 	AOOTACode       *string `gorm:"column:ao_ota_code;size:10;index" json:"-"`
 	BartonicekType  *string `gorm:"column:bartonicek_type;size:15;index" json:"-"`
 
