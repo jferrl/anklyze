@@ -32,6 +32,7 @@ Any deviation is a defect. Report it.
 4. Click the login/submit button
 5. Wait for redirect to main page
 6. Verify login succeeded via `browser_snapshot`
+7. **Open parallel tabs**: Use `browser_evaluate` with `window.open('{app_url}/classify', '_blank')` to open 6 additional tabs (7 total, one per branch). The login session/cookies carry over to all tabs automatically.
 
 ## Test Execution Flow
 
@@ -114,6 +115,7 @@ Click "Empezar de Nuevo" to reset for the next test.
 | PREMATURE_SUBMIT | HIGH | Submit button enabled before all drawio questions are answered. Allows incomplete classification. |
 | SUBMIT_BLOCKED | HIGH | Submit button disabled after all drawio questions are answered. Blocks valid classification. |
 | EXTRA_OPTION | LOW | A question shows more options than the drawio provides. Not necessarily wrong but indicates divergence. |
+| COPY_MISMATCH | HIGH | A question title in the form doesn't match the drawio question text (after accent normalization). The drawio is the source of truth for all user-facing copy. |
 
 ## Spanish Label Reference
 
@@ -282,17 +284,140 @@ Record as **I18N_GAP** with the raw key and location.
 
 The source of truth is the drawio decision tree, parsed by `scripts/parse_drawio_test_cases.py` into `/tmp/classification_test_cases.json`. There are **153 validated paths** (2 shortcut paths are filtered — trimaleolar infrasindesmal paths that skip CT in the drawio but the form always asks it).
 
+**IMPORTANT:** Before starting tests, ALWAYS regenerate the test cases by running:
+```bash
+python3 scripts/parse_drawio_test_cases.py
+```
+This ensures the test data matches the current drawio file. Check the output for:
+- Label validation warnings (labels that don't match form i18n)
+- Morphology mismatches (drawio vs form option counts)
+- Duplicate paths
+
 Only test the 153 drawio-validated paths. If the form has extra options not in the drawio, do NOT test those paths — but DO report them as EXTRA_OPTION.
 
-## Performance Strategy
+## Question Matching Strategy
 
-Testing 153 paths with full structure validation on every step is expensive. Use this strategy:
+Click by **option labels** (the `label` field), not by question titles. However, also **validate question titles** against the drawio.
 
-1. **First pass — Structure Audit (1 path per branch × 7 branches)**: Pick the first test case from each branch. Do FULL structure validation (every snapshot, every submit-gate check, count all questions and options). This catches systemic form issues early.
+### COPY_MISMATCH Validation (CRITICAL)
 
-2. **Remaining paths — Result Validation**: For the other 146 paths, do streamlined testing: click sequence → submit → compare results. Only do structure validation if a result mismatch occurs (to diagnose whether the form or engine is at fault).
+The form question titles MUST match the drawio question text (with spelling/accent fixes only). At each step:
+1. Read the visible question title text from the DOM
+2. Compare it against the test case's `question` field (after applying accent normalization: `maleolo` → `maléolo`, `maleolos` → `maléolos`)
+3. If they don't match, record **COPY_MISMATCH** with both texts
 
-3. **If any Structure Audit fails**: Expand full structure validation to ALL paths in the affected branch before continuing.
+This catches cases where the form invents its own question phrasing instead of using the drawio's text. The drawio is the source of truth for all user-facing copy.
+
+Accent fixes to apply when comparing (drawio → expected form):
+- `maleolo` → `maléolo` (singular accent)
+- `maleolos` → `maléolos` (plural accent)
+
+Any other text difference (different words, added/removed phrases) is a real COPY_MISMATCH defect.
+
+## Progressive Question Disclosure
+
+The form uses progressive disclosure — questions appear as previous ones are answered. At each step, validate:
+1. **Expected question count**: After answering click `i`, exactly `i+1` questions should be visible (the answered ones + the next unanswered one). Extra visible questions indicate a form logic bug.
+2. **Submit button timing**: The submit button should ONLY be enabled after the LAST click in the sequence (before the "Clasificar Fractura" submit entry).
+
+## Expected Question Counts Per Path
+
+These are the number of questions (clicks before submit) the drawio expects for each path. Use these to validate PREMATURE_SUBMIT:
+
+| Branch | Sub-path | Questions | Notes |
+|--------|----------|-----------|-------|
+| posterior_only | large_with_extension | 3 | malleoli → articular → depression |
+| posterior_only | small + CT=no | 3 | malleoli → articular → CT |
+| posterior_only | small + CT=yes | 4 | malleoli → articular → CT → posterior_type |
+| medial_only | large_with_extension | 3 | malleoli → articular → depression |
+| medial_only | small | 3 | malleoli → articular → morphology |
+| medial_posterior | CT=no | 2 | malleoli → CT |
+| medial_posterior | CT=yes | 3 | malleoli → CT → posterior_type |
+| lateral_only | infrasindesmal | 3 | malleoli → level → infra_morph |
+| lateral_only | transindesmal | 4 | malleoli → level → morphology → subtype |
+| lateral_only | supra proximal | 3 | malleoli → level → supra_type |
+| lateral_only | supra non-proximal | 4 | malleoli → level → supra_type → trace |
+| lateral_posterior | infrasindesmal CT=no | 3 | malleoli → level → CT |
+| lateral_posterior | infrasindesmal CT=yes | 4 | malleoli → level → CT → posterior_type |
+| lateral_posterior | transindesmal CT=no | 4 | malleoli → level → morphology → CT |
+| lateral_posterior | transindesmal CT=yes | 5 | malleoli → level → morphology → CT → posterior_type |
+| lateral_posterior | supra proximal CT=no | 4 | malleoli → level → supra_type → CT |
+| lateral_posterior | supra proximal CT=yes | 5 | malleoli → level → supra_type → CT → posterior_type |
+| lateral_posterior | supra non-proximal CT=no | 5 | malleoli → level → supra_type → trace → CT |
+| lateral_posterior | supra non-proximal CT=yes | 6 | malleoli → level → supra_type → trace → CT → posterior_type |
+| lateral_medial | vertical + infra=yes | 3 | malleoli → medial_morph → infra_q |
+| lateral_medial | infrasindesmal | 4 | malleoli → medial_morph → level → infra_morph |
+| lateral_medial | transindesmal conminuta | 4 | malleoli → medial_morph → level → fibula_morph |
+| lateral_medial | transindesmal non-conminuta | 5 | malleoli → medial_morph → level → fibula_morph → medial_subtype |
+| lateral_medial | supra proximal | 5 | malleoli → medial_morph → level → supra_type → shortening |
+| lateral_medial | supra non-proximal | 6 | malleoli → medial_morph → level → supra_type → trace → medial_subtype |
+| trimaleolar | infrasindesmal CT=no | 4 | malleoli → level → infra_morph → CT |
+| trimaleolar | infrasindesmal CT=yes | 5 | malleoli → level → infra_morph → CT → posterior_type |
+| trimaleolar | transindesmal CT=no | 5 | malleoli → level → fibula_morph → medial_subtype → CT |
+| trimaleolar | transindesmal CT=yes | 6 | malleoli → level → fibula_morph → medial_subtype → CT → posterior_type |
+| trimaleolar | supra proximal CT=no | 4 | malleoli → level → supra_type → CT |
+| trimaleolar | supra proximal CT=yes | 5 | malleoli → level → supra_type → CT → posterior_type |
+| trimaleolar | supra non-proximal CT=no | 5 | malleoli → level → supra_type → trace → CT |
+| trimaleolar | supra non-proximal CT=yes | 6 | malleoli → level → supra_type → trace → CT → posterior_type |
+
+## Performance Strategy — Parallel Tabs
+
+Testing 153 paths sequentially is slow. Use **7 parallel browser tabs** (one per branch) with round-robin interleaving:
+
+### Setup Phase
+1. Login in the first tab
+2. Open 6 additional tabs using JavaScript: `browser_evaluate` with `window.open('{app_url}/classify', '_blank')` for each branch
+3. Use `browser_tabs` to list all tab IDs and assign each to a branch:
+   - Tab 1: `posterior_only` (7 cases)
+   - Tab 2: `medial_only` (4 cases)
+   - Tab 3: `lateral_only` (13 cases)
+   - Tab 4: `medial_posterior` (6 cases)
+   - Tab 5: `lateral_posterior` (40 cases)
+   - Tab 6: `lateral_medial` (18 cases)
+   - Tab 7: `trimaleolar` (65 cases)
+
+### Execution Phase — Round-Robin
+Maintain a **queue per tab** with all test cases for that branch. Process in rounds:
+
+```
+Round 1: Click first option in Tab1, Tab2, Tab3, Tab4, Tab5, Tab6, Tab7
+Round 2: Click second option in Tab1, Tab2, Tab3, ... (skip tabs that need snapshot first)
+...
+```
+
+For each tab, follow this cycle:
+1. **Switch to tab** using `browser_click` with the tab's `ref` from `browser_tabs`
+2. **Snapshot** — read current state
+3. **Validate** — check question titles (COPY_MISMATCH), question count, submit gate
+4. **Click** the next option in the queue
+5. **Move to next tab** — don't wait for render; come back next round
+
+When a tab completes all clicks for a test case:
+1. Click submit, snapshot results, compare against expected
+2. Click "Empezar de Nuevo" to reset
+3. Load next test case from the branch queue
+4. If branch queue is empty, close the tab
+
+### Validation Depth
+- **First test case per tab**: FULL validation (copy, structure, submit gate at every step)
+- **Subsequent test cases**: Streamlined (click sequence → submit → compare results)
+- **On any failure**: Expand full validation to remaining cases in that branch
+
+### Tab State Tracking
+Keep a mental model of each tab's state:
+```
+tab_state = {
+  tab_id: "...",
+  branch: "lateral_only",
+  current_test: "lateral_only_1",
+  click_index: 2,       // next click to perform
+  total_clicks: 4,      // clicks before submit
+  issues: [],           // accumulated issues
+  phase: "clicking"|"submitting"|"reading_results"|"resetting"|"done"
+}
+```
+
+This reduces wall-clock time by ~5-7x compared to sequential execution, since DOM rendering in one tab happens while you work on another.
 
 ## Output Format
 
