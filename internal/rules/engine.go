@@ -1,3 +1,4 @@
+// Package rules implements the classification rules for ankle fractures.
 package rules
 
 import (

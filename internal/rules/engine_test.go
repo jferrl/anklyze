@@ -1058,12 +1058,12 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 		},
 		// Path: Infrasindesmal — direct infrasindesmal morphology
 		{
-			name:                "infrasindesmal trimaleolar → A3.3 Weber A",
-			fibularLevel:        domain.FibularLevelInfrasindesmal,
-			lang:                i18n.English,
-			expectedDanisWeber:  domain.DanisWeberA,
-			expectedAOOTA:       domain.AOOTAA3_3,
-			expectedLHNil:       true,
+			name:               "infrasindesmal trimaleolar → A3.3 Weber A",
+			fibularLevel:       domain.FibularLevelInfrasindesmal,
+			lang:               i18n.English,
+			expectedDanisWeber: domain.DanisWeberA,
+			expectedAOOTA:      domain.AOOTAA3_3,
+			expectedLHNil:      true,
 		},
 		// Path: Transindesmal - transverse — B3 subtype by medial subtype
 		{
