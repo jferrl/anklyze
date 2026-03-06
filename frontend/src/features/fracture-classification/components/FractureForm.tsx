@@ -228,11 +228,6 @@ export function FractureForm() {
       lateralMedialReadyForFibularLevel
     );
 
-  // Skip morphology for infrasindesmal paths (all branches)
-  const skipInfra = !!formData.involved_malleoli &&
-    ['lateral_only', 'lateral_posterior', 'lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli) &&
-    formData.fibular_level === 'infrasindesmal';
-
   const showLateralMorphology = showFibularLevel && formData.fibular_level &&
     formData.fibular_level !== 'infrasindesmal';
 
