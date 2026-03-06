@@ -193,7 +193,7 @@ export function getLocalFormOptions(): FormOptions {
   // Fibula morphology for trimaleolar transindesmal (3 options per drawio)
   const fibula_morphology_tri: SelectOption[] = [
     { value: 'transverse', label: t('form.options.fibulaMorphologyTri.transverse') },
-    { value: 'oblique', label: t('form.options.fibulaMorphologyTri.oblique') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyTri.conminuta') },
     { value: 'spiral', label: t('form.options.fibulaMorphologyTri.spiral') },
   ];
 

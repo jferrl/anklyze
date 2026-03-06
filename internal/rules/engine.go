@@ -522,7 +522,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 				Type: domain.LaugeHansenPA,
 			}
 
-		case domain.LateralMorphologyOblique:
+		case domain.LateralMorphologyConminuta:
 			result.DanisWeber = &domain.DanisWeberClassification{
 				Type: domain.DanisWeberB,
 			}
@@ -613,16 +613,16 @@ func getAOOTAForSuprasindesmalTrimaleolar(st domain.SuprasindesmalType) *domain.
 // getAOOTAB3ForTrimaleolar maps LateralMorphology + MedialSubtype to the B3 subtype code
 // for trimaleolar transyndesmotic fractures per drawio 2026-02-28.
 //
-// Oblique morphology:
+// Conminuta morphology:
 //   - malleolus_fracture → B3.3
 //   - open_mortise       → nil (no clasificable)
 //
-// Non-oblique (Transverse, Spiral):
+// Non-conminuta (Transverse, Spiral):
 //   - open_mortise       → B3.1
 //   - malleolus_fracture → B3.2
 //   - fallback           → B3
 func getAOOTAB3ForTrimaleolar(lm domain.LateralMorphology, ms domain.MedialSubtype) *domain.AOOTAClassification {
-	if lm == domain.LateralMorphologyOblique {
+	if lm == domain.LateralMorphologyConminuta {
 		if ms == domain.MedialSubtypeMalleolusFracture {
 			return &domain.AOOTAClassification{Code: domain.AOOTAB3_3}
 		}

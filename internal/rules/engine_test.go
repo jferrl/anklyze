@@ -1099,9 +1099,9 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 		// Path: Transindesmal - oblique — B3 subtype depends on medial subtype per drawio 2026-02-28
 		// Oblique + malleolus_fracture → B3.3; oblique + open_mortise → nil (no clasificable)
 		{
-			name:                "transindesmal oblique trimaleolar malleolus fracture → B3.3",
+			name:                "transindesmal conminuta trimaleolar malleolus fracture → B3.3",
 			fibularLevel:        domain.FibularLevelTransindesmal,
-			lateralMorphology:   domain.LateralMorphologyOblique,
+			lateralMorphology:   domain.LateralMorphologyConminuta,
 			medialSubtype:       domain.MedialSubtypeMalleolusFracture,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
@@ -1109,9 +1109,9 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenPA,
 		},
 		{
-			name:                "transindesmal oblique trimaleolar open mortise → nil AO (no clasificable)",
+			name:                "transindesmal conminuta trimaleolar open mortise → nil AO (no clasificable)",
 			fibularLevel:        domain.FibularLevelTransindesmal,
-			lateralMorphology:   domain.LateralMorphologyOblique,
+			lateralMorphology:   domain.LateralMorphologyConminuta,
 			medialSubtype:       domain.MedialSubtypeOpenMortise,
 			lang:                i18n.English,
 			expectedDanisWeber:  domain.DanisWeberB,
@@ -1354,9 +1354,9 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenNotClassifiable,
 		},
 		{
-			name:                "transindesmal oblique with CT → Bartonicek 4",
+			name:                "transindesmal conminuta with CT → Bartonicek 4",
 			fibularLevel:        domain.FibularLevelTransindesmal,
-			lateralMorphology:   domain.LateralMorphologyOblique,
+			lateralMorphology:   domain.LateralMorphologyConminuta,
 			posteriorType:       domain.PosteriorLargePosterolateral,
 			hasCTScan:           &boolTrue,
 			expectedBartonicek:  domain.BartonicekType4,

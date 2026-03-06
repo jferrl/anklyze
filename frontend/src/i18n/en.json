@@ -196,7 +196,7 @@
       },
       "fibulaMorphologyTri": {
         "transverse": "Transverse/Oblique (Low medial, high lateral)",
-        "oblique": "Comminuted/butterfly",
+        "conminuta": "Comminuted/butterfly",
         "spiral": "Spiral (Low anterior, high posterior)"
       },
       "infrasindesmalMorphology": {

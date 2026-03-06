@@ -188,8 +188,8 @@ def map_lateral_morphology(label, branch):
         if branch == 'lateral_medial':
             return 'domain.LateralMorphologyConminuta'
         else:
-            # trimaleolar: "Conminuta/ala de mariposa" maps to Oblique
-            return 'domain.LateralMorphologyOblique'
+            # trimaleolar: "Conminuta/ala de mariposa" also maps to Conminuta
+            return 'domain.LateralMorphologyConminuta'
     if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
         return 'domain.LateralMorphologyTransverse'
     if label == 'Espiroidea (Baja anterior, alta posterior)':

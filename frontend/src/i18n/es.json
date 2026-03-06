@@ -202,7 +202,7 @@
       },
       "fibulaMorphologyTri": {
         "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
-        "oblique": "Conminuta/ala de mariposa",
+        "conminuta": "Conminuta/ala de mariposa",
         "spiral": "Espiroidea (Baja anterior, alta posterior)"
       },
       "infrasindesmalMorphology": {

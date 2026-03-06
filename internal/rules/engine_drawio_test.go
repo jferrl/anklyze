@@ -4961,7 +4961,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeMalleolusFracture,
 				HasCTScan: &boolFalse,
 		})
@@ -5001,7 +5001,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeMalleolusFracture,
 				PosteriorFractureType: domain.PosteriorPosterolateral,
 				HasCTScan: &boolTrue,
@@ -5045,7 +5045,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeMalleolusFracture,
 				PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
 				HasCTScan: &boolTrue,
@@ -5089,7 +5089,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeMalleolusFracture,
 				PosteriorFractureType: domain.PosteriorLargePosterolateral,
 				HasCTScan: &boolTrue,
@@ -5133,7 +5133,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeMalleolusFracture,
 				PosteriorFractureType: domain.PosteriorExtraincisural,
 				HasCTScan: &boolTrue,
@@ -5609,7 +5609,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeOpenMortise,
 				HasCTScan: &boolFalse,
 		})
@@ -5646,7 +5646,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeOpenMortise,
 				PosteriorFractureType: domain.PosteriorPosterolateral,
 				HasCTScan: &boolTrue,
@@ -5687,7 +5687,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeOpenMortise,
 				PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
 				HasCTScan: &boolTrue,
@@ -5728,7 +5728,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeOpenMortise,
 				PosteriorFractureType: domain.PosteriorLargePosterolateral,
 				HasCTScan: &boolTrue,
@@ -5769,7 +5769,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 				InvolvedMalleoli: domain.InvolvedTrimaleolar,
 				FibularLevel: domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologyOblique,
+				LateralMorphology: domain.LateralMorphologyConminuta,
 				MedialSubtype: domain.MedialSubtypeOpenMortise,
 				PosteriorFractureType: domain.PosteriorExtraincisural,
 				HasCTScan: &boolTrue,
