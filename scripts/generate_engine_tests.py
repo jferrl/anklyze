@@ -398,8 +398,16 @@ def build_expected_checks(expected, fracture_type):
             checks.append(f'\t\t\t}}')
         else:
             checks.append(f'\t\t\t// TODO: unknown AO code "{ao}"')
+    elif ao == 'no clasificable':
+        # "no clasificable" → expect AOOTANotClassifiable
+        checks.append(f'\t\t\tif result.AOOTA == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("AOOTA is nil, want no clasificable")')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.AOOTA.Code != domain.AOOTANotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)')
+        checks.append(f'\t\t\t}}')
     else:
-        # "no clasificable" or nil → expect AOOTA to be nil
+        # nil AO → expect AOOTA to be nil
         checks.append(f'\t\t\tif result.AOOTA != nil {{')
         checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)')
         checks.append(f'\t\t\t}}')

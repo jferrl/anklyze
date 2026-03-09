@@ -1,0 +1,175 @@
+# Ankle Fracture Classification — All Terminal Paths
+# Total: 155 paths across 7 branches
+# Source: drawio diagram (source of truth)
+#
+# Branch       AO           LH    W   B   Path (answers in order)
+# ------------ ------------ ----- --- --- --------------------------------------------------
+
+## post (7 paths)
+  N/C          PA    -   -   <1/3 de superficie articular sin extensión metafisaria → No
+  N/C          PA    -   1   <1/3 de superficie articular sin extensión metafisaria → Sí → Fragmento extraincisural
+  N/C          PA    -   2   <1/3 de superficie articular sin extensión metafisaria → Sí → Fragmento posterolateral
+  N/C          PA    -   3   <1/3 de superficie articular sin extensión metafisaria → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    -   4   <1/3 de superficie articular sin extensión metafisaria → Sí → Gran fragmento triangular posterolateral
+  43-B1        -     -   -   >1/3 de superficie articular con extensión metafisaria → No
+  43-B2        -     -   -   >1/3 de superficie articular con extensión metafisaria → Sí
+
+## medial (4 paths)
+  N/C          N/C   -   -   No → Transverso/oblicuo
+  N/C          SA    -   -   No → Vertical
+  43-B1        -     -   -   Sí → No
+  43-B2        -     -   -   Sí → Sí
+
+## lateral (13 paths)
+  44-A1.2      SA    A   -   Infrasindesmal → Avulsión de la punta del maleolo
+  44-A1.3      SA    A   -   Infrasindesmal → Fractura de maleolo lateral
+  44-C1        PA    C   -   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
+  44-C1        PER   C   -   Suprasindesmal → Diafisaria Simple → Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)
+  44-C2        PER   C   -   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
+  44-C2        PA    C   -   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular)
+  44-C3        PER   C   -   Suprasindesmal → Proximal (1/ proximal de peroné)
+  44-B1.2      SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
+  44-B1.3      SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura en ala de maliposa/multifragmentaria
+  44-B1.1      SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura simple
+  44-B1.2      PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
+  44-B1.3      PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Fractura en ala de maliposa/multifragmentaria
+  44-B1.1      PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Fractura simple
+
+## med+post (6 paths)
+  N/C          PA    -   -   No
+  N/C          PA    -   1   Sí → Fragmento extraincisural posterior
+  N/C          PA    -   -   Sí → Fragmento extraincisural posteromedial
+  N/C          PA    -   2   Sí → Fragmento posterolateral
+  N/C          PA    -   3   Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    -   4   Sí → Gran fragmento triangular posterolateral
+
+## lat+post (40 paths)
+  N/C          SA    A   -   Infrasindesmal → No
+  N/C          SA    A   1   Infrasindesmal → Sí → Fragmento extraincisural posterior
+  N/C          SA    A   2   Infrasindesmal → Sí → Fragmento posterolateral
+  N/C          SA    A   3   Infrasindesmal → Sí → Fragmento posteromedial y posterolateral
+  N/C          SA    A   4   Infrasindesmal → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    C   -   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → No
+  N/C          PA    C   1   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento extraincisural
+  N/C          PA    C   2   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento posterolateral
+  N/C          PA    C   3   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    C   4   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Gran fragmento triangular posterolateral
+  N/C          PER   C   -   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → No
+  N/C          PER   C   1   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento extraincisural
+  N/C          PER   C   2   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento posterolateral
+  N/C          PER   C   3   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento posteromedial y posterolateral
+  N/C          PER   C   4   Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Gran fragmento triangular posterolateral
+  N/C          PER   C   -   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → No
+  N/C          PER   C   1   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento extraincisural
+  N/C          PER   C   2   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento posterolateral
+  N/C          PER   C   3   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento posteromedial y posterolateral
+  N/C          PER   C   4   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    C   -   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → No
+  N/C          PA    C   1   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento extraincisural
+  N/C          PA    C   2   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento posterolateral
+  N/C          PA    C   3   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    C   4   Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Gran fragmento triangular posterolateral
+  N/C          PER   C   -   Suprasindesmal → Proximal (1/3 proximal de peroné) → No
+  N/C          PER   C   1   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Fragmento extraincisural
+  N/C          PER   C   2   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Fragmento posterolateral
+  N/C          PER   C   3   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Fragmento posteromedial y posterolateral
+  N/C          PER   C   4   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Gran fragmento triangular posterolateral
+  N/C          SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → No
+  N/C          SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento extraincisural
+  N/C          SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento posterolateral
+  N/C          SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento posteromedial y posterolateral
+  N/C          SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → No
+  N/C          PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento extraincisural
+  N/C          PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento posterolateral
+  N/C          PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Gran fragmento triangular posterolateral
+
+## lat+med (18 paths)
+  44-C1.1      PA    C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Abierta la mortaja
+  44-C1.2      PA    C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Fractura del maleolo/avulsión
+  44-C1.1      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Abierta la mortaja
+  44-C1.2      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Fractura del maleolo/avulsión
+  44-C2.1      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Abierta la mortaja
+  44-C2.2      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Fractura del maleolo/avulsión
+  44-C2.1      PA    C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Abierta la mortaja
+  44-C2.2      PA    C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Fractura del maleolo/avulsión
+  44-C3.1      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Proximal (1/3 proximal peroné) → No
+  44-C3.2      PER   C   -   Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Proximal (1/3 proximal peroné) → Si
+  44-A2.2      SA    A   -   Transverso/oblicuo/avulsión/abierta mortaja → Infrasindesmal → Avulsión
+  44-A2.3      SA    A   -   Transverso/oblicuo/avulsión/abierta mortaja → Infrasindesmal → Transversa
+  44-B2.3      PA    B   -   Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Conminuta/ala de mariposa
+  44-B2.1      SER   B   -   Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja
+  44-B2.2      SER   B   -   Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión
+  44-B2.1      PA    B   -   Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja
+  44-B2.2      PA    B   -   Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión
+  44-A2        SA    A   -   Vertical → Sí
+
+## trimaleolar (67 paths)
+  44-C1.3      PA    C   -   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → No
+  44-C1.3      PA    C   1   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento extraincisural
+  44-C1.3      PA    C   2   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento posterolateral
+  44-C1.3      PA    C   3   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento posteromedial y posterolateral
+  44-C1.3      PA    C   4   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Gran fragmento triangular posterolateral
+  44-C1.3      PER   C   -   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → No
+  44-C1.3      PER   C   1   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento extraincisural
+  44-C1.3      PER   C   2   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento posterolateral
+  44-C1.3      PER   C   3   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Fragmento posteromedial y posterolateral
+  44-C1.3      PER   C   4   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Sí → Gran fragmento triangular posterolateral
+  44-C2.3      PER   C   -   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → No
+  44-C2.3      PER   C   1   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento extraincisural
+  44-C2.3      PER   C   2   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento posterolateral
+  44-C2.3      PER   C   3   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Fragmento posteromedial y posterolateral
+  44-C2.3      PER   C   4   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Sí → Gran fragmento triangular posterolateral
+  44-C2.3      PA    C   -   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → No
+  44-C2.3      PA    C   1   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento extraincisural
+  44-C2.3      PA    C   2   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento posterolateral
+  44-C2.3      PA    C   3   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Fragmento posteromedial y posterolateral
+  44-C2.3      PA    C   4   Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Sí → Gran fragmento triangular posterolateral
+  44-C3.3      PER   C   -   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → No
+  44-C3.3      PER   C   1   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Fragmento extraincisural
+  44-C3.3      PER   C   2   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Fragmento posterolateral
+  44-C3.3      PER   C   3   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Fragmento posteromedial y posterolateral
+  44-C3.3      PER   C   4   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Gran fragmento triangular posterolateral
+  44-A3.2      N/C   A   -   Infrasindesmal → Avulsión
+  44-A3.2      N/C   A   -   Infrasindesmal → Avulsión → No
+  44-A3.2      N/C   A   1   Infrasindesmal → Avulsión → Sí → Fragmento extraincisural
+  44-A3.2      N/C   A   2   Infrasindesmal → Avulsión → Sí → Fragmento posterolateral
+  44-A3.2      N/C   A   3   Infrasindesmal → Avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-A3.2      N/C   A   4   Infrasindesmal → Avulsión → Sí → Gran fragmento triangular posterolateral
+  44-A3.3      N/C   A   -   Infrasindesmal → Transversa
+  44-A3.3      N/C   A   -   Infrasindesmal → Transversa → No
+  44-A3.3      N/C   A   1   Infrasindesmal → Transversa → Sí → Fragmento extraincisural
+  44-A3.3      N/C   A   2   Infrasindesmal → Transversa → Sí → Fragmento posterolateral
+  44-A3.3      N/C   A   3   Infrasindesmal → Transversa → Sí → Fragmento posteromedial y posterolateral
+  44-A3.3      N/C   A   4   Infrasindesmal → Transversa → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    B   -   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → No
+  N/C          PA    B   1   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento extraincisural
+  N/C          PA    B   2   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento posterolateral
+  N/C          PA    B   3   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    B   4   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.3      PA    B   -   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → No
+  44-B3.3      PA    B   1   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.3      PA    B   2   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.3      PA    B   3   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.3      PA    B   4   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  44-B3.1      SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → No
+  44-B3.1      SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento extraincisural
+  44-B3.1      SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posterolateral
+  44-B3.1      SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  44-B3.1      SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.2      SER   B   -   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → No
+  44-B3.2      SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.2      SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.2      SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.2      SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  44-B3.1      PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → No
+  44-B3.1      PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento extraincisural
+  44-B3.1      PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posterolateral
+  44-B3.1      PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  44-B3.1      PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.2      PA    B   -   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → No
+  44-B3.2      PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.2      PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.2      PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.2      PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral

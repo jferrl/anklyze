@@ -201,8 +201,8 @@ func TestHandler_ClassifyFracture_PosteriorOnly(t *testing.T) {
 			}
 
 			// small_without_extension: AO is unclassifiable (nil)
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+			if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 
 			// small_without_extension: LH is PA
@@ -273,8 +273,8 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 			}
 
 			if tt.expectedAOOTANil {
-				if result.AOOTA != nil {
-					t.Errorf("AOOTA should be nil for medial-only, got %q", result.AOOTA.Code)
+				if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+					t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 				}
 			}
 

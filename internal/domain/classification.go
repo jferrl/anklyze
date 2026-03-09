@@ -38,6 +38,11 @@ type LaugeHansenClassification struct {
 // AOOTACode represents the AO/OTA classification code.
 type AOOTACode string
 
+// AOOTANotClassifiable is the sentinel value for "no clasificable" in the AO/OTA system.
+// This means the system actively determined the fracture cannot be classified under AO 44-x.
+// It is distinct from nil (where the AO system simply does not apply).
+const AOOTANotClassifiable AOOTACode = "no clasificable"
+
 // AOOTAA1 and related constants define the AO/OTA classification codes.
 const (
 	// AOOTAA1 is the 44-A1 unifocal/isolated lateral infrasyndesmotic code.

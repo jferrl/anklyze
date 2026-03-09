@@ -52,9 +52,12 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.Clas
 		}, nil
 	}
 
-	// <1/3 without metaphyseal extension: AO unclassifiable, LH PA, Bartonicek from CT
+	// <1/3 without metaphyseal extension: AO no clasificable, LH PA, Bartonicek from CT
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_posterior",
+		AOOTA: &domain.AOOTAClassification{
+			Code: domain.AOOTANotClassifiable,
+		},
 		LaugeHansen: &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		},
@@ -83,9 +86,12 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 	}
 
 	// <1/3 without metaphyseal extension: morphology path
-	// AO = nil (no clasificable per drawio 2026-02-28)
+	// AO = no clasificable per drawio 2026-02-28
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_medial",
+		AOOTA: &domain.AOOTAClassification{
+			Code: domain.AOOTANotClassifiable,
+		},
 	}
 
 	if input.MedialMorphology == domain.MedialMorphologyVertical {
@@ -191,8 +197,13 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 		FractureType: "bimaleolar_medial_posterior",
 	}
 
+	// All medial+posterior paths: AO = no clasificable per drawio 2026-02-28
+	result.AOOTA = &domain.AOOTAClassification{
+		Code: domain.AOOTANotClassifiable,
+	}
+
 	if input.HasCTScan == nil || !*input.HasCTScan {
-		// No CT → AO unclassifiable, LH PA
+		// No CT → AO no clasificable, LH PA
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
@@ -201,14 +212,14 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 
 	// CT available → branch on posterior fragment type
 	if input.PosteriorFractureType == domain.PosteriorExtraincisuralPosteromedial {
-		// Per drawio 2026-02-28: AO = nil (no clasificable), LH = PA
+		// Per drawio 2026-02-28: AO = no clasificable, LH = PA
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
 		return result, nil
 	}
 
-	// Standard 4 posterior types → AO unclassifiable (nil) + LH PA + Bartonicek (per 2026-02-28 flow)
+	// Standard 4 posterior types → AO no clasificable + LH PA + Bartonicek (per 2026-02-28 flow)
 	result.LaugeHansen = &domain.LaugeHansenClassification{
 		Type: domain.LaugeHansenPA,
 	}
@@ -221,6 +232,10 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.ClassificationResult, error) {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_lateral_posterior",
+		// All lateral+posterior paths: AO = no clasificable per drawio 2026-02-28
+		AOOTA: &domain.AOOTAClassification{
+			Code: domain.AOOTANotClassifiable,
+		},
 	}
 
 	switch input.FibularLevel {
@@ -233,7 +248,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		}
 
 		if input.HasCTScan == nil || !*input.HasCTScan {
-			// No CT → AO unclassifiable (nil), LH SA, Weber A
+			// No CT → AO no clasificable, LH SA, Weber A
 			return result, nil
 		}
 
@@ -246,7 +261,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
 		}
-		// AO not classifiable for lateral+posterior transindesmal per drawio 2026-02-28
+		// AO no clasificable for lateral+posterior transindesmal per drawio 2026-02-28
 		if input.LateralMorphology == domain.LateralMorphologySpiral {
 			result.LaugeHansen = &domain.LaugeHansenClassification{
 				Type: domain.LaugeHansenSER,
@@ -266,7 +281,7 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberC,
 		}
-		// AO unclassifiable (nil) per 2026-02-28 flow for all lateral+posterior suprasindesmal paths
+		// AO no clasificable per 2026-02-28 flow for all lateral+posterior suprasindesmal paths (set at result init)
 
 		// For simple diaphyseal and multifragmentary, use fibula trace pattern to determine PA vs PER
 		// Proximal is always PER
@@ -627,7 +642,7 @@ func getAOOTAB3ForTrimaleolar(lm domain.LateralMorphology, ms domain.MedialSubty
 			return &domain.AOOTAClassification{Code: domain.AOOTAB3_3}
 		}
 		// Oblique + open_mortise (or no medial subtype) → no clasificable
-		return nil
+		return &domain.AOOTAClassification{Code: domain.AOOTANotClassifiable}
 	}
 	// Transverse, Spiral: standard mapping
 	switch ms {

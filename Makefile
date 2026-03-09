@@ -1,7 +1,7 @@
 .PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
 	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger lint-go \
-	export-diagram
+	export-diagram classify-validate classify-tree classify-test
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
 
@@ -179,6 +179,39 @@ export-diagram:
 		--output frontend/public/classification-flow.svg \
 		"docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
 	@echo "Done: frontend/public/classification-flow.svg"
+
+# === Classification Validation Pipeline ===
+
+# Full classification validation: parse drawio → render tree → generate Go tests → run tests
+classify-validate:
+	@echo "=== Step 1: Parse drawio → test cases JSON ==="
+	@python3 scripts/parse_drawio_test_cases.py
+	@echo ""
+	@echo "=== Step 2: Render readable decision tree + table ==="
+	@python3 scripts/render_decision_tree.py --both
+	@echo ""
+	@echo "=== Step 3: Generate Go engine tests ==="
+	@python3 scripts/generate_engine_tests.py
+	@echo ""
+	@echo "=== Step 4: Run Go engine tests (drawio-generated) ==="
+	@go test -v -count=1 ./internal/rules/... 2>&1 | grep -E '(PASS|FAIL|---)'
+	@echo ""
+	@echo "=== Step 5: Cross-validation ==="
+	@python3 scripts/validate_classification.py
+	@echo ""
+	@echo "=== Done ==="
+
+# Just render the decision tree (for quick reference)
+classify-tree:
+	@python3 scripts/render_decision_tree.py --both
+	@echo "Tree: docs/decision_tree.txt"
+	@echo "Table: docs/decision_table.txt"
+
+# Just regenerate and run the engine tests
+classify-test:
+	@python3 scripts/parse_drawio_test_cases.py
+	@python3 scripts/generate_engine_tests.py
+	@go test -v -count=1 ./internal/rules/... 2>&1 | grep -E '(PASS|FAIL|---)'
 
 # Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:

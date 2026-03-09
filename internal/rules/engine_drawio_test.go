@@ -1289,8 +1289,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -1329,8 +1332,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -1369,8 +1375,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -1409,8 +1418,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -1449,8 +1461,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -1489,8 +1504,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -1529,8 +1547,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -1569,8 +1590,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -1610,8 +1634,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -1651,8 +1678,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -1692,8 +1722,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -1733,8 +1766,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -1774,8 +1810,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -1815,8 +1854,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -1856,8 +1898,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -1897,8 +1942,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -1937,8 +1985,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -1977,8 +2028,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -2017,8 +2071,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -2057,8 +2114,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -2096,8 +2156,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2133,8 +2196,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2169,8 +2235,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2206,8 +2275,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPER {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPER)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2244,8 +2316,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -2285,8 +2360,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -2326,8 +2404,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -2367,8 +2448,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -2407,8 +2491,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2444,8 +2531,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2482,8 +2572,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -2523,8 +2616,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -2564,8 +2660,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -2605,8 +2704,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -2644,8 +2746,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2679,8 +2784,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2715,8 +2823,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -2754,8 +2865,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -2793,8 +2907,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -2832,8 +2949,11 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -2876,8 +2996,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenSA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -2908,8 +3031,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -3012,8 +3138,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -3044,8 +3173,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -3079,8 +3211,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -3114,8 +3249,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -3149,8 +3287,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -3184,8 +3325,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -3226,8 +3370,11 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")
@@ -3262,8 +3409,11 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -3298,8 +3448,11 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -3334,8 +3487,11 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -3433,8 +3589,11 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -5634,8 +5793,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek != nil {
 				t.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)
@@ -5672,8 +5834,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 2")
@@ -5713,8 +5878,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 3")
@@ -5754,8 +5922,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 4")
@@ -5795,8 +5966,11 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 			if result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)
+			if result.AOOTA == nil {
+				t.Fatal("AOOTA is nil, want no clasificable")
+			}
+			if result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.Bartonicek == nil {
 				t.Fatal("Bartonicek is nil, want 1")

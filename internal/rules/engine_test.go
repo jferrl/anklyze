@@ -189,8 +189,8 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 				t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_posterior")
 			}
 
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+			if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 
 			if result.LaugeHansen == nil {
@@ -278,8 +278,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.FractureType != "unimaleolar_medial" {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil, got %v", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil {
 			t.Fatal("LaugeHansen classification is nil")
@@ -307,8 +307,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.FractureType != "unimaleolar_medial" {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil, got %v", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		// LH should be not_classifiable per drawio 2026-02-28
 		if result.LaugeHansen == nil {
@@ -487,8 +487,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		if result.FractureType != "bimaleolar_medial_posterior" {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_medial_posterior")
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
@@ -509,8 +509,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
@@ -528,8 +528,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
 		// AO = nil per drawio 2026-02-28
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil, got %v", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		// LH = PA per drawio 2026-02-28
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
@@ -563,8 +563,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
-			if result.AOOTA != nil {
-				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+			if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
@@ -601,8 +601,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
@@ -624,8 +624,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
@@ -646,8 +646,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA = %v, want nil (no clasificable per drawio)", result.AOOTA)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
@@ -671,8 +671,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberA {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberA)
 		}
-		if result.AOOTA != nil {
-			t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
@@ -842,8 +842,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 				if result.AOOTA.Code != tt.expectedAOOTA {
 					t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, tt.expectedAOOTA)
 				}
-			} else if result.AOOTA != nil {
-				t.Errorf("AOOTA should be nil (unclassifiable), got %q", result.AOOTA.Code)
+			} else if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+				t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 			}
 			if result.LaugeHansen == nil {
 				t.Fatal("LaugeHansen classification is nil")
@@ -1203,8 +1203,8 @@ func TestEngine_Classify_Trimaleolar(t *testing.T) {
 			}
 
 			if tt.expectedAOOTANil {
-				if result.AOOTA != nil {
-					t.Errorf("AOOTA should be nil (no clasificable), got %q", result.AOOTA.Code)
+				if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+					t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 				}
 			} else {
 				if result.AOOTA == nil {
@@ -1657,8 +1657,8 @@ func TestEngine_Classify_AOSubtypes(t *testing.T) {
 				t.Fatalf("Classify() unexpected error: %v", err)
 			}
 			if tt.expectedNil {
-				if result.AOOTA != nil {
-					t.Errorf("AOOTA should be nil, got %v", result.AOOTA.Code)
+				if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
+					t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 				}
 			} else {
 				if result.AOOTA == nil {
