@@ -6,14 +6,6 @@ export class RateLimitError extends Error {
   }
 }
 
-// Custom error for session limit exceeded
-export class SessionLimitError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'SessionLimitError';
-  }
-}
-
 // Custom error for input validation failures
 export class InputValidationError extends Error {
   code: string;
@@ -65,7 +57,6 @@ function getErrorMessage(error: Record<string, unknown>, fallback: string): stri
  * @throws {AuthRequiredError} - When status is 401
  * @throws {ForbiddenError} - When status is 403
  * @throws {RateLimitError} - When status is 429
- * @throws {SessionLimitError} - When status is 429 and error code is session_limit_exceeded
  * @throws {InputValidationError} - When status is 400 and error code indicates invalid input
  */
 export async function handleApiError(response: Response): Promise<never> {
@@ -84,11 +75,6 @@ export async function handleApiError(response: Response): Promise<never> {
   // Handle rate limiting errors
   if (response.status === 429) {
     const error = await response.json();
-    const errorCode = getErrorCode(error).toLowerCase();
-
-    if (errorCode === 'session_limit_exceeded') {
-      throw new SessionLimitError(getErrorMessage(error, 'Session limit exceeded'));
-    }
     throw new RateLimitError(getErrorMessage(error, 'Rate limit exceeded'));
   }
 
@@ -97,12 +83,10 @@ export async function handleApiError(response: Response): Promise<never> {
     const error = await response.json();
     const errorCode = getErrorCode(error);
 
-    // Check for invalid input (both INVALID_INPUT and legacy formats)
     if (errorCode.toUpperCase() === 'INVALID_INPUT' || errorCode.startsWith('INVALID_') || errorCode === 'invalid_input') {
       throw new InputValidationError(getErrorMessage(error, 'Invalid input'), errorCode);
     }
 
-    // Re-throw with extracted message
     const err = new Error(getErrorMessage(error, 'Bad request'));
     (err as Error & { code?: string }).code = errorCode;
     throw err;

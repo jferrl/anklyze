@@ -25,9 +25,7 @@ func setupTestHandlerWithDB(dbHealthy bool) *Handler {
 	classificationService := newTestClassificationSvc()
 	auditRepo := repository.NewNoOpAuditRepository()
 	analyticsRepo := repository.NewNoOpAnalyticsRepository()
-	chatAuditRepo := repository.NewNoOpChatAuditRepository()
-	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
-	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy, nil)
+	return NewHandler(classificationService, auditRepo, analyticsRepo, dbHealthy, nil)
 }
 
 // setupTestHandler creates a handler with real implementations for integration testing.
@@ -37,11 +35,8 @@ func setupTestHandler() *Handler {
 	classificationService := newTestClassificationSvc()
 	auditRepo := repository.NewNoOpAuditRepository()
 	analyticsRepo := repository.NewNoOpAnalyticsRepository()
-	chatAuditRepo := repository.NewNoOpChatAuditRepository()
-	chatAnalyticsRepo := repository.NewNoOpChatAnalyticsRepository()
-	// chatService is nil for tests - chat endpoint will return 503
 	// jwksReady is nil for tests - nil means not tracked, defaults to "ready" in health check
-	return NewHandler(classificationService, nil, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, true, nil)
+	return NewHandler(classificationService, auditRepo, analyticsRepo, true, nil)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.

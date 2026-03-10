@@ -21,6 +21,7 @@ import {
   getLaugeHansenFullName,
   getLaugeHansenDescription,
   getAOOTADescription,
+  getAOOTADisplayName,
   getBartonicekDescription,
 } from '@/utils/classificationTranslations';
 
@@ -259,13 +260,13 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
                   "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
                   classificationStyles.aoota.hover
                 )}>
-                  {result.ao_ota.code}
+                  {getAOOTADisplayName(t, result.ao_ota.code)}
                   <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 </p>
               </HoverCardTrigger>
               <HoverCardContent className="w-80 glass-card">
                 <div className="space-y-2">
-                  <h4 className="font-semibold">{result.ao_ota.code}</h4>
+                  <h4 className="font-semibold">{getAOOTADisplayName(t, result.ao_ota.code)}</h4>
                   <p className="text-sm text-muted-foreground">
                     {getAOOTADescription(t, result.ao_ota.code)}
                   </p>

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/service"
@@ -28,36 +27,11 @@ type AnalyticsRepository interface {
 	GetDistribution(system string, from, to time.Time) (*domain.ClassificationDistribution, error)
 }
 
-// ChatAuditRepository defines the chat audit persistence interface.
-type ChatAuditRepository interface {
-	CreateSession(ctx context.Context, session *domain.ChatSession) error
-	UpdateSession(ctx context.Context, session *domain.ChatSession) error
-	GetSession(ctx context.Context, sessionID uuid.UUID) (*domain.ChatSession, error)
-	SaveMessage(ctx context.Context, message *domain.ChatMessage) error
-	SaveFeedback(ctx context.Context, feedback *domain.ChatFeedback) error
-	GetFeedbackBySession(ctx context.Context, sessionID uuid.UUID) (*domain.ChatFeedback, error)
-	GetLastAssistantMessage(ctx context.Context, sessionID uuid.UUID) (*domain.ChatMessage, error)
-	Close() error
-}
-
-// ChatAnalyticsRepository defines the chat analytics query interface.
-type ChatAnalyticsRepository interface {
-	GetSummary(from, to time.Time) (*domain.ChatAnalyticsSummary, error)
-	GetFeedbackSummary(from, to time.Time) (*domain.ChatFeedbackSummary, error)
-	GetConfidenceDistribution(from, to time.Time) (*domain.ConfidenceDistribution, error)
-	GetTrends(from, to time.Time, granularity domain.Granularity) (*domain.ChatTrendData, error)
-}
-
 // Handler handles HTTP requests
 type Handler struct {
 	classificationService service.ClassificationService
-	chatService           service.ChatService
 	auditRepo             AuditRepository
 	analyticsRepo         AnalyticsRepository
-	chatAuditRepo         ChatAuditRepository
-	chatAnalyticsRepo     ChatAnalyticsRepository
-	sessionMessageLimit   int
-	inputValidator        *InputValidator
 	dbHealthy             bool         // Whether database connection succeeded at startup
 	jwksReady             *atomic.Bool // Whether JWKS endpoint is reachable; nil means not tracked (defaults to ready)
 }
@@ -65,32 +39,18 @@ type Handler struct {
 // NewHandler creates a new Handler
 func NewHandler(
 	classificationService service.ClassificationService,
-	chatService service.ChatService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
-	chatAuditRepo ChatAuditRepository,
-	chatAnalyticsRepo ChatAnalyticsRepository,
 	dbHealthy bool,
 	jwksReady *atomic.Bool,
 ) *Handler {
 	return &Handler{
 		classificationService: classificationService,
-		chatService:           chatService,
 		auditRepo:             auditRepo,
 		analyticsRepo:         analyticsRepo,
-		chatAuditRepo:         chatAuditRepo,
-		chatAnalyticsRepo:     chatAnalyticsRepo,
-		sessionMessageLimit:   20, // Default limit
-		inputValidator:        NewInputValidator(),
 		dbHealthy:             dbHealthy,
 		jwksReady:             jwksReady,
 	}
-}
-
-// WithSessionMessageLimit sets the session message limit
-func (h *Handler) WithSessionMessageLimit(limit int) *Handler {
-	h.sessionMessageLimit = limit
-	return h
 }
 
 // getLanguage extracts the language from the Accept-Language header
@@ -240,168 +200,4 @@ func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, distribution)
-}
-
-// ChatMessage handles POST /api/chat
-// @Summary Chat-based fracture classification
-// @Description Processes natural language fracture descriptions and returns classification
-// @Tags Chat
-// @Accept json
-// @Produce json
-// @Param input body service.ChatRequest true "Chat message"
-// @Success 200 {object} service.ChatResponse "Chat response with classification"
-// @Failure 400 {object} map[string]string "Invalid input"
-// @Failure 503 {object} map[string]string "Chat service unavailable"
-// @Router /api/chat [post]
-func (h *Handler) ChatMessage(c *gin.Context) {
-	if h.chatService == nil {
-		c.JSON(http.StatusServiceUnavailable, gin.H{
-			"error_code": domain.ErrCodeChatUnavailable,
-		})
-		return
-	}
-
-	startTime := time.Now()
-
-	var req service.ChatRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error_code": domain.ErrCodeInvalidInput,
-			"details":    err.Error(),
-		})
-		return
-	}
-
-	// Use query param language if not specified in body
-	if req.Language == "" {
-		req.Language = string(getLanguage(c))
-	}
-
-	// Validate input for gibberish/spam
-	if h.inputValidator != nil {
-		// Check for gibberish/invalid input
-		validationResult := h.inputValidator.Validate(req.Message)
-		if !validationResult.Valid {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error_code": validationResult.Code,
-			})
-			return
-		}
-
-		// Check language is supported
-		langResult := h.inputValidator.ValidateLanguage(req.Message)
-		if !langResult.Valid {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error_code": langResult.Code,
-			})
-			return
-		}
-	}
-
-	// Parse session ID if provided
-	var sessionID *uuid.UUID
-	if req.SessionID != "" {
-		id, err := uuid.Parse(req.SessionID)
-		if err == nil {
-			sessionID = &id
-		}
-	}
-
-	// Determine message type for user message and get previous context
-	userMsgType := domain.ChatMessageTypeInitial
-	if sessionID != nil {
-		// Check if session has messages already (this would be a follow-up)
-		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
-		if err == nil && session != nil {
-			// Check session message limit
-			if h.sessionMessageLimit > 0 && session.TotalMessages >= h.sessionMessageLimit {
-				c.JSON(http.StatusTooManyRequests, gin.H{
-					"error_code": domain.ErrCodeSessionLimitExceeded,
-				})
-				return
-			}
-
-			if session.TotalMessages > 0 {
-				userMsgType = domain.ChatMessageTypeClarificationAnswer
-
-				// Get the last assistant message to retrieve previous extracted input
-				lastMsg, err := h.chatAuditRepo.GetLastAssistantMessage(c.Request.Context(), *sessionID)
-				if err == nil && lastMsg != nil {
-					// Parse the extracted input from the last message
-					previousInput, err := lastMsg.GetExtractedInput()
-					if err == nil && previousInput != nil {
-						req.PreviousInput = previousInput
-					}
-				}
-			}
-		}
-	}
-
-	// Save user message if session exists
-	if sessionID != nil {
-		userMsg := domain.NewUserMessage(*sessionID, req.Message, userMsgType)
-		if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), userMsg); err != nil {
-			slog.Warn("failed to save user message", "error", err)
-		}
-	}
-
-	resp, err := h.chatService.ProcessMessage(c.Request.Context(), req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error_code": domain.ErrCodeClassification,
-		})
-		return
-	}
-
-	processingMS := time.Since(startTime).Milliseconds()
-
-	// Save assistant message and update session if session exists
-	if sessionID != nil {
-		// Determine assistant message type
-		assistantMsgType := domain.ChatMessageTypeClassification
-		if resp.Status == service.ChatStatusNeedsClarification {
-			assistantMsgType = domain.ChatMessageTypeClarificationRequest
-		}
-
-		// Create and save assistant message
-		assistantMsg, err := domain.NewAssistantMessage(
-			*sessionID,
-			resp.Message,
-			assistantMsgType,
-			resp.ExtractedInput,
-			&resp.Confidence,
-			processingMS,
-		)
-		if err != nil {
-			slog.Warn("failed to create assistant message", "error", err)
-		} else {
-			if err := h.chatAuditRepo.SaveMessage(c.Request.Context(), assistantMsg); err != nil {
-				slog.Warn("failed to save assistant message", "error", err)
-			}
-		}
-
-		// Update session counts and state
-		session, err := h.chatAuditRepo.GetSession(c.Request.Context(), *sessionID)
-		if err == nil && session != nil {
-			// Increment message count (2 messages: user + assistant)
-			session.IncrementMessages()
-			session.IncrementMessages()
-
-			// Increment clarification count if needed
-			if resp.Status == service.ChatStatusNeedsClarification {
-				session.IncrementClarifications()
-			}
-
-			// If classification is complete, update session with final results
-			if resp.Status == service.ChatStatusComplete && resp.Classification != nil {
-				session.Complete(resp.Confidence, resp.Classification)
-			}
-
-			if err := h.chatAuditRepo.UpdateSession(c.Request.Context(), session); err != nil {
-				slog.Warn("failed to update session", "error", err, "session_id", sessionID)
-			}
-		}
-	}
-
-	c.JSON(http.StatusOK, resp)
 }

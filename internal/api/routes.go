@@ -18,19 +18,7 @@ import (
 // defaultSignedURLDuration is the default duration for signed URLs (15 minutes).
 const defaultSignedURLDuration = 15 * time.Minute
 
-// Cleanup holds references to resources that need cleanup on shutdown.
-type Cleanup struct {
-	rateLimiter *IPRateLimiter
-}
-
-// Stop gracefully stops all background goroutines.
-func (c *Cleanup) Stop() {
-	if c.rateLimiter != nil {
-		c.rateLimiter.Stop()
-	}
-}
-
-// SetupRoutes configures all API routes and returns a Cleanup struct for graceful shutdown.
+// SetupRoutes configures all API routes.
 func SetupRoutes(
 	router *gin.Engine,
 	cfg *config.Config,
@@ -39,20 +27,13 @@ func SetupRoutes(
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
 	classificationService service.ClassificationService,
-	chatService service.ChatService,
-	chatAuditRepo ChatAuditRepository,
-	chatAnalyticsRepo ChatAnalyticsRepository,
 	dbHealthy bool,
 	jwksReady *atomic.Bool,
-) *Cleanup {
-	handler := NewHandler(classificationService, chatService, auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, dbHealthy, jwksReady).
-		WithSessionMessageLimit(cfg.SessionMessageLimit)
+) {
+	handler := NewHandler(classificationService, auditRepo, analyticsRepo, dbHealthy, jwksReady)
 
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
-
-	// Rate limiter for chat endpoints (protects against excessive API costs)
-	rateLimiter, chatRateLimiter := RateLimitMiddlewareWithConfig(cfg.RateLimitRate, cfg.RateLimitBurst)
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
@@ -63,14 +44,10 @@ func SetupRoutes(
 
 	if authValidator != nil {
 		// Auth is enabled - protect routes
-		setupProtectedRoutes(api, authValidator, userRepo, handler, chatRateLimiter)
+		setupProtectedRoutes(api, authValidator, userRepo, handler)
 	} else {
 		// Auth is disabled - all routes are public (development/backwards compatibility)
-		setupPublicRoutes(api, handler, chatRateLimiter)
-	}
-
-	return &Cleanup{
-		rateLimiter: rateLimiter,
+		setupPublicRoutes(api, handler)
 	}
 }
 
@@ -80,7 +57,6 @@ func setupProtectedRoutes(
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	handler *Handler,
-	chatRateLimiter gin.HandlerFunc,
 ) {
 	// Protected routes - require authentication (User or Admin)
 	protected := api.Group("")
@@ -88,9 +64,6 @@ func setupProtectedRoutes(
 	protected.Use(auth.UserSyncMiddleware(userRepo))
 	protected.GET("/me", GetCurrentUser)
 	protected.POST("/classify", handler.ClassifyFracture)
-	protected.POST("/chat", chatRateLimiter, handler.ChatMessage)
-
-	registerChatSessionRoutes(protected.Group("/chat"), handler)
 
 	// Admin-only routes - require admin role
 	analytics := api.Group("/analytics")
@@ -104,7 +77,6 @@ func setupProtectedRoutes(
 func setupPublicRoutes(
 	api *gin.RouterGroup,
 	handler *Handler,
-	chatRateLimiter gin.HandlerFunc,
 ) {
 	// In development mode, /me returns a mock admin user
 	api.GET("/me", func(c *gin.Context) {
@@ -115,9 +87,7 @@ func setupPublicRoutes(
 		})
 	})
 	api.POST("/classify", handler.ClassifyFracture)
-	api.POST("/chat", chatRateLimiter, handler.ChatMessage)
 
-	registerChatSessionRoutes(api.Group("/chat"), handler)
 	registerAnalyticsRoutes(api.Group("/analytics"), handler)
 }
 
@@ -252,26 +222,11 @@ func setupPublicStudyRoutes(
 // Shared route registration helpers
 // ============================================================================
 
-// registerChatSessionRoutes registers chat session routes on the given group.
-func registerChatSessionRoutes(chat *gin.RouterGroup, h *Handler) {
-	chat.POST("/session", h.CreateChatSession)
-	chat.PUT("/session/:id/complete", h.CompleteChatSession)
-	chat.PUT("/session/:id/abandon", h.AbandonChatSession)
-	chat.POST("/session/:id/feedback", h.SubmitFeedback)
-	chat.GET("/session/:id/feedback", h.GetFeedback)
-}
-
-// registerAnalyticsRoutes registers analytics and chat analytics routes on the given group.
+// registerAnalyticsRoutes registers analytics routes on the given group.
 func registerAnalyticsRoutes(analytics *gin.RouterGroup, h *Handler) {
 	analytics.GET("/summary", h.GetAnalyticsSummary)
 	analytics.GET("/trends", h.GetAnalyticsTrends)
 	analytics.GET("/distribution/:system", h.GetAnalyticsDistribution)
-
-	chatAnalytics := analytics.Group("/chat")
-	chatAnalytics.GET("/summary", h.GetChatAnalyticsSummary)
-	chatAnalytics.GET("/feedback", h.GetChatFeedbackSummary)
-	chatAnalytics.GET("/confidence", h.GetChatConfidenceDistribution)
-	chatAnalytics.GET("/trends", h.GetChatTrends)
 }
 
 // registerUserCaseRoutes registers user-facing case routes on the given group.

@@ -1,9 +1,6 @@
 import { http, HttpResponse, delay } from 'msw'
 import {
   mockClassificationResult,
-  mockChatSession,
-  mockChatResponseComplete,
-  mockChatResponseClarification,
   mockCase,
   mockCaseWithImages,
   mockUserCaseItem,
@@ -44,46 +41,6 @@ export const classificationHandlers = [
   http.post(`${API_BASE_URL}/api/validate`, async () => {
     await delay(50)
     return HttpResponse.json({ valid: true })
-  }),
-]
-
-// ============================================================================
-// Chat API Handlers
-// ============================================================================
-
-export const chatHandlers = [
-  // POST /api/chat/session - Create new chat session
-  http.post(`${API_BASE_URL}/api/chat/session`, async () => {
-    await delay(100)
-    return HttpResponse.json(mockChatSession)
-  }),
-
-  // POST /api/chat - Send chat message
-  http.post(`${API_BASE_URL}/api/chat`, async ({ request }) => {
-    await delay(200) // Simulate AI processing time
-
-    const body = await request.json() as { message?: string }
-
-    // If message contains certain keywords, return complete response
-    if (body.message?.toLowerCase().includes('lateral') &&
-        body.message?.toLowerCase().includes('transindesmal')) {
-      return HttpResponse.json(mockChatResponseComplete)
-    }
-
-    // Otherwise, request clarification
-    return HttpResponse.json(mockChatResponseClarification)
-  }),
-
-  // PUT /api/chat/session/:id/complete - Complete chat session
-  http.put(`${API_BASE_URL}/api/chat/session/:id/complete`, async () => {
-    await delay(50)
-    return new HttpResponse(null, { status: 204 })
-  }),
-
-  // PUT /api/chat/session/:id/abandon - Abandon chat session
-  http.put(`${API_BASE_URL}/api/chat/session/:id/abandon`, async () => {
-    await delay(50)
-    return new HttpResponse(null, { status: 204 })
   }),
 ]
 
@@ -209,24 +166,6 @@ export const userHandlers = [
 ]
 
 // ============================================================================
-// Feedback API Handlers
-// ============================================================================
-
-export const feedbackHandlers = [
-  // POST /api/feedback - Submit feedback
-  http.post(`${API_BASE_URL}/api/feedback`, async () => {
-    await delay(100)
-    return HttpResponse.json({ success: true }, { status: 201 })
-  }),
-
-  // POST /api/chat/:sessionId/feedback - Submit chat feedback
-  http.post(`${API_BASE_URL}/api/chat/:sessionId/feedback`, async () => {
-    await delay(100)
-    return HttpResponse.json({ success: true }, { status: 201 })
-  }),
-]
-
-// ============================================================================
 // Error Handlers (for testing error scenarios)
 // ============================================================================
 
@@ -248,7 +187,7 @@ export const errorHandlers = {
   }),
 
   // 429 Rate Limited
-  rateLimited: http.post(`${API_BASE_URL}/api/chat`, () => {
+  rateLimited: http.post(`${API_BASE_URL}/api/classify`, () => {
     return HttpResponse.json(
       { error: 'Rate limit exceeded', message: 'Too many requests' },
       { status: 429 }
@@ -278,9 +217,7 @@ export const errorHandlers = {
  */
 export const handlers = [
   ...classificationHandlers,
-  ...chatHandlers,
   ...caseHandlers,
   ...analyticsHandlers,
   ...userHandlers,
-  ...feedbackHandlers,
 ]

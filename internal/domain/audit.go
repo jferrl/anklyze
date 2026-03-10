@@ -26,7 +26,7 @@ type AuditEntry struct {
 	IsImpossible    bool    `gorm:"column:is_impossible;index"`
 	DanisWeberType  *string `gorm:"column:danis_weber_type;size:10;index"`
 	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:20;index"`
-	AOOTACode       *string `gorm:"column:ao_ota_code;size:10;index"`
+	AOOTACode       *string `gorm:"column:ao_ota_code;size:20;index"`
 
 	// Processing time
 	DurationMS int64

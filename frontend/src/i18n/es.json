@@ -31,7 +31,8 @@
     "cohorts": "Cohortes",
     "newCohort": "Nueva Cohorte",
     "editCohort": "Editar Cohorte",
-    "cohortDetail": "Detalle de Cohorte"
+    "cohortDetail": "Detalle de Cohorte",
+    "profile": "Perfil"
   },
   "app": {
     "title": "Clasificación de Fracturas de Tobillo",
@@ -63,11 +64,6 @@
       "free": {
         "title": "Siempre Gratis",
         "description": "Sin suscripción, sin anuncios, sin recolección de datos. Solo una herramienta que funciona."
-      },
-      "chat": {
-        "title": "Chat IA",
-        "description": "Describe la fractura en lenguaje natural y deja que la IA extraiga los parámetros de clasificación.",
-        "badge": "Experimental"
       }
     },
     "howItWorks": {
@@ -127,19 +123,21 @@
     "questions": {
       "involved_malleoli": "¿Qué maléolos tiene fracturados?",
       "posterior_fracture_type": "¿Qué tipo de fractura es?",
+      "posterior_fracture_type_med_post": "¿Qué tipo de fractura es el maléolo posterior?",
       "posterior_fracture_type_posterior": "¿Qué tipo de fractura es?",
       "posterior_fracture_type_lp_infra": "¿Cuál es la morfología del maléolo posterior?",
       "medial_morphology": "¿Qué morfología tiene?",
       "medial_morphology_lm": "¿De qué morfología es la fractura del maléolo medial?",
-      "fibular_level": "¿A qué nivel está la fractura de peroné?",
+      "fibular_level": "¿A qué nivel está la fractura?",
       "fibular_level_lm": "¿A qué nivel está la fractura de peroné?",
       "fibular_level_tri": "¿A qué nivel está la fractura de peroné?",
       "lateral_morphology": "¿De qué morfología es la fractura?",
       "lateral_morphology_lm_tri": "¿De qué morfología es la fractura del peroné?",
       "suprasindesmal_type": "¿De qué tipo?",
-      "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal y transversa?",
+      "fibula_infrasindesmal_transverse": "¿La fractura del peroné es infrasindesmal?",
       "has_ct_scan": "¿Tiene TAC?",
-      "fibula_trace_pattern": "¿Cómo es el trazo principal del peroné?",
+      "fibula_trace_pattern": "¿Cómo es el trazo del peroné?",
+      "fibula_trace_pattern_lp": "¿Cómo es el trazo del peroné?",
       "fibula_trace_pattern_multi": "¿Cómo es el trazo principal del peroné?",
       "fibular_level_for_transverse": "¿A qué nivel está la fractura de peroné?",
       "articularInvolvement": "¿Cuál es la afectación?",
@@ -168,7 +166,10 @@
         "posterolateral": "Fragmento posterolateral",
         "posteromedial_posterolateral": "Fragmento posteromedial y posterolateral",
         "large_posterolateral": "Gran fragmento triangular posterolateral",
-        "extraincisural_posteromedial": "Fragmento extraincisural postero-medial"
+        "extraincisural_posteromedial": "Fragmento extraincisural posteromedial"
+      },
+      "posteriorTypeMedPost": {
+        "extraincisural": "Fragmento extraincisural posterior"
       },
       "medialMorphology": {
         "vertical": "Vertical",
@@ -176,7 +177,7 @@
       },
       "medialMorphologyLM": {
         "vertical": "Vertical",
-        "transverse_oblique": "Transverso/oblicuo"
+        "transverse_oblique": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       "fibularLevel": {
         "infrasindesmal": "Infrasindesmal",
@@ -206,27 +207,52 @@
         "spiral": "Espiroidea (Baja anterior, alta posterior)"
       },
       "infrasindesmalMorphology": {
-        "avulsion": "Avulsión punta del peroné",
-        "malleolus_fracture": "Fractura del maléolo"
+        "avulsion": "Avulsión de la punta del maleolo",
+        "malleolus_fracture": "Fractura de maleolo lateral"
+      },
+      "infrasindesmalMorphologyLMTri": {
+        "avulsion": "Avulsión",
+        "malleolus_fracture": "Transversa"
       },
       "lateralSubtype": {
-        "simple": "Simple",
-        "syndesmosis_rupture": "Rotura de sindesmosis",
-        "butterfly": "Ala de mariposa / cuña"
+        "simple": "Fractura simple",
+        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)",
+        "butterfly": "Fractura en ala de maliposa/multifragmentaria"
       },
       "medialSubtype": {
-        "open_mortise": "Abierta mortaja",
-        "malleolus_fracture": "Fractura del maléolo"
+        "open_mortise": "Abierta la mortaja",
+        "malleolus_fracture": "Fractura del maléolo/avulsión"
       },
       "suprasindesmalType": {
         "simple_diaphyseal": "Diafisaria Simple",
-        "multifragmentary": "Multifragmentaria",
-        "proximal": "Proximal"
+        "multifragmentary": "Multifragmentaria/ala de mariposa",
+        "proximal": "Proximal (1/3 proximal peroné)"
+      },
+      "suprasindesmalTypeLP": {
+        "simple_diaphyseal": "Diafisaria Simple",
+        "multifragmentary": "Multifragmentaria/ala de mariposa",
+        "proximal": "Proximal (1/3 proximal de peroné)"
       },
       "fibulaTracePattern": {
-        "parasindesmotic_short": "Parasindesmal de trazo oblicuo corto/transverso/conminuto",
-        "parasindesmotic_long": "Parasindesmal de trazo oblicuo largo/espiroideo",
-        "suprasindesmotic_far": "Suprasindesmal (>6cm de superficie articular)"
+        "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
+        "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+      },
+      "fibulaTracePatternLP": {
+        "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
+        "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+      },
+      "fibulaTracePatternMultiLP": {
+        "parasindesmotic_short": "Parasindesmal conminuta (a <6cm de la superficie articular)",
+        "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa",
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+      },
+      "posteriorTypeLPInfra": {
+        "extraincisural": "Fragmento extraincisural posterior",
+        "posterolateral": "Fragmento posterolateral",
+        "posteromedial_posterolateral": "Fragmento posteromedial y posterolateral",
+        "large_posterolateral": "Gran fragmento triangular posterolateral"
       },
       "articularInvolvement": {
         "large_with_extension": ">1/3 de superficie articular con extensión metafisaria",
@@ -330,7 +356,9 @@
         "C3.2_desc": "44-C3.2: Fractura suprasindesmal proximal con acortamiento del peroné",
         "C3.3_desc": "44-C3.3: Fractura trimaleolar suprasindesmal proximal",
         "43B1_desc": "43-B1: Fractura de tibia distal sin depresión articular",
-        "43B2_desc": "43-B2: Fractura de tibia distal con depresión articular"
+        "43B2_desc": "43-B2: Fractura de tibia distal con depresión articular",
+        "not_classifiable_name": "No clasificable",
+        "not_classifiable_desc": "AO/OTA no clasificable para este patrón de fractura"
       },
       "bartonicek": {
         "1_desc": "Bartonicek 1: Fragmento extraincisural",
@@ -366,8 +394,6 @@
   },
   "classify": {
     "backToHome": "Volver al Inicio",
-    "modeForm": "Formulario",
-    "modeChat": "Chat",
     "flowDiagram": {
       "title": "Flujo de Clasificación",
       "description": "Guía visual del proceso de decisión de clasificación",
@@ -376,56 +402,6 @@
       "resetZoom": "Restablecer zoom",
       "loading": "Cargando diagrama..."
     }
-  },
-  "chat": {
-    "placeholder": "Describe la fractura de tobillo que quieres clasificar...",
-    "inputPlaceholder": "Describe la fractura...",
-    "thinking": "Analizando...",
-    "extractedParams": "Parámetros Extraídos",
-    "confirmClassify": "Confirmar y Clasificar",
-    "yes": "Sí",
-    "no": "No",
-    "experimental": {
-      "badge": "Experimental",
-      "notice": "La clasificación por chat está en fase experimental. Para mayor precisión, usa la clasificación por formulario."
-    },
-    "examples": {
-      "title": "Ejemplos de descripciones:",
-      "ex1": "Fractura trimaleolar con peroné suprasindesmal",
-      "ex2": "Fractura de maléolo lateral a nivel de sindesmosis, patrón espiroideo",
-      "ex3": "Bimaleolar: medial transverso, peroné espiroideo"
-    },
-    "fields": {
-      "involvedMalleoli": "Maléolos involucrados",
-      "posteriorType": "Tipo posterior",
-      "medialMorphology": "Morfología medial",
-      "fibularLevel": "Nivel del peroné",
-      "lateralMorphology": "Morfología lateral",
-      "suprasindesmalType": "Tipo suprasindesmal"
-    },
-    "clarification": {
-      "title": "Información Adicional Necesaria",
-      "subtitle": "Por favor selecciona una opción para ayudar a clasificar la fractura"
-    },
-    "errors": {
-      "generic": "Lo siento, no pude procesar eso. Por favor intenta de nuevo.",
-      "unavailable": "La clasificación por chat no está disponible temporalmente.",
-      "rateLimit": "Estás enviando mensajes demasiado rápido. Por favor espera un momento antes de intentar de nuevo.",
-      "sessionLimit": "Has alcanzado el límite de mensajes para esta sesión. Por favor inicia una nueva conversación.",
-      "dailyQuota": "Has alcanzado tu límite diario. Por favor intenta de nuevo mañana."
-    },
-    "validation": {
-      "minLength": "Por favor ingresa al menos {{min}} caracteres ({{current}}/{{min}})",
-      "pleaseWait": "Por favor espera un momento antes de enviar otro mensaje"
-    }
-  },
-  "feedback": {
-    "title": "¿Fue útil esta clasificación?",
-    "helpful": "Útil",
-    "notHelpful": "No útil",
-    "commentPlaceholder": "¿Algún comentario adicional? (opcional)",
-    "submit": "Enviar Opinión",
-    "thankYou": "¡Gracias por tu opinión!"
   },
   "language": {
     "en": "Inglés",
@@ -1210,7 +1186,6 @@
     "classification_error": "Error en la clasificación: ",
     "no_fractures_found": "No se detectaron fracturas de maléolos",
     "isolated_posterior": "Fractura aislada del maléolo posterior",
-    "chat_unavailable": "La clasificación por chat no está disponible temporalmente",
     "caseNotFound": "Caso no encontrado",
     "imageNotFound": "Imagen no encontrada",
     "studyNotFound": "Estudio no encontrado",

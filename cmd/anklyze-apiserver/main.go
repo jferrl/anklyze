@@ -17,7 +17,6 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/database"
-	"github.com/jferrl/anklyze/internal/llm"
 	"github.com/jferrl/anklyze/internal/logger"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/repository/postgres"
@@ -70,12 +69,8 @@ func main() {
 		Format: cfg.LogFormat,
 	})
 
-	ctx := context.Background()
-
 	var auditRepo api.AuditRepository
 	var analyticsRepo api.AnalyticsRepository
-	var chatAuditRepo api.ChatAuditRepository
-	var chatAnalyticsRepo api.ChatAnalyticsRepository
 	var userRepo repository.UserRepository
 	var caseRepo repository.CaseRepository
 	var caseResponseRepo repository.CaseResponseRepository
@@ -103,7 +98,7 @@ func main() {
 		if err != nil {
 			slog.Warn("database connection failed, running in degraded mode (NoOp repositories)", "error", err)
 			dbHealthy = false
-			auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
+			auditRepo, analyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
 		} else {
 			if err := database.RunMigrations(migrations.FS, cfg.DatabaseURL); err != nil {
 				slog.Error("database migration failed", "error", err)
@@ -113,8 +108,6 @@ func main() {
 			slog.Info("database connected, audit trail and analytics enabled")
 			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
-			chatAuditRepo = postgres.NewChatAuditRepository(db, cfg.AuditBufferSize)
-			chatAnalyticsRepo = postgres.NewChatAnalyticsRepository(db)
 			userRepo = postgres.NewUserRepository(db)
 			caseRepo = postgres.NewCaseRepository(db)
 			caseResponseRepo = postgres.NewCaseResponseRepository(db, cfg.AuditBufferSize)
@@ -125,7 +118,7 @@ func main() {
 	} else {
 		slog.Info("no DATABASE_URL configured, running in degraded mode (NoOp repositories)")
 		dbHealthy = false
-		auditRepo, analyticsRepo, chatAuditRepo, chatAnalyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
+		auditRepo, analyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
 	}
 
 	// Create user service that orchestrates DB and Supabase operations
@@ -135,28 +128,8 @@ func main() {
 	ruleEngine := rules.NewEngine()
 	classificationService := service.NewClassificationService(ruleEngine, caseResponseRepo)
 
-	// Initialize prompt loader (independent of API key — loads from embedded templates)
-	promptLoader, err := llm.NewPromptLoader()
-	if err != nil {
-		slog.Error("failed to load prompt templates", "error", err)
-		os.Exit(1)
-	}
-
-	// Initialize chat service if Gemini is configured
-	var chatService service.ChatService
-	if cfg.HasGemini() {
-		llmClient, err := llm.NewClient(ctx, cfg.GeminiAPIKey, cfg.GeminiModel, promptLoader)
-		if err != nil {
-			slog.Warn("Gemini client creation failed, chat disabled", "error", err)
-		} else {
-			chatService = service.NewChatService(llmClient, classificationService, 0.7)
-			slog.Info("Gemini configured, chat classification enabled")
-		}
-	} else {
-		slog.Info("no GEMINI_API_KEY configured, chat classification disabled")
-	}
-
 	// Initialize Supabase Auth validator if configured
+	ctx := context.Background()
 	var authValidator *auth.Validator
 	if cfg.HasSupabase() {
 		validator, err := auth.NewValidator(ctx, cfg.SupabaseURL)
@@ -218,7 +191,7 @@ func main() {
 	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
 
 	router := gin.Default()
-	routeCleanup := api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, chatService, chatAuditRepo, chatAnalyticsRepo, dbHealthy, jwksReady)
+	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, dbHealthy, jwksReady)
 	responseHandler := api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, caseRepo, studyService)
 
@@ -260,10 +233,10 @@ func main() {
 	}
 
 	// Give outstanding requests 5 seconds to complete
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(shutdownCtx); err != nil {
 		slog.Error("server forced to shutdown", "error", err)
 	}
 
@@ -273,9 +246,6 @@ func main() {
 	// Close audit repositories to flush pending writes
 	if err := auditRepo.Close(); err != nil {
 		slog.Error("failed to close audit repository", "error", err)
-	}
-	if err := chatAuditRepo.Close(); err != nil {
-		slog.Error("failed to close chat audit repository", "error", err)
 	}
 	if err := caseResponseRepo.Close(); err != nil {
 		slog.Error("failed to close case response repository", "error", err)
@@ -287,9 +257,6 @@ func main() {
 			slog.Error("failed to close auth validator", "error", err)
 		}
 	}
-
-	// Stop rate limiter and quota tracker goroutines
-	routeCleanup.Stop()
 
 	// Close database connection pool
 	if db != nil {
@@ -309,8 +276,6 @@ func main() {
 func initNoOpRepositories() (
 	api.AuditRepository,
 	api.AnalyticsRepository,
-	api.ChatAuditRepository,
-	api.ChatAnalyticsRepository,
 	repository.UserRepository,
 	repository.CaseRepository,
 	repository.CaseResponseRepository,
@@ -320,8 +285,6 @@ func initNoOpRepositories() (
 ) {
 	return repository.NewNoOpAuditRepository(),
 		repository.NewNoOpAnalyticsRepository(),
-		repository.NewNoOpChatAuditRepository(),
-		repository.NewNoOpChatAnalyticsRepository(),
 		repository.NewNoOpUserRepository(),
 		repository.NewNoOpCaseRepository(),
 		repository.NewNoOpCaseResponseRepository(),

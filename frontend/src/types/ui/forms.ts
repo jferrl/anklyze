@@ -121,14 +121,29 @@ export interface FormOptions {
   /** Options for fibula trace patterns */
   fibula_trace_patterns: FormOption[];
 
+  /** Options for suprasyndesmotic types in lateral+posterior (with qualifiers) */
+  suprasindesmal_types_lp: FormOption[];
+
+  /** Options for fibula trace patterns in lateral+posterior Diafisaria Simple */
+  fibula_trace_patterns_lp: FormOption[];
+
+  /** Options for fibula trace patterns in lateral+posterior Multifragmentaria */
+  fibula_trace_patterns_multi_lp: FormOption[];
+
   /** Options for articular involvement (posterior-only, medial-only) */
   articular_involvement_options: FormOption[];
 
   /** Options for posterior fracture types in medial+posterior path (5 options) */
   posterior_fracture_types_medial_posterior: FormOption[];
 
-  /** Options for infrasindesmal morphology (avulsion vs malleolus fracture) */
+  /** Options for posterior fracture types in lateral+posterior infrasindesmal (extraincisural has "posterior" qualifier) */
+  posterior_fracture_types_lp_infra: FormOption[];
+
+  /** Options for infrasindesmal morphology — lateral_only (avulsion vs malleolus fracture) */
   infrasindesmal_morphology: FormOption[];
+
+  /** Options for infrasindesmal morphology — lateral_medial / trimaleolar */
+  infrasindesmal_morphology_lm_tri: FormOption[];
 
   /** Options for lateral subtype (transindesmal lateral-only) */
   lateral_subtype: FormOption[];

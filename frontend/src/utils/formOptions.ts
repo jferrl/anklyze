@@ -23,6 +23,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'posterior_fracture_type',
       title: t('form.questions.posterior_fracture_type'),
     },
+    posterior_fracture_type_med_post: {
+      id: 'posterior_fracture_type_med_post',
+      title: t('form.questions.posterior_fracture_type_med_post'),
+    },
     posterior_fracture_type_posterior: {
       id: 'posterior_fracture_type_posterior',
       title: t('form.questions.posterior_fracture_type_posterior'),
@@ -74,6 +78,10 @@ export function getLocalFormOptions(): FormOptions {
     fibula_trace_pattern: {
       id: 'fibula_trace_pattern',
       title: t('form.questions.fibula_trace_pattern'),
+    },
+    fibula_trace_pattern_lp: {
+      id: 'fibula_trace_pattern_lp',
+      title: t('form.questions.fibula_trace_pattern_lp'),
     },
     fibula_trace_pattern_multi: {
       id: 'fibula_trace_pattern_multi',
@@ -152,9 +160,21 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'large_posterolateral', label: t('form.options.posteriorType.large_posterolateral') },
   ];
 
+  // Posterior fracture types for lateral+posterior infrasindesmal (extraincisural has "posterior" qualifier per drawio)
+  const posterior_fracture_types_lp_infra: SelectOption[] = [
+    { value: 'extraincisural', label: t('form.options.posteriorTypeLPInfra.extraincisural') },
+    { value: 'posterolateral', label: t('form.options.posteriorTypeLPInfra.posterolateral') },
+    { value: 'posteromedial_posterolateral', label: t('form.options.posteriorTypeLPInfra.posteromedial_posterolateral') },
+    { value: 'large_posterolateral', label: t('form.options.posteriorTypeLPInfra.large_posterolateral') },
+  ];
+
   // Posterior fracture types for medial+posterior path (5 options including extraincisural_posteromedial)
+  // Uses branch-specific label for extraincisural ("posterior" qualifier per drawio)
   const posterior_fracture_types_medial_posterior: SelectOption[] = [
-    ...posterior_fracture_types,
+    { value: 'extraincisural', label: t('form.options.posteriorTypeMedPost.extraincisural') },
+    { value: 'posterolateral', label: t('form.options.posteriorType.posterolateral') },
+    { value: 'posteromedial_posterolateral', label: t('form.options.posteriorType.posteromedial_posterolateral') },
+    { value: 'large_posterolateral', label: t('form.options.posteriorType.large_posterolateral') },
     { value: 'extraincisural_posteromedial', label: t('form.options.posteriorType.extraincisural_posteromedial') },
   ];
 
@@ -197,10 +217,16 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'spiral', label: t('form.options.fibulaMorphologyTri.spiral') },
   ];
 
-  // Infrasindesmal morphology options (avulsion vs malleolus fracture)
+  // Infrasindesmal morphology options for lateral_only (avulsion vs malleolus fracture)
   const infrasindesmal_morphology: SelectOption[] = [
     { value: 'avulsion', label: t('form.options.infrasindesmalMorphology.avulsion') },
     { value: 'malleolus_fracture', label: t('form.options.infrasindesmalMorphology.malleolus_fracture') },
+  ];
+
+  // Infrasindesmal morphology options for lateral_medial / trimaleolar
+  const infrasindesmal_morphology_lm_tri: SelectOption[] = [
+    { value: 'avulsion', label: t('form.options.infrasindesmalMorphologyLMTri.avulsion') },
+    { value: 'malleolus_fracture', label: t('form.options.infrasindesmalMorphologyLMTri.malleolus_fracture') },
   ];
 
   // Lateral subtype options for transindesmal lateral-only
@@ -223,6 +249,13 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'proximal', label: t('form.options.suprasindesmalType.proximal') },
   ];
 
+  // Suprasindesmal type options for lateral+posterior (includes qualifiers per drawio)
+  const suprasindesmal_types_lp: SelectOption[] = [
+    { value: 'simple_diaphyseal', label: t('form.options.suprasindesmalTypeLP.simple_diaphyseal') },
+    { value: 'multifragmentary', label: t('form.options.suprasindesmalTypeLP.multifragmentary') },
+    { value: 'proximal', label: t('form.options.suprasindesmalTypeLP.proximal') },
+  ];
+
   // Fibular level options for lateral+medial and trimaleolar (High/Low per MMD)
   const fibular_level_high_low: SelectOption[] = [
     { value: 'suprasindesmal', label: t('form.options.fibularLevelHighLow.high') },
@@ -240,6 +273,20 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'parasindesmotic_short', label: t('form.options.fibulaTracePattern.parasindesmotic_short') },
     { value: 'parasindesmotic_long', label: t('form.options.fibulaTracePattern.parasindesmotic_long') },
     { value: 'suprasindesmotic_far', label: t('form.options.fibulaTracePattern.suprasindesmotic_far') },
+  ];
+
+  // Fibula trace pattern options for lateral+posterior Diafisaria Simple (with distance qualifiers per drawio)
+  const fibula_trace_patterns_lp: SelectOption[] = [
+    { value: 'parasindesmotic_short', label: t('form.options.fibulaTracePatternLP.parasindesmotic_short') },
+    { value: 'parasindesmotic_long', label: t('form.options.fibulaTracePatternLP.parasindesmotic_long') },
+    { value: 'suprasindesmotic_far', label: t('form.options.fibulaTracePatternLP.suprasindesmotic_far') },
+  ];
+
+  // Fibula trace pattern options for lateral+posterior Multifragmentaria (per drawio)
+  const fibula_trace_patterns_multi_lp: SelectOption[] = [
+    { value: 'parasindesmotic_short', label: t('form.options.fibulaTracePatternMultiLP.parasindesmotic_short') },
+    { value: 'parasindesmotic_long', label: t('form.options.fibulaTracePatternMultiLP.parasindesmotic_long') },
+    { value: 'suprasindesmotic_far', label: t('form.options.fibulaTracePatternMultiLP.suprasindesmotic_far') },
   ];
 
   // Articular involvement options (posterior-only, medial-only paths)
@@ -265,7 +312,12 @@ export function getLocalFormOptions(): FormOptions {
     fibula_trace_patterns,
     articular_involvement_options,
     posterior_fracture_types_medial_posterior,
+    suprasindesmal_types_lp,
+    fibula_trace_patterns_lp,
+    fibula_trace_patterns_multi_lp,
+    posterior_fracture_types_lp_infra,
     infrasindesmal_morphology,
+    infrasindesmal_morphology_lm_tri,
     lateral_subtype,
     medial_subtype,
   };

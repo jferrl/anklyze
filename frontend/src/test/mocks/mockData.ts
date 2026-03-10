@@ -6,10 +6,6 @@ import type {
   AOOTAClassification,
 } from '@/types/domain/fracture'
 import type {
-  ChatResponse,
-  ChatSessionResponse,
-} from '@/types/api/chat'
-import type {
   Case,
   CaseImage,
   CaseWithImages,
@@ -49,36 +45,6 @@ export const mockClassificationResult: ClassificationResult = {
   lauge_hansen: mockLaugeHansen,
   ao_ota: mockAOOTA,
   notes: ['Isolated lateral malleolus fracture at syndesmosis level'],
-}
-
-// ============================================================================
-// Chat Mock Data
-// ============================================================================
-
-export const mockChatSession: ChatSessionResponse = {
-  session_id: 'chat-session-123',
-}
-
-export const mockChatResponseClarification: ChatResponse = {
-  status: 'needs_clarification',
-  confidence: 0.6,
-  missing_fields: ['lateral_morphology'],
-  clarifications: [
-    {
-      field: 'lateral_morphology',
-      question: 'What is the morphology of the fracture line?',
-      options: ['Transverse', 'Oblique', 'Spiral'],
-    },
-  ],
-  message: 'I need more information about the fracture morphology.',
-}
-
-export const mockChatResponseComplete: ChatResponse = {
-  status: 'complete',
-  extracted_input: mockFractureInput,
-  classification: mockClassificationResult,
-  confidence: 0.95,
-  message: 'Based on your description, here is the classification.',
 }
 
 // ============================================================================

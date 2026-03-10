@@ -44,6 +44,10 @@ export function getLaugeHansenDescription(t: TFunction, type: string, ambiguous?
  * Get the translated AO/OTA description
  */
 export function getAOOTADescription(t: TFunction, code: string): string {
+  // Handle "not_classifiable"
+  if (code === 'not_classifiable') {
+    return t('results.classifications.aoOta.not_classifiable_desc');
+  }
   // Handle 43-B1/43-B2 (distal tibia) codes
   if (code.startsWith('43-')) {
     const key = code.replace('-', '');
@@ -52,6 +56,16 @@ export function getAOOTADescription(t: TFunction, code: string): string {
   // Handle 44-B (unclassifiable subtype) and standard 44-XX codes
   const key = code.replace('44-', '').replace('-', '');
   return t(`results.classifications.aoOta.${key}_desc`);
+}
+
+/**
+ * Get the translated AO/OTA display name (for "not_classifiable" → "No clasificable")
+ */
+export function getAOOTADisplayName(t: TFunction, code: string): string {
+  if (code === 'not_classifiable') {
+    return t('results.classifications.aoOta.not_classifiable_name');
+  }
+  return code;
 }
 
 /**

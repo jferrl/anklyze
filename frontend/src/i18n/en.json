@@ -25,7 +25,8 @@
     "editStudy": "Edit Study",
     "analytics": "Analytics",
     "reliability": "Reliability",
-    "divergence": "Divergence"
+    "divergence": "Divergence",
+    "profile": "Profile"
   },
   "app": {
     "title": "Ankle Fracture Classification",
@@ -57,11 +58,6 @@
       "free": {
         "title": "Always Free",
         "description": "No subscription, no ads, no data collection. Just a tool that works."
-      },
-      "chat": {
-        "title": "AI Chat",
-        "description": "Describe the fracture in natural language and let AI extract the classification parameters.",
-        "badge": "Experimental"
       }
     },
     "howItWorks": {
@@ -121,6 +117,7 @@
     "questions": {
       "involved_malleoli": "Which malleoli are fractured?",
       "posterior_fracture_type": "What type of fracture is it?",
+      "posterior_fracture_type_med_post": "What type of posterior malleolus fracture is it?",
       "posterior_fracture_type_posterior": "What type of fracture is it?",
       "posterior_fracture_type_lp_infra": "What is the morphology of the posterior malleolus?",
       "medial_morphology": "What morphology does it have?",
@@ -131,9 +128,10 @@
       "lateral_morphology": "What is the morphology of the fracture?",
       "lateral_morphology_lm_tri": "What is the morphology of the fibular fracture?",
       "suprasindesmal_type": "What type?",
-      "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal and transverse?",
+      "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal?",
       "has_ct_scan": "Do you have a CT scan?",
-      "fibula_trace_pattern": "What is the main fibular trace pattern?",
+      "fibula_trace_pattern": "What is the fibular trace pattern?",
+      "fibula_trace_pattern_lp": "What is the fibular trace pattern?",
       "fibula_trace_pattern_multi": "What is the main fibular trace pattern?",
       "fibular_level_for_transverse": "At what level is the fibular fracture?",
       "articularInvolvement": "What is the involvement?",
@@ -162,7 +160,10 @@
         "posterolateral": "Posterolateral fragment",
         "posteromedial_posterolateral": "Posteromedial and posterolateral fragment",
         "large_posterolateral": "Large posterolateral triangular fragment",
-        "extraincisural_posteromedial": "Extraincisural postero-medial fragment"
+        "extraincisural_posteromedial": "Extraincisural posteromedial fragment"
+      },
+      "posteriorTypeMedPost": {
+        "extraincisural": "Posterior extraincisural fragment"
       },
       "medialMorphology": {
         "vertical": "Vertical",
@@ -170,7 +171,7 @@
       },
       "medialMorphologyLM": {
         "vertical": "Vertical",
-        "transverse_oblique": "Transverse/Oblique"
+        "transverse_oblique": "Transverse/oblique/avulsion/open mortise"
       },
       "fibularLevel": {
         "infrasindesmal": "Infrasyndesmal",
@@ -201,7 +202,11 @@
       },
       "infrasindesmalMorphology": {
         "avulsion": "Fibula tip avulsion",
-        "malleolus_fracture": "Malleolus fracture"
+        "malleolus_fracture": "Lateral malleolus fracture"
+      },
+      "infrasindesmalMorphologyLMTri": {
+        "avulsion": "Avulsion",
+        "malleolus_fracture": "Transverse"
       },
       "lateralSubtype": {
         "simple": "Simple",
@@ -210,17 +215,38 @@
       },
       "medialSubtype": {
         "open_mortise": "Open mortise",
-        "malleolus_fracture": "Malleolus fracture"
+        "malleolus_fracture": "Malleolus fracture/avulsion"
       },
       "suprasindesmalType": {
         "simple_diaphyseal": "Simple Diaphyseal",
-        "multifragmentary": "Multifragmentary",
-        "proximal": "Proximal"
+        "multifragmentary": "Multifragmentary/butterfly wing",
+        "proximal": "Proximal (1/3 proximal fibula)"
+      },
+      "suprasindesmalTypeLP": {
+        "simple_diaphyseal": "Simple Diaphyseal",
+        "multifragmentary": "Multifragmentary/butterfly wing",
+        "proximal": "Proximal (1/3 proximal fibula)"
       },
       "fibulaTracePattern": {
-        "parasindesmotic_short": "Parasyndesmotic short oblique/transverse/comminuted trace",
-        "parasindesmotic_long": "Parasyndesmotic long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
+        "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
+        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+      },
+      "fibulaTracePatternLP": {
+        "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
+        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+      },
+      "fibulaTracePatternMultiLP": {
+        "parasindesmotic_short": "Comminuted parasyndesmotic (<6cm from articular surface)",
+        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral/butterfly wing trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+      },
+      "posteriorTypeLPInfra": {
+        "extraincisural": "Posterior extraincisural fragment",
+        "posterolateral": "Posterolateral fragment",
+        "posteromedial_posterolateral": "Posteromedial and posterolateral fragment",
+        "large_posterolateral": "Large triangular posterolateral fragment"
       },
       "articularInvolvement": {
         "large_with_extension": ">1/3 articular surface with metaphyseal extension",
@@ -324,7 +350,9 @@
         "C3.2_desc": "44-C3.2: Proximal suprasyndesmal with fibula head shortening",
         "C3.3_desc": "44-C3.3: Trimaleolar proximal suprasyndesmal fracture",
         "43B1_desc": "43-B1: Distal tibia fracture without articular depression",
-        "43B2_desc": "43-B2: Distal tibia fracture with articular depression"
+        "43B2_desc": "43-B2: Distal tibia fracture with articular depression",
+        "not_classifiable_name": "Not classifiable",
+        "not_classifiable_desc": "AO/OTA not classifiable for this fracture pattern"
       },
       "bartonicek": {
         "1_desc": "Bartonicek 1: Extraincisural fragment",
@@ -360,8 +388,6 @@
   },
   "classify": {
     "backToHome": "Back to Home",
-    "modeForm": "Form",
-    "modeChat": "Chat",
     "flowDiagram": {
       "title": "Classification Flow",
       "description": "Visual guide for the classification decision process",
@@ -370,56 +396,6 @@
       "resetZoom": "Reset zoom",
       "loading": "Loading diagram..."
     }
-  },
-  "chat": {
-    "placeholder": "Describe the ankle fracture you want to classify...",
-    "inputPlaceholder": "Describe the fracture...",
-    "thinking": "Analyzing...",
-    "extractedParams": "Extracted Parameters",
-    "confirmClassify": "Confirm & Classify",
-    "yes": "Yes",
-    "no": "No",
-    "experimental": {
-      "badge": "Experimental",
-      "notice": "Chat classification is in experimental phase. For maximum accuracy, use the form-based classification."
-    },
-    "examples": {
-      "title": "Example descriptions:",
-      "ex1": "Trimaleolar fracture with suprasindesmal fibula",
-      "ex2": "Lateral malleolus fracture at syndesmosis level, spiral pattern",
-      "ex3": "Bimalleolar: transverse medial, spiral fibula"
-    },
-    "fields": {
-      "involvedMalleoli": "Involved malleoli",
-      "posteriorType": "Posterior type",
-      "medialMorphology": "Medial morphology",
-      "fibularLevel": "Fibular level",
-      "lateralMorphology": "Lateral morphology",
-      "suprasindesmalType": "Suprasindesmal type"
-    },
-    "clarification": {
-      "title": "Additional Information Needed",
-      "subtitle": "Please select an option to help classify the fracture"
-    },
-    "errors": {
-      "generic": "Sorry, I couldn't process that. Please try again.",
-      "unavailable": "Chat classification is temporarily unavailable.",
-      "rateLimit": "You're sending messages too quickly. Please wait a moment before trying again.",
-      "sessionLimit": "You've reached the message limit for this session. Please start a new conversation.",
-      "dailyQuota": "You've reached your daily limit. Please try again tomorrow."
-    },
-    "validation": {
-      "minLength": "Please enter at least {{min}} characters ({{current}}/{{min}})",
-      "pleaseWait": "Please wait a moment before sending another message"
-    }
-  },
-  "feedback": {
-    "title": "Was this classification helpful?",
-    "helpful": "Helpful",
-    "notHelpful": "Not helpful",
-    "commentPlaceholder": "Any additional comments? (optional)",
-    "submit": "Submit Feedback",
-    "thankYou": "Thank you for your feedback!"
   },
   "language": {
     "en": "English",
@@ -1204,7 +1180,6 @@
     "classification_error": "Classification error: ",
     "no_fractures_found": "No malleolus fractures detected",
     "isolated_posterior": "Isolated posterior malleolus fracture",
-    "chat_unavailable": "Chat classification is temporarily unavailable",
     "caseNotFound": "Case not found",
     "imageNotFound": "Image not found",
     "studyNotFound": "Study not found",

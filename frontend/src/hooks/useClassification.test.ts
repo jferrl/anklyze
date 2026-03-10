@@ -9,15 +9,6 @@ vi.mock('@/services', () => ({
   classifyFracture: vi.fn(),
 }))
 
-// Mock the classification cache hook
-vi.mock('./useClassificationCache', () => ({
-  useClassificationCache: () => ({
-    getCache: vi.fn().mockResolvedValue(null),
-    setCache: vi.fn().mockResolvedValue(undefined),
-    clearCache: vi.fn().mockResolvedValue(undefined),
-  }),
-}))
-
 // Import the mocked function
 import { classifyFracture } from '@/services'
 

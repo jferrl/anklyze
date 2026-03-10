@@ -46,22 +46,6 @@ export * from './domain/study';
 export * from './api/classification';
 
 /**
- * Chat API types
- * - Conversational classification interface
- * - Chat sessions and messages
- * - Clarifications and completions
- */
-export * from './api/chat';
-
-/**
- * Analytics API types
- * - Usage metrics and summaries
- * - Feedback collection
- * - Confidence distributions
- */
-export * from './api/analytics';
-
-/**
  * Study/Case API types
  * - Case and study CRUD operations
  * - Response submissions

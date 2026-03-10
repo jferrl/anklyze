@@ -51,13 +51,17 @@ FORM_LABELS = {
         'spiral': 'Espiroidea (Baja anterior, alta posterior)',
     },
     'infrasindesmal_morphology': {
-        'avulsion': 'Avulsión punta del peroné',
-        'malleolus_fracture': 'Fractura del maléolo',
+        'avulsion': 'Avulsión de la punta del maleolo',
+        'malleolus_fracture': 'Fractura de maleolo lateral',
+    },
+    'infrasindesmal_morphology_lm_tri': {
+        'avulsion': 'Avulsión',
+        'malleolus_fracture': 'Transversa',
     },
     'lateral_subtype': {
-        'simple': 'Simple',
-        'syndesmosis_rupture': 'Rotura de sindesmosis',
-        'butterfly': 'Ala de mariposa / cuña',
+        'simple': 'Fractura simple',
+        'syndesmosis_rupture': 'Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)',
+        'butterfly': 'Fractura en ala de maliposa/multifragmentaria',
     },
     'medial_subtype': {
         'open_mortise': 'Abierta mortaja',
@@ -408,11 +412,6 @@ def normalize_labels(branch, clicks):
                     label = 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta'
                 elif label == 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta':
                     pass  # Already correct
-                # Infrasindesmal morphology in lateral_only (different question used)
-                elif label == 'Avulsión de la punta del maleolo':
-                    label = 'Avulsión punta del peroné'
-                elif label == 'Fractura de maleolo lateral':
-                    label = 'Fractura del maléolo'
 
         # --- Fibula trace pattern mapping (all variants) ---
         # Drawio uses long descriptions; form uses shorter standard labels
@@ -424,28 +423,13 @@ def normalize_labels(branch, clicks):
             elif 'Suprasindesmal' in label and '>6cm' in label:
                 label = 'Suprasindesmal (>6cm de superficie articular)'
 
-        # --- Lateral subtype mapping (transindesmal subtypes) ---
-        # Drawio labels differ from form labels for B1 subtypes
-        # Context: after morphology in transindesmal path, "¿De qué tipo?" = lateral subtype
-        if q == '¿De qué tipo?' and any(
-            prev['label'] and ('Espiroidea' in prev['label'] or 'Transversa/Oblicua' in prev['label'])
-            for prev in result[-2:] if isinstance(prev, dict) and 'label' in prev
-        ):
-            if label == 'Fractura simple':
-                label = 'Simple'
-            elif label.startswith('Asocia rotura de sindesmosis'):
-                label = 'Rotura de sindesmosis'
-            elif label == 'Multifragmentaria':
-                label = 'Ala de mariposa / cuña'
+        # --- Lateral subtype: form now matches drawio labels directly ---
+        # No normalization needed for: Fractura simple, Asocia rotura de sindesmosis...,
+        # Fractura en ala de maliposa/multifragmentaria
 
-        # --- Infrasindesmal morphology mapping ---
-        # Drawio uses "Avulsión" / "Transversa" but form uses
-        # "Avulsión punta del peroné" / "Fractura del maléolo"
-        if q in ('¿Cómo es el maleolo lateral?', '¿Cómo es el maléolo lateral?'):
-            if label == 'Avulsión':
-                label = 'Avulsión punta del peroné'
-            elif label == 'Transversa':
-                label = 'Fractura del maléolo'
+        # --- Infrasindesmal morphology mapping for lm/tri ---
+        # Drawio uses "Avulsión" / "Transversa", form now matches directly
+        # No normalization needed
 
         # --- Medial subtype mapping ---
         # Drawio uses "Abierta la mortaja" / "Fractura del maleolo/avulsión"

@@ -49,7 +49,10 @@ function getBreadcrumbTrail(
 
   // Suprasindesmal type
   if (formData.suprasindesmal_type) {
-    const option = options.suprasindesmal_types?.find(
+    const supraOptions = formData.involved_malleoli === 'lateral_posterior'
+      ? (options.suprasindesmal_types_lp || options.suprasindesmal_types)
+      : options.suprasindesmal_types;
+    const option = supraOptions?.find(
       opt => opt.value === formData.suprasindesmal_type
     );
     if (option) trail.push({ label: option.label, key: 'suprasindesmal_type' });
@@ -85,7 +88,14 @@ function getBreadcrumbTrail(
 
   // Fibula trace pattern
   if (formData.fibula_trace_pattern) {
-    const option = options.fibula_trace_patterns?.find(
+    const traceOptions = formData.involved_malleoli === 'lateral_posterior'
+      ? (formData.suprasindesmal_type === 'multifragmentary'
+        ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns)
+        : (options.fibula_trace_patterns_lp || options.fibula_trace_patterns))
+      : (formData.suprasindesmal_type === 'multifragmentary'
+        ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns)
+        : options.fibula_trace_patterns);
+    const option = traceOptions?.find(
       opt => opt.value === formData.fibula_trace_pattern
     );
     if (option) trail.push({ label: option.label, key: 'fibula_trace_pattern' });

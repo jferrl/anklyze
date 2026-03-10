@@ -14,16 +14,9 @@ type Config struct {
 	DatabaseURL     string
 	AuditBufferSize int
 	CORSAllowOrigin string
-	GeminiAPIKey    string
-	GeminiModel     string
 	LogLevel        string
 	LogFormat       string
 	AppEnv          string // Application environment (e.g., "production", "development")
-	// Rate limiting configuration
-	RateLimitRate  float64 // Requests per second (e.g., 0.5 = 1 request per 2 seconds)
-	RateLimitBurst int     // Maximum burst size
-	// Usage limits
-	SessionMessageLimit int // Maximum messages per chat session
 	// Supabase Auth configuration
 	SupabaseURL string // Supabase project URL (e.g., https://xxx.supabase.co)
 	// Supabase Storage configuration
@@ -39,14 +32,9 @@ func Load() (*Config, error) {
 		DatabaseURL:            os.Getenv("DATABASE_URL"),
 		AuditBufferSize:        getEnvInt("AUDIT_BUFFER_SIZE", 100),
 		CORSAllowOrigin:        getEnv("CORS_ALLOW_ORIGIN", "*"),
-		GeminiAPIKey:           os.Getenv("GEMINI_API_KEY"),
-		GeminiModel:            getEnv("GEMINI_MODEL", "gemini-3-flash-preview"),
 		LogLevel:               getEnv("LOG_LEVEL", "info"),
 		LogFormat:              getEnv("LOG_FORMAT", "text"),
 		AppEnv:                 os.Getenv("APP_ENV"),
-		RateLimitRate:          getEnvFloat("RATE_LIMIT_RATE", 0.5),    // 1 request per 2 seconds
-		RateLimitBurst:         getEnvInt("RATE_LIMIT_BURST", 5),       // Allow burst of 5
-		SessionMessageLimit:    getEnvInt("SESSION_MESSAGE_LIMIT", 20), // Max messages per session
 		SupabaseURL:            os.Getenv("SUPABASE_URL"),
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
 		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
@@ -70,22 +58,9 @@ func (c *Config) Validate() error {
 		errs = append(errs, fmt.Sprintf("PORT must be 1-65535, got: %q", c.Port))
 	}
 
-	// Rate limiting validation
-	if c.RateLimitRate <= 0 {
-		errs = append(errs, fmt.Sprintf("RATE_LIMIT_RATE must be positive, got: %.4f", c.RateLimitRate))
-	}
-	if c.RateLimitBurst < 1 {
-		errs = append(errs, fmt.Sprintf("RATE_LIMIT_BURST must be >= 1, got: %d", c.RateLimitBurst))
-	}
-
 	// Buffer size validation
 	if c.AuditBufferSize < 10 {
 		errs = append(errs, fmt.Sprintf("AUDIT_BUFFER_SIZE must be >= 10, got: %d", c.AuditBufferSize))
-	}
-
-	// Session limits
-	if c.SessionMessageLimit < 1 {
-		errs = append(errs, fmt.Sprintf("SESSION_MESSAGE_LIMIT must be >= 1, got: %d", c.SessionMessageLimit))
 	}
 
 	// URL validation (if provided)
@@ -116,11 +91,6 @@ func (c *Config) Validate() error {
 // HasDatabase returns true if database is configured.
 func (c *Config) HasDatabase() bool {
 	return c.DatabaseURL != ""
-}
-
-// HasGemini returns true if Gemini API is configured.
-func (c *Config) HasGemini() bool {
-	return c.GeminiAPIKey != ""
 }
 
 // HasSupabase returns true if Supabase Auth is configured.
@@ -176,20 +146,6 @@ func getEnvInt(key string, defaultValue int) int {
 			return defaultValue
 		}
 		return intVal
-	}
-	return defaultValue
-}
-
-func getEnvFloat(key string, defaultValue float64) float64 {
-	if value := os.Getenv(key); value != "" {
-		floatVal, err := strconv.ParseFloat(value, 64)
-		if err != nil {
-			// Log to stderr since slog may not be initialized yet during config load
-			fmt.Fprintf(os.Stderr, "WARN: invalid float value for %s=%q, using default %.2f: %v\n",
-				key, value, defaultValue, err)
-			return defaultValue
-		}
-		return floatVal
 	}
 	return defaultValue
 }

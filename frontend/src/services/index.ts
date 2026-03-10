@@ -4,16 +4,6 @@
 export * from './classification/classificationService';
 
 // ================================
-// Chat Service
-// ================================
-export * from './chat/chatService';
-
-// ================================
-// Feedback Service
-// ================================
-export * from './feedback/feedbackService';
-
-// ================================
 // Study Services (Cases & Studies)
 // ================================
 export * from './study';
@@ -23,7 +13,6 @@ export * from './study';
 // ================================
 export {
   RateLimitError,
-  SessionLimitError,
   InputValidationError,
   AuthRequiredError,
   ForbiddenError,

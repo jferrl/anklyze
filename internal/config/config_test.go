@@ -141,101 +141,6 @@ func TestGetEnvInt(t *testing.T) {
 	}
 }
 
-func TestGetEnvFloat(t *testing.T) {
-	tests := []struct {
-		name         string
-		key          string
-		defaultValue float64
-		envValue     string
-		want         float64
-		wantWarning  bool
-	}{
-		{
-			name:         "valid float",
-			key:          "TEST_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "3.14",
-			want:         3.14,
-			wantWarning:  false,
-		},
-		{
-			name:         "integer as float",
-			key:          "TEST_INT_AS_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "42",
-			want:         42.0,
-			wantWarning:  false,
-		},
-		{
-			name:         "negative float",
-			key:          "TEST_NEG_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "-2.5",
-			want:         -2.5,
-			wantWarning:  false,
-		},
-		{
-			name:         "zero value",
-			key:          "TEST_ZERO_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "0",
-			want:         0.0,
-			wantWarning:  false,
-		},
-		{
-			name:         "scientific notation",
-			key:          "TEST_SCIENTIFIC",
-			defaultValue: 1.0,
-			envValue:     "1.5e-3",
-			want:         0.0015,
-			wantWarning:  false,
-		},
-		{
-			name:         "invalid float - use default",
-			key:          "TEST_INVALID_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "not-a-number",
-			want:         1.0,
-			wantWarning:  true,
-		},
-		{
-			name:         "empty string - use default",
-			key:          "TEST_EMPTY_FLOAT",
-			defaultValue: 1.0,
-			envValue:     "",
-			want:         1.0,
-			wantWarning:  false,
-		},
-		{
-			name:         "multiple decimal points - use default",
-			key:          "TEST_MULTIPLE_DOTS",
-			defaultValue: 1.0,
-			envValue:     "3.14.15",
-			want:         1.0,
-			wantWarning:  true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Setup
-			if tt.envValue != "" {
-				t.Setenv(tt.key, tt.envValue)
-			} else {
-				_ = os.Unsetenv(tt.key)
-			}
-
-			// Execute
-			got := getEnvFloat(tt.key, tt.defaultValue)
-
-			// Assert
-			if got != tt.want {
-				t.Errorf("getEnvFloat() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestConfigLoad(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -250,14 +155,8 @@ func TestConfigLoad(t *testing.T) {
 				"DATABASE_URL":              "",
 				"AUDIT_BUFFER_SIZE":         "",
 				"CORS_ALLOW_ORIGIN":         "",
-				"GEMINI_API_KEY":            "",
-				"GEMINI_MODEL":              "",
 				"LOG_LEVEL":                 "",
 				"LOG_FORMAT":                "",
-				"RATE_LIMIT_RATE":           "",
-				"RATE_LIMIT_BURST":          "",
-				"SESSION_MESSAGE_LIMIT":     "",
-				"DAILY_QUOTA_PER_IP":        "",
 				"SUPABASE_URL":              "",
 				"SUPABASE_SERVICE_ROLE_KEY": "",
 				"STUDY_BUCKET_NAME":         "",
@@ -272,23 +171,11 @@ func TestConfigLoad(t *testing.T) {
 				if cfg.CORSAllowOrigin != "*" {
 					t.Errorf("CORSAllowOrigin = %v, want *", cfg.CORSAllowOrigin)
 				}
-				if cfg.GeminiModel != "gemini-3-flash-preview" {
-					t.Errorf("GeminiModel = %v, want gemini-3-flash-preview", cfg.GeminiModel)
-				}
 				if cfg.LogLevel != "info" {
 					t.Errorf("LogLevel = %v, want info", cfg.LogLevel)
 				}
 				if cfg.LogFormat != "text" {
 					t.Errorf("LogFormat = %v, want text", cfg.LogFormat)
-				}
-				if cfg.RateLimitRate != 0.5 {
-					t.Errorf("RateLimitRate = %v, want 0.5", cfg.RateLimitRate)
-				}
-				if cfg.RateLimitBurst != 5 {
-					t.Errorf("RateLimitBurst = %v, want 5", cfg.RateLimitBurst)
-				}
-				if cfg.SessionMessageLimit != 20 {
-					t.Errorf("SessionMessageLimit = %v, want 20", cfg.SessionMessageLimit)
 				}
 				if cfg.StudyBucketName != "studies" {
 					t.Errorf("StudyBucketName = %v, want studies", cfg.StudyBucketName)
@@ -298,20 +185,15 @@ func TestConfigLoad(t *testing.T) {
 		{
 			name: "custom values",
 			envVars: map[string]string{
-				"PORT":                  "3000",
-				"DATABASE_URL":          "postgres://localhost/test",
-				"AUDIT_BUFFER_SIZE":     "200",
-				"CORS_ALLOW_ORIGIN":     "https://example.com",
-				"GEMINI_API_KEY":        "test-key",
-				"GEMINI_MODEL":          "gemini-4",
-				"LOG_LEVEL":             "debug",
-				"LOG_FORMAT":            "json",
-				"RATE_LIMIT_RATE":       "1.5",
-				"RATE_LIMIT_BURST":      "10",
-				"SESSION_MESSAGE_LIMIT": "50",
-				"DAILY_QUOTA_PER_IP":    "500",
-				"SUPABASE_URL":          "https://test.supabase.co",
-				"STUDY_BUCKET_NAME":     "custom-bucket",
+				"PORT":                      "3000",
+				"DATABASE_URL":              "postgres://localhost/test",
+				"AUDIT_BUFFER_SIZE":         "200",
+				"CORS_ALLOW_ORIGIN":         "https://example.com",
+				"LOG_LEVEL":                 "debug",
+				"LOG_FORMAT":                "json",
+				"SUPABASE_URL":              "https://test.supabase.co",
+				"SUPABASE_SERVICE_ROLE_KEY": "service-key",
+				"STUDY_BUCKET_NAME":         "custom-bucket",
 			},
 			check: func(t *testing.T, cfg *Config) {
 				if cfg.Port != "3000" {
@@ -326,26 +208,11 @@ func TestConfigLoad(t *testing.T) {
 				if cfg.CORSAllowOrigin != "https://example.com" {
 					t.Errorf("CORSAllowOrigin = %v, want https://example.com", cfg.CORSAllowOrigin)
 				}
-				if cfg.GeminiAPIKey != "test-key" {
-					t.Errorf("GeminiAPIKey = %v, want test-key", cfg.GeminiAPIKey)
-				}
-				if cfg.GeminiModel != "gemini-4" {
-					t.Errorf("GeminiModel = %v, want gemini-4", cfg.GeminiModel)
-				}
 				if cfg.LogLevel != "debug" {
 					t.Errorf("LogLevel = %v, want debug", cfg.LogLevel)
 				}
 				if cfg.LogFormat != "json" {
 					t.Errorf("LogFormat = %v, want json", cfg.LogFormat)
-				}
-				if cfg.RateLimitRate != 1.5 {
-					t.Errorf("RateLimitRate = %v, want 1.5", cfg.RateLimitRate)
-				}
-				if cfg.RateLimitBurst != 10 {
-					t.Errorf("RateLimitBurst = %v, want 10", cfg.RateLimitBurst)
-				}
-				if cfg.SessionMessageLimit != 50 {
-					t.Errorf("SessionMessageLimit = %v, want 50", cfg.SessionMessageLimit)
 				}
 				if cfg.SupabaseURL != "https://test.supabase.co" {
 					t.Errorf("SupabaseURL = %v, want https://test.supabase.co", cfg.SupabaseURL)
@@ -390,26 +257,20 @@ func TestConfigValidate(t *testing.T) {
 		{
 			name: "valid config",
 			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "8080",
+				AuditBufferSize: 100,
+				LogLevel:        "info",
+				LogFormat:       "text",
 			},
 			wantErr: false,
 		},
 		{
 			name: "invalid port - not a number",
 			config: &Config{
-				Port:                "abc",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "abc",
+				AuditBufferSize: 100,
+				LogLevel:        "info",
+				LogFormat:       "text",
 			},
 			wantErr: true,
 			errMsg:  "PORT must be 1-65535",
@@ -417,83 +278,32 @@ func TestConfigValidate(t *testing.T) {
 		{
 			name: "invalid port - out of range",
 			config: &Config{
-				Port:                "70000",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "70000",
+				AuditBufferSize: 100,
+				LogLevel:        "info",
+				LogFormat:       "text",
 			},
 			wantErr: true,
 			errMsg:  "PORT must be 1-65535",
 		},
 		{
-			name: "invalid rate limit rate - negative",
-			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       -1,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
-			},
-			wantErr: true,
-			errMsg:  "RATE_LIMIT_RATE must be positive",
-		},
-		{
-			name: "invalid rate limit burst - zero",
-			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      0,
-				SessionMessageLimit: 20,
-			},
-			wantErr: true,
-			errMsg:  "RATE_LIMIT_BURST must be >= 1",
-		},
-		{
 			name: "invalid audit buffer size - too small",
 			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     5,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "8080",
+				AuditBufferSize: 5,
+				LogLevel:        "info",
+				LogFormat:       "text",
 			},
 			wantErr: true,
 			errMsg:  "AUDIT_BUFFER_SIZE must be >= 10",
 		},
 		{
-			name: "invalid session message limit - zero",
-			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 0,
-			},
-			wantErr: true,
-			errMsg:  "SESSION_MESSAGE_LIMIT must be >= 1",
-		},
-		{
 			name: "invalid log level",
 			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "invalid",
-				LogFormat:           "text",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "8080",
+				AuditBufferSize: 100,
+				LogLevel:        "invalid",
+				LogFormat:       "text",
 			},
 			wantErr: true,
 			errMsg:  "LOG_LEVEL must be debug|info|warn|error",
@@ -501,13 +311,10 @@ func TestConfigValidate(t *testing.T) {
 		{
 			name: "invalid log format",
 			config: &Config{
-				Port:                "8080",
-				AuditBufferSize:     100,
-				LogLevel:            "info",
-				LogFormat:           "yaml",
-				RateLimitRate:       0.5,
-				RateLimitBurst:      5,
-				SessionMessageLimit: 20,
+				Port:            "8080",
+				AuditBufferSize: 100,
+				LogLevel:        "info",
+				LogFormat:       "yaml",
 			},
 			wantErr: true,
 			errMsg:  "LOG_FORMAT must be json|text",
@@ -515,13 +322,10 @@ func TestConfigValidate(t *testing.T) {
 		{
 			name: "multiple errors",
 			config: &Config{
-				Port:                "invalid",
-				AuditBufferSize:     1,
-				LogLevel:            "wrong",
-				LogFormat:           "bad",
-				RateLimitRate:       -1,
-				RateLimitBurst:      0,
-				SessionMessageLimit: 0,
+				Port:            "invalid",
+				AuditBufferSize: 1,
+				LogLevel:        "wrong",
+				LogFormat:       "bad",
 			},
 			wantErr: true,
 			errMsg:  "configuration validation failed",
@@ -703,13 +507,11 @@ func TestConfigHelperMethods(t *testing.T) {
 			name: "no services configured",
 			config: &Config{
 				DatabaseURL:            "",
-				GeminiAPIKey:           "",
 				SupabaseURL:            "",
 				SupabaseServiceRoleKey: "",
 			},
 			checks: map[string]bool{
 				"HasDatabase":        false,
-				"HasGemini":          false,
 				"HasSupabase":        false,
 				"HasSupabaseStorage": false,
 			},
@@ -718,13 +520,11 @@ func TestConfigHelperMethods(t *testing.T) {
 			name: "all services configured",
 			config: &Config{
 				DatabaseURL:            "postgres://localhost/db",
-				GeminiAPIKey:           "key",
 				SupabaseURL:            "https://test.supabase.co",
 				SupabaseServiceRoleKey: "service-key",
 			},
 			checks: map[string]bool{
 				"HasDatabase":        true,
-				"HasGemini":          true,
 				"HasSupabase":        true,
 				"HasSupabaseStorage": true,
 			},
@@ -733,13 +533,11 @@ func TestConfigHelperMethods(t *testing.T) {
 			name: "supabase without storage",
 			config: &Config{
 				DatabaseURL:            "",
-				GeminiAPIKey:           "",
 				SupabaseURL:            "https://test.supabase.co",
 				SupabaseServiceRoleKey: "",
 			},
 			checks: map[string]bool{
 				"HasDatabase":        false,
-				"HasGemini":          false,
 				"HasSupabase":        true,
 				"HasSupabaseStorage": false,
 			},
@@ -750,9 +548,6 @@ func TestConfigHelperMethods(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.config.HasDatabase(); got != tt.checks["HasDatabase"] {
 				t.Errorf("HasDatabase() = %v, want %v", got, tt.checks["HasDatabase"])
-			}
-			if got := tt.config.HasGemini(); got != tt.checks["HasGemini"] {
-				t.Errorf("HasGemini() = %v, want %v", got, tt.checks["HasGemini"])
 			}
 			if got := tt.config.HasSupabase(); got != tt.checks["HasSupabase"] {
 				t.Errorf("HasSupabase() = %v, want %v", got, tt.checks["HasSupabase"])

@@ -14,7 +14,6 @@ import {
   FileCheck2,
   Sparkles,
   Github,
-  MessageCircle,
   ArrowRight,
 } from 'lucide-react';
 
@@ -39,13 +38,6 @@ export function LandingPage() {
       title: t('landing.features.comprehensive.title'),
       description: t('landing.features.comprehensive.description'),
       className: '',
-    },
-    {
-      icon: MessageCircle,
-      title: t('landing.features.chat.title'),
-      description: t('landing.features.chat.description'),
-      badge: t('landing.features.chat.badge'),
-      className: 'md:col-span-2',
     },
   ];
 
@@ -186,11 +178,6 @@ export function LandingPage() {
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold text-lg">{feature.title}</h3>
-                    {feature.badge && (
-                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-                        {feature.badge}
-                      </Badge>
-                    )}
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed flex-1">
                     {feature.description}
