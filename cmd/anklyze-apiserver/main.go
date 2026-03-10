@@ -162,14 +162,27 @@ func main() {
 		}
 	}
 
-	// Initialize storage
+	// Initialize storage (S3-compatible takes priority over Supabase)
 	var caseStorage storage.Storage
-	if cfg.HasSupabaseStorage() {
+	switch {
+	case cfg.HasS3Storage():
+		s3Storage, err := storage.NewS3Storage(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, cfg.S3UseSSL)
+		if err != nil {
+			slog.Error("failed to initialize S3 storage", "error", err)
+			os.Exit(1)
+		}
+		if err := s3Storage.EnsureBucket(ctx); err != nil {
+			slog.Error("failed to ensure S3 bucket exists", "error", err)
+			os.Exit(1)
+		}
+		caseStorage = s3Storage
+		slog.Info("S3 storage enabled", "endpoint", cfg.S3Endpoint, "bucket", cfg.S3Bucket)
+	case cfg.HasSupabaseStorage():
 		caseStorage = storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey, cfg.StudyBucketName)
 		slog.Info("Supabase storage enabled", "bucket", cfg.StudyBucketName)
-	} else {
+	default:
 		caseStorage = storage.NewNoOpStorage()
-		slog.Info("no SUPABASE_SERVICE_ROLE_KEY configured, case image storage disabled")
+		slog.Info("no storage configured, case image storage disabled")
 	}
 
 	// Initialize statistics service for reliability metrics

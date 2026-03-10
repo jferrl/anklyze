@@ -257,8 +257,6 @@ Supabase Auth with JWT validation (JWKS, ES256). Roles: `user`, `admin`.
 |----------|-------------|---------|
 | `PORT` | Server port | `8080` |
 | `DATABASE_URL` | PostgreSQL connection string | (none - audit disabled) |
-| `GEMINI_API_KEY` | Google Gemini API key | (none - chat disabled) |
-| `GEMINI_MODEL` | Gemini model to use | `gemini-3-flash-preview` |
 | `SUPABASE_URL` | Supabase project URL | (none - auth disabled) |
 | `SUPABASE_JWT_SECRET` | JWT secret (optional, uses JWKS if not set) | (none) |
 

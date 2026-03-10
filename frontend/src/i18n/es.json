@@ -124,7 +124,7 @@
       "involved_malleoli": "¿Qué maléolos tiene fracturados?",
       "posterior_fracture_type": "¿Qué tipo de fractura es?",
       "posterior_fracture_type_med_post": "¿Qué tipo de fractura es el maléolo posterior?",
-      "posterior_fracture_type_posterior": "¿Qué tipo de fractura es?",
+      "posterior_fracture_type_posterior": "¿Qué tipo de fractura es el maléolo posterior?",
       "posterior_fracture_type_lp_infra": "¿Cuál es la morfología del maléolo posterior?",
       "medial_morphology": "¿Qué morfología tiene?",
       "medial_morphology_lm": "¿De qué morfología es la fractura del maléolo medial?",
@@ -226,7 +226,7 @@
       "suprasindesmalType": {
         "simple_diaphyseal": "Diafisaria Simple",
         "multifragmentary": "Multifragmentaria/ala de mariposa",
-        "proximal": "Proximal (1/3 proximal peroné)"
+        "proximal": "Proximal (1/3 proximal de peroné)"
       },
       "suprasindesmalTypeLP": {
         "simple_diaphyseal": "Diafisaria Simple",
@@ -236,17 +236,17 @@
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
-        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
       },
       "fibulaTracePatternLP": {
         "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
-        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
       },
       "fibulaTracePatternMultiLP": {
         "parasindesmotic_short": "Parasindesmal conminuta (a <6cm de la superficie articular)",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa",
-        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
       },
       "posteriorTypeLPInfra": {
         "extraincisural": "Fragmento extraincisural posterior",

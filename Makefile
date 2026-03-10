@@ -4,6 +4,10 @@
 	export-diagram classify-validate classify-tree classify-test
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
+LOCAL_S3_ENDPOINT := localhost:9000
+LOCAL_S3_ACCESS_KEY := anklyze
+LOCAL_S3_SECRET_KEY := anklyze123
+LOCAL_S3_BUCKET := studies
 
 # Default target - run with local PostgreSQL + fixtures
 all: run
@@ -13,7 +17,13 @@ run:
 	@echo "Starting PostgreSQL..."
 	@docker compose up -d --wait
 	@echo "Starting backend and frontend..."
-	@DATABASE_URL="$(LOCAL_DATABASE_URL)" $(MAKE) -j2 run-backend run-frontend
+	@DATABASE_URL="$(LOCAL_DATABASE_URL)" \
+		S3_ENDPOINT="$(LOCAL_S3_ENDPOINT)" \
+		S3_ACCESS_KEY="$(LOCAL_S3_ACCESS_KEY)" \
+		S3_SECRET_KEY="$(LOCAL_S3_SECRET_KEY)" \
+		S3_BUCKET="$(LOCAL_S3_BUCKET)" \
+		S3_USE_SSL="false" \
+		$(MAKE) -j2 run-backend run-frontend
 
 # Run without database (degraded mode, NoOp repositories)
 run-no-db:

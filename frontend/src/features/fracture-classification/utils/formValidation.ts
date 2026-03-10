@@ -97,9 +97,8 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
     case 'trimaleolar':
       if (!formData.fibular_level) return false;
       if (formData.fibular_level === 'infrasindesmal') {
-        // Infrasindesmal → infrasindesmal morphology + CT + Bartonicek
+        // Infrasindesmal → morphology required; TAC is optional (shortcut terminal per drawio)
         if (!formData.infrasindesmal_morphology) return false;
-        if (formData.has_ct_scan === undefined) return false;
         if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
         return true;
       }

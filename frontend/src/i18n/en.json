@@ -118,7 +118,7 @@
       "involved_malleoli": "Which malleoli are fractured?",
       "posterior_fracture_type": "What type of fracture is it?",
       "posterior_fracture_type_med_post": "What type of posterior malleolus fracture is it?",
-      "posterior_fracture_type_posterior": "What type of fracture is it?",
+      "posterior_fracture_type_posterior": "What type of fracture is the posterior malleolus?",
       "posterior_fracture_type_lp_infra": "What is the morphology of the posterior malleolus?",
       "medial_morphology": "What morphology does it have?",
       "medial_morphology_lm": "What is the morphology of the medial malleolus fracture?",
@@ -230,17 +230,17 @@
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
       },
       "fibulaTracePatternLP": {
         "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
       },
       "fibulaTracePatternMultiLP": {
         "parasindesmotic_short": "Comminuted parasyndesmotic (<6cm from articular surface)",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral/butterfly wing trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
       },
       "posteriorTypeLPInfra": {
         "extraincisural": "Posterior extraincisural fragment",

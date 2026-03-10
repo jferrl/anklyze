@@ -451,7 +451,11 @@ export function FractureForm() {
             ) || 'Fibular fracture level?',
           }}
           value={formData.fibular_level}
-          options={options.fibular_levels || []}
+          options={
+            formData.involved_malleoli === 'trimaleolar'
+              ? (options.fibular_levels_tri || options.fibular_levels || [])
+              : (options.fibular_levels || [])
+          }
           onChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
         />
       )}

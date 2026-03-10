@@ -22,9 +22,6 @@
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_tabs",
       "Read(//opt/homebrew/**)"
-    ],
-    "additionalDirectories": [
-      "/Users/jferrl/git/anklyze/internal/llm"
     ]
   }
 }

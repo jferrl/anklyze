@@ -210,11 +210,11 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'conminuta', label: t('form.options.fibulaMorphologyLM.conminuta') },
   ];
 
-  // Fibula morphology for trimaleolar transindesmal (3 options per drawio)
+  // Fibula morphology for trimaleolar transindesmal (3 options per drawio: Transversa → Espiroidea → Conminuta)
   const fibula_morphology_tri: SelectOption[] = [
     { value: 'transverse', label: t('form.options.fibulaMorphologyTri.transverse') },
-    { value: 'conminuta', label: t('form.options.fibulaMorphologyTri.conminuta') },
     { value: 'spiral', label: t('form.options.fibulaMorphologyTri.spiral') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyTri.conminuta') },
   ];
 
   // Infrasindesmal morphology options for lateral_only (avulsion vs malleolus fracture)
@@ -260,6 +260,13 @@ export function getLocalFormOptions(): FormOptions {
   const fibular_level_high_low: SelectOption[] = [
     { value: 'suprasindesmal', label: t('form.options.fibularLevelHighLow.high') },
     { value: 'transindesmal', label: t('form.options.fibularLevelHighLow.low') },
+  ];
+
+  // Fibular level options for trimaleolar (3 options with "Alta (Suprasindesmal)" label per drawio)
+  const fibular_levels_tri: SelectOption[] = [
+    { value: 'infrasindesmal', label: t('form.options.fibularLevel.infrasindesmal') },
+    { value: 'transindesmal', label: t('form.options.fibularLevel.transindesmal') },
+    { value: 'suprasindesmal', label: t('form.options.fibularLevelHighLow.high') },
   ];
 
   // Fibular level for transverse morphology sub-level (only Infra/Trans)
@@ -308,6 +315,7 @@ export function getLocalFormOptions(): FormOptions {
     fibula_morphology_tri,
     suprasindesmal_types,
     fibular_level_high_low,
+    fibular_levels_tri,
     fibular_level_for_transverse,
     fibula_trace_patterns,
     articular_involvement_options,

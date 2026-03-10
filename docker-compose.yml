@@ -18,5 +18,25 @@ services:
       timeout: 5s
       retries: 10
 
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: anklyze-rustfs
+    environment:
+      RUSTFS_ACCESS_KEY: anklyze
+      RUSTFS_SECRET_KEY: anklyze123
+      RUSTFS_VOLUMES: /data
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - anklyze-rustfs:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -so /dev/null http://localhost:9000/ || true"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   anklyze-pgdata:
+  anklyze-rustfs:
