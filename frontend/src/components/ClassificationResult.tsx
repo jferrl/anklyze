@@ -14,6 +14,8 @@ import {
   getFractureDescription,
   getLaugeHansenFullName,
   getAOOTADisplayName,
+  getDanisWeberDisplayName,
+  getBartonicekDisplayName,
 } from '@/utils/classificationTranslations';
 
 interface ClassificationResultProps {
@@ -104,14 +106,20 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <CardDescription>{t('results.laugeHansen.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
-            <p className="text-3xl font-bold mb-1">
-              {result.lauge_hansen.type === 'not_classifiable'
-                ? getLaugeHansenFullName(t, result.lauge_hansen.type)
-                : result.lauge_hansen.type}
-            </p>
-            <p className="text-lg mb-2">
-              {getLaugeHansenFullName(t, result.lauge_hansen.type)}
-            </p>
+            {result.lauge_hansen.type === 'not_classifiable' ? (
+              <p className="text-3xl font-bold mb-2">
+                {getLaugeHansenFullName(t, result.lauge_hansen.type)}
+              </p>
+            ) : (
+              <>
+                <p className="text-3xl font-bold mb-1">
+                  {result.lauge_hansen.type}
+                </p>
+                <p className="text-lg mb-2">
+                  {getLaugeHansenFullName(t, result.lauge_hansen.type)}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -135,7 +143,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
           </CardHeader>
           <CardContent className="relative">
             <p className="text-3xl font-bold mb-2">
-              {result.danis_weber.type}
+              {getDanisWeberDisplayName(t, result.danis_weber.type)}
             </p>
           </CardContent>
         </Card>
@@ -185,7 +193,7 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
           </CardHeader>
           <CardContent className="relative">
             <p className="text-3xl font-bold mb-2">
-              {result.bartonicek.type}
+              {getBartonicekDisplayName(t, result.bartonicek.type)}
             </p>
           </CardContent>
         </Card>

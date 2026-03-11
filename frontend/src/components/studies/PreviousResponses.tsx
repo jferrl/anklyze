@@ -3,6 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import type { CaseResponse } from '@/types';
+import {
+  getDanisWeberDisplayName,
+  getLaugeHansenFullName,
+  getAOOTADisplayName,
+  getBartonicekDisplayName,
+} from '@/utils/classificationTranslations';
 
 interface PreviousResponsesProps {
   responses: CaseResponse[];
@@ -50,25 +56,25 @@ export function PreviousResponses({ responses }: PreviousResponsesProps) {
                   {response.classification.danis_weber && (
                     <div>
                       <span className="font-medium">Danis-Weber:</span>{' '}
-                      {response.classification.danis_weber.type}
+                      {getDanisWeberDisplayName(t, response.classification.danis_weber.type)}
                     </div>
                   )}
                   {response.classification.lauge_hansen && (
                     <div>
                       <span className="font-medium">Lauge-Hansen:</span>{' '}
-                      {response.classification.lauge_hansen.type}
+                      {getLaugeHansenFullName(t, response.classification.lauge_hansen.type)}
                     </div>
                   )}
                   {response.classification.ao_ota && (
                     <div>
                       <span className="font-medium">AO/OTA:</span>{' '}
-                      {response.classification.ao_ota.code}
+                      {getAOOTADisplayName(t, response.classification.ao_ota.code)}
                     </div>
                   )}
                   {response.classification.bartonicek && (
                     <div>
                       <span className="font-medium">Bartonicek:</span>{' '}
-                      {response.classification.bartonicek.type}
+                      {getBartonicekDisplayName(t, response.classification.bartonicek.type)}
                     </div>
                   )}
                 </div>

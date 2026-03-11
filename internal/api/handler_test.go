@@ -280,9 +280,12 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 				t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, tt.expectedLaugeHansen)
 			}
 
-			// Medial only should not have DanisWeber
-			if result.DanisWeber != nil {
-				t.Error("DanisWeber should be nil for medial only fractures")
+			// Medial only should have DanisWeber as not_classifiable
+			if result.DanisWeber == nil {
+				t.Fatal("DanisWeber is nil, want not_classifiable")
+			}
+			if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+				t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 			}
 		})
 	}

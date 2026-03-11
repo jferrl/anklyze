@@ -353,7 +353,7 @@ def build_expected_checks(expected, fracture_type):
     checks.append(f'\t\t\t\tt.Errorf("FractureType = %q, want %q", result.FractureType, "{fracture_type}")')
     checks.append('\t\t\t}')
 
-    # Weber
+    # Weber — always present; missing from drawio means not_classifiable
     weber = expected.get('weber')
     if weber:
         go_val = WEBER_MAP[weber]
@@ -365,8 +365,12 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\t\tt.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, {go_val})')
         checks.append(f'\t\t\t}}')
     else:
-        checks.append(f'\t\t\tif result.DanisWeber != nil {{')
-        checks.append(f'\t\t\t\tt.Errorf("DanisWeber = %q, want nil", result.DanisWeber.Type)')
+        checks.append(f'\t\t\tif result.DanisWeber == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("DanisWeber is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\treturn')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.DanisWeber.Type != domain.DanisWeberNotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)')
         checks.append(f'\t\t\t}}')
 
     # Lauge-Hansen
@@ -389,8 +393,12 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)')
         checks.append(f'\t\t\t}}')
     else:
-        checks.append(f'\t\t\tif result.LaugeHansen != nil {{')
-        checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want nil", result.LaugeHansen.Type)')
+        checks.append(f'\t\t\tif result.LaugeHansen == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("LaugeHansen is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\treturn')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)')
         checks.append(f'\t\t\t}}')
 
     # AO/OTA
@@ -417,9 +425,13 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)')
         checks.append(f'\t\t\t}}')
     else:
-        # nil AO → expect AOOTA to be nil
-        checks.append(f'\t\t\tif result.AOOTA != nil {{')
-        checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want nil", result.AOOTA.Code)')
+        # Missing AO → expect not_classifiable
+        checks.append(f'\t\t\tif result.AOOTA == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("AOOTA is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\treturn')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.AOOTA.Code != domain.AOOTANotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)')
         checks.append(f'\t\t\t}}')
 
     # Bartonicek
@@ -434,8 +446,13 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, {go_val})')
         checks.append(f'\t\t\t}}')
     else:
-        checks.append(f'\t\t\tif result.Bartonicek != nil {{')
-        checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want nil", result.Bartonicek.Type)')
+        # Missing Bartonicek → expect not_classifiable
+        checks.append(f'\t\t\tif result.Bartonicek == nil {{')
+        checks.append(f'\t\t\t\tt.Fatal("Bartonicek is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\treturn')
+        checks.append(f'\t\t\t}}')
+        checks.append(f'\t\t\tif result.Bartonicek.Type != domain.BartonicekNotClassifiable {{')
+        checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)')
         checks.append(f'\t\t\t}}')
 
     return '\n'.join(checks)

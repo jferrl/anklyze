@@ -16,6 +16,12 @@ import {
 } from '../../../components/ui/card';
 import { Switch } from '../../../components/ui/switch';
 import type { ClassificationResult, FractureInput } from '@/types';
+import {
+  getDanisWeberDisplayName,
+  getLaugeHansenFullName,
+  getAOOTADisplayName,
+  getBartonicekDisplayName,
+} from '@/utils/classificationTranslations';
 
 export interface CaseSettingsStepProps {
   referenceClassification: ClassificationResult | undefined;
@@ -83,25 +89,25 @@ export function CaseSettingsStep({
                     {referenceClassification.danis_weber && (
                       <div>
                         <span className="text-muted-foreground">Danis-Weber:</span>{' '}
-                        <span className="font-medium">{referenceClassification.danis_weber.type}</span>
+                        <span className="font-medium">{getDanisWeberDisplayName(t, referenceClassification.danis_weber.type)}</span>
                       </div>
                     )}
                     {referenceClassification.lauge_hansen && (
                       <div>
                         <span className="text-muted-foreground">Lauge-Hansen:</span>{' '}
-                        <span className="font-medium">{referenceClassification.lauge_hansen.type}</span>
+                        <span className="font-medium">{getLaugeHansenFullName(t, referenceClassification.lauge_hansen.type)}</span>
                       </div>
                     )}
                     {referenceClassification.ao_ota && (
                       <div>
                         <span className="text-muted-foreground">AO/OTA:</span>{' '}
-                        <span className="font-medium">{referenceClassification.ao_ota.code}</span>
+                        <span className="font-medium">{getAOOTADisplayName(t, referenceClassification.ao_ota.code)}</span>
                       </div>
                     )}
                     {referenceClassification.bartonicek && (
                       <div>
                         <span className="text-muted-foreground">Bartonicek:</span>{' '}
-                        <span className="font-medium">{referenceClassification.bartonicek.type}</span>
+                        <span className="font-medium">{getBartonicekDisplayName(t, referenceClassification.bartonicek.type)}</span>
                       </div>
                     )}
                   </div>

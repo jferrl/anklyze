@@ -21,7 +21,9 @@
       "mcp__playwright__browser_navigate_back",
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_tabs",
-      "Read(//opt/homebrew/**)"
+      "Read(//opt/homebrew/**)",
+      "Bash(bash .githooks/pre-commit)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

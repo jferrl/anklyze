@@ -10,105 +10,105 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── >1/3 de superficie articular con extensión metafisaria
 │   │   │   │   Q: ¿Presenta depresión articular?
 │   │   │   │   │   ├── No
-│   │   │   │   │   │   ╰── [AO:43-B1] tibia distal
+│   │   │   │   │   │   ╰── [AO:43-B1 LH:N/C W:N/C Bart:N/C] tibia distal
 │   │   │   │   │   ├── Sí
-│   │   │   │   │   │   ╰── [AO:43-B2] tibia distal
+│   │   │   │   │   │   ╰── [AO:43-B2 LH:N/C W:N/C Bart:N/C] tibia distal
 │   │   │   ├── <1/3 de superficie articular sin extensión metafisaria
 │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   ├── Sí
 │   │   │   │   │   │   Q: ¿Qué tipo de fractura es?
 │   │   │   │   │   │   │   ├── Fragmento extraincisural
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:1] unimaleolar posterior
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] unimaleolar posterior
 │   │   │   │   │   │   │   ├── Fragmento posterolateral
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:2] unimaleolar posterior
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:2] unimaleolar posterior
 │   │   │   │   │   │   │   ├── Fragmento posteromedial y posterolateral
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:3] unimaleolar posterior
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:3] unimaleolar posterior
 │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:4] unimaleolar posterior
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:4] unimaleolar posterior
 │   │   │   │   │   ├── No
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA] unimaleolar posterior
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] unimaleolar posterior
 │   ├── Maleolo medial
 │   │   Q: ¿Tiene importante afectación articular con extensión metafisaria?
 │   │   │   ├── Sí
 │   │   │   │   Q: ¿Tiene depresión articular?
 │   │   │   │   │   ├── Sí
-│   │   │   │   │   │   ╰── [AO:43-B2] tibia distal
+│   │   │   │   │   │   ╰── [AO:43-B2 LH:N/C W:N/C Bart:N/C] tibia distal
 │   │   │   │   │   ├── No
-│   │   │   │   │   │   ╰── [AO:43-B1] tibia distal
+│   │   │   │   │   │   ╰── [AO:43-B1 LH:N/C W:N/C Bart:N/C] tibia distal
 │   │   │   ├── No
 │   │   │   │   Q: ¿Qué morfología tiene?
 │   │   │   │   │   ├── Vertical
-│   │   │   │   │   │   ╰── [AO:N/C LH:SA] unimaleolar medial
+│   │   │   │   │   │   ╰── [AO:N/C LH:SA W:N/C Bart:N/C] unimaleolar medial
 │   │   │   │   │   ├── Transverso/oblicuo
-│   │   │   │   │   │   ╰── [AO:N/C LH:N/C] unimaleolar medial
+│   │   │   │   │   │   ╰── [AO:N/C LH:N/C W:N/C Bart:N/C] unimaleolar medial
 │   ├── Maleolo lateral
 │   │   Q: ¿A qué nivel está la fractura?
 │   │   │   ├── Infrasindesmal
 │   │   │   │   Q: ¿De qué morfología es la fractura?
 │   │   │   │   │   ├── Avulsión de la punta del maleolo
-│   │   │   │   │   │   ╰── [AO:44-A1.2 LH:SA W:A] unimaleolar lateral
+│   │   │   │   │   │   ╰── [AO:44-A1.2 LH:SA W:A Bart:N/C] unimaleolar lateral
 │   │   │   │   │   ├── Fractura de maleolo lateral
-│   │   │   │   │   │   ╰── [AO:44-A1.3 LH:SA W:A] unimaleolar lateral
+│   │   │   │   │   │   ╰── [AO:44-A1.3 LH:SA W:A Bart:N/C] unimaleolar lateral
 │   │   │   ├── Transindesmal
 │   │   │   │   Q: ¿De qué morfología es la fractura?
 │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Fractura simple
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:SER W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:SER W:B Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:SER W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:SER W:B Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Fractura en ala de maliposa/multifragmentaria
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:SER W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:SER W:B Bart:N/C] unimaleolar lateral
 │   │   │   │   │   ├── Transversa/Oblicua (Baja medial, alta lateral)/Conminuta
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Fractura simple
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:PA W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:PA W:B Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:PA W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:PA W:B Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Fractura en ala de maliposa/multifragmentaria
-│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:PA W:B] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:PA W:B Bart:N/C] unimaleolar lateral
 │   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
-│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PA W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PA W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)
-│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Suprasindesmal (a >6cm de superficie articular)
-│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
 │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
-│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PA W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PA W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
-│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Suprasindesmal (a >6cm de superficie articular)
-│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C] unimaleolar lateral
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   ├── Proximal (1/ proximal de peroné)
-│   │   │   │   │   │   ╰── [AO:44-C3 LH:PER W:C] unimaleolar lateral
+│   │   │   │   │   │   ╰── [AO:44-C3 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   ├── Maleolos medial y posterior
 │   │   Q: ¿Tiene TAC?
 │   │   │   ├── Sí
 │   │   │   │   Q: ¿Qué tipo de fractura es el maleolo posterior?
 │   │   │   │   │   ├── Fragmento extraincisural posteromedial
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Fragmento extraincisural posterior
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:1] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Fragmento posterolateral
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:2] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:2] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Fragmento posteromedial y posterolateral
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:3] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:3] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Gran fragmento triangular posterolateral
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA Bart:4] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:4] bimaleolar (Medial + Posterior)
 │   │   │   ├── No
-│   │   │   │   ╰── [AO:N/C LH:PA] bimaleolar (Medial + Posterior)
+│   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] bimaleolar (Medial + Posterior)
 │   ├── Maleolos lateral y posterior
 │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   ├── Infrasindesmal
 │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   ├── No
-│   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   ├── Sí
 │   │   │   │   │   │   Q: ¿Cuál es la morfología del maleolo posterior?
 │   │   │   │   │   │   │   ├── Fragmento extraincisural posterior
@@ -134,7 +134,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   ├── Transversa/Oblicua (Baja medial, alta lateral)/Conminuta
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí
@@ -148,7 +148,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
@@ -166,7 +166,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -180,7 +180,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -194,7 +194,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
 │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
@@ -210,7 +210,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -224,7 +224,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -238,7 +238,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   ├── Proximal (1/3 proximal de peroné)
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí
@@ -252,21 +252,21 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C] bimaleolar (Lateral + Posterior)
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   ├── Maleolos lateral y medial
 │   │   Q: ¿De qué morfología es la fractura del maleolo medial?
 │   │   │   ├── Vertical
 │   │   │   │   Q: ¿La fractura del peroné es infrasindesmal?
 │   │   │   │   │   ├── Sí
-│   │   │   │   │   │   ╰── [AO:44-A2 LH:SA W:A] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   ╰── [AO:44-A2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   ├── No
 │   │   │   │   │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   │   │   │   │   ├── Infrasindesmal
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo lateral?
 │   │   │   │   │   │   │   │   │   ├── Transversa
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Avulsión
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   │   │   ├── Diafisaria Simple
@@ -274,71 +274,71 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Proximal (1/3 proximal peroné)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Acortamiento a nivel de cabeza de peroné?
 │   │   │   │   │   │   │   │   │   │   │   ├── Si
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Transindesmal
 │   │   │   │   │   │   │   │   Q: ¿De qué morfología es la fractura del peroné?
 │   │   │   │   │   │   │   │   │   ├── Transversa/Oblicua (Baja medial, alta lateral)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Conminuta/ala de mariposa
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   ├── Transverso/oblicuo/avulsión/abierta mortaja
 │   │   │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   │   │   ├── Infrasindesmal
 │   │   │   │   │   │   Q: ¿Cómo es el maleolo lateral?
 │   │   │   │   │   │   │   ├── Transversa
-│   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Avulsión
-│   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Diafisaria Simple
@@ -346,63 +346,63 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Suprasindesmal (a > 6cm de superficie articular)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Proximal (1/3 proximal peroné)
 │   │   │   │   │   │   │   │   Q: ¿Acortamiento a nivel de cabeza de peroné?
 │   │   │   │   │   │   │   │   │   ├── Si
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   ├── Transindesmal
 │   │   │   │   │   │   Q: ¿De qué morfología es la fractura del peroné?
 │   │   │   │   │   │   │   ├── Transversa/Oblicua (Baja medial, alta lateral)
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Conminuta/ala de mariposa
-│   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B] bimaleolar (Lateral + Medial)
+│   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] bimaleolar (Lateral + Medial)
 │   ├── maleolos medial, lateral y posterior
 │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   ├── Transindesmal
@@ -422,7 +422,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Abierta la mortaja
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -436,7 +436,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -452,7 +452,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Abierta la mortaja
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -466,7 +466,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Conminuta/ala de mariposa
 │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -482,11 +482,11 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Abierta la mortaja
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── Sí
 │   │   │   │   │   │   │   │   │   │   Q: ¿Qué tipo de fractura es el maleolo posterior?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fragmento extraincisural
@@ -512,8 +512,8 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:4] trimaleolar
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A] trimaleolar
-│   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A] trimaleolar
+│   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:N/C] trimaleolar
+│   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Avulsión
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí
@@ -527,8 +527,8 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:4] trimaleolar
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A] trimaleolar
-│   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A] trimaleolar
+│   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
+│   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
 │   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
@@ -546,7 +546,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -560,7 +560,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Suprasindesmal (a >6cm de superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -574,7 +574,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
 │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
@@ -590,7 +590,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -604,7 +604,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:N/C] trimaleolar
 │   │   │   │   │   │   │   ├── Suprasindesmal (a >6cm de superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -618,7 +618,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C] trimaleolar
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Proximal (1/3 proximal de peroné)
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí
@@ -632,6 +632,6 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:4] trimaleolar
 │   │   │   │   │   │   │   ├── No
-│   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C] trimaleolar
+│   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:N/C] trimaleolar
 
 # Total terminals: 202

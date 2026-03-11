@@ -312,7 +312,9 @@
       "danisWeber": {
         "A_desc": "Weber A: Fracture below syndesmosis",
         "B_desc": "Weber B: Fracture at syndesmosis level",
-        "C_desc": "Weber C: Fracture above syndesmosis"
+        "C_desc": "Weber C: Fracture above syndesmosis",
+        "not_classifiable_name": "Not classifiable",
+        "not_classifiable_desc": "Danis-Weber not classifiable for this fracture pattern"
       },
       "aoOta": {
         "A1_desc": "44-A1: Isolated infrasyndesmal fracture",
@@ -358,7 +360,9 @@
         "1_desc": "Bartonicek 1: Extraincisural fragment",
         "2_desc": "Bartonicek 2: Posterolateral fragment",
         "3_desc": "Bartonicek 3: Posteromedial and posterolateral fragment",
-        "4_desc": "Bartonicek 4: Large posterolateral triangular fragment"
+        "4_desc": "Bartonicek 4: Large posterolateral triangular fragment",
+        "not_classifiable_name": "Not classifiable",
+        "not_classifiable_desc": "Bartonicek not classifiable for this fracture pattern"
       }
     },
     "impossible": {

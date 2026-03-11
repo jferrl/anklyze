@@ -5,9 +5,10 @@ type DanisWeberType string
 
 // DanisWeberA and related constants define the Danis-Weber classification types.
 const (
-	DanisWeberA DanisWeberType = "Weber A"
-	DanisWeberB DanisWeberType = "Weber B"
-	DanisWeberC DanisWeberType = "Weber C"
+	DanisWeberA               DanisWeberType = "Weber A"
+	DanisWeberB               DanisWeberType = "Weber B"
+	DanisWeberC               DanisWeberType = "Weber C"
+	DanisWeberNotClassifiable DanisWeberType = "not_classifiable"
 )
 
 // LaugeHansenType represents the Lauge-Hansen classification type.
@@ -114,10 +115,11 @@ type BartonicekType string
 
 // BartonicekType1 and related constants define the Bartonicek posterior malleolus classification types.
 const (
-	BartonicekType1 BartonicekType = "Bartonicek 1"
-	BartonicekType2 BartonicekType = "Bartonicek 2"
-	BartonicekType3 BartonicekType = "Bartonicek 3"
-	BartonicekType4 BartonicekType = "Bartonicek 4"
+	BartonicekType1           BartonicekType = "Bartonicek 1"
+	BartonicekType2           BartonicekType = "Bartonicek 2"
+	BartonicekType3           BartonicekType = "Bartonicek 3"
+	BartonicekType4           BartonicekType = "Bartonicek 4"
+	BartonicekNotClassifiable BartonicekType = "not_classifiable"
 )
 
 // BartonicekClassification holds the Bartonicek classification for posterior malleolus

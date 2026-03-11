@@ -15,26 +15,57 @@ func NewEngine() *Engine {
 
 // Classify applies the classification rules based on the decision tree from the flow diagram
 func (e *Engine) Classify(input domain.FractureInput) (*domain.ClassificationResult, error) {
+	var result *domain.ClassificationResult
+	var err error
+
 	switch input.InvolvedMalleoli {
 	case domain.InvolvedPosteriorOnly:
-		return e.classifyPosteriorOnly(input)
+		result, err = e.classifyPosteriorOnly(input)
 	case domain.InvolvedMedialOnly:
-		return e.classifyMedialOnly(input)
+		result, err = e.classifyMedialOnly(input)
 	case domain.InvolvedLateralOnly:
-		return e.classifyLateralOnly(input)
+		result, err = e.classifyLateralOnly(input)
 	case domain.InvolvedMedialPosterior:
-		return e.classifyMedialPosterior(input)
+		result, err = e.classifyMedialPosterior(input)
 	case domain.InvolvedLateralPosterior:
-		return e.classifyLateralPosterior(input)
+		result, err = e.classifyLateralPosterior(input)
 	case domain.InvolvedLateralMedial:
-		return e.classifyLateralMedial(input)
+		result, err = e.classifyLateralMedial(input)
 	case domain.InvolvedTrimaleolar:
-		return e.classifyTrimaleolar(input)
+		result, err = e.classifyTrimaleolar(input)
+	default:
+		return &domain.ClassificationResult{
+			FractureType: "none_selected",
+		}, nil
 	}
 
-	return &domain.ClassificationResult{
-		FractureType: "none_selected",
-	}, nil
+	if err != nil {
+		return nil, err
+	}
+
+	normalizeResult(result)
+
+	return result, nil
+}
+
+// normalizeResult ensures all four classification systems are present.
+// Any nil classification is filled with its "not_classifiable" sentinel value.
+func normalizeResult(r *domain.ClassificationResult) {
+	if r == nil || r.Impossible {
+		return
+	}
+	if r.DanisWeber == nil {
+		r.DanisWeber = &domain.DanisWeberClassification{Type: domain.DanisWeberNotClassifiable}
+	}
+	if r.LaugeHansen == nil {
+		r.LaugeHansen = &domain.LaugeHansenClassification{Type: domain.LaugeHansenNotClassifiable}
+	}
+	if r.AOOTA == nil {
+		r.AOOTA = &domain.AOOTAClassification{Code: domain.AOOTANotClassifiable}
+	}
+	if r.Bartonicek == nil {
+		r.Bartonicek = &domain.BartonicekClassification{Type: domain.BartonicekNotClassifiable}
+	}
 }
 
 // classifyPosteriorOnly handles posterior malleolus only fractures

@@ -161,15 +161,11 @@ def render_tree(cells, children, root_id, out):
         elif t == 'terminal':
             codes = parse_terminal_codes(text)
             parts = []
-            if codes['ao']:
-                parts.append(f"AO:{codes['ao']}")
-            if codes['lh']:
-                parts.append(f"LH:{codes['lh']}")
-            if codes['weber']:
-                parts.append(f"W:{codes['weber']}")
-            if codes['bartonicek']:
-                parts.append(f"Bart:{codes['bartonicek']}")
-            code_str = ' '.join(parts) if parts else 'no codes'
+            parts.append(f"AO:{codes['ao'] or 'N/C'}")
+            parts.append(f"LH:{codes['lh'] or 'N/C'}")
+            parts.append(f"W:{codes['weber'] or 'N/C'}")
+            parts.append(f"Bart:{codes['bartonicek'] or 'N/C'}")
+            code_str = ' '.join(parts)
             # Short fracture type
             ft = codes['fracture_type']
             ft_short = ft.replace('Fractura ', '').replace('maleolo ', '').replace('maleolos ', '')
@@ -289,10 +285,10 @@ def render_table(cells, children, parents, root_id, out):
             out.write(f"\n## {current_branch} ({sum(1 for x in paths if x['branch'] == current_branch)} paths)\n")
 
         c = p['codes']
-        ao = c['ao'] or '-'
-        lh = c['lh'] or '-'
-        w = c['weber'] or '-'
-        b = c['bartonicek'] or '-'
+        ao = c['ao'] or 'N/C'
+        lh = c['lh'] or 'N/C'
+        w = c['weber'] or 'N/C'
+        b = c['bartonicek'] or 'N/C'
         # Skip first answer (malleoli selection — redundant with branch)
         answer_path = ' → '.join(p['answers'][1:]) if len(p['answers']) > 1 else '(direct)'
         out.write(f"  {ao:<12} {lh:<5} {w:<3} {b:<3} {answer_path}\n")

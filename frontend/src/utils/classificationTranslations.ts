@@ -25,6 +25,26 @@ export function getAOOTADisplayName(t: TFunction, code: string): string {
 }
 
 /**
+ * Get the translated Danis-Weber display name (for "not_classifiable" → "No clasificable")
+ */
+export function getDanisWeberDisplayName(t: TFunction, type: string): string {
+  if (type === 'not_classifiable') {
+    return t('results.classifications.danisWeber.not_classifiable_name');
+  }
+  return type;
+}
+
+/**
+ * Get the translated Bartonicek display name (for "not_classifiable" → "No clasificable")
+ */
+export function getBartonicekDisplayName(t: TFunction, type: string): string {
+  if (type === 'not_classifiable') {
+    return t('results.classifications.bartonicek.not_classifiable_name');
+  }
+  return type;
+}
+
+/**
  * Get the translated impossible reason
  */
 export function getImpossibleReason(t: TFunction, impossibleKey: string): string {

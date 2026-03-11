@@ -79,14 +79,14 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B2 {
 			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B2)
 		}
-		if result.LaugeHansen != nil {
-			t.Error("LaugeHansen should be nil for distal tibia fractures")
+		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenNotClassifiable)
 		}
-		if result.Bartonicek != nil {
-			t.Error("Bartonicek should be nil for distal tibia fractures")
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 		}
-		if result.DanisWeber != nil {
-			t.Error("DanisWeber should be nil for distal tibia fractures")
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 		}
 	})
 
@@ -201,8 +201,8 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 			}
 
 			if tt.expectBartonicekNil {
-				if result.Bartonicek != nil {
-					t.Error("Bartonicek should be nil without CT scan")
+				if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+					t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 				}
 			} else {
 				if result.Bartonicek == nil {
@@ -237,11 +237,14 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B2 {
 			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B2)
 		}
-		if result.LaugeHansen != nil {
-			t.Error("LaugeHansen should be nil for distal tibia fractures")
+		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenNotClassifiable)
 		}
-		if result.DanisWeber != nil {
-			t.Error("DanisWeber should be nil for distal tibia fractures")
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
+		}
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 		}
 	})
 
@@ -287,8 +290,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
 		}
-		if result.DanisWeber != nil {
-			t.Error("DanisWeber should be nil for medial only fractures")
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 		}
 	})
 
@@ -317,8 +320,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
 			t.Errorf("LaugeHansen.Type = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
 		}
-		if result.DanisWeber != nil {
-			t.Error("DanisWeber should be nil for medial only fractures")
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 		}
 	})
 }
@@ -493,11 +496,11 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenPA)
 		}
-		if result.Bartonicek != nil {
-			t.Error("Bartonicek should be nil without CT")
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 		}
-		if result.DanisWeber != nil {
-			t.Error("DanisWeber should be nil for medial posterior fractures")
+		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 		}
 	})
 
@@ -535,8 +538,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 			t.Errorf("LaugeHansen.Type = %v, want PA", result.LaugeHansen)
 		}
-		if result.Bartonicek != nil {
-			t.Error("Bartonicek should be nil for extraincisural_posteromedial")
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 		}
 	})
 
@@ -572,8 +575,8 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 			if result.Bartonicek == nil || result.Bartonicek.Type != tt.expectedBartonicek {
 				t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, tt.expectedBartonicek)
 			}
-			if result.DanisWeber != nil {
-				t.Error("DanisWeber should be nil for medial posterior fractures")
+			if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
+				t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 			}
 		})
 	}
@@ -607,8 +610,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenSA {
 			t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, domain.LaugeHansenSA)
 		}
-		if result.Bartonicek != nil {
-			t.Error("Bartonicek should be nil without CT")
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 		}
 	})
 
@@ -853,8 +856,8 @@ func TestEngine_Classify_LateralPosterior(t *testing.T) {
 			}
 
 			if tt.expectBartonicekNil {
-				if result.Bartonicek != nil {
-					t.Error("Bartonicek should be nil")
+				if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+					t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 				}
 			} else {
 				if result.Bartonicek == nil {
@@ -1400,8 +1403,8 @@ func TestEngine_Classify_Trimaleolar_WithBartonicek(t *testing.T) {
 				t.Errorf("LaugeHansen.Type = %v, want %q", result.LaugeHansen, tt.expectedLaugeHansen)
 			}
 			if tt.expectBartonicekNil {
-				if result.Bartonicek != nil {
-					t.Error("Bartonicek should be nil without CT scan")
+				if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+					t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
 				}
 			} else {
 				if result.Bartonicek == nil {
