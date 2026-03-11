@@ -5,53 +5,34 @@ import { Button, FormSkeleton } from '@/components/ui';
 import { ComparisonView } from '@/components/ComparisonView';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { useClassification } from '@/hooks/useClassification';
-import type {
-  FractureInput,
-  InvolvedMalleoli,
-  FibularLevel,
-  LateralMorphology,
-  SuprasindesmalType,
-  FibulaTracePattern,
-  MedialMorphology,
-  PosteriorFractureType,
-  ArticularInvolvement,
-  LateralSubtype,
-  MedialSubtype,
-} from '@/types';
+import type { FractureInput } from '@/types';
 
-// Import feature components
-import { QuestionStep } from './QuestionStep';
+import { ClassificationFormQuestions } from './ClassificationFormQuestions';
 import { ResultsPanel } from './ResultsPanel';
 import { FormProgress } from './FormProgress';
 import { BreadcrumbTrail } from './BreadcrumbTrail';
 
-// Import feature utilities
 import { isFormComplete, calculateProgress } from '../utils/formValidation';
 
-// Import feature hooks
 import { useFormState } from '../hooks/useFormState';
 import { useUrlParams } from '../hooks/useUrlParams';
-import { useAutoScroll } from '../hooks/useAutoScroll';
 
 /**
- * Main FractureForm component
+ * Main FractureForm component for the /classify page.
  *
- * Orchestrates the fracture classification form using extracted hooks and components.
- * Handles loading states, form rendering, and result display.
+ * Orchestrates the classification form with URL params, comparison mode,
+ * and result display. The actual form questions are rendered by
+ * ClassificationFormQuestions (the single source of truth).
  */
 export function FractureForm() {
   const { t, i18n } = useTranslation();
 
-  // State management hooks
   const { formData, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
-  // Track last successful classification input (state for render access)
   const [lastInput, setLastInput] = useState<FractureInput | null>(null);
 
-  // Load form options (re-compute when language changes)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
 
-  // Classification hook
   const {
     result,
     loading,
@@ -64,18 +45,11 @@ export function FractureForm() {
     resetAll,
   } = useClassification();
 
-  // URL params loading (with auto-classification)
   const { isLoading: loadingFromUrl } = useUrlParams(async (input) => {
     setLastInput(input as FractureInput);
     await classify(input as FractureInput);
   });
 
-  // Auto-scroll when form data changes
-  const formEndRef = useAutoScroll(formData);
-
-  /**
-   * Handle form submission
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormComplete(formData) || loading) return;
@@ -88,25 +62,16 @@ export function FractureForm() {
     }
   };
 
-  /**
-   * Reset form to start over
-   */
   const handleReset = () => {
     clearFormData();
     reset();
   };
 
-  /**
-   * Reset everything including scenarios
-   */
   const handleStartOver = () => {
     clearFormData();
     resetAll();
   };
 
-  /**
-   * Start comparison mode
-   */
   const handleStartComparison = () => {
     if (!lastInput || !result) return;
     addScenario(lastInput, result);
@@ -114,14 +79,10 @@ export function FractureForm() {
     clearFormData();
   };
 
-  /**
-   * Clear comparison scenarios
-   */
   const handleClearComparison = () => {
     clearScenarios();
   };
 
-  // Show loading skeleton while loading from URL
   if (loadingFromUrl) {
     return (
       <div className="max-w-2xl mx-auto p-6">
@@ -130,7 +91,6 @@ export function FractureForm() {
     );
   }
 
-  // Show comparison view when we have 2+ scenarios
   if (scenarios.length >= 2) {
     return (
       <div className="max-w-5xl mx-auto p-6">
@@ -152,7 +112,6 @@ export function FractureForm() {
     );
   }
 
-  // Show result with actions
   if (result && lastInput) {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -166,121 +125,8 @@ export function FractureForm() {
     );
   }
 
-  // Determine which questions to show based on form data (matching MMD decision tree)
-
-  // Articular involvement: posterior_only uses 2-option select, medial_only uses Yes/No per reference MMD
-  const showArticularInvolvementSelect = formData.involved_malleoli === 'posterior_only';
-  const showArticularInvolvementYesNo = formData.involved_malleoli === 'medial_only';
-
-  // Articular depression: when articular_involvement = large_with_extension (either path)
-  const showArticularDepression = (showArticularInvolvementSelect || showArticularInvolvementYesNo) &&
-    formData.articular_involvement === 'large_with_extension';
-
-  // Medial morphology: for medial_only (only after small_without_extension) and lateral_medial
-  const showMedialMorphology = formData.involved_malleoli &&
-    (
-      formData.involved_malleoli === 'lateral_medial' ||
-      (formData.involved_malleoli === 'medial_only' &&
-        formData.articular_involvement === 'small_without_extension')
-    );
-
-  const showBimaleolarInfraQuestion = formData.involved_malleoli === 'lateral_medial' &&
-    formData.medial_morphology === 'vertical';
-
-  const lateralMedialReadyForFibularLevel = formData.involved_malleoli === 'lateral_medial' && (
-    formData.medial_morphology === 'transverse_oblique' ||
-    (formData.medial_morphology === 'vertical' && formData.fibula_infrasindesmal_transverse === false)
-  );
-
-  const showFibularLevel = formData.involved_malleoli &&
-    (
-      ['lateral_only', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli) ||
-      lateralMedialReadyForFibularLevel
-    );
-
-  const showLateralMorphology = showFibularLevel && formData.fibular_level &&
-    formData.fibular_level !== 'infrasindesmal';
-
-  // Infrasindesmal morphology subtype: any branch with infrasindesmal fibula level
-  const showInfrasindesmalMorphology =
-    (formData.involved_malleoli === 'lateral_only' && formData.fibular_level === 'infrasindesmal') ||
-    (formData.involved_malleoli === 'lateral_medial' && formData.fibular_level === 'infrasindesmal') ||
-    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'infrasindesmal');
-
-  // Lateral subtype: lateral_only + transindesmal + morphology selected
-  const showLateralSubtype = formData.involved_malleoli === 'lateral_only' &&
-    formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology;
-
-  // Medial subtype: lateral_medial or trimaleolar transindesmal paths
-  // For suprasindesmal paths, medial subtype appears AFTER trace pattern (per decision tree order)
-  const showMedialSubtype = (
-    // lateral_medial paths
-    formData.involved_malleoli === 'lateral_medial' && (
-      // Transindesmal path with non-conminuta morphology
-      (formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology &&
-        formData.lateral_morphology !== 'conminuta') ||
-      // Suprasindesmal path (for C1/C2 subtypes) — after trace pattern is answered
-      (formData.fibular_level === 'suprasindesmal' && !!formData.suprasindesmal_type &&
-        formData.suprasindesmal_type !== 'proximal' && !!formData.fibula_trace_pattern)
-    )
-  ) || (
-    // trimaleolar transindesmal paths (transverse, oblique, or spiral)
-    formData.involved_malleoli === 'trimaleolar' &&
-    formData.fibular_level === 'transindesmal' &&
-    !!formData.lateral_morphology
-  );
-
-  // Fibula head shortening: lateral_medial + suprasindesmal + proximal
-  const showFibulaHeadShortening = formData.involved_malleoli === 'lateral_medial' &&
-    formData.fibular_level === 'suprasindesmal' &&
-    formData.suprasindesmal_type === 'proximal';
-
-  const showSuprasindesmalType = formData.fibular_level === 'suprasindesmal';
-
-  const showFibulaTracePattern = formData.fibular_level === 'suprasindesmal' &&
-    formData.suprasindesmal_type !== undefined &&
-    formData.suprasindesmal_type !== 'proximal';
-
-  // CT scan: show only after ALL preceding questions for the current path are answered.
-  // For infrasindesmal: CT shows right after fibular_level (no intermediate questions).
-  // For transindesmal: CT shows after lateral_morphology (and medial_subtype for trimaleolar).
-  // For suprasindesmal: CT shows after suprasindesmal_type + fibula_trace_pattern (or proximal).
-  const showCTScan = formData.involved_malleoli && (
-    // posterior_only: only after articular involvement resolved to small_without_extension
-    (formData.involved_malleoli === 'posterior_only' &&
-      formData.articular_involvement === 'small_without_extension') ||
-    // medial_posterior: always
-    formData.involved_malleoli === 'medial_posterior' ||
-    // lateral_posterior: depends on fibular level sub-path
-    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal') ||
-    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'transindesmal' &&
-      !!formData.lateral_morphology) ||
-    (formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'suprasindesmal' &&
-      !!formData.suprasindesmal_type &&
-      (formData.suprasindesmal_type === 'proximal' || !!formData.fibula_trace_pattern)) ||
-    // trimaleolar: depends on fibular level sub-path
-    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'infrasindesmal' &&
-      !!formData.infrasindesmal_morphology) ||
-    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'transindesmal' &&
-      !!formData.lateral_morphology && !!formData.medial_subtype) ||
-    (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'suprasindesmal' &&
-      !!formData.suprasindesmal_type &&
-      (formData.suprasindesmal_type === 'proximal' || !!formData.fibula_trace_pattern))
-  );
-
-  // Posterior type: after CT=true
-  const showPosteriorType = showCTScan && formData.has_ct_scan === true;
-
-  // Create yes/no options for boolean questions
-  const yesNoOptions = [
-    { value: 'true', label: options.labels.yes },
-    { value: 'false', label: options.labels.no },
-  ];
-
-  // Calculate progress
   const { currentStep, totalSteps } = calculateProgress(formData);
 
-  // Render the form
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Header */}
@@ -292,10 +138,7 @@ export function FractureForm() {
       {/* Progress indicator with breadcrumb trail and progress bar */}
       {formData.involved_malleoli && (
         <div className="space-y-4 mb-6">
-          {/* Breadcrumb trail showing answered questions */}
           <BreadcrumbTrail formData={formData} options={options} />
-
-          {/* Progress bar */}
           <FormProgress
             currentStep={currentStep}
             totalSteps={totalSteps}
@@ -331,254 +174,11 @@ export function FractureForm() {
         </Button>
       </div>
 
-      {/* Questions */}
-      <QuestionStep
-        question={{
-          id: 'involved_malleoli',
-          title: options.questions.involved_malleoli?.title || 'Which malleoli are fractured?',
-        }}
-        value={formData.involved_malleoli}
-        options={options.involved_malleoli || []}
-        onChange={(value) => updateFormData({ ...formData, involved_malleoli: value as InvolvedMalleoli })}
+      {/* Questions — single source of truth */}
+      <ClassificationFormQuestions
+        formData={formData}
+        onUpdate={updateFormData}
       />
-
-      {showArticularInvolvementSelect && (
-        <QuestionStep
-          question={{
-            id: 'articular_involvement',
-            title: options.questions.articular_involvement?.title || 'Articular surface involvement?',
-          }}
-          value={formData.articular_involvement}
-          options={options.articular_involvement_options || []}
-          onChange={(value) => updateFormData({ ...formData, articular_involvement: value as ArticularInvolvement })}
-        />
-      )}
-
-      {showArticularInvolvementYesNo && (
-        <QuestionStep
-          question={{
-            id: 'articular_involvement',
-            title: options.questions.articular_involvement_medial?.title || 'Is there significant articular involvement with metaphyseal extension?',
-          }}
-          value={formData.articular_involvement === 'large_with_extension' ? 'true' : formData.articular_involvement === 'small_without_extension' ? 'false' : undefined}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
-        />
-      )}
-
-      {showArticularDepression && (
-        <QuestionStep
-          question={{
-            id: 'has_articular_depression',
-            title: (formData.involved_malleoli === 'medial_only'
-              ? options.questions.has_articular_depression_medial?.title
-              : options.questions.has_articular_depression?.title) || 'Is articular depression present?',
-          }}
-          value={formData.has_articular_depression?.toString()}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, has_articular_depression: value === 'true' })}
-        />
-      )}
-
-      {showMedialMorphology && (
-        <QuestionStep
-          question={{
-            id: 'medial_morphology',
-            title: (formData.involved_malleoli === 'lateral_medial'
-              ? options.questions.medial_morphology_lm?.title
-              : options.questions.medial_morphology?.title) || 'Medial fracture morphology?',
-          }}
-          value={formData.medial_morphology}
-          options={
-            formData.involved_malleoli === 'lateral_medial'
-              ? (options.medial_morphology_lm || [])
-              : (options.medial_morphology || [])
-          }
-          onChange={(value) => updateFormData({ ...formData, medial_morphology: value as MedialMorphology })}
-        />
-      )}
-
-      {showBimaleolarInfraQuestion && (
-        <QuestionStep
-          question={{
-            id: 'fibula_infrasindesmal_transverse',
-            title: options.questions.fibula_infrasindesmal_transverse?.title || 'Is fibula fracture infrasindesmal AND transverse?',
-          }}
-          value={formData.fibula_infrasindesmal_transverse?.toString()}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, fibula_infrasindesmal_transverse: value === 'true' })}
-        />
-      )}
-
-      {showFibularLevel && (
-        <QuestionStep
-          question={{
-            id: 'fibular_level',
-            title: (
-              ['lateral_medial', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli || '')
-                ? options.questions.fibular_level_lm?.title
-                : options.questions.fibular_level?.title
-            ) || 'Fibular fracture level?',
-          }}
-          value={formData.fibular_level}
-          options={
-            ['trimaleolar', 'lateral_medial'].includes(formData.involved_malleoli || '')
-              ? (options.fibular_levels_tri || options.fibular_levels || [])
-              : (options.fibular_levels || [])
-          }
-          onChange={(value) => updateFormData({ ...formData, fibular_level: value as FibularLevel })}
-        />
-      )}
-
-      {showLateralMorphology && !showSuprasindesmalType && (
-        <QuestionStep
-          question={{
-            id: 'lateral_morphology',
-            title: (['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
-              ? options.questions.lateral_morphology_lm_tri?.title
-              : options.questions.lateral_morphology?.title) || 'Lateral fracture morphology?',
-          }}
-          value={formData.lateral_morphology}
-          options={
-            formData.involved_malleoli === 'lateral_medial'
-              ? (options.fibula_morphology_lm || [])
-              : formData.involved_malleoli === 'trimaleolar'
-                ? (options.fibula_morphology_tri || [])
-                : (options.lateral_morphology || [])
-          }
-          onChange={(value) => updateFormData({ ...formData, lateral_morphology: value as LateralMorphology })}
-        />
-      )}
-
-      {showInfrasindesmalMorphology && (
-        <QuestionStep
-          question={{
-            id: 'infrasindesmal_morphology',
-            title: (['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
-              ? options.questions.infrasindesmal_morphology_lm_tri?.title
-              : options.questions.infrasindesmal_morphology?.title) || 'Infrasyndesmal fracture morphology?',
-          }}
-          value={formData.infrasindesmal_morphology}
-          options={['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
-            ? (options.infrasindesmal_morphology_lm_tri || [])
-            : (options.infrasindesmal_morphology || [])}
-          onChange={(value) => updateFormData({ ...formData, infrasindesmal_morphology: value as LateralSubtype })}
-        />
-      )}
-
-      {showLateralSubtype && (
-        <QuestionStep
-          question={{
-            id: 'lateral_subtype',
-            title: options.questions.lateral_subtype?.title || 'Lateral fracture type?',
-          }}
-          value={formData.lateral_subtype}
-          options={options.lateral_subtype || []}
-          onChange={(value) => updateFormData({ ...formData, lateral_subtype: value as LateralSubtype })}
-        />
-      )}
-
-      {showSuprasindesmalType && (
-        <QuestionStep
-          question={{
-            id: 'suprasindesmal_type',
-            title: options.questions.suprasindesmal_type?.title || 'Suprasindesmotic fracture type?',
-          }}
-          value={formData.suprasindesmal_type}
-          options={formData.involved_malleoli === 'lateral_posterior'
-            ? (options.suprasindesmal_types_lp || options.suprasindesmal_types || [])
-            : (options.suprasindesmal_types || [])}
-          onChange={(value) => updateFormData({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
-        />
-      )}
-
-      {showFibulaTracePattern && (
-        <QuestionStep
-          question={{
-            id: 'fibula_trace_pattern',
-            title: (formData.involved_malleoli === 'lateral_posterior'
-              ? (formData.suprasindesmal_type === 'multifragmentary'
-                ? options.questions.fibula_trace_pattern_multi?.title
-                : options.questions.fibula_trace_pattern_lp?.title)
-              : (formData.suprasindesmal_type === 'multifragmentary'
-                ? options.questions.fibula_trace_pattern_multi?.title
-                : options.questions.fibula_trace_pattern?.title)) || 'Fibula trace pattern?',
-          }}
-          value={formData.fibula_trace_pattern}
-          options={formData.involved_malleoli === 'lateral_posterior'
-            ? (formData.suprasindesmal_type === 'multifragmentary'
-              ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns || [])
-              : (options.fibula_trace_patterns_lp || options.fibula_trace_patterns || []))
-            : (formData.suprasindesmal_type === 'multifragmentary'
-              ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns || [])
-              : (options.fibula_trace_patterns || []))}
-          onChange={(value) => updateFormData({ ...formData, fibula_trace_pattern: value as FibulaTracePattern })}
-        />
-      )}
-
-      {showMedialSubtype && (
-        <QuestionStep
-          question={{
-            id: 'medial_subtype',
-            title: options.questions.medial_subtype?.title || 'Medial malleolus type?',
-          }}
-          value={formData.medial_subtype}
-          options={options.medial_subtype || []}
-          onChange={(value) => updateFormData({ ...formData, medial_subtype: value as MedialSubtype })}
-        />
-      )}
-
-      {showFibulaHeadShortening && (
-        <QuestionStep
-          question={{
-            id: 'has_fibula_head_shortening',
-            title: options.questions.has_fibula_head_shortening?.title || 'Is there fibula head shortening?',
-          }}
-          value={formData.has_fibula_head_shortening?.toString()}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, has_fibula_head_shortening: value === 'true' })}
-        />
-      )}
-
-      {showCTScan && (
-        <QuestionStep
-          question={{
-            id: 'has_ct_scan',
-            title: options.questions.has_ct_scan?.title || 'Do you have a CT scan?',
-          }}
-          value={formData.has_ct_scan?.toString()}
-          options={yesNoOptions}
-          onChange={(value) => updateFormData({ ...formData, has_ct_scan: value === 'true', posterior_fracture_type: undefined })}
-        />
-      )}
-
-      {showPosteriorType && (
-        <QuestionStep
-          question={{
-            id: 'posterior_fracture_type',
-            title: (
-              formData.involved_malleoli === 'posterior_only'
-                ? options.questions.posterior_fracture_type?.title
-                : formData.involved_malleoli === 'medial_posterior'
-                  ? options.questions.posterior_fracture_type_med_post?.title
-                  : formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal'
-                    ? options.questions.posterior_fracture_type_lp_infra?.title
-                    : formData.involved_malleoli === 'lateral_posterior'
-                      ? options.questions.posterior_fracture_type_med_post?.title
-                      : options.questions.posterior_fracture_type_posterior?.title
-            ) || 'Posterior fracture type (Bartoníček)?',
-          }}
-          value={formData.posterior_fracture_type}
-          options={
-            formData.involved_malleoli === 'medial_posterior'
-              ? (options.posterior_fracture_types_medial_posterior || [])
-              : formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal'
-                ? (options.posterior_fracture_types_lp_infra || options.posterior_fracture_types || [])
-                : (options.posterior_fracture_types || [])
-          }
-          onChange={(value) => updateFormData({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
-        />
-      )}
 
       {/* Error display */}
       {error && (
@@ -586,9 +186,6 @@ export function FractureForm() {
           <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
-
-      {/* Scroll anchor */}
-      <div ref={formEndRef} />
 
       {/* Submit button */}
       <Button
