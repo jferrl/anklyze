@@ -230,17 +230,17 @@
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
       },
       "fibulaTracePatternLP": {
         "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
       },
       "fibulaTracePatternMultiLP": {
         "parasindesmotic_short": "Comminuted parasyndesmotic (<6cm from articular surface)",
         "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral/butterfly wing trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (>6cm from articular surface)"
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
       },
       "posteriorTypeLPInfra": {
         "extraincisural": "Posterior extraincisural fragment",

@@ -236,17 +236,17 @@
       "fibulaTracePattern": {
         "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
-        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
       },
       "fibulaTracePatternLP": {
         "parasindesmotic_short": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo",
-        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
       },
       "fibulaTracePatternMultiLP": {
         "parasindesmotic_short": "Parasindesmal conminuta (a <6cm de la superficie articular)",
         "parasindesmotic_long": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa",
-        "suprasindesmotic_far": "Suprasindesmal (a >6cm de superficie articular)"
+        "suprasindesmotic_far": "Suprasindesmal (a > 6cm de superficie articular)"
       },
       "posteriorTypeLPInfra": {
         "extraincisural": "Fragmento extraincisural posterior",

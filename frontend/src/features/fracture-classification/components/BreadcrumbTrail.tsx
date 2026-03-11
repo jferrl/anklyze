@@ -26,11 +26,9 @@ function getBreadcrumbTrail(
 
   // Fibular level
   if (formData.fibular_level) {
-    const levelOptions = formData.involved_malleoli === 'trimaleolar'
+    const levelOptions = ['trimaleolar', 'lateral_medial'].includes(formData.involved_malleoli || '')
       ? options.fibular_levels_tri
-      : ['lateral_medial'].includes(formData.involved_malleoli || '')
-        ? options.fibular_level_high_low
-        : options.fibular_levels;
+      : options.fibular_levels;
     const option = levelOptions?.find(
       opt => opt.value === formData.fibular_level
     );

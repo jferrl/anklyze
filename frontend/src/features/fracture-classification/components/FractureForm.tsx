@@ -1,7 +1,6 @@
-import { useEffect, useRef, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Sparkles, ArrowLeft, RotateCcw } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button, FormSkeleton } from '@/components/ui';
 import { ComparisonView } from '@/components/ComparisonView';
 import { getLocalFormOptions } from '@/utils/formOptions';
@@ -31,7 +30,6 @@ import { isFormComplete, calculateProgress } from '../utils/formValidation';
 
 // Import feature hooks
 import { useFormState } from '../hooks/useFormState';
-import { useFormPersistence } from '@/hooks/useFormPersistence';
 import { useUrlParams } from '../hooks/useUrlParams';
 import { useAutoScroll } from '../hooks/useAutoScroll';
 
@@ -45,14 +43,9 @@ export function FractureForm() {
   const { t, i18n } = useTranslation();
 
   // State management hooks
-  const { formData, formHistory, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
-  const { restore, clear: clearPersistence } = useFormPersistence('fracture', formData, formHistory);
-
+  const { formData, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
   // Track last successful classification input (state for render access)
   const [lastInput, setLastInput] = useState<FractureInput | null>(null);
-
-  // Track if we've already restored from storage (prevent duplicate toasts in StrictMode)
-  const hasRestoredRef = useRef(false);
 
   // Load form options (re-compute when language changes)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,26 +74,6 @@ export function FractureForm() {
   const formEndRef = useAutoScroll(formData);
 
   /**
-   * Restore form from IndexedDB on mount (if not loading from URL)
-   */
-  useEffect(() => {
-    if (loadingFromUrl || hasRestoredRef.current) return;
-
-    // Set ref immediately to prevent duplicate calls in StrictMode
-    hasRestoredRef.current = true;
-
-    const restoreFormData = async () => {
-      const restored = await restore();
-      if (restored) {
-        updateFormData(restored.data);
-        toast.info(t('form.draftRestored'), { duration: 3000 });
-      }
-    };
-
-    restoreFormData();
-  }, [loadingFromUrl]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  /**
    * Handle form submission
    */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,7 +83,6 @@ export function FractureForm() {
     try {
       setLastInput(formData as FractureInput);
       await classify(formData as FractureInput);
-      clearPersistence();
     } catch {
       // Error already handled by useClassification
     }
@@ -122,7 +94,6 @@ export function FractureForm() {
   const handleReset = () => {
     clearFormData();
     reset();
-    clearPersistence();
   };
 
   /**
@@ -131,7 +102,6 @@ export function FractureForm() {
   const handleStartOver = () => {
     clearFormData();
     resetAll();
-    clearPersistence();
   };
 
   /**
@@ -452,7 +422,7 @@ export function FractureForm() {
           }}
           value={formData.fibular_level}
           options={
-            formData.involved_malleoli === 'trimaleolar'
+            ['trimaleolar', 'lateral_medial'].includes(formData.involved_malleoli || '')
               ? (options.fibular_levels_tri || options.fibular_levels || [])
               : (options.fibular_levels || [])
           }
