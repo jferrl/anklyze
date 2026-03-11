@@ -129,9 +129,6 @@ export interface DanisWeberClassification {
 // Lauge-Hansen classification result
 export interface LaugeHansenClassification {
   type: string;
-  ambiguous?: boolean;
-  ambiguous_reason_key?: string;
-  possible_types?: string[];
 }
 
 // AO/OTA classification result

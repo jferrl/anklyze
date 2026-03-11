@@ -32,7 +32,6 @@ const mockDanisWeber: DanisWeberClassification = {
 
 const mockLaugeHansen: LaugeHansenClassification = {
   type: 'SER II',
-  ambiguous: false,
 }
 
 const mockAOOTA: AOOTAClassification = {

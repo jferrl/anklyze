@@ -3,10 +3,6 @@ import type { ComparisonScenario } from '@/types';
 import { cn } from '@/lib/utils';
 import {
   getFractureDescription,
-  getDanisWeberDescription,
-  getLaugeHansenFullName,
-  getAOOTADescription,
-  getBartonicekDescription,
 } from '@/utils/classificationTranslations';
 
 interface ComparisonViewProps {
@@ -114,8 +110,8 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
           {scenarios.map((scenario) => (
             <ClassificationValue
               key={scenario.id}
-              value={scenario.result.lauge_hansen?.type || getLaugeHansenFullName(t, '', scenario.result.lauge_hansen?.ambiguous)}
-              subtitle={scenario.result.lauge_hansen && getLaugeHansenFullName(t, scenario.result.lauge_hansen.type, scenario.result.lauge_hansen.ambiguous)}
+              value={scenario.result.lauge_hansen?.type}
+              subtitle={undefined}
               isDifferent={lhDifferent}
               colors={classificationColors.laugeHansen}
             />
@@ -136,7 +132,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.danis_weber?.type}
-              subtitle={scenario.result.danis_weber && getDanisWeberDescription(t, scenario.result.danis_weber.type)}
+              subtitle={undefined}
               isDifferent={dwDifferent}
               colors={classificationColors.danisWeber}
             />
@@ -157,7 +153,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.ao_ota?.code}
-              subtitle={scenario.result.ao_ota && getAOOTADescription(t, scenario.result.ao_ota.code)}
+              subtitle={undefined}
               isDifferent={aoDifferent}
               colors={classificationColors.aoota}
             />
@@ -178,7 +174,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.bartonicek?.type}
-              subtitle={scenario.result.bartonicek && getBartonicekDescription(t, scenario.result.bartonicek.type)}
+              subtitle={undefined}
               isDifferent={bartDifferent}
               colors={classificationColors.bartonicek}
             />

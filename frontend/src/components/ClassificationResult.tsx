@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Info, AlertTriangle, XCircle } from 'lucide-react';
+import { XCircle } from 'lucide-react';
 import type { ClassificationResult as Result } from '@/types';
 import {
   Card,
@@ -9,20 +9,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
 import { cn } from '@/lib/utils';
 import {
   getFractureDescription,
-  getDanisWeberDescription,
   getLaugeHansenFullName,
-  getLaugeHansenDescription,
-  getAOOTADescription,
   getAOOTADisplayName,
-  getBartonicekDescription,
 } from '@/utils/classificationTranslations';
 
 interface ClassificationResultProps {
@@ -97,99 +88,32 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
 
       {/* Lauge-Hansen */}
       {result.lauge_hansen && (
-        <>
-          {result.lauge_hansen.ambiguous ? (
-            // Ambiguous case — always show yellow/orange warning banner
-            <Alert
-              className="question-card-enter border-l-4 border-l-amber-500 dark:border-l-amber-400 bg-amber-50 dark:bg-amber-950/20 w-full max-w-full"
-              style={{ animationDelay: '0.1s' }}
-            >
-              <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              <AlertTitle className="text-amber-900 dark:text-amber-100">
-                {t('results.ambiguousBanner.title')}
-              </AlertTitle>
-              <AlertDescription className="space-y-3">
-                <p className="text-amber-800 dark:text-amber-200">
-                  {result.lauge_hansen.ambiguous_reason_key
-                    ? t(`results.ambiguousReasons.${result.lauge_hansen.ambiguous_reason_key}`)
-                    : t('results.ambiguousBanner.genericReason')}
-                </p>
-                {/* Show possible types if present (existing behavior preserved) */}
-                {result.lauge_hansen.possible_types && result.lauge_hansen.possible_types.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-semibold text-amber-900 dark:text-amber-100">
-                      {t('results.possibleTypes')}:
-                    </p>
-                    <div className="space-y-2">
-                      {result.lauge_hansen.possible_types.map((type) => (
-                        <div
-                          key={type}
-                          className="p-3 rounded-md bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800"
-                        >
-                          <p className="font-semibold text-amber-900 dark:text-amber-100">
-                            {type} - {getLaugeHansenFullName(t, type)}
-                          </p>
-                          <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                            {getLaugeHansenDescription(t, type)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </AlertDescription>
-            </Alert>
-          ) : (
-            // Definitive classification
-            <Card
-              className={cn(
-                "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter w-full max-w-full",
-                classificationStyles.laugeHansen.border
-              )}
-              style={{ animationDelay: '0.1s' }}
-            >
-              <div className={cn(
-                "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
-                classificationStyles.laugeHansen.glow
-              )} />
-              <CardHeader className="relative">
-                <CardTitle className={classificationStyles.laugeHansen.title}>{t('results.laugeHansen.title')}</CardTitle>
-                <CardDescription>{t('results.laugeHansen.description')}</CardDescription>
-              </CardHeader>
-              <CardContent className="relative">
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <p className={cn(
-                      "text-3xl font-bold mb-1 cursor-help inline-flex items-center gap-2 transition-colors",
-                      classificationStyles.laugeHansen.hover
-                    )}>
-                      {result.lauge_hansen.type === 'not_classifiable'
-                        ? getLaugeHansenFullName(t, result.lauge_hansen.type)
-                        : result.lauge_hansen.type || getLaugeHansenFullName(t, '', result.lauge_hansen.ambiguous)}
-                      <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                    </p>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80 glass-card">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">
-                        {getLaugeHansenFullName(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {getLaugeHansenDescription(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
-                      </p>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-                <p className="text-lg mb-2">
-                  {getLaugeHansenFullName(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
-                </p>
-                <p className="text-muted-foreground">
-                  {getLaugeHansenDescription(t, result.lauge_hansen.type, result.lauge_hansen.ambiguous)}
-                </p>
-              </CardContent>
-            </Card>
+        <Card
+          className={cn(
+            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter w-full max-w-full",
+            classificationStyles.laugeHansen.border
           )}
-        </>
+          style={{ animationDelay: '0.1s' }}
+        >
+          <div className={cn(
+            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+            classificationStyles.laugeHansen.glow
+          )} />
+          <CardHeader className="relative">
+            <CardTitle className={classificationStyles.laugeHansen.title}>{t('results.laugeHansen.title')}</CardTitle>
+            <CardDescription>{t('results.laugeHansen.description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="relative">
+            <p className="text-3xl font-bold mb-1">
+              {result.lauge_hansen.type === 'not_classifiable'
+                ? getLaugeHansenFullName(t, result.lauge_hansen.type)
+                : result.lauge_hansen.type}
+            </p>
+            <p className="text-lg mb-2">
+              {getLaugeHansenFullName(t, result.lauge_hansen.type)}
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Danis-Weber */}
@@ -210,27 +134,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <CardDescription>{t('results.danisWeber.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className={cn(
-                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
-                  classificationStyles.danisWeber.hover
-                )}>
-                  {result.danis_weber.type}
-                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 glass-card">
-                <div className="space-y-2">
-                  <h4 className="font-semibold">{result.danis_weber.type}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {getDanisWeberDescription(t, result.danis_weber.type)}
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            <p className="text-muted-foreground">
-              {getDanisWeberDescription(t, result.danis_weber.type)}
+            <p className="text-3xl font-bold mb-2">
+              {result.danis_weber.type}
             </p>
           </CardContent>
         </Card>
@@ -254,27 +159,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <CardDescription>{t('results.aoota.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className={cn(
-                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
-                  classificationStyles.aoota.hover
-                )}>
-                  {getAOOTADisplayName(t, result.ao_ota.code)}
-                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 glass-card">
-                <div className="space-y-2">
-                  <h4 className="font-semibold">{getAOOTADisplayName(t, result.ao_ota.code)}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {getAOOTADescription(t, result.ao_ota.code)}
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            <p className="text-muted-foreground">
-              {getAOOTADescription(t, result.ao_ota.code)}
+            <p className="text-3xl font-bold mb-2">
+              {getAOOTADisplayName(t, result.ao_ota.code)}
             </p>
           </CardContent>
         </Card>
@@ -298,27 +184,8 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <CardDescription>{t('results.bartonicek.description')}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className={cn(
-                  "text-3xl font-bold mb-2 cursor-help inline-flex items-center gap-2 transition-colors",
-                  classificationStyles.bartonicek.hover
-                )}>
-                  {result.bartonicek.type}
-                  <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 glass-card">
-                <div className="space-y-2">
-                  <h4 className="font-semibold">{result.bartonicek.type}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {getBartonicekDescription(t, result.bartonicek.type)}
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            <p className="text-muted-foreground">
-              {getBartonicekDescription(t, result.bartonicek.type)}
+            <p className="text-3xl font-bold mb-2">
+              {result.bartonicek.type}
             </p>
           </CardContent>
         </Card>
