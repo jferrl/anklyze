@@ -41,6 +41,7 @@ func TestCalculateReliabilityMetrics_TwoRaters(t *testing.T) {
 
 	if metrics == nil {
 		t.Fatal("expected metrics, got nil")
+		return
 	}
 
 	if metrics.TotalResponses != 2 {

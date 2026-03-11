@@ -42,6 +42,7 @@ func TestNewAuthAdmin(t *testing.T) {
 
 			if admin == nil {
 				t.Fatal("NewAuthAdmin returned nil")
+				return
 			}
 			if admin.baseURL != tt.wantBaseURL {
 				t.Errorf("baseURL = %q, want %q", admin.baseURL, tt.wantBaseURL)

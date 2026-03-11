@@ -447,6 +447,7 @@ func TestAnalyticsRepository_GetTrends_BasicContract(t *testing.T) {
 
 			if trend == nil {
 				t.Fatal("GetTrends() returned nil")
+				return
 			}
 
 			if trend.Granularity != string(tt.granularity) {

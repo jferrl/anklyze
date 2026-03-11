@@ -88,6 +88,7 @@ func TestClassificationService_Classify(t *testing.T) {
 		}
 		if result == nil {
 			t.Fatal("Classify() returned nil result")
+			return
 		}
 		if result.FractureType != "unimaleolar_lateral" {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
@@ -215,6 +216,7 @@ func TestClassificationService_ClassifyAndSave(t *testing.T) {
 		}
 		if resp == nil {
 			t.Fatal("ClassifyAndSave() returned nil response")
+			return
 		}
 		if resp.CaseID != caseID {
 			t.Errorf("CaseID = %v, want %v", resp.CaseID, caseID)

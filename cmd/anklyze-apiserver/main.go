@@ -147,6 +147,7 @@ func main() {
 	jwksReady := &atomic.Bool{}
 	jwksReady.Store(true) // default: ready (non-production or no auth)
 
+	var probeCancel context.CancelFunc
 	if cfg.IsProduction() && authValidator != nil {
 		jwksURL := cfg.SupabaseURL + "/auth/v1/.well-known/jwks.json"
 		if err := auth.ProbeJWKS(ctx, jwksURL); err != nil {
@@ -154,8 +155,8 @@ func main() {
 			slog.Warn("JWKS endpoint unreachable at startup — auth may reject tokens until resolved",
 				"url", jwksURL, "error", err)
 			// Create a cancellable context for the retry goroutine
-			probeCtx, probeCancel := context.WithCancel(context.Background())
-			defer probeCancel()
+			probeCtx, cancel := context.WithCancel(context.Background())
+			probeCancel = cancel
 			go auth.RetryJWKSProbe(probeCtx, jwksURL, jwksReady)
 		} else {
 			slog.Info("JWKS endpoint reachable", "url", jwksURL)
@@ -168,6 +169,9 @@ func main() {
 		s3Storage, err := storage.NewS3Storage(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.StudyBucketName, cfg.S3UseSSL)
 		if err != nil {
 			slog.Error("failed to initialize S3 storage", "error", err)
+			if probeCancel != nil {
+				probeCancel()
+			}
 			os.Exit(1)
 		}
 		caseStorage = s3Storage
@@ -254,6 +258,11 @@ func main() {
 	}
 	if err := caseResponseRepo.Close(); err != nil {
 		slog.Error("failed to close case response repository", "error", err)
+	}
+
+	// Stop JWKS retry probe goroutine if running
+	if probeCancel != nil {
+		probeCancel()
 	}
 
 	// Close auth validator
