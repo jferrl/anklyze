@@ -526,6 +526,6 @@ func TestConfigHelperMethods(t *testing.T) {
 			if got := tt.config.HasSupabase(); got != tt.checks["HasSupabase"] {
 				t.Errorf("HasSupabase() = %v, want %v", got, tt.checks["HasSupabase"])
 			}
-			})
+		})
 	}
 }
