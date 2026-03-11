@@ -85,8 +85,12 @@ INFRASINDESMAL_MORPHOLOGY = {
 
 LATERAL_SUBTYPE = {
     'Simple': 'domain.LateralSubtypeSimple',
+    'Fractura simple': 'domain.LateralSubtypeSimple',
     'Rotura de sindesmosis': 'domain.LateralSubtypeSyndesmosisRupture',
+    'Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)': 'domain.LateralSubtypeSyndesmosisRupture',
     'Ala de mariposa / cuña': 'domain.LateralSubtypeButterfly',
+    'Multifragmentaria': 'domain.LateralSubtypeButterfly',
+    'Fractura en ala de maliposa/multifragmentaria': 'domain.LateralSubtypeButterfly',
 }
 
 MEDIAL_SUBTYPE = {
@@ -281,18 +285,19 @@ def clicks_to_input(clicks, branch):
             else:
                 fields['LateralMorphology'] = map_lateral_morphology(label, branch)
 
-        # Suprasindesmal type
+        # Suprasindesmal type or lateral subtype
         elif q.strip() == '¿De qué tipo?':
-            # Could be suprasindesmal type or lateral subtype
-            # Check context: if previous click was a fibula trace or suprasindesmal level
+            # Disambiguate: suprasindesmal type vs lateral subtype (transindesmal path)
             prev_labels = [clicks[j]['label'] for j in range(max(0, i-3), i) if clicks[j].get('label')]
-            if any('Suprasindesmal' in pl or 'Proximal' in pl or 'Diafisaria' in pl or 'Multifragmentaria' in pl
-                   for pl in prev_labels):
+            is_supra_context = any('Suprasindesmal' in pl or 'Proximal' in pl or 'Diafisaria' in pl
+                   for pl in prev_labels)
+            is_trans_context = any('Transindesmal' in pl for pl in prev_labels)
+            if is_supra_context and not is_trans_context:
                 fields['SuprasindesmalType'] = SUPRASINDESMAL_TYPE.get(label, f'UNKNOWN:{label}')
-            elif label in SUPRASINDESMAL_TYPE:
-                fields['SuprasindesmalType'] = SUPRASINDESMAL_TYPE[label]
             elif label in LATERAL_SUBTYPE:
                 fields['LateralSubtype'] = LATERAL_SUBTYPE[label]
+            elif label in SUPRASINDESMAL_TYPE:
+                fields['SuprasindesmalType'] = SUPRASINDESMAL_TYPE[label]
 
         # Fibula trace pattern
         elif is_question(q, 'trazo') and is_question(q, 'peroné'):
@@ -354,6 +359,7 @@ def build_expected_checks(expected, fracture_type):
         go_val = WEBER_MAP[weber]
         checks.append(f'\t\t\tif result.DanisWeber == nil {{')
         checks.append(f'\t\t\t\tt.Fatal("DanisWeber is nil, want {weber}")')
+        checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
         checks.append(f'\t\t\tif result.DanisWeber.Type != {go_val} {{')
         checks.append(f'\t\t\t\tt.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, {go_val})')
@@ -369,6 +375,7 @@ def build_expected_checks(expected, fracture_type):
         go_val = LH_MAP[lh]
         checks.append(f'\t\t\tif result.LaugeHansen == nil {{')
         checks.append(f'\t\t\t\tt.Fatal("LaugeHansen is nil, want {lh}")')
+        checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
         checks.append(f'\t\t\tif result.LaugeHansen.Type != {go_val} {{')
         checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, {go_val})')
@@ -376,6 +383,7 @@ def build_expected_checks(expected, fracture_type):
     elif lh == 'no clasificable':
         checks.append(f'\t\t\tif result.LaugeHansen == nil {{')
         checks.append(f'\t\t\t\tt.Fatal("LaugeHansen is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
         checks.append(f'\t\t\tif result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {{')
         checks.append(f'\t\t\t\tt.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)')
@@ -392,6 +400,7 @@ def build_expected_checks(expected, fracture_type):
         if go_val:
             checks.append(f'\t\t\tif result.AOOTA == nil {{')
             checks.append(f'\t\t\t\tt.Fatal("AOOTA is nil, want {ao}")')
+            checks.append(f'\t\t\t\treturn')
             checks.append(f'\t\t\t}}')
             checks.append(f'\t\t\tif result.AOOTA.Code != {go_val} {{')
             checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, {go_val})')
@@ -402,6 +411,7 @@ def build_expected_checks(expected, fracture_type):
         # "no clasificable" → expect AOOTANotClassifiable
         checks.append(f'\t\t\tif result.AOOTA == nil {{')
         checks.append(f'\t\t\t\tt.Fatal("AOOTA is nil, want no clasificable")')
+        checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
         checks.append(f'\t\t\tif result.AOOTA.Code != domain.AOOTANotClassifiable {{')
         checks.append(f'\t\t\t\tt.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)')
@@ -418,6 +428,7 @@ def build_expected_checks(expected, fracture_type):
         go_val = BARTONICEK_MAP[bart]
         checks.append(f'\t\t\tif result.Bartonicek == nil {{')
         checks.append(f'\t\t\t\tt.Fatal("Bartonicek is nil, want {bart}")')
+        checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
         checks.append(f'\t\t\tif result.Bartonicek.Type != {go_val} {{')
         checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, {go_val})')
@@ -496,6 +507,7 @@ def main():
                 lines.append(f'\t\t}}')
                 lines.append(f'\t\tif result == nil {{')
                 lines.append(f'\t\t\tt.Fatal("Classify() returned nil")')
+                lines.append(f'\t\t\treturn')
                 lines.append(f'\t\t}}')
                 lines.append(expected_checks)
                 lines.append(f'\t}})')

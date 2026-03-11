@@ -559,6 +559,7 @@ func TestCase_CompareWithReference(t *testing.T) {
 
 			if got == nil {
 				t.Fatal("CompareWithReference() = nil, want non-nil result")
+				return
 			}
 
 			if got.DanisWeberMatch != tt.wantDW {
@@ -609,6 +610,7 @@ func TestCase_CompareWithReference_PartialSystems(t *testing.T) {
 	got := c.CompareWithReference(userResult)
 	if got == nil {
 		t.Fatal("CompareWithReference() = nil, want non-nil result")
+		return
 	}
 
 	if !got.DanisWeberMatch {
@@ -646,6 +648,7 @@ func TestCase_CompareWithReference_NoOverlappingSystems(t *testing.T) {
 	got := c.CompareWithReference(userResult)
 	if got == nil {
 		t.Fatal("CompareWithReference() = nil, want non-nil result")
+		return
 	}
 
 	// total == 0, so OverallAccuracy must remain 0.0.
