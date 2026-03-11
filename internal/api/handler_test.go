@@ -227,10 +227,10 @@ func TestHandler_ClassifyFracture_MedialOnly(t *testing.T) {
 			expectedLaugeHansen: domain.LaugeHansenSA,
 		},
 		{
-			name:             "transverse medial morphology",
+			name:                "transverse medial morphology",
 			medialMorphology:    domain.MedialMorphologyTransverse,
-			expectedAOOTANil:    true,                               // AO not classifiable for medial-only
-			expectedLaugeHansen: domain.LaugeHansenNotClassifiable,  // LH not classifiable for transverse medial
+			expectedAOOTANil:    true,                              // AO not classifiable for medial-only
+			expectedLaugeHansen: domain.LaugeHansenNotClassifiable, // LH not classifiable for transverse medial
 		},
 	}
 
