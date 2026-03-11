@@ -34,22 +34,6 @@ func NewS3Storage(endpoint, accessKey, secretKey, bucketName string, useSSL bool
 	}, nil
 }
 
-// EnsureBucket creates the bucket if it does not exist.
-func (s *S3Storage) EnsureBucket(ctx context.Context) error {
-	exists, err := s.client.BucketExists(ctx, s.bucketName)
-	if err != nil {
-		return fmt.Errorf("failed to check bucket %s: %w", s.bucketName, err)
-	}
-	if exists {
-		return nil
-	}
-
-	if err := s.client.MakeBucket(ctx, s.bucketName, minio.MakeBucketOptions{}); err != nil {
-		return fmt.Errorf("failed to create bucket %s: %w", s.bucketName, err)
-	}
-	return nil
-}
-
 // Upload uploads a file to the specified path in the bucket.
 func (s *S3Storage) Upload(ctx context.Context, path string, reader io.Reader, contentType string, size int64) error {
 	opts := minio.PutObjectOptions{

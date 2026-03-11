@@ -171,10 +171,6 @@ func main() {
 			slog.Error("failed to initialize S3 storage", "error", err)
 			os.Exit(1)
 		}
-		if err := s3Storage.EnsureBucket(ctx); err != nil {
-			slog.Error("failed to ensure S3 bucket exists", "error", err)
-			os.Exit(1)
-		}
 		caseStorage = s3Storage
 		slog.Info("S3 storage enabled", "endpoint", cfg.S3Endpoint, "bucket", cfg.S3Bucket)
 	case cfg.HasSupabaseStorage():
