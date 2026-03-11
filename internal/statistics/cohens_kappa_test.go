@@ -168,6 +168,7 @@ func TestCohensKappaWithCI_Basic(t *testing.T) {
 	// CI should exist
 	if ci == nil {
 		t.Fatal("expected confidence interval, got nil")
+		return
 	}
 
 	// CI should be valid
@@ -248,6 +249,7 @@ func TestCohensKappaWithCI_DifferentConfidenceLevels(t *testing.T) {
 
 	if ci90 == nil || ci95 == nil || ci99 == nil {
 		t.Fatal("expected all CIs to exist")
+		return
 	}
 
 	width90 := ci90.Upper - ci90.Lower

@@ -118,6 +118,7 @@ func TestCalculateCategoryMetrics_Basic(t *testing.T) {
 	metricsA := metrics["A"]
 	if metricsA == nil {
 		t.Fatal("expected metrics for category A, got nil")
+		return
 	}
 
 	// Sensitivity = TP / (TP + FN) = 5 / (5 + 1) = 0.8333

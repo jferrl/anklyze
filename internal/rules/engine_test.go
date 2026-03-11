@@ -49,6 +49,7 @@ func TestEngine_Classify_NoFractureSelected(t *testing.T) {
 			}
 			if result == nil {
 				t.Fatal("Classify() returned nil result")
+				return
 			}
 			expectedType := "none_selected"
 			if result.FractureType != expectedType {

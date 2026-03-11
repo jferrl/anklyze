@@ -16,31 +16,26 @@ func NewEngine() *Engine {
 // Classify applies the classification rules based on the decision tree from the flow diagram
 func (e *Engine) Classify(input domain.FractureInput) (*domain.ClassificationResult, error) {
 	var result *domain.ClassificationResult
-	var err error
 
 	switch input.InvolvedMalleoli {
 	case domain.InvolvedPosteriorOnly:
-		result, err = e.classifyPosteriorOnly(input)
+		result = e.classifyPosteriorOnly(input)
 	case domain.InvolvedMedialOnly:
-		result, err = e.classifyMedialOnly(input)
+		result = e.classifyMedialOnly(input)
 	case domain.InvolvedLateralOnly:
-		result, err = e.classifyLateralOnly(input)
+		result = e.classifyLateralOnly(input)
 	case domain.InvolvedMedialPosterior:
-		result, err = e.classifyMedialPosterior(input)
+		result = e.classifyMedialPosterior(input)
 	case domain.InvolvedLateralPosterior:
-		result, err = e.classifyLateralPosterior(input)
+		result = e.classifyLateralPosterior(input)
 	case domain.InvolvedLateralMedial:
-		result, err = e.classifyLateralMedial(input)
+		result = e.classifyLateralMedial(input)
 	case domain.InvolvedTrimaleolar:
-		result, err = e.classifyTrimaleolar(input)
+		result = e.classifyTrimaleolar(input)
 	default:
 		return &domain.ClassificationResult{
 			FractureType: "none_selected",
 		}, nil
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	normalizeResult(result)
@@ -69,7 +64,7 @@ func normalizeResult(r *domain.ClassificationResult) {
 }
 
 // classifyPosteriorOnly handles posterior malleolus only fractures
-func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) *domain.ClassificationResult {
 	if input.ArticularInvolvement == domain.ArticularLargeWithExtension {
 		aoCode := domain.AOOTA43B1
 		if input.HasArticularDepression != nil && *input.HasArticularDepression {
@@ -80,7 +75,7 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.Clas
 			AOOTA: &domain.AOOTAClassification{
 				Code: aoCode,
 			},
-		}, nil
+		}
 	}
 
 	// <1/3 without metaphyseal extension: AO no clasificable, LH PA, Bartonicek from CT
@@ -98,11 +93,11 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) (*domain.Clas
 		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 	}
 
-	return result, nil
+	return result
 }
 
 // classifyMedialOnly handles medial malleolus only fractures
-func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyMedialOnly(input domain.FractureInput) *domain.ClassificationResult {
 	if input.ArticularInvolvement == domain.ArticularLargeWithExtension {
 		aoCode := domain.AOOTA43B1
 		if input.HasArticularDepression != nil && *input.HasArticularDepression {
@@ -113,7 +108,7 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 			AOOTA: &domain.AOOTAClassification{
 				Code: aoCode,
 			},
-		}, nil
+		}
 	}
 
 	// <1/3 without metaphyseal extension: morphology path
@@ -136,11 +131,11 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) (*domain.Classif
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 // classifyLateralOnly handles lateral malleolus only fractures
-func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyLateralOnly(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_lateral",
 	}
@@ -219,11 +214,11 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) (*domain.Classi
 		result.AOOTA = getAOOTAForSuprasindesmal(input.SuprasindesmalType)
 	}
 
-	return result, nil
+	return result
 }
 
 // classifyMedialPosterior handles medial + posterior fractures
-func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyMedialPosterior(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_medial_posterior",
 	}
@@ -238,7 +233,7 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
-		return result, nil
+		return result
 	}
 
 	// CT available → branch on posterior fragment type
@@ -247,7 +242,7 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
 		}
-		return result, nil
+		return result
 	}
 
 	// Standard 4 posterior types → AO no clasificable + LH PA + Bartonicek (per 2026-02-28 flow)
@@ -256,11 +251,11 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) (*domain.Cl
 	}
 	result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 
-	return result, nil
+	return result
 }
 
 // classifyLateralPosterior handles lateral + posterior fractures
-func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyLateralPosterior(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_lateral_posterior",
 		// All lateral+posterior paths: AO = no clasificable per drawio 2026-02-28
@@ -280,13 +275,13 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 
 		if input.HasCTScan == nil || !*input.HasCTScan {
 			// No CT → AO no clasificable, LH SA, Weber A
-			return result, nil
+			return result
 		}
 
 		// CT available → Bartonicek from posterior fracture type per drawio 2026-02-28
 		result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 
-		return result, nil
+		return result
 
 	case domain.FibularLevelTransindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
@@ -338,11 +333,11 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) (*domain.C
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 // classifyLateralMedial handles lateral + medial fractures
-func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyLateralMedial(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_lateral_medial",
 	}
@@ -359,7 +354,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
 		}
-		return result, nil
+		return result
 	}
 
 	switch input.FibularLevel {
@@ -381,7 +376,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenSA,
 		}
-		return result, nil
+		return result
 
 	case domain.FibularLevelSuprasindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
@@ -418,7 +413,7 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 			}
 			result.AOOTA = getAOOTAForSuprasindesmalWithMedialSubtype(input.SuprasindesmalType, input.MedialSubtype)
 		}
-		return result, nil
+		return result
 
 	case domain.FibularLevelTransindesmal:
 		// Transindesmal → check morphology
@@ -491,11 +486,11 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) (*domain.Clas
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 // classifyTrimaleolar handles trimaleolar fractures
-func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.ClassificationResult, error) {
+func (e *Engine) classifyTrimaleolar(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "trimaleolar",
 	}
@@ -524,7 +519,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		if input.HasCTScan != nil && *input.HasCTScan {
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
-		return result, nil
+		return result
 
 	case domain.FibularLevelSuprasindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
@@ -554,7 +549,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 			result.Bartonicek = getBartonicekFromPosteriorType(input.PosteriorFractureType)
 		}
 		result.AOOTA = getAOOTAForSuprasindesmalTrimaleolar(input.SuprasindesmalType)
-		return result, nil
+		return result
 
 	case domain.FibularLevelTransindesmal:
 		// Transindesmal → check morphology
@@ -593,7 +588,7 @@ func (e *Engine) classifyTrimaleolar(input domain.FractureInput) (*domain.Classi
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 // Helper functions
