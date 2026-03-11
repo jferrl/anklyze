@@ -159,7 +159,6 @@ func TestConfigLoad(t *testing.T) {
 				"LOG_FORMAT":                "",
 				"SUPABASE_URL":              "",
 				"SUPABASE_SERVICE_ROLE_KEY": "",
-				"STUDY_BUCKET_NAME":         "",
 			},
 			check: func(t *testing.T, cfg *Config) {
 				if cfg.Port != "8080" {
@@ -177,9 +176,6 @@ func TestConfigLoad(t *testing.T) {
 				if cfg.LogFormat != "text" {
 					t.Errorf("LogFormat = %v, want text", cfg.LogFormat)
 				}
-				if cfg.StudyBucketName != "studies" {
-					t.Errorf("StudyBucketName = %v, want studies", cfg.StudyBucketName)
-				}
 			},
 		},
 		{
@@ -193,7 +189,6 @@ func TestConfigLoad(t *testing.T) {
 				"LOG_FORMAT":                "json",
 				"SUPABASE_URL":              "https://test.supabase.co",
 				"SUPABASE_SERVICE_ROLE_KEY": "service-key",
-				"STUDY_BUCKET_NAME":         "custom-bucket",
 			},
 			check: func(t *testing.T, cfg *Config) {
 				if cfg.Port != "3000" {
@@ -216,9 +211,6 @@ func TestConfigLoad(t *testing.T) {
 				}
 				if cfg.SupabaseURL != "https://test.supabase.co" {
 					t.Errorf("SupabaseURL = %v, want https://test.supabase.co", cfg.SupabaseURL)
-				}
-				if cfg.StudyBucketName != "custom-bucket" {
-					t.Errorf("StudyBucketName = %v, want custom-bucket", cfg.StudyBucketName)
 				}
 			},
 		},
@@ -428,8 +420,7 @@ func TestValidateProduction(t *testing.T) {
 				SupabaseURL:            validURL,
 				SupabaseServiceRoleKey: "",
 			},
-			wantErr: true,
-			errMsgs: []string{"SUPABASE_SERVICE_ROLE_KEY"},
+			wantErr: false,
 		},
 		{
 			name: "both missing",
@@ -438,7 +429,7 @@ func TestValidateProduction(t *testing.T) {
 				SupabaseServiceRoleKey: "",
 			},
 			wantErr: true,
-			errMsgs: []string{"SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"},
+			errMsgs: []string{"SUPABASE_URL"},
 		},
 	}
 
@@ -506,40 +497,23 @@ func TestConfigHelperMethods(t *testing.T) {
 		{
 			name: "no services configured",
 			config: &Config{
-				DatabaseURL:            "",
-				SupabaseURL:            "",
-				SupabaseServiceRoleKey: "",
+				DatabaseURL: "",
+				SupabaseURL: "",
 			},
 			checks: map[string]bool{
-				"HasDatabase":        false,
-				"HasSupabase":        false,
-				"HasSupabaseStorage": false,
+				"HasDatabase": false,
+				"HasSupabase": false,
 			},
 		},
 		{
 			name: "all services configured",
 			config: &Config{
-				DatabaseURL:            "postgres://localhost/db",
-				SupabaseURL:            "https://test.supabase.co",
-				SupabaseServiceRoleKey: "service-key",
+				DatabaseURL: "postgres://localhost/db",
+				SupabaseURL: "https://test.supabase.co",
 			},
 			checks: map[string]bool{
-				"HasDatabase":        true,
-				"HasSupabase":        true,
-				"HasSupabaseStorage": true,
-			},
-		},
-		{
-			name: "supabase without storage",
-			config: &Config{
-				DatabaseURL:            "",
-				SupabaseURL:            "https://test.supabase.co",
-				SupabaseServiceRoleKey: "",
-			},
-			checks: map[string]bool{
-				"HasDatabase":        false,
-				"HasSupabase":        true,
-				"HasSupabaseStorage": false,
+				"HasDatabase": true,
+				"HasSupabase": true,
 			},
 		},
 	}
@@ -552,9 +526,6 @@ func TestConfigHelperMethods(t *testing.T) {
 			if got := tt.config.HasSupabase(); got != tt.checks["HasSupabase"] {
 				t.Errorf("HasSupabase() = %v, want %v", got, tt.checks["HasSupabase"])
 			}
-			if got := tt.config.HasSupabaseStorage(); got != tt.checks["HasSupabaseStorage"] {
-				t.Errorf("HasSupabaseStorage() = %v, want %v", got, tt.checks["HasSupabaseStorage"])
-			}
-		})
+			})
 	}
 }

@@ -18,16 +18,14 @@ type Config struct {
 	LogFormat       string
 	AppEnv          string // Application environment (e.g., "production", "development")
 	// Supabase Auth configuration
-	SupabaseURL string // Supabase project URL (e.g., https://xxx.supabase.co)
-	// Supabase Storage configuration
-	SupabaseServiceRoleKey string // Service role key for storage operations
-	StudyBucketName        string // Bucket name for study images
+	SupabaseURL            string // Supabase project URL (e.g., https://xxx.supabase.co)
+	SupabaseServiceRoleKey string // Service role key for auth admin operations
 	// S3-compatible storage configuration (e.g., RustFS, MinIO)
-	S3Endpoint  string // S3 endpoint (host:port, e.g., "rustfs.example.com:9000")
-	S3AccessKey string // S3 access key
-	S3SecretKey string // S3 secret key
-	S3Bucket    string // S3 bucket name (default: "studies")
-	S3UseSSL    bool   // Whether to use SSL for S3 connections
+	S3Endpoint      string // S3 endpoint (host:port, e.g., "rustfs.example.com:9000")
+	S3AccessKey     string // S3 access key
+	S3SecretKey     string // S3 secret key
+	StudyBucketName string // Bucket name (default: "studies")
+	S3UseSSL        bool   // Whether to use SSL for S3 connections
 }
 
 // Load loads configuration from environment variables.
@@ -43,11 +41,10 @@ func Load() (*Config, error) {
 		AppEnv:                 os.Getenv("APP_ENV"),
 		SupabaseURL:            os.Getenv("SUPABASE_URL"),
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
-		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
 		S3Endpoint:             os.Getenv("S3_ENDPOINT"),
 		S3AccessKey:            os.Getenv("S3_ACCESS_KEY"),
 		S3SecretKey:            os.Getenv("S3_SECRET_KEY"),
-		S3Bucket:               getEnv("S3_BUCKET", "studies"),
+		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
 		S3UseSSL:               getEnv("S3_USE_SSL", "true") == "true",
 	}
 
@@ -109,11 +106,6 @@ func (c *Config) HasSupabase() bool {
 	return c.SupabaseURL != ""
 }
 
-// HasSupabaseStorage returns true if Supabase Storage is configured.
-func (c *Config) HasSupabaseStorage() bool {
-	return c.SupabaseURL != "" && c.SupabaseServiceRoleKey != ""
-}
-
 // HasS3Storage returns true if S3-compatible storage is configured.
 func (c *Config) HasS3Storage() bool {
 	return c.S3Endpoint != "" && c.S3AccessKey != "" && c.S3SecretKey != ""
@@ -132,10 +124,6 @@ func (c *Config) ValidateProduction() error {
 
 	if c.SupabaseURL == "" {
 		errs = append(errs, "SUPABASE_URL is required in production (SEC-01: auth enforcement)")
-	}
-
-	if c.SupabaseServiceRoleKey == "" {
-		errs = append(errs, "SUPABASE_SERVICE_ROLE_KEY is required in production (SEC-04)")
 	}
 
 	if len(errs) > 0 {

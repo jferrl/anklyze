@@ -87,7 +87,7 @@ func main() {
 
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
-	if cfg.HasSupabaseStorage() {
+	if cfg.HasSupabase() && cfg.SupabaseServiceRoleKey != "" {
 		authAdmin = supabase.NewAuthAdmin(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
 		slog.Info("Supabase auth admin enabled for role syncing")
 	}
@@ -162,21 +162,17 @@ func main() {
 		}
 	}
 
-	// Initialize storage (S3-compatible takes priority over Supabase)
+	// Initialize storage
 	var caseStorage storage.Storage
-	switch {
-	case cfg.HasS3Storage():
-		s3Storage, err := storage.NewS3Storage(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, cfg.S3UseSSL)
+	if cfg.HasS3Storage() {
+		s3Storage, err := storage.NewS3Storage(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.StudyBucketName, cfg.S3UseSSL)
 		if err != nil {
 			slog.Error("failed to initialize S3 storage", "error", err)
 			os.Exit(1)
 		}
 		caseStorage = s3Storage
-		slog.Info("S3 storage enabled", "endpoint", cfg.S3Endpoint, "bucket", cfg.S3Bucket)
-	case cfg.HasSupabaseStorage():
-		caseStorage = storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey, cfg.StudyBucketName)
-		slog.Info("Supabase storage enabled", "bucket", cfg.StudyBucketName)
-	default:
+		slog.Info("S3 storage enabled", "endpoint", cfg.S3Endpoint, "bucket", cfg.StudyBucketName)
+	} else {
 		caseStorage = storage.NewNoOpStorage()
 		slog.Info("no storage configured, case image storage disabled")
 	}
