@@ -3726,11 +3726,11 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want Bartonicek 1")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
 		}
 	})
 

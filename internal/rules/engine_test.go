@@ -521,7 +521,7 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("CT + extraincisural_posteromedial → AO nil + LH PA", func(t *testing.T) {
+	t.Run("CT + extraincisural_posteromedial → AO nil + LH PA + Bartonicek 1", func(t *testing.T) {
 		input := domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			HasCTScan:             &boolTrue,
@@ -531,16 +531,14 @@ func TestEngine_Classify_MedialPosterior(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
-		// AO = nil per drawio 2026-02-28
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTANotClassifiable {
 			t.Errorf("AOOTA.Code = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
-		// LH = PA per drawio 2026-02-28
 		if result.LaugeHansen == nil || result.LaugeHansen.Type != domain.LaugeHansenPA {
 			t.Errorf("LaugeHansen.Type = %v, want PA", result.LaugeHansen)
 		}
-		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekType1)
 		}
 	})
 

@@ -238,9 +238,12 @@ func (e *Engine) classifyMedialPosterior(input domain.FractureInput) *domain.Cla
 
 	// CT available → branch on posterior fragment type
 	if input.PosteriorFractureType == domain.PosteriorExtraincisuralPosteromedial {
-		// Per drawio 2026-02-28: AO = no clasificable, LH = PA
+		// AO = no clasificable, LH = PA, Bartonicek 1
 		result.LaugeHansen = &domain.LaugeHansenClassification{
 			Type: domain.LaugeHansenPA,
+		}
+		result.Bartonicek = &domain.BartonicekClassification{
+			Type: domain.BartonicekType1,
 		}
 		return result
 	}

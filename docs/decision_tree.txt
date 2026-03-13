@@ -92,7 +92,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── Sí
 │   │   │   │   Q: ¿Qué tipo de fractura es el maleolo posterior?
 │   │   │   │   │   ├── Fragmento extraincisural posteromedial
-│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] bimaleolar (Medial + Posterior)
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Fragmento extraincisural posterior
 │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] bimaleolar (Medial + Posterior)
 │   │   │   │   │   ├── Fragmento posterolateral
@@ -267,7 +267,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Avulsión
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
-│   │   │   │   │   │   │   ├── Suprasindesmal
+│   │   │   │   │   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
@@ -339,7 +339,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Avulsión
 │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
-│   │   │   │   │   ├── Suprasindesmal
+│   │   │   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
@@ -529,7 +529,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   ├── No
 │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
 │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
-│   │   │   ├── Suprasindesmal
+│   │   │   ├── Alta (Suprasindesmal)
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
