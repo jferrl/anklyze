@@ -70,7 +70,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
-│   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PA W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)
@@ -78,7 +78,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   ├── Suprasindesmal (a >6cm de superficie articular)
 │   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
-│   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PA W:C Bart:N/C] unimaleolar lateral
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
@@ -152,7 +152,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
-│   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -196,7 +196,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── No
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] bimaleolar (Lateral + Posterior)
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
-│   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -270,7 +270,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   ├── Suprasindesmal
 │   │   │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   │   │   ├── Diafisaria Simple
-│   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
+│   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -290,7 +290,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
 │   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
-│   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -342,7 +342,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   ├── Suprasindesmal
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Diafisaria Simple
-│   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
+│   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -362,7 +362,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Abierta la mortaja
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
-│   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo medial?
 │   │   │   │   │   │   │   │   │   │   │   ├── Fractura del maleolo/avulsión
@@ -532,7 +532,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
-│   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí
@@ -576,7 +576,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   ├── No
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:N/C] trimaleolar
 │   │   │   │   │   ├── Multifragmentaria/ala de mariposa
-│   │   │   │   │   │   Q: ¿Cómo es el trazo principal del peroné?
+│   │   │   │   │   │   Q: ¿Cómo es el trazo principal de la fractura del peroné?
 │   │   │   │   │   │   │   ├── Parasindesmal conminuta (a <6cm de la superficie articular)
 │   │   │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   │   │   ├── Sí

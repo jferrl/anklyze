@@ -123,10 +123,10 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Proximal (1/ proximal de peroné)" vertex="1">
           <mxGeometry height="60" width="264" x="17891.78965163429" y="780" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-40" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-40" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="312" x="16169.456318300958" y="900" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-41" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-41" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="312" x="17169.78965163429" y="900" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-42" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" value="Fractura unimaleolar maleolo lateral&lt;br&gt;AO tipo 44 C3 subtipo no clasificable&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C" vertex="1">
@@ -312,10 +312,10 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-102" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;" value="Fractura bimaleolar (Lateral + Posterior)&lt;br&gt;AO no clasificable&lt;br&gt;Lauge-Hansen PER&lt;br&gt;Weber C&lt;br&gt;Bartonicek 4" vertex="1">
           <mxGeometry height="140" width="392" x="35082.78965163429" y="1400" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-103" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="¿Cómo es el trazo del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-103" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="60" width="232" x="28241.956318300956" y="900" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-104" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-104" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="312" x="32078.289651634288" y="900" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-105" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="¿Tiene TAC?" vertex="1">
@@ -366,10 +366,10 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-119" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Proximal (1/3 proximal peroné)" vertex="1">
           <mxGeometry height="60" width="264" x="39076.62298496763" y="1300" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-120" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-120" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="240" x="36214.789651634295" y="1420" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-121" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-121" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="312" x="37858.789651634295" y="1420" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-123" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué morfología es la fractura del peroné?" vertex="1">
@@ -411,10 +411,10 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-140" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Proximal (1/3 proximal de peroné)" vertex="1">
           <mxGeometry height="60" width="264" x="49260.122984967624" y="780" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-141" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-141" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="240" x="44230.122984967624" y="900" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-142" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal del peroné?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-142" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el trazo principal de la fractura del peroné?" vertex="1">
           <mxGeometry height="80" width="312" x="47194.122984967624" y="900" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-143" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Tiene TAC?" vertex="1">

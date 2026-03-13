@@ -379,7 +379,7 @@ def normalize_labels(branch, clicks):
                 label = 'Proximal'
 
         # --- Fibula trace pattern mapping ---
-        if q == '¿Cómo es el trazo principal del peroné?':
+        if q == '¿Cómo es el trazo principal de la fractura del peroné?':
             if label.startswith('Parasindesmal conminuta'):
                 label = 'Parasindesmal de trazo oblicuo corto/transverso/conminuto'
 
