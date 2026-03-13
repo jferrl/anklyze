@@ -31,12 +31,12 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         chunkFileNames: 'chunks/[name]-[hash].js',
         entryFileNames: 'entries/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
-manualChunks: (id) => {
+        manualChunks: (id) => {
           // All React and React-dependent UI libraries in one chunk to avoid circular deps
           if (id.includes('node_modules/react') ||
               id.includes('node_modules/react-dom') ||
@@ -82,8 +82,5 @@ manualChunks: (id) => {
       'i18next',
       'react-i18next',
     ],
-  },
-  esbuild: {
-    drop: ['console', 'debugger'],
   },
 })
