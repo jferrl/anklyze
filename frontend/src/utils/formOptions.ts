@@ -262,7 +262,7 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'transindesmal', label: t('form.options.fibularLevelHighLow.low') },
   ];
 
-  // Fibular level options for trimaleolar (3 options with "Alta (Suprasindesmal)" label per drawio)
+  // Fibular level options for trimaleolar (3 options with "Suprasindesmal" label per drawio)
   const fibular_levels_tri: SelectOption[] = [
     { value: 'infrasindesmal', label: t('form.options.fibularLevel.infrasindesmal') },
     { value: 'transindesmal', label: t('form.options.fibularLevel.transindesmal') },

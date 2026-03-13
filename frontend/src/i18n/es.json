@@ -185,7 +185,7 @@
         "suprasindesmal": "Suprasindesmal"
       },
       "fibularLevelHighLow": {
-        "high": "Alta (Suprasindesmal)",
+        "high": "Suprasindesmal",
         "low": "Baja (Transindesmal / Infrasindesmal)"
       },
       "fibularLevelForTransverse": {
@@ -262,7 +262,7 @@
     "labels": {
       "yes": "Sí",
       "no": "No",
-      "high": "Alta (Suprasindesmal)",
+      "high": "Suprasindesmal",
       "low": "Baja (Transindesmal / Infrasindesmal)"
     }
   },

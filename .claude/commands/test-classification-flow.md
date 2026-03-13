@@ -101,7 +101,7 @@ Each test case should be structured as:
 - `suprasindesmal` → "Suprasindesmal"
 
 **Fibular Level (High/Low for lateral_medial and trimaleolar):**
-- `suprasindesmal` → "Alta (Suprasindesmal)"
+- `suprasindesmal` → "Suprasindesmal"
 - `transindesmal` → "Baja (Transindesmal / Infrasindesmal)"
 
 **Lateral Morphology (2-option for lateral_only, lateral_posterior):**

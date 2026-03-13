@@ -267,7 +267,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Avulsión
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
-│   │   │   │   │   │   │   ├── Alta (Suprasindesmal)
+│   │   │   │   │   │   │   ├── Suprasindesmal
 │   │   │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
@@ -339,7 +339,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Avulsión
 │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
-│   │   │   │   │   ├── Alta (Suprasindesmal)
+│   │   │   │   │   ├── Suprasindesmal
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?
@@ -529,7 +529,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   ├── No
 │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
 │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] trimaleolar
-│   │   │   ├── Alta (Suprasindesmal)
+│   │   │   ├── Suprasindesmal
 │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   ├── Diafisaria Simple
 │   │   │   │   │   │   Q: ¿Cómo es el trazo del peroné?

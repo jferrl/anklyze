@@ -151,7 +151,7 @@ export interface FormOptions {
   /** Options for medial subtype (bimalleolar paths) */
   medial_subtype: FormOption[];
 
-  /** Options for fibular level in trimaleolar (3 options with "Alta (Suprasindesmal)" label) */
+  /** Options for fibular level in trimaleolar (3 options with "Suprasindesmal" label) */
   fibular_levels_tri: FormOption[];
 
   /** Additional labels and translations */

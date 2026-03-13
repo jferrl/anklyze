@@ -179,7 +179,7 @@
         "suprasindesmal": "Suprasyndesmal"
       },
       "fibularLevelHighLow": {
-        "high": "High (Suprasyndesmotic)",
+        "high": "Suprasyndesmotic",
         "low": "Low (Transsyndesmotic / Infrasyndesmotic)"
       },
       "fibularLevelForTransverse": {
@@ -256,7 +256,7 @@
     "labels": {
       "yes": "Yes",
       "no": "No",
-      "high": "High (Suprasyndesmotic)",
+      "high": "Suprasyndesmotic",
       "low": "Low (Transsyndesmal / Infrasyndesmal)"
     }
   },

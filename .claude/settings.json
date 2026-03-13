@@ -23,7 +23,9 @@
       "mcp__playwright__browser_tabs",
       "Read(//opt/homebrew/**)",
       "Bash(bash .githooks/pre-commit)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(tee /tmp/all_en_keys.txt)",
+      "Bash(grep -rn 't\\(`' frontend/src/ --include='*.ts' --include='*.tsx')"
     ]
   }
 }
