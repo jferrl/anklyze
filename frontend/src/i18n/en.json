@@ -115,7 +115,7 @@
       "articularDepressionMedial": "Is there articular depression?",
       "posteriorPosteromedial": "Is the posterior fragment posteromedial?",
       "infrasindesmalMorphology": "What is the morphology of the fracture?",
-      "infrasindesmalMorphologyLMTri": "What is the lateral malleolus like?",
+      "infrasindesmalMorphologyLMTri": "What is the lateral malleolus fracture like?",
       "lateralSubtype": "What type?",
       "medialSubtype": "What is the medial malleolus like?",
       "hasFibulaHeadShortening": "Shortening at the fibula head level?"

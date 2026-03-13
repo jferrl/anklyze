@@ -2172,7 +2172,7 @@
         <mxCell id="ln2etF4hYXnpLN-lJU8S-147" edge="1" parent="1" source="ln2etF4hYXnpLN-lJU8S-148" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" target="ln2etF4hYXnpLN-lJU8S-150">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ln2etF4hYXnpLN-lJU8S-148" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el maleolo lateral?" vertex="1">
+        <mxCell id="ln2etF4hYXnpLN-lJU8S-148" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es la fractura del maleolo lateral?" vertex="1">
           <mxGeometry height="80" width="240" x="41857.622984967624" y="1160" as="geometry" />
         </mxCell>
         <mxCell id="ln2etF4hYXnpLN-lJU8S-149" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Avulsión" vertex="1">
@@ -2298,7 +2298,7 @@
         <mxCell id="_oBYOCIyM_onSBWCery6-101" edge="1" parent="1" source="_oBYOCIyM_onSBWCery6-102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" target="_oBYOCIyM_onSBWCery6-104">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="_oBYOCIyM_onSBWCery6-102" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es el maleolo lateral?" vertex="1">
+        <mxCell id="_oBYOCIyM_onSBWCery6-102" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Cómo es la fractura del maleolo lateral?" vertex="1">
           <mxGeometry height="80" width="240" x="61726.622984967624" y="640" as="geometry" />
         </mxCell>
         <mxCell id="_oBYOCIyM_onSBWCery6-374" edge="1" parent="1" source="_oBYOCIyM_onSBWCery6-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="_oBYOCIyM_onSBWCery6-323">

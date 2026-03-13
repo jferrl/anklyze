@@ -262,7 +262,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   ├── No
 │   │   │   │   │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   │   │   │   │   ├── Infrasindesmal
-│   │   │   │   │   │   │   │   Q: ¿Cómo es el maleolo lateral?
+│   │   │   │   │   │   │   │   Q: ¿Cómo es la fractura del maleolo lateral?
 │   │   │   │   │   │   │   │   │   ├── Transversa
 │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   │   │   ├── Avulsión
@@ -334,7 +334,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   ├── Transverso/oblicuo/avulsión/abierta mortaja
 │   │   │   │   Q: ¿A qué nivel está la fractura de peroné?
 │   │   │   │   │   ├── Infrasindesmal
-│   │   │   │   │   │   Q: ¿Cómo es el maleolo lateral?
+│   │   │   │   │   │   Q: ¿Cómo es la fractura del maleolo lateral?
 │   │   │   │   │   │   │   ├── Transversa
 │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] bimaleolar (Lateral + Medial)
 │   │   │   │   │   │   │   ├── Avulsión
@@ -498,7 +498,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] trimaleolar
 │   │   │   ├── Infrasindesmal
-│   │   │   │   Q: ¿Cómo es el maleolo lateral?
+│   │   │   │   Q: ¿Cómo es la fractura del maleolo lateral?
 │   │   │   │   │   ├── Transversa
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí
