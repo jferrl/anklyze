@@ -171,11 +171,11 @@ export function getLocalFormOptions(): FormOptions {
   // Posterior fracture types for medial+posterior path (5 options including extraincisural_posteromedial)
   // Uses branch-specific label for extraincisural ("posterior" qualifier per drawio)
   const posterior_fracture_types_medial_posterior: SelectOption[] = [
+    { value: 'extraincisural_posteromedial', label: t('form.options.posteriorType.extraincisural_posteromedial') },
     { value: 'extraincisural', label: t('form.options.posteriorTypeMedPost.extraincisural') },
     { value: 'posterolateral', label: t('form.options.posteriorType.posterolateral') },
     { value: 'posteromedial_posterolateral', label: t('form.options.posteriorType.posteromedial_posterolateral') },
     { value: 'large_posterolateral', label: t('form.options.posteriorType.large_posterolateral') },
-    { value: 'extraincisural_posteromedial', label: t('form.options.posteriorType.extraincisural_posteromedial') },
   ];
 
   // Medial morphology options
