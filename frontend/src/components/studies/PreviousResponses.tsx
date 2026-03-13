@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
 import type { CaseResponse } from '@/types';
 import {
   getDanisWeberDisplayName,
   getLaugeHansenFullName,
   getAOOTADisplayName,
+  getAOOTASubtypeLabel,
   getBartonicekDisplayName,
 } from '@/utils/classificationTranslations';
 
@@ -66,9 +68,14 @@ export function PreviousResponses({ responses }: PreviousResponsesProps) {
                     </div>
                   )}
                   {response.classification.ao_ota && (
-                    <div>
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium">AO/OTA:</span>{' '}
                       {getAOOTADisplayName(t, response.classification.ao_ota.code)}
+                      {getAOOTASubtypeLabel(t, response.classification.ao_ota.code) && (
+                        <Badge variant="outline" className="border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-600 dark:bg-violet-950/40 dark:text-violet-300 text-[10px]">
+                          {getAOOTASubtypeLabel(t, response.classification.ao_ota.code)}
+                        </Badge>
+                      )}
                     </div>
                   )}
                   {response.classification.bartonicek && (

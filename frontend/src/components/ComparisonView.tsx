@@ -3,6 +3,7 @@ import type { ComparisonScenario } from '@/types';
 import { cn } from '@/lib/utils';
 import {
   getFractureDescription,
+  getAOOTASubtypeLabel,
 } from '@/utils/classificationTranslations';
 
 interface ComparisonViewProps {
@@ -153,7 +154,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
             <ClassificationValue
               key={scenario.id}
               value={scenario.result.ao_ota?.code}
-              subtitle={undefined}
+              subtitle={scenario.result.ao_ota ? getAOOTASubtypeLabel(t, scenario.result.ao_ota.code) ?? undefined : undefined}
               isDifferent={aoDifferent}
               colors={classificationColors.aoota}
             />

@@ -15,6 +15,13 @@ export function getLaugeHansenFullName(t: TFunction, type: string): string {
 }
 
 /**
+ * Check if an AO/OTA code includes a subtype (has a dot notation like 44-B1.1)
+ */
+export function isAOOTASubtype(code: string): boolean {
+  return code.includes('.');
+}
+
+/**
  * Get the translated AO/OTA display name (for "not_classifiable" → "No clasificable")
  */
 export function getAOOTADisplayName(t: TFunction, code: string): string {
@@ -22,6 +29,16 @@ export function getAOOTADisplayName(t: TFunction, code: string): string {
     return t('results.classifications.aoOta.not_classifiable_name');
   }
   return code;
+}
+
+/**
+ * Get the "subtype not classifiable" label for AO/OTA codes without a subtype
+ */
+export function getAOOTASubtypeLabel(t: TFunction, code: string): string | null {
+  if (code === 'not_classifiable' || isAOOTASubtype(code)) {
+    return null;
+  }
+  return t('results.classifications.aoOta.subtype_not_classifiable');
 }
 
 /**

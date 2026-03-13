@@ -9,11 +9,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
   getFractureDescription,
   getLaugeHansenFullName,
   getAOOTADisplayName,
+  getAOOTASubtypeLabel,
   getDanisWeberDisplayName,
   getBartonicekDisplayName,
 } from '@/utils/classificationTranslations';
@@ -170,6 +172,11 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
             <p className="text-3xl font-bold mb-2">
               {getAOOTADisplayName(t, result.ao_ota.code)}
             </p>
+            {getAOOTASubtypeLabel(t, result.ao_ota.code) && (
+              <Badge variant="outline" className="border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-600 dark:bg-violet-950/40 dark:text-violet-300">
+                {getAOOTASubtypeLabel(t, result.ao_ota.code)}
+              </Badge>
+            )}
           </CardContent>
         </Card>
       )}

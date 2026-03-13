@@ -284,7 +284,8 @@
         "not_classifiable_name": "No clasificable"
       },
       "aoOta": {
-        "not_classifiable_name": "No clasificable"
+        "not_classifiable_name": "No clasificable",
+        "subtype_not_classifiable": "Subtipo no clasificable"
       },
       "bartonicek": {
         "not_classifiable_name": "No clasificable"
