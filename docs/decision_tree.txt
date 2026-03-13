@@ -50,7 +50,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   ├── Fractura de maleolo lateral
 │   │   │   │   │   │   ╰── [AO:44-A1.3 LH:SA W:A Bart:N/C] unimaleolar lateral
 │   │   │   ├── Transindesmal
-│   │   │   │   Q: ¿De qué morfología es la fractura?
+│   │   │   │   Q: ¿De qué morfología es la fractura de peroné?
 │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   Q: ¿De qué tipo?
 │   │   │   │   │   │   │   ├── Fractura simple
@@ -120,7 +120,7 @@ Q: ¿Qué maleolos tiene fracturados?
 │   │   │   │   │   │   │   ├── Gran fragmento triangular posterolateral
 │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:4] bimaleolar (Lateral + Posterior)
 │   │   │   ├── Transindesmal
-│   │   │   │   Q: ¿De qué morfología es la fractura?
+│   │   │   │   Q: ¿De qué morfología es la fractura de peroné?
 │   │   │   │   │   ├── Espiroidea (Baja anterior, alta posterior)
 │   │   │   │   │   │   Q: ¿Tiene TAC?
 │   │   │   │   │   │   │   ├── Sí

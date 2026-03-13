@@ -403,10 +403,10 @@ def normalize_labels(branch, clicks):
                     label = 'Conminuta/ala de mariposa'
 
         # --- Lateral morphology mapping for lateral_only, lateral_posterior ---
-        # These branches use a different question text: "¿De qué morfología es la fractura?"
-        # (without "del peroné"), and also "¿De qué morfología es la fractura del peroné?"
+        # These branches use question text: "¿De qué morfología es la fractura de peroné?"
+        # and also "¿De qué morfología es la fractura del peroné?"
         if branch in ('lateral_only', 'lateral_posterior'):
-            if q in ('¿De qué morfología es la fractura?',
+            if q in ('¿De qué morfología es la fractura de peroné?',
                      '¿De qué morfología es la fractura del peroné?'):
                 if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
                     label = 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta'

@@ -59,7 +59,7 @@ Each test case should be structured as:
   "clicks": [
     {"question": "¿Qué maléolos tiene fracturados?", "label": "Maléolo lateral"},
     {"question": "¿A qué nivel está la fractura?", "label": "Transindesmal"},
-    {"question": "¿De qué morfología es la fractura?", "label": "Espiroidea (Baja anterior, alta posterior)"},
+    {"question": "¿De qué morfología es la fractura de peroné?", "label": "Espiroidea (Baja anterior, alta posterior)"},
     {"question": "Clasificar Fractura", "label": null}
   ],
   "expected": {

@@ -96,7 +96,7 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Suprasindesmal" vertex="1">
           <mxGeometry height="60" width="220" x="17075.622984967624" y="520" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-31" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué morfología es la fractura?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-31" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué morfología es la fractura de peroné?" vertex="1">
           <mxGeometry height="80" width="272" x="14668.456318300958" y="640" as="geometry" />
         </mxCell>
         <mxCell id="_oBYOCIyM_onSBWCery6-288" edge="1" parent="1" source="0S3fIhuK620pGgQrKJa_-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;noEdgeStyle=1;orthogonal=1;" target="ln2etF4hYXnpLN-lJU8S-25">
@@ -150,7 +150,7 @@
         <mxCell id="0S3fIhuK620pGgQrKJa_-48" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿Tiene TAC?" vertex="1">
           <mxGeometry height="80" width="240" x="20809.78965163429" y="640" as="geometry" />
         </mxCell>
-        <mxCell id="0S3fIhuK620pGgQrKJa_-49" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué morfología es la fractura?" vertex="1">
+        <mxCell id="0S3fIhuK620pGgQrKJa_-49" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué morfología es la fractura de peroné?" vertex="1">
           <mxGeometry height="80" width="272" x="24317.28965163429" y="640" as="geometry" />
         </mxCell>
         <mxCell id="0S3fIhuK620pGgQrKJa_-50" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="¿De qué tipo?" vertex="1">
