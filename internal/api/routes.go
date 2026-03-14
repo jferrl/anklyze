@@ -37,6 +37,7 @@ func SetupRoutes(
 	// Prometheus metrics middleware — must be registered before CORS so that
 	// every request, including preflight OPTIONS, is counted.
 	m := metrics.New(prometheus.DefaultRegisterer)
+	router.Use(m.RecoveryMiddleware())
 	router.Use(m.Middleware())
 
 	// CORS middleware

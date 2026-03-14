@@ -203,6 +203,43 @@ func TestRegisterMetricsEndpoint(t *testing.T) {
 	}
 }
 
+func TestMiddleware_RecordsResponseSize(t *testing.T) {
+	m, reg := newTestMetrics(t)
+	r := setupRouter(m)
+
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	r.ServeHTTP(httptest.NewRecorder(), req)
+
+	count := histogramCount(t, reg, "http_response_size_bytes", map[string]string{
+		"method": "GET",
+		"path":   "/health",
+	})
+	if count != 1 {
+		t.Errorf("http_response_size_bytes sample count = %d, want 1", count)
+	}
+}
+
+func TestRecoveryMiddleware_IncrementsCounter(t *testing.T) {
+	m, reg := newTestMetrics(t)
+	r := gin.New()
+	r.Use(m.RecoveryMiddleware())
+	r.Use(m.Middleware())
+	r.GET("/panic", func(c *gin.Context) { panic("test panic") })
+
+	req := httptest.NewRequest(http.MethodGet, "/panic", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("status = %d, want 500", w.Code)
+	}
+
+	got := counterValue(t, reg, "panics_recovered_total", nil)
+	if got != 1 {
+		t.Errorf("panics_recovered_total = %v, want 1", got)
+	}
+}
+
 func TestNew_PanicsOnDuplicateRegistration(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	New(reg) // first registration is fine

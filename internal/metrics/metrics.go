@@ -2,6 +2,7 @@
 package metrics
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -15,6 +16,8 @@ type Metrics struct {
 	requestsTotal    *prometheus.CounterVec
 	requestDuration  *prometheus.HistogramVec
 	requestsInFlight prometheus.Gauge
+	responseSize     *prometheus.HistogramVec
+	panicsTotal      prometheus.Counter
 }
 
 // New creates and registers the application metrics with the given Prometheus
@@ -37,12 +40,25 @@ func New(reg prometheus.Registerer) *Metrics {
 			Name: "http_requests_in_flight",
 			Help: "Current number of HTTP requests being processed.",
 		}),
+
+		responseSize: prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Name:    "http_response_size_bytes",
+			Help:    "HTTP response size in bytes partitioned by method and path.",
+			Buckets: prometheus.ExponentialBuckets(100, 10, 7), // 100B … 100MB
+		}, []string{"method", "path"}),
+
+		panicsTotal: prometheus.NewCounter(prometheus.CounterOpts{
+			Name: "panics_recovered_total",
+			Help: "Total number of panics recovered by the HTTP server.",
+		}),
 	}
 
 	reg.MustRegister(
 		m.requestsTotal,
 		m.requestDuration,
 		m.requestsInFlight,
+		m.responseSize,
+		m.panicsTotal,
 	)
 
 	return m
@@ -67,6 +83,7 @@ func (m *Metrics) Middleware() gin.HandlerFunc {
 				path = "unmatched"
 			}
 			m.requestDuration.WithLabelValues(c.Request.Method, path).Observe(dur)
+			m.responseSize.WithLabelValues(c.Request.Method, path).Observe(float64(c.Writer.Size()))
 			m.requestsTotal.WithLabelValues(
 				c.Request.Method,
 				path,
@@ -75,6 +92,23 @@ func (m *Metrics) Middleware() gin.HandlerFunc {
 		}))
 		defer timer.ObserveDuration()
 
+		c.Next()
+	}
+}
+
+// RecoveryMiddleware returns a Gin middleware that recovers from panics,
+// increments the panics_recovered_total counter, and returns 500 to the client.
+// Use this instead of gin.Recovery() to get observability on panics.
+func (m *Metrics) RecoveryMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+				m.panicsTotal.Inc()
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+					"error": fmt.Sprintf("internal server error: %v", r),
+				})
+			}
+		}()
 		c.Next()
 	}
 }
