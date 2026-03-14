@@ -8,9 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/config"
+	"github.com/jferrl/anklyze/internal/metrics"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
+	"github.com/prometheus/client_golang/prometheus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -32,12 +34,18 @@ func SetupRoutes(
 ) {
 	handler := NewHandler(classificationService, auditRepo, analyticsRepo, dbHealthy, jwksReady)
 
+	// Prometheus metrics middleware — must be registered before CORS so that
+	// every request, including preflight OPTIONS, is counted.
+	m := metrics.New(prometheus.DefaultRegisterer)
+	router.Use(m.Middleware())
+
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	metrics.RegisterMetricsEndpoint(router, prometheus.DefaultGatherer)
 
 	// API routes
 	api := router.Group("/api")
