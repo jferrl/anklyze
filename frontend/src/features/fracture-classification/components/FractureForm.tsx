@@ -16,6 +16,7 @@ import { isFormComplete, calculateProgress } from '../utils/formValidation';
 
 import { useFormState } from '../hooks/useFormState';
 import { useUrlParams } from '../hooks/useUrlParams';
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 
 /**
  * Main FractureForm component for the /classify page.
@@ -50,10 +51,8 @@ export function FractureForm() {
     await classify(input as FractureInput);
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSubmit = async () => {
     if (!isFormComplete(formData) || loading) return;
-
     try {
       setLastInput(formData as FractureInput);
       await classify(formData as FractureInput);
@@ -61,6 +60,20 @@ export function FractureForm() {
       // Error already handled by useClassification
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doSubmit();
+  };
+
+  // Keyboard shortcuts: 1-9 select, Enter submit, Backspace go back
+  useKeyboardNavigation({
+    onGoBack: goBack,
+    onSubmit: doSubmit,
+    canSubmit: isFormComplete(formData) && !loading,
+    canGoBack,
+    enabled: !result && !loading,
+  });
 
   const handleReset = () => {
     clearFormData();

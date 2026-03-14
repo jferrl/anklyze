@@ -4,6 +4,7 @@ import { ChevronLeft, Loader2, Sparkles } from 'lucide-react';
 import type { FractureInput, ClassificationResult } from '@/types';
 import { isFormComplete, calculateProgress } from '@/features/fracture-classification/utils/formValidation';
 import { ClassificationFormQuestions } from '@/features/fracture-classification/components/ClassificationFormQuestions';
+import { useKeyboardNavigation } from '@/features/fracture-classification/hooks/useKeyboardNavigation';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -130,27 +131,36 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
       .join('→');
   }, [formData]);
 
-  const getAnswerTracking = useCallback((): AnswerTracking => ({
-    answerPath: tracking.answerPath,
-    decisionPath: buildDecisionPath(),
-    timePerQuestion: tracking.timePerQuestion,
-    backClicks: tracking.backClicks,
-  }), [tracking, buildDecisionPath]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSubmit = useCallback(async () => {
     if (!isFormComplete(formData)) return;
-
     setFormState(prev => ({ ...prev, loading: true, error: null }));
-
     try {
-      const answerTracking = getAnswerTracking();
+      const answerTracking: AnswerTracking = {
+        answerPath: tracking.answerPath,
+        decisionPath: buildDecisionPath(),
+        timePerQuestion: tracking.timePerQuestion,
+        backClicks: tracking.backClicks,
+      };
       await onClassify(formData as FractureInput, answerTracking);
     } catch (err) {
       setFormState(prev => ({ ...prev, error: err instanceof Error ? err.message : 'Classification failed' }));
     } finally {
       setFormState(prev => ({ ...prev, loading: false }));
     }
+  }, [formData, tracking, buildDecisionPath, onClassify]);
+
+  // Keyboard shortcuts: 1-9 select, Enter submit, Backspace go back
+  useKeyboardNavigation({
+    onGoBack: goBack,
+    onSubmit: doSubmit,
+    canSubmit: isFormComplete(formData) && !loading,
+    canGoBack,
+    enabled: !loading,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doSubmit();
   };
 
   const { currentStep, totalSteps } = calculateProgress(formData);
