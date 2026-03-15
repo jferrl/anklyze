@@ -12,10 +12,7 @@ export * from './study';
 // Core - Error Handling
 // ================================
 export {
-  RateLimitError,
   InputValidationError,
-  AuthRequiredError,
-  ForbiddenError,
   handleApiError,
 } from './core/errorHandling';
 

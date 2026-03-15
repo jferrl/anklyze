@@ -17,7 +17,7 @@ export function getLaugeHansenFullName(t: TFunction, type: string): string {
 /**
  * Check if an AO/OTA code includes a subtype (has a dot notation like 44-B1.1)
  */
-export function isAOOTASubtype(code: string): boolean {
+function isAOOTASubtype(code: string): boolean {
   return code.includes('.');
 }
 
@@ -61,9 +61,3 @@ export function getBartonicekDisplayName(t: TFunction, type: string): string {
   return type;
 }
 
-/**
- * Get the translated impossible reason
- */
-export function getImpossibleReason(t: TFunction, impossibleKey: string): string {
-  return t(`results.impossible.${impossibleKey}`);
-}

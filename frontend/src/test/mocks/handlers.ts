@@ -16,7 +16,7 @@ const API_BASE_URL = 'http://localhost:8080'
 // Classification API Handlers
 // ============================================================================
 
-export const classificationHandlers = [
+const classificationHandlers = [
   // POST /api/classify - Classify a fracture
   http.post(`${API_BASE_URL}/api/classify`, async ({ request }) => {
     await delay(100) // Simulate network latency
@@ -48,7 +48,7 @@ export const classificationHandlers = [
 // Case API Handlers
 // ============================================================================
 
-export const caseHandlers = [
+const caseHandlers = [
   // GET /api/admin/cases - List all cases (admin)
   http.get(`${API_BASE_URL}/api/admin/cases`, async () => {
     await delay(100)
@@ -129,7 +129,7 @@ export const caseHandlers = [
 // Analytics API Handlers
 // ============================================================================
 
-export const analyticsHandlers = [
+const analyticsHandlers = [
   // GET /api/admin/cases/:id/analytics - Get case analytics
   http.get(`${API_BASE_URL}/api/admin/cases/:id/analytics`, async () => {
     await delay(100)
@@ -147,7 +147,7 @@ export const analyticsHandlers = [
 // User API Handlers
 // ============================================================================
 
-export const userHandlers = [
+const userHandlers = [
   // GET /api/profile - Get current user profile
   http.get(`${API_BASE_URL}/api/profile`, async () => {
     await delay(50)
@@ -164,49 +164,6 @@ export const userHandlers = [
     })
   }),
 ]
-
-// ============================================================================
-// Error Handlers (for testing error scenarios)
-// ============================================================================
-
-export const errorHandlers = {
-  // 401 Unauthorized
-  unauthorized: http.post(`${API_BASE_URL}/api/classify`, () => {
-    return HttpResponse.json(
-      { error: 'Unauthorized', message: 'Authentication required' },
-      { status: 401 }
-    )
-  }),
-
-  // 403 Forbidden
-  forbidden: http.post(`${API_BASE_URL}/api/classify`, () => {
-    return HttpResponse.json(
-      { error: 'Forbidden', message: 'Access denied' },
-      { status: 403 }
-    )
-  }),
-
-  // 429 Rate Limited
-  rateLimited: http.post(`${API_BASE_URL}/api/classify`, () => {
-    return HttpResponse.json(
-      { error: 'Rate limit exceeded', message: 'Too many requests' },
-      { status: 429 }
-    )
-  }),
-
-  // 500 Server Error
-  serverError: http.post(`${API_BASE_URL}/api/classify`, () => {
-    return HttpResponse.json(
-      { error: 'Internal server error', message: 'Something went wrong' },
-      { status: 500 }
-    )
-  }),
-
-  // Network Error
-  networkError: http.post(`${API_BASE_URL}/api/classify`, () => {
-    return HttpResponse.error()
-  }),
-}
 
 // ============================================================================
 // Combined Handlers
