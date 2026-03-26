@@ -205,8 +205,7 @@ export function CaseEditorPage() {
               canEdit={canEdit} caseId={id}
               onRemovePending={removePendingUpload}
               onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
-              onDrop={createOnDrop} onPrev={goToPrevStep}
-              onNext={isEditing ? goToNextStep : undefined} />
+              onDrop={createOnDrop} onPrev={goToPrevStep} />
           )}
 
         </div>
