@@ -54,11 +54,6 @@ func (r *StudyRepository) Update(ctx context.Context, study *domain.Study) error
 // Delete deletes a study and removes all associated data.
 func (r *StudyRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Delete all study raters first
-		if err := tx.Delete(&domain.StudyRater{}, "study_id = ?", id).Error; err != nil {
-			return fmt.Errorf("delete study raters: %w", err)
-		}
-
 		// Clear study_id from all cases in this study
 		if err := tx.Model(&domain.Case{}).
 			Where("study_id = ?", id).
@@ -205,116 +200,6 @@ func (r *StudyRepository) GetNextCaseOrder(ctx context.Context, studyID uuid.UUI
 		return 0, nil
 	}
 	return *maxOrder + 1, nil
-}
-
-// ============================================================================
-// Rater Management
-// ============================================================================
-
-// AddRater assigns a user as a rater to a study.
-func (r *StudyRepository) AddRater(ctx context.Context, studyID, userID uuid.UUID, email string) error {
-	rater := domain.NewStudyRater(studyID, userID, email)
-	if err := r.db.WithContext(ctx).Create(rater).Error; err != nil {
-		return fmt.Errorf("add rater: %w", err)
-	}
-	return nil
-}
-
-// RemoveRater removes a user from a study.
-func (r *StudyRepository) RemoveRater(ctx context.Context, studyID, userID uuid.UUID) error {
-	err := r.db.WithContext(ctx).
-		Delete(&domain.StudyRater{}, "study_id = ? AND user_id = ?", studyID, userID).Error
-	if err != nil {
-		return fmt.Errorf("remove rater: %w", err)
-	}
-	return nil
-}
-
-// GetRaters retrieves all raters assigned to a study.
-func (r *StudyRepository) GetRaters(ctx context.Context, studyID uuid.UUID) ([]domain.StudyRater, error) {
-	var raters []domain.StudyRater
-	err := r.db.WithContext(ctx).
-		Where("study_id = ?", studyID).
-		Order("created_at ASC").
-		Find(&raters).Error
-	if err != nil {
-		return nil, fmt.Errorf("get raters: %w", err)
-	}
-	return raters, nil
-}
-
-// HasAccess checks if a user is assigned to a study.
-func (r *StudyRepository) HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error) {
-	var count int64
-	err := r.db.WithContext(ctx).
-		Model(&domain.StudyRater{}).
-		Where("study_id = ? AND user_id = ?", studyID, userID).
-		Count(&count).Error
-	if err != nil {
-		return false, fmt.Errorf("has access: %w", err)
-	}
-	return count > 0, nil
-}
-
-// GetRaterProgress retrieves completion progress for all raters in a study.
-func (r *StudyRepository) GetRaterProgress(ctx context.Context, studyID uuid.UUID) ([]domain.RaterProgress, error) {
-	// Get total cases count
-	var totalCases int64
-	if err := r.db.WithContext(ctx).
-		Model(&domain.Case{}).
-		Where("study_id = ?", studyID).
-		Count(&totalCases).Error; err != nil {
-		return nil, fmt.Errorf("get rater progress total cases: %w", err)
-	}
-
-	// Get all study raters with their progress
-	var raters []domain.StudyRater
-	if err := r.db.WithContext(ctx).
-		Where("study_id = ?", studyID).
-		Order("created_at ASC").
-		Find(&raters).Error; err != nil {
-		return nil, fmt.Errorf("get rater progress raters: %w", err)
-	}
-
-	// Build progress list
-	result := make([]domain.RaterProgress, 0, len(raters))
-	for _, rater := range raters {
-		// Get display name from users table
-		var displayName string
-		r.db.WithContext(ctx).
-			Model(&domain.User{}).
-			Select("display_name").
-			Where("id = ?", rater.UserID).
-			Scan(&displayName)
-
-		result = append(result, domain.RaterProgress{
-			UserID:         rater.UserID,
-			UserEmail:      rater.UserEmail,
-			DisplayName:    displayName,
-			CasesCompleted: rater.CasesCompleted,
-			TotalCases:     int(totalCases),
-			IsComplete:     rater.CasesCompleted >= int(totalCases),
-			LastResponseAt: rater.LastResponseAt,
-		})
-	}
-
-	return result, nil
-}
-
-// UpdateRaterProgress updates a rater's progress in a study.
-func (r *StudyRepository) UpdateRaterProgress(ctx context.Context, studyID, userID uuid.UUID, casesCompleted int) error {
-	now := time.Now()
-	err := r.db.WithContext(ctx).
-		Model(&domain.StudyRater{}).
-		Where("study_id = ? AND user_id = ?", studyID, userID).
-		Updates(map[string]any{
-			"cases_completed":  casesCompleted,
-			"last_response_at": now,
-		}).Error
-	if err != nil {
-		return fmt.Errorf("update rater progress: %w", err)
-	}
-	return nil
 }
 
 // ============================================================================

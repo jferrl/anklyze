@@ -117,11 +117,11 @@ func SetupCaseRoutes(
 	// Create specialized handlers for different concerns
 	adminHandler := NewCaseAdminHandler(caseRepo, storage)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
-	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo, userRepo)
+	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo)
 	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)
 
 	// Create analytics handler with statistics service
-	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsService, studyService)
+	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsService)
 
 	// Create user handler for profile endpoints
 	userHandler := NewUserHandler(userRepoForProfile)
@@ -166,7 +166,7 @@ func setupProtectedCaseRoutes(
 	adminCases.Use(auth.Middleware(authValidator))
 	adminCases.Use(auth.UserSyncMiddleware(userRepo))
 	adminCases.Use(auth.RequireRole(auth.RoleAdmin))
-	registerAdminCaseRoutes(adminCases, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler)
+	registerAdminCaseRoutes(adminCases, adminHandler, imageHandler, responseHandler, analyticsHandler)
 }
 
 // setupPublicCaseRoutes configures case routes without authentication (development mode).
@@ -181,7 +181,7 @@ func setupPublicCaseRoutes(
 ) {
 	registerUserCaseRoutes(api.Group("/cases"), accessHandler, responseHandler)
 	registerProfileRoutes(api.Group("/me"), userHandler)
-	registerAdminCaseRoutes(api.Group("/admin/cases"), adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler)
+	registerAdminCaseRoutes(api.Group("/admin/cases"), adminHandler, imageHandler, responseHandler, analyticsHandler)
 }
 
 // SetupStudyRoutes configures study-related routes.
@@ -194,7 +194,7 @@ func SetupStudyRoutes(
 	caseRepo repository.CaseRepository,
 	studyService service.StudyService,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, caseRepo, userRepo, studyService)
+	studyHandler := NewStudyHandler(studyRepo, caseRepo, studyService)
 
 	api := router.Group("/api")
 
@@ -262,7 +262,6 @@ func registerAdminCaseRoutes(
 	adminCases *gin.RouterGroup,
 	adminHandler *CaseAdminHandler,
 	imageHandler *CaseImageHandler,
-	accessHandler *CaseAccessHandler,
 	responseHandler *CaseResponseHandler,
 	analyticsHandler *CaseAnalyticsHandler,
 ) {
@@ -286,15 +285,10 @@ func registerAdminCaseRoutes(
 	// Analytics and export (CaseAnalyticsHandler)
 	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
 	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
-	adminCases.GET("/:id/divergence", analyticsHandler.GetDivergenceAnalysis)
 	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
 	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
 	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)
 
-	// User access management (CaseAccessHandler)
-	adminCases.GET("/:id/users", accessHandler.ListCaseUsers)
-	adminCases.POST("/:id/users", accessHandler.AddCaseUser)
-	adminCases.DELETE("/:id/users/:userId", accessHandler.RemoveCaseUser)
 }
 
 // registerAdminStudyRoutes registers all admin study routes on the given group.
@@ -308,14 +302,9 @@ func registerAdminStudyRoutes(adminStudies *gin.RouterGroup, studyHandler *Study
 
 	// Case management
 	adminStudies.POST("/:id/cases", studyHandler.AddCase)
+	adminStudies.POST("/:id/cases/add-all", studyHandler.AddAllPublishedCases)
 	adminStudies.DELETE("/:id/cases/:caseId", studyHandler.RemoveCase)
 	adminStudies.PUT("/:id/cases/reorder", studyHandler.ReorderCases)
-
-	// Rater management
-	adminStudies.GET("/:id/raters", studyHandler.ListStudyRaters)
-	adminStudies.POST("/:id/raters", studyHandler.AddStudyRater)
-	adminStudies.DELETE("/:id/raters/:userId", studyHandler.RemoveStudyRater)
-	adminStudies.GET("/:id/progress", studyHandler.GetRaterProgress)
 
 	// Status
 	adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)

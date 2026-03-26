@@ -24,7 +24,6 @@ import { AdminCasesPage } from './pages/admin/AdminCasesPage';
 import { CaseEditorPage } from './pages/admin/CaseEditorPage';
 import { CaseAnalyticsPage } from './pages/admin/CaseAnalyticsPage';
 import { CaseReliabilityPage } from './pages/admin/CaseReliabilityPage';
-import { CaseDivergencePage } from './pages/admin/CaseDivergencePage';
 import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
 import { StudyEditorPage } from './pages/admin/StudyEditorPage';
 import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
@@ -178,22 +177,6 @@ function App() {
                       ]}
                     >
                       <CaseReliabilityPage />
-                    </AppShell>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/cases/:id/divergence"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'cases', href: '/admin/cases' },
-                        { labelKey: 'divergence' },
-                      ]}
-                    >
-                      <CaseDivergencePage />
                     </AppShell>
                   </ProtectedRoute>
                 }

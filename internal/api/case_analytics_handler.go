@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
 )
 
@@ -19,7 +18,6 @@ type CaseAnalyticsHandler struct {
 	responseRepo  repository.CaseResponseRepository
 	analyticsRepo repository.CaseAnalyticsRepository
 	statsService  StatisticsService
-	studyService  StudyService
 }
 
 // NewCaseAnalyticsHandler creates a new case analytics handler.
@@ -28,14 +26,12 @@ func NewCaseAnalyticsHandler(
 	responseRepo repository.CaseResponseRepository,
 	analyticsRepo repository.CaseAnalyticsRepository,
 	statsService StatisticsService,
-	studyService StudyService,
 ) *CaseAnalyticsHandler {
 	return &CaseAnalyticsHandler{
 		caseRepo:      caseRepo,
 		responseRepo:  responseRepo,
 		analyticsRepo: analyticsRepo,
 		statsService:  statsService,
-		studyService:  studyService,
 	}
 }
 
@@ -65,17 +61,6 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
-		return
-	}
-
 	// Get all responses for calculation
 	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
 	if err != nil {
@@ -99,7 +84,7 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 		return
 	}
 
-	metrics, err := h.statsService.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := h.statsService.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		slog.Error("failed to calculate reliability metrics", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate metrics"})
@@ -110,41 +95,6 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 		ReliabilityMetrics: metrics,
 		CalculatedAt:       time.Now(),
 	})
-}
-
-// GetDivergenceAnalysis handles GET /api/admin/cases/:id/divergence
-// Returns divergence analysis showing where users deviate from the gold standard path.
-func (h *CaseAnalyticsHandler) GetDivergenceAnalysis(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
-		return
-	}
-
-	if h.studyService == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "divergence analysis not available"})
-		return
-	}
-
-	report, err := h.studyService.GetDivergenceAnalysis(c.Request.Context(), caseID)
-	if err != nil {
-		if err.Error() == "case has no gold standard input stored" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "divergence analysis requires gold standard input",
-				"hint":  "set the reference input (FractureInput) when creating or updating the case",
-			})
-			return
-		}
-		if err.Error() == "case not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
-			return
-		}
-		slog.Error("failed to analyze divergence", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to analyze divergence"})
-		return
-	}
-
-	c.JSON(http.StatusOK, report)
 }
 
 // ExportResponses handles GET /api/admin/cases/:id/export
@@ -211,7 +161,7 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 }
 
 // ExportDetailedResponses handles GET /api/admin/cases/:id/export/detailed
-// Exports responses with user expertise and gold standard comparison.
+// Exports responses with user expertise data.
 func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
 	caseID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -233,22 +183,12 @@ func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
 		return
 	}
 
-	// Parse reference classification if exists
-	var refClass *domain.ClassificationResult
-	if cs.HasReferenceClassification() {
-		refClass, _ = cs.GetReferenceClassification()
-	}
-
 	// Generate CSV
 	c.Header("Content-Type", "text/csv")
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"case_%s_detailed.csv\"", caseID.String()[:8]))
 
 	// Write header
-	header := "response_id,user_email,years_experience,specialty,training_level,institution,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek"
-	if refClass != nil {
-		header += ",dw_correct,lh_correct,ao_correct,bt_correct"
-	}
-	if _, err := c.Writer.WriteString(header + "\n"); err != nil {
+	if _, err := c.Writer.WriteString("response_id,user_email,years_experience,specialty,training_level,institution,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek\n"); err != nil {
 		return
 	}
 
@@ -299,42 +239,6 @@ func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
 			r.TimeTakenMS,
 			dw, lh, ao, bt,
 		)
-
-		// Add gold standard comparison if reference exists
-		if refClass != nil {
-			dwCorrect, lhCorrect, aoCorrect, btCorrect := "", "", "", ""
-
-			if r.DanisWeberType != nil && refClass.DanisWeber != nil {
-				if *r.DanisWeberType == string(refClass.DanisWeber.Type) {
-					dwCorrect = "1"
-				} else {
-					dwCorrect = "0"
-				}
-			}
-			if r.LaugeHansenType != nil && refClass.LaugeHansen != nil {
-				if *r.LaugeHansenType == string(refClass.LaugeHansen.Type) {
-					lhCorrect = "1"
-				} else {
-					lhCorrect = "0"
-				}
-			}
-			if r.AOOTACode != nil && refClass.AOOTA != nil {
-				if *r.AOOTACode == string(refClass.AOOTA.Code) {
-					aoCorrect = "1"
-				} else {
-					aoCorrect = "0"
-				}
-			}
-			if r.BartonicekType != nil && refClass.Bartonicek != nil {
-				if *r.BartonicekType == string(refClass.Bartonicek.Type) {
-					btCorrect = "1"
-				} else {
-					btCorrect = "0"
-				}
-			}
-
-			line += fmt.Sprintf(",%s,%s,%s,%s", dwCorrect, lhCorrect, aoCorrect, btCorrect)
-		}
 
 		if _, err := c.Writer.WriteString(line + "\n"); err != nil {
 			return

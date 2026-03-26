@@ -17,7 +17,6 @@ import (
 type StudyHandler struct {
 	studyRepo    repository.StudyRepository
 	caseRepo     repository.CaseRepository
-	userRepo     auth.UserService
 	studyService StudyService
 }
 
@@ -25,13 +24,11 @@ type StudyHandler struct {
 func NewStudyHandler(
 	studyRepo repository.StudyRepository,
 	caseRepo repository.CaseRepository,
-	userRepo auth.UserService,
 	studyService StudyService,
 ) *StudyHandler {
 	return &StudyHandler{
 		studyRepo:    studyRepo,
 		caseRepo:     caseRepo,
-		userRepo:     userRepo,
 		studyService: studyService,
 	}
 }
@@ -61,9 +58,9 @@ type ReorderCasesRequest struct {
 	CaseIDs []string `json:"case_ids" binding:"required"`
 }
 
-// AddStudyRaterRequest is the request body for adding a user to a study.
-type AddStudyRaterRequest struct {
-	Email string `json:"email" binding:"required,email"`
+// AddAllCasesResponse is the response for adding all published cases to a study.
+type AddAllCasesResponse struct {
+	Added int `json:"added"`
 }
 
 // StudyListResponse is the response for listing studies.
@@ -77,12 +74,6 @@ type StudyListResponse struct {
 // StudyDetailResponse is the response for getting a study with its cases.
 type StudyDetailResponse struct {
 	domain.StudyWithCases
-}
-
-// RaterProgressResponse is the response for getting rater progress.
-type RaterProgressResponse struct {
-	Raters []domain.RaterProgress `json:"raters"`
-	Total  int                    `json:"total"`
 }
 
 // StudyReliabilityResponse is the response for getting study reliability metrics.
@@ -315,6 +306,71 @@ func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 
 // --- Case Management ---
 
+// AddAllPublishedCases adds all published cases (not already in any study) to a study.
+// @Summary Add all available published cases to a study
+// @Tags Admin Studies
+// @Produce json
+// @Param id path string true "Study ID"
+// @Success 200 {object} AddAllCasesResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/admin/studies/{id}/cases/add-all [post]
+func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+		return
+	}
+
+	// Verify study exists and is draft
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
+		return
+	}
+	if study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+		return
+	}
+	if study.Status != domain.StudyStatusDraft {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only draft studies can be modified"})
+		return
+	}
+
+	// Get all published cases not in any study
+	published, _, err := h.caseRepo.List(c.Request.Context(), statusPtr(domain.CaseStatusPublished), 1000, 0)
+	if err != nil {
+		slog.Error("failed to list published cases", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list published cases"})
+		return
+	}
+
+	// Get next case order
+	nextOrder, err := h.studyRepo.GetNextCaseOrder(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get next case order", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to determine case order"})
+		return
+	}
+
+	added := 0
+	for _, cs := range published {
+		if cs.StudyID != nil {
+			continue // already in a study
+		}
+		if err := h.studyService.AddCase(c.Request.Context(), studyID, cs.ID, nextOrder); err != nil {
+			slog.Error("failed to add case", "error", err, "case_id", cs.ID)
+			continue
+		}
+		nextOrder++
+		added++
+	}
+
+	c.JSON(http.StatusOK, AddAllCasesResponse{Added: added})
+}
+
 // AddCase adds a case to a study.
 // @Summary Add a case to a study
 // @Tags Admin Studies
@@ -483,173 +539,6 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// --- User/Rater Management ---
-
-// StudyRatersResponse is the response for listing study raters.
-type StudyRatersResponse struct {
-	Raters []domain.StudyRater `json:"raters"`
-	Total  int                 `json:"total"`
-}
-
-// ListStudyRaters lists all users assigned to a study.
-// @Summary List study raters
-// @Tags Admin Studies
-// @Produce json
-// @Param id path string true "Study ID"
-// @Success 200 {object} StudyRatersResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/raters [get]
-func (h *StudyHandler) ListStudyRaters(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
-		return
-	}
-
-	raters, err := h.studyRepo.GetRaters(c.Request.Context(), studyID)
-	if err != nil {
-		slog.Error("failed to list study raters", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list study raters"})
-		return
-	}
-
-	c.JSON(http.StatusOK, StudyRatersResponse{
-		Raters: raters,
-		Total:  len(raters),
-	})
-}
-
-// AddStudyRater assigns a user as a rater to a study.
-// @Summary Add rater to study
-// @Tags Admin Studies
-// @Accept json
-// @Produce json
-// @Param id path string true "Study ID"
-// @Param request body AddStudyRaterRequest true "User details"
-// @Success 201 {object} domain.StudyRater
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/raters [post]
-func (h *StudyHandler) AddStudyRater(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
-		return
-	}
-
-	var req AddStudyRaterRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
-		return
-	}
-
-	// Look up user by email
-	user, err := h.userRepo.GetByEmail(c.Request.Context(), req.Email)
-	if err != nil {
-		slog.Error("failed to look up user by email", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to look up user"})
-		return
-	}
-	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found. The user must have logged in at least once before being added as a rater."})
-		return
-	}
-
-	userID := user.ID
-
-	// Check if user is already in study
-	hasAccess, err := h.studyRepo.HasAccess(c.Request.Context(), studyID, userID)
-	if err != nil {
-		slog.Error("failed to check access", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check user access"})
-		return
-	}
-	if hasAccess {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User is already assigned to this study"})
-		return
-	}
-
-	if err := h.studyRepo.AddRater(c.Request.Context(), studyID, userID, req.Email); err != nil {
-		slog.Error("failed to add study rater", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add rater to study"})
-		return
-	}
-
-	// Update counters
-	if err := h.studyRepo.UpdateCounters(c.Request.Context(), studyID); err != nil {
-		slog.Error("failed to update counters", "error", err)
-	}
-
-	studyRater := domain.NewStudyRater(studyID, userID, req.Email)
-	c.JSON(http.StatusCreated, studyRater)
-}
-
-// RemoveStudyRater removes a rater from a study.
-// @Summary Remove rater from study
-// @Tags Admin Studies
-// @Param id path string true "Study ID"
-// @Param userId path string true "User ID"
-// @Success 204 "No Content"
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/raters/{userId} [delete]
-func (h *StudyHandler) RemoveStudyRater(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
-		return
-	}
-
-	userID, err := uuid.Parse(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	if err := h.studyRepo.RemoveRater(c.Request.Context(), studyID, userID); err != nil {
-		slog.Error("failed to remove study rater", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove rater from study"})
-		return
-	}
-
-	// Update counters
-	if err := h.studyRepo.UpdateCounters(c.Request.Context(), studyID); err != nil {
-		slog.Error("failed to update counters", "error", err)
-	}
-
-	c.Status(http.StatusNoContent)
-}
-
-// GetRaterProgress gets completion progress for all raters in a study.
-// @Summary Get rater progress
-// @Tags Admin Studies
-// @Produce json
-// @Param id path string true "Study ID"
-// @Success 200 {object} RaterProgressResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/progress [get]
-func (h *StudyHandler) GetRaterProgress(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
-		return
-	}
-
-	progress, err := h.studyRepo.GetRaterProgress(c.Request.Context(), studyID)
-	if err != nil {
-		slog.Error("failed to get rater progress", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get rater progress"})
-		return
-	}
-
-	c.JSON(http.StatusOK, RaterProgressResponse{
-		Raters: progress,
-		Total:  len(progress),
-	})
-}
-
 // --- Status Transitions ---
 
 // ActivateStudy activates a study (draft -> active).
@@ -693,17 +582,6 @@ func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 	}
 	if len(cases) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Study must have at least one case"})
-		return
-	}
-
-	raters, err := h.studyRepo.GetRaters(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get raters", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to validate study"})
-		return
-	}
-	if len(raters) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Study must have at least one assigned rater"})
 		return
 	}
 
@@ -797,4 +675,8 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 		StudyReliabilityMetrics: metrics,
 		CalculatedAt:            time.Now(),
 	})
+}
+
+func statusPtr(s domain.CaseStatus) *domain.CaseStatus {
+	return &s
 }

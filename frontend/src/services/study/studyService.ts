@@ -4,8 +4,6 @@ import type {
   StudyListResponse,
   CreateStudyRequest,
   UpdateStudyRequest,
-  StudyRater,
-  RaterProgressResponse,
   StudyReliabilityResponse,
   StudyStatus,
   Case,
@@ -119,6 +117,17 @@ export async function addCaseToStudy(
 }
 
 /**
+ * Add all available published cases to a study (admin only)
+ */
+export async function addAllCasesToStudy(
+  studyId: string
+): Promise<{ added: number }> {
+  return apiRequest<{ added: number }>(`/api/admin/studies/${studyId}/cases/add-all`, {
+    method: 'POST',
+  });
+}
+
+/**
  * Remove a case from a study (admin only)
  */
 export async function removeCaseFromStudy(studyId: string, caseId: string): Promise<void> {
@@ -141,53 +150,8 @@ export async function reorderStudyCases(
 }
 
 // ================================
-// Study Raters Management
-// ================================
-
-/**
- * List raters assigned to a study (admin only)
- */
-export async function listStudyRaters(studyId: string): Promise<{ raters: StudyRater[]; total: number }> {
-  return apiRequest<{ raters: StudyRater[]; total: number }>(
-    `/api/admin/studies/${studyId}/raters`,
-    { method: 'GET' }
-  );
-}
-
-/**
- * Add a rater to a study (admin only)
- */
-export async function addStudyRater(
-  studyId: string,
-  userEmail: string
-): Promise<StudyRater> {
-  return apiRequest<StudyRater>(`/api/admin/studies/${studyId}/raters`, {
-    method: 'POST',
-    body: JSON.stringify({ email: userEmail }),
-  });
-}
-
-/**
- * Remove a rater from a study (admin only)
- */
-export async function removeStudyRater(studyId: string, userId: string): Promise<void> {
-  await apiRequest<void>(`/api/admin/studies/${studyId}/raters/${userId}`, {
-    method: 'DELETE',
-  });
-}
-
-// ================================
 // Study Analytics & Reporting
 // ================================
-
-/**
- * Get rater progress for a study (admin only)
- */
-export async function getStudyRaterProgress(studyId: string): Promise<RaterProgressResponse> {
-  return apiRequest<RaterProgressResponse>(`/api/admin/studies/${studyId}/progress`, {
-    method: 'GET',
-  });
-}
 
 /**
  * Get study reliability metrics (admin only)

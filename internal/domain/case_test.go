@@ -1,13 +1,11 @@
 package domain
 
 import (
-	"encoding/json"
 	"errors"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 )
 
 // newDraftCase returns a minimal draft Case suitable for use in tests.
@@ -42,16 +40,6 @@ func newClosedCase() Case {
 func withDeadline(c Case, d time.Time) Case {
 	c.Deadline = &d
 	return c
-}
-
-// mustMarshalClassification serialises r into datatypes.JSON or panics. Only
-// intended for use inside tests where a panic on bad data is acceptable.
-func mustMarshalClassification(r *ClassificationResult) datatypes.JSON {
-	b, err := json.Marshal(r)
-	if err != nil {
-		panic(err)
-	}
-	return datatypes.JSON(b)
 }
 
 // ---------------------------------------------------------------------------
@@ -179,9 +167,6 @@ func TestCase_IsExpired(t *testing.T) {
 	}
 }
 
-// TestCase_BelongsToStudy was removed: BelongsToStudy() method was removed from Case domain model.
-// Study membership is now queried only through StudyService.IsCaseInStudy().
-
 // ---------------------------------------------------------------------------
 // T008 – CanPublish / CanClose
 // ---------------------------------------------------------------------------
@@ -296,94 +281,51 @@ func TestCase_ValidateResponseSubmission(t *testing.T) {
 	past := time.Now().Add(-24 * time.Hour)
 	future := time.Now().Add(24 * time.Hour)
 
-	// A published case that allows multiple responses (the default).
-	publishedMulti := newPublishedCase()
-	publishedMulti.AllowMultipleResponses = true
-
-	// A published case that only allows a single response.
-	publishedSingle := newPublishedCase()
-	publishedSingle.AllowMultipleResponses = false
-
-	// Published case whose deadline has passed.
-	publishedExpired := withDeadline(newPublishedCase(), past)
-
-	// Published case with a future deadline.
-	publishedFuture := withDeadline(newPublishedCase(), future)
-
 	tests := []struct {
 		name         string
 		c            Case
-		isAdmin      bool
 		hasResponded bool
 		wantErr      error
 	}{
 		{
-			name:         "admin always bypasses all checks",
-			c:            newDraftCase(),
-			isAdmin:      true,
+			name:         "already responded returns ErrAlreadyResponded",
+			c:            newPublishedCase(),
 			hasResponded: true,
-			wantErr:      nil,
+			wantErr:      ErrAlreadyResponded,
 		},
 		{
-			name:         "admin bypasses closed case check",
-			c:            newClosedCase(),
-			isAdmin:      true,
-			hasResponded: false,
-			wantErr:      nil,
+			name:         "already responded on draft case returns ErrAlreadyResponded",
+			c:            newDraftCase(),
+			hasResponded: true,
+			wantErr:      ErrAlreadyResponded,
 		},
 		{
 			name:         "non-published case returns ErrCaseNotAcceptingResponses",
 			c:            newDraftCase(),
-			isAdmin:      false,
 			hasResponded: false,
 			wantErr:      ErrCaseNotAcceptingResponses,
 		},
 		{
 			name:         "closed case returns ErrCaseNotAcceptingResponses",
 			c:            newClosedCase(),
-			isAdmin:      false,
 			hasResponded: false,
 			wantErr:      ErrCaseNotAcceptingResponses,
 		},
 		{
 			name:         "expired published case returns ErrDeadlinePassed",
-			c:            publishedExpired,
-			isAdmin:      false,
+			c:            withDeadline(newPublishedCase(), past),
 			hasResponded: false,
 			wantErr:      ErrDeadlinePassed,
 		},
 		{
-			name:         "single-response mode with prior response returns ErrAlreadyResponded",
-			c:            publishedSingle,
-			isAdmin:      false,
-			hasResponded: true,
-			wantErr:      ErrAlreadyResponded,
-		},
-		{
-			name:         "multi-response mode with prior response is allowed",
-			c:            publishedMulti,
-			isAdmin:      false,
-			hasResponded: true,
-			wantErr:      nil,
-		},
-		{
-			name:         "published not-expired not-responded in single-response mode is allowed",
-			c:            publishedSingle,
-			isAdmin:      false,
-			hasResponded: false,
-			wantErr:      nil,
-		},
-		{
-			name:         "published not-expired not-responded in multi-response mode is allowed",
-			c:            publishedMulti,
-			isAdmin:      false,
+			name:         "published not-responded is allowed",
+			c:            newPublishedCase(),
 			hasResponded: false,
 			wantErr:      nil,
 		},
 		{
 			name:         "published with future deadline is allowed",
-			c:            publishedFuture,
-			isAdmin:      false,
+			c:            withDeadline(newPublishedCase(), future),
 			hasResponded: false,
 			wantErr:      nil,
 		},
@@ -392,24 +334,24 @@ func TestCase_ValidateResponseSubmission(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			err := tt.c.ValidateResponseSubmission(tt.isAdmin, tt.hasResponded)
+			err := tt.c.ValidateResponseSubmission(tt.hasResponded)
 			if tt.wantErr == nil {
 				if err != nil {
-					t.Errorf("ValidateResponseSubmission(%v, %v) returned unexpected error: %v",
-						tt.isAdmin, tt.hasResponded, err)
+					t.Errorf("ValidateResponseSubmission(%v) returned unexpected error: %v",
+						tt.hasResponded, err)
 				}
 				return
 			}
 			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("ValidateResponseSubmission(%v, %v) error = %v, want %v",
-					tt.isAdmin, tt.hasResponded, err, tt.wantErr)
+				t.Errorf("ValidateResponseSubmission(%v) error = %v, want %v",
+					tt.hasResponded, err, tt.wantErr)
 			}
 		})
 	}
 }
 
 // ---------------------------------------------------------------------------
-// T010 – CompareWithReference / IsPublished
+// T010 – IsPublished
 // ---------------------------------------------------------------------------
 
 func TestCase_IsPublished(t *testing.T) {
@@ -444,215 +386,5 @@ func TestCase_IsPublished(t *testing.T) {
 				t.Errorf("IsPublished() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestCase_CompareWithReference(t *testing.T) {
-	t.Parallel()
-
-	// Reference classification uses all four systems.
-	reference := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenSER},
-		AOOTA:       &AOOTAClassification{Code: AOOTAB1},
-		Bartonicek:  &BartonicekClassification{Type: BartonicekType2},
-	}
-
-	// Helper: build a case with the given reference classification pre-serialised.
-	caseWithRef := func(ref *ClassificationResult) Case {
-		c := newPublishedCase()
-		if ref != nil {
-			c.ReferenceClassification = mustMarshalClassification(ref)
-		}
-		return c
-	}
-
-	// User result that exactly matches the reference.
-	fullMatchResult := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenSER},
-		AOOTA:       &AOOTAClassification{Code: AOOTAB1},
-		Bartonicek:  &BartonicekClassification{Type: BartonicekType2},
-	}
-
-	// User result that matches only DanisWeber and LaugeHansen (2 of 4).
-	partialMatchResult := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},     // match
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenSER}, // match
-		AOOTA:       &AOOTAClassification{Code: AOOTAC1},              // mismatch
-		Bartonicek:  &BartonicekClassification{Type: BartonicekType4}, // mismatch
-	}
-
-	// User result that matches none of the four systems.
-	noMatchResult := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberA},
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenPA},
-		AOOTA:       &AOOTAClassification{Code: AOOTAC3},
-		Bartonicek:  &BartonicekClassification{Type: BartonicekType1},
-	}
-
-	tests := []struct {
-		name       string
-		c          Case
-		userResult *ClassificationResult
-		// wantNil signals the test expects CompareWithReference to return nil.
-		wantNil        bool
-		wantDW         bool
-		wantLH         bool
-		wantAOOTA      bool
-		wantBartonicek bool
-		wantAccuracy   float64
-	}{
-		{
-			name:       "nil reference classification returns nil",
-			c:          newPublishedCase(), // no ReferenceClassification set
-			userResult: fullMatchResult,
-			wantNil:    true,
-		},
-		{
-			name:           "full match across all four systems yields accuracy 1.0",
-			c:              caseWithRef(reference),
-			userResult:     fullMatchResult,
-			wantNil:        false,
-			wantDW:         true,
-			wantLH:         true,
-			wantAOOTA:      true,
-			wantBartonicek: true,
-			wantAccuracy:   1.0,
-		},
-		{
-			name:           "partial match of 2 of 4 systems yields accuracy 0.5",
-			c:              caseWithRef(reference),
-			userResult:     partialMatchResult,
-			wantNil:        false,
-			wantDW:         true,
-			wantLH:         true,
-			wantAOOTA:      false,
-			wantBartonicek: false,
-			wantAccuracy:   0.5,
-		},
-		{
-			name:           "no system matches yields accuracy 0.0",
-			c:              caseWithRef(reference),
-			userResult:     noMatchResult,
-			wantNil:        false,
-			wantDW:         false,
-			wantLH:         false,
-			wantAOOTA:      false,
-			wantBartonicek: false,
-			wantAccuracy:   0.0,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			got := tt.c.CompareWithReference(tt.userResult)
-
-			if tt.wantNil {
-				if got != nil {
-					t.Errorf("CompareWithReference() = %+v, want nil", got)
-				}
-				return
-			}
-
-			if got == nil {
-				t.Fatal("CompareWithReference() = nil, want non-nil result")
-				return
-			}
-
-			if got.DanisWeberMatch != tt.wantDW {
-				t.Errorf("DanisWeberMatch = %v, want %v", got.DanisWeberMatch, tt.wantDW)
-			}
-			if got.LaugeHansenMatch != tt.wantLH {
-				t.Errorf("LaugeHansenMatch = %v, want %v", got.LaugeHansenMatch, tt.wantLH)
-			}
-			if got.AOOTAMatch != tt.wantAOOTA {
-				t.Errorf("AOOTAMatch = %v, want %v", got.AOOTAMatch, tt.wantAOOTA)
-			}
-			if got.BartonicekMatch != tt.wantBartonicek {
-				t.Errorf("BartonicekMatch = %v, want %v", got.BartonicekMatch, tt.wantBartonicek)
-			}
-			if got.OverallAccuracy != tt.wantAccuracy {
-				t.Errorf("OverallAccuracy = %v, want %v", got.OverallAccuracy, tt.wantAccuracy)
-			}
-		})
-	}
-}
-
-// TestCase_CompareWithReference_PartialSystems verifies the accuracy calculation
-// when not all four classification systems are populated in both the reference
-// and the user result. Only populated systems on both sides should count toward
-// the total and the accuracy denominator.
-func TestCase_CompareWithReference_PartialSystems(t *testing.T) {
-	t.Parallel()
-
-	// Reference has only two systems set.
-	reference := &ClassificationResult{
-		DanisWeber: &DanisWeberClassification{Type: DanisWeberB},
-		AOOTA:      &AOOTAClassification{Code: AOOTAB2},
-		// LaugeHansen and Bartonicek intentionally absent.
-	}
-
-	c := newPublishedCase()
-	c.ReferenceClassification = mustMarshalClassification(reference)
-
-	// User matches DanisWeber, misses AOOTA. LaugeHansen and Bartonicek are
-	// present in the user result but absent from the reference, so they must
-	// not contribute to total or matched counts.
-	userResult := &ClassificationResult{
-		DanisWeber:  &DanisWeberClassification{Type: DanisWeberB},
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenSA},
-		AOOTA:       &AOOTAClassification{Code: AOOTAC2},
-	}
-
-	got := c.CompareWithReference(userResult)
-	if got == nil {
-		t.Fatal("CompareWithReference() = nil, want non-nil result")
-		return
-	}
-
-	if !got.DanisWeberMatch {
-		t.Errorf("DanisWeberMatch = false, want true")
-	}
-	if got.AOOTAMatch {
-		t.Errorf("AOOTAMatch = true, want false")
-	}
-	// Expected: 1 match out of 2 comparable systems = 0.5.
-	const wantAccuracy = 0.5
-	if got.OverallAccuracy != wantAccuracy {
-		t.Errorf("OverallAccuracy = %v, want %v", got.OverallAccuracy, wantAccuracy)
-	}
-}
-
-// TestCase_CompareWithReference_NoOverlappingSystems verifies that when neither
-// the reference nor the user result share any populated classification systems,
-// the comparison returns a non-nil result with zero accuracy (total = 0).
-func TestCase_CompareWithReference_NoOverlappingSystems(t *testing.T) {
-	t.Parallel()
-
-	// Reference has only DanisWeber.
-	reference := &ClassificationResult{
-		DanisWeber: &DanisWeberClassification{Type: DanisWeberA},
-	}
-
-	c := newPublishedCase()
-	c.ReferenceClassification = mustMarshalClassification(reference)
-
-	// User only has LaugeHansen — no overlap with reference.
-	userResult := &ClassificationResult{
-		LaugeHansen: &LaugeHansenClassification{Type: LaugeHansenPER},
-	}
-
-	got := c.CompareWithReference(userResult)
-	if got == nil {
-		t.Fatal("CompareWithReference() = nil, want non-nil result")
-		return
-	}
-
-	// total == 0, so OverallAccuracy must remain 0.0.
-	if got.OverallAccuracy != 0.0 {
-		t.Errorf("OverallAccuracy = %v, want 0.0", got.OverallAccuracy)
 	}
 }

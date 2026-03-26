@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, Ban, Target, XCircle } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, Ban } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import type { ClassificationResult, FractureInput } from '@/types';
-import type { SubmitResponseResult } from '@/types';
 import { ClassificationResult as ClassificationResultComponent } from '../ClassificationResult';
 import { CaseClassificationForm, type AnswerTracking } from './StudyClassificationForm';
 import { cn } from '@/lib/utils';
@@ -18,7 +17,6 @@ interface ClassificationPanelProps {
   isExpired: boolean;
   cannotSubmit?: boolean;
   canReanswer?: boolean;
-  submitResult?: SubmitResponseResult | null;
   onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
   onSubmit: () => void;
   onReanswer: () => void;
@@ -33,7 +31,6 @@ export function ClassificationPanel({
   isExpired,
   cannotSubmit = false,
   canReanswer = true,
-  submitResult,
   onClassify,
   onSubmit,
   onReanswer,
@@ -84,8 +81,6 @@ export function ClassificationPanel({
 
   // Success state
   if (submitSuccess) {
-    const hasReference = submitResult?.reference_classification;
-
     return (
       <Card className="border-green-500/30 bg-green-500/5 overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-green-500 to-green-400" />
@@ -100,68 +95,6 @@ export function ClassificationPanel({
             <p className="text-muted-foreground mb-6 max-w-sm">
               {t('studies.responseSubmittedDescription')}
             </p>
-
-            {/* Reference comparison */}
-            {hasReference && (
-              <div className="w-full max-w-md mb-6 p-4 rounded-lg bg-background border border-border/50">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-foreground">
-                    {t('studies.referenceComparison', 'Reference Comparison')}
-                  </h4>
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  {submitResult.reference_classification?.danis_weber && (
-                    <div className="flex items-center justify-between p-2 rounded bg-muted/50">
-                      <span className="text-muted-foreground">Danis-Weber</span>
-                      {submitResult.matches_danis_weber === true ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      ) : submitResult.matches_danis_weber === false ? (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </div>
-                  )}
-                  {submitResult.reference_classification?.lauge_hansen && (
-                    <div className="flex items-center justify-between p-2 rounded bg-muted/50">
-                      <span className="text-muted-foreground">Lauge-Hansen</span>
-                      {submitResult.matches_lauge_hansen === true ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      ) : submitResult.matches_lauge_hansen === false ? (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </div>
-                  )}
-                  {submitResult.reference_classification?.ao_ota && (
-                    <div className="flex items-center justify-between p-2 rounded bg-muted/50">
-                      <span className="text-muted-foreground">AO/OTA</span>
-                      {submitResult.matches_ao_ota === true ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      ) : submitResult.matches_ao_ota === false ? (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </div>
-                  )}
-                  {submitResult.reference_classification?.bartonicek && (
-                    <div className="flex items-center justify-between p-2 rounded bg-muted/50">
-                      <span className="text-muted-foreground">Bartonicek</span>
-                      {submitResult.matches_bartonicek === true ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      ) : submitResult.matches_bartonicek === false ? (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
 
             {canReanswer && (
               <Button

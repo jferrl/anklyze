@@ -490,15 +490,6 @@
         "titleRequired": "El título es obligatorio",
         "imagesRequired": "Se requiere al menos una imagen para publicar"
       },
-      "users": {
-        "title": "Acceso al Caso",
-        "description": "Gestiona qué usuarios pueden acceder a este caso",
-        "emailPlaceholder": "Introduce el email del usuario",
-        "add": "Añadir Usuario",
-        "email": "Email",
-        "addedAt": "Añadido",
-        "empty": "Aún no se han añadido usuarios a este caso"
-      },
       "table": {
         "title": "Título",
         "status": "Estado",
@@ -515,8 +506,7 @@
       "setReference": "Establecer Clasificación de Referencia",
       "changeReference": "Cambiar",
       "responseOptions": "Opciones de Respuesta",
-      "allowMultipleResponses": "Permitir Múltiples Respuestas",
-      "allowMultipleResponsesDescription": "Cuando está desactivado, cada participante solo puede enviar una respuesta",
+
       "showReferenceAfterSubmit": "Mostrar Referencia Después de Enviar",
       "showReferenceAfterSubmitDescription": "Muestra la clasificación correcta después de que los participantes envíen su respuesta",
       "decisionPathConfigured": "Ruta de decisión configurada para análisis de divergencia",
@@ -557,6 +547,7 @@
       "noCasesAvailable": "No hay casos publicados disponibles",
       "noCases": "Aún no hay casos en este estudio",
       "addCasesHint": "Agrega casos publicados para comenzar",
+      "addAllCases": "Agregar todos",
       "step": "Paso",
       "activateConfirmTitle": "Activar Estudio",
       "activateConfirmDescription": "Una vez activado, el estudio estará disponible para que los evaluadores asignados envíen clasificaciones. No se podrán agregar o eliminar casos después de la activación.",

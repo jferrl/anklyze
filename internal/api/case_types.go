@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/service"
 )
 
 // --- Service Interfaces ---
@@ -18,40 +17,29 @@ type StudyService interface {
 	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
 	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
-	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
-	ValidateResponseSubmission(ctx context.Context, caseID, userID uuid.UUID) error
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
-	GetDivergenceAnalysis(ctx context.Context, caseID uuid.UUID) (*service.DivergenceReport, error)
-	UpdateProgressAfterResponse(ctx context.Context, studyID uuid.UUID, caseID, userID uuid.UUID)
+	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
 }
 
 // StatisticsService calculates reliability metrics.
 type StatisticsService interface {
-	CalculateReliabilityMetrics(responses []domain.CaseResponse, cs *domain.Case) (*domain.ReliabilityMetrics, error)
+	CalculateReliabilityMetrics(caseID uuid.UUID, responses []domain.CaseResponse) (*domain.ReliabilityMetrics, error)
 }
 
 // --- Request Types ---
 
 // CreateCaseRequest is the request body for creating a case.
 type CreateCaseRequest struct {
-	Title                    string                       `json:"title" binding:"required,max=255"`
-	Description              string                       `json:"description" binding:"max=10000"`
-	Deadline                 *time.Time                   `json:"deadline,omitempty"`
-	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
-	ReferenceInput           *domain.FractureInput        `json:"reference_input,omitempty"`
-	ShowReferenceAfterSubmit bool                         `json:"show_reference_after_submit"`
-	AllowMultipleResponses   *bool                        `json:"allow_multiple_responses,omitempty"`
+	Title       string     `json:"title" binding:"required,max=255"`
+	Description string     `json:"description" binding:"max=10000"`
+	Deadline    *time.Time `json:"deadline,omitempty"`
 }
 
 // UpdateCaseRequest is the request body for updating a case.
 type UpdateCaseRequest struct {
-	Title                    *string                      `json:"title,omitempty" binding:"omitempty,max=255"`
-	Description              *string                      `json:"description,omitempty" binding:"omitempty,max=10000"`
-	Deadline                 *time.Time                   `json:"deadline,omitempty"`
-	ReferenceClassification  *domain.ClassificationResult `json:"reference_classification,omitempty"`
-	ReferenceInput           *domain.FractureInput        `json:"reference_input,omitempty"`
-	ShowReferenceAfterSubmit *bool                        `json:"show_reference_after_submit,omitempty"`
-	AllowMultipleResponses   *bool                        `json:"allow_multiple_responses,omitempty"`
+	Title       *string    `json:"title,omitempty" binding:"omitempty,max=255"`
+	Description *string    `json:"description,omitempty" binding:"omitempty,max=10000"`
+	Deadline    *time.Time `json:"deadline,omitempty"`
 }
 
 // SubmitResponseRequest is the request body for submitting a classification response.
@@ -69,11 +57,6 @@ type SubmitResponseRequest struct {
 // UpdateImageRequest is the request body for updating an image.
 type UpdateImageRequest struct {
 	DisplayOrder *int `json:"display_order,omitempty"`
-}
-
-// AddCaseUserRequest is the request body for adding a user to a case.
-type AddCaseUserRequest struct {
-	UserEmail string `json:"user_email" binding:"required,email"`
 }
 
 // --- Response Types ---
@@ -122,28 +105,22 @@ type UserCaseItem struct {
 
 // UserCaseDetailResponse is the response for getting a case detail for users.
 type UserCaseDetailResponse struct {
-	ID                     uuid.UUID           `json:"id"`
-	Title                  string              `json:"title"`
-	Description            string              `json:"description,omitempty"`
-	Status                 domain.CaseStatus   `json:"status"`
-	Deadline               *time.Time          `json:"deadline,omitempty"`
-	PublishedAt            *time.Time          `json:"published_at,omitempty"`
-	HasTACImages           bool                `json:"has_tac_images"`
-	Images                 []CaseImageResponse `json:"images"`
-	HasResponded           bool                `json:"has_responded"`
-	MyResponseCount        int                 `json:"my_response_count"`
-	AllowMultipleResponses bool                `json:"allow_multiple_responses"`
-	IsExpired              bool                `json:"is_expired"`
+	ID              uuid.UUID           `json:"id"`
+	Title           string              `json:"title"`
+	Description     string              `json:"description,omitempty"`
+	Status          domain.CaseStatus   `json:"status"`
+	Deadline        *time.Time          `json:"deadline,omitempty"`
+	PublishedAt     *time.Time          `json:"published_at,omitempty"`
+	HasTACImages    bool                `json:"has_tac_images"`
+	Images          []CaseImageResponse `json:"images"`
+	HasResponded    bool                `json:"has_responded"`
+	MyResponseCount int                 `json:"my_response_count"`
+	IsExpired       bool                `json:"is_expired"`
 }
 
-// SubmitResponseResult is the response for submitting a classification, including reference comparison.
+// SubmitResponseResult is the response for submitting a classification.
 type SubmitResponseResult struct {
-	Response                *domain.CaseResponse         `json:"response"`
-	ReferenceClassification *domain.ClassificationResult `json:"reference_classification,omitempty"`
-	MatchesDanisWeber       *bool                        `json:"matches_danis_weber,omitempty"`
-	MatchesLaugeHansen      *bool                        `json:"matches_lauge_hansen,omitempty"`
-	MatchesAOOTA            *bool                        `json:"matches_ao_ota,omitempty"`
-	MatchesBartonicek       *bool                        `json:"matches_bartonicek,omitempty"`
+	Response *domain.CaseResponse `json:"response"`
 }
 
 // ReliabilityMetricsResponse is the response for reliability metrics endpoint.
@@ -164,20 +141,6 @@ type CaseImageResponse struct {
 type AdminImageResponse struct {
 	domain.CaseImage
 	SignedURL string `json:"signed_url,omitempty"`
-}
-
-// CaseUserResponse represents a user in a case's access list.
-type CaseUserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	UserID    uuid.UUID `json:"user_id"`
-	UserEmail string    `json:"user_email"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-// CaseUsersListResponse is the response for listing case users.
-type CaseUsersListResponse struct {
-	Users []CaseUserResponse `json:"users"`
-	Total int                `json:"total"`
 }
 
 // --- Helper Functions ---

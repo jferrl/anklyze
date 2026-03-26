@@ -2,14 +2,12 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
-	"gorm.io/datatypes"
 )
 
 // --- Mock implementations ---
@@ -49,26 +47,12 @@ func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Con
 }
 func (m *mockCaseResponseRepository) Close() error { return nil }
 
-func createResponseWithPath(caseID uuid.UUID, decisionPath string, answers []domain.QuestionAnswer, backClicks int) domain.CaseResponse {
-	answersJSON, _ := json.Marshal(answers)
-	return domain.CaseResponse{
-		ID:           uuid.New(),
-		CaseID:       caseID,
-		UserID:       uuid.New(),
-		DecisionPath: decisionPath,
-		AnswerPath:   datatypes.JSON(answersJSON),
-		BackClicks:   backClicks,
-	}
-}
-
 // mockStudyRepository is a minimal mock for StudyRepository.
 type mockStudyRepository struct {
 	study             *domain.Study
 	studyErr          error
 	cases             []domain.Case
 	casesErr          error
-	hasAccess         bool
-	hasAccessErr      error
 	addCaseErr        error
 	removeCaseErr     error
 	updateCountersErr error
@@ -100,22 +84,6 @@ func (m *mockStudyRepository) GetStudyByCaseID(_ context.Context, _ uuid.UUID) (
 }
 func (m *mockStudyRepository) GetNextCaseOrder(_ context.Context, _ uuid.UUID) (int, error) {
 	return 0, nil
-}
-func (m *mockStudyRepository) AddRater(_ context.Context, _, _ uuid.UUID, _ string) error {
-	return nil
-}
-func (m *mockStudyRepository) RemoveRater(_ context.Context, _, _ uuid.UUID) error { return nil }
-func (m *mockStudyRepository) GetRaters(_ context.Context, _ uuid.UUID) ([]domain.StudyRater, error) {
-	return nil, nil
-}
-func (m *mockStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return m.hasAccess, m.hasAccessErr
-}
-func (m *mockStudyRepository) GetRaterProgress(_ context.Context, _ uuid.UUID) ([]domain.RaterProgress, error) {
-	return nil, nil
-}
-func (m *mockStudyRepository) UpdateRaterProgress(_ context.Context, _, _ uuid.UUID, _ int) error {
-	return nil
 }
 func (m *mockStudyRepository) Activate(_ context.Context, _ uuid.UUID) error { return nil }
 func (m *mockStudyRepository) Close(_ context.Context, _ uuid.UUID) error    { return nil }
@@ -174,9 +142,6 @@ func (m *mockCaseRepositoryForStudy) List(_ context.Context, _ *domain.CaseStatu
 func (m *mockCaseRepositoryForStudy) ListPublished(_ context.Context, _, _ int) ([]domain.Case, int64, error) {
 	return nil, 0, nil
 }
-func (m *mockCaseRepositoryForStudy) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Case, int64, error) {
-	return nil, 0, nil
-}
 func (m *mockCaseRepositoryForStudy) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domain.Case, error) {
 	return nil, nil
 }
@@ -204,18 +169,6 @@ func (m *mockCaseRepositoryForStudy) IncrementResponseCount(_ context.Context, _
 func (m *mockCaseRepositoryForStudy) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
 	return nil
 }
-func (m *mockCaseRepositoryForStudy) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return false, nil
-}
-func (m *mockCaseRepositoryForStudy) AddUser(_ context.Context, _, _ uuid.UUID, _ string) error {
-	return nil
-}
-func (m *mockCaseRepositoryForStudy) RemoveUser(_ context.Context, _, _ uuid.UUID) error {
-	return nil
-}
-func (m *mockCaseRepositoryForStudy) GetUsers(_ context.Context, _ uuid.UUID) ([]domain.CaseUser, error) {
-	return nil, nil
-}
 func (m *mockCaseRepositoryForStudy) GetImagesForCases(_ context.Context, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
 	return make(map[uuid.UUID][]domain.CaseImage), nil
 }
@@ -240,88 +193,6 @@ func newStudyService(
 	calc *mockReliabilityCalculator,
 ) StudyService {
 	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, NewTTLStatsCache(time.Hour))
-}
-
-// --- Tests for ValidateResponseSubmission ---
-
-func TestValidateResponseSubmission(t *testing.T) {
-	studyID := uuid.New()
-
-	tests := []struct {
-		name          string
-		cs            *domain.Case
-		caseErr       error
-		hasAccess     bool
-		hasAccessErr  error
-		expectedError error
-	}{
-		{
-			name: "case not in study — no validation needed",
-			cs: &domain.Case{
-				ID:      uuid.New(),
-				StudyID: nil, // Not in a study
-			},
-			hasAccess:     false, // Doesn't matter
-			expectedError: nil,
-		},
-		{
-			name: "case in study — user has access",
-			cs: &domain.Case{
-				ID:      uuid.New(),
-				StudyID: &studyID,
-			},
-			hasAccess:     true,
-			expectedError: nil,
-		},
-		{
-			name: "case in study — user does NOT have access",
-			cs: &domain.Case{
-				ID:      uuid.New(),
-				StudyID: &studyID,
-			},
-			hasAccess:     false,
-			expectedError: domain.ErrNotStudyMember,
-		},
-		{
-			name:          "case not found — treated as no validation needed",
-			cs:            nil,
-			expectedError: nil,
-		},
-		{
-			name:          "case repo error",
-			cs:            nil,
-			caseErr:       errors.New("db error"),
-			expectedError: errors.New("db error"),
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			studyRepo := &mockStudyRepository{hasAccess: tt.hasAccess, hasAccessErr: tt.hasAccessErr}
-			caseRepo := &mockCaseRepositoryForStudy{cs: tt.cs, err: tt.caseErr}
-			svc := newStudyService(studyRepo, &mockStudyResponseRepository{}, caseRepo, &mockCaseResponseRepository{}, &mockReliabilityCalculator{})
-
-			err := svc.ValidateResponseSubmission(context.Background(), uuid.New(), uuid.New())
-
-			if tt.expectedError == nil {
-				if err != nil {
-					t.Errorf("expected nil error, got %v", err)
-				}
-			} else {
-				if err == nil {
-					t.Errorf("expected error %v, got nil", tt.expectedError)
-					return
-				}
-				if errors.Is(tt.expectedError, domain.ErrNotStudyMember) {
-					if !errors.Is(err, domain.ErrNotStudyMember) {
-						t.Errorf("expected ErrNotStudyMember, got %v", err)
-					}
-				} else if err.Error() != tt.expectedError.Error() {
-					t.Errorf("expected error %q, got %q", tt.expectedError, err)
-				}
-			}
-		})
-	}
 }
 
 // --- Tests for IsCaseInStudy ---
@@ -506,214 +377,5 @@ func TestGetReliabilityMetrics_CacheMissPopulates(t *testing.T) {
 	}
 	if cachedResult != computed {
 		t.Errorf("expected cache to contain computed metrics pointer, got different value")
-	}
-}
-
-// --- Tests for GetDivergenceAnalysis (ported from divergence_test.go) ---
-
-func TestGetDivergenceAnalysis(t *testing.T) {
-	caseID := uuid.New()
-
-	// Create a reference input
-	referenceInput := &domain.FractureInput{
-		InvolvedMalleoli:  domain.InvolvedLateralOnly,
-		FibularLevel:      domain.FibularLevelTransindesmal,
-		LateralMorphology: domain.LateralMorphologySpiral,
-	}
-	referenceInputJSON, _ := json.Marshal(referenceInput)
-
-	tests := []struct {
-		name          string
-		cs            *domain.Case
-		responses     []domain.CaseResponse
-		expectedError string
-		validate      func(*testing.T, *DivergenceReport)
-	}{
-		{
-			name:          "case not found",
-			cs:            nil,
-			responses:     nil,
-			expectedError: "case not found",
-		},
-		{
-			name: "case without reference input",
-			cs: &domain.Case{
-				ID:    caseID,
-				Title: "Test Case",
-			},
-			responses:     nil,
-			expectedError: "case has no gold standard input stored",
-		},
-		{
-			name: "no responses with answer path",
-			cs: &domain.Case{
-				ID:             caseID,
-				Title:          "Test Case",
-				ReferenceInput: datatypes.JSON(referenceInputJSON),
-			},
-			responses: []domain.CaseResponse{
-				{
-					ID:           uuid.New(),
-					CaseID:       caseID,
-					DecisionPath: "", // No answer path
-				},
-			},
-			validate: func(t *testing.T, report *DivergenceReport) {
-				if report.TotalResponses != 1 {
-					t.Errorf("expected 1 total response, got %d", report.TotalResponses)
-				}
-				if report.ResponsesWithPath != 0 {
-					t.Errorf("expected 0 responses with path, got %d", report.ResponsesWithPath)
-				}
-			},
-		},
-		{
-			name: "responses with correct path",
-			cs: &domain.Case{
-				ID:             caseID,
-				Title:          "Test Case",
-				ReferenceInput: datatypes.JSON(referenceInputJSON),
-			},
-			responses: []domain.CaseResponse{
-				createResponseWithPath(caseID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
-					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
-					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
-					{Question: "lateral_morphology", Answer: "spiral", Timestamp: 3000},
-				}, 0),
-			},
-			validate: func(t *testing.T, report *DivergenceReport) {
-				if report.TotalResponses != 1 {
-					t.Errorf("expected 1 total response, got %d", report.TotalResponses)
-				}
-				if report.ResponsesWithPath != 1 {
-					t.Errorf("expected 1 response with path, got %d", report.ResponsesWithPath)
-				}
-				if report.CorrectPath != "lateral_only→transindesmal→spiral" {
-					t.Errorf("unexpected correct path: %s", report.CorrectPath)
-				}
-			},
-		},
-		{
-			name: "responses with errors",
-			cs: &domain.Case{
-				ID:             caseID,
-				Title:          "Test Case",
-				ReferenceInput: datatypes.JSON(referenceInputJSON),
-			},
-			responses: []domain.CaseResponse{
-				createResponseWithPath(caseID, "lateral_only→transindesmal→spiral", []domain.QuestionAnswer{
-					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
-					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
-					{Question: "lateral_morphology", Answer: "spiral", Timestamp: 3000},
-				}, 0),
-				createResponseWithPath(caseID, "lateral_only→transindesmal→oblique", []domain.QuestionAnswer{
-					{Question: "involved_malleoli", Answer: "lateral_only", Timestamp: 1000},
-					{Question: "fibular_level", Answer: "transindesmal", Timestamp: 2000},
-					{Question: "lateral_morphology", Answer: "oblique", Timestamp: 3000},
-				}, 2),
-			},
-			validate: func(t *testing.T, report *DivergenceReport) {
-				if report.TotalResponses != 2 {
-					t.Errorf("expected 2 total responses, got %d", report.TotalResponses)
-				}
-				if report.ResponsesWithPath != 2 {
-					t.Errorf("expected 2 responses with path, got %d", report.ResponsesWithPath)
-				}
-				if report.PathDistribution["lateral_only→transindesmal→spiral"] != 1 {
-					t.Errorf("expected 1 correct path, got %d", report.PathDistribution["lateral_only→transindesmal→spiral"])
-				}
-				if report.PathDistribution["lateral_only→transindesmal→oblique"] != 1 {
-					t.Errorf("expected 1 incorrect path, got %d", report.PathDistribution["lateral_only→transindesmal→oblique"])
-				}
-				for _, stat := range report.QuestionStats {
-					if stat.Question == "lateral_morphology" {
-						if stat.ErrorRate != 0.5 {
-							t.Errorf("expected 50%% error rate for lateral_morphology, got %.2f", stat.ErrorRate)
-						}
-						if stat.WrongAnswerDist["oblique"] != 1 {
-							t.Errorf("expected 1 wrong answer of 'oblique', got %d", stat.WrongAnswerDist["oblique"])
-						}
-					}
-				}
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			caseRepo := &mockCaseRepositoryForStudy{cs: tt.cs}
-			responseRepo := &mockCaseResponseRepository{responses: tt.responses}
-			studyRepo := &mockStudyRepository{}
-			svc := newStudyService(studyRepo, &mockStudyResponseRepository{}, caseRepo, responseRepo, &mockReliabilityCalculator{})
-
-			report, err := svc.GetDivergenceAnalysis(context.Background(), caseID)
-
-			if tt.expectedError != "" {
-				if err == nil {
-					t.Errorf("expected error %q, got nil", tt.expectedError)
-					return
-				}
-				if err.Error() != tt.expectedError {
-					t.Errorf("expected error %q, got %q", tt.expectedError, err.Error())
-				}
-				return
-			}
-			if err != nil {
-				t.Errorf("unexpected error: %v", err)
-				return
-			}
-			if tt.validate != nil {
-				tt.validate(t, report)
-			}
-		})
-	}
-}
-
-// --- Tests for helper functions (ported from divergence_test.go) ---
-
-func TestBuildAnswerPathFromInputStudy(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    *domain.FractureInput
-		expected map[string]string
-	}{
-		{
-			name: "lateral only with transindesmal spiral",
-			input: &domain.FractureInput{
-				InvolvedMalleoli:  domain.InvolvedLateralOnly,
-				FibularLevel:      domain.FibularLevelTransindesmal,
-				LateralMorphology: domain.LateralMorphologySpiral,
-			},
-			expected: map[string]string{
-				"involved_malleoli":  "lateral_only",
-				"fibular_level":      "transindesmal",
-				"lateral_morphology": "spiral",
-			},
-		},
-		{
-			name: "medial only with vertical morphology",
-			input: &domain.FractureInput{
-				InvolvedMalleoli: domain.InvolvedMedialOnly,
-				MedialMorphology: domain.MedialMorphologyVertical,
-			},
-			expected: map[string]string{
-				"involved_malleoli": "medial_only",
-				"medial_morphology": "vertical",
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := buildAnswerPathFromInput(tt.input)
-			if len(result) != len(tt.expected) {
-				t.Errorf("expected %d keys, got %d", len(tt.expected), len(result))
-			}
-			for key, expectedVal := range tt.expected {
-				if result[key] != expectedVal {
-					t.Errorf("key %s: expected %q, got %q", key, expectedVal, result[key])
-				}
-			}
-		})
 	}
 }

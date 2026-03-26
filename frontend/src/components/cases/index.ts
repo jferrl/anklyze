@@ -4,4 +4,3 @@ export { CaseHeader } from '../studies/StudyHeader';
 export { PreviousResponses } from '../studies/PreviousResponses';
 export { ClassificationPanel } from '../studies/ClassificationPanel';
 export { CaseClassificationForm, type AnswerTracking, type QuestionAnswer } from '../studies/StudyClassificationForm';
-export { GoldStandardInputDialog } from '../studies/GoldStandardInputDialog';

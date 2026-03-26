@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { FileText, Users, Images, Check, Settings } from 'lucide-react';
+import { FileText, Images, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type Step = 'details' | 'settings' | 'images' | 'users';
+type Step = 'details' | 'images';
 
 interface CaseEditorStepperProps {
   steps: Step[];
@@ -26,19 +26,16 @@ export function CaseEditorStepper({ steps, isEditing, currentStep, title, totalI
 
   const stepConfig: Record<Step, { icon: React.ElementType; label: string }> = {
     details: { icon: FileText, label: t('admin.cases.details') },
-    settings: { icon: Settings, label: t('admin.cases.validationSettings', 'Validation') },
     images: { icon: Images, label: t('admin.cases.images') },
-    users: { icon: Users, label: t('admin.cases.users.title') },
   };
 
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
-          if (step === 'users' && !isEditing) return null;
           const status = getStatus(step);
           const { icon: Icon, label } = stepConfig[step];
-          const isLast = index === steps.length - 1 || (step === 'images' && !isEditing);
+          const isLast = index === steps.length - 1;
           return (
             <div key={step} className="flex items-center flex-1">
               <button

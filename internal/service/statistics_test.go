@@ -30,11 +30,7 @@ func TestCalculateReliabilityMetrics_TwoRaters(t *testing.T) {
 		},
 	}
 
-	cs := &domain.Case{
-		ID: caseID,
-	}
-
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -85,9 +81,7 @@ func TestCalculateReliabilityMetrics_MultipleRaters_FleissNote(t *testing.T) {
 		{UserID: user3, DanisWeberType: &dw},
 	}
 
-	cs := &domain.Case{ID: caseID}
-
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -135,9 +129,7 @@ func TestCalculateReliabilityMetrics_MultipleResponsesPerUser(t *testing.T) {
 		{UserID: user2, DanisWeberType: &dw2b}, // Second response user2 (latest)
 	}
 
-	cs := &domain.Case{ID: caseID}
-
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -164,9 +156,8 @@ func TestCalculateReliabilityMetrics_EmptyResponses(t *testing.T) {
 	svc := NewStatisticsService()
 
 	responses := []domain.CaseResponse{}
-	cs := &domain.Case{ID: uuid.New()}
 
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(uuid.New(), responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -223,9 +214,7 @@ func TestCalculateReliabilityMetrics_AOOTAIncludesWeightedKappa(t *testing.T) {
 		{UserID: user2, AOOTACode: &ao2},
 	}
 
-	cs := &domain.Case{ID: caseID}
-
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -265,9 +254,7 @@ func TestCalculateReliabilityMetrics_WithSingleCase_NoCI(t *testing.T) {
 		{UserID: user2, DanisWeberType: &dw2},
 	}
 
-	cs := &domain.Case{ID: caseID}
-
-	metrics, err := svc.CalculateReliabilityMetrics(responses, cs)
+	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

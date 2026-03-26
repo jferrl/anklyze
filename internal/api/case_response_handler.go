@@ -63,15 +63,6 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Check access (admins bypass this check)
-	if !auth.IsAdmin(c) {
-		hasAccess, _ := h.caseRepo.HasAccess(c.Request.Context(), caseID, userID)
-		if !hasAccess {
-			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this case"})
-			return
-		}
-	}
-
 	// Verify case can accept responses
 	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
 	if err != nil {
@@ -84,29 +75,16 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Check study access - if case belongs to a study, verify user is assigned to it.
-	// StudyService.ValidateResponseSubmission is a no-op when the case is not in a study.
-	if h.studyService != nil {
-		if err := h.studyService.ValidateResponseSubmission(c.Request.Context(), caseID, userID); err != nil {
-			HandleError(c, err, "Cannot submit response")
-			return
-		}
-	}
-
-	// Check if user has already responded (needed for single-response check)
-	hasResponded := false
-	if !cs.AllowMultipleResponses {
-		var err error
-		hasResponded, err = h.responseRepo.HasUserResponded(c.Request.Context(), userID, caseID)
-		if err != nil {
-			slog.Error("failed to check existing response", "error", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check response status"})
-			return
-		}
+	// Check if user has already responded
+	hasResponded, err := h.responseRepo.HasUserResponded(c.Request.Context(), userID, caseID)
+	if err != nil {
+		slog.Error("failed to check existing response", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check response status"})
+		return
 	}
 
 	// Validate response submission using domain logic
-	if err := cs.ValidateResponseSubmission(auth.IsAdmin(c), hasResponded); err != nil {
+	if err := cs.ValidateResponseSubmission(hasResponded); err != nil {
 		HandleError(c, err, "Cannot submit response")
 		return
 	}
@@ -187,30 +165,11 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 
 		// Update study user progress if case belongs to a study.
 		if cs.StudyID != nil && h.studyService != nil {
-			h.studyService.UpdateProgressAfterResponse(bgCtx, *cs.StudyID, caseID, userID)
+			h.studyService.UpdateAfterResponse(bgCtx, *cs.StudyID)
 		}
 	})
 
-	// Build result with reference comparison if enabled
-	result := SubmitResponseResult{
-		Response: response,
-	}
-
-	if cs.ShowReferenceAfterSubmit && cs.HasReferenceClassification() {
-		refClass, err := cs.GetReferenceClassification()
-		if err == nil && refClass != nil {
-			result.ReferenceClassification = refClass
-
-			if comparison := cs.CompareWithReference(&req.Classification); comparison != nil {
-				result.MatchesDanisWeber = &comparison.DanisWeberMatch
-				result.MatchesLaugeHansen = &comparison.LaugeHansenMatch
-				result.MatchesAOOTA = &comparison.AOOTAMatch
-				result.MatchesBartonicek = &comparison.BartonicekMatch
-			}
-		}
-	}
-
-	c.JSON(http.StatusCreated, result)
+	c.JSON(http.StatusCreated, SubmitResponseResult{Response: response})
 }
 
 // GetMyResponses handles GET /api/cases/:id/my-responses
@@ -226,15 +185,6 @@ func (h *CaseResponseHandler) GetMyResponses(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
-	}
-
-	// Check access (admins bypass this check)
-	if !auth.IsAdmin(c) {
-		hasAccess, _ := h.caseRepo.HasAccess(c.Request.Context(), caseID, userID)
-		if !hasAccess {
-			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this case"})
-			return
-		}
 	}
 
 	responses, err := h.responseRepo.GetByUserAndCase(c.Request.Context(), userID, caseID)
@@ -285,21 +235,6 @@ func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
 		return
-	}
-
-	// Get user ID and check access (admins bypass this check)
-	uid, err := auth.ParseUserID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
-		return
-	}
-
-	if !auth.IsAdmin(c) {
-		hasAccess, _ := h.caseRepo.HasAccess(c.Request.Context(), caseID, uid)
-		if !hasAccess {
-			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this case"})
-			return
-		}
 	}
 
 	// Verify case is published

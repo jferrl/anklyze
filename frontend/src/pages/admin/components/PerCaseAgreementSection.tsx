@@ -8,7 +8,6 @@ import type { ClassificationSystem } from './CaseMetricCard';
 
 interface PerCaseAgreementSectionProps {
   perCaseMetrics: CaseMetrics[];
-  hasGoldStandard: boolean;
 }
 
 const SYSTEMS: ClassificationSystem[] = ['danis_weber', 'lauge_hansen', 'ao_ota', 'bartonicek'];
@@ -23,7 +22,7 @@ function getSystemLabel(key: string): string {
   return labels[key] || key;
 }
 
-export function PerCaseAgreementSection({ perCaseMetrics, hasGoldStandard }: PerCaseAgreementSectionProps) {
+export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSectionProps) {
   const { t } = useTranslation();
   const [activeSystem, setActiveSystem] = useState<ClassificationSystem>('danis_weber');
 
@@ -89,9 +88,6 @@ export function PerCaseAgreementSection({ perCaseMetrics, hasGoldStandard }: Per
                   <th className="text-center py-3 px-4 font-medium text-muted-foreground">Lauge-Hansen</th>
                   <th className="text-center py-3 px-4 font-medium text-muted-foreground">AO/OTA</th>
                   <th className="text-center py-3 px-4 font-medium text-muted-foreground">Bartonicek</th>
-                  {hasGoldStandard && (
-                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">Gold Match</th>
-                  )}
                 </tr>
               </thead>
               <tbody>
@@ -133,13 +129,6 @@ export function PerCaseAgreementSection({ perCaseMetrics, hasGoldStandard }: Per
                         ? `${caseMetrics.bartonicek_agreement.toFixed(0)}%`
                         : '-'}
                     </td>
-                    {hasGoldStandard && (
-                      <td className={cn('py-3 px-4 text-center font-semibold', getAgreementColorClass(caseMetrics.gold_standard_match_rate ?? 0))}>
-                        {caseMetrics.gold_standard_match_rate !== undefined
-                          ? `${caseMetrics.gold_standard_match_rate.toFixed(0)}%`
-                          : '-'}
-                      </td>
-                    )}
                   </tr>
                 ))}
               </tbody>

@@ -15,14 +15,11 @@ import type {
   MyResponsesResponse,
   AdminCaseImagesResponse,
   ImageCategory,
-  CaseUsersListResponse,
-  AddCaseUserRequest,
   UpdateImageRequest,
   ReliabilityMetricsResponse,
   SubmitResponseResult,
   UserProfile,
   UpdateUserProfileRequest,
-  DivergenceReport,
 } from '@/types';
 import { apiRequest, getAuthHeaders, API_BASE_URL } from '../core/apiClient';
 import i18n from '../../i18n/config';
@@ -107,7 +104,7 @@ export async function getAdminImageSignedURL(
 
 /**
  * Submit a classification response to a case
- * Returns the response along with gold standard comparison if available
+ * Returns the submitted response
  */
 export async function submitCaseResponse(
   caseId: string,
@@ -364,16 +361,6 @@ export async function getReliabilityMetrics(caseId: string): Promise<Reliability
 }
 
 /**
- * Get divergence analysis for a case (admin only)
- * Analyzes where users diverge from the gold standard path
- */
-export async function getDivergenceAnalysis(caseId: string): Promise<DivergenceReport> {
-  return apiRequest<DivergenceReport>(`/api/admin/cases/${caseId}/divergence`, {
-    method: 'GET',
-  });
-}
-
-/**
  * Export detailed case responses as CSV with expertise and gold standard comparison (admin only)
  */
 export async function exportDetailedResponses(caseId: string): Promise<Blob> {
@@ -447,41 +434,6 @@ export async function updateUserProfile(data: UpdateUserProfileRequest): Promise
   return apiRequest<UserProfile>('/api/me/profile', {
     method: 'PUT',
     body: JSON.stringify(data),
-  });
-}
-
-// ================================
-// Case User Management (Admin)
-// ================================
-
-/**
- * List users who have access to a case (admin only)
- */
-export async function listCaseUsers(caseId: string): Promise<CaseUsersListResponse> {
-  return apiRequest<CaseUsersListResponse>(`/api/admin/cases/${caseId}/users`, {
-    method: 'GET',
-  });
-}
-
-/**
- * Add a user to a case (admin only)
- */
-export async function addCaseUser(
-  caseId: string,
-  data: AddCaseUserRequest
-): Promise<void> {
-  await apiRequest<void>(`/api/admin/cases/${caseId}/users`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
-
-/**
- * Remove a user from a case (admin only)
- */
-export async function removeCaseUser(caseId: string, userId: string): Promise<void> {
-  await apiRequest<void>(`/api/admin/cases/${caseId}/users/${userId}`, {
-    method: 'DELETE',
   });
 }
 

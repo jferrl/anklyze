@@ -44,47 +44,7 @@ func (h *CaseAdminHandler) CreateCase(c *gin.Context) {
 		return
 	}
 
-	// Validate JSONB fields if provided
-	if req.ReferenceClassification != nil {
-		if err := validate.Struct(req.ReferenceClassification); err != nil {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error":  "invalid reference classification",
-				"fields": validationFieldErrors(err),
-			})
-			return
-		}
-	}
-	if req.ReferenceInput != nil {
-		if err := validate.Struct(req.ReferenceInput); err != nil {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error":  "invalid reference input",
-				"fields": validationFieldErrors(err),
-			})
-			return
-		}
-	}
-
 	cs := domain.NewCase(userID, req.Title, req.Description, req.Deadline)
-
-	// Set validation case options
-	if req.ReferenceClassification != nil {
-		if err := cs.SetReferenceClassification(req.ReferenceClassification); err != nil {
-			slog.Error("failed to set reference classification", "error", err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference classification"})
-			return
-		}
-	}
-	if req.ReferenceInput != nil {
-		if err := cs.SetReferenceInput(req.ReferenceInput); err != nil {
-			slog.Error("failed to set reference input", "error", err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference input"})
-			return
-		}
-	}
-	cs.ShowReferenceAfterSubmit = req.ShowReferenceAfterSubmit
-	if req.AllowMultipleResponses != nil {
-		cs.AllowMultipleResponses = *req.AllowMultipleResponses
-	}
 
 	if err := h.caseRepo.Create(c.Request.Context(), cs); err != nil {
 		slog.Error("failed to create case", "error", err)
@@ -178,50 +138,10 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 		return
 	}
 
-	// Validate JSONB fields if provided
-	if req.ReferenceClassification != nil {
-		if err := validate.Struct(req.ReferenceClassification); err != nil {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error":  "invalid reference classification",
-				"fields": validationFieldErrors(err),
-			})
-			return
-		}
-	}
-	if req.ReferenceInput != nil {
-		if err := validate.Struct(req.ReferenceInput); err != nil {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error":  "invalid reference input",
-				"fields": validationFieldErrors(err),
-			})
-			return
-		}
-	}
-
-	// For draft cases, allow all fields to be edited
+	// For draft cases, title can be edited
 	if cs.CanBeEdited() {
 		if req.Title != nil {
 			cs.Title = *req.Title
-		}
-		if req.ReferenceClassification != nil {
-			if err := cs.SetReferenceClassification(req.ReferenceClassification); err != nil {
-				slog.Error("failed to set reference classification", "error", err)
-				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference classification"})
-				return
-			}
-		}
-		if req.ReferenceInput != nil {
-			if err := cs.SetReferenceInput(req.ReferenceInput); err != nil {
-				slog.Error("failed to set reference input", "error", err)
-				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reference input"})
-				return
-			}
-		}
-		if req.ShowReferenceAfterSubmit != nil {
-			cs.ShowReferenceAfterSubmit = *req.ShowReferenceAfterSubmit
-		}
-		if req.AllowMultipleResponses != nil {
-			cs.AllowMultipleResponses = *req.AllowMultipleResponses
 		}
 	}
 

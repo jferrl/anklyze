@@ -16,8 +16,8 @@ func NewStatisticsService() *StatisticsService {
 
 // CalculateReliabilityMetrics calculates all reliability metrics for a case.
 func (s *StatisticsService) CalculateReliabilityMetrics(
+	caseID uuid.UUID,
 	responses []domain.CaseResponse,
-	cs *domain.Case,
 ) (*domain.ReliabilityMetrics, error) {
 	if len(responses) == 0 {
 		return nil, nil
@@ -30,7 +30,7 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 	}
 
 	metrics := &domain.ReliabilityMetrics{
-		CaseID:         cs.ID,
+		CaseID:         caseID,
 		TotalResponses: int64(len(responses)),
 		UniqueRaters:   int64(len(uniqueRaters)),
 	}
@@ -40,14 +40,6 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 	metrics.LaugeHansenAgreement = s.calculateSystemAgreement(responses, "lauge_hansen")
 	metrics.AOOTAAgreement = s.calculateSystemAgreement(responses, "ao_ota")
 	metrics.BartonicekAgreement = s.calculateSystemAgreement(responses, "bartonicek")
-
-	// Calculate gold standard accuracy if reference is set
-	if cs.HasReferenceClassification() {
-		refClass, err := cs.GetReferenceClassification()
-		if err == nil && refClass != nil {
-			metrics.GoldStandardAccuracy = s.calculateGoldStandardAccuracy(responses, refClass)
-		}
-	}
 
 	return metrics, nil
 }
@@ -157,111 +149,6 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 	return agreement
 }
 
-// calculateGoldStandardAccuracy calculates accuracy comparing responses to reference.
-func (s *StatisticsService) calculateGoldStandardAccuracy(
-	responses []domain.CaseResponse,
-	reference *domain.ClassificationResult,
-) *domain.GoldStandardAccuracy {
-	accuracy := &domain.GoldStandardAccuracy{
-		TotalComparisons: int64(len(responses)),
-	}
-
-	var dwCorrect, lhCorrect, aoCorrect, btCorrect int64
-	var dwTotal, lhTotal, aoTotal, btTotal int64
-
-	for _, r := range responses {
-		// Danis-Weber
-		if r.DanisWeberType != nil && reference.DanisWeber != nil {
-			dwTotal++
-			if *r.DanisWeberType == string(reference.DanisWeber.Type) {
-				dwCorrect++
-			}
-		}
-
-		// Lauge-Hansen
-		if r.LaugeHansenType != nil && reference.LaugeHansen != nil {
-			lhTotal++
-			if *r.LaugeHansenType == string(reference.LaugeHansen.Type) {
-				lhCorrect++
-			}
-		}
-
-		// AO/OTA
-		if r.AOOTACode != nil && reference.AOOTA != nil {
-			aoTotal++
-			if *r.AOOTACode == string(reference.AOOTA.Code) {
-				aoCorrect++
-			}
-		}
-
-		// Bartonicek
-		if r.BartonicekType != nil && reference.Bartonicek != nil {
-			btTotal++
-			if *r.BartonicekType == string(reference.Bartonicek.Type) {
-				btCorrect++
-			}
-		}
-	}
-
-	// Calculate per-system accuracy
-	if dwTotal > 0 {
-		acc := float64(dwCorrect) / float64(dwTotal) * 100
-		accuracy.DanisWeberAccuracy = &acc
-		accuracy.CorrectResponses += dwCorrect
-	}
-	if lhTotal > 0 {
-		acc := float64(lhCorrect) / float64(lhTotal) * 100
-		accuracy.LaugeHansenAccuracy = &acc
-		accuracy.CorrectResponses += lhCorrect
-	}
-	if aoTotal > 0 {
-		acc := float64(aoCorrect) / float64(aoTotal) * 100
-		accuracy.AOOTAAccuracy = &acc
-		accuracy.CorrectResponses += aoCorrect
-	}
-	if btTotal > 0 {
-		acc := float64(btCorrect) / float64(btTotal) * 100
-		accuracy.BartonicekAccuracy = &acc
-		accuracy.CorrectResponses += btCorrect
-	}
-
-	// Calculate overall accuracy
-	totalCorrect := dwCorrect + lhCorrect + aoCorrect + btCorrect
-	totalComparisons := dwTotal + lhTotal + aoTotal + btTotal
-	if totalComparisons > 0 {
-		accuracy.OverallAccuracy = float64(totalCorrect) / float64(totalComparisons) * 100
-		accuracy.IncorrectResponses = totalComparisons - totalCorrect
-	}
-
-	// Calculate per-category metrics (sensitivity, specificity, etc.)
-	// Combine all classification systems for aggregate metrics
-	var allObserved, allExpected []string
-	for _, r := range responses {
-		if r.DanisWeberType != nil && reference.DanisWeber != nil {
-			allObserved = append(allObserved, *r.DanisWeberType)
-			allExpected = append(allExpected, string(reference.DanisWeber.Type))
-		}
-		if r.LaugeHansenType != nil && reference.LaugeHansen != nil {
-			allObserved = append(allObserved, *r.LaugeHansenType)
-			allExpected = append(allExpected, string(reference.LaugeHansen.Type))
-		}
-		if r.AOOTACode != nil && reference.AOOTA != nil {
-			allObserved = append(allObserved, *r.AOOTACode)
-			allExpected = append(allExpected, string(reference.AOOTA.Code))
-		}
-		if r.BartonicekType != nil && reference.Bartonicek != nil {
-			allObserved = append(allObserved, *r.BartonicekType)
-			allExpected = append(allExpected, string(reference.Bartonicek.Type))
-		}
-	}
-
-	if len(allObserved) > 0 {
-		accuracy.PerCategoryMetrics = statistics.CalculateCategoryMetrics(allObserved, allExpected)
-	}
-
-	return accuracy
-}
-
 // ============================================================================
 // Study Reliability Metrics
 // ============================================================================
@@ -310,9 +197,6 @@ func (s *StatisticsService) CalculateStudyReliabilityMetrics(
 
 	// Calculate per-case metrics
 	metrics.PerCaseMetrics = s.calculatePerCaseMetrics(cases, responsesByCase)
-
-	// Calculate aggregated gold standard accuracy
-	metrics.GoldStandardAccuracy = s.calculateStudyGoldStandardAccuracy(cases, responsesByCase)
 
 	return metrics, nil
 }
@@ -482,15 +366,6 @@ func (s *StatisticsService) calculatePerCaseMetrics(
 			cm.BartonicekAgreement = &btAgreement
 		}
 
-		// Calculate gold standard match rate if reference is set
-		if c.HasReferenceClassification() {
-			refClass, err := c.GetReferenceClassification()
-			if err == nil && refClass != nil {
-				matchRate := s.calculateGoldStandardMatchRate(responses, refClass)
-				cm.GoldStandardMatchRate = &matchRate
-			}
-		}
-
 		// Flag low agreement cases
 		cm.IsLowAgreement = cm.DanisWeberAgreement < 60 ||
 			cm.LaugeHansenAgreement < 60 ||
@@ -517,147 +392,4 @@ func (s *StatisticsService) calculateCaseAgreement(responses []domain.CaseRespon
 	}
 
 	return statistics.PercentAgreement(classifications) * 100
-}
-
-// calculateGoldStandardMatchRate calculates the percentage of responses matching the gold standard.
-func (s *StatisticsService) calculateGoldStandardMatchRate(
-	responses []domain.CaseResponse,
-	reference *domain.ClassificationResult,
-) float64 {
-	if len(responses) == 0 || reference == nil {
-		return 0
-	}
-
-	var matches, total int
-
-	for _, r := range responses {
-		// Check each available system
-		comparisons := 0
-		matchCount := 0
-
-		if r.DanisWeberType != nil && reference.DanisWeber != nil {
-			comparisons++
-			if *r.DanisWeberType == string(reference.DanisWeber.Type) {
-				matchCount++
-			}
-		}
-		if r.LaugeHansenType != nil && reference.LaugeHansen != nil {
-			comparisons++
-			if *r.LaugeHansenType == string(reference.LaugeHansen.Type) {
-				matchCount++
-			}
-		}
-		if r.AOOTACode != nil && reference.AOOTA != nil {
-			comparisons++
-			if *r.AOOTACode == string(reference.AOOTA.Code) {
-				matchCount++
-			}
-		}
-		if r.BartonicekType != nil && reference.Bartonicek != nil {
-			comparisons++
-			if *r.BartonicekType == string(reference.Bartonicek.Type) {
-				matchCount++
-			}
-		}
-
-		if comparisons > 0 {
-			total += comparisons
-			matches += matchCount
-		}
-	}
-
-	if total == 0 {
-		return 0
-	}
-
-	return float64(matches) / float64(total) * 100
-}
-
-// calculateStudyGoldStandardAccuracy calculates aggregated gold standard accuracy across all cases.
-func (s *StatisticsService) calculateStudyGoldStandardAccuracy(
-	cases []domain.Case,
-	responsesByCase map[uuid.UUID][]domain.CaseResponse,
-) *domain.StudyGoldStandardAccuracy {
-	var totalDW, correctDW int64
-	var totalLH, correctLH int64
-	var totalAO, correctAO int64
-	var totalBT, correctBT int64
-	casesWithRef := 0
-
-	for _, c := range cases {
-		if !c.HasReferenceClassification() {
-			continue
-		}
-
-		refClass, err := c.GetReferenceClassification()
-		if err != nil || refClass == nil {
-			continue
-		}
-
-		casesWithRef++
-		responses := responsesByCase[c.ID]
-
-		for _, r := range responses {
-			if r.DanisWeberType != nil && refClass.DanisWeber != nil {
-				totalDW++
-				if *r.DanisWeberType == string(refClass.DanisWeber.Type) {
-					correctDW++
-				}
-			}
-			if r.LaugeHansenType != nil && refClass.LaugeHansen != nil {
-				totalLH++
-				if *r.LaugeHansenType == string(refClass.LaugeHansen.Type) {
-					correctLH++
-				}
-			}
-			if r.AOOTACode != nil && refClass.AOOTA != nil {
-				totalAO++
-				if *r.AOOTACode == string(refClass.AOOTA.Code) {
-					correctAO++
-				}
-			}
-			if r.BartonicekType != nil && refClass.Bartonicek != nil {
-				totalBT++
-				if *r.BartonicekType == string(refClass.Bartonicek.Type) {
-					correctBT++
-				}
-			}
-		}
-	}
-
-	if casesWithRef == 0 {
-		return nil
-	}
-
-	totalComparisons := totalDW + totalLH + totalAO + totalBT
-	totalCorrect := correctDW + correctLH + correctAO + correctBT
-
-	if totalComparisons == 0 {
-		return nil
-	}
-
-	accuracy := &domain.StudyGoldStandardAccuracy{
-		CasesWithReference: casesWithRef,
-		TotalComparisons:   totalComparisons,
-		OverallAccuracy:    float64(totalCorrect) / float64(totalComparisons) * 100,
-	}
-
-	if totalDW > 0 {
-		acc := float64(correctDW) / float64(totalDW) * 100
-		accuracy.DanisWeberAccuracy = &acc
-	}
-	if totalLH > 0 {
-		acc := float64(correctLH) / float64(totalLH) * 100
-		accuracy.LaugeHansenAccuracy = &acc
-	}
-	if totalAO > 0 {
-		acc := float64(correctAO) / float64(totalAO) * 100
-		accuracy.AOOTAAccuracy = &acc
-	}
-	if totalBT > 0 {
-		acc := float64(correctBT) / float64(totalBT) * 100
-		accuracy.BartonicekAccuracy = &acc
-	}
-
-	return accuracy
 }

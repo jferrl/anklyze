@@ -485,15 +485,6 @@
         "titleRequired": "Title is required",
         "imagesRequired": "At least one image is required to publish"
       },
-      "users": {
-        "title": "Case Access",
-        "description": "Manage which users can access this case",
-        "emailPlaceholder": "Enter user email address",
-        "add": "Add User",
-        "email": "Email",
-        "addedAt": "Added",
-        "empty": "No users have been added to this case yet"
-      },
       "table": {
         "title": "Title",
         "status": "Status",
@@ -510,8 +501,7 @@
       "setReference": "Set Reference Classification",
       "changeReference": "Change",
       "responseOptions": "Response Options",
-      "allowMultipleResponses": "Allow Multiple Responses",
-      "allowMultipleResponsesDescription": "When disabled, each participant can only submit one response",
+
       "showReferenceAfterSubmit": "Show Reference After Submit",
       "showReferenceAfterSubmitDescription": "Display the correct classification after participants submit their response",
       "decisionPathConfigured": "Decision path configured for divergence analysis",
@@ -552,6 +542,7 @@
       "noCasesAvailable": "No published cases available",
       "noCases": "No cases in this study yet",
       "addCasesHint": "Add published cases to get started",
+      "addAllCases": "Add all",
       "step": "Step",
       "activateConfirmTitle": "Activate Study",
       "activateConfirmDescription": "Once activated, the study will be available for assigned raters to submit classifications. Cases cannot be added or removed after activation.",

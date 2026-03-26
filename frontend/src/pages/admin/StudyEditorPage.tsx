@@ -13,7 +13,6 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  Users,
   FolderOpen,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -32,13 +31,12 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { studyApi, caseApi } from '@/services';
-import { StudyUsersManager } from '../../components/admin/StudyUsersManager';
 import type { StudyStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
-type Step = 'details' | 'cases' | 'raters';
+type Step = 'details' | 'cases';
 
-const STEPS: Step[] = ['details', 'cases', 'raters'];
+const STEPS: Step[] = ['details', 'cases'];
 
 export function StudyEditorPage() {
   const { t } = useTranslation();
@@ -121,6 +119,17 @@ export function StudyEditorPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
       queryClient.invalidateQueries({ queryKey: ['admin-cases-available'] });
       setSelectedCaseId('');
+    },
+    onError: (err: Error) => {
+      setError(err.message);
+    },
+  });
+
+  const addAllCasesMutation = useMutation({
+    mutationFn: () => studyApi.addAllCasesToStudy(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-study', id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-cases-available'] });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -228,11 +237,6 @@ export function StudyEditorPage() {
   const goToNextStep = async () => {
     const nextIndex = currentStepIndex + 1;
     if (nextIndex < STEPS.length) {
-      // Skip raters step if not editing
-      if (STEPS[nextIndex] === 'raters' && !isEditing) {
-        return;
-      }
-      
       // When moving to cases step, ensure study is created first
       if (STEPS[nextIndex] === 'cases' && !isEditing) {
         if (!title.trim()) {
@@ -275,11 +279,6 @@ export function StudyEditorPage() {
       icon: FolderOpen,
       label: t('admin.studies.cases', 'Cases'),
       description: t('admin.studies.casesDescription', 'Add cases to the study'),
-    },
-    raters: {
-      icon: Users,
-      label: t('admin.studies.raters.title', 'Raters'),
-      description: t('admin.studies.raters.description', 'Assign raters'),
     },
   };
 
@@ -379,9 +378,6 @@ export function StudyEditorPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => {
-              // Skip raters step in stepper if not editing
-              if (step === 'raters' && !isEditing) return null;
-
               const status = getStepStatus(step);
               const config = stepConfig[step];
               const Icon = config.icon;
@@ -464,20 +460,16 @@ export function StudyEditorPage() {
               selectedCaseId={selectedCaseId}
               canEdit={canEdit}
               isAddingCase={addCaseMutation.isPending}
+              isAddingAll={addAllCasesMutation.isPending}
               isRemovingCase={removeCaseMutation.isPending}
               onSelectCase={setSelectedCaseId}
               onAddCase={handleAddCase}
+              onAddAllCases={() => addAllCasesMutation.mutate()}
               onRemoveCase={(caseId) => removeCaseMutation.mutate(caseId)}
               studyId={id}
             />
           )}
 
-          {/* Raters Step */}
-          {currentStep === 'raters' && isEditing && (
-            <div className="animate-fade-in">
-              <StudyUsersManager studyId={id!} disabled={isReadOnly} />
-            </div>
-          )}
         </div>
 
         {/* Navigation Buttons */}
@@ -498,10 +490,7 @@ export function StudyEditorPage() {
 
           <Button
             onClick={goToNextStep}
-            disabled={
-              (currentStep === 'cases' && !isEditing) ||
-              (currentStep === 'raters')
-            }
+            disabled={currentStep === 'cases'}
             className="gap-2"
           >
             {t('common.next', 'Next')}

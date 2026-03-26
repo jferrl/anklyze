@@ -73,10 +73,6 @@ export const mockCase: Case = {
   has_tac_images: true,
   response_count: 15,
   unique_users: 12,
-  reference_classification: mockClassificationResult,
-  reference_input: mockFractureInput,
-  show_reference_after_submit: true,
-  allow_multiple_responses: false,
   case_order: 1,
 }
 
@@ -134,7 +130,6 @@ export const mockUserCaseDetail: UserCaseDetail = {
   ],
   has_responded: false,
   my_response_count: 0,
-  allow_multiple_responses: false,
   is_expired: false,
 }
 
@@ -203,14 +198,5 @@ export const mockReliabilityMetrics: ReliabilityMetrics = {
     cohens_kappa_ci: { lower: 0.58, upper: 0.72, level: 0.95 },
     fleiss_kappa: 0.62,
     category_counts: { 'SA': 3, 'SER': 38, 'PER': 7, 'PA': 2 },
-  },
-  gold_standard_accuracy: {
-    overall_accuracy: 0.82,
-    danis_weber_accuracy: 0.88,
-    lauge_hansen_accuracy: 0.76,
-    ao_ota_accuracy: 0.72,
-    total_comparisons: 50,
-    correct_responses: 41,
-    incorrect_responses: 9,
   },
 }

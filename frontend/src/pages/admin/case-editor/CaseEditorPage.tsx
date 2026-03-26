@@ -13,12 +13,9 @@ import {
 } from '../../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { caseApi } from '@/services';
-import { CaseUsersManager } from '../../../components/admin/CaseUsersManager';
-import { GoldStandardInputDialog } from '../../../components/cases';
 import { cn } from '@/lib/utils';
 import type { ImageCategory } from '@/types';
 import { CaseDetailsStep } from '../components/CaseDetailsStep';
-import { CaseSettingsStep } from '../components/CaseSettingsStep';
 import { useCaseEditorForm } from './useCaseEditorForm';
 import { useCaseEditorMutations } from './useCaseEditorMutations';
 import { CaseImagesStep } from './CaseImagesStep';
@@ -31,8 +28,8 @@ interface PendingUpload {
   preview: string;
 }
 
-type Step = 'details' | 'settings' | 'images' | 'users';
-const STEPS: Step[] = ['details', 'settings', 'images', 'users'];
+type Step = 'details' | 'images';
+const STEPS: Step[] = ['details', 'images'];
 
 export function CaseEditorPage() {
   const { t } = useTranslation();
@@ -43,13 +40,11 @@ export function CaseEditorPage() {
     step: 'details' as Step,
     error: null as string | null,
     showPublishDialog: false,
-    showGoldStandardInputDialog: false,
   });
-  const { step: currentStep, error, showPublishDialog, showGoldStandardInputDialog } = pageState;
+  const { step: currentStep, error, showPublishDialog } = pageState;
   const setCurrentStep = (step: Step) => setPageState(p => ({ ...p, step }));
   const setError = (error: string | null) => setPageState(p => ({ ...p, error }));
   const setShowPublishDialog = (v: boolean) => setPageState(p => ({ ...p, showPublishDialog: v }));
-  const setShowGoldStandardInputDialog = (v: boolean) => setPageState(p => ({ ...p, showGoldStandardInputDialog: v }));
 
   const { data: existingCase, isLoading: isLoadingCase } = useQuery({
     queryKey: ['case', id],
@@ -58,7 +53,7 @@ export function CaseEditorPage() {
   });
 
   const { form, setForm, updateForm } = useCaseEditorForm(existingCase);
-  const { title, description, deadline, referenceClassification, referenceInput, showReferenceAfterSubmit, allowMultipleResponses } = form;
+  const { title, description, deadline } = form;
 
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [prevCaseIdForUploads, setPrevCaseIdForUploads] = useState<string | undefined>();
@@ -79,7 +74,7 @@ export function CaseEditorPage() {
   const currentStepIndex = STEPS.indexOf(currentStep);
   const goToNextStep = () => {
     const next = STEPS[currentStepIndex + 1];
-    if (next && !(next === 'users' && !isEditing)) setCurrentStep(next);
+    if (next) setCurrentStep(next);
   };
   const goToPrevStep = () => { if (currentStepIndex > 0) setCurrentStep(STEPS[currentStepIndex - 1]); };
 
@@ -105,8 +100,6 @@ export function CaseEditorPage() {
     const data = {
       title: title.trim(), description: description.trim() || undefined,
       deadline: deadline ? new Date(deadline).toISOString() : undefined,
-      reference_classification: referenceClassification, reference_input: referenceInput,
-      show_reference_after_submit: showReferenceAfterSubmit, allow_multiple_responses: allowMultipleResponses,
     };
     if (isEditing) {
       await updateMutation.mutateAsync({ caseId: id!, data });
@@ -207,14 +200,6 @@ export function CaseEditorPage() {
               onUpdateField={(field, value) => updateForm(field as keyof typeof form, value)}
               onNext={goToNextStep} />
           )}
-          {currentStep === 'settings' && (
-            <CaseSettingsStep referenceClassification={referenceClassification}
-              referenceInput={referenceInput} showReferenceAfterSubmit={showReferenceAfterSubmit}
-              allowMultipleResponses={allowMultipleResponses} canEdit={canEdit}
-              onUpdateForm={(updates) => setForm(prev => ({ ...prev, ...updates }))}
-              onOpenGoldStandard={() => setShowGoldStandardInputDialog(true)}
-              onPrev={goToPrevStep} onNext={goToNextStep} />
-          )}
           {currentStep === 'images' && (
             <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
               canEdit={canEdit} caseId={id}
@@ -223,16 +208,7 @@ export function CaseEditorPage() {
               onDrop={createOnDrop} onPrev={goToPrevStep}
               onNext={isEditing ? goToNextStep : undefined} />
           )}
-          {currentStep === 'users' && isEditing && (
-            <div className="animate-fade-in">
-              <CaseUsersManager caseId={id!} disabled={existingCase?.status === 'closed'} />
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={goToPrevStep} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" />{t('common.previous')}
-                </Button>
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
 
@@ -252,12 +228,6 @@ export function CaseEditorPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <GoldStandardInputDialog
-        open={showGoldStandardInputDialog} onOpenChange={setShowGoldStandardInputDialog}
-        hasTACImages={existingImages.filter(i => i.category === 'tac').length + pendingUploads.filter(u => u.category === 'tac').length > 0}
-        initialInput={referenceInput} initialClassification={referenceClassification}
-        onSave={(input, classification) => setForm(prev => ({ ...prev, referenceInput: input, referenceClassification: classification }))}
-      />
     </div>
   );
 }

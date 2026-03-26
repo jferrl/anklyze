@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Loader2, Plus, Trash2, FolderOpen } from 'lucide-react';
+import { Loader2, Plus, PlusCircle, Trash2, FolderOpen } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
@@ -19,9 +19,11 @@ interface StudyCasesStepProps {
   selectedCaseId: string;
   canEdit: boolean;
   isAddingCase: boolean;
+  isAddingAll: boolean;
   isRemovingCase: boolean;
   onSelectCase: (id: string) => void;
   onAddCase: () => void;
+  onAddAllCases: () => void;
   onRemoveCase: (id: string) => void;
   studyId?: string;
 }
@@ -43,9 +45,11 @@ export function StudyCasesStep({
   selectedCaseId,
   canEdit,
   isAddingCase,
+  isAddingAll,
   isRemovingCase,
   onSelectCase,
   onAddCase,
+  onAddAllCases,
   onRemoveCase,
   studyId,
 }: StudyCasesStepProps) {
@@ -99,7 +103,7 @@ export function StudyCasesStep({
               </Select>
               <Button
                 onClick={onAddCase}
-                disabled={!selectedCaseId || !studyId || isAddingCase}
+                disabled={!selectedCaseId || !studyId || isAddingCase || isAddingAll}
                 className="h-12 gap-2"
               >
                 {isAddingCase ? (
@@ -109,6 +113,21 @@ export function StudyCasesStep({
                 )}
                 {t('common.add', 'Add')}
               </Button>
+              {availableCases.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={onAddAllCases}
+                  disabled={!studyId || isAddingCase || isAddingAll}
+                  className="h-12 gap-2"
+                >
+                  {isAddingAll ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <PlusCircle className="w-4 h-4" />
+                  )}
+                  {t('admin.studies.addAllCases', 'Add all')}
+                </Button>
+              )}
             </div>
           )}
 

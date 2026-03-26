@@ -18,7 +18,7 @@ export interface QuestionAnswer {
   timestamp: number;
 }
 
-// AnswerTracking contains tracking data for divergence analysis
+// AnswerTracking contains tracking data for analytics
 export interface AnswerTracking {
   answerPath: QuestionAnswer[];
   decisionPath: string;
@@ -47,7 +47,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
   }));
   const { data: formData, history: formHistory, loading, error } = formState;
 
-  // Answer tracking state for divergence analysis
+  // Answer tracking state for analytics
   const startTimeRef = useRef<number>(Date.now());
   const [tracking, setTracking] = useState<{
     answerPath: QuestionAnswer[];

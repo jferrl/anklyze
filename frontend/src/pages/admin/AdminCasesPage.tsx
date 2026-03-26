@@ -10,7 +10,6 @@ import {
   Pencil,
   Trash2,
   BarChart3,
-  TrendingUp,
   Send,
   Lock,
   FileText,
@@ -138,7 +137,6 @@ export function AdminCasesPage() {
   const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation]);
   const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
   const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
-  const handleViewDivergence = useCallback((id: string) => navigate(`/admin/cases/${id}/divergence`), [navigate]);
 
   const statusOptions = useMemo(() => [
     { value: 'all', label: t('admin.cases.allStatuses') },
@@ -280,12 +278,6 @@ export function AdminCasesPage() {
                   {t('admin.cases.analytics')}
                 </DropdownMenuItem>
               )}
-              {caseItem.status !== 'draft' && (
-                <DropdownMenuItem onClick={() => handleViewDivergence(caseItem.id)}>
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  {t('admin.cases.divergence')}
-                </DropdownMenuItem>
-              )}
               <DropdownMenuSeparator />
               {caseItem.status === 'draft' && (
                 <DropdownMenuItem onClick={() => handlePublish(caseItem.id)} className="text-emerald-600 dark:text-emerald-400">
@@ -309,7 +301,7 @@ export function AdminCasesPage() {
         );
       },
     },
-  ], [t, formatDate, isDeadlinePassed, handleView, handleEdit, handlePublish, handleClose, handleViewAnalytics, handleViewDivergence, handleDelete]);
+  ], [t, formatDate, isDeadlinePassed, handleView, handleEdit, handlePublish, handleClose, handleViewAnalytics, handleDelete]);
 
   if (isLoading) {
     return (
@@ -399,7 +391,6 @@ export function AdminCasesPage() {
                   onPublish={() => handlePublish(caseItem.id)}
                   onClose={() => handleClose(caseItem.id)}
                   onViewAnalytics={() => handleViewAnalytics(caseItem.id)}
-                  onViewDivergence={() => handleViewDivergence(caseItem.id)}
                   t={t}
                 />
               ))}
@@ -463,7 +454,6 @@ interface CaseRowProps {
   onPublish: () => void;
   onClose: () => void;
   onViewAnalytics: () => void;
-  onViewDivergence: () => void;
   t: (key: string) => string;
 }
 
@@ -478,7 +468,6 @@ const CaseCard = memo(function CaseCard({
   onPublish,
   onClose,
   onViewAnalytics,
-  onViewDivergence,
   t,
 }: CaseRowProps) {
   return (
@@ -556,12 +545,6 @@ const CaseCard = memo(function CaseCard({
               <DropdownMenuItem onClick={onViewAnalytics}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 {t('admin.cases.analytics')}
-              </DropdownMenuItem>
-            )}
-            {caseItem.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewDivergence}>
-                <TrendingUp className="h-4 w-4 mr-2" />
-                {t('admin.cases.divergence')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />

@@ -57,11 +57,6 @@ func (r *CaseRepository) Update(ctx context.Context, cs *domain.Case) error {
 // Delete deletes a case and all associated data (images, responses, users) by its ID.
 func (r *CaseRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Delete all case users first
-		if err := tx.Delete(&domain.CaseUser{}, "case_id = ?", id).Error; err != nil {
-			return fmt.Errorf("delete case users: %w", err)
-		}
-
 		// Delete all responses
 		if err := tx.Delete(&domain.CaseResponse{}, "case_id = ?", id).Error; err != nil {
 			return fmt.Errorf("delete case responses: %w", err)
@@ -265,73 +260,6 @@ func (r *CaseRepository) UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID
 		return fmt.Errorf("update unique users: %w", err)
 	}
 	return nil
-}
-
-// AddUser adds a user to a case (grants access).
-func (r *CaseRepository) AddUser(ctx context.Context, caseID, userID uuid.UUID, email string) error {
-	caseUser := domain.NewCaseUser(caseID, userID, email)
-	if err := r.db.WithContext(ctx).Create(caseUser).Error; err != nil {
-		return fmt.Errorf("add user: %w", err)
-	}
-	return nil
-}
-
-// RemoveUser removes a user from a case (revokes access).
-func (r *CaseRepository) RemoveUser(ctx context.Context, caseID, userID uuid.UUID) error {
-	err := r.db.WithContext(ctx).
-		Delete(&domain.CaseUser{}, "case_id = ? AND user_id = ?", caseID, userID).Error
-	if err != nil {
-		return fmt.Errorf("remove user: %w", err)
-	}
-	return nil
-}
-
-// GetUsers retrieves all users who have access to a case.
-func (r *CaseRepository) GetUsers(ctx context.Context, caseID uuid.UUID) ([]domain.CaseUser, error) {
-	var users []domain.CaseUser
-	err := r.db.WithContext(ctx).
-		Where("case_id = ?", caseID).
-		Order("created_at ASC").
-		Find(&users).Error
-	if err != nil {
-		return nil, fmt.Errorf("get users: %w", err)
-	}
-	return users, nil
-}
-
-// HasAccess checks if a user has access to a case.
-func (r *CaseRepository) HasAccess(ctx context.Context, caseID, userID uuid.UUID) (bool, error) {
-	var count int64
-	err := r.db.WithContext(ctx).
-		Model(&domain.CaseUser{}).
-		Where("case_id = ? AND user_id = ?", caseID, userID).
-		Count(&count).Error
-	if err != nil {
-		return false, fmt.Errorf("has access: %w", err)
-	}
-	return count > 0, nil
-}
-
-// ListForUser retrieves published cases accessible to a specific user with pagination.
-func (r *CaseRepository) ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Case, int64, error) {
-	var cases []domain.Case
-	var total int64
-
-	query := r.db.WithContext(ctx).
-		Model(&domain.Case{}).
-		Joins("INNER JOIN case_users ON case_users.case_id = cases.id").
-		Where("case_users.user_id = ? AND cases.status = ?", userID, domain.CaseStatusPublished)
-
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, fmt.Errorf("list for user count: %w", err)
-	}
-
-	if err := query.Order("cases.published_at DESC").
-		Limit(limit).Offset(offset).Find(&cases).Error; err != nil {
-		return nil, 0, fmt.Errorf("list for user find: %w", err)
-	}
-
-	return cases, total, nil
 }
 
 // GetByIDs batch loads cases by their IDs.

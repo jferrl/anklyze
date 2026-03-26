@@ -11,28 +11,25 @@ import (
 	"github.com/jferrl/anklyze/internal/repository"
 )
 
-// CaseAccessHandler handles user access management and case browsing.
+// CaseAccessHandler handles case browsing for authenticated users.
 type CaseAccessHandler struct {
 	caseRepo     repository.CaseRepository
 	responseRepo repository.CaseResponseRepository
-	userRepo     auth.UserService
 }
 
 // NewCaseAccessHandler creates a new case access handler.
 func NewCaseAccessHandler(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
-	userRepo auth.UserService,
 ) *CaseAccessHandler {
 	return &CaseAccessHandler{
 		caseRepo:     caseRepo,
 		responseRepo: responseRepo,
-		userRepo:     userRepo,
 	}
 }
 
 // ListPublishedCases handles GET /api/cases
-// Returns cases the user has been granted access to, or all published cases for admins.
+// Returns all published cases for any authenticated user.
 // Uses batch loading to avoid N+1 query issues.
 func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 	page, limit, offset := getPagination(c)
@@ -43,16 +40,7 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 		return
 	}
 
-	var cases []domain.Case
-	var total int64
-
-	// Admins can see all published cases
-	if auth.IsAdmin(c) {
-		cases, total, err = h.caseRepo.ListPublished(c.Request.Context(), limit, offset)
-	} else {
-		// Regular users only see cases they have access to
-		cases, total, err = h.caseRepo.ListForUser(c.Request.Context(), uid, limit, offset)
-	}
+	cases, total, err := h.caseRepo.ListPublished(c.Request.Context(), limit, offset)
 	if err != nil {
 		slog.Error("failed to list cases", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list cases"})
@@ -111,7 +99,7 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 }
 
 // GetPublishedCase handles GET /api/cases/:id
-// Requires user to have access to the case, or be an admin.
+// Any authenticated user can view a published case.
 func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -124,20 +112,6 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
 		return
-	}
-
-	// Check access (admins bypass this check)
-	if !auth.IsAdmin(c) {
-		hasAccess, err := h.caseRepo.HasAccess(c.Request.Context(), id, uid)
-		if err != nil {
-			slog.Error("failed to check access", "error", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check access"})
-			return
-		}
-		if !hasAccess {
-			c.JSON(http.StatusForbidden, gin.H{"error": "you do not have access to this case"})
-			return
-		}
 	}
 
 	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
@@ -178,120 +152,16 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, UserCaseDetailResponse{
-		ID:                     cs.ID,
-		Title:                  cs.Title,
-		Description:            cs.Description,
-		Status:                 cs.Status,
-		Deadline:               cs.Deadline,
-		PublishedAt:            cs.PublishedAt,
-		HasTACImages:           cs.HasTACImages,
-		Images:                 imageResponses,
-		HasResponded:           hasResponded,
-		MyResponseCount:        myResponseCount,
-		AllowMultipleResponses: cs.AllowMultipleResponses,
-		IsExpired:              cs.IsExpired(),
+		ID:              cs.ID,
+		Title:           cs.Title,
+		Description:     cs.Description,
+		Status:          cs.Status,
+		Deadline:        cs.Deadline,
+		PublishedAt:     cs.PublishedAt,
+		HasTACImages:    cs.HasTACImages,
+		Images:          imageResponses,
+		HasResponded:    hasResponded,
+		MyResponseCount: myResponseCount,
+		IsExpired:       cs.IsExpired(),
 	})
-}
-
-// ListCaseUsers handles GET /api/admin/cases/:id/users
-func (h *CaseAccessHandler) ListCaseUsers(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
-		return
-	}
-
-	users, err := h.caseRepo.GetUsers(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to list case users", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list users"})
-		return
-	}
-
-	response := make([]CaseUserResponse, len(users))
-	for i, u := range users {
-		response[i] = CaseUserResponse{
-			ID:        u.ID,
-			UserID:    u.UserID,
-			UserEmail: u.UserEmail,
-			CreatedAt: u.CreatedAt,
-		}
-	}
-
-	c.JSON(http.StatusOK, CaseUsersListResponse{
-		Users: response,
-		Total: len(response),
-	})
-}
-
-// AddCaseUser handles POST /api/admin/cases/:id/users
-func (h *CaseAccessHandler) AddCaseUser(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
-		return
-	}
-
-	var req AddCaseUserRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
-		return
-	}
-
-	// Verify case exists
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
-		return
-	}
-
-	// Lookup user by email
-	user, err := h.userRepo.GetByEmail(c.Request.Context(), req.UserEmail)
-	if err != nil {
-		slog.Error("failed to lookup user", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to lookup user"})
-		return
-	}
-	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-		return
-	}
-
-	// Check if user is already added
-	hasAccess, _ := h.caseRepo.HasAccess(c.Request.Context(), caseID, user.ID)
-	if hasAccess {
-		c.JSON(http.StatusConflict, gin.H{"error": "user already has access"})
-		return
-	}
-
-	if err := h.caseRepo.AddUser(c.Request.Context(), caseID, user.ID, user.Email); err != nil {
-		slog.Error("failed to add user to case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to add user"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{"message": "user added successfully"})
-}
-
-// RemoveCaseUser handles DELETE /api/admin/cases/:id/users/:userId
-func (h *CaseAccessHandler) RemoveCaseUser(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
-		return
-	}
-
-	userID, err := uuid.Parse(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
-		return
-	}
-
-	if err := h.caseRepo.RemoveUser(c.Request.Context(), caseID, userID); err != nil {
-		slog.Error("failed to remove user from case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to remove user"})
-		return
-	}
-
-	c.Status(http.StatusNoContent)
 }

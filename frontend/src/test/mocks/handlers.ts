@@ -118,9 +118,6 @@ const caseHandlers = [
         classification: mockClassificationResult,
         time_taken_ms: 45000,
       },
-      reference_classification: mockClassificationResult,
-      matches_danis_weber: true,
-      matches_lauge_hansen: true,
     }, { status: 201 })
   }),
 ]

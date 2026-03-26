@@ -2,7 +2,6 @@ import type {
   Case,
   CaseImage,
   CaseResponse,
-  CaseUser,
   UserCaseItem,
   AdminCaseImage,
   ReliabilityMetrics,
@@ -10,16 +9,11 @@ import type {
   Specialty,
   TrainingLevel,
 } from '../domain/case';
+import type { ClassificationResult } from '../domain/fracture';
 import type {
   Study,
   StudyReliabilityMetrics,
-  RaterProgress,
 } from '../domain/study';
-import type {
-  ClassificationResult,
-  FractureInput,
-} from '../domain/fracture';
-
 // ============================================================================
 // Case API Types
 // ============================================================================
@@ -33,10 +27,6 @@ export interface CreateCaseRequest {
   title: string;
   description?: string;
   deadline?: string;
-  reference_classification?: ClassificationResult;
-  reference_input?: FractureInput;
-  show_reference_after_submit?: boolean;
-  allow_multiple_responses?: boolean;
 }
 
 /**
@@ -46,31 +36,20 @@ export interface UpdateCaseRequest {
   title?: string;
   description?: string;
   deadline?: string;
-  reference_classification?: ClassificationResult;
-  reference_input?: FractureInput;
-  show_reference_after_submit?: boolean;
-  allow_multiple_responses?: boolean;
 }
 
 /**
  * Request payload to submit a case response
- * Includes classification and metadata for divergence analysis
+ * Includes classification and metadata for analytics
  */
 export interface SubmitResponseRequest {
   classification: ClassificationResult;
   time_taken_ms: number;
-  // Answer tracking for divergence analysis
+  // Answer tracking for analytics
   answer_path?: QuestionAnswer[];
   decision_path?: string;
   time_per_question?: Record<string, number>;
   back_clicks?: number;
-}
-
-/**
- * Request payload to add a user to a case
- */
-export interface AddCaseUserRequest {
-  user_email: string;
 }
 
 /**
@@ -153,14 +132,6 @@ export interface AdminCaseImagesResponse {
 }
 
 /**
- * List of users with access to a case
- */
-export interface CaseUsersListResponse {
-  users: CaseUser[];
-  total: number;
-}
-
-/**
  * Reliability metrics response with calculation timestamp
  */
 export interface ReliabilityMetricsResponse extends ReliabilityMetrics {
@@ -204,13 +175,6 @@ export interface ReorderCasesRequest {
   case_ids: string[];
 }
 
-/**
- * Request payload to add a rater to a study
- */
-export interface AddStudyRaterRequest {
-  email: string;
-}
-
 // --- Study Response Types ---
 
 /**
@@ -221,14 +185,6 @@ export interface StudyListResponse {
   total: number;
   page: number;
   limit: number;
-}
-
-/**
- * Rater progress across a study
- */
-export interface RaterProgressResponse {
-  raters: RaterProgress[];
-  total: number;
 }
 
 /**

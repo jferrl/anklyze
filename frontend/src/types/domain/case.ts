@@ -1,4 +1,4 @@
-import type { ClassificationResult, FractureInput } from './fracture';
+import type { ClassificationResult } from './fracture';
 
 /**
  * Case status lifecycle
@@ -28,11 +28,6 @@ export interface Case {
   has_tac_images: boolean;
   response_count: number;
   unique_users: number;
-  // Gold standard/reference classification
-  reference_classification?: ClassificationResult;
-  reference_input?: FractureInput;
-  show_reference_after_submit: boolean;
-  allow_multiple_responses: boolean;
   // Study membership (optional)
   study_id?: string;
   case_order: number;
@@ -99,7 +94,6 @@ export interface UserCaseDetail {
   images: CaseImageInfo[];
   has_responded: boolean;
   my_response_count: number;
-  allow_multiple_responses: boolean;
   is_expired: boolean;
 }
 
@@ -117,7 +111,7 @@ export interface CaseResponse {
 
 /**
  * Question-answer pair in user's decision path
- * Used for divergence analysis
+ * Used for analytics
  */
 export interface QuestionAnswer {
   question: string;
@@ -130,16 +124,6 @@ export interface QuestionAnswer {
  */
 export interface AdminCaseImage extends CaseImage {
   signed_url?: string;
-}
-
-/**
- * Case user access
- */
-export interface CaseUser {
-  id: string;
-  user_id: string;
-  user_email: string;
-  created_at: string;
 }
 
 /**
@@ -189,33 +173,6 @@ export interface SystemAgreement {
 }
 
 /**
- * Per-category diagnostic metrics
- */
-export interface CategoryMetrics {
-  category: string;
-  sensitivity: number;
-  specificity: number;
-  ppv: number;
-  npv: number;
-  f1_score: number;
-}
-
-/**
- * Gold standard accuracy metrics
- */
-export interface GoldStandardAccuracy {
-  danis_weber_accuracy?: number;
-  lauge_hansen_accuracy?: number;
-  ao_ota_accuracy?: number;
-  bartonicek_accuracy?: number;
-  overall_accuracy: number;
-  total_comparisons: number;
-  correct_responses: number;
-  incorrect_responses: number;
-  per_category_metrics?: Record<string, CategoryMetrics>;
-}
-
-/**
  * Reliability metrics for a case
  */
 export interface ReliabilityMetrics {
@@ -226,19 +183,13 @@ export interface ReliabilityMetrics {
   lauge_hansen_agreement?: SystemAgreement;
   ao_ota_agreement?: SystemAgreement;
   bartonicek_agreement?: SystemAgreement;
-  gold_standard_accuracy?: GoldStandardAccuracy;
 }
 
 /**
- * Submit response result with gold standard comparison
+ * Submit response result
  */
 export interface SubmitResponseResult {
   response: CaseResponse;
-  reference_classification?: ClassificationResult;
-  matches_danis_weber?: boolean;
-  matches_lauge_hansen?: boolean;
-  matches_ao_ota?: boolean;
-  matches_bartonicek?: boolean;
 }
 
 /**
@@ -265,45 +216,6 @@ export interface UserProfile {
   specialty?: Specialty;
   training_level?: TrainingLevel;
   institution?: string;
-}
-
-/**
- * Question error statistics for divergence analysis
- */
-export interface QuestionErrorStats {
-  question: string;
-  correct_answer: string;
-  total_answers: number;
-  correct_answers: number;
-  incorrect_answers: number;
-  error_rate: number;
-  wrong_answer_distribution: Record<string, number>;
-  avg_time_ms: number;
-}
-
-/**
- * Divergence analysis report
- * Analyzes where users diverge from the correct classification path
- */
-export interface DivergenceReport {
-  case_id: string;
-  case_title: string;
-  total_responses: number;
-  responses_with_path: number;
-  question_stats: QuestionErrorStats[];
-  most_confusing_question: string;
-  most_confusing_error_rate: number;
-  path_distribution: Record<string, number>;
-  correct_path: string;
-  correct_path_count: number;
-  correct_path_percent: number;
-  unique_paths_count: number;
-  first_divergence_stats: Record<string, number>;
-  most_common_first_divergence: string;
-  avg_back_clicks: number;
-  back_click_correlation: 'positive' | 'negative' | 'none';
-  correct_with_high_back_count: number;
-  incorrect_with_high_back_count: number;
 }
 
 /**

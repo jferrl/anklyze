@@ -9,18 +9,12 @@ import {
   Loader2,
   FileText,
   ArrowLeft,
-  Target,
-  CheckCircle,
-  XCircle,
-  TrendingUp,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { StatCard } from '../../components/analytics';
 import { caseApi, downloadDetailedResponsesCSV } from '@/services';
 import { cn } from '@/lib/utils';
-import { GoldStandardAccuracySection } from './components/GoldStandardAccuracySection';
-import { DiagnosticMetricsSection } from './components/DiagnosticMetricsSection';
 import { KappaScoresSection } from './components/KappaScoresSection';
 import { DetailedSystemAnalysis } from './components/DetailedSystemAnalysis';
 
@@ -90,8 +84,6 @@ export function CaseReliabilityPage() {
     );
   }
 
-  const hasGoldStandard = metrics.gold_standard_accuracy !== undefined;
-
   return (
     <div className="min-h-screen bg-mesh">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -126,31 +118,11 @@ export function CaseReliabilityPage() {
                   >
                     {t(`cases.status.${caseData.status}`)}
                   </Badge>
-                  {hasGoldStandard && (
-                    <Badge
-                      variant="outline"
-                      className="border-violet-500/50 text-violet-600 dark:text-violet-400"
-                    >
-                      <Target className="w-3 h-3 mr-1" />
-                      {t('admin.reliability.hasGoldStandard')}
-                    </Badge>
-                  )}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
-              {hasGoldStandard && (
-                <Button
-                  onClick={() => navigate(`/admin/cases/${id}/divergence`)}
-                  variant="outline"
-                  size="lg"
-                  className="gap-2"
-                >
-                  <TrendingUp className="w-4 h-4" />
-                  {t('admin.reliability.viewDivergence', 'Divergence Analysis')}
-                </Button>
-              )}
               <Button
                 onClick={handleExportCSV}
                 size="lg"
@@ -179,38 +151,7 @@ export function CaseReliabilityPage() {
             color="emerald"
             delay={50}
           />
-          {hasGoldStandard && metrics.gold_standard_accuracy && (
-            <>
-              <StatCard
-                title={t('admin.reliability.correctResponses')}
-                value={metrics.gold_standard_accuracy.correct_responses}
-                icon={CheckCircle}
-                color="emerald"
-                delay={100}
-              />
-              <StatCard
-                title={t('admin.reliability.incorrectResponses')}
-                value={metrics.gold_standard_accuracy.incorrect_responses}
-                icon={XCircle}
-                color="rose"
-                delay={150}
-              />
-            </>
-          )}
         </section>
-
-        {/* Gold Standard Accuracy */}
-        {hasGoldStandard && metrics.gold_standard_accuracy && (
-          <GoldStandardAccuracySection accuracy={metrics.gold_standard_accuracy} />
-        )}
-
-        {/* Per-Category Diagnostic Metrics */}
-        {hasGoldStandard && metrics.gold_standard_accuracy?.per_category_metrics &&
-          Object.keys(metrics.gold_standard_accuracy.per_category_metrics).length > 0 && (
-          <DiagnosticMetricsSection
-            perCategoryMetrics={metrics.gold_standard_accuracy.per_category_metrics}
-          />
-        )}
 
         {/* Kappa Scores Overview */}
         <KappaScoresSection metrics={metrics} />

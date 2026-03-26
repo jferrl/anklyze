@@ -32,32 +32,6 @@ export interface StudyWithCases extends Study {
 }
 
 /**
- * Study rater (pre-assigned participant)
- */
-export interface StudyRater {
-  id: string;
-  study_id: string;
-  user_id: string;
-  user_email: string;
-  cases_completed: number;
-  last_response_at?: string;
-  created_at: string;
-}
-
-/**
- * Rater progress tracking across a study
- */
-export interface RaterProgress {
-  user_id: string;
-  user_email: string;
-  display_name?: string;
-  cases_completed: number;
-  total_cases: number;
-  is_complete: boolean;
-  last_response_at?: string;
-}
-
-/**
  * Fleiss' Kappa result for multi-rater agreement
  */
 export interface FleissKappaResult {
@@ -82,21 +56,7 @@ export interface CaseMetrics {
   lauge_hansen_agreement: number;
   ao_ota_agreement: number;
   bartonicek_agreement?: number;
-  gold_standard_match_rate?: number;
   is_low_agreement: boolean;
-}
-
-/**
- * Gold standard accuracy aggregated across a study
- */
-export interface StudyGoldStandardAccuracy {
-  overall_accuracy: number;
-  cases_with_reference: number;
-  total_comparisons: number;
-  danis_weber_accuracy?: number;
-  lauge_hansen_accuracy?: number;
-  ao_ota_accuracy?: number;
-  bartonicek_accuracy?: number;
 }
 
 /**
@@ -115,5 +75,4 @@ export interface StudyReliabilityMetrics {
   ao_ota_fleiss?: FleissKappaResult;
   bartonicek_fleiss?: FleissKappaResult;
   per_case_metrics: CaseMetrics[];
-  gold_standard_accuracy?: StudyGoldStandardAccuracy;
 }

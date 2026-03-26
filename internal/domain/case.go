@@ -57,19 +57,6 @@ type Case struct {
 	ResponseCount int `gorm:"default:0" json:"response_count"`
 	UniqueUsers   int `gorm:"default:0" json:"unique_users"`
 
-	// Gold Standard / Reference Classification for validation studies
-	// Stores the "correct" classification to compare user responses against
-	ReferenceClassification  datatypes.JSON `gorm:"type:jsonb" json:"reference_classification,omitempty" swaggertype:"object"`
-	ShowReferenceAfterSubmit bool           `json:"show_reference_after_submit"`
-
-	// Reference input (FractureInput) that produced the gold standard classification
-	// Used for divergence analysis to compare answer paths
-	ReferenceInput datatypes.JSON `gorm:"type:jsonb" json:"reference_input,omitempty" swaggertype:"object"`
-
-	// Single Response Control - when false, users can only submit one response
-	// Note: Default is set in NewCase(), not via GORM tag (GORM omits false values with default tags)
-	AllowMultipleResponses bool `json:"allow_multiple_responses"`
-
 	// Study membership - if set, this case is part of a study for multi-case reliability analysis
 	StudyID   *uuid.UUID `gorm:"type:uuid;index" json:"study_id,omitempty"`
 	CaseOrder int        `gorm:"default:0" json:"case_order"`
@@ -83,82 +70,15 @@ func (Case) TableName() string {
 // NewCase creates a new case with the given parameters.
 func NewCase(createdBy uuid.UUID, title, description string, deadline *time.Time) *Case {
 	return &Case{
-		ID:                     uuid.New(),
-		CreatedAt:              time.Now(),
-		UpdatedAt:              time.Now(),
-		CreatedBy:              createdBy,
-		Title:                  title,
-		Description:            description,
-		Status:                 CaseStatusDraft,
-		Deadline:               deadline,
-		AllowMultipleResponses: true, // Default to allowing multiple responses
+		ID:          uuid.New(),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+		CreatedBy:   createdBy,
+		Title:       title,
+		Description: description,
+		Status:      CaseStatusDraft,
+		Deadline:    deadline,
 	}
-}
-
-// GetReferenceClassification parses and returns the reference classification.
-func (c *Case) GetReferenceClassification() (*ClassificationResult, error) {
-	if len(c.ReferenceClassification) == 0 {
-		return nil, nil
-	}
-
-	var result ClassificationResult
-	if err := json.Unmarshal(c.ReferenceClassification, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// SetReferenceClassification sets the reference classification from a ClassificationResult.
-func (c *Case) SetReferenceClassification(result *ClassificationResult) error {
-	if result == nil {
-		c.ReferenceClassification = nil
-		return nil
-	}
-
-	data, err := json.Marshal(result)
-	if err != nil {
-		return err
-	}
-	c.ReferenceClassification = datatypes.JSON(data)
-	return nil
-}
-
-// HasReferenceClassification returns true if a reference classification is set.
-func (c *Case) HasReferenceClassification() bool {
-	return len(c.ReferenceClassification) > 0
-}
-
-// GetReferenceInput parses and returns the reference input (FractureInput).
-func (c *Case) GetReferenceInput() (*FractureInput, error) {
-	if len(c.ReferenceInput) == 0 {
-		return nil, nil
-	}
-
-	var input FractureInput
-	if err := json.Unmarshal(c.ReferenceInput, &input); err != nil {
-		return nil, err
-	}
-	return &input, nil
-}
-
-// SetReferenceInput sets the reference input from a FractureInput.
-func (c *Case) SetReferenceInput(input *FractureInput) error {
-	if input == nil {
-		c.ReferenceInput = nil
-		return nil
-	}
-
-	data, err := json.Marshal(input)
-	if err != nil {
-		return err
-	}
-	c.ReferenceInput = datatypes.JSON(data)
-	return nil
-}
-
-// HasReferenceInput returns true if a reference input is set.
-func (c *Case) HasReferenceInput() bool {
-	return len(c.ReferenceInput) > 0
 }
 
 // CanBeEdited returns true if the case can be modified.
@@ -222,10 +142,10 @@ func (c *Case) CanClose() error {
 }
 
 // ValidateResponseSubmission checks whether a user can submit a response to this case.
-// Admins always bypass validation. Returns nil if submission is allowed.
-func (c *Case) ValidateResponseSubmission(isAdmin, hasResponded bool) error {
-	if isAdmin {
-		return nil
+// Each user can only submit one response per case, regardless of role.
+func (c *Case) ValidateResponseSubmission(hasResponded bool) error {
+	if hasResponded {
+		return ErrAlreadyResponded
 	}
 	if !c.CanAcceptResponses() {
 		if c.IsExpired() {
@@ -233,67 +153,7 @@ func (c *Case) ValidateResponseSubmission(isAdmin, hasResponded bool) error {
 		}
 		return ErrCaseNotAcceptingResponses
 	}
-	if !c.AllowMultipleResponses && hasResponded {
-		return ErrAlreadyResponded
-	}
 	return nil
-}
-
-// ComparisonResult holds the comparison between a user's classification and the reference.
-type ComparisonResult struct {
-	DanisWeberMatch  bool    `json:"danis_weber_match"`
-	LaugeHansenMatch bool    `json:"lauge_hansen_match"`
-	AOOTAMatch       bool    `json:"ao_ota_match"`
-	BartonicekMatch  bool    `json:"bartonicek_match"`
-	OverallAccuracy  float64 `json:"overall_accuracy"`
-}
-
-// CompareWithReference compares the user's classification against the case's reference.
-// Returns nil if there is no reference classification.
-func (c *Case) CompareWithReference(userResult *ClassificationResult) *ComparisonResult {
-	refClass, err := c.GetReferenceClassification()
-	if err != nil || refClass == nil {
-		return nil
-	}
-
-	result := &ComparisonResult{}
-	matched := 0
-	total := 0
-
-	if userResult.DanisWeber != nil && refClass.DanisWeber != nil {
-		total++
-		if userResult.DanisWeber.Type == refClass.DanisWeber.Type {
-			result.DanisWeberMatch = true
-			matched++
-		}
-	}
-	if userResult.LaugeHansen != nil && refClass.LaugeHansen != nil {
-		total++
-		if userResult.LaugeHansen.Type == refClass.LaugeHansen.Type {
-			result.LaugeHansenMatch = true
-			matched++
-		}
-	}
-	if userResult.AOOTA != nil && refClass.AOOTA != nil {
-		total++
-		if userResult.AOOTA.Code == refClass.AOOTA.Code {
-			result.AOOTAMatch = true
-			matched++
-		}
-	}
-	if userResult.Bartonicek != nil && refClass.Bartonicek != nil {
-		total++
-		if userResult.Bartonicek.Type == refClass.Bartonicek.Type {
-			result.BartonicekMatch = true
-			matched++
-		}
-	}
-
-	if total > 0 {
-		result.OverallAccuracy = float64(matched) / float64(total)
-	}
-
-	return result
 }
 
 // CaseImage represents an image attached to a case.
@@ -364,7 +224,7 @@ type CaseResponse struct {
 	DanisWeberType  *string `gorm:"column:danis_weber_type;size:20;index" json:"-"`
 	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:20;index" json:"-"`
 	AOOTACode       *string `gorm:"column:ao_ota_code;size:20;index" json:"-"`
-	BartonicekType  *string `gorm:"column:bartonicek_type;size:15;index" json:"-"`
+	BartonicekType  *string `gorm:"column:bartonicek_type;size:20;index" json:"-"`
 
 	// Answer path tracking for divergence analysis
 	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty" swaggertype:"array,object"` // []QuestionAnswer

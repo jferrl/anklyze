@@ -34,20 +34,6 @@ type StudyRepository interface {
 	// GetNextCaseOrder returns the next available case order for a study.
 	GetNextCaseOrder(ctx context.Context, studyID uuid.UUID) (int, error)
 
-	// Rater management
-	// AddRater assigns a user as a rater to a study.
-	AddRater(ctx context.Context, studyID, userID uuid.UUID, email string) error
-	// RemoveRater removes a user from a study.
-	RemoveRater(ctx context.Context, studyID, userID uuid.UUID) error
-	// GetRaters retrieves all raters assigned to a study.
-	GetRaters(ctx context.Context, studyID uuid.UUID) ([]domain.StudyRater, error)
-	// HasAccess checks if a user is assigned to a study.
-	HasAccess(ctx context.Context, studyID, userID uuid.UUID) (bool, error)
-	// GetRaterProgress retrieves completion progress for all raters in a study.
-	GetRaterProgress(ctx context.Context, studyID uuid.UUID) ([]domain.RaterProgress, error)
-	// UpdateRaterProgress updates a rater's progress in a study.
-	UpdateRaterProgress(ctx context.Context, studyID, userID uuid.UUID, casesCompleted int) error
-
 	// Status transitions
 	// Activate changes a study from draft to active.
 	Activate(ctx context.Context, id uuid.UUID) error
@@ -153,36 +139,6 @@ func (r *NoOpStudyRepository) GetStudyByCaseID(_ context.Context, _ uuid.UUID) (
 // GetNextCaseOrder implements StudyRepository.
 func (r *NoOpStudyRepository) GetNextCaseOrder(_ context.Context, _ uuid.UUID) (int, error) {
 	return 0, nil
-}
-
-// AddRater implements StudyRepository.
-func (r *NoOpStudyRepository) AddRater(_ context.Context, _, _ uuid.UUID, _ string) error {
-	return nil
-}
-
-// RemoveRater implements StudyRepository.
-func (r *NoOpStudyRepository) RemoveRater(_ context.Context, _, _ uuid.UUID) error {
-	return nil
-}
-
-// GetRaters implements StudyRepository.
-func (r *NoOpStudyRepository) GetRaters(_ context.Context, _ uuid.UUID) ([]domain.StudyRater, error) {
-	return []domain.StudyRater{}, nil
-}
-
-// HasAccess implements StudyRepository.
-func (r *NoOpStudyRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return false, nil
-}
-
-// GetRaterProgress implements StudyRepository.
-func (r *NoOpStudyRepository) GetRaterProgress(_ context.Context, _ uuid.UUID) ([]domain.RaterProgress, error) {
-	return []domain.RaterProgress{}, nil
-}
-
-// UpdateRaterProgress implements StudyRepository.
-func (r *NoOpStudyRepository) UpdateRaterProgress(_ context.Context, _, _ uuid.UUID, _ int) error {
-	return nil
 }
 
 // Activate implements StudyRepository.

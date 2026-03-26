@@ -9,7 +9,6 @@ import {
   Loader2,
   FileText,
   ArrowLeft,
-  Target,
   CheckCircle2,
   AlertCircle,
   FolderOpen,
@@ -90,7 +89,6 @@ export function StudyReliabilityPage() {
     );
   }
 
-  const hasGoldStandard = reliability.gold_standard_accuracy !== undefined;
   const lowAgreementCases = reliability.per_case_metrics.filter((c) => c.is_low_agreement);
 
   return (
@@ -127,15 +125,6 @@ export function StudyReliabilityPage() {
                   >
                     {t(`studies.status.${study.status}`)}
                   </Badge>
-                  {hasGoldStandard && (
-                    <Badge
-                      variant="outline"
-                      className="border-violet-500/50 text-violet-600 dark:text-violet-400"
-                    >
-                      <Target className="w-3 h-3 mr-1" />
-                      {t('admin.reliability.hasGoldStandard', 'Gold Standard')}
-                    </Badge>
-                  )}
                   {lowAgreementCases.length > 0 && (
                     <Badge
                       variant="outline"
@@ -194,77 +183,12 @@ export function StudyReliabilityPage() {
           />
         </section>
 
-        {/* Gold Standard Accuracy */}
-        {hasGoldStandard && reliability.gold_standard_accuracy && (
-          <section className="chart-card mb-8">
-            <div className="flex items-center gap-2 mb-6">
-              <Target className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-semibold text-foreground">
-                {t('admin.reliability.goldStandardAccuracy', 'Gold Standard Accuracy')}
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-6">
-              <div className="flex flex-col items-center p-4 bg-primary/5 rounded-xl">
-                <span className="text-3xl font-bold text-foreground">
-                  {reliability.gold_standard_accuracy.overall_accuracy.toFixed(1)}%
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {t('admin.reliability.overallAccuracy', 'Overall')}
-                </span>
-              </div>
-
-              {reliability.gold_standard_accuracy.danis_weber_accuracy !== undefined && (
-                <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
-                  <span className="text-2xl font-bold text-foreground">
-                    {reliability.gold_standard_accuracy.danis_weber_accuracy.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">Danis-Weber</span>
-                </div>
-              )}
-
-              {reliability.gold_standard_accuracy.lauge_hansen_accuracy !== undefined && (
-                <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
-                  <span className="text-2xl font-bold text-foreground">
-                    {reliability.gold_standard_accuracy.lauge_hansen_accuracy.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">Lauge-Hansen</span>
-                </div>
-              )}
-
-              {reliability.gold_standard_accuracy.ao_ota_accuracy !== undefined && (
-                <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
-                  <span className="text-2xl font-bold text-foreground">
-                    {reliability.gold_standard_accuracy.ao_ota_accuracy.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">AO/OTA</span>
-                </div>
-              )}
-
-              {reliability.gold_standard_accuracy.bartonicek_accuracy !== undefined && (
-                <div className="flex flex-col items-center p-4 bg-muted/30 rounded-xl">
-                  <span className="text-2xl font-bold text-foreground">
-                    {reliability.gold_standard_accuracy.bartonicek_accuracy.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">Bartonicek</span>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-4 p-3 bg-muted/30 rounded-lg text-sm text-muted-foreground">
-              {reliability.gold_standard_accuracy.cases_with_reference} {t('admin.studies.reliability.casesWithReference', 'cases with reference')} •{' '}
-              {reliability.gold_standard_accuracy.total_comparisons} {t('admin.studies.reliability.totalComparisons', 'total comparisons')}
-            </div>
-          </section>
-        )}
-
         {/* Fleiss' Kappa Scores + Detailed Kappa Analysis */}
         <StudyKappaAnalysis reliability={reliability} />
 
         {/* Per-Case Agreement */}
         <PerCaseAgreementSection
           perCaseMetrics={reliability.per_case_metrics}
-          hasGoldStandard={hasGoldStandard}
         />
       </div>
     </div>

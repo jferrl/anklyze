@@ -14,7 +14,7 @@ import {
   classifyFracture,
 } from '@/services';
 import type { FractureInput, ClassificationResult } from '@/types';
-import type { SubmitResponseResult, UserCaseDetail } from '@/types';
+import type { UserCaseDetail } from '@/types';
 import {
   ImageGrid,
   ImageLightbox,
@@ -51,7 +51,7 @@ export function CaseDetailPage() {
   type SubmitState =
     | { status: 'idle' }
     | { status: 'error'; error: string }
-    | { status: 'success'; result: SubmitResponseResult };
+    | { status: 'success' };
   const [submitState, setSubmitState] = useState<SubmitState>({ status: 'idle' });
 
   // Time tracking - initialized in useEffect to avoid impure function call during render
@@ -117,7 +117,7 @@ export function CaseDetailPage() {
       return submitCaseResponse(id, {
         classification: classification.result,
         time_taken_ms: timeTakenMs,
-        // Include tracking data for divergence analysis
+        // Include tracking data for analytics
         ...(classification.tracking && {
           answer_path: classification.tracking.answerPath,
           decision_path: classification.tracking.decisionPath,
@@ -126,31 +126,12 @@ export function CaseDetailPage() {
         }),
       });
     },
-    onSuccess: (result) => {
-      setSubmitState({ status: 'success', result });
+    onSuccess: () => {
+      setSubmitState({ status: 'success' });
 
-      // Show different message based on gold standard comparison
-      if (result.reference_classification) {
-        const allMatch =
-          result.matches_danis_weber !== false &&
-          result.matches_lauge_hansen !== false &&
-          result.matches_ao_ota !== false &&
-          result.matches_bartonicek !== false;
-
-        if (allMatch) {
-          toast.success(t('cases.submitSuccess'), {
-            description: t('cases.matchesReference', 'Your classification matches the reference!'),
-          });
-        } else {
-          toast.info(t('cases.submitSuccess'), {
-            description: t('cases.submitSuccessDescription'),
-          });
-        }
-      } else {
-        toast.success(t('cases.submitSuccess'), {
-          description: t('cases.submitSuccessDescription'),
-        });
-      }
+      toast.success(t('cases.submitSuccess'), {
+        description: t('cases.submitSuccessDescription'),
+      });
 
       // Optimistically update the cache to immediately reflect that user has responded
       // This prevents any race conditions where stale cache data could allow re-submission
@@ -234,9 +215,9 @@ export function CaseDetailPage() {
   const deadline = caseData.deadline ? new Date(caseData.deadline) : null;
   const isExpired = caseData.is_expired || (deadline && deadline < new Date());
 
-  // Check if user can submit based on single response mode
-  const cannotSubmit = !caseData.allow_multiple_responses && caseData.has_responded;
-  const canReanswer = caseData.allow_multiple_responses;
+  // Single response mode: user cannot submit again once they have responded
+  const cannotSubmit = caseData.has_responded;
+  const canReanswer = false;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -329,7 +310,6 @@ export function CaseDetailPage() {
               isExpired={!!isExpired}
               cannotSubmit={cannotSubmit}
               canReanswer={canReanswer}
-              submitResult={submitState.status === 'success' ? submitState.result : null}
               onClassify={handleClassify}
               onSubmit={handleSubmitResponse}
               onReanswer={handleReanswer}

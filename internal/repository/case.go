@@ -48,17 +48,6 @@ type CaseRepository interface {
 	// UpdateUniqueUsers recalculates and updates the unique users count.
 	UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID, count int) error
 
-	// User access management
-	// AddUser adds a user to a case (grants access).
-	AddUser(ctx context.Context, caseID, userID uuid.UUID, email string) error
-	// RemoveUser removes a user from a case (revokes access).
-	RemoveUser(ctx context.Context, caseID, userID uuid.UUID) error
-	// GetUsers retrieves all users who have access to a case.
-	GetUsers(ctx context.Context, caseID uuid.UUID) ([]domain.CaseUser, error)
-	// HasAccess checks if a user has access to a case.
-	HasAccess(ctx context.Context, caseID, userID uuid.UUID) (bool, error)
-	// ListForUser retrieves published cases accessible to a specific user with pagination.
-	ListForUser(ctx context.Context, userID uuid.UUID, limit, offset int) ([]domain.Case, int64, error)
 	// GetByIDs batch loads cases by their IDs.
 	GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error)
 }
@@ -195,31 +184,6 @@ func (r *NoOpCaseRepository) IncrementResponseCount(_ context.Context, _ uuid.UU
 // UpdateUniqueUsers implements CaseRepository.
 func (r *NoOpCaseRepository) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
 	return nil
-}
-
-// AddUser implements CaseRepository.
-func (r *NoOpCaseRepository) AddUser(_ context.Context, _, _ uuid.UUID, _ string) error {
-	return nil
-}
-
-// RemoveUser implements CaseRepository.
-func (r *NoOpCaseRepository) RemoveUser(_ context.Context, _, _ uuid.UUID) error {
-	return nil
-}
-
-// GetUsers implements CaseRepository.
-func (r *NoOpCaseRepository) GetUsers(_ context.Context, _ uuid.UUID) ([]domain.CaseUser, error) {
-	return []domain.CaseUser{}, nil
-}
-
-// HasAccess implements CaseRepository.
-func (r *NoOpCaseRepository) HasAccess(_ context.Context, _, _ uuid.UUID) (bool, error) {
-	return false, nil
-}
-
-// ListForUser implements CaseRepository.
-func (r *NoOpCaseRepository) ListForUser(_ context.Context, _ uuid.UUID, _, _ int) ([]domain.Case, int64, error) {
-	return []domain.Case{}, 0, nil
 }
 
 // GetByIDs implements CaseRepository.
