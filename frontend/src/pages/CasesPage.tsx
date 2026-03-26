@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -28,26 +28,34 @@ import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Pagination } from '@/pages/admin/components/Pagination';
 import { listPublishedCases } from '@/services';
 import type { UserCaseItem } from '@/types';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 
+const PAGE_SIZE = 20;
+
 export function CasesPage() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
+  const [page, setPage] = useState(1);
 
   const { data, isLoading: loading, error: queryError } = useQuery({
-    queryKey: ['published-cases'],
-    queryFn: async () => {
-      const response = await listPublishedCases();
-      return response.cases;
-    },
+    queryKey: ['published-cases', page],
+    queryFn: () => listPublishedCases(page, PAGE_SIZE),
   });
 
-  const cases = useMemo(() => data ?? [], [data]);
+  const cases = useMemo(() => data?.cases ?? [], [data]);
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
   const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Filter and search cases
   const filteredCases = useMemo(() => {
@@ -229,6 +237,13 @@ export function CasesPage() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          showingText={total > 0 ? t('cases.showing', { from: (page - 1) * PAGE_SIZE + 1, to: Math.min(page * PAGE_SIZE, total), total }) : undefined}
+        />
       </div>
     </div>
   );

@@ -414,7 +414,8 @@
     "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
     "submitError": "Error al Enviar",
     "clickToEnlarge": "Clic para ampliar",
-    "matchesReference": "¡Tu clasificación coincide con la referencia!"
+    "matchesReference": "¡Tu clasificación coincide con la referencia!",
+    "showing": "Mostrando {{from}}-{{to}} de {{total}} casos"
   },
   "studies": {
     "title": "Título",

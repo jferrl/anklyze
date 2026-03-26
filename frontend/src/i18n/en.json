@@ -409,7 +409,8 @@
     "submitSuccessDescription": "Your classification has been recorded successfully.",
     "submitError": "Submission Failed",
     "clickToEnlarge": "Click to enlarge",
-    "matchesReference": "Your classification matches the reference!"
+    "matchesReference": "Your classification matches the reference!",
+    "showing": "Showing {{from}}-{{to}} of {{total}} cases"
   },
   "studies": {
     "title": "Title",
