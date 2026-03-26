@@ -46,3 +46,4 @@ coverage/
 bin/
 .planning/
 anklyze-apiserver
+cases_data/
