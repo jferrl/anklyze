@@ -4,6 +4,7 @@ export {
   listPublishedCases,
   getPublishedCase,
   getImageSignedURL,
+  getBatchImageSignedURLs,
   getAdminImageSignedURL,
   submitCaseResponse,
   getMyResponses,
@@ -73,6 +74,7 @@ export const caseApi = {
   listPublishedCases: caseService.listPublishedCases,
   getPublishedCase: caseService.getPublishedCase,
   getImageSignedURL: caseService.getImageSignedURL,
+  getBatchImageSignedURLs: caseService.getBatchImageSignedURLs,
   submitCaseResponse: caseService.submitCaseResponse,
   getMyResponses: caseService.getMyResponses,
   // User profile

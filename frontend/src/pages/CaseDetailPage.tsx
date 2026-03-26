@@ -23,14 +23,16 @@ import {
   ClassificationPanel,
 } from '../components/cases';
 import type { AnswerTracking } from '../components/cases';
+import { useImageUrls } from '../hooks/useImageUrls';
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
 
-  // Image gallery state — progressively populated as each image resolves its signed URL
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  // Batch-fetch all signed URLs for this case (single request, cached by React Query)
+  const { imageUrls, isLoading: isLoadingUrls } = useImageUrls(id);
+
   const [viewState, setViewState] = useState<{
     selectedImageIndex: number | null;
     activeTab: 'xray' | 'tac';
@@ -73,7 +75,6 @@ export function CaseDetailPage() {
   // This pattern is recommended by React for syncing state with props during render
   if (caseData && caseData.id !== prevCaseId) {
     setPrevCaseId(caseData.id);
-    setImageUrls({}); // Reset image URLs for new case
     const hasXray = caseData.images.some((img) => img.category === 'xray');
     const hasTac = caseData.images.some((img) => img.category === 'tac');
     if (!hasXray && hasTac) {
@@ -82,11 +83,6 @@ export function CaseDetailPage() {
       setActiveTab('xray');
     }
   }
-
-  // Stable callback — collects resolved URLs from LazyImage components for lightbox use
-  const handleUrlResolved = useCallback((imageId: string, url: string) => {
-    setImageUrls(prev => ({ ...prev, [imageId]: url }));
-  }, []);
 
   // Fetch previous responses with React Query
   const { data: responsesData } = useQuery({
@@ -272,18 +268,18 @@ export function CaseDetailPage() {
                     <TabsContent value="xray" className="mt-0 p-4">
                       <ImageGrid
                         images={xrayImages}
-                        caseId={id!}
+                        imageUrls={imageUrls}
+                        isLoadingUrls={isLoadingUrls}
                         onImageClick={openLightbox}
-                        onUrlResolved={handleUrlResolved}
                       />
                     </TabsContent>
 
                     <TabsContent value="tac" className="mt-0 p-4">
                       <ImageGrid
                         images={tacImages}
-                        caseId={id!}
+                        imageUrls={imageUrls}
+                        isLoadingUrls={isLoadingUrls}
                         onImageClick={openLightbox}
-                        onUrlResolved={handleUrlResolved}
                       />
                     </TabsContent>
                   </Tabs>

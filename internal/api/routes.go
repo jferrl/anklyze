@@ -246,6 +246,7 @@ func registerUserCaseRoutes(
 ) {
 	cases.GET("", accessHandler.ListPublishedCases)
 	cases.GET("/:id", accessHandler.GetPublishedCase)
+	cases.GET("/:id/images/urls", responseHandler.GetBatchImageSignedURLs)
 	cases.GET("/:id/images/:imageId/url", responseHandler.GetImageSignedURL)
 	cases.POST("/:id/responses", responseHandler.SubmitResponse)
 	cases.GET("/:id/my-responses", responseHandler.GetMyResponses)

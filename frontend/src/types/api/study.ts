@@ -81,6 +81,13 @@ export interface SignedURLResponse {
 }
 
 /**
+ * Batch signed URL response — all image URLs for a case in one request
+ */
+export interface BatchSignedURLResponse {
+  urls: Record<string, SignedURLResponse>;
+}
+
+/**
  * Paginated list of cases (admin view)
  */
 export interface CaseListResponse {

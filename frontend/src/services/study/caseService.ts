@@ -10,6 +10,7 @@ import type {
   SubmitResponseRequest,
   ImageUploadResponse,
   SignedURLResponse,
+  BatchSignedURLResponse,
   CaseAnalyticsSummary,
   CaseResponseListResponse,
   MyResponsesResponse,
@@ -81,6 +82,19 @@ export async function getImageSignedURL(
     }
     throw error;
   }
+}
+
+/**
+ * Get signed URLs for all images of a published case in a single request.
+ * Returns a map of imageId -> { url, expires_at }.
+ */
+export async function getBatchImageSignedURLs(
+  caseId: string
+): Promise<BatchSignedURLResponse> {
+  return apiRequest<BatchSignedURLResponse>(
+    `/api/cases/${caseId}/images/urls`,
+    { method: 'GET' }
+  );
 }
 
 /**

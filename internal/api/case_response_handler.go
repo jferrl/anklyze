@@ -222,6 +222,47 @@ func (h *CaseResponseHandler) ListCaseResponses(c *gin.Context) {
 	})
 }
 
+// GetBatchImageSignedURLs handles GET /api/cases/:id/images/urls
+// Returns signed URLs for all images of a published case in a single request.
+func (h *CaseResponseHandler) GetBatchImageSignedURLs(c *gin.Context) {
+	caseID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+		return
+	}
+
+	// Verify case is published
+	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
+	if err != nil || cs == nil || !cs.IsPublished() {
+		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+		return
+	}
+
+	// Get all images for the case
+	images, err := h.caseRepo.GetImages(c.Request.Context(), caseID)
+	if err != nil {
+		slog.Error("failed to get images", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
+		return
+	}
+
+	// Generate signed URLs for all images
+	urls := make(map[string]SignedURLResponse, len(images))
+	for _, img := range images {
+		url, err := h.storage.GetSignedURL(c.Request.Context(), img.StoragePath, h.signedURLDuration)
+		if err != nil {
+			slog.Error("failed to generate signed URL", "error", err, "image_id", img.ID)
+			continue
+		}
+		urls[img.ID.String()] = SignedURLResponse{
+			URL:       url,
+			ExpiresAt: time.Now().Add(h.signedURLDuration),
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"urls": urls})
+}
+
 // GetImageSignedURL handles GET /api/cases/:id/images/:imageId/url
 // Requires user to have access to the case, or be an admin.
 func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {

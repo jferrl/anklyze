@@ -56,6 +56,20 @@ export function ImageLightbox({
     [currentIndex, onNext, onPrev]
   );
 
+  // Preload neighboring images for instant carousel swiping
+  useEffect(() => {
+    const neighbors = [currentIndex - 1, currentIndex + 1];
+    for (const idx of neighbors) {
+      if (idx >= 0 && idx < images.length) {
+        const url = imageUrls[images[idx].id];
+        if (url) {
+          const img = new Image();
+          img.src = url;
+        }
+      }
+    }
+  }, [currentIndex, images, imageUrls]);
+
   return (
     <div
       role="dialog"
