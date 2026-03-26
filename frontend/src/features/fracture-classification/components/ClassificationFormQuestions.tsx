@@ -19,7 +19,7 @@ import { QuestionStep } from './QuestionStep';
 interface ClassificationFormQuestionsProps {
   formData: Partial<FractureInput>;
   onUpdate: (newData: Partial<FractureInput>) => void;
-  /** When true, has_ct_scan is auto-set and CT question is skipped */
+  /** When set (true/false), has_ct_scan is auto-set and CT question is skipped */
   hasTACImages?: boolean;
 }
 
@@ -32,7 +32,7 @@ interface ClassificationFormQuestionsProps {
 export function ClassificationFormQuestions({
   formData,
   onUpdate,
-  hasTACImages = false,
+  hasTACImages,
 }: ClassificationFormQuestionsProps) {
   const { i18n } = useTranslation();
   const formEndRef = useRef<HTMLDivElement>(null);
@@ -113,8 +113,9 @@ export function ClassificationFormQuestions({
     formData.suprasindesmal_type !== undefined &&
     formData.suprasindesmal_type !== 'proximal';
 
-  // CT scan: show only after ALL preceding questions for the current path are answered
-  const showCTScan = !hasTACImages && formData.involved_malleoli && (
+  // CT scan: show only when hasTACImages is undefined (no case context).
+  // When hasTACImages is true or false, the answer is auto-set from case images.
+  const showCTScan = hasTACImages === undefined && formData.involved_malleoli && (
     (formData.involved_malleoli === 'posterior_only' &&
       formData.articular_involvement === 'small_without_extension') ||
     formData.involved_malleoli === 'medial_posterior' ||
@@ -135,7 +136,7 @@ export function ClassificationFormQuestions({
 
   // Posterior type: after CT=true (either explicit or auto from TAC images)
   const showPosteriorType = (() => {
-    const hasCT = hasTACImages || formData.has_ct_scan === true;
+    const hasCT = hasTACImages === true || formData.has_ct_scan === true;
     if (!hasCT) return false;
 
     // For hasTACImages, the CT question is skipped but we still need to check
@@ -176,7 +177,7 @@ export function ClassificationFormQuestions({
         options={options.involved_malleoli || []}
         onChange={(value) => onUpdate({
           involved_malleoli: value as InvolvedMalleoli,
-          ...(hasTACImages ? { has_ct_scan: true } : {}),
+          ...(hasTACImages !== undefined ? { has_ct_scan: hasTACImages } : {}),
         })}
       />
 

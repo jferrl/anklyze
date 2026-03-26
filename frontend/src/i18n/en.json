@@ -386,6 +386,7 @@
     "imageGallery": "Image Gallery",
     "noImages": "No images available",
     "ctScanAutoDetected": "CT scan images detected - CT scan question answered automatically",
+    "ctScanAutoNo": "No CT scan images available - CT scan question answered automatically",
     "myResponses": "My Responses",
     "pageTitle": "Clinical Cases",
     "pageSubtitle": "Classify ankle fracture cases and compare your assessment with other clinicians.",

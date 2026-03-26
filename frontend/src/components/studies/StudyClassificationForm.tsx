@@ -40,7 +40,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
     loading: boolean;
     error: string | null;
   }>(() => ({
-    data: hasTACImages ? { has_ct_scan: true } : {},
+    data: { has_ct_scan: hasTACImages },
     history: [],
     loading: false,
     error: null,
@@ -186,6 +186,15 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
           <AlertDescription className="flex items-center gap-2">
             <Badge variant="secondary" className="bg-primary/10 text-primary border-0">TAC</Badge>
             {t('cases.ctScanAutoDetected')}
+          </AlertDescription>
+        </Alert>
+      )}
+      {!hasTACImages && (
+        <Alert className="border-muted-foreground/20 bg-muted/50">
+          <Sparkles className="h-4 w-4 text-muted-foreground" />
+          <AlertDescription className="flex items-center gap-2">
+            <Badge variant="secondary" className="bg-muted text-muted-foreground border-0">TAC</Badge>
+            {t('cases.ctScanAutoNo')}
           </AlertDescription>
         </Alert>
       )}

@@ -391,6 +391,7 @@
     "imageGallery": "Galería de Imágenes",
     "noImages": "No hay imágenes disponibles",
     "ctScanAutoDetected": "Imágenes de TAC detectadas - pregunta de TAC respondida automáticamente",
+    "ctScanAutoNo": "Sin imágenes de TAC disponibles - pregunta de TAC respondida automáticamente",
     "myResponses": "Mis Respuestas",
     "pageTitle": "Casos Clínicos",
     "pageSubtitle": "Clasifica casos de fracturas de tobillo y compara tu evaluación con otros clínicos.",
