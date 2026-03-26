@@ -172,6 +172,15 @@ func (m *mockCaseRepositoryForStudy) UpdateUniqueUsers(_ context.Context, _ uuid
 func (m *mockCaseRepositoryForStudy) GetImagesForCases(_ context.Context, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {
 	return make(map[uuid.UUID][]domain.CaseImage), nil
 }
+func (m *mockCaseRepositoryForStudy) GetDashboardStats(_ context.Context) (*domain.DashboardStats, error) {
+	return &domain.DashboardStats{}, nil
+}
+func (m *mockCaseRepositoryForStudy) GetRecentActiveCases(_ context.Context, _ int) ([]domain.DashboardRecentCase, error) {
+	return nil, nil
+}
+func (m *mockCaseRepositoryForStudy) GetCasesNeedingAttention(_ context.Context, _ int) ([]domain.DashboardAttentionCase, error) {
+	return nil, nil
+}
 
 // mockReliabilityCalculator is a mock for ReliabilityCalculator.
 type mockReliabilityCalculator struct {

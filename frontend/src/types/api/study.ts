@@ -139,6 +139,52 @@ export interface ReliabilityMetricsResponse extends ReliabilityMetrics {
 }
 
 // ============================================================================
+// Dashboard API Types
+// ============================================================================
+
+/**
+ * Aggregated statistics for the admin dashboard
+ */
+export interface DashboardStats {
+  total_cases: number;
+  draft_cases: number;
+  published_cases: number;
+  closed_cases: number;
+  total_responses: number;
+  total_unique_users: number;
+  avg_responses_per_case: number;
+}
+
+/**
+ * Summary of a recently active case
+ */
+export interface DashboardRecentCase {
+  id: string;
+  title: string;
+  status: string;
+  response_count: number;
+  updated_at: string;
+}
+
+/**
+ * A case that needs admin attention
+ */
+export interface DashboardAttentionCase {
+  id: string;
+  title: string;
+  deadline?: string;
+}
+
+/**
+ * Full dashboard API response
+ */
+export interface DashboardResponse {
+  stats: DashboardStats;
+  recent_active_cases: DashboardRecentCase[];
+  cases_needing_attention: DashboardAttentionCase[];
+}
+
+// ============================================================================
 // Study API Types
 // ============================================================================
 

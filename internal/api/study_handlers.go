@@ -144,7 +144,7 @@ func (h *StudyHandler) ListStudies(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-	if limit < 1 || limit > 100 {
+	if limit < 1 || limit > MaxPageSize {
 		limit = 20
 	}
 	offset := (page - 1) * limit

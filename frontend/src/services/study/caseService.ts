@@ -20,6 +20,7 @@ import type {
   SubmitResponseResult,
   UserProfile,
   UpdateUserProfileRequest,
+  DashboardResponse,
 } from '@/types';
 import { apiRequest, getAuthHeaders, API_BASE_URL } from '../core/apiClient';
 import i18n from '../../i18n/config';
@@ -140,6 +141,15 @@ export async function getMyResponses(caseId: string): Promise<MyResponsesRespons
 // ================================
 // Admin Case Endpoints
 // ================================
+
+/**
+ * Get admin dashboard stats (admin only)
+ */
+export async function getDashboard(): Promise<DashboardResponse> {
+  return apiRequest<DashboardResponse>('/api/admin/cases/dashboard', {
+    method: 'GET',
+  });
+}
 
 /**
  * Create a new case (admin only)

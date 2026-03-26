@@ -50,6 +50,13 @@ type CaseRepository interface {
 
 	// GetByIDs batch loads cases by their IDs.
 	GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error)
+
+	// GetDashboardStats retrieves aggregated dashboard statistics.
+	GetDashboardStats(ctx context.Context) (*domain.DashboardStats, error)
+	// GetRecentActiveCases retrieves the most recently updated cases that have responses.
+	GetRecentActiveCases(ctx context.Context, limit int) ([]domain.DashboardRecentCase, error)
+	// GetCasesNeedingAttention retrieves published cases with no responses or past deadline.
+	GetCasesNeedingAttention(ctx context.Context, limit int) ([]domain.DashboardAttentionCase, error)
 }
 
 // CaseResponseRepository defines the interface for case response persistence.
@@ -189,6 +196,21 @@ func (r *NoOpCaseRepository) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _
 // GetByIDs implements CaseRepository.
 func (r *NoOpCaseRepository) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domain.Case, error) {
 	return []domain.Case{}, nil
+}
+
+// GetDashboardStats implements CaseRepository.
+func (r *NoOpCaseRepository) GetDashboardStats(_ context.Context) (*domain.DashboardStats, error) {
+	return &domain.DashboardStats{}, nil
+}
+
+// GetRecentActiveCases implements CaseRepository.
+func (r *NoOpCaseRepository) GetRecentActiveCases(_ context.Context, _ int) ([]domain.DashboardRecentCase, error) {
+	return []domain.DashboardRecentCase{}, nil
+}
+
+// GetCasesNeedingAttention implements CaseRepository.
+func (r *NoOpCaseRepository) GetCasesNeedingAttention(_ context.Context, _ int) ([]domain.DashboardAttentionCase, error) {
+	return []domain.DashboardAttentionCase{}, nil
 }
 
 // NoOpCaseResponseRepository is a no-op implementation.

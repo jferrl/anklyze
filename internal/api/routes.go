@@ -268,6 +268,7 @@ func registerAdminCaseRoutes(
 	// CRUD operations (CaseAdminHandler)
 	adminCases.POST("", adminHandler.CreateCase)
 	adminCases.GET("", adminHandler.ListCases)
+	adminCases.GET("/dashboard", adminHandler.GetDashboard)
 	adminCases.GET("/:id", adminHandler.GetCase)
 	adminCases.PUT("/:id", adminHandler.UpdateCase)
 	adminCases.DELETE("/:id", adminHandler.DeleteCase)

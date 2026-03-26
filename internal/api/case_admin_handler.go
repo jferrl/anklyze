@@ -29,6 +29,38 @@ func NewCaseAdminHandler(
 	}
 }
 
+// GetDashboard handles GET /api/admin/cases/dashboard
+func (h *CaseAdminHandler) GetDashboard(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	stats, err := h.caseRepo.GetDashboardStats(ctx)
+	if err != nil {
+		slog.Error("failed to get dashboard stats", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get dashboard stats"})
+		return
+	}
+
+	recentCases, err := h.caseRepo.GetRecentActiveCases(ctx, 5)
+	if err != nil {
+		slog.Error("failed to get recent active cases", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get recent cases"})
+		return
+	}
+
+	attentionCases, err := h.caseRepo.GetCasesNeedingAttention(ctx, 5)
+	if err != nil {
+		slog.Error("failed to get cases needing attention", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get attention cases"})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.DashboardResponse{
+		Stats:                 *stats,
+		RecentActiveCases:     recentCases,
+		CasesNeedingAttention: attentionCases,
+	})
+}
+
 // CreateCase handles POST /api/admin/cases
 func (h *CaseAdminHandler) CreateCase(c *gin.Context) {
 	var req CreateCaseRequest

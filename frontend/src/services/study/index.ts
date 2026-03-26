@@ -8,6 +8,7 @@ export {
   submitCaseResponse,
   getMyResponses,
   // Admin case endpoints
+  getDashboard,
   createCase,
   listCases,
   getCase,
@@ -78,6 +79,7 @@ export const caseApi = {
   getUserProfile: caseService.getUserProfile,
   updateUserProfile: caseService.updateUserProfile,
   // Admin case endpoints
+  getDashboard: caseService.getDashboard,
   createCase: caseService.createCase,
   listCases: caseService.listCases,
   getCase: caseService.getCase,

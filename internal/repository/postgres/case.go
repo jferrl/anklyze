@@ -275,6 +275,62 @@ func (r *CaseRepository) GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domai
 	return cases, nil
 }
 
+// GetDashboardStats retrieves aggregated dashboard statistics.
+func (r *CaseRepository) GetDashboardStats(ctx context.Context) (*domain.DashboardStats, error) {
+	var stats domain.DashboardStats
+
+	err := r.db.WithContext(ctx).Model(&domain.Case{}).Select(
+		"COUNT(*) as total_cases",
+		"COUNT(CASE WHEN status = 'draft' THEN 1 END) as draft_cases",
+		"COUNT(CASE WHEN status = 'published' THEN 1 END) as published_cases",
+		"COUNT(CASE WHEN status = 'closed' THEN 1 END) as closed_cases",
+		"COALESCE(SUM(response_count), 0) as total_responses",
+		"COALESCE(SUM(unique_users), 0) as total_unique_users",
+		"CASE WHEN COUNT(*) > 0 THEN ROUND(COALESCE(SUM(response_count), 0)::numeric / COUNT(*)) ELSE 0 END as avg_responses_per_case",
+	).Scan(&stats).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("get dashboard stats: %w", err)
+	}
+
+	return &stats, nil
+}
+
+// GetRecentActiveCases retrieves the most recently updated cases that have responses.
+func (r *CaseRepository) GetRecentActiveCases(ctx context.Context, limit int) ([]domain.DashboardRecentCase, error) {
+	var cases []domain.DashboardRecentCase
+
+	err := r.db.WithContext(ctx).Model(&domain.Case{}).
+		Select("id, title, status, response_count, updated_at").
+		Where("response_count > 0").
+		Order("updated_at DESC").
+		Limit(limit).
+		Scan(&cases).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("get recent active cases: %w", err)
+	}
+
+	return cases, nil
+}
+
+// GetCasesNeedingAttention retrieves published cases with no responses or past deadline.
+func (r *CaseRepository) GetCasesNeedingAttention(ctx context.Context, limit int) ([]domain.DashboardAttentionCase, error) {
+	var cases []domain.DashboardAttentionCase
+
+	err := r.db.WithContext(ctx).Model(&domain.Case{}).
+		Select("id, title, deadline").
+		Where("status = ? AND (response_count = 0 OR (deadline IS NOT NULL AND deadline < NOW()))", domain.CaseStatusPublished).
+		Limit(limit).
+		Scan(&cases).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("get cases needing attention: %w", err)
+	}
+
+	return cases, nil
+}
+
 // CaseResponseRepository implements case response persistence with async writes.
 type CaseResponseRepository struct {
 	db      *gorm.DB

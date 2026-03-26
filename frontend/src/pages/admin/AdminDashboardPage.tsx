@@ -21,47 +21,29 @@ export function AdminDashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data: casesData, isLoading } = useQuery({
-    queryKey: ['admin-cases-all'],
-    queryFn: () => caseApi.listCases(undefined, 1, 100),
-    staleTime: 0, // Always consider data stale
-    refetchOnMount: 'always', // Refetch when component mounts
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-dashboard'],
+    queryFn: () => caseApi.getDashboard(),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
-  const cases = useMemo(() => casesData?.cases ?? [], [casesData]);
+  const stats = useMemo(() => {
+    if (!data) return { totalCases: 0, draftCases: 0, publishedCases: 0, closedCases: 0, totalResponses: 0, totalUniqueUsers: 0, avgResponsesPerCase: 0 };
+    const s = data.stats;
+    return {
+      totalCases: s.total_cases,
+      draftCases: s.draft_cases,
+      publishedCases: s.published_cases,
+      closedCases: s.closed_cases,
+      totalResponses: s.total_responses,
+      totalUniqueUsers: s.total_unique_users,
+      avgResponsesPerCase: s.avg_responses_per_case,
+    };
+  }, [data]);
 
-  const stats = useMemo(() => ({
-    totalCases: cases.length,
-    draftCases: cases.filter((c) => c.status === 'draft').length,
-    publishedCases: cases.filter((c) => c.status === 'published').length,
-    closedCases: cases.filter((c) => c.status === 'closed').length,
-    totalResponses: cases.reduce((sum, c) => sum + c.response_count, 0),
-    totalUniqueUsers: cases.reduce((sum, c) => sum + c.unique_users, 0),
-    avgResponsesPerCase:
-      cases.length > 0
-        ? Math.round(
-            cases.reduce((sum, c) => sum + c.response_count, 0) / cases.length
-          )
-        : 0,
-  }), [cases]);
-
-  const recentActiveCases = useMemo(() =>
-    [...cases]
-      .filter((c) => c.response_count > 0)
-      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-      .slice(0, 5),
-    [cases]
-  );
-
-  const casesNeedingAttention = useMemo(() =>
-    cases.filter((c) => {
-      if (c.status === 'published' && c.response_count === 0) return true;
-      if (c.deadline && new Date(c.deadline) < new Date() && c.status === 'published')
-        return true;
-      return false;
-    }),
-    [cases]
-  );
+  const recentActiveCases = data?.recent_active_cases ?? [];
+  const casesNeedingAttention = data?.cases_needing_attention ?? [];
 
   if (isLoading) {
     return (
