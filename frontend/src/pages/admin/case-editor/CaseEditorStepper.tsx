@@ -13,7 +13,7 @@ interface CaseEditorStepperProps {
   onStepClick: (step: Step) => void;
 }
 
-export function CaseEditorStepper({ steps, isEditing, currentStep, title, totalImages, onStepClick }: CaseEditorStepperProps) {
+export function CaseEditorStepper({ steps, currentStep, title, totalImages, onStepClick }: CaseEditorStepperProps) {
   const { t } = useTranslation();
   const currentStepIndex = steps.indexOf(currentStep);
 

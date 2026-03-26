@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Save, Send, AlertCircle, Loader2, ChevronLeft, Sparkles,
+  Save, Send, AlertCircle, Loader2, Sparkles,
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
@@ -52,7 +52,7 @@ export function CaseEditorPage() {
     enabled: isEditing,
   });
 
-  const { form, setForm, updateForm } = useCaseEditorForm(existingCase);
+  const { form, updateForm } = useCaseEditorForm(existingCase);
   const { title, description, deadline } = form;
 
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
