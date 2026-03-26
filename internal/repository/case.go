@@ -83,6 +83,8 @@ type CaseResponseRepository interface {
 	GetAllByCase(ctx context.Context, caseID uuid.UUID) ([]domain.CaseResponse, error)
 	// GetResponsesWithUserExpertise retrieves responses joined with user expertise data.
 	GetResponsesWithUserExpertise(ctx context.Context, caseID uuid.UUID) ([]domain.ResponseWithExpertise, error)
+	// CountRespondedPublishedCases counts how many published cases a user has responded to.
+	CountRespondedPublishedCases(ctx context.Context, userID uuid.UUID) (int64, error)
 }
 
 // CaseAnalyticsRepository defines the interface for case analytics queries.
@@ -269,6 +271,11 @@ func (r *NoOpCaseResponseRepository) GetAllByCase(_ context.Context, _ uuid.UUID
 // GetResponsesWithUserExpertise implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return []domain.ResponseWithExpertise{}, nil
+}
+
+// CountRespondedPublishedCases implements CaseResponseRepository.
+func (r *NoOpCaseResponseRepository) CountRespondedPublishedCases(_ context.Context, _ uuid.UUID) (int64, error) {
+	return 0, nil
 }
 
 // NoOpCaseAnalyticsRepository is a no-op implementation.

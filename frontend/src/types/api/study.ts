@@ -96,6 +96,7 @@ export interface CaseListResponse {
 export interface UserCaseListResponse {
   cases: UserCaseItem[];
   total: number;
+  total_completed: number;
   page: number;
   limit: number;
 }

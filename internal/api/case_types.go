@@ -82,10 +82,11 @@ type SignedURLResponse struct {
 
 // UserCaseListResponse is the response for listing cases for users.
 type UserCaseListResponse struct {
-	Cases []UserCaseItem `json:"cases"`
-	Total int64          `json:"total"`
-	Page  int            `json:"page"`
-	Limit int            `json:"limit"`
+	Cases          []UserCaseItem `json:"cases"`
+	Total          int64          `json:"total"`
+	TotalCompleted int64          `json:"total_completed"`
+	Page           int            `json:"page"`
+	Limit          int            `json:"limit"`
 }
 
 // UserCaseItem is a case item in the user's list view.

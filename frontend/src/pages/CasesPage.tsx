@@ -75,14 +75,13 @@ export function CasesPage() {
     });
   }, [cases, searchQuery, filterStatus]);
 
-  // Calculate stats
+  // Calculate stats from API totals (across all pages, not just current page)
   const stats = useMemo(() => {
-    const total = cases.length;
-    const completed = cases.filter((c) => c.has_responded).length;
+    const completed = data?.total_completed ?? 0;
     const pending = total - completed;
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, completed, pending, progress };
-  }, [cases]);
+  }, [data, total]);
 
   const formatDeadline = (deadline: string | undefined) => {
     if (!deadline) return null;

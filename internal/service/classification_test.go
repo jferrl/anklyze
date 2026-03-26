@@ -63,6 +63,9 @@ func (m *mockResponseRepoForClassification) GetAllByCase(_ context.Context, _ uu
 func (m *mockResponseRepoForClassification) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return nil, nil
 }
+func (m *mockResponseRepoForClassification) CountRespondedPublishedCases(_ context.Context, _ uuid.UUID) (int64, error) {
+	return 0, nil
+}
 func (m *mockResponseRepoForClassification) Close() error { return nil }
 
 func TestClassificationService_Classify(t *testing.T) {

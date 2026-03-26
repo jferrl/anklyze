@@ -560,6 +560,21 @@ func (r *CaseResponseRepository) GetResponsesWithUserExpertise(ctx context.Conte
 	return results, nil
 }
 
+// CountRespondedPublishedCases counts how many published cases a user has responded to.
+func (r *CaseResponseRepository) CountRespondedPublishedCases(ctx context.Context, userID uuid.UUID) (int64, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.CaseResponse{}).
+		Joins("JOIN cases ON cases.id = case_responses.case_id AND cases.status = ?", domain.CaseStatusPublished).
+		Where("case_responses.user_id = ?", userID).
+		Distinct("case_responses.case_id").
+		Count(&count).Error
+	if err != nil {
+		return 0, fmt.Errorf("count responded published cases: %w", err)
+	}
+	return count, nil
+}
+
 // CaseAnalyticsRepository implements case analytics queries.
 type CaseAnalyticsRepository struct {
 	db *gorm.DB

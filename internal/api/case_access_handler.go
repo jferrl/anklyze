@@ -67,6 +67,13 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 		responsesMap = make(map[uuid.UUID][]domain.CaseResponse)
 	}
 
+	// Count total published cases the user has responded to (across all pages)
+	totalCompleted, err := h.responseRepo.CountRespondedPublishedCases(c.Request.Context(), uid)
+	if err != nil {
+		slog.Warn("failed to count responded cases", "error", err)
+		totalCompleted = 0
+	}
+
 	// Build response using maps (O(1) lookup)
 	items := make([]UserCaseItem, len(cases))
 	for i, cs := range cases {
@@ -91,10 +98,11 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, UserCaseListResponse{
-		Cases: items,
-		Total: total,
-		Page:  page,
-		Limit: limit,
+		Cases:          items,
+		Total:          total,
+		TotalCompleted: totalCompleted,
+		Page:           page,
+		Limit:          limit,
 	})
 }
 

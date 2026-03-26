@@ -45,6 +45,9 @@ func (m *mockCaseResponseRepository) CountUniqueUsersByCase(_ context.Context, _
 func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return nil, nil
 }
+func (m *mockCaseResponseRepository) CountRespondedPublishedCases(_ context.Context, _ uuid.UUID) (int64, error) {
+	return 0, nil
+}
 func (m *mockCaseResponseRepository) Close() error { return nil }
 
 // mockStudyRepository is a minimal mock for StudyRepository.
