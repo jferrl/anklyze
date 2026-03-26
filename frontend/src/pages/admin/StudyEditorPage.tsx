@@ -488,14 +488,17 @@ export function StudyEditorPage() {
             {t('admin.studies.step', 'Step')} {currentStepIndex + 1} {t('common.of', 'of')} {isEditing ? STEPS.length : STEPS.length - 1}
           </div>
 
-          <Button
-            onClick={goToNextStep}
-            disabled={currentStep === 'cases'}
-            className="gap-2"
-          >
-            {t('common.next', 'Next')}
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+          {currentStep !== 'cases' ? (
+            <Button
+              onClick={goToNextStep}
+              className="gap-2"
+            >
+              {t('common.next', 'Next')}
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          ) : (
+            <div />
+          )}
         </div>
 
         {/* Activate Confirmation Dialog */}
