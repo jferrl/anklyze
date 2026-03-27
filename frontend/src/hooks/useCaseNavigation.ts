@@ -25,21 +25,24 @@ interface CaseNavigationResult {
  * Hook that provides prev/next case navigation context for CaseDetailPage.
  * Reads the filter/search state from URL search params (set by CasesPage)
  * so navigation respects the user's current view.
+ *
+ * Uses a dedicated query key ('case-navigation') separate from the paginated
+ * list to avoid cache conflicts with CasesPage's per-page queries.
  */
 export function useCaseNavigation(currentCaseId: string | undefined): CaseNavigationResult {
   const [searchParams] = useSearchParams();
   const filterStatus = (searchParams.get('status') as FilterStatus) || 'all';
   const searchQuery = (searchParams.get('q') || '').toLowerCase();
 
-  // Fetch all cases (large page to get them all for navigation)
-  // Uses same query key pattern as CasesPage for cache sharing
+  // Fetch ALL cases for navigation — uses its own query key so it doesn't
+  // conflict with CasesPage's paginated ['published-cases', page] queries.
   const { data, isLoading } = useQuery({
-    queryKey: ['published-cases', 1],
-    queryFn: () => listPublishedCases(1, 200),
+    queryKey: ['case-navigation'],
+    queryFn: () => listPublishedCases(1, 1000),
     staleTime: 1000 * 60 * 5,
   });
 
-  const allCases = data?.cases ?? [];
+  const allCases = useMemo(() => data?.cases ?? [], [data]);
 
   // Apply the same filters as CasesPage
   const filteredCases = useMemo(() => {

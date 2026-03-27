@@ -151,6 +151,7 @@ export function CaseDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['published-case', id] });
       queryClient.invalidateQueries({ queryKey: ['published-cases'] });
       queryClient.invalidateQueries({ queryKey: ['my-responses', id] });
+      queryClient.invalidateQueries({ queryKey: ['case-navigation'] });
     },
     onError: (err) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
