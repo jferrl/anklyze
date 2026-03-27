@@ -36,16 +36,29 @@ export function ImageLightbox({
   const { t } = useTranslation();
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const isDragging = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const positionRef = useRef({ x: 0, y: 0 });
+  const [prevIndex, setPrevIndex] = useState(currentIndex);
+
+  // Reset zoom when changing images — "adjust state during render" pattern
+  // (https://react.dev/reference/react/useState#storing-information-from-previous-renders)
+  if (prevIndex !== currentIndex) {
+    setPrevIndex(currentIndex);
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }
+
+  // Keep positionRef in sync with position state for pointer event handlers
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
   const isZoomed = scale > 1;
 
   const resetZoom = useCallback(() => {
     setScale(1);
     setPosition({ x: 0, y: 0 });
-    positionRef.current = { x: 0, y: 0 };
   }, []);
 
   const zoomIn = useCallback(() => {
@@ -57,16 +70,10 @@ export function ImageLightbox({
       const next = Math.max(s - ZOOM_STEP, MIN_SCALE);
       if (next === MIN_SCALE) {
         setPosition({ x: 0, y: 0 });
-        positionRef.current = { x: 0, y: 0 };
       }
       return next;
     });
   }, []);
-
-  // Reset zoom when changing images
-  useEffect(() => {
-    resetZoom();
-  }, [currentIndex, resetZoom]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -101,7 +108,7 @@ export function ImageLightbox({
     (e: React.PointerEvent) => {
       if (!isZoomed) return;
       e.preventDefault();
-      isDragging.current = true;
+      setIsDragging(true);
       dragStart.current = { x: e.clientX - positionRef.current.x, y: e.clientY - positionRef.current.y };
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
     },
@@ -110,19 +117,18 @@ export function ImageLightbox({
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!isDragging.current) return;
+      if (!isDragging) return;
       const newPos = {
         x: e.clientX - dragStart.current.x,
         y: e.clientY - dragStart.current.y,
       };
-      positionRef.current = newPos;
       setPosition(newPos);
     },
-    []
+    [isDragging]
   );
 
   const handlePointerUp = useCallback(() => {
-    isDragging.current = false;
+    setIsDragging(false);
   }, []);
 
   // Double-click to toggle zoom
@@ -263,7 +269,7 @@ export function ImageLightbox({
                           transform: idx === currentIndex
                             ? `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`
                             : undefined,
-                          transition: isDragging.current ? 'none' : 'transform 0.2s ease-out',
+                          transition: isDragging ? 'none' : 'transform 0.2s ease-out',
                         }}
                       />
                     </div>
