@@ -93,7 +93,11 @@ func (r *CaseRepository) List(ctx context.Context, status *domain.CaseStatus, li
 		return nil, 0, fmt.Errorf("list count: %w", err)
 	}
 
-	if err := query.Order("created_at ASC").Limit(limit).Offset(offset).Find(&cases).Error; err != nil {
+	q := query.Order("created_at ASC")
+	if limit > 0 {
+		q = q.Limit(limit).Offset(offset)
+	}
+	if err := q.Find(&cases).Error; err != nil {
 		return nil, 0, fmt.Errorf("list find: %w", err)
 	}
 

@@ -32,15 +32,14 @@ func NewCaseAccessHandler(
 // Returns all published cases for any authenticated user.
 // Uses batch loading to avoid N+1 query issues.
 func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
-	page, limit, offset := getPagination(c)
-
 	uid, err := auth.ParseUserID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
 		return
 	}
 
-	cases, total, err := h.caseRepo.ListPublished(c.Request.Context(), limit, offset)
+	// Load all published cases (no pagination — dataset is small enough)
+	cases, total, err := h.caseRepo.ListPublished(c.Request.Context(), 0, 0)
 	if err != nil {
 		slog.Error("failed to list cases", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list cases"})
@@ -101,8 +100,8 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 		Cases:          items,
 		Total:          total,
 		TotalCompleted: totalCompleted,
-		Page:           page,
-		Limit:          limit,
+		Page:           1,
+		Limit:          int(total),
 	})
 }
 
