@@ -24,6 +24,65 @@ interface ClassificationFormQuestionsProps {
 }
 
 /**
+ * Maps each question field to all fields that could appear after it in any
+ * decision-tree path. When a question answer changes, all its downstream
+ * fields are cleared so stale answers from a previous path don't persist.
+ */
+const DOWNSTREAM_FIELDS: Record<string, (keyof FractureInput)[]> = {
+  articular_involvement: [
+    'has_articular_depression', 'medial_morphology', 'fibula_infrasindesmal_transverse',
+    'fibular_level', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
+    'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
+  ],
+  has_articular_depression: [],
+  medial_morphology: [
+    'fibula_infrasindesmal_transverse', 'fibular_level', 'lateral_morphology',
+    'infrasindesmal_morphology', 'lateral_subtype', 'suprasindesmal_type',
+    'fibula_trace_pattern', 'medial_subtype', 'has_fibula_head_shortening',
+    'has_ct_scan', 'posterior_fracture_type',
+  ],
+  fibula_infrasindesmal_transverse: [
+    'fibular_level', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
+    'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
+  ],
+  fibular_level: [
+    'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
+    'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
+  ],
+  lateral_morphology: [
+    'lateral_subtype', 'medial_subtype', 'has_ct_scan', 'posterior_fracture_type',
+  ],
+  infrasindesmal_morphology: ['has_ct_scan', 'posterior_fracture_type'],
+  lateral_subtype: [],
+  suprasindesmal_type: [
+    'fibula_trace_pattern', 'medial_subtype', 'has_fibula_head_shortening',
+    'has_ct_scan', 'posterior_fracture_type',
+  ],
+  fibula_trace_pattern: ['medial_subtype', 'has_ct_scan', 'posterior_fracture_type'],
+  medial_subtype: ['has_ct_scan', 'posterior_fracture_type'],
+  has_fibula_head_shortening: [],
+  has_ct_scan: ['posterior_fracture_type'],
+  posterior_fracture_type: [],
+};
+
+/** Returns a copy of formData with all downstream fields of `changedField` removed. */
+function clearDownstream(
+  formData: Partial<FractureInput>,
+  changedField: string,
+): Partial<FractureInput> {
+  const toClear = DOWNSTREAM_FIELDS[changedField];
+  if (!toClear || toClear.length === 0) return { ...formData };
+  const cleaned = { ...formData };
+  for (const field of toClear) {
+    delete cleaned[field];
+  }
+  return cleaned;
+}
+
+/**
  * Shared classification form questions component.
  *
  * Single source of truth for the fracture classification decision tree UI.
@@ -189,7 +248,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.articular_involvement}
           options={options.articular_involvement_options || []}
-          onChange={(value) => onUpdate({ ...formData, articular_involvement: value as ArticularInvolvement })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: value as ArticularInvolvement })}
         />
       )}
 
@@ -201,7 +260,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.articular_involvement === 'large_with_extension' ? 'true' : formData.articular_involvement === 'small_without_extension' ? 'false' : undefined}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...formData, articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
         />
       )}
 
@@ -215,7 +274,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_articular_depression?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...formData, has_articular_depression: value === 'true' })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_articular_depression'), has_articular_depression: value === 'true' })}
         />
       )}
 
@@ -233,7 +292,7 @@ export function ClassificationFormQuestions({
               ? (options.medial_morphology_lm || [])
               : (options.medial_morphology || [])
           }
-          onChange={(value) => onUpdate({ ...formData, medial_morphology: value as MedialMorphology })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'medial_morphology'), medial_morphology: value as MedialMorphology })}
         />
       )}
 
@@ -245,7 +304,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.fibula_infrasindesmal_transverse?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...formData, fibula_infrasindesmal_transverse: value === 'true' })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibula_infrasindesmal_transverse'), fibula_infrasindesmal_transverse: value === 'true' })}
         />
       )}
 
@@ -265,7 +324,7 @@ export function ClassificationFormQuestions({
               ? (options.fibular_levels_tri || options.fibular_levels || [])
               : (options.fibular_levels || [])
           }
-          onChange={(value) => onUpdate({ ...formData, fibular_level: value as FibularLevel })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibular_level'), fibular_level: value as FibularLevel })}
         />
       )}
 
@@ -285,7 +344,7 @@ export function ClassificationFormQuestions({
                 ? (options.fibula_morphology_tri || [])
                 : (options.lateral_morphology || [])
           }
-          onChange={(value) => onUpdate({ ...formData, lateral_morphology: value as LateralMorphology })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'lateral_morphology'), lateral_morphology: value as LateralMorphology })}
         />
       )}
 
@@ -301,7 +360,7 @@ export function ClassificationFormQuestions({
           options={['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
             ? (options.infrasindesmal_morphology_lm_tri || [])
             : (options.infrasindesmal_morphology || [])}
-          onChange={(value) => onUpdate({ ...formData, infrasindesmal_morphology: value as LateralSubtype })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'infrasindesmal_morphology'), infrasindesmal_morphology: value as LateralSubtype })}
         />
       )}
 
@@ -313,7 +372,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.lateral_subtype}
           options={options.lateral_subtype || []}
-          onChange={(value) => onUpdate({ ...formData, lateral_subtype: value as LateralSubtype })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'lateral_subtype'), lateral_subtype: value as LateralSubtype })}
         />
       )}
 
@@ -327,7 +386,7 @@ export function ClassificationFormQuestions({
           options={formData.involved_malleoli === 'lateral_posterior'
             ? (options.suprasindesmal_types_lp || options.suprasindesmal_types || [])
             : (options.suprasindesmal_types || [])}
-          onChange={(value) => onUpdate({ ...formData, suprasindesmal_type: value as SuprasindesmalType })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'suprasindesmal_type'), suprasindesmal_type: value as SuprasindesmalType })}
         />
       )}
 
@@ -351,7 +410,7 @@ export function ClassificationFormQuestions({
             : (formData.suprasindesmal_type === 'multifragmentary'
               ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns || [])
               : (options.fibula_trace_patterns || []))}
-          onChange={(value) => onUpdate({ ...formData, fibula_trace_pattern: value as FibulaTracePattern })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibula_trace_pattern'), fibula_trace_pattern: value as FibulaTracePattern })}
         />
       )}
 
@@ -363,7 +422,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.medial_subtype}
           options={options.medial_subtype || []}
-          onChange={(value) => onUpdate({ ...formData, medial_subtype: value as MedialSubtype })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'medial_subtype'), medial_subtype: value as MedialSubtype })}
         />
       )}
 
@@ -375,7 +434,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_fibula_head_shortening?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...formData, has_fibula_head_shortening: value === 'true' })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_fibula_head_shortening'), has_fibula_head_shortening: value === 'true' })}
         />
       )}
 
@@ -387,7 +446,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_ct_scan?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...formData, has_ct_scan: value === 'true', posterior_fracture_type: undefined })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_ct_scan'), has_ct_scan: value === 'true' })}
         />
       )}
 
@@ -415,7 +474,7 @@ export function ClassificationFormQuestions({
                 ? (options.posterior_fracture_types_lp_infra || options.posterior_fracture_types || [])
                 : (options.posterior_fracture_types || [])
           }
-          onChange={(value) => onUpdate({ ...formData, posterior_fracture_type: value as PosteriorFractureType })}
+          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'posterior_fracture_type'), posterior_fracture_type: value as PosteriorFractureType })}
         />
       )}
 

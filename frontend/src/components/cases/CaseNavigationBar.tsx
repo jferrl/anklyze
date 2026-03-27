@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, LayoutList } from 'lucide-react';
@@ -57,28 +57,6 @@ export function CaseNavigationBar({
     navigate(`/cases${qs ? `?${qs}` : ''}`);
   }, [navigate, searchParams]);
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept when user is typing in an input/textarea
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
-
-      if (e.key === 'ArrowLeft' && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        goToPrev();
-      } else if (e.key === 'ArrowRight' && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        goToNext();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToPrev, goToNext]);
-
   if (isLoading || totalFiltered === 0) return null;
 
   return (
@@ -121,10 +99,6 @@ export function CaseNavigationBar({
         </Button>
       </div>
 
-      {/* Keyboard hint - only on desktop */}
-      <span className="hidden lg:inline text-xs text-muted-foreground/60">
-        ← → {t('cases.nav.keyboardHint')}
-      </span>
     </div>
   );
 }
