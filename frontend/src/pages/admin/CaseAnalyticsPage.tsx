@@ -19,7 +19,13 @@ import { Badge } from '../../components/ui/badge';
 import { StatCard } from '../../components/analytics';
 
 const ClassificationChart = lazy(() =>
-  import('../../components/analytics/ClassificationChart').then(m => ({ default: m.ClassificationChart }))
+  import('../../components/analytics/ClassificationChart')
+    .then(m => ({ default: m.ClassificationChart }))
+    .catch(() => {
+      // Chunk missing after deploy — reload to get fresh index.html
+      window.location.reload();
+      return { default: () => null };
+    })
 );
 import { caseApi, downloadCaseResponsesCSV } from '@/services';
 import { cn } from '@/lib/utils';
