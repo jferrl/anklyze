@@ -27,23 +27,7 @@ import (
 	"github.com/jferrl/anklyze/migrations"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
-
-	_ "github.com/jferrl/anklyze/docs"
 )
-
-// @title Anklyze API
-// @version 1.0
-// @description Ankle fracture classification API. Classifies fractures according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems.
-
-// @contact.name API Support
-// @contact.url https://github.com/jferrl/anklyze
-
-// @license.name Apache 2.0
-// @license.url https://opensource.org/licenses/MIT
-
-// @host api.anklyze.es
-// @BasePath /
-// @schemes https
 
 func main() {
 	// Load .env file if present (for local development)

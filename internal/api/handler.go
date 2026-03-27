@@ -59,16 +59,6 @@ func getLanguage(c *gin.Context) i18n.Language {
 }
 
 // ClassifyFracture handles POST /api/classify
-// @Summary Classify an ankle fracture
-// @Description Classifies an ankle fracture according to Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek systems. Language is determined from the Accept-Language header.
-// @Tags Classification
-// @Accept json
-// @Produce json
-// @Param input body domain.FractureInput true "Fracture input parameters"
-// @Success 200 {object} domain.ClassificationResult "Classification result"
-// @Failure 400 {object} map[string]string "Invalid input"
-// @Failure 500 {object} map[string]string "Classification error"
-// @Router /api/classify [post]
 func (h *Handler) ClassifyFracture(c *gin.Context) {
 	startTime := time.Now()
 	lang := getLanguage(c)
@@ -108,12 +98,6 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 }
 
 // HealthCheck handles GET /health
-// @Summary Health check
-// @Description Returns the health status of the API
-// @Tags System
-// @Produce json
-// @Success 200 {object} map[string]string "Health status"
-// @Router /health [get]
 func (h *Handler) HealthCheck(c *gin.Context) {
 	dbStatus := "healthy"
 	if !h.dbHealthy {
@@ -133,15 +117,6 @@ func parseDateRange(c *gin.Context) (time.Time, time.Time) {
 }
 
 // GetAnalyticsSummary handles GET /api/analytics/summary
-// @Summary Get analytics summary
-// @Description Returns aggregated classification statistics for a time period
-// @Tags Analytics
-// @Produce json
-// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
-// @Param to query string false "End date (YYYY-MM-DD)" default(today)
-// @Success 200 {object} domain.AnalyticsSummary "Analytics summary"
-// @Failure 500 {object} map[string]string "Server error"
-// @Router /api/analytics/summary [get]
 func (h *Handler) GetAnalyticsSummary(c *gin.Context) {
 	from, to := parseDateRange(c)
 
@@ -155,16 +130,6 @@ func (h *Handler) GetAnalyticsSummary(c *gin.Context) {
 }
 
 // GetAnalyticsTrends handles GET /api/analytics/trends
-// @Summary Get classification trends
-// @Description Returns time-series classification data with configurable granularity
-// @Tags Analytics
-// @Produce json
-// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
-// @Param to query string false "End date (YYYY-MM-DD)" default(today)
-// @Param granularity query string false "Time granularity (day, week, month)" default(day)
-// @Success 200 {object} domain.TrendData "Trend data"
-// @Failure 500 {object} map[string]string "Server error"
-// @Router /api/analytics/trends [get]
 func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
 	from, to := parseDateRange(c)
 	granularity := domain.ParseGranularity(c.Query("granularity"))
@@ -179,16 +144,6 @@ func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
 }
 
 // GetAnalyticsDistribution handles GET /api/analytics/distribution/:system
-// @Summary Get classification distribution
-// @Description Returns detailed distribution for a specific classification system
-// @Tags Analytics
-// @Produce json
-// @Param system path string true "Classification system (danis-weber, lauge-hansen, ao-ota)"
-// @Param from query string false "Start date (YYYY-MM-DD)" default(30 days ago)
-// @Param to query string false "End date (YYYY-MM-DD)" default(today)
-// @Success 200 {object} domain.ClassificationDistribution "Distribution data"
-// @Failure 500 {object} map[string]string "Server error"
-// @Router /api/analytics/distribution/{system} [get]
 func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 	system := c.Param("system")
 	from, to := parseDateRange(c)

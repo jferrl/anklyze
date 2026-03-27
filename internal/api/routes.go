@@ -13,8 +13,6 @@ import (
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 	"github.com/prometheus/client_golang/prometheus"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // defaultSignedURLDuration is the default duration for signed URLs (15 minutes).
@@ -45,7 +43,6 @@ func SetupRoutes(
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	metrics.RegisterMetricsEndpoint(router, prometheus.DefaultGatherer)
 
 	// API routes

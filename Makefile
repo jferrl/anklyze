@@ -1,6 +1,6 @@
 .PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit swagger lint-go \
+	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit lint-go \
 	export-diagram classify-validate classify-tree classify-test
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
@@ -222,7 +222,3 @@ classify-test:
 	@python3 scripts/parse_drawio_test_cases.py
 	@python3 scripts/generate_engine_tests.py
 	@go test -v -count=1 ./internal/rules/... 2>&1 | grep -E '(PASS|FAIL|---)'
-
-# Generate Swagger documentation (requires: go install github.com/swaggo/swag/cmd/swag@latest)
-swagger:
-	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/anklyze-apiserver/main.go -o docs

@@ -89,16 +89,6 @@ type StudyReliabilityResponse struct {
 // --- Handlers ---
 
 // CreateStudy creates a new study.
-// @Summary Create a new study
-// @Tags Admin Studies
-// @Accept json
-// @Produce json
-// @Param request body CreateStudyRequest true "Study details"
-// @Success 201 {object} domain.Study
-// @Failure 400 {object} ErrorResponse
-// @Failure 401 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies [post]
 func (h *StudyHandler) CreateStudy(c *gin.Context) {
 	var req CreateStudyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -131,16 +121,6 @@ func (h *StudyHandler) CreateStudy(c *gin.Context) {
 }
 
 // ListStudies lists all studies with optional status filter.
-// @Summary List studies
-// @Tags Admin Studies
-// @Produce json
-// @Param status query string false "Filter by status (draft, active, closed)"
-// @Param page query int false "Page number" default(1)
-// @Param limit query int false "Items per page" default(20)
-// @Success 200 {object} StudyListResponse
-// @Failure 401 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies [get]
 func (h *StudyHandler) ListStudies(c *gin.Context) {
 	// Parse query parameters
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -176,15 +156,6 @@ func (h *StudyHandler) ListStudies(c *gin.Context) {
 }
 
 // GetStudy retrieves a study by ID with its cases.
-// @Summary Get study details
-// @Tags Admin Studies
-// @Produce json
-// @Param id path string true "Study ID"
-// @Success 200 {object} StudyDetailResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id} [get]
 func (h *StudyHandler) GetStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -220,17 +191,6 @@ func (h *StudyHandler) GetStudy(c *gin.Context) {
 }
 
 // UpdateStudy updates a study.
-// @Summary Update a study
-// @Tags Admin Studies
-// @Accept json
-// @Produce json
-// @Param id path string true "Study ID"
-// @Param request body UpdateStudyRequest true "Update data"
-// @Success 200 {object} domain.Study
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id} [put]
 func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -273,14 +233,6 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 }
 
 // DeleteStudy deletes a study.
-// @Summary Delete a study
-// @Tags Admin Studies
-// @Param id path string true "Study ID"
-// @Success 204 "No Content"
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id} [delete]
 func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -311,15 +263,6 @@ func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 // --- Case Management ---
 
 // AddAllPublishedCases adds all published cases (not already in any study) to a study.
-// @Summary Add all available published cases to a study
-// @Tags Admin Studies
-// @Produce json
-// @Param id path string true "Study ID"
-// @Success 200 {object} AddAllCasesResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/cases/add-all [post]
 func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -376,17 +319,6 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 }
 
 // AddCase adds a case to a study.
-// @Summary Add a case to a study
-// @Tags Admin Studies
-// @Accept json
-// @Produce json
-// @Param id path string true "Study ID"
-// @Param request body AddCaseRequest true "Case details"
-// @Success 201 {object} domain.Case
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/cases [post]
 func (h *StudyHandler) AddCase(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -470,14 +402,6 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 }
 
 // RemoveCase removes a case from a study.
-// @Summary Remove a case from a study
-// @Tags Admin Studies
-// @Param id path string true "Study ID"
-// @Param caseId path string true "Case ID"
-// @Success 204 "No Content"
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/cases/{caseId} [delete]
 func (h *StudyHandler) RemoveCase(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -501,15 +425,6 @@ func (h *StudyHandler) RemoveCase(c *gin.Context) {
 }
 
 // ReorderCases reorders cases in a study.
-// @Summary Reorder cases in a study
-// @Tags Admin Studies
-// @Accept json
-// @Param id path string true "Study ID"
-// @Param request body ReorderCasesRequest true "Ordered list of case IDs"
-// @Success 204 "No Content"
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/cases/reorder [put]
 func (h *StudyHandler) ReorderCases(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -546,14 +461,6 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 // --- Status Transitions ---
 
 // ActivateStudy activates a study (draft -> active).
-// @Summary Activate a study
-// @Tags Admin Studies
-// @Param id path string true "Study ID"
-// @Success 200 {object} domain.Study
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/activate [put]
 func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -600,14 +507,6 @@ func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 }
 
 // CloseStudy closes a study.
-// @Summary Close a study
-// @Tags Admin Studies
-// @Param id path string true "Study ID"
-// @Success 200 {object} domain.Study
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/close [put]
 func (h *StudyHandler) CloseStudy(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -639,15 +538,6 @@ func (h *StudyHandler) CloseStudy(c *gin.Context) {
 // --- Analytics ---
 
 // GetStudyReliabilityMetrics calculates and returns reliability metrics for a study.
-// @Summary Get study reliability metrics
-// @Tags Admin Studies
-// @Produce json
-// @Param id path string true "Study ID"
-// @Success 200 {object} StudyReliabilityResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/reliability [get]
 func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -682,15 +572,6 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 }
 
 // ExportStudyResponses exports all responses for a study as CSV.
-// @Summary Export study responses as CSV
-// @Tags Admin Studies
-// @Produce text/csv
-// @Param id path string true "Study ID"
-// @Success 200 {file} file "CSV file"
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /api/admin/studies/{id}/export [get]
 func (h *StudyHandler) ExportStudyResponses(c *gin.Context) {
 	studyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {

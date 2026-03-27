@@ -45,14 +45,6 @@ func NewUserHandler(userRepo repository.UserRepository) *UserHandler {
 }
 
 // GetCurrentUser handles GET /api/me
-// @Summary Get current user profile
-// @Description Returns the authenticated user's profile including their role
-// @Tags User
-// @Produce json
-// @Security BearerAuth
-// @Success 200 {object} UserProfileResponse "User profile"
-// @Failure 401 {object} map[string]string "Unauthorized"
-// @Router /api/me [get]
 func GetCurrentUser(c *gin.Context) {
 	// First try to get the synced user from database (has authoritative role)
 	user := auth.GetUser(c)

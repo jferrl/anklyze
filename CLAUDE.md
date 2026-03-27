@@ -8,7 +8,6 @@ make run-backend      # Backend only with hot reload
 make run-with-db      # Backend with local PostgreSQL
 make build            # Build both
 make test             # Run all tests (backend + frontend)
-make swagger          # Regenerate OpenAPI docs
 ```
 
 ## Test Commands
@@ -49,7 +48,7 @@ Go module at repo root (`go.mod`), follows [go.dev/doc/modules/layout#server-pro
 - `internal/` — all Go packages (not importable externally)
 - `frontend/` — React SPA
 - `e2e/` — Playwright tests
-- `docs/` — Swagger + project documentation
+- `docs/` — project documentation
 
 ## Key Domain Concepts
 

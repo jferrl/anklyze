@@ -215,7 +215,7 @@ type CaseResponse struct {
 	CreatedAt time.Time `gorm:"index" json:"created_at"`
 
 	// Classification data (JSONB in PostgreSQL)
-	Classification datatypes.JSON `gorm:"not null" json:"classification" swaggertype:"object"`
+	Classification datatypes.JSON `gorm:"not null" json:"classification"`
 
 	// Time taken to complete classification in milliseconds
 	TimeTakenMS int64 `gorm:"column:time_taken_ms" json:"time_taken_ms"`
@@ -227,10 +227,10 @@ type CaseResponse struct {
 	BartonicekType  *string `gorm:"column:bartonicek_type;size:20;index" json:"-"`
 
 	// Answer path tracking for divergence analysis
-	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty" swaggertype:"array,object"` // []QuestionAnswer
-	DecisionPath    string         `gorm:"size:500;index" json:"decision_path,omitempty"`                      // "lateral_only→transindesmal→spiral"
-	TimePerQuestion datatypes.JSON `gorm:"type:jsonb" json:"time_per_question,omitempty" swaggertype:"object"` // map[string]int64
-	BackClicks      int            `gorm:"default:0" json:"back_clicks,omitempty"`                             // Back button usage count
+	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty"`       // []QuestionAnswer
+	DecisionPath    string         `gorm:"size:500;index" json:"decision_path,omitempty"` // "lateral_only→transindesmal→spiral"
+	TimePerQuestion datatypes.JSON `gorm:"type:jsonb" json:"time_per_question,omitempty"` // map[string]int64
+	BackClicks      int            `gorm:"default:0" json:"back_clicks,omitempty"`        // Back button usage count
 }
 
 // TableName returns the table name for GORM.
