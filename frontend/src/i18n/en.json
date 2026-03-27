@@ -409,8 +409,18 @@
     "submitSuccessDescription": "Your classification has been recorded successfully.",
     "submitError": "Submission Failed",
     "clickToEnlarge": "Click to enlarge",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "resetZoom": "Reset zoom",
+    "zoomHint": "Scroll to zoom, drag to pan",
     "matchesReference": "Your classification matches the reference!",
-    "showing": "Showing {{from}}-{{to}} of {{total}} cases"
+    "showing": "Showing {{from}}-{{to}} of {{total}} cases",
+    "nav": {
+      "prev": "Previous",
+      "next": "Next",
+      "nextCase": "Next Case",
+      "keyboardHint": "to navigate"
+    }
   },
   "studies": {
     "title": "Title",

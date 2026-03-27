@@ -414,8 +414,18 @@
     "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
     "submitError": "Error al Enviar",
     "clickToEnlarge": "Clic para ampliar",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "resetZoom": "Restablecer zoom",
+    "zoomHint": "Desplaza para zoom, arrastra para mover",
     "matchesReference": "¡Tu clasificación coincide con la referencia!",
-    "showing": "Mostrando {{from}}-{{to}} de {{total}} casos"
+    "showing": "Mostrando {{from}}-{{to}} de {{total}} casos",
+    "nav": {
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "nextCase": "Siguiente Caso",
+      "keyboardHint": "para navegar"
+    }
   },
   "studies": {
     "title": "Título",
