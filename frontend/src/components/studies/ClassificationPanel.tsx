@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, Ban } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, Ban, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -20,6 +20,10 @@ interface ClassificationPanelProps {
   onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
   onSubmit: () => void;
   onReanswer: () => void;
+  /** Called when user wants to navigate to next pending case */
+  onNextCase?: () => void;
+  /** Whether there is a next pending case available */
+  hasNextCase?: boolean;
 }
 
 export function ClassificationPanel({
@@ -34,6 +38,8 @@ export function ClassificationPanel({
   onClassify,
   onSubmit,
   onReanswer,
+  onNextCase,
+  hasNextCase = false,
 }: ClassificationPanelProps) {
   const { t } = useTranslation();
 
@@ -96,17 +102,29 @@ export function ClassificationPanel({
               {t('studies.responseSubmittedDescription')}
             </p>
 
-            {canReanswer && (
-              <Button
-                onClick={onReanswer}
-                variant="outline"
-                size="lg"
-                className="gap-2 border-green-500/30 hover:bg-green-500/10"
-              >
-                <RotateCcw className="h-4 w-4" />
-                {t('studies.submitAnother')}
-              </Button>
-            )}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {canReanswer && (
+                <Button
+                  onClick={onReanswer}
+                  variant="outline"
+                  size="lg"
+                  className="gap-2 border-green-500/30 hover:bg-green-500/10"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  {t('studies.submitAnother')}
+                </Button>
+              )}
+              {hasNextCase && onNextCase && (
+                <Button
+                  onClick={onNextCase}
+                  size="lg"
+                  className="gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
+                >
+                  {t('cases.nav.nextCase')}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

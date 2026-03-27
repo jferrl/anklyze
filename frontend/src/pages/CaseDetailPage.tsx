@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ImageIcon, ZoomIn } from 'lucide-react';
 import { toast } from 'sonner';
@@ -22,13 +22,20 @@ import {
   PreviousResponses,
   ClassificationPanel,
 } from '../components/cases';
+import { CaseNavigationBar } from '../components/cases/CaseNavigationBar';
 import type { AnswerTracking } from '../components/cases';
 import { useImageUrls } from '../hooks/useImageUrls';
+import { useCaseNavigation } from '../hooks/useCaseNavigation';
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Case navigation (prev/next/position)
+  const caseNav = useCaseNavigation(id);
 
   // Batch-fetch all signed URLs for this case (single request, cached by React Query)
   const { imageUrls, isLoading: isLoadingUrls } = useImageUrls(id);
@@ -167,6 +174,18 @@ export function CaseDetailPage() {
     startTimeRef.current = Date.now();
   }, []);
 
+  // Navigate to next pending case
+  const handleNextCase = useCallback(() => {
+    if (!caseNav.nextPendingCase) return;
+    const params = new URLSearchParams();
+    const status = searchParams.get('status');
+    const q = searchParams.get('q');
+    if (status && status !== 'all') params.set('status', status);
+    if (q) params.set('q', q);
+    const qs = params.toString();
+    navigate(`/cases/${caseNav.nextPendingCase.id}${qs ? `?${qs}` : ''}`);
+  }, [caseNav.nextPendingCase, navigate, searchParams]);
+
   // Image lightbox navigation
   const openLightbox = (index: number) => setSelectedImageIndex(index);
   const closeLightbox = () => setSelectedImageIndex(null);
@@ -217,6 +236,19 @@ export function CaseDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Case Navigation Bar */}
+      <div className="border-b bg-muted/30 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-2">
+          <CaseNavigationBar
+            prevCase={caseNav.prevCase}
+            nextCase={caseNav.nextCase}
+            currentIndex={caseNav.currentIndex}
+            totalFiltered={caseNav.totalFiltered}
+            isLoading={caseNav.isLoading}
+          />
+        </div>
+      </div>
+
       {/* Hero Section with Case Info */}
       <div className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8">
@@ -309,6 +341,8 @@ export function CaseDetailPage() {
               onClassify={handleClassify}
               onSubmit={handleSubmitResponse}
               onReanswer={handleReanswer}
+              onNextCase={handleNextCase}
+              hasNextCase={!!caseNav.nextPendingCase}
             />
           </div>
         </div>

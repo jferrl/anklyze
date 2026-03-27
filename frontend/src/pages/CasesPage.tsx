@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   FileText,
@@ -38,9 +38,28 @@ const PAGE_SIZE = 20;
 
 export function CasesPage() {
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read filter state from URL search params (preserves state across navigation)
+  const searchQuery = searchParams.get('q') || '';
+  const filterStatus = (searchParams.get('status') as FilterStatus) || 'all';
+  const page = Number(searchParams.get('page')) || 1;
+
+  const updateParam = useCallback((key: string, value: string, resetPage = true) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (!value || value === 'all' || value === '1') {
+        next.delete(key);
+      } else {
+        next.set(key, value);
+      }
+      if (resetPage && key !== 'page') next.delete('page');
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
+
+  const setSearchQuery = useCallback((q: string) => updateParam('q', q), [updateParam]);
+  const setFilterStatus = useCallback((s: FilterStatus) => updateParam('status', s), [updateParam]);
 
   const { data, isLoading: loading, error: queryError } = useQuery({
     queryKey: ['published-cases', page],
@@ -53,9 +72,9 @@ export function CasesPage() {
   const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
 
   const handlePageChange = useCallback((newPage: number) => {
-    setPage(newPage);
+    updateParam('page', String(newPage), false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+  }, [updateParam]);
 
   // Filter and search cases
   const filteredCases = useMemo(() => {
@@ -231,9 +250,15 @@ export function CasesPage() {
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredCases.map((caseItem) => (
-              <CaseCard key={caseItem.id} caseItem={caseItem} formatDeadline={formatDeadline} />
-            ))}
+            {filteredCases.map((caseItem) => {
+              // Build filter params to pass through to case detail for navigation context
+              const params = new URLSearchParams();
+              if (filterStatus !== 'all') params.set('status', filterStatus);
+              if (searchQuery) params.set('q', searchQuery);
+              return (
+                <CaseCard key={caseItem.id} caseItem={caseItem} filterParams={params.toString()} formatDeadline={formatDeadline} />
+              );
+            })}
           </div>
         )}
 
@@ -250,6 +275,7 @@ export function CasesPage() {
 
 interface CaseCardProps {
   caseItem: UserCaseItem;
+  filterParams: string;
   formatDeadline: (deadline: string | undefined) => {
     text: string;
     isExpired: boolean;
@@ -258,9 +284,10 @@ interface CaseCardProps {
   } | null;
 }
 
-function CaseCard({ caseItem, formatDeadline }: CaseCardProps) {
+function CaseCard({ caseItem, filterParams, formatDeadline }: CaseCardProps) {
   const { t } = useTranslation();
   const deadline = formatDeadline(caseItem.deadline);
+  const caseUrl = `/cases/${caseItem.id}${filterParams ? `?${filterParams}` : ''}`;
 
   return (
     <Card className={`group relative overflow-hidden glass-card card-hover spotlight ${
@@ -360,7 +387,7 @@ function CaseCard({ caseItem, formatDeadline }: CaseCardProps) {
 
       <CardFooter className="pt-0">
         <Button asChild className="w-full group/btn hover-glow">
-          <Link to={`/cases/${caseItem.id}`}>
+          <Link to={caseUrl}>
             {caseItem.has_responded
               ? t('cases.viewOrReanswer')
               : t('cases.startClassification')
