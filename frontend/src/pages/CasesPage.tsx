@@ -28,13 +28,10 @@ import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Pagination } from '@/pages/admin/components/Pagination';
 import { listPublishedCases } from '@/services';
 import type { UserCaseItem } from '@/types';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
-
-const PAGE_SIZE = 20;
 
 export function CasesPage() {
   const { t } = useTranslation();
@@ -43,17 +40,15 @@ export function CasesPage() {
   // Read filter state from URL search params (preserves state across navigation)
   const searchQuery = searchParams.get('q') || '';
   const filterStatus = (searchParams.get('status') as FilterStatus) || 'all';
-  const page = Number(searchParams.get('page')) || 1;
 
-  const updateParam = useCallback((key: string, value: string, resetPage = true) => {
+  const updateParam = useCallback((key: string, value: string) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (!value || value === 'all' || value === '1') {
+      if (!value || value === 'all') {
         next.delete(key);
       } else {
         next.set(key, value);
       }
-      if (resetPage && key !== 'page') next.delete('page');
       return next;
     }, { replace: true });
   }, [setSearchParams]);
@@ -62,19 +57,13 @@ export function CasesPage() {
   const setFilterStatus = useCallback((s: FilterStatus) => updateParam('status', s), [updateParam]);
 
   const { data, isLoading: loading, error: queryError } = useQuery({
-    queryKey: ['published-cases', page],
-    queryFn: () => listPublishedCases(page, PAGE_SIZE),
+    queryKey: ['published-cases'],
+    queryFn: () => listPublishedCases(1, 10000),
   });
 
   const cases = useMemo(() => data?.cases ?? [], [data]);
   const total = data?.total ?? 0;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
   const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
-
-  const handlePageChange = useCallback((newPage: number) => {
-    updateParam('page', String(newPage), false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [updateParam]);
 
   // Filter and search cases
   const filteredCases = useMemo(() => {
@@ -262,12 +251,6 @@ export function CasesPage() {
           </div>
         )}
 
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          showingText={total > 0 ? t('cases.showing', { from: (page - 1) * PAGE_SIZE + 1, to: Math.min(page * PAGE_SIZE, total), total }) : undefined}
-        />
       </div>
     </div>
   );
