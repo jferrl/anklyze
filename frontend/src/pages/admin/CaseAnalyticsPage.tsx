@@ -24,7 +24,7 @@ const ClassificationChart = lazy(() =>
     .catch(() => {
       // Chunk missing after deploy — reload to get fresh index.html
       window.location.reload();
-      return { default: () => null };
+      return { default: () => null! };
     })
 );
 import { caseApi, downloadCaseResponsesCSV } from '@/services';

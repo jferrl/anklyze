@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -15,21 +16,24 @@ import (
 
 // StudyHandler handles study-related HTTP requests.
 type StudyHandler struct {
-	studyRepo    repository.StudyRepository
-	caseRepo     repository.CaseRepository
-	studyService StudyService
+	studyRepo         repository.StudyRepository
+	studyResponseRepo repository.StudyResponseRepository
+	caseRepo          repository.CaseRepository
+	studyService      StudyService
 }
 
 // NewStudyHandler creates a new study handler.
 func NewStudyHandler(
 	studyRepo repository.StudyRepository,
+	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
 	studyService StudyService,
 ) *StudyHandler {
 	return &StudyHandler{
-		studyRepo:    studyRepo,
-		caseRepo:     caseRepo,
-		studyService: studyService,
+		studyRepo:         studyRepo,
+		studyResponseRepo: studyResponseRepo,
+		caseRepo:          caseRepo,
+		studyService:      studyService,
 	}
 }
 
@@ -675,6 +679,91 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 		StudyReliabilityMetrics: metrics,
 		CalculatedAt:            time.Now(),
 	})
+}
+
+// ExportStudyResponses exports all responses for a study as CSV.
+// @Summary Export study responses as CSV
+// @Tags Admin Studies
+// @Produce text/csv
+// @Param id path string true "Study ID"
+// @Success 200 {file} file "CSV file"
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/admin/studies/{id}/export [get]
+func (h *StudyHandler) ExportStudyResponses(c *gin.Context) {
+	studyID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+		return
+	}
+
+	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
+		return
+	}
+	if study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+		return
+	}
+
+	cases, err := h.studyRepo.GetCases(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study cases", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study cases"})
+		return
+	}
+
+	responsesByCase, err := h.studyResponseRepo.GetAllByStudy(c.Request.Context(), studyID)
+	if err != nil {
+		slog.Error("failed to get study responses", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to export study responses"})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"study_%s_responses.csv\"", studyID.String()[:8]))
+
+	if _, err := c.Writer.WriteString("case_id,case_title,response_id,user_id,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek\n"); err != nil {
+		return
+	}
+
+	for _, cs := range cases {
+		responses := responsesByCase[cs.ID]
+		for _, r := range responses {
+			dw := ""
+			if r.DanisWeberType != nil {
+				dw = *r.DanisWeberType
+			}
+			lh := ""
+			if r.LaugeHansenType != nil {
+				lh = *r.LaugeHansenType
+			}
+			ao := ""
+			if r.AOOTACode != nil {
+				ao = *r.AOOTACode
+			}
+			bt := ""
+			if r.BartonicekType != nil {
+				bt = *r.BartonicekType
+			}
+
+			line := fmt.Sprintf("%s,%s,%s,%s,%s,%d,%s,%s,%s,%s\n",
+				cs.ID.String(),
+				cs.Title,
+				r.ID.String(),
+				r.UserID.String(),
+				r.CreatedAt.Format(time.RFC3339),
+				r.TimeTakenMS,
+				dw, lh, ao, bt,
+			)
+			if _, err := c.Writer.WriteString(line); err != nil {
+				return
+			}
+		}
+	}
 }
 
 func statusPtr(s domain.CaseStatus) *domain.CaseStatus {

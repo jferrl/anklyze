@@ -191,10 +191,11 @@ func SetupStudyRoutes(
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
 	studyRepo repository.StudyRepository,
+	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
 	studyService service.StudyService,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, caseRepo, studyService)
+	studyHandler := NewStudyHandler(studyRepo, studyResponseRepo, caseRepo, studyService)
 
 	api := router.Group("/api")
 
@@ -312,8 +313,9 @@ func registerAdminStudyRoutes(adminStudies *gin.RouterGroup, studyHandler *Study
 	adminStudies.PUT("/:id/activate", studyHandler.ActivateStudy)
 	adminStudies.PUT("/:id/close", studyHandler.CloseStudy)
 
-	// Analytics
+	// Analytics and export
 	adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
+	adminStudies.GET("/:id/export", studyHandler.ExportStudyResponses)
 }
 
 // CORSMiddleware handles Cross-Origin Resource Sharing
