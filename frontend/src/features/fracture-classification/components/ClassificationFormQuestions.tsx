@@ -99,6 +99,16 @@ export function ClassificationFormQuestions({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
 
+  // Wrap onUpdate to always re-apply has_ct_scan when hasTACImages is defined.
+  // clearDownstream removes has_ct_scan when upstream fields change, but when
+  // TAC images are present the value must persist throughout the form.
+  const handleUpdate = (newData: Partial<FractureInput>) => {
+    onUpdate({
+      ...newData,
+      ...(hasTACImages !== undefined ? { has_ct_scan: hasTACImages } : {}),
+    });
+  };
+
   // Auto-scroll when form data changes
   useEffect(() => {
     if (Object.keys(formData).length > 0 && formEndRef.current) {
@@ -234,9 +244,8 @@ export function ClassificationFormQuestions({
         }}
         value={formData.involved_malleoli}
         options={options.involved_malleoli || []}
-        onChange={(value) => onUpdate({
+        onChange={(value) => handleUpdate({
           involved_malleoli: value as InvolvedMalleoli,
-          ...(hasTACImages !== undefined ? { has_ct_scan: hasTACImages } : {}),
         })}
       />
 
@@ -248,7 +257,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.articular_involvement}
           options={options.articular_involvement_options || []}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: value as ArticularInvolvement })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: value as ArticularInvolvement })}
         />
       )}
 
@@ -260,7 +269,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.articular_involvement === 'large_with_extension' ? 'true' : formData.articular_involvement === 'small_without_extension' ? 'false' : undefined}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'articular_involvement'), articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement })}
         />
       )}
 
@@ -274,7 +283,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_articular_depression?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_articular_depression'), has_articular_depression: value === 'true' })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'has_articular_depression'), has_articular_depression: value === 'true' })}
         />
       )}
 
@@ -292,7 +301,7 @@ export function ClassificationFormQuestions({
               ? (options.medial_morphology_lm || [])
               : (options.medial_morphology || [])
           }
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'medial_morphology'), medial_morphology: value as MedialMorphology })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'medial_morphology'), medial_morphology: value as MedialMorphology })}
         />
       )}
 
@@ -304,7 +313,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.fibula_infrasindesmal_transverse?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibula_infrasindesmal_transverse'), fibula_infrasindesmal_transverse: value === 'true' })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'fibula_infrasindesmal_transverse'), fibula_infrasindesmal_transverse: value === 'true' })}
         />
       )}
 
@@ -324,7 +333,7 @@ export function ClassificationFormQuestions({
               ? (options.fibular_levels_tri || options.fibular_levels || [])
               : (options.fibular_levels || [])
           }
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibular_level'), fibular_level: value as FibularLevel })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'fibular_level'), fibular_level: value as FibularLevel })}
         />
       )}
 
@@ -344,7 +353,7 @@ export function ClassificationFormQuestions({
                 ? (options.fibula_morphology_tri || [])
                 : (options.lateral_morphology || [])
           }
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'lateral_morphology'), lateral_morphology: value as LateralMorphology })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'lateral_morphology'), lateral_morphology: value as LateralMorphology })}
         />
       )}
 
@@ -360,7 +369,7 @@ export function ClassificationFormQuestions({
           options={['lateral_medial', 'trimaleolar'].includes(formData.involved_malleoli || '')
             ? (options.infrasindesmal_morphology_lm_tri || [])
             : (options.infrasindesmal_morphology || [])}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'infrasindesmal_morphology'), infrasindesmal_morphology: value as LateralSubtype })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'infrasindesmal_morphology'), infrasindesmal_morphology: value as LateralSubtype })}
         />
       )}
 
@@ -372,7 +381,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.lateral_subtype}
           options={options.lateral_subtype || []}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'lateral_subtype'), lateral_subtype: value as LateralSubtype })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'lateral_subtype'), lateral_subtype: value as LateralSubtype })}
         />
       )}
 
@@ -386,7 +395,7 @@ export function ClassificationFormQuestions({
           options={formData.involved_malleoli === 'lateral_posterior'
             ? (options.suprasindesmal_types_lp || options.suprasindesmal_types || [])
             : (options.suprasindesmal_types || [])}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'suprasindesmal_type'), suprasindesmal_type: value as SuprasindesmalType })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'suprasindesmal_type'), suprasindesmal_type: value as SuprasindesmalType })}
         />
       )}
 
@@ -410,7 +419,7 @@ export function ClassificationFormQuestions({
             : (formData.suprasindesmal_type === 'multifragmentary'
               ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns || [])
               : (options.fibula_trace_patterns || []))}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'fibula_trace_pattern'), fibula_trace_pattern: value as FibulaTracePattern })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'fibula_trace_pattern'), fibula_trace_pattern: value as FibulaTracePattern })}
         />
       )}
 
@@ -422,7 +431,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.medial_subtype}
           options={options.medial_subtype || []}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'medial_subtype'), medial_subtype: value as MedialSubtype })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'medial_subtype'), medial_subtype: value as MedialSubtype })}
         />
       )}
 
@@ -434,7 +443,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_fibula_head_shortening?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_fibula_head_shortening'), has_fibula_head_shortening: value === 'true' })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'has_fibula_head_shortening'), has_fibula_head_shortening: value === 'true' })}
         />
       )}
 
@@ -446,7 +455,7 @@ export function ClassificationFormQuestions({
           }}
           value={formData.has_ct_scan?.toString()}
           options={yesNoOptions}
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'has_ct_scan'), has_ct_scan: value === 'true' })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'has_ct_scan'), has_ct_scan: value === 'true' })}
         />
       )}
 
@@ -474,7 +483,7 @@ export function ClassificationFormQuestions({
                 ? (options.posterior_fracture_types_lp_infra || options.posterior_fracture_types || [])
                 : (options.posterior_fracture_types || [])
           }
-          onChange={(value) => onUpdate({ ...clearDownstream(formData, 'posterior_fracture_type'), posterior_fracture_type: value as PosteriorFractureType })}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'posterior_fracture_type'), posterior_fracture_type: value as PosteriorFractureType })}
         />
       )}
 
