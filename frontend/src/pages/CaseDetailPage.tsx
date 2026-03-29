@@ -69,6 +69,13 @@ export function CaseDetailPage() {
     startTimeRef.current = Date.now();
   }, []);
 
+  // Reset form state when navigating between cases
+  useEffect(() => {
+    setClassification({ result: null, tracking: null });
+    setSubmitState({ status: 'idle' });
+    startTimeRef.current = Date.now();
+  }, [id]);
+
   // Fetch case data with React Query
   const { data: caseData, isLoading: loading, error: queryError } = useQuery({
     queryKey: ['published-case', id],
