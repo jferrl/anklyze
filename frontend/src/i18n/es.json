@@ -420,6 +420,9 @@
     "zoomHint": "Desplaza para zoom, arrastra para mover",
     "matchesReference": "¡Tu clasificación coincide con la referencia!",
     "showing": "Mostrando {{from}}-{{to}} de {{total}} casos",
+    "caseNumber": "Caso #{{number}}",
+    "nextUp": "Siguiente",
+    "classifiedCount": "{{count}} clasificados",
     "nav": {
       "prev": "Anterior",
       "next": "Siguiente",

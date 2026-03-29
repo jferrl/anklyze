@@ -16,20 +16,14 @@ import {
 import { Button } from '../components/ui/button';
 import { Spinner } from '../components/ui/spinner';
 import { EmptyState } from '../components/ui/empty-state';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { listPublishedCases } from '@/services';
 import type { UserCaseItem } from '@/types';
+import { cn } from '@/lib/utils';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 
@@ -37,7 +31,6 @@ export function CasesPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Read filter state from URL search params (preserves state across navigation)
   const searchQuery = searchParams.get('q') || '';
   const filterStatus = (searchParams.get('status') as FilterStatus) || 'all';
 
@@ -65,25 +58,29 @@ export function CasesPage() {
   const total = data?.total ?? 0;
   const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
 
-  // Filter and search cases
+  // Find the index of the first pending case (for "next up" highlight)
+  const firstPendingIndex = useMemo(
+    () => cases.findIndex((c) => !c.has_responded),
+    [cases],
+  );
+
   const filteredCases = useMemo(() => {
-    return cases.filter((caseItem) => {
-      // Search filter
-      const matchesSearch =
-        caseItem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        caseItem.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    return cases
+      .map((caseItem, index) => ({ caseItem, originalIndex: index }))
+      .filter(({ caseItem }) => {
+        const matchesSearch =
+          caseItem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          caseItem.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Status filter
-      const matchesStatus =
-        filterStatus === 'all' ||
-        (filterStatus === 'completed' && caseItem.has_responded) ||
-        (filterStatus === 'pending' && !caseItem.has_responded);
+        const matchesStatus =
+          filterStatus === 'all' ||
+          (filterStatus === 'completed' && caseItem.has_responded) ||
+          (filterStatus === 'pending' && !caseItem.has_responded);
 
-      return matchesSearch && matchesStatus;
-    });
+        return matchesSearch && matchesStatus;
+      });
   }, [cases, searchQuery, filterStatus]);
 
-  // Calculate stats from API totals (across all pages, not just current page)
   const stats = useMemo(() => {
     const completed = data?.total_completed ?? 0;
     const pending = total - completed;
@@ -108,19 +105,17 @@ export function CasesPage() {
 
   return (
     <div className="h-full">
-      {/* Header Section */}
-      <div className="border-b bg-muted/30 relative overflow-hidden">
-        <div className="absolute inset-0 bg-mesh opacity-30" />
-        <div className="container mx-auto px-4 py-8 relative">
+      {/* Header */}
+      <div className="border-b bg-muted/30">
+        <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">{t('cases.pageTitle')}</h1>
               <p className="text-muted-foreground mt-2">{t('cases.pageSubtitle')}</p>
             </div>
 
-            {/* Progress Overview */}
             {!loading && cases.length > 0 && (
-              <div className="flex items-center gap-6 p-4 rounded-xl glass-card">
+              <div className="flex items-center gap-6 p-4 rounded-xl border bg-card">
                 <div className="flex-1 min-w-[200px]">
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="text-muted-foreground">{t('cases.yourProgress')}</span>
@@ -130,11 +125,11 @@ export function CasesPage() {
                 </div>
                 <div className="hidden sm:flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                     <span className="text-muted-foreground">{stats.completed} {t('cases.completedCount')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.5)]" />
+                    <div className="h-2 w-2 rounded-full bg-orange-500" />
                     <span className="text-muted-foreground">{stats.pending} {t('cases.pendingCount')}</span>
                   </div>
                 </div>
@@ -144,11 +139,10 @@ export function CasesPage() {
         </div>
       </div>
 
-      {/* Filters Section */}
+      {/* Filters */}
       <div className="border-b bg-background sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            {/* Search */}
             <div className="relative w-full sm:w-[300px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -159,7 +153,6 @@ export function CasesPage() {
               />
             </div>
 
-            {/* Status Tabs */}
             <Tabs value={filterStatus} onValueChange={(v) => setFilterStatus(v as FilterStatus)}>
               <TabsList>
                 <TabsTrigger value="all" className="gap-1.5">
@@ -238,26 +231,33 @@ export function CasesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredCases.map((caseItem) => {
-              // Build filter params to pass through to case detail for navigation context
+          <div className="flex flex-col gap-3">
+            {filteredCases.map(({ caseItem, originalIndex }) => {
               const params = new URLSearchParams();
               if (filterStatus !== 'all') params.set('status', filterStatus);
               if (searchQuery) params.set('q', searchQuery);
               return (
-                <CaseCard key={caseItem.id} caseItem={caseItem} filterParams={params.toString()} formatDeadline={formatDeadline} />
+                <CaseRow
+                  key={caseItem.id}
+                  caseItem={caseItem}
+                  caseNumber={originalIndex + 1}
+                  isNextUp={originalIndex === firstPendingIndex}
+                  filterParams={params.toString()}
+                  formatDeadline={formatDeadline}
+                />
               );
             })}
           </div>
         )}
-
       </div>
     </div>
   );
 }
 
-interface CaseCardProps {
+interface CaseRowProps {
   caseItem: UserCaseItem;
+  caseNumber: number;
+  isNextUp: boolean;
   filterParams: string;
   formatDeadline: (deadline: string | undefined) => {
     text: string;
@@ -267,118 +267,134 @@ interface CaseCardProps {
   } | null;
 }
 
-function CaseCard({ caseItem, filterParams, formatDeadline }: CaseCardProps) {
+function CaseRow({ caseItem, caseNumber, isNextUp, filterParams, formatDeadline }: CaseRowProps) {
   const { t } = useTranslation();
   const deadline = formatDeadline(caseItem.deadline);
   const caseUrl = `/cases/${caseItem.id}${filterParams ? `?${filterParams}` : ''}`;
+  const completed = caseItem.has_responded;
 
   return (
-    <Card className={`group relative overflow-hidden glass-card card-hover spotlight ${
-      caseItem.has_responded
-        ? 'border-green-500/30 dark:border-green-500/20'
-        : 'border-border/50 hover:border-primary/30'
-    }`}>
-      {/* Animated gradient border on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-        <div className="absolute inset-[-1px] bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-xl" />
-      </div>
+    <Link
+      to={caseUrl}
+      className={cn(
+        'group block rounded-lg border bg-card transition-colors',
+        completed
+          ? 'opacity-60 hover:opacity-80'
+          : 'hover:bg-accent/50',
+        isNextUp && !completed && 'ring-2 ring-primary/50 border-primary/30',
+      )}
+    >
+      <div className="flex items-center gap-4 px-4 py-3 sm:px-5 sm:py-4">
+        {/* Case number */}
+        <div className={cn(
+          'hidden sm:flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold shrink-0',
+          completed
+            ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+            : 'bg-muted text-muted-foreground',
+        )}>
+          {completed ? <CheckCircle2 className="h-5 w-5" /> : caseNumber}
+        </div>
 
-      {/* Status indicator bar with glow */}
-      <div className={`absolute top-0 left-0 right-0 h-1 ${
-        caseItem.has_responded
-          ? 'bg-gradient-to-r from-green-400 to-green-600 shadow-[0_0_10px_rgba(34,197,94,0.5)]'
-          : deadline?.isExpired
-          ? 'bg-gradient-to-r from-red-400 to-red-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-          : deadline?.isUrgent
-          ? 'bg-gradient-to-r from-orange-400 to-orange-600 shadow-[0_0_10px_rgba(249,115,22,0.5)]'
-          : 'bg-gradient-to-r from-primary/80 to-primary shadow-[0_0_10px_oklch(0.55_0.2_195/0.5)]'
-      }`} />
-
-      <CardHeader className="pb-3 relative">
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-all duration-300">
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-xs text-muted-foreground sm:hidden">
+              {t('cases.caseNumber', { number: caseNumber })}
+            </span>
+            {isNextUp && !completed && (
+              <Badge className="bg-primary/10 text-primary border-primary/20 text-xs px-1.5 py-0">
+                {t('cases.nextUp')}
+              </Badge>
+            )}
+          </div>
+          <h3 className={cn(
+            'font-medium truncate',
+            !completed && 'group-hover:text-primary transition-colors',
+          )}>
             {caseItem.title}
-          </CardTitle>
-          {caseItem.has_responded && (
-            <Badge variant="secondary" className="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 shadow-sm">
+          </h3>
+          {caseItem.description && (
+            <p className="text-sm text-muted-foreground truncate mt-0.5">
+              {caseItem.description}
+            </p>
+          )}
+        </div>
+
+        {/* Metadata */}
+        <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground shrink-0">
+          <span className="inline-flex items-center gap-1">
+            <ImageIcon className="h-3.5 w-3.5" />
+            {caseItem.image_count}
+          </span>
+          {caseItem.has_tac_images && (
+            <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-600 dark:text-blue-400">
+              TAC
+            </Badge>
+          )}
+          <span className="inline-flex items-center gap-1">
+            <Users className="h-3.5 w-3.5" />
+            {caseItem.response_count}
+          </span>
+          {deadline && (
+            <span className={cn(
+              'inline-flex items-center gap-1',
+              deadline.isExpired && 'text-destructive',
+              deadline.isUrgent && 'text-orange-600 dark:text-orange-400',
+            )}>
+              {deadline.isExpired ? (
+                <Clock className="h-3.5 w-3.5" />
+              ) : (
+                <CalendarDays className="h-3.5 w-3.5" />
+              )}
+              {deadline.isExpired
+                ? t('cases.expired')
+                : deadline.isUrgent
+                  ? t('cases.daysLeft', { count: deadline.daysLeft })
+                  : deadline.text}
+            </span>
+          )}
+        </div>
+
+        {/* Status + arrow */}
+        <div className="flex items-center gap-3 shrink-0">
+          {completed && (
+            <Badge variant="secondary" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hidden sm:flex">
               <CheckCircle2 className="h-3 w-3 mr-1" />
               {t('cases.responded')}
             </Badge>
           )}
+          <ArrowRight className={cn(
+            'h-4 w-4 text-muted-foreground transition-transform',
+            !completed && 'group-hover:translate-x-1 group-hover:text-primary',
+          )} />
         </div>
-        {caseItem.description && (
-          <CardDescription className="line-clamp-2 mt-1.5 text-muted-foreground/80">
-            {caseItem.description}
-          </CardDescription>
+      </div>
+
+      {/* Mobile metadata row */}
+      <div className="flex md:hidden items-center gap-3 px-4 pb-3 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <ImageIcon className="h-3 w-3" />
+          {caseItem.image_count} {t('cases.imagesCount')}
+        </span>
+        {caseItem.has_tac_images && (
+          <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-600 dark:text-blue-400 h-5">
+            TAC
+          </Badge>
         )}
-      </CardHeader>
-
-      <CardContent className="pb-3 relative">
-        {/* Metadata badges */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
-            <ImageIcon className="h-3 w-3 text-primary/70" />
-            {caseItem.image_count} {t('cases.imagesCount')}
-          </Badge>
-          {caseItem.has_tac_images && (
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 shadow-sm">
-              TAC
-            </Badge>
-          )}
-          <Badge variant="outline" className="gap-1 bg-muted/50 border-border/50 hover:bg-muted transition-colors">
-            <Users className="h-3 w-3 text-primary/70" />
-            {caseItem.response_count} {t('cases.responses')}
-          </Badge>
-        </div>
-
-        {/* Deadline */}
+        <span className="inline-flex items-center gap-1">
+          <Users className="h-3 w-3" />
+          {caseItem.response_count} {t('cases.responses')}
+        </span>
         {deadline && (
-          <div className={`flex items-center gap-2 text-sm ${
-            deadline.isExpired
-              ? 'text-destructive'
-              : deadline.isUrgent
-              ? 'text-orange-600 dark:text-orange-400'
-              : 'text-muted-foreground'
-          }`}>
-            {deadline.isExpired ? (
-              <Clock className="h-4 w-4" />
-            ) : (
-              <CalendarDays className="h-4 w-4" />
-            )}
-            {deadline.isExpired ? (
-              <span className="font-medium">{t('cases.expired')}</span>
-            ) : deadline.isUrgent ? (
-              <span className="font-medium">
-                {t('cases.daysLeft', { count: deadline.daysLeft })}
-              </span>
-            ) : (
-              <span>{t('cases.deadline')}: {deadline.text}</span>
-            )}
-          </div>
+          <span className={cn(
+            'inline-flex items-center gap-1',
+            deadline.isExpired && 'text-destructive',
+            deadline.isUrgent && 'text-orange-600 dark:text-orange-400',
+          )}>
+            {deadline.isExpired ? t('cases.expired') : deadline.text}
+          </span>
         )}
-
-        {/* User's response count */}
-        {caseItem.my_response_count > 0 && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span>
-              {t('cases.yourResponses', { count: caseItem.my_response_count })}
-            </span>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="pt-0">
-        <Button asChild className="w-full group/btn hover-glow">
-          <Link to={caseUrl}>
-            {caseItem.has_responded
-              ? t('cases.viewOrReanswer')
-              : t('cases.startClassification')
-            }
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </Link>
   );
 }

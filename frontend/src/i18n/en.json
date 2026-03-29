@@ -415,6 +415,9 @@
     "zoomHint": "Scroll to zoom, drag to pan",
     "matchesReference": "Your classification matches the reference!",
     "showing": "Showing {{from}}-{{to}} of {{total}} cases",
+    "caseNumber": "Case #{{number}}",
+    "nextUp": "Next",
+    "classifiedCount": "{{count}} classified",
     "nav": {
       "prev": "Previous",
       "next": "Next",
