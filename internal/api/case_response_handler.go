@@ -130,44 +130,17 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Update case counters in background with detached context
-	// Use context.Background() since these operations must complete after response is sent
-	// (request context gets cancelled when the HTTP response is sent)
-	h.wg.Go(func() {
-		// Create background context with timeout to prevent infinite hangs
-		bgCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+	// Update study user progress in background if case belongs to a study.
+	// Note: response_count and unique_users are already updated by the
+	// CaseResponseRepository's backgroundWriter after saving the response.
+	if cs.StudyID != nil && h.studyService != nil {
+		h.wg.Go(func() {
+			bgCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
 
-		// Log errors instead of ignoring them (Uber Go Style: handle errors once)
-		if err := h.caseRepo.IncrementResponseCount(bgCtx, caseID); err != nil {
-			slog.Error("failed to increment response count",
-				"error", err,
-				"case_id", caseID,
-			)
-		}
-
-		count, err := h.responseRepo.CountUniqueUsersByCase(bgCtx, caseID)
-		if err != nil {
-			slog.Error("failed to count unique users",
-				"error", err,
-				"case_id", caseID,
-			)
-			return // Don't continue if count failed
-		}
-
-		if err := h.caseRepo.UpdateUniqueUsers(bgCtx, caseID, int(count)); err != nil {
-			slog.Error("failed to update unique users",
-				"error", err,
-				"case_id", caseID,
-				"count", count,
-			)
-		}
-
-		// Update study user progress if case belongs to a study.
-		if cs.StudyID != nil && h.studyService != nil {
 			h.studyService.UpdateAfterResponse(bgCtx, *cs.StudyID)
-		}
-	})
+		})
+	}
 
 	c.JSON(http.StatusCreated, SubmitResponseResult{Response: response})
 }
