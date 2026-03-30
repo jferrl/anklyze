@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -27,9 +27,15 @@ import type { AnswerTracking } from '../components/cases';
 import { useImageUrls } from '../hooks/useImageUrls';
 import { useCaseNavigation } from '../hooks/useCaseNavigation';
 
+// Wrapper extracts route param and keys the inner component by id,
+// so React resets all state automatically when navigating between cases.
 export function CaseDetailPage() {
-  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  return <CaseDetailContent key={id} id={id} />;
+}
+
+function CaseDetailContent({ id }: { id: string | undefined }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -40,15 +46,9 @@ export function CaseDetailPage() {
   // Batch-fetch all signed URLs for this case (single request, cached by React Query)
   const { imageUrls, isLoading: isLoadingUrls } = useImageUrls(id);
 
-  const [viewState, setViewState] = useState<{
-    selectedImageIndex: number | null;
-    activeTab: 'xray' | 'tac';
-    prevCaseId: string | undefined;
-  }>({ selectedImageIndex: null, activeTab: 'xray', prevCaseId: undefined });
-  const { selectedImageIndex, activeTab, prevCaseId } = viewState;
-  const setSelectedImageIndex = (idx: number | null) => setViewState(prev => ({ ...prev, selectedImageIndex: idx }));
-  const setActiveTab = (tab: 'xray' | 'tac') => setViewState(prev => ({ ...prev, activeTab: tab }));
-  const setPrevCaseId = (id: string | undefined) => setViewState(prev => ({ ...prev, prevCaseId: id }));
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  // User's explicit tab choice; null means "use default based on available images"
+  const [tabOverride, setTabOverride] = useState<'xray' | 'tac' | null>(null);
 
   // Classification state
   const [classification, setClassification] = useState<{
@@ -69,13 +69,6 @@ export function CaseDetailPage() {
     startTimeRef.current = Date.now();
   }, []);
 
-  // Reset form state when navigating between cases
-  useEffect(() => {
-    setClassification({ result: null, tracking: null });
-    setSubmitState({ status: 'idle' });
-    startTimeRef.current = Date.now();
-  }, [id]);
-
   // Fetch case data with React Query
   const { data: caseData, isLoading: loading, error: queryError } = useQuery({
     queryKey: ['published-case', id],
@@ -85,18 +78,15 @@ export function CaseDetailPage() {
 
   const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load case' : null;
 
-  // Set initial tab based on available images (only once when case loads)
-  // This pattern is recommended by React for syncing state with props during render
-  if (caseData && caseData.id !== prevCaseId) {
-    setPrevCaseId(caseData.id);
+  // Derive active tab: user override takes precedence, otherwise default based on images
+  const defaultTab = (() => {
+    if (!caseData) return 'xray';
     const hasXray = caseData.images.some((img) => img.category === 'xray');
     const hasTac = caseData.images.some((img) => img.category === 'tac');
-    if (!hasXray && hasTac) {
-      setActiveTab('tac');
-    } else {
-      setActiveTab('xray');
-    }
-  }
+    return !hasXray && hasTac ? 'tac' : 'xray';
+  })();
+  const activeTab = tabOverride ?? defaultTab;
+  const setActiveTab = (tab: 'xray' | 'tac') => setTabOverride(tab);
 
   // Fetch previous responses with React Query
   const { data: responsesData } = useQuery({
@@ -198,18 +188,14 @@ export function CaseDetailPage() {
   const openLightbox = (index: number) => setSelectedImageIndex(index);
   const closeLightbox = () => setSelectedImageIndex(null);
   const nextImage = () => {
-    setViewState(prev => ({
-      ...prev,
-      selectedImageIndex: prev.selectedImageIndex !== null && prev.selectedImageIndex < currentImages.length - 1
-        ? prev.selectedImageIndex + 1 : prev.selectedImageIndex,
-    }));
+    setSelectedImageIndex(prev =>
+      prev !== null && prev < currentImages.length - 1 ? prev + 1 : prev
+    );
   };
   const prevImage = () => {
-    setViewState(prev => ({
-      ...prev,
-      selectedImageIndex: prev.selectedImageIndex !== null && prev.selectedImageIndex > 0
-        ? prev.selectedImageIndex - 1 : prev.selectedImageIndex,
-    }));
+    setSelectedImageIndex(prev =>
+      prev !== null && prev > 0 ? prev - 1 : prev
+    );
   };
 
   if (loading) {
