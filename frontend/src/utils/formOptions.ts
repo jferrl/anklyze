@@ -131,6 +131,10 @@ export function getLocalFormOptions(): FormOptions {
       id: 'has_fibula_head_shortening',
       title: t('form.questions.hasFibulaHeadShortening'),
     },
+    fibulaTraceCount: {
+      id: 'fibulaTraceCount',
+      title: t('form.questions.fibulaTraceCount'),
+    },
   };
 
   // Labels
@@ -197,24 +201,56 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'suprasindesmal', label: t('form.options.fibularLevel.suprasindesmal') },
   ];
 
-  // Lateral morphology options (lateral-only and lateral+posterior: 2 options per MMD)
+  // Fibula trace count options (transindesmal: 1 vs >1 traces)
+  const fibula_trace_count: SelectOption[] = [
+    { value: 'single', label: t('form.options.fibulaTraceCount.single') },
+    { value: 'multiple', label: t('form.options.fibulaTraceCount.multiple') },
+  ];
+
+  // Lateral morphology options for lateral-only transindesmal 1-trace (2 options)
   const lateral_morphology: SelectOption[] = [
     { value: 'oblique', label: t('form.options.lateralMorphology.oblique') },
     { value: 'spiral', label: t('form.options.lateralMorphology.spiral') },
   ];
 
-  // Fibula morphology for lateral+medial transindesmal (3 options per drawio)
-  const fibula_morphology_lm: SelectOption[] = [
-    { value: 'transverse', label: t('form.options.fibulaMorphologyLM.transverse') },
-    { value: 'spiral', label: t('form.options.fibulaMorphologyLM.spiral') },
-    { value: 'conminuta', label: t('form.options.fibulaMorphologyLM.conminuta') },
+  // Lateral morphology options for lateral-only transindesmal >1-trace (3 options)
+  const lateral_morphology_multi: SelectOption[] = [
+    { value: 'spiral', label: t('form.options.lateralMorphologyMulti.spiral') },
+    { value: 'oblique', label: t('form.options.lateralMorphologyMulti.oblique') },
+    { value: 'conminuta', label: t('form.options.lateralMorphologyMulti.conminuta') },
   ];
 
-  // Fibula morphology for trimaleolar transindesmal (3 options per drawio: Transversa → Espiroidea → Conminuta)
+  // Lateral morphology options for lateral+posterior transindesmal (3 options, no trace count)
+  const lateral_morphology_lp: SelectOption[] = [
+    { value: 'spiral', label: t('form.options.lateralMorphologyLP.spiral') },
+    { value: 'oblique', label: t('form.options.lateralMorphologyLP.oblique') },
+    { value: 'conminuta', label: t('form.options.lateralMorphologyLP.conminuta') },
+  ];
+
+  // Fibula morphology for lateral+medial transindesmal 1-trace (2 options)
+  const fibula_morphology_lm: SelectOption[] = [
+    { value: 'oblique', label: t('form.options.fibulaMorphologyLM.oblique') },
+    { value: 'spiral', label: t('form.options.fibulaMorphologyLM.spiral') },
+  ];
+
+  // Fibula morphology for lateral+medial transindesmal >1-trace (3 options)
+  const fibula_morphology_lm_multi: SelectOption[] = [
+    { value: 'oblique', label: t('form.options.fibulaMorphologyLMMulti.oblique') },
+    { value: 'spiral', label: t('form.options.fibulaMorphologyLMMulti.spiral') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyLMMulti.conminuta') },
+  ];
+
+  // Fibula morphology for trimaleolar transindesmal 1-trace (2 options)
   const fibula_morphology_tri: SelectOption[] = [
     { value: 'transverse', label: t('form.options.fibulaMorphologyTri.transverse') },
     { value: 'spiral', label: t('form.options.fibulaMorphologyTri.spiral') },
-    { value: 'conminuta', label: t('form.options.fibulaMorphologyTri.conminuta') },
+  ];
+
+  // Fibula morphology for trimaleolar transindesmal >1-trace (3 options)
+  const fibula_morphology_tri_multi: SelectOption[] = [
+    { value: 'oblique', label: t('form.options.fibulaMorphologyTriMulti.oblique') },
+    { value: 'spiral', label: t('form.options.fibulaMorphologyTriMulti.spiral') },
+    { value: 'conminuta', label: t('form.options.fibulaMorphologyTriMulti.conminuta') },
   ];
 
   // Infrasindesmal morphology options for lateral_only (avulsion vs malleolus fracture)
@@ -229,11 +265,10 @@ export function getLocalFormOptions(): FormOptions {
     { value: 'malleolus_fracture', label: t('form.options.infrasindesmalMorphologyLMTri.malleolus_fracture') },
   ];
 
-  // Lateral subtype options for transindesmal lateral-only
+  // Lateral subtype options for transindesmal lateral-only (1-trace only: simple/syndesmosis)
   const lateral_subtype: SelectOption[] = [
     { value: 'simple', label: t('form.options.lateralSubtype.simple') },
     { value: 'syndesmosis_rupture', label: t('form.options.lateralSubtype.syndesmosis_rupture') },
-    { value: 'butterfly', label: t('form.options.lateralSubtype.butterfly') },
   ];
 
   // Medial subtype options for bimalleolar paths
@@ -311,8 +346,13 @@ export function getLocalFormOptions(): FormOptions {
     medial_morphology_lm,
     fibular_levels,
     lateral_morphology,
+    lateral_morphology_multi,
+    lateral_morphology_lp,
     fibula_morphology_lm,
+    fibula_morphology_lm_multi,
     fibula_morphology_tri,
+    fibula_morphology_tri_multi,
+    fibula_trace_count,
     suprasindesmal_types,
     fibular_level_high_low,
     fibular_levels_tri,

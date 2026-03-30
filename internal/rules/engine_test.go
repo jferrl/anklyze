@@ -1628,13 +1628,14 @@ func TestEngine_Classify_AOSubtypes(t *testing.T) {
 			},
 			expectedAO: domain.AOOTAC3_2,
 		},
-		// Conminuta morphology
+		// Conminuta morphology (>1 traces)
 		{
 			name: "lateral_medial conminuta → 44-B2.3",
 			input: domain.FractureInput{
 				InvolvedMalleoli:  domain.InvolvedLateralMedial,
 				MedialMorphology:  domain.MedialMorphologyTransverse,
 				FibularLevel:      domain.FibularLevelTransindesmal,
+				FibulaTraceCount:  domain.FibulaTraceCountMultiple,
 				LateralMorphology: domain.LateralMorphologyConminuta,
 			},
 			expectedAO: domain.AOOTAB2_3,

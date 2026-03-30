@@ -36,8 +36,11 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         if (formData.suprasindesmal_type !== 'proximal' && !formData.fibula_trace_pattern) return false;
         return true;
       }
+      if (!formData.fibula_trace_count) return false;
       if (!formData.lateral_morphology) return false;
-      // Transindesmal: lateral_subtype required per drawio (determines B1.1/B1.2/B1.3)
+      // >1 traces: complete after morphology (AO always B1.3)
+      if (formData.fibula_trace_count === 'multiple') return true;
+      // 1 trace: lateral_subtype required (determines B1.1/B1.2)
       if (!formData.lateral_subtype) return false;
       return true;
 
@@ -88,9 +91,11 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         return true;
       }
       // Transindesmal
+      if (!formData.fibula_trace_count) return false;
       if (!formData.lateral_morphology) return false;
-      if (formData.lateral_morphology === 'conminuta') return true; // Conminuta → B2.3 direct, no medial subtype
-      // Medial subtype required per drawio (determines B2.1/B2.2)
+      // >1 traces: complete after morphology (AO always B2.3)
+      if (formData.fibula_trace_count === 'multiple') return true;
+      // 1 trace: medial subtype required (determines B2.1/B2.2)
       if (!formData.medial_subtype) return false;
       return true;
 
@@ -109,9 +114,10 @@ export function isFormComplete(formData: Partial<FractureInput>): boolean {
         if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;
         return true;
       }
-      // Transindesmal → morphology + medial subtype + CT + Bartonicek
+      // Transindesmal → trace count + morphology + medial subtype + CT + Bartonicek
+      if (!formData.fibula_trace_count) return false;
       if (!formData.lateral_morphology) return false;
-      // All trimaleolar transindesmal paths need medial_subtype
+      // All trimaleolar transindesmal paths need medial_subtype (both 1 and >1 traces)
       if (!formData.medial_subtype) return false;
       if (formData.has_ct_scan === undefined) return false;
       if (formData.has_ct_scan === true && !formData.posterior_fracture_type) return false;

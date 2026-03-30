@@ -118,7 +118,8 @@
       "infrasindesmalMorphologyLMTri": "What is the lateral malleolus fracture like?",
       "lateralSubtype": "What type?",
       "medialSubtype": "What is the medial malleolus like?",
-      "hasFibulaHeadShortening": "Shortening at the fibula head level?"
+      "hasFibulaHeadShortening": "Shortening at the fibula head level?",
+      "fibulaTraceCount": "How many fracture traces does the fibula have?"
     },
     "options": {
       "involvedMalleoli": {
@@ -161,19 +162,41 @@
         "infrasindesmal": "Infrasyndesmotic",
         "transindesmal": "Transsyndesmotic"
       },
+      "fibulaTraceCount": {
+        "single": "1",
+        "multiple": ">1"
+      },
       "lateralMorphology": {
-        "oblique": "Transverse/Oblique (Low medial, high lateral)/Comminuted",
-        "spiral": "Spiral (Low anterior, high posterior)"
+        "oblique": "Oblique (low medial, high lateral) or transverse",
+        "spiral": "Spiral (low anterior, high posterior)"
+      },
+      "lateralMorphologyMulti": {
+        "spiral": "Main trace direction is spiral (low anterior, high posterior)",
+        "oblique": "Main trace direction is oblique (low medial, high lateral) or transverse",
+        "conminuta": "Comminuted (multiple fragments with no clear direction)"
+      },
+      "lateralMorphologyLP": {
+        "spiral": "Main direction is spiral (low anterior, high posterior) but may have multiple fragments",
+        "oblique": "Main direction is oblique (low medial, high lateral) or transverse",
+        "conminuta": "Comminuted (multiple fragments with no clear direction)"
       },
       "fibulaMorphologyLM": {
-        "transverse": "Transverse/Oblique (Low medial, high lateral)",
-        "spiral": "Spiral (Low anterior, high posterior)",
+        "oblique": "Oblique (low medial, high lateral) or transverse",
+        "spiral": "Spiral (low anterior, high posterior)"
+      },
+      "fibulaMorphologyLMMulti": {
+        "oblique": "Main trace direction is oblique (low medial, high lateral) or transverse",
+        "spiral": "Main trace direction is spiral (low anterior, high posterior)",
         "conminuta": "Comminuted/butterfly"
       },
       "fibulaMorphologyTri": {
         "transverse": "Transverse/Oblique (Low medial, high lateral)",
-        "conminuta": "Comminuted/butterfly",
         "spiral": "Spiral (Low anterior, high posterior)"
+      },
+      "fibulaMorphologyTriMulti": {
+        "oblique": "Main trace direction is oblique (low medial, high lateral) or transverse",
+        "spiral": "Main trace direction is spiral (low anterior, high posterior)",
+        "conminuta": "Comminuted/butterfly"
       },
       "infrasindesmalMorphology": {
         "avulsion": "Fibula tip avulsion",
@@ -185,8 +208,7 @@
       },
       "lateralSubtype": {
         "simple": "Simple",
-        "syndesmosis_rupture": "Syndesmosis rupture",
-        "butterfly": "Butterfly / wedge"
+        "syndesmosis_rupture": "Syndesmosis rupture"
       },
       "medialSubtype": {
         "open_mortise": "Open mortise",

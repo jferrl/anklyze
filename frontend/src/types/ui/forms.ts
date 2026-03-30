@@ -100,14 +100,29 @@ export interface FormOptions {
   /** Options for fibular fracture levels */
   fibular_levels: FormOption[];
 
-  /** Options for lateral fracture morphology */
+  /** Options for lateral fracture morphology (1-trace transindesmal) */
   lateral_morphology: FormOption[];
 
-  /** Options for fibula morphology in lateral+medial transindesmal cases */
+  /** Options for lateral morphology (>1-trace transindesmal lateral-only) */
+  lateral_morphology_multi: FormOption[];
+
+  /** Options for lateral morphology (lateral+posterior transindesmal, no trace count) */
+  lateral_morphology_lp: FormOption[];
+
+  /** Options for fibula morphology in lateral+medial transindesmal (1-trace) */
   fibula_morphology_lm: FormOption[];
 
-  /** Options for fibula morphology in trimaleolar transindesmal cases */
+  /** Options for fibula morphology in lateral+medial transindesmal (>1-trace) */
+  fibula_morphology_lm_multi: FormOption[];
+
+  /** Options for fibula morphology in trimaleolar transindesmal (1-trace) */
   fibula_morphology_tri: FormOption[];
+
+  /** Options for fibula morphology in trimaleolar transindesmal (>1-trace) */
+  fibula_morphology_tri_multi: FormOption[];
+
+  /** Options for fibula trace count (transindesmal: 1 vs >1) */
+  fibula_trace_count: FormOption[];
 
   /** Options for suprasyndesmotic fracture types */
   suprasindesmal_types: FormOption[];

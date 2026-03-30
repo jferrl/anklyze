@@ -123,7 +123,8 @@
       "infrasindesmalMorphologyLMTri": "¿Cómo es la fractura del maléolo lateral?",
       "lateralSubtype": "¿De qué tipo?",
       "medialSubtype": "¿Cómo es el maléolo medial?",
-      "hasFibulaHeadShortening": "¿Acortamiento a nivel de cabeza de peroné?"
+      "hasFibulaHeadShortening": "¿Acortamiento a nivel de cabeza de peroné?",
+      "fibulaTraceCount": "¿Cuántos trazos tiene la fractura de peroné?"
     },
     "options": {
       "involvedMalleoli": {
@@ -166,19 +167,41 @@
         "infrasindesmal": "Infrasindesmal",
         "transindesmal": "Transindesmal"
       },
+      "fibulaTraceCount": {
+        "single": "1",
+        "multiple": ">1"
+      },
       "lateralMorphology": {
-        "oblique": "Transversa/Oblicua (Baja medial, alta lateral)/Conminuta",
-        "spiral": "Espiroidea (Baja anterior, alta posterior)"
+        "oblique": "Oblicua (baja medial, alta lateral) o transversa",
+        "spiral": "Espiroidea (baja anterior, alta posterior)"
+      },
+      "lateralMorphologyMulti": {
+        "spiral": "La dirección del trazo principal es espiroidea (baja anterior, alta posterior)",
+        "oblique": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa",
+        "conminuta": "Conminuta (varios fragmentos sin dirección clara)"
+      },
+      "lateralMorphologyLP": {
+        "spiral": "La dirección principal es espiroidea (baja anterior, alta posterior) pero puede tener varios fragmentos",
+        "oblique": "La dirección principal es oblicua (baja medial, alta lateral) o transversa",
+        "conminuta": "Conminuta (varios fragmentos sin dirección clara)"
       },
       "fibulaMorphologyLM": {
-        "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
-        "spiral": "Espiroidea (Baja anterior, alta posterior)",
+        "oblique": "Oblicua (baja medial, alta lateral) o transversa",
+        "spiral": "Espiroidea (baja anterior, alta posterior)"
+      },
+      "fibulaMorphologyLMMulti": {
+        "oblique": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa",
+        "spiral": "La dirección del trazo principal es espiroidea (baja anterior, alta posterior)",
         "conminuta": "Conminuta/ala de mariposa"
       },
       "fibulaMorphologyTri": {
         "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
-        "conminuta": "Conminuta/ala de mariposa",
         "spiral": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      "fibulaMorphologyTriMulti": {
+        "oblique": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa",
+        "spiral": "La dirección del trazo principal es espiroidea (baja anterior, alta posterior)",
+        "conminuta": "Conminuta/ala de mariposa"
       },
       "infrasindesmalMorphology": {
         "avulsion": "Avulsión de la punta del maleolo",
@@ -190,8 +213,7 @@
       },
       "lateralSubtype": {
         "simple": "Fractura simple",
-        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)",
-        "butterfly": "Fractura en ala de maliposa/multifragmentaria"
+        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
       },
       "medialSubtype": {
         "open_mortise": "Abierta la mortaja",

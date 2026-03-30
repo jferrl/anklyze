@@ -80,6 +80,15 @@ const (
 	FibulaTraceSuprasindesmoticFar FibulaTracePattern = "suprasindesmotic_far"
 )
 
+// FibulaTraceCount represents the number of fracture traces in the fibula for transindesmal paths.
+type FibulaTraceCount string
+
+// FibulaTraceCount constants define single vs multiple fracture traces.
+const (
+	FibulaTraceCountSingle   FibulaTraceCount = "single"   // 1 trace
+	FibulaTraceCountMultiple FibulaTraceCount = "multiple" // >1 traces
+)
+
 // LateralSubtype represents the subtype of lateral fracture for transindesmal paths.
 type LateralSubtype string
 
@@ -151,6 +160,9 @@ type FractureInput struct {
 
 	// Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
 	IsPosteriorPosteromedial *bool `json:"is_posterior_posteromedial,omitempty"`
+
+	// Number of fracture traces in fibula for transindesmal paths (single or multiple)
+	FibulaTraceCount FibulaTraceCount `json:"fibula_trace_count,omitempty"`
 
 	// Lateral subtype for transindesmal lateral-only paths (simple, syndesmosis_rupture, butterfly)
 	LateralSubtype LateralSubtype `json:"lateral_subtype,omitempty"`

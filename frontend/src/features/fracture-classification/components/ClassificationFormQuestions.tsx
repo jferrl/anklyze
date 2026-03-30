@@ -8,6 +8,7 @@ import type {
   LateralMorphology,
   SuprasindesmalType,
   FibulaTracePattern,
+  FibulaTraceCount,
   MedialMorphology,
   PosteriorFractureType,
   ArticularInvolvement,
@@ -31,26 +32,30 @@ interface ClassificationFormQuestionsProps {
 const DOWNSTREAM_FIELDS: Record<string, (keyof FractureInput)[]> = {
   articular_involvement: [
     'has_articular_depression', 'medial_morphology', 'fibula_infrasindesmal_transverse',
-    'fibular_level', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'fibular_level', 'fibula_trace_count', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
     'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
     'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
   ],
   has_articular_depression: [],
   medial_morphology: [
-    'fibula_infrasindesmal_transverse', 'fibular_level', 'lateral_morphology',
+    'fibula_infrasindesmal_transverse', 'fibular_level', 'fibula_trace_count', 'lateral_morphology',
     'infrasindesmal_morphology', 'lateral_subtype', 'suprasindesmal_type',
     'fibula_trace_pattern', 'medial_subtype', 'has_fibula_head_shortening',
     'has_ct_scan', 'posterior_fracture_type',
   ],
   fibula_infrasindesmal_transverse: [
-    'fibular_level', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'fibular_level', 'fibula_trace_count', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
     'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
     'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
   ],
   fibular_level: [
-    'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
+    'fibula_trace_count', 'lateral_morphology', 'infrasindesmal_morphology', 'lateral_subtype',
     'suprasindesmal_type', 'fibula_trace_pattern', 'medial_subtype',
     'has_fibula_head_shortening', 'has_ct_scan', 'posterior_fracture_type',
+  ],
+  fibula_trace_count: [
+    'lateral_morphology', 'lateral_subtype', 'medial_subtype',
+    'has_ct_scan', 'posterior_fracture_type',
   ],
   lateral_morphology: [
     'lateral_subtype', 'medial_subtype', 'has_ct_scan', 'posterior_fracture_type',
@@ -148,8 +153,19 @@ export function ClassificationFormQuestions({
       lateralMedialReadyForFibularLevel
     );
 
+  // Trace count question: shown for transindesmal on lateral_only, lateral_medial, trimaleolar
+  const showFibulaTraceCount = showFibularLevel &&
+    formData.fibular_level === 'transindesmal' &&
+    formData.involved_malleoli !== 'lateral_posterior';
+
+  // For transindesmal paths with trace count, morphology requires trace count to be set
+  // For lateral_posterior transindesmal, no trace count → show morphology directly
   const showLateralMorphology = showFibularLevel && formData.fibular_level &&
-    formData.fibular_level !== 'infrasindesmal';
+    formData.fibular_level !== 'infrasindesmal' && (
+      formData.fibular_level !== 'transindesmal' ||
+      formData.involved_malleoli === 'lateral_posterior' ||
+      !!formData.fibula_trace_count
+    );
 
   const showInfrasindesmalMorphology =
     (formData.involved_malleoli === 'lateral_only' && formData.fibular_level === 'infrasindesmal') ||
@@ -157,12 +173,15 @@ export function ClassificationFormQuestions({
     (formData.involved_malleoli === 'trimaleolar' && formData.fibular_level === 'infrasindesmal');
 
   const showLateralSubtype = formData.involved_malleoli === 'lateral_only' &&
-    formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology;
+    formData.fibular_level === 'transindesmal' &&
+    formData.fibula_trace_count === 'single' &&
+    !!formData.lateral_morphology;
 
   const showMedialSubtype = (
     formData.involved_malleoli === 'lateral_medial' && (
-      (formData.fibular_level === 'transindesmal' && !!formData.lateral_morphology &&
-        formData.lateral_morphology !== 'conminuta') ||
+      (formData.fibular_level === 'transindesmal' &&
+        formData.fibula_trace_count === 'single' &&
+        !!formData.lateral_morphology) ||
       (formData.fibular_level === 'suprasindesmal' && !!formData.suprasindesmal_type &&
         formData.suprasindesmal_type !== 'proximal' && !!formData.fibula_trace_pattern)
     )
@@ -228,6 +247,31 @@ export function ClassificationFormQuestions({
       (formData.suprasindesmal_type === 'proximal' || !!formData.fibula_trace_pattern)) return true;
     return false;
   })();
+
+  // Determine morphology options based on malleoli, trace count, etc.
+  const getMorphologyOptions = () => {
+    const m = formData.involved_malleoli;
+    const isMulti = formData.fibula_trace_count === 'multiple';
+
+    if (m === 'lateral_posterior') {
+      // lateral+posterior: updated labels with 3 options (no trace count question)
+      return options.lateral_morphology_lp || [];
+    }
+    if (m === 'lateral_medial') {
+      return isMulti
+        ? (options.fibula_morphology_lm_multi || [])
+        : (options.fibula_morphology_lm || []);
+    }
+    if (m === 'trimaleolar') {
+      return isMulti
+        ? (options.fibula_morphology_tri_multi || [])
+        : (options.fibula_morphology_tri || []);
+    }
+    // lateral_only
+    return isMulti
+      ? (options.lateral_morphology_multi || [])
+      : (options.lateral_morphology || []);
+  };
 
   // Yes/No options for boolean questions
   const yesNoOptions = [
@@ -337,6 +381,18 @@ export function ClassificationFormQuestions({
         />
       )}
 
+      {showFibulaTraceCount && (
+        <QuestionStep
+          question={{
+            id: 'fibula_trace_count',
+            title: options.questions.fibulaTraceCount?.title || 'How many fracture traces does the fibula have?',
+          }}
+          value={formData.fibula_trace_count}
+          options={options.fibula_trace_count || []}
+          onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'fibula_trace_count'), fibula_trace_count: value as FibulaTraceCount })}
+        />
+      )}
+
       {showLateralMorphology && !showSuprasindesmalType && (
         <QuestionStep
           question={{
@@ -346,13 +402,7 @@ export function ClassificationFormQuestions({
               : options.questions.lateral_morphology?.title) || 'Lateral fracture morphology?',
           }}
           value={formData.lateral_morphology}
-          options={
-            formData.involved_malleoli === 'lateral_medial'
-              ? (options.fibula_morphology_lm || [])
-              : formData.involved_malleoli === 'trimaleolar'
-                ? (options.fibula_morphology_tri || [])
-                : (options.lateral_morphology || [])
-          }
+          options={getMorphologyOptions()}
           onChange={(value) => handleUpdate({ ...clearDownstream(formData, 'lateral_morphology'), lateral_morphology: value as LateralMorphology })}
         />
       )}

@@ -34,6 +34,11 @@ export type LateralMorphology =
   | 'spiral'     // Espiroidea (Baja anterior, alta posterior)
   | 'conminuta'; // Conminuta
 
+// Número de trazos de fractura del peroné para transindesmal
+export type FibulaTraceCount =
+  | 'single'    // 1 trazo
+  | 'multiple'; // >1 trazos
+
 // Subtipo lateral para transindesmal lateral-only
 export type LateralSubtype =
   | 'simple'              // Simple
@@ -104,6 +109,9 @@ export interface FractureInput {
 
   // Whether posterior fragment is posteromedial (lateral+posterior infrasindesmal + CT path)
   is_posterior_posteromedial?: boolean;
+
+  // Número de trazos de fractura del peroné para transindesmal
+  fibula_trace_count?: FibulaTraceCount;
 
   // Lateral subtype for transindesmal lateral-only paths
   lateral_subtype?: LateralSubtype;

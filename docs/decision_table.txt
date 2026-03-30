@@ -1,5 +1,5 @@
 # Ankle Fracture Classification — All Terminal Paths
-# Total: 155 paths across 7 branches
+# Total: 165 paths across 7 branches
 # Source: drawio diagram (source of truth)
 #
 # Branch       AO           LH    W   B   Path (answers in order)
@@ -27,13 +27,13 @@
   44-C1        PER   C   N/C Suprasindesmal → Diafisaria Simple → Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)
   44-C2        PER   C   N/C Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa
   44-C2        PA    C   N/C Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular)
-  44-C3        PER   C   N/C Suprasindesmal → Proximal (1/ proximal de peroné)
-  44-B1.2      SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
-  44-B1.3      SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura en ala de maliposa/multifragmentaria
-  44-B1.1      SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura simple
-  44-B1.2      PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
-  44-B1.3      PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Fractura en ala de maliposa/multifragmentaria
-  44-B1.1      PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Fractura simple
+  44-C3        PER   C   N/C Suprasindesmal → Proximal (1/3 proximal de peroné)
+  44-B1.2      SER   B   N/C Transindesmal → 1 → Espiroidea (baja anterior, alta posterior) → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
+  44-B1.1      SER   B   N/C Transindesmal → 1 → Espiroidea (baja anterior, alta posterior) → Fractura simple
+  44-B1.2      PA    B   N/C Transindesmal → 1 → Oblicua (baja medial, alta lateral) o transversa → Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)
+  44-B1.1      PA    B   N/C Transindesmal → 1 → Oblicua (baja medial, alta lateral) o transversa → Fractura simple
+  44-B1.3      PA    B   N/C Transindesmal → >1 → Conminuta (varios fragmentos sin dirección clara)
+  44-B1.3      SER   B   N/C Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior)
 
 ## med+post (6 paths)
   N/C          PA    N/C N/C No
@@ -74,38 +74,40 @@
   N/C          PER   C   2   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Fragmento posterolateral
   N/C          PER   C   3   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Fragmento posteromedial y posterolateral
   N/C          PER   C   4   Suprasindesmal → Proximal (1/3 proximal de peroné) → Sí → Gran fragmento triangular posterolateral
-  N/C          SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → No
-  N/C          SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento extraincisural
-  N/C          SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento posterolateral
-  N/C          SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Fragmento posteromedial y posterolateral
-  N/C          SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Sí → Gran fragmento triangular posterolateral
-  N/C          PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → No
-  N/C          PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento extraincisural
-  N/C          PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento posterolateral
-  N/C          PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Fragmento posteromedial y posterolateral
-  N/C          PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral)/Conminuta → Sí → Gran fragmento triangular posterolateral
+  N/C          SER   B   N/C Transindesmal → La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos → No
+  N/C          SER   B   1   Transindesmal → La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos → Sí → Fragmento extraincisural
+  N/C          SER   B   2   Transindesmal → La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos → Sí → Fragmento posterolateral
+  N/C          SER   B   3   Transindesmal → La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos → Sí → Fragmento posteromedial y posterolateral
+  N/C          SER   B   4   Transindesmal → La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    B   N/C Transindesmal → La dirección principal es oblicua (baja medial, alta lateral) o transversa → No
+  N/C          PA    B   1   Transindesmal → La dirección principal es oblicua (baja medial, alta lateral) o transversa → Sí → Fragmento extraincisural
+  N/C          PA    B   2   Transindesmal → La dirección principal es oblicua (baja medial, alta lateral) o transversa → Sí → Fragmento posterolateral
+  N/C          PA    B   3   Transindesmal → La dirección principal es oblicua (baja medial, alta lateral) o transversa → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    B   4   Transindesmal → La dirección principal es oblicua (baja medial, alta lateral) o transversa → Sí → Gran fragmento triangular posterolateral
 
-## lat+med (18 paths)
-  44-C1.1      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Abierta la mortaja
-  44-C1.2      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Fractura del maleolo/avulsión
-  44-C1.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Abierta la mortaja
-  44-C1.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Fractura del maleolo/avulsión
-  44-C2.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Abierta la mortaja
-  44-C2.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Fractura del maleolo/avulsión
-  44-C2.1      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Abierta la mortaja
-  44-C2.2      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Fractura del maleolo/avulsión
-  44-C3.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Proximal (1/3 proximal peroné) → No
-  44-C3.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Alta (Suprasindesmal) → Proximal (1/3 proximal peroné) → Si
+## lat+med (20 paths)
   44-A2.2      SA    A   N/C Transverso/oblicuo/avulsión/abierta mortaja → Infrasindesmal → Avulsión
   44-A2.3      SA    A   N/C Transverso/oblicuo/avulsión/abierta mortaja → Infrasindesmal → Transversa
-  44-B2.3      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Conminuta/ala de mariposa
-  44-B2.1      SER   B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja
-  44-B2.2      SER   B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión
-  44-B2.1      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja
-  44-B2.2      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión
+  44-C1.1      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Abierta la mortaja
+  44-C1.2      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Fractura del maleolo/avulsión
+  44-C1.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Abierta la mortaja
+  44-C1.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo → Fractura del maleolo/avulsión
+  44-C2.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Abierta la mortaja
+  44-C2.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa → Fractura del maleolo/avulsión
+  44-C2.1      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Abierta la mortaja
+  44-C2.2      PA    C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Multifragmentaria/ala de mariposa → Parasindesmal conminuta (a <6cm de la superficie articular) → Fractura del maleolo/avulsión
+  44-C3.1      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Proximal (1/3 proximal peroné) → No
+  44-C3.2      PER   C   N/C Transverso/oblicuo/avulsión/abierta mortaja → Suprasindesmal → Proximal (1/3 proximal peroné) → Si
+  44-B2.1      SER   B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → 1 → Espiroidea (baja anterior, alta posterior) → Abierta la mortaja
+  44-B2.2      SER   B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → 1 → Espiroidea (baja anterior, alta posterior) → Fractura del maleolo/avulsión
+  44-B2.1      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → 1 → Oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja
+  44-B2.2      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → 1 → Oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión
+  44-B2.3      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → >1 → Conminuta/ala de mariposa
+  44-B2.3      SER   B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior)
+  44-B2.3      PA    B   N/C Transverso/oblicuo/avulsión/abierta mortaja → Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa
   44-A2        SA    A   N/C Vertical → Sí
 
-## trimaleolar (67 paths)
+## trimaleolar (75 paths)
   44-C1.3      PA    C   N/C Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → No
   44-C1.3      PA    C   1   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento extraincisural
   44-C1.3      PA    C   2   Alta (Suprasindesmal) → Diafisaria Simple → Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso → Sí → Fragmento posterolateral
@@ -131,45 +133,53 @@
   44-C3.3      PER   C   2   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Fragmento posterolateral
   44-C3.3      PER   C   3   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Fragmento posteromedial y posterolateral
   44-C3.3      PER   C   4   Alta (Suprasindesmal) → Proximal (1/3 proximal de peroné) → Sí → Gran fragmento triangular posterolateral
-  44-A3.2      N/C   A   N/C Infrasindesmal → Avulsión
   44-A3.2      N/C   A   N/C Infrasindesmal → Avulsión → No
   44-A3.2      N/C   A   1   Infrasindesmal → Avulsión → Sí → Fragmento extraincisural
   44-A3.2      N/C   A   2   Infrasindesmal → Avulsión → Sí → Fragmento posterolateral
   44-A3.2      N/C   A   3   Infrasindesmal → Avulsión → Sí → Fragmento posteromedial y posterolateral
   44-A3.2      N/C   A   4   Infrasindesmal → Avulsión → Sí → Gran fragmento triangular posterolateral
-  44-A3.3      N/C   A   N/C Infrasindesmal → Transversa
   44-A3.3      N/C   A   N/C Infrasindesmal → Transversa → No
   44-A3.3      N/C   A   1   Infrasindesmal → Transversa → Sí → Fragmento extraincisural
   44-A3.3      N/C   A   2   Infrasindesmal → Transversa → Sí → Fragmento posterolateral
   44-A3.3      N/C   A   3   Infrasindesmal → Transversa → Sí → Fragmento posteromedial y posterolateral
   44-A3.3      N/C   A   4   Infrasindesmal → Transversa → Sí → Gran fragmento triangular posterolateral
-  N/C          PA    B   N/C Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → No
-  N/C          PA    B   1   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento extraincisural
-  N/C          PA    B   2   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento posterolateral
-  N/C          PA    B   3   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
-  N/C          PA    B   4   Transindesmal → Conminuta/ala de mariposa → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
-  44-B3.3      PA    B   N/C Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → No
-  44-B3.3      PA    B   1   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
-  44-B3.3      PA    B   2   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
-  44-B3.3      PA    B   3   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
-  44-B3.3      PA    B   4   Transindesmal → Conminuta/ala de mariposa → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
-  44-B3.1      SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → No
-  44-B3.1      SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento extraincisural
-  44-B3.1      SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posterolateral
-  44-B3.1      SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
-  44-B3.1      SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
-  44-B3.2      SER   B   N/C Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → No
-  44-B3.2      SER   B   1   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
-  44-B3.2      SER   B   2   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
-  44-B3.2      SER   B   3   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
-  44-B3.2      SER   B   4   Transindesmal → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
-  44-B3.1      PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → No
-  44-B3.1      PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento extraincisural
-  44-B3.1      PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posterolateral
-  44-B3.1      PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
-  44-B3.1      PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
-  44-B3.2      PA    B   N/C Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → No
-  44-B3.2      PA    B   1   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
-  44-B3.2      PA    B   2   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
-  44-B3.2      PA    B   3   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
-  44-B3.2      PA    B   4   Transindesmal → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  44-B3.1      SER   B   N/C Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → No
+  44-B3.1      SER   B   1   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento extraincisural
+  44-B3.1      SER   B   2   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posterolateral
+  44-B3.1      SER   B   3   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  44-B3.1      SER   B   4   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.2      SER   B   N/C Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → No
+  44-B3.2      SER   B   1   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.2      SER   B   2   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.2      SER   B   3   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.2      SER   B   4   Transindesmal → 1 → Espiroidea (Baja anterior, alta posterior) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  44-B3.1      PA    B   N/C Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → No
+  44-B3.1      PA    B   1   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento extraincisural
+  44-B3.1      PA    B   2   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posterolateral
+  44-B3.1      PA    B   3   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  44-B3.1      PA    B   4   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.2      PA    B   N/C Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → No
+  44-B3.2      PA    B   1   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.2      PA    B   2   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.2      PA    B   3   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.2      PA    B   4   Transindesmal → 1 → Transversa/Oblicua (Baja medial, alta lateral) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  N/C          SER   B   N/C Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Abierta la mortaja → No
+  N/C          SER   B   1   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Abierta la mortaja → Sí → Fragmento extraincisural
+  N/C          SER   B   2   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Abierta la mortaja → Sí → Fragmento posterolateral
+  N/C          SER   B   3   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  N/C          SER   B   4   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.3      SER   B   N/C Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Fractura del maleolo/avulsión → No
+  44-B3.3      SER   B   1   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.3      SER   B   2   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.3      SER   B   3   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.3      SER   B   4   Transindesmal → >1 → La dirección del trazo principal es espiroidea (baja anterior,alta posterior) → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
+  N/C          PA    B   N/C Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja → No
+  N/C          PA    B   1   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja → Sí → Fragmento extraincisural
+  N/C          PA    B   2   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja → Sí → Fragmento posterolateral
+  N/C          PA    B   3   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja → Sí → Fragmento posteromedial y posterolateral
+  N/C          PA    B   4   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Abierta la mortaja → Sí → Gran fragmento triangular posterolateral
+  44-B3.3      PA    B   N/C Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión → No
+  44-B3.3      PA    B   1   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión → Sí → Fragmento extraincisural
+  44-B3.3      PA    B   2   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión → Sí → Fragmento posterolateral
+  44-B3.3      PA    B   3   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión → Sí → Fragmento posteromedial y posterolateral
+  44-B3.3      PA    B   4   Transindesmal → >1 → La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa → Fractura del maleolo/avulsión → Sí → Gran fragmento triangular posterolateral
