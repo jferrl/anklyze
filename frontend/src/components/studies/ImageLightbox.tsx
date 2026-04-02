@@ -140,21 +140,31 @@ export function ImageLightbox({
     }
   }, [isZoomed, resetZoom]);
 
-  const handleCarouselChange = useCallback(
-    (api: CarouselApi) => {
-      if (!api) return;
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
-      api.on('select', () => {
-        const newIndex = api.selectedScrollSnap();
-        if (newIndex > currentIndex) {
-          onNext();
-        } else if (newIndex < currentIndex) {
-          onPrev();
-        }
-      });
-    },
-    [currentIndex, onNext, onPrev]
-  );
+  // Sync parent index changes with carousel and listen for carousel selections
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    // Keep carousel in sync when parent index changes
+    if (carouselApi.selectedScrollSnap() !== currentIndex) {
+      carouselApi.scrollTo(currentIndex, true);
+    }
+
+    const onSelect = () => {
+      const newIndex = carouselApi.selectedScrollSnap();
+      if (newIndex > currentIndex) {
+        onNext();
+      } else if (newIndex < currentIndex) {
+        onPrev();
+      }
+    };
+
+    carouselApi.on('select', onSelect);
+    return () => {
+      carouselApi.off('select', onSelect);
+    };
+  }, [carouselApi, currentIndex, onNext, onPrev]);
 
   // Preload neighboring images for instant carousel swiping
   useEffect(() => {
@@ -244,7 +254,7 @@ export function ImageLightbox({
             loop: false,
             watchDrag: !isZoomed,
           }}
-          setApi={handleCarouselChange}
+          setApi={setCarouselApi}
           className="w-full"
         >
           <CarouselContent>
