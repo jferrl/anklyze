@@ -563,6 +563,8 @@
       "responses": "responses",
       "case": "case",
       "cases_plural": "cases",
+      "rater": "rater",
+      "raters_plural": "raters",
       "backToList": "Back to Studies",
       "notFound": "Study not found",
       "notFoundDescription": "The study you're looking for doesn't exist or has been removed.",
@@ -597,6 +599,8 @@
       "table": {
         "title": "Title",
         "status": "Status",
+        "cases": "Cases",
+        "raters": "Raters",
         "responses": "Responses",
         "created": "Created",
         "showing": "Showing {{from}}-{{to}} of {{total}} studies"

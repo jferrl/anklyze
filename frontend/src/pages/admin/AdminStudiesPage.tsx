@@ -257,20 +257,20 @@ export function AdminStudiesPage() {
               {study.status !== 'draft' && (
                 <DropdownMenuItem onClick={() => handleViewReliability(study.id)}>
                   <BarChart3 className="h-4 w-4 mr-2" />
-                  Reliability
+                  {t('admin.studies.viewReliability')}
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
               {study.status === 'draft' && study.case_count > 0 && (
                 <DropdownMenuItem onClick={() => handleActivate(study.id)} className="text-emerald-600 dark:text-emerald-400">
                   <Play className="h-4 w-4 mr-2" />
-                  Activate
+                  {t('admin.studies.activate')}
                 </DropdownMenuItem>
               )}
               {study.status === 'active' && (
                 <DropdownMenuItem onClick={() => handleClose(study.id)}>
                   <Lock className="h-4 w-4 mr-2" />
-                  Close
+                  {t('admin.studies.close')}
                 </DropdownMenuItem>
               )}
               {study.status === 'draft' && (
@@ -485,18 +485,18 @@ const StudyCard = memo(function StudyCard({
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <FileText className="w-3.5 h-3.5" />
-              {study.case_count} {study.case_count === 1 ? 'case' : 'cases'}
+              {study.case_count} {study.case_count === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
             </span>
             <span className="inline-flex items-center gap-1">
               <Users className="w-3.5 h-3.5" />
-              {study.unique_raters} {study.unique_raters === 1 ? 'rater' : 'raters'}
+              {study.unique_raters} {study.unique_raters === 1 ? t('admin.studies.rater') : t('admin.studies.raters_plural')}
             </span>
             <span className={cn(
               'inline-flex items-center gap-1',
               study.total_responses > 0 ? 'text-primary' : ''
             )}>
               <BarChart3 className="w-3.5 h-3.5" />
-              {study.total_responses} responses
+              {study.total_responses} {t('admin.studies.responses')}
             </span>
           </div>
         </div>
@@ -514,20 +514,20 @@ const StudyCard = memo(function StudyCard({
             {study.status !== 'draft' && (
               <DropdownMenuItem onClick={onViewReliability}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Reliability
+                {t('admin.studies.viewReliability')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
             {study.status === 'draft' && study.case_count > 0 && (
               <DropdownMenuItem onClick={onActivate} className="text-emerald-600 dark:text-emerald-400">
                 <Play className="h-4 w-4 mr-2" />
-                Activate
+                {t('admin.studies.activate')}
               </DropdownMenuItem>
             )}
             {study.status === 'active' && (
               <DropdownMenuItem onClick={onClose}>
                 <Lock className="h-4 w-4 mr-2" />
-                Close
+                {t('admin.studies.close')}
               </DropdownMenuItem>
             )}
             {study.status === 'draft' && (

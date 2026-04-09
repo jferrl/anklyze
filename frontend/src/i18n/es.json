@@ -568,6 +568,8 @@
       "responses": "respuestas",
       "case": "caso",
       "cases_plural": "casos",
+      "rater": "evaluador",
+      "raters_plural": "evaluadores",
       "backToList": "Volver a Estudios",
       "notFound": "Estudio no encontrado",
       "notFoundDescription": "El estudio que buscas no existe o ha sido eliminado.",
@@ -602,6 +604,8 @@
       "table": {
         "title": "Título",
         "status": "Estado",
+        "cases": "Casos",
+        "raters": "Evaluadores",
         "responses": "Respuestas",
         "created": "Creado",
         "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"

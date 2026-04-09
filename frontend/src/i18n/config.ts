@@ -11,7 +11,7 @@ const getSavedLanguage = (): string => {
 
   // Detect browser language
   const browserLang = navigator.language.split('-')[0];
-  return browserLang === 'es' ? 'es' : 'en';
+  return browserLang === 'en' ? 'en' : 'es';
 };
 
 i18n
@@ -22,7 +22,7 @@ i18n
       es: { translation: es },
     },
     lng: getSavedLanguage(),
-    fallbackLng: 'en',
+    fallbackLng: 'es',
     interpolation: {
       escapeValue: false, // React already escapes values
     },
