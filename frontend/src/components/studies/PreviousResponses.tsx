@@ -81,7 +81,7 @@ export function PreviousResponses({ responses }: PreviousResponsesProps) {
                   {response.classification.bartonicek && (
                     <div>
                       <span className="font-medium">Bartonicek:</span>{' '}
-                      {getBartonicekDisplayName(t, response.classification.bartonicek.type)}
+                      {getBartonicekDisplayName(t, response.classification.bartonicek.type, response.classification.fracture_type)}
                     </div>
                   )}
                 </div>

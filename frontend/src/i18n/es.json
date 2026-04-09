@@ -291,7 +291,8 @@
       "bimaleolar_lateral_posterior": "Fractura bimaleolar (Lateral + Posterior)",
       "bimaleolar_lateral_medial": "Fractura bimaleolar (Lateral + Medial)",
       "trimaleolar": "Fractura trimaleolar",
-      "distal_tibia": "Fractura de tibia distal"
+      "distal_tibia": "Fractura de tibia distal",
+      "posterior_distal_tibia": "Fractura de tibia distal (maléolo posterior)"
     },
     "classifications": {
       "laugeHansen": {
@@ -310,7 +311,12 @@
         "subtype_not_classifiable": "Subtipo no clasificable"
       },
       "bartonicek": {
-        "not_classifiable_name": "No clasificable"
+        "not_classifiable_name": "No clasificable",
+        "not_applicable_name": "No aplica",
+        "requires_ct_name": "Requiere TAC",
+        "reason_no_posterior": "Sin fractura del maléolo posterior",
+        "reason_no_ct": "Fractura de maléolo posterior presente. Requiere TAC para clasificar.",
+        "reason_pilon": "Fractura de tibia distal (>1/3 superficie articular)"
       }
     },
     "impossible": {

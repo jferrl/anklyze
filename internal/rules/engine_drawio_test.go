@@ -2991,8 +2991,8 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			t.Fatal("Classify() returned nil")
 			return
 		}
-		if result.FractureType != "distal_tibia" {
-			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		if result.FractureType != "posterior_distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "posterior_distal_tibia")
 		}
 		if result.DanisWeber == nil {
 			t.Fatal("DanisWeber is nil, want not_classifiable")
@@ -3037,8 +3037,8 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 			t.Fatal("Classify() returned nil")
 			return
 		}
-		if result.FractureType != "distal_tibia" {
-			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		if result.FractureType != "posterior_distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "posterior_distal_tibia")
 		}
 		if result.DanisWeber == nil {
 			t.Fatal("DanisWeber is nil, want not_classifiable")

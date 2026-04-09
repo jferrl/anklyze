@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import {
   getFractureDescription,
   getAOOTASubtypeLabel,
+  getBartonicekDisplayName,
+  getBartonicekReason,
 } from '@/utils/classificationTranslations';
 
 interface ComparisonViewProps {
@@ -174,8 +176,12 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
           {scenarios.map((scenario) => (
             <ClassificationValue
               key={scenario.id}
-              value={scenario.result.bartonicek?.type}
-              subtitle={undefined}
+              value={scenario.result.bartonicek
+                ? getBartonicekDisplayName(t, scenario.result.bartonicek.type, scenario.result.fracture_type)
+                : undefined}
+              subtitle={scenario.result.bartonicek
+                ? getBartonicekReason(t, scenario.result.bartonicek.type, scenario.result.fracture_type) ?? undefined
+                : undefined}
               isDifferent={bartDifferent}
               colors={classificationColors.bartonicek}
             />

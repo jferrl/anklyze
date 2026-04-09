@@ -64,7 +64,7 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("large_with_extension + depression → distal_tibia AO 43-B2", func(t *testing.T) {
+	t.Run("large_with_extension + depression → posterior_distal_tibia AO 43-B2", func(t *testing.T) {
 		input := domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -74,8 +74,8 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
-		if result.FractureType != "distal_tibia" {
-			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		if result.FractureType != "posterior_distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "posterior_distal_tibia")
 		}
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B2 {
 			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B2)
@@ -91,7 +91,7 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("large_with_extension + no depression → distal_tibia AO 43-B1", func(t *testing.T) {
+	t.Run("large_with_extension + no depression → posterior_distal_tibia AO 43-B1", func(t *testing.T) {
 		input := domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -101,8 +101,8 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
-		if result.FractureType != "distal_tibia" {
-			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		if result.FractureType != "posterior_distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "posterior_distal_tibia")
 		}
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B1 {
 			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B1)
@@ -118,8 +118,8 @@ func TestEngine_Classify_PosteriorOnly(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Classify() unexpected error: %v", err)
 		}
-		if result.FractureType != "distal_tibia" {
-			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
+		if result.FractureType != "posterior_distal_tibia" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "posterior_distal_tibia")
 		}
 		if result.AOOTA == nil || result.AOOTA.Code != domain.AOOTA43B1 {
 			t.Errorf("AOOTA.Code = %v, want %q", result.AOOTA, domain.AOOTA43B1)

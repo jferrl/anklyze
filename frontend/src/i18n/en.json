@@ -286,7 +286,8 @@
       "bimaleolar_lateral_posterior": "Bimalleolar fracture (Lateral + Posterior)",
       "bimaleolar_lateral_medial": "Bimalleolar fracture (Lateral + Medial)",
       "trimaleolar": "Trimalleolar fracture",
-      "distal_tibia": "Distal tibia fracture"
+      "distal_tibia": "Distal tibia fracture",
+      "posterior_distal_tibia": "Distal tibia fracture (posterior malleolus)"
     },
     "classifications": {
       "laugeHansen": {
@@ -305,7 +306,12 @@
         "subtype_not_classifiable": "Subtype not classifiable"
       },
       "bartonicek": {
-        "not_classifiable_name": "Not classifiable"
+        "not_classifiable_name": "Not classifiable",
+        "not_applicable_name": "Not applicable",
+        "requires_ct_name": "Requires CT scan",
+        "reason_no_posterior": "No posterior malleolus fracture",
+        "reason_no_ct": "Posterior malleolus fracture present. CT scan required to classify.",
+        "reason_pilon": "Distal tibia fracture (>1/3 articular surface)"
       }
     },
     "impossible": {

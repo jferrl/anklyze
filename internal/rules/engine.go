@@ -71,7 +71,7 @@ func (e *Engine) classifyPosteriorOnly(input domain.FractureInput) *domain.Class
 			aoCode = domain.AOOTA43B2
 		}
 		return &domain.ClassificationResult{
-			FractureType: "distal_tibia",
+			FractureType: "posterior_distal_tibia",
 			AOOTA: &domain.AOOTAClassification{
 				Code: aoCode,
 			},

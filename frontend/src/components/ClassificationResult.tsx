@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { XCircle } from 'lucide-react';
+import { XCircle, AlertTriangle, Info } from 'lucide-react';
 import type { ClassificationResult as Result } from '@/types';
 import {
   Card,
@@ -18,6 +18,8 @@ import {
   getAOOTASubtypeLabel,
   getDanisWeberDisplayName,
   getBartonicekDisplayName,
+  getBartonicekReason,
+  getBartonicekState,
 } from '@/utils/classificationTranslations';
 
 interface ClassificationResultProps {
@@ -49,6 +51,18 @@ const classificationStyles = {
     title: 'text-amber-600 dark:text-amber-400',
     hover: 'hover:text-amber-500',
     glow: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+  },
+  bartonicekNoPosterior: {
+    border: 'border-l-gray-300 dark:border-l-gray-600',
+    title: 'text-gray-400 dark:text-gray-500',
+    hover: '',
+    glow: 'bg-gray-500/5',
+  },
+  bartonicekNoCt: {
+    border: 'border-l-orange-500 dark:border-l-orange-400',
+    title: 'text-orange-600 dark:text-orange-400',
+    hover: '',
+    glow: 'bg-orange-500/10 group-hover:bg-orange-500/20',
   },
 };
 
@@ -182,29 +196,62 @@ export function ClassificationResult({ result }: ClassificationResultProps) {
       )}
 
       {/* Bartonicek */}
-      {result.bartonicek && (
-        <Card
-          className={cn(
-            "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter w-full max-w-full",
-            classificationStyles.bartonicek.border
-          )}
-          style={{ animationDelay: '0.4s' }}
-        >
-          <div className={cn(
-            "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
-            classificationStyles.bartonicek.glow
-          )} />
-          <CardHeader className="relative">
-            <CardTitle className={classificationStyles.bartonicek.title}>{t('results.bartonicek.title')}</CardTitle>
-            <CardDescription>{t('results.bartonicek.description')}</CardDescription>
-          </CardHeader>
-          <CardContent className="relative">
-            <p className="text-3xl font-bold mb-2">
-              {getBartonicekDisplayName(t, result.bartonicek.type)}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {result.bartonicek && (() => {
+        const bartState = getBartonicekState(result.bartonicek.type, result.fracture_type);
+        const styles = bartState === 'no_posterior'
+          ? classificationStyles.bartonicekNoPosterior
+          : bartState === 'no_ct'
+            ? classificationStyles.bartonicekNoCt
+            : classificationStyles.bartonicek;
+
+        return (
+          <Card
+            className={cn(
+              "group relative overflow-hidden border-l-4 glass-card card-hover question-card-enter w-full max-w-full",
+              styles.border,
+              bartState === 'no_posterior' && "opacity-60"
+            )}
+            style={{ animationDelay: '0.4s' }}
+          >
+            <div className={cn(
+              "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-colors duration-500",
+              styles.glow
+            )} />
+            <CardHeader className="relative">
+              <CardTitle className={styles.title}>
+                {t('results.bartonicek.title')}
+              </CardTitle>
+              <CardDescription>{t('results.bartonicek.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="relative">
+              <p className="text-3xl font-bold mb-2">
+                {getBartonicekDisplayName(t, result.bartonicek.type, result.fracture_type)}
+              </p>
+              {getBartonicekReason(t, result.bartonicek.type, result.fracture_type) && (
+                bartState === 'no_ct' ? (
+                  <div className="flex items-start gap-2 rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-2.5 mt-1">
+                    <AlertTriangle className="h-4 w-4 text-orange-500 dark:text-orange-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-orange-700 dark:text-orange-300">
+                      {getBartonicekReason(t, result.bartonicek.type, result.fracture_type)}
+                    </p>
+                  </div>
+                ) : bartState === 'no_posterior' ? (
+                  <div className="flex items-start gap-2 rounded-md bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 p-2.5 mt-1">
+                    <Info className="h-4 w-4 text-gray-500 dark:text-gray-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {getBartonicekReason(t, result.bartonicek.type, result.fracture_type)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    {getBartonicekReason(t, result.bartonicek.type, result.fracture_type)}
+                  </p>
+                )
+              )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Clinical Notes */}
       {result.notes && result.notes.length > 0 && (
