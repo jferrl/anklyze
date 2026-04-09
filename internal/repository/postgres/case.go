@@ -287,8 +287,8 @@ func (r *CaseRepository) GetDashboardStats(ctx context.Context) (*domain.Dashboa
 		"COUNT(CASE WHEN status = 'published' THEN 1 END) as published_cases",
 		"COUNT(CASE WHEN status = 'closed' THEN 1 END) as closed_cases",
 		"COALESCE(SUM(response_count), 0) as total_responses",
-		"COALESCE(SUM(unique_users), 0) as total_unique_users",
-		"CASE WHEN COUNT(*) > 0 THEN ROUND(COALESCE(SUM(response_count), 0)::numeric / COUNT(*)) ELSE 0 END as avg_responses_per_case",
+		"(SELECT COUNT(DISTINCT user_id) FROM case_responses) as total_unique_users",
+		"CASE WHEN COUNT(*) > 0 THEN ROUND(CAST(COALESCE(SUM(response_count), 0) AS REAL) / COUNT(*)) ELSE 0 END as avg_responses_per_case",
 	).Scan(&stats).Error
 
 	if err != nil {
