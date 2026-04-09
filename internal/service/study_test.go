@@ -48,7 +48,6 @@ func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Con
 func (m *mockCaseResponseRepository) CountRespondedPublishedCases(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
 }
-func (m *mockCaseResponseRepository) Close() error { return nil }
 
 // mockStudyRepository is a minimal mock for StudyRepository.
 type mockStudyRepository struct {

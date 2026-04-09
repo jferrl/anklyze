@@ -94,7 +94,7 @@ func main() {
 			analyticsRepo = postgres.NewAnalyticsRepository(db)
 			userRepo = postgres.NewUserRepository(db)
 			caseRepo = postgres.NewCaseRepository(db)
-			caseResponseRepo = postgres.NewCaseResponseRepository(db, cfg.AuditBufferSize)
+			caseResponseRepo = postgres.NewCaseResponseRepository(db)
 			caseAnalyticsRepo = postgres.NewCaseAnalyticsRepository(db)
 			studyRepo = postgres.NewStudyRepository(db)
 			studyResponseRepo = postgres.NewStudyResponseRepository(db)
@@ -185,7 +185,7 @@ func main() {
 
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, dbHealthy, jwksReady)
-	responseHandler := api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
+	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, studyService)
 
 	srv := &http.Server{
@@ -233,17 +233,10 @@ func main() {
 		slog.Error("server forced to shutdown", "error", err)
 	}
 
-	// Wait for background goroutines in response handler to finish
-	responseHandler.Close()
-
 	// Close audit repositories to flush pending writes
 	if err := auditRepo.Close(); err != nil {
 		slog.Error("failed to close audit repository", "error", err)
 	}
-	if err := caseResponseRepo.Close(); err != nil {
-		slog.Error("failed to close case response repository", "error", err)
-	}
-
 	// Stop JWKS retry probe goroutine if running
 	if probeCancel != nil {
 		probeCancel()

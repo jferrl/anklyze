@@ -61,7 +61,7 @@ type CaseRepository interface {
 
 // CaseResponseRepository defines the interface for case response persistence.
 type CaseResponseRepository interface {
-	// Save saves a case response asynchronously.
+	// Save persists a case response and updates case counters.
 	Save(ctx context.Context, response *domain.CaseResponse) error
 	// GetByCase retrieves all responses for a case with pagination.
 	GetByCase(ctx context.Context, caseID uuid.UUID, limit, offset int) ([]domain.CaseResponse, int64, error)
@@ -74,8 +74,6 @@ type CaseResponseRepository interface {
 	CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error)
 	// CountUniqueUsersByCase counts unique users who responded to a case.
 	CountUniqueUsersByCase(ctx context.Context, caseID uuid.UUID) (int64, error)
-	// Close gracefully shuts down the repository.
-	Close() error
 
 	// HasUserResponded checks if a user has already submitted a response to a case.
 	HasUserResponded(ctx context.Context, userID, caseID uuid.UUID) (bool, error)
@@ -251,11 +249,6 @@ func (r *NoOpCaseResponseRepository) CountByCase(_ context.Context, _ uuid.UUID)
 // CountUniqueUsersByCase implements CaseResponseRepository.
 func (r *NoOpCaseResponseRepository) CountUniqueUsersByCase(_ context.Context, _ uuid.UUID) (int64, error) {
 	return 0, nil
-}
-
-// Close implements CaseResponseRepository.
-func (r *NoOpCaseResponseRepository) Close() error {
-	return nil
 }
 
 // HasUserResponded implements CaseResponseRepository.

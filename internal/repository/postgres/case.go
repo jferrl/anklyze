@@ -5,12 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
-	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
 
@@ -335,48 +333,24 @@ func (r *CaseRepository) GetCasesNeedingAttention(ctx context.Context, limit int
 	return cases, nil
 }
 
-// CaseResponseRepository implements case response persistence with async writes.
+// CaseResponseRepository implements case response persistence with synchronous writes.
 type CaseResponseRepository struct {
-	db      *gorm.DB
-	writeCh chan *domain.CaseResponse
-	done    chan struct{}
-	wg      sync.WaitGroup
-	closed  bool
-	mu      sync.RWMutex
+	db *gorm.DB
 }
 
-// NewCaseResponseRepository creates a new case response repository with async writes.
-func NewCaseResponseRepository(db *gorm.DB, bufferSize int) *CaseResponseRepository {
-	r := &CaseResponseRepository{
-		db:      db,
-		writeCh: make(chan *domain.CaseResponse, bufferSize),
-		done:    make(chan struct{}),
-	}
-
-	r.wg.Add(1)
-	go r.backgroundWriter()
-
-	return r
+// NewCaseResponseRepository creates a new case response repository.
+func NewCaseResponseRepository(db *gorm.DB) *CaseResponseRepository {
+	return &CaseResponseRepository{db: db}
 }
 
-// Save queues a case response for async persistence.
+// Save persists a case response and updates case counters.
 func (r *CaseResponseRepository) Save(ctx context.Context, response *domain.CaseResponse) error {
-	r.mu.RLock()
-	if r.closed {
-		r.mu.RUnlock()
-		return repository.ErrRepositoryClosed
+	if err := r.db.WithContext(ctx).Create(response).Error; err != nil {
+		return fmt.Errorf("save case response: %w", err)
 	}
-	r.mu.RUnlock()
 
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	case r.writeCh <- response:
-		return nil
-	default:
-		slog.Warn("case response buffer full, dropping entry", "response_id", response.ID)
-		return repository.ErrBufferFull
-	}
+	r.updateCaseCounters(ctx, response.CaseID)
+	return nil
 }
 
 // GetByCase retrieves all responses for a case with pagination.
@@ -460,39 +434,10 @@ func (r *CaseResponseRepository) CountUniqueUsersByCase(ctx context.Context, cas
 	return count, nil
 }
 
-// Close gracefully shuts down the background writer.
-func (r *CaseResponseRepository) Close() error {
-	r.mu.Lock()
-	if r.closed {
-		r.mu.Unlock()
-		return nil
-	}
-	r.closed = true
-	r.mu.Unlock()
-
-	close(r.writeCh)
-	r.wg.Wait()
-	return nil
-}
-
-// backgroundWriter processes the write queue.
-func (r *CaseResponseRepository) backgroundWriter() {
-	defer r.wg.Done()
-	for response := range r.writeCh {
-		if err := r.db.Create(response).Error; err != nil {
-			slog.Error("failed to save case response", "response_id", response.ID, "error", err)
-			continue
-		}
-
-		// Update case counters after successful save
-		r.updateCaseCounters(response.CaseID)
-	}
-}
-
 // updateCaseCounters updates the response_count and unique_users for a case.
-func (r *CaseResponseRepository) updateCaseCounters(caseID uuid.UUID) {
+func (r *CaseResponseRepository) updateCaseCounters(ctx context.Context, caseID uuid.UUID) {
 	// Increment response count
-	if err := r.db.Model(&domain.Case{}).
+	if err := r.db.WithContext(ctx).Model(&domain.Case{}).
 		Where("id = ?", caseID).
 		UpdateColumn("response_count", gorm.Expr("response_count + 1")).Error; err != nil {
 		slog.Error("failed to increment response count", "case_id", caseID, "error", err)
@@ -500,7 +445,7 @@ func (r *CaseResponseRepository) updateCaseCounters(caseID uuid.UUID) {
 
 	// Count and update unique users
 	var uniqueCount int64
-	if err := r.db.Model(&domain.CaseResponse{}).
+	if err := r.db.WithContext(ctx).Model(&domain.CaseResponse{}).
 		Where("case_id = ?", caseID).
 		Distinct("user_id").
 		Count(&uniqueCount).Error; err != nil {
@@ -508,7 +453,7 @@ func (r *CaseResponseRepository) updateCaseCounters(caseID uuid.UUID) {
 		return
 	}
 
-	if err := r.db.Model(&domain.Case{}).
+	if err := r.db.WithContext(ctx).Model(&domain.Case{}).
 		Where("id = ?", caseID).
 		Update("unique_users", uniqueCount).Error; err != nil {
 		slog.Error("failed to update unique users", "case_id", caseID, "error", err)

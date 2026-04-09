@@ -1,10 +1,8 @@
 package api
 
 import (
-	"context"
 	"log/slog"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +20,6 @@ type CaseResponseHandler struct {
 	studyService      StudyService
 	storage           storage.Storage
 	signedURLDuration time.Duration
-	wg                sync.WaitGroup
 }
 
 // NewCaseResponseHandler creates a new case response handler.
@@ -40,12 +37,6 @@ func NewCaseResponseHandler(
 		storage:           storage,
 		signedURLDuration: signedURLDuration,
 	}
-}
-
-// Close waits for all background goroutines to finish.
-// Should be called during shutdown before closing the database.
-func (h *CaseResponseHandler) Close() {
-	h.wg.Wait()
 }
 
 // SubmitResponse handles POST /api/cases/:id/responses
@@ -123,23 +114,15 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// Save response (async)
 	if err := h.responseRepo.Save(c.Request.Context(), response); err != nil {
 		slog.Error("failed to save response", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save response"})
 		return
 	}
 
-	// Update study user progress in background if case belongs to a study.
-	// Note: response_count and unique_users are already updated by the
-	// CaseResponseRepository's backgroundWriter after saving the response.
+	// Update study user progress if case belongs to a study
 	if cs.StudyID != nil && h.studyService != nil {
-		h.wg.Go(func() {
-			bgCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-
-			h.studyService.UpdateAfterResponse(bgCtx, *cs.StudyID)
-		})
+		h.studyService.UpdateAfterResponse(c.Request.Context(), *cs.StudyID)
 	}
 
 	c.JSON(http.StatusCreated, SubmitResponseResult{Response: response})

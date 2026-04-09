@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
@@ -39,10 +38,6 @@ type ClassificationService interface {
 	// Classify classifies a fracture input and returns the classification result.
 	// Results may be served from cache. HTTP-level audit logging stays in the handler.
 	Classify(ctx context.Context, input domain.FractureInput) (*domain.ClassificationResult, error)
-
-	// ClassifyAndSave classifies a fracture input and persists the response to the repository.
-	// Used by the response submission path where persistence is required.
-	ClassifyAndSave(ctx context.Context, input domain.FractureInput, caseID, userID uuid.UUID, timeTakenMS int64, tracking *domain.AnswerTracking) (*domain.CaseResponse, error)
 }
 
 // classificationService implements ClassificationService.
@@ -83,36 +78,4 @@ func (s *classificationService) Classify(ctx context.Context, input domain.Fract
 	)
 
 	return result, nil
-}
-
-// ClassifyAndSave classifies the input and persists the response.
-// It always calls the engine directly (skips cache) to ensure fresh results are saved.
-func (s *classificationService) ClassifyAndSave(
-	ctx context.Context,
-	input domain.FractureInput,
-	caseID, userID uuid.UUID,
-	timeTakenMS int64,
-	tracking *domain.AnswerTracking,
-) (*domain.CaseResponse, error) {
-	result, err := s.engine.Classify(input)
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := domain.NewCaseResponseWithTracking(caseID, userID, *result, timeTakenMS, tracking)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.responseRepo.Save(ctx, response); err != nil {
-		return nil, err
-	}
-
-	slog.Info("classification saved",
-		"case_id", caseID,
-		"user_id", userID,
-		"fracture_type", result.FractureType,
-	)
-
-	return response, nil
 }

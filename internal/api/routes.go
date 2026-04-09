@@ -110,7 +110,7 @@ func SetupCaseRoutes(
 	studyService service.StudyService,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
-) *CaseResponseHandler {
+) {
 	// Create specialized handlers for different concerns
 	adminHandler := NewCaseAdminHandler(caseRepo, storage)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
@@ -131,7 +131,6 @@ func SetupCaseRoutes(
 		setupPublicCaseRoutes(api, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	}
 
-	return responseHandler
 }
 
 // setupProtectedCaseRoutes configures case routes with authentication.
