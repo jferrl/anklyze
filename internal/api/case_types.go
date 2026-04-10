@@ -24,6 +24,7 @@ type StudyService interface {
 // StatisticsService calculates reliability metrics.
 type StatisticsService interface {
 	CalculateReliabilityMetrics(caseID uuid.UUID, responses []domain.CaseResponse) (*domain.ReliabilityMetrics, error)
+	CalculateGoldStandardAccuracy(cs *domain.Case, responses []domain.CaseResponse) (*domain.GoldStandardAccuracy, error)
 }
 
 // --- Request Types ---
@@ -52,6 +53,17 @@ type SubmitResponseRequest struct {
 	DecisionPath    string                  `json:"decision_path,omitempty"`
 	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty"`
 	BackClicks      int                     `json:"back_clicks,omitempty"`
+}
+
+// SetGoldStandardRequest is the request body for setting the gold standard classification.
+// All fields are optional — only the systems provided will be set.
+// Send an empty body or null to clear the gold standard.
+type SetGoldStandardRequest struct {
+	DanisWeber  *string `json:"danis_weber,omitempty"`
+	LaugeHansen *string `json:"lauge_hansen,omitempty"`
+	AOOTA       *string `json:"ao_ota,omitempty"`
+	Bartonicek  *string `json:"bartonicek,omitempty"`
+	Impossible  bool    `json:"impossible,omitempty"`
 }
 
 // UpdateImageRequest is the request body for updating an image.

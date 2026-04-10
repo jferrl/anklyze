@@ -100,6 +100,10 @@ export const caseApi = {
   exportDetailedResponses: caseService.exportDetailedResponses,
   downloadDetailedResponsesCSV: caseService.downloadDetailedResponsesCSV,
   getAdminImageSignedURL: caseService.getAdminImageSignedURL,
+  // Gold standard
+  setGoldStandard: caseService.setGoldStandard,
+  deleteGoldStandard: caseService.deleteGoldStandard,
+  getGoldStandardAccuracy: caseService.getGoldStandardAccuracy,
   // Helpers
   getImageUrl: caseService.getImageUrl,
   getAdminImageUrl: caseService.getAdminImageUrl,

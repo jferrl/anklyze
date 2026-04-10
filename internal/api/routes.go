@@ -112,7 +112,7 @@ func SetupCaseRoutes(
 	statsService *service.StatisticsService,
 ) {
 	// Create specialized handlers for different concerns
-	adminHandler := NewCaseAdminHandler(caseRepo, storage)
+	adminHandler := NewCaseAdminHandler(caseRepo, storage, statsService)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
 	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo)
 	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)
@@ -281,9 +281,14 @@ func registerAdminCaseRoutes(
 	adminCases.DELETE("/:id/images/:imageId", imageHandler.DeleteImage)
 	adminCases.PUT("/:id/images/reorder", imageHandler.ReorderImages)
 
+	// Gold standard management (CaseAdminHandler)
+	adminCases.PUT("/:id/gold-standard", adminHandler.SetGoldStandard)
+	adminCases.DELETE("/:id/gold-standard", adminHandler.DeleteGoldStandard)
+
 	// Analytics and export (CaseAnalyticsHandler)
 	adminCases.GET("/:id/analytics", analyticsHandler.GetCaseAnalytics)
 	adminCases.GET("/:id/reliability", analyticsHandler.GetReliabilityMetrics)
+	adminCases.GET("/:id/accuracy", analyticsHandler.GetGoldStandardAccuracy)
 	adminCases.GET("/:id/responses", responseHandler.ListCaseResponses)
 	adminCases.GET("/:id/export", analyticsHandler.ExportResponses)
 	adminCases.GET("/:id/export/detailed", analyticsHandler.ExportDetailedResponses)

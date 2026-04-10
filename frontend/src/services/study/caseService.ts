@@ -22,6 +22,8 @@ import type {
   UserProfile,
   UpdateUserProfileRequest,
   DashboardResponse,
+  SetGoldStandardRequest,
+  GoldStandardAccuracy,
 } from '@/types';
 import { apiRequest, getAuthHeaders, API_BASE_URL } from '../core/apiClient';
 import i18n from '../../i18n/config';
@@ -382,6 +384,42 @@ export async function getReliabilityMetrics(caseId: string): Promise<Reliability
   return apiRequest<ReliabilityMetricsResponse>(`/api/admin/cases/${caseId}/reliability`, {
     method: 'GET',
   });
+}
+
+/**
+ * Set or update gold standard classification for a case (admin only)
+ * Can be called at any case status (draft, published, closed)
+ */
+export async function setGoldStandard(
+  caseId: string,
+  data: SetGoldStandardRequest
+): Promise<Case> {
+  return apiRequest<Case>(`/api/admin/cases/${caseId}/gold-standard`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Clear gold standard classification for a case (admin only)
+ */
+export async function deleteGoldStandard(caseId: string): Promise<void> {
+  await apiRequest<void>(`/api/admin/cases/${caseId}/gold-standard`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Get gold standard accuracy metrics for a case (admin only)
+ * Compares rater responses against the gold standard classification
+ */
+export async function getGoldStandardAccuracy(
+  caseId: string
+): Promise<GoldStandardAccuracy> {
+  return apiRequest<GoldStandardAccuracy>(
+    `/api/admin/cases/${caseId}/accuracy`,
+    { method: 'GET' }
+  );
 }
 
 /**

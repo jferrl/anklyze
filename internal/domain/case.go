@@ -57,6 +57,10 @@ type Case struct {
 	ResponseCount int `gorm:"default:0" json:"response_count"`
 	UniqueUsers   int `gorm:"default:0" json:"unique_users"`
 
+	// Gold standard: the reference classification set by the admin.
+	// Used to calculate accuracy metrics (rater responses vs. ground truth).
+	GoldStandard datatypes.JSON `gorm:"type:jsonb;column:gold_standard" json:"gold_standard,omitempty"`
+
 	// Study membership - if set, this case is part of a study for multi-case reliability analysis
 	StudyID   *uuid.UUID `gorm:"type:uuid;index" json:"study_id,omitempty"`
 	CaseOrder int        `gorm:"default:0" json:"case_order"`
@@ -153,6 +157,39 @@ func (c *Case) ValidateResponseSubmission(hasResponded bool) error {
 		}
 		return ErrCaseNotAcceptingResponses
 	}
+	return nil
+}
+
+// HasGoldStandard returns true if a gold standard classification has been set.
+func (c *Case) HasGoldStandard() bool {
+	return len(c.GoldStandard) > 0 && string(c.GoldStandard) != "null"
+}
+
+// GetGoldStandard parses and returns the gold standard classification.
+func (c *Case) GetGoldStandard() (*ClassificationResult, error) {
+	if !c.HasGoldStandard() {
+		return nil, nil
+	}
+
+	var result ClassificationResult
+	if err := json.Unmarshal(c.GoldStandard, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// SetGoldStandard sets the gold standard classification for this case.
+func (c *Case) SetGoldStandard(result *ClassificationResult) error {
+	if result == nil {
+		c.GoldStandard = nil
+		return nil
+	}
+
+	data, err := json.Marshal(result)
+	if err != nil {
+		return err
+	}
+	c.GoldStandard = datatypes.JSON(data)
 	return nil
 }
 

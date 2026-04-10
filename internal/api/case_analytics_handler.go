@@ -97,6 +97,47 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 	})
 }
 
+// GetGoldStandardAccuracy handles GET /api/admin/cases/:id/accuracy
+func (h *CaseAnalyticsHandler) GetGoldStandardAccuracy(c *gin.Context) {
+	caseID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+		return
+	}
+
+	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
+	if err != nil {
+		slog.Error("failed to get case", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
+		return
+	}
+	if cs == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+		return
+	}
+
+	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
+	if err != nil {
+		slog.Error("failed to get responses", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get responses"})
+		return
+	}
+
+	if h.statsService == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "statistics service not available"})
+		return
+	}
+
+	accuracy, err := h.statsService.CalculateGoldStandardAccuracy(cs, responses)
+	if err != nil {
+		slog.Error("failed to calculate gold standard accuracy", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate accuracy"})
+		return
+	}
+
+	c.JSON(http.StatusOK, accuracy)
+}
+
 // ExportResponses handles GET /api/admin/cases/:id/export
 func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 	caseID, err := uuid.Parse(c.Param("id"))

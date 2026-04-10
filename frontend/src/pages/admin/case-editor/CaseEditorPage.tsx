@@ -20,6 +20,7 @@ import { useCaseEditorForm } from './useCaseEditorForm';
 import { useCaseEditorMutations } from './useCaseEditorMutations';
 import { CaseImagesStep } from './CaseImagesStep';
 import { CaseEditorStepper } from './CaseEditorStepper';
+import { CaseGoldStandardCard } from './CaseGoldStandardCard';
 
 interface PendingUpload {
   id: string;
@@ -208,6 +209,9 @@ export function CaseEditorPage() {
               onDrop={createOnDrop} onPrev={goToPrevStep} />
           )}
 
+          {isEditing && existingCase && existingCase.status !== 'closed' && (
+            <CaseGoldStandardCard caseData={existingCase} />
+          )}
         </div>
       </div>
 

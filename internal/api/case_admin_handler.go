@@ -14,18 +14,21 @@ import (
 
 // CaseAdminHandler handles admin CRUD operations for cases.
 type CaseAdminHandler struct {
-	caseRepo repository.CaseRepository
-	storage  storage.Storage
+	caseRepo     repository.CaseRepository
+	storage      storage.Storage
+	statsService StatisticsService
 }
 
 // NewCaseAdminHandler creates a new case admin handler.
 func NewCaseAdminHandler(
 	caseRepo repository.CaseRepository,
 	storage storage.Storage,
+	statsService StatisticsService,
 ) *CaseAdminHandler {
 	return &CaseAdminHandler{
-		caseRepo: caseRepo,
-		storage:  storage,
+		caseRepo:     caseRepo,
+		storage:      storage,
+		statsService: statsService,
 	}
 }
 
@@ -310,4 +313,130 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, cs)
+}
+
+// SetGoldStandard handles PUT /api/admin/cases/:id/gold-standard
+// Sets or clears the gold standard classification for a case.
+// Only allowed on draft or published cases.
+func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+		return
+	}
+
+	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to get case", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
+		return
+	}
+	if cs == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+		return
+	}
+
+	if cs.Status == domain.CaseStatusClosed {
+		c.JSON(http.StatusConflict, gin.H{"error": "cannot set gold standard on a closed case"})
+		return
+	}
+
+	var req SetGoldStandardRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		return
+	}
+
+	// Build ClassificationResult from request
+	result := buildGoldStandardResult(req)
+
+	if err := cs.SetGoldStandard(result); err != nil {
+		slog.Error("failed to set gold standard", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to set gold standard"})
+		return
+	}
+
+	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
+		slog.Error("failed to update case", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update case"})
+		return
+	}
+
+	c.JSON(http.StatusOK, cs)
+}
+
+// DeleteGoldStandard handles DELETE /api/admin/cases/:id/gold-standard
+// Clears the gold standard classification for a case.
+// Only allowed on draft or published cases.
+func (h *CaseAdminHandler) DeleteGoldStandard(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+		return
+	}
+
+	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to get case", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
+		return
+	}
+	if cs == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+		return
+	}
+
+	if cs.Status == domain.CaseStatusClosed {
+		c.JSON(http.StatusConflict, gin.H{"error": "cannot modify gold standard on a closed case"})
+		return
+	}
+
+	if err := cs.SetGoldStandard(nil); err != nil {
+		slog.Error("failed to clear gold standard", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to clear gold standard"})
+		return
+	}
+
+	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
+		slog.Error("failed to update case", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update case"})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// buildGoldStandardResult converts a SetGoldStandardRequest to a ClassificationResult.
+// Returns nil if all fields are empty (clears gold standard).
+func buildGoldStandardResult(req SetGoldStandardRequest) *domain.ClassificationResult {
+	if req.DanisWeber == nil && req.LaugeHansen == nil && req.AOOTA == nil && req.Bartonicek == nil && !req.Impossible {
+		return nil
+	}
+
+	result := &domain.ClassificationResult{
+		Impossible: req.Impossible,
+	}
+
+	if req.DanisWeber != nil {
+		result.DanisWeber = &domain.DanisWeberClassification{
+			Type: domain.DanisWeberType(*req.DanisWeber),
+		}
+	}
+	if req.LaugeHansen != nil {
+		result.LaugeHansen = &domain.LaugeHansenClassification{
+			Type: domain.LaugeHansenType(*req.LaugeHansen),
+		}
+	}
+	if req.AOOTA != nil {
+		result.AOOTA = &domain.AOOTAClassification{
+			Code: domain.AOOTACode(*req.AOOTA),
+		}
+	}
+	if req.Bartonicek != nil {
+		result.Bartonicek = &domain.BartonicekClassification{
+			Type: domain.BartonicekType(*req.Bartonicek),
+		}
+	}
+
+	return result
 }

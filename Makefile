@@ -1,6 +1,6 @@
 .PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
-	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit lint-go \
+	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit db-gold-standard db-gold-standard-cleanup lint-go \
 	export-diagram classify-validate classify-tree classify-test
 
 LOCAL_DATABASE_URL := postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
@@ -165,6 +165,14 @@ endif
 # Connect to local database
 db-shell:
 	@docker compose exec postgres psql -U postgres -d anklyze
+
+# Load gold standard test fixtures (run after db-start + app startup)
+db-gold-standard:
+	@docker compose exec postgres psql -U postgres -d anklyze -f /fixtures/gold_standard_test_data.sql
+
+# Remove gold standard test fixtures
+db-gold-standard-cleanup:
+	@docker compose exec postgres psql -U postgres -d anklyze -f /fixtures/cleanup_gold_standard_test_data.sql
 
 # Show audit entries
 db-audit:

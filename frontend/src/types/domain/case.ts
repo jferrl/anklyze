@@ -28,6 +28,8 @@ export interface Case {
   has_tac_images: boolean;
   response_count: number;
   unique_users: number;
+  // Gold standard classification (admin-only, optional)
+  gold_standard?: ClassificationResult;
   // Study membership (optional)
   study_id?: string;
   case_order: number;
@@ -216,6 +218,101 @@ export interface UserProfile {
   specialty?: Specialty;
   training_level?: TrainingLevel;
   institution?: string;
+}
+
+/**
+ * Request to set gold standard classification on a case
+ */
+export interface SetGoldStandardRequest {
+  danis_weber?: string;
+  lauge_hansen?: string;
+  ao_ota?: string;
+  bartonicek?: string;
+  impossible?: boolean;
+}
+
+/**
+ * System accuracy against gold standard
+ */
+export interface SystemAccuracyResult {
+  system: string;
+  gold_value: string;
+  accuracy: number;
+  total_raters: number;
+  correct_raters: number;
+  majority_value: string;
+  majority_matches_gold: boolean;
+  majority_percentage: number;
+  response_distribution: Record<string, number>;
+}
+
+/**
+ * Gold standard accuracy for a single case
+ */
+export interface GoldStandardAccuracy {
+  case_id: string;
+  has_gold_standard: boolean;
+  total_raters: number;
+  gold_standard?: ClassificationResult;
+  danis_weber_accuracy?: SystemAccuracyResult;
+  lauge_hansen_accuracy?: SystemAccuracyResult;
+  ao_ota_accuracy?: SystemAccuracyResult;
+  bartonicek_accuracy?: SystemAccuracyResult;
+}
+
+/**
+ * Aggregate accuracy across study cases
+ */
+export interface AggregateAccuracy {
+  system: string;
+  mean_accuracy: number;
+  cases_evaluated: number;
+  consensus_correct: number;
+  consensus_total: number;
+  consensus_rate: number;
+}
+
+/**
+ * Per-case accuracy within a study
+ */
+export interface PerCaseAccuracy {
+  case_order: number;
+  case_id: string;
+  case_title: string;
+  has_gold_standard: boolean;
+  danis_weber_accuracy?: number;
+  lauge_hansen_accuracy?: number;
+  ao_ota_accuracy?: number;
+  bartonicek_accuracy?: number;
+  is_hard_case: boolean;
+}
+
+/**
+ * Per-rater accuracy within a study
+ */
+export interface PerRaterAccuracy {
+  user_id: string;
+  cases_completed: number;
+  danis_weber_accuracy?: number;
+  lauge_hansen_accuracy?: number;
+  ao_ota_accuracy?: number;
+  bartonicek_accuracy?: number;
+}
+
+/**
+ * Study-level gold standard metrics
+ */
+export interface StudyGoldStandardMetrics {
+  study_id: string;
+  study_title: string;
+  total_cases: number;
+  cases_with_gold: number;
+  danis_weber_accuracy?: AggregateAccuracy;
+  lauge_hansen_accuracy?: AggregateAccuracy;
+  ao_ota_accuracy?: AggregateAccuracy;
+  bartonicek_accuracy?: AggregateAccuracy;
+  per_case_accuracy: PerCaseAccuracy[];
+  per_rater_accuracy?: PerRaterAccuracy[];
 }
 
 /**
