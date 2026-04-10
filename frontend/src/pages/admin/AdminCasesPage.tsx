@@ -15,6 +15,7 @@ import {
   FileText,
   Loader2,
   Sparkles,
+  Award,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
@@ -155,7 +156,12 @@ export function AdminCasesPage() {
         const caseItem = row.original;
         return (
           <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+              {caseItem.gold_standard && (
+                <Award className="w-4 h-4 text-amber-500 flex-shrink-0" aria-label={t('admin.reliability.goldStandardSet')} />
+              )}
+            </div>
             {caseItem.description && (
               <span className="text-sm text-muted-foreground truncate">
                 {caseItem.description}
@@ -486,6 +492,9 @@ const CaseCard = memo(function CaseCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+            {caseItem.gold_standard && (
+              <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+            )}
             <Badge
               variant="outline"
               className={cn(
