@@ -261,7 +261,7 @@ type CaseResponse struct {
 	DanisWeberType  *string `gorm:"column:danis_weber_type;size:20;index" json:"-"`
 	LaugeHansenType *string `gorm:"column:lauge_hansen_type;size:20;index" json:"-"`
 	AOOTACode       *string `gorm:"column:ao_ota_code;size:20;index" json:"-"`
-	BartonicekType  *string `gorm:"column:bartonicek_type;size:20;index" json:"-"`
+	BartonicekType  *string `gorm:"column:bartonicek_type;size:30;index" json:"-"`
 
 	// Answer path tracking for divergence analysis
 	AnswerPath      datatypes.JSON `gorm:"type:jsonb" json:"answer_path,omitempty"`       // []QuestionAnswer
