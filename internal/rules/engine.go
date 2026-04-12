@@ -105,6 +105,9 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) *domain.Classifi
 		}
 		return &domain.ClassificationResult{
 			FractureType: "distal_tibia",
+			Bartonicek: &domain.BartonicekClassification{
+				Type: domain.BartonicekNoPosteriorFracture,
+			},
 			AOOTA: &domain.AOOTAClassification{
 				Code: aoCode,
 			},
@@ -115,6 +118,9 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) *domain.Classifi
 	// AO = no clasificable per drawio 2026-02-28
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_medial",
+		Bartonicek: &domain.BartonicekClassification{
+			Type: domain.BartonicekNoPosteriorFracture,
+		},
 		AOOTA: &domain.AOOTAClassification{
 			Code: domain.AOOTANotClassifiable,
 		},
@@ -138,6 +144,9 @@ func (e *Engine) classifyMedialOnly(input domain.FractureInput) *domain.Classifi
 func (e *Engine) classifyLateralOnly(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "unimaleolar_lateral",
+		Bartonicek: &domain.BartonicekClassification{
+			Type: domain.BartonicekNoPosteriorFracture,
+		},
 	}
 
 	switch input.FibularLevel {
@@ -163,9 +172,6 @@ func (e *Engine) classifyLateralOnly(input domain.FractureInput) *domain.Classif
 	case domain.FibularLevelTransindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
-		}
-		result.Bartonicek = &domain.BartonicekClassification{
-			Type: domain.BartonicekNotClassifiable,
 		}
 
 		if input.FibulaTraceCount == domain.FibulaTraceCountMultiple {
@@ -355,6 +361,9 @@ func (e *Engine) classifyLateralPosterior(input domain.FractureInput) *domain.Cl
 func (e *Engine) classifyLateralMedial(input domain.FractureInput) *domain.ClassificationResult {
 	result := &domain.ClassificationResult{
 		FractureType: "bimaleolar_lateral_medial",
+		Bartonicek: &domain.BartonicekClassification{
+			Type: domain.BartonicekNoPosteriorFracture,
+		},
 	}
 
 	// Path: Oblique medial + infrasindesmal transverse fibula
@@ -433,9 +442,6 @@ func (e *Engine) classifyLateralMedial(input domain.FractureInput) *domain.Class
 	case domain.FibularLevelTransindesmal:
 		result.DanisWeber = &domain.DanisWeberClassification{
 			Type: domain.DanisWeberB,
-		}
-		result.Bartonicek = &domain.BartonicekClassification{
-			Type: domain.BartonicekNotClassifiable,
 		}
 
 		// Lauge-Hansen: spiral → SER, everything else → PA

@@ -244,8 +244,8 @@ func TestEngine_Classify_MedialOnly(t *testing.T) {
 		if result.DanisWeber == nil || result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber.Type = %v, want %q", result.DanisWeber, domain.DanisWeberNotClassifiable)
 		}
-		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNotClassifiable)
+		if result.Bartonicek == nil || result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek.Type = %v, want %q", result.Bartonicek, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 

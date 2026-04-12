@@ -64,11 +64,14 @@ export type BartonicekState = 'classified' | 'no_posterior' | 'no_ct' | 'not_cla
 /**
  * Determine the Bartonicek card visual state:
  * - "classified": Bartonicek 1-4 (normal amber card)
- * - "no_posterior": no posterior fracture (muted/gray card)
+ * - "no_posterior": no posterior fracture (muted/gray card) — backend sends "no_posterior_fracture"
  * - "no_ct": posterior fracture present but no CT (warning/orange card)
  * - "not_classifiable": posterior fracture >1/3 pilon — Bartonicek doesn't apply (normal amber card, "No clasificable")
  */
 export function getBartonicekState(type: string, fractureType?: string): BartonicekState {
+  if (type === 'no_posterior_fracture') {
+    return 'no_posterior';
+  }
   if (type !== 'not_classifiable') {
     return 'classified';
   }
@@ -88,7 +91,7 @@ export function getBartonicekDisplayName(t: TFunction, type: string, fractureTyp
   const state = getBartonicekState(type, fractureType);
   switch (state) {
     case 'no_posterior':
-      return t('results.classifications.bartonicek.not_classifiable_name');
+      return t('results.classifications.bartonicek.not_applicable_name');
     case 'no_ct':
       return t('results.classifications.bartonicek.not_classifiable_name');
     case 'not_classifiable':

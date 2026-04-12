@@ -59,6 +59,7 @@ const BARTONICEK_OPTIONS = [
   { value: 'Bartonicek 3', label: 'Bartonicek 3 (Posteromedial two-part)' },
   { value: 'Bartonicek 4', label: 'Bartonicek 4 (Large triangular)' },
   { value: 'not_classifiable', label: 'Not classifiable' },
+  { value: 'no_posterior_fracture', label: 'No posterior malleolus fracture' },
 ];
 
 const NONE_VALUE = '__none__';

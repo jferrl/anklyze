@@ -53,11 +53,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -102,11 +102,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1_1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -151,11 +151,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1_2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -200,11 +200,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1_1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -249,11 +249,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1_2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -298,11 +298,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2_1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -347,11 +347,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2_2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -396,11 +396,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2_1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -445,11 +445,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2_2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -493,11 +493,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC3_1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -541,11 +541,11 @@ func TestDrawio_LateralMedial(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC3_2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -614,11 +614,11 @@ func TestDrawio_LateralOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC3)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -661,11 +661,11 @@ func TestDrawio_LateralOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -708,11 +708,11 @@ func TestDrawio_LateralOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -755,11 +755,11 @@ func TestDrawio_LateralOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -802,11 +802,11 @@ func TestDrawio_LateralOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAC2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -2330,7 +2330,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want not_classifiable")
+			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
@@ -2351,11 +2351,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -2376,14 +2376,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want not_classifiable")
+			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2397,11 +2397,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -2422,14 +2422,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want not_classifiable")
+			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2443,11 +2443,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTA43B2)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
@@ -2468,14 +2468,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want not_classifiable")
+			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2489,11 +2489,11 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTA43B1)
 		}
 		if result.Bartonicek == nil {
-			t.Fatal("Bartonicek is nil, want not_classifiable")
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
 			return
 		}
-		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
-			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
 		}
 	})
 
