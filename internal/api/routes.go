@@ -186,12 +186,13 @@ func SetupStudyRoutes(
 	router *gin.Engine,
 	authValidator *auth.Validator,
 	userRepo auth.UserService,
+	userRepoForLookup repository.UserRepository,
 	studyRepo repository.StudyRepository,
 	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
 	studyService service.StudyService,
 ) {
-	studyHandler := NewStudyHandler(studyRepo, studyResponseRepo, caseRepo, studyService)
+	studyHandler := NewStudyHandler(studyRepo, studyResponseRepo, caseRepo, userRepoForLookup, studyService)
 
 	api := router.Group("/api")
 

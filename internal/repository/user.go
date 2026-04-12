@@ -15,6 +15,8 @@ type UserRepository interface {
 	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
 	// GetByID retrieves a user by their ID.
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
+	// GetByIDs retrieves multiple users by their IDs.
+	GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.User, error)
 	// UpdateRole updates a user's role.
 	UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error
 	// GetByEmail retrieves a user by their email.
@@ -38,6 +40,11 @@ func (r *NoOpUserRepository) SyncOnLogin(_ context.Context, userID uuid.UUID, em
 
 // GetByID returns nil (not found).
 func (r *NoOpUserRepository) GetByID(_ context.Context, _ uuid.UUID) (*domain.User, error) {
+	return nil, nil
+}
+
+// GetByIDs returns empty slice.
+func (r *NoOpUserRepository) GetByIDs(_ context.Context, _ []uuid.UUID) ([]domain.User, error) {
 	return nil, nil
 }
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -19,6 +20,7 @@ type StudyHandler struct {
 	studyRepo         repository.StudyRepository
 	studyResponseRepo repository.StudyResponseRepository
 	caseRepo          repository.CaseRepository
+	userRepo          repository.UserRepository
 	studyService      StudyService
 }
 
@@ -27,12 +29,14 @@ func NewStudyHandler(
 	studyRepo repository.StudyRepository,
 	studyResponseRepo repository.StudyResponseRepository,
 	caseRepo repository.CaseRepository,
+	userRepo repository.UserRepository,
 	studyService StudyService,
 ) *StudyHandler {
 	return &StudyHandler{
 		studyRepo:         studyRepo,
 		studyResponseRepo: studyResponseRepo,
 		caseRepo:          caseRepo,
+		userRepo:          userRepo,
 		studyService:      studyService,
 	}
 }
@@ -604,10 +608,41 @@ func (h *StudyHandler) GetStudyGoldStandardAccuracy(c *gin.Context) {
 		return
 	}
 
+	// Enrich per-rater accuracy with user display names
+	if metrics != nil && len(metrics.PerRaterAccuracy) > 0 {
+		h.enrichRaterNames(c.Request.Context(), metrics)
+	}
+
 	c.JSON(http.StatusOK, StudyGoldStandardResponse{
 		StudyGoldStandardMetrics: metrics,
 		CalculatedAt:             time.Now(),
 	})
+}
+
+// enrichRaterNames populates user email and display name on per-rater accuracy entries.
+func (h *StudyHandler) enrichRaterNames(ctx context.Context, metrics *domain.StudyGoldStandardMetrics) {
+	userIDs := make([]uuid.UUID, len(metrics.PerRaterAccuracy))
+	for i, pra := range metrics.PerRaterAccuracy {
+		userIDs[i] = pra.UserID
+	}
+
+	users, err := h.userRepo.GetByIDs(ctx, userIDs)
+	if err != nil {
+		slog.Warn("failed to load user names for gold standard raters", "error", err)
+		return
+	}
+
+	userMap := make(map[uuid.UUID]domain.User, len(users))
+	for _, u := range users {
+		userMap[u.ID] = u
+	}
+
+	for i := range metrics.PerRaterAccuracy {
+		if u, ok := userMap[metrics.PerRaterAccuracy[i].UserID]; ok {
+			metrics.PerRaterAccuracy[i].UserEmail = u.Email
+			metrics.PerRaterAccuracy[i].UserDisplayName = u.DisplayName
+		}
+	}
 }
 
 // ExportStudyResponses exports all responses for a study as CSV.

@@ -186,7 +186,7 @@ func main() {
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, dbHealthy, jwksReady)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
-	api.SetupStudyRoutes(router, authValidator, userService, studyRepo, studyResponseRepo, caseRepo, studyService)
+	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, caseRepo, studyService)
 
 	srv := &http.Server{
 		Addr:              ":" + cfg.Port,

@@ -99,7 +99,9 @@ type PerCaseAccuracy struct {
 
 // PerRaterAccuracy contains a single rater's accuracy across all cases in a study.
 type PerRaterAccuracy struct {
-	UserID uuid.UUID `json:"user_id"`
+	UserID          uuid.UUID `json:"user_id"`
+	UserEmail       string    `json:"user_email,omitempty"`
+	UserDisplayName string    `json:"user_display_name,omitempty"`
 
 	// Number of cases this rater completed (that have gold standard)
 	CasesCompleted int `json:"cases_completed"`

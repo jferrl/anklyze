@@ -62,6 +62,18 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 	return &user, nil
 }
 
+// GetByIDs retrieves multiple users by their IDs.
+func (r *UserRepository) GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.User, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	var users []domain.User
+	if err := r.db.WithContext(ctx).Where("id IN ?", ids).Find(&users).Error; err != nil {
+		return nil, fmt.Errorf("get by ids: %w", err)
+	}
+	return users, nil
+}
+
 // UpdateRole updates a user's role.
 func (r *UserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error {
 	if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", id).Update("role", role).Error; err != nil {

@@ -292,6 +292,8 @@ export interface PerCaseAccuracy {
  */
 export interface PerRaterAccuracy {
   user_id: string;
+  user_email?: string;
+  user_display_name?: string;
   cases_completed: number;
   danis_weber_accuracy?: number;
   lauge_hansen_accuracy?: number;

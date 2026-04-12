@@ -327,8 +327,15 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
               <tbody>
                 {metrics.per_rater_accuracy.map((rater) => (
                   <tr key={rater.user_id} className="border-b border-border/30 hover:bg-muted/20">
-                    <td className="py-3 px-4 font-mono text-xs text-muted-foreground">
-                      {rater.user_id.slice(0, 8)}...
+                    <td className="py-3 px-4">
+                      <div className="truncate max-w-[200px]">
+                        <span className="font-medium text-foreground">
+                          {rater.user_display_name || rater.user_email || rater.user_id.slice(0, 8) + '...'}
+                        </span>
+                        {rater.user_display_name && rater.user_email && (
+                          <p className="text-xs text-muted-foreground truncate">{rater.user_email}</p>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-center text-muted-foreground">
                       {rater.cases_completed}
@@ -368,8 +375,8 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
               return (
                 <div key={rater.user_id} className="p-4 rounded-lg bg-muted/20">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {rater.user_id.slice(0, 8)}...
+                    <span className="text-sm font-medium text-foreground truncate">
+                      {rater.user_display_name || rater.user_email || rater.user_id.slice(0, 8) + '...'}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {rater.cases_completed} {t('admin.studies.goldStandard.cases', 'cases')}
