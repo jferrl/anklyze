@@ -21,6 +21,9 @@ type Config struct {
 	// Supabase Auth configuration
 	SupabaseURL            string // Supabase project URL (e.g., https://xxx.supabase.co)
 	SupabaseServiceRoleKey string // Service role key for auth admin operations
+	// Database connection pool configuration
+	DBMaxOpenConns int // Maximum open connections (default: 25)
+	DBMaxIdleConns int // Maximum idle connections (default: 10)
 	// S3-compatible storage configuration (e.g., RustFS, MinIO)
 	S3Endpoint      string // S3 endpoint (host:port, e.g., "rustfs.example.com:9000")
 	S3AccessKey     string // S3 access key
@@ -42,6 +45,8 @@ func Load() (*Config, error) {
 		AppEnv:                 os.Getenv("APP_ENV"),
 		SupabaseURL:            os.Getenv("SUPABASE_URL"),
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
+		DBMaxOpenConns:         getEnvInt("DB_MAX_OPEN_CONNS", 25),
+		DBMaxIdleConns:         getEnvInt("DB_MAX_IDLE_CONNS", 10),
 		S3Endpoint:             os.Getenv("S3_ENDPOINT"),
 		S3AccessKey:            os.Getenv("S3_ACCESS_KEY"),
 		S3SecretKey:            os.Getenv("S3_SECRET_KEY"),

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -279,16 +280,20 @@ func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
 		return
 	}
 
-	// Add signed URLs for preview
+	// Generate signed URLs in parallel
 	response := make([]AdminImageResponse, len(images))
+	var wg sync.WaitGroup
 	for i, img := range images {
-		response[i] = AdminImageResponse{
-			CaseImage: img,
-		}
-		if url, err := h.storage.GetSignedURL(c.Request.Context(), img.StoragePath, h.signedURLDuration); err == nil {
-			response[i].SignedURL = url
-		}
+		response[i] = AdminImageResponse{CaseImage: img}
+		wg.Add(1)
+		go func(idx int, path string) {
+			defer wg.Done()
+			if url, err := h.storage.GetSignedURL(c.Request.Context(), path, h.signedURLDuration); err == nil {
+				response[idx].SignedURL = url
+			}
+		}(i, img.StoragePath)
 	}
+	wg.Wait()
 
 	c.JSON(http.StatusOK, gin.H{"images": response})
 }
@@ -324,13 +329,15 @@ func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
 		return
 	}
 
-	// Update each image's display order
+	// Batch update display orders in a single transaction
+	orders := make(map[uuid.UUID]int, len(req.ImageOrder))
 	for _, item := range req.ImageOrder {
-		img, err := h.caseRepo.GetImageByID(c.Request.Context(), item.ID)
-		if err == nil && img != nil && img.CaseID == caseID {
-			img.DisplayOrder = item.DisplayOrder
-			_ = h.caseRepo.UpdateImage(c.Request.Context(), img)
-		}
+		orders[item.ID] = item.DisplayOrder
+	}
+	if err := h.caseRepo.ReorderImages(c.Request.Context(), caseID, orders); err != nil {
+		slog.Error("failed to reorder images", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reorder images"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "images reordered"})

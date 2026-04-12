@@ -78,7 +78,10 @@ func main() {
 
 	if cfg.HasDatabase() {
 		var err error
-		db, err = database.Connect(cfg.DatabaseURL)
+		db, err = database.Connect(cfg.DatabaseURL, database.PoolConfig{
+			MaxOpenConns: cfg.DBMaxOpenConns,
+			MaxIdleConns: cfg.DBMaxIdleConns,
+		})
 		if err != nil {
 			slog.Warn("database connection failed, running in degraded mode (NoOp repositories)", "error", err)
 			dbHealthy = false
@@ -192,6 +195,7 @@ func main() {
 		Addr:              ":" + cfg.Port,
 		Handler:           router,
 		ReadHeaderTimeout: 10 * time.Second,
+		WriteTimeout:      60 * time.Second, // Prevent slow responses from holding connections
 	}
 
 	// Start server in goroutine with error channel pattern (Uber Go Style Guide)

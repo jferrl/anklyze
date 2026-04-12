@@ -152,8 +152,8 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 		return
 	}
 
-	// Get all responses (no pagination for export)
-	responses, _, err := h.responseRepo.GetByCase(c.Request.Context(), caseID, 10000, 0)
+	// Get all responses without artificial limit
+	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
 	if err != nil {
 		slog.Error("failed to get responses for export", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to export responses"})

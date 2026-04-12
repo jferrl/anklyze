@@ -203,10 +203,11 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 			}
 			slog.Info("user synced on first login", "user_id", userIDStr, "email", claims.GetEmail())
 		} else {
-			// For existing users, sync role to Supabase if it differs from JWT
+			// For existing users, sync role to Supabase if it differs from JWT.
+			// Fire-and-forget: use a detached context so the request isn't blocked.
 			jwtRole := claims.GetRole()
 			if string(user.Role) != string(jwtRole) {
-				userSvc.SyncRoleToSupabase(c.Request.Context(), userID, user.Role)
+				go userSvc.SyncRoleToSupabase(context.WithoutCancel(c.Request.Context()), userID, user.Role)
 			}
 		}
 

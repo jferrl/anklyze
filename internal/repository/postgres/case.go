@@ -179,6 +179,27 @@ func (r *CaseRepository) UpdateImage(ctx context.Context, image *domain.CaseImag
 	return nil
 }
 
+// ReorderImages updates display_order for multiple images in a single transaction.
+func (r *CaseRepository) ReorderImages(ctx context.Context, caseID uuid.UUID, orders map[uuid.UUID]int) error {
+	if len(orders) == 0 {
+		return nil
+	}
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for imageID, order := range orders {
+			if err := tx.Model(&domain.CaseImage{}).
+				Where("id = ? AND case_id = ?", imageID, caseID).
+				Update("display_order", order).Error; err != nil {
+				return fmt.Errorf("reorder image %s: %w", imageID, err)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("reorder images: %w", err)
+	}
+	return nil
+}
+
 // DeleteImage deletes an image by its ID.
 func (r *CaseRepository) DeleteImage(ctx context.Context, imageID uuid.UUID) error {
 	if err := r.db.WithContext(ctx).Delete(&domain.CaseImage{}, "id = ?", imageID).Error; err != nil {
@@ -462,15 +483,14 @@ func (r *CaseResponseRepository) updateCaseCounters(ctx context.Context, caseID 
 
 // HasUserResponded checks if a user has already submitted a response to a case.
 func (r *CaseResponseRepository) HasUserResponded(ctx context.Context, userID, caseID uuid.UUID) (bool, error) {
-	var count int64
+	var exists bool
 	err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Where("user_id = ? AND case_id = ?", userID, caseID).
-		Count(&count).Error
+		Raw("SELECT EXISTS(SELECT 1 FROM case_responses WHERE user_id = ? AND case_id = ? LIMIT 1)", userID, caseID).
+		Scan(&exists).Error
 	if err != nil {
 		return false, fmt.Errorf("has user responded: %w", err)
 	}
-	return count > 0, nil
+	return exists, nil
 }
 
 // GetAllByCase retrieves all responses for a case without pagination (for Kappa calculation).
@@ -536,32 +556,18 @@ func NewCaseAnalyticsRepository(db *gorm.DB) *CaseAnalyticsRepository {
 
 // GetSummary retrieves aggregated analytics for a case.
 func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UUID) (*domain.CaseAnalyticsSummary, error) {
-	// Get basic counts
-	var responseCount int64
-	if err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Where("case_id = ?", caseID).
-		Count(&responseCount).Error; err != nil {
-		return nil, fmt.Errorf("get summary response count: %w", err)
+	// Single query for all basic counts (was 3 separate queries)
+	var counts struct {
+		ResponseCount int64
+		UniqueUsers   int64
+		AvgTimeTaken  float64
 	}
-
-	var uniqueUsers int64
 	if err := r.db.WithContext(ctx).
 		Model(&domain.CaseResponse{}).
+		Select("COUNT(*) as response_count, COUNT(DISTINCT user_id) as unique_users, COALESCE(AVG(time_taken_ms), 0) as avg_time_taken").
 		Where("case_id = ?", caseID).
-		Distinct("user_id").
-		Count(&uniqueUsers).Error; err != nil {
-		return nil, fmt.Errorf("get summary unique users: %w", err)
-	}
-
-	// Get average time taken
-	var avgTimeTaken float64
-	if err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Where("case_id = ?", caseID).
-		Select("COALESCE(AVG(time_taken_ms), 0)").
-		Scan(&avgTimeTaken).Error; err != nil {
-		return nil, fmt.Errorf("get summary avg time: %w", err)
+		Scan(&counts).Error; err != nil {
+		return nil, fmt.Errorf("get summary counts: %w", err)
 	}
 
 	// Get case info
@@ -570,36 +576,68 @@ func (r *CaseAnalyticsRepository) GetSummary(ctx context.Context, caseID uuid.UU
 		return nil, fmt.Errorf("get summary case info: %w", err)
 	}
 
-	// Get distributions (non-critical: log failures but don't fail the whole summary)
-	dwDist, err := r.getDistribution(ctx, caseID, "danis_weber_type")
+	// Single query for all distributions (was 4 separate queries)
+	dwDist, lhDist, aoDist, btDist, err := r.getAllDistributions(ctx, caseID)
 	if err != nil {
-		slog.Warn("failed to get danis_weber distribution", "case_id", caseID, "error", err)
-	}
-	lhDist, err := r.getDistribution(ctx, caseID, "lauge_hansen_type")
-	if err != nil {
-		slog.Warn("failed to get lauge_hansen distribution", "case_id", caseID, "error", err)
-	}
-	aoDist, err := r.getDistribution(ctx, caseID, "ao_ota_code")
-	if err != nil {
-		slog.Warn("failed to get ao_ota distribution", "case_id", caseID, "error", err)
-	}
-	btDist, err := r.getDistribution(ctx, caseID, "bartonicek_type")
-	if err != nil {
-		slog.Warn("failed to get bartonicek distribution", "case_id", caseID, "error", err)
+		slog.Warn("failed to get distributions", "case_id", caseID, "error", err)
 	}
 
 	return &domain.CaseAnalyticsSummary{
 		CaseID:            caseID,
 		Title:             cs.Title,
 		Status:            cs.Status,
-		ResponseCount:     responseCount,
-		UniqueRespondents: uniqueUsers,
-		AvgTimeTakenMS:    avgTimeTaken,
+		ResponseCount:     counts.ResponseCount,
+		UniqueRespondents: counts.UniqueUsers,
+		AvgTimeTakenMS:    counts.AvgTimeTaken,
 		DanisWeberDist:    dwDist,
 		LaugeHansenDist:   lhDist,
 		AOOTADist:         aoDist,
 		BartonicekDist:    btDist,
 	}, nil
+}
+
+// getAllDistributions fetches all classification distributions in a single query using UNION ALL.
+func (r *CaseAnalyticsRepository) getAllDistributions(ctx context.Context, caseID uuid.UUID) (dw, lh, ao, bt map[string]int64, err error) {
+	var rows []struct {
+		System string
+		Value  string
+		Count  int64
+	}
+
+	query := `
+		SELECT 'danis_weber' as system, danis_weber_type as value, COUNT(*) as count
+		FROM case_responses WHERE case_id = ? AND danis_weber_type IS NOT NULL GROUP BY danis_weber_type
+		UNION ALL
+		SELECT 'lauge_hansen', lauge_hansen_type, COUNT(*)
+		FROM case_responses WHERE case_id = ? AND lauge_hansen_type IS NOT NULL GROUP BY lauge_hansen_type
+		UNION ALL
+		SELECT 'ao_ota', ao_ota_code, COUNT(*)
+		FROM case_responses WHERE case_id = ? AND ao_ota_code IS NOT NULL GROUP BY ao_ota_code
+		UNION ALL
+		SELECT 'bartonicek', bartonicek_type, COUNT(*)
+		FROM case_responses WHERE case_id = ? AND bartonicek_type IS NOT NULL GROUP BY bartonicek_type
+	`
+	if err := r.db.WithContext(ctx).Raw(query, caseID, caseID, caseID, caseID).Scan(&rows).Error; err != nil {
+		return nil, nil, nil, nil, fmt.Errorf("get all distributions: %w", err)
+	}
+
+	dw = make(map[string]int64)
+	lh = make(map[string]int64)
+	ao = make(map[string]int64)
+	bt = make(map[string]int64)
+	for _, row := range rows {
+		switch row.System {
+		case "danis_weber":
+			dw[row.Value] = row.Count
+		case "lauge_hansen":
+			lh[row.Value] = row.Count
+		case "ao_ota":
+			ao[row.Value] = row.Count
+		case "bartonicek":
+			bt[row.Value] = row.Count
+		}
+	}
+	return dw, lh, ao, bt, nil
 }
 
 // GetClassificationDistribution retrieves distribution for a specific classification system.

@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 	"gorm.io/gorm"
 )
 
@@ -200,6 +201,32 @@ func (r *StudyRepository) GetNextCaseOrder(ctx context.Context, studyID uuid.UUI
 		return 0, nil
 	}
 	return *maxOrder + 1, nil
+}
+
+// AddCases assigns multiple cases to a study in a single transaction.
+func (r *StudyRepository) AddCases(ctx context.Context, studyID uuid.UUID, assignments []repository.CaseAssignment) error {
+	if len(assignments) == 0 {
+		return nil
+	}
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		now := time.Now()
+		for _, a := range assignments {
+			if err := tx.Model(&domain.Case{}).
+				Where("id = ?", a.CaseID).
+				Updates(map[string]any{
+					"study_id":   studyID,
+					"case_order": a.CaseOrder,
+					"updated_at": now,
+				}).Error; err != nil {
+				return fmt.Errorf("add case %s: %w", a.CaseID, err)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("add cases: %w", err)
+	}
+	return nil
 }
 
 // ============================================================================

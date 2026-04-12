@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 )
 
 // --- Mock implementations ---
@@ -91,6 +92,9 @@ func (m *mockStudyRepository) Activate(_ context.Context, _ uuid.UUID) error { r
 func (m *mockStudyRepository) Close(_ context.Context, _ uuid.UUID) error    { return nil }
 func (m *mockStudyRepository) UpdateCounters(_ context.Context, _ uuid.UUID) error {
 	return m.updateCountersErr
+}
+func (m *mockStudyRepository) AddCases(_ context.Context, _ uuid.UUID, _ []repository.CaseAssignment) error {
+	return m.addCaseErr
 }
 
 // mockStudyResponseRepository is a minimal mock for StudyResponseRepository.
@@ -182,6 +186,9 @@ func (m *mockCaseRepositoryForStudy) GetRecentActiveCases(_ context.Context, _ i
 }
 func (m *mockCaseRepositoryForStudy) GetCasesNeedingAttention(_ context.Context, _ int) ([]domain.DashboardAttentionCase, error) {
 	return nil, nil
+}
+func (m *mockCaseRepositoryForStudy) ReorderImages(_ context.Context, _ uuid.UUID, _ map[uuid.UUID]int) error {
+	return nil
 }
 
 // mockReliabilityCalculator is a mock for ReliabilityCalculator.

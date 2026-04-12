@@ -312,20 +312,28 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 		return
 	}
 
-	added := 0
+	// Collect eligible cases for batch insert
+	var assignments []repository.CaseAssignment
 	for _, cs := range published {
 		if cs.StudyID != nil {
 			continue // already in a study
 		}
-		if err := h.studyService.AddCase(c.Request.Context(), studyID, cs.ID, nextOrder); err != nil {
-			slog.Error("failed to add case", "error", err, "case_id", cs.ID)
-			continue
-		}
+		assignments = append(assignments, repository.CaseAssignment{
+			CaseID:    cs.ID,
+			CaseOrder: nextOrder,
+		})
 		nextOrder++
-		added++
 	}
 
-	c.JSON(http.StatusOK, AddAllCasesResponse{Added: added})
+	if len(assignments) > 0 {
+		if err := h.studyService.AddCases(c.Request.Context(), studyID, assignments); err != nil {
+			slog.Error("failed to batch add cases", "error", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add cases to study"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, AddAllCasesResponse{Added: len(assignments)})
 }
 
 // AddCase adds a case to a study.

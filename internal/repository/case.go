@@ -33,6 +33,8 @@ type CaseRepository interface {
 	GetImageByID(ctx context.Context, imageID uuid.UUID) (*domain.CaseImage, error)
 	// UpdateImage updates an image's mutable fields (display_order).
 	UpdateImage(ctx context.Context, image *domain.CaseImage) error
+	// ReorderImages updates display_order for multiple images in a single transaction.
+	ReorderImages(ctx context.Context, caseID uuid.UUID, orders map[uuid.UUID]int) error
 	// DeleteImage deletes an image by its ID.
 	DeleteImage(ctx context.Context, imageID uuid.UUID) error
 	// UpdateHasTACImages recalculates and updates the has_tac_images flag for a case.
@@ -160,6 +162,11 @@ func (r *NoOpCaseRepository) GetImageByID(_ context.Context, _ uuid.UUID) (*doma
 
 // UpdateImage implements CaseRepository.
 func (r *NoOpCaseRepository) UpdateImage(_ context.Context, _ *domain.CaseImage) error {
+	return nil
+}
+
+// ReorderImages implements CaseRepository.
+func (r *NoOpCaseRepository) ReorderImages(_ context.Context, _ uuid.UUID, _ map[uuid.UUID]int) error {
 	return nil
 }
 

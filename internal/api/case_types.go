@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/repository"
 )
 
 // --- Service Interfaces ---
@@ -15,6 +16,7 @@ import (
 // StudyService defines the study operations interface needed by handlers.
 type StudyService interface {
 	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
+	AddCases(ctx context.Context, studyID uuid.UUID, assignments []repository.CaseAssignment) error
 	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)

@@ -7,6 +7,12 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 )
 
+// CaseAssignment pairs a case ID with a display order for batch operations.
+type CaseAssignment struct {
+	CaseID    uuid.UUID
+	CaseOrder int
+}
+
 // StudyRepository defines the interface for study persistence operations.
 type StudyRepository interface {
 	// Create creates a new study.
@@ -33,6 +39,8 @@ type StudyRepository interface {
 	GetStudyByCaseID(ctx context.Context, caseID uuid.UUID) (*domain.Study, error)
 	// GetNextCaseOrder returns the next available case order for a study.
 	GetNextCaseOrder(ctx context.Context, studyID uuid.UUID) (int, error)
+	// AddCases assigns multiple cases to a study in a single transaction.
+	AddCases(ctx context.Context, studyID uuid.UUID, assignments []CaseAssignment) error
 
 	// Status transitions
 	// Activate changes a study from draft to active.
@@ -139,6 +147,11 @@ func (r *NoOpStudyRepository) GetStudyByCaseID(_ context.Context, _ uuid.UUID) (
 // GetNextCaseOrder implements StudyRepository.
 func (r *NoOpStudyRepository) GetNextCaseOrder(_ context.Context, _ uuid.UUID) (int, error) {
 	return 0, nil
+}
+
+// AddCases implements StudyRepository.
+func (r *NoOpStudyRepository) AddCases(_ context.Context, _ uuid.UUID, _ []CaseAssignment) error {
+	return nil
 }
 
 // Activate implements StudyRepository.

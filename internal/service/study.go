@@ -25,6 +25,7 @@ type GoldStandardCalculator interface {
 type StudyService interface {
 	// Case-study relationship management
 	AddCase(ctx context.Context, studyID, caseID uuid.UUID, caseOrder int) error
+	AddCases(ctx context.Context, studyID uuid.UUID, assignments []repository.CaseAssignment) error
 	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
 
@@ -81,6 +82,20 @@ func (s *studyService) AddCase(ctx context.Context, studyID, caseID uuid.UUID, c
 			"case_id", caseID,
 		)
 		// Counter update failure is non-fatal — the case was added successfully.
+	}
+	return nil
+}
+
+// AddCases batch-adds multiple cases to a study and updates counters once.
+func (s *studyService) AddCases(ctx context.Context, studyID uuid.UUID, assignments []repository.CaseAssignment) error {
+	if err := s.studyRepo.AddCases(ctx, studyID, assignments); err != nil {
+		return err
+	}
+	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
+		slog.Error("failed to update study counters after AddCases",
+			"error", err,
+			"study_id", studyID,
+		)
 	}
 	return nil
 }

@@ -46,22 +46,14 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 
 // calculateSystemAgreement calculates agreement metrics for a single classification system.
 func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResponse, system string) *domain.SystemAgreement {
-	// Extract classifications for this system
+	// Single pass: extract classifications and group by user simultaneously
 	var classifications []string
+	uniqueUsers := make(map[string][]string)
 	for _, r := range responses {
-		var val *string
-		switch system {
-		case "danis_weber":
-			val = r.DanisWeberType
-		case "lauge_hansen":
-			val = r.LaugeHansenType
-		case "ao_ota":
-			val = r.AOOTACode
-		case "bartonicek":
-			val = r.BartonicekType
-		}
-		if val != nil {
-			classifications = append(classifications, *val)
+		cat := s.getClassificationForSystem(r, system)
+		if cat != "" {
+			classifications = append(classifications, cat)
+			uniqueUsers[r.UserID.String()] = append(uniqueUsers[r.UserID.String()], cat)
 		}
 	}
 
@@ -79,26 +71,6 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 		agreement.PercentAgreement = statistics.PercentAgreement(classifications) * 100
 	} else {
 		agreement.PercentAgreement = 100
-	}
-
-	// For 2 unique raters, calculate Cohen's Kappa
-	// For more, calculate Fleiss' Kappa
-	uniqueUsers := make(map[string][]string)
-	for _, r := range responses {
-		var val *string
-		switch system {
-		case "danis_weber":
-			val = r.DanisWeberType
-		case "lauge_hansen":
-			val = r.LaugeHansenType
-		case "ao_ota":
-			val = r.AOOTACode
-		case "bartonicek":
-			val = r.BartonicekType
-		}
-		if val != nil {
-			uniqueUsers[r.UserID.String()] = append(uniqueUsers[r.UserID.String()], *val)
-		}
 	}
 
 	numRaters := len(uniqueUsers)
