@@ -14,6 +14,7 @@ import type {
   Study,
   StudyReliabilityMetrics,
 } from '../domain/study';
+import type { StudyGoldStandardMetrics } from '../domain/case';
 // ============================================================================
 // Case API Types
 // ============================================================================
@@ -245,5 +246,12 @@ export interface StudyListResponse {
  * Study reliability metrics response with calculation timestamp
  */
 export interface StudyReliabilityResponse extends StudyReliabilityMetrics {
+  calculated_at: string;
+}
+
+/**
+ * Study gold standard accuracy response with calculation timestamp
+ */
+export interface StudyGoldStandardResponse extends StudyGoldStandardMetrics {
   calculated_at: string;
 }

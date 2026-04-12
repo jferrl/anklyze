@@ -86,6 +86,12 @@ type StudyReliabilityResponse struct {
 	CalculatedAt time.Time `json:"calculated_at"`
 }
 
+// StudyGoldStandardResponse is the response for getting study gold standard accuracy.
+type StudyGoldStandardResponse struct {
+	*domain.StudyGoldStandardMetrics
+	CalculatedAt time.Time `json:"calculated_at"`
+}
+
 // --- Handlers ---
 
 // CreateStudy creates a new study.
@@ -568,6 +574,39 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 	c.JSON(http.StatusOK, StudyReliabilityResponse{
 		StudyReliabilityMetrics: metrics,
 		CalculatedAt:            time.Now(),
+	})
+}
+
+// GetStudyGoldStandardAccuracy calculates and returns gold standard accuracy for a study.
+func (h *StudyHandler) GetStudyGoldStandardAccuracy(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+		return
+	}
+
+	// Verify study exists first for proper 404 handling
+	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to get study", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
+		return
+	}
+	if study == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+		return
+	}
+
+	metrics, err := h.studyService.GetGoldStandardMetrics(c.Request.Context(), id)
+	if err != nil {
+		slog.Error("failed to calculate gold standard metrics", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate gold standard accuracy"})
+		return
+	}
+
+	c.JSON(http.StatusOK, StudyGoldStandardResponse{
+		StudyGoldStandardMetrics: metrics,
+		CalculatedAt:             time.Now(),
 	})
 }
 

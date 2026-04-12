@@ -630,6 +630,25 @@
         "perCaseAgreement": "Per-Case Agreement",
         "noCaseMetrics": "No case metrics available",
         "agreementNote": "Agreement percentage shows how often raters selected the same classification for each case. Cases with low agreement (< 60%) are highlighted."
+      },
+      "goldStandard": {
+        "title": "Gold Standard Accuracy",
+        "description": "Measures how often raters match the expert reference classification. Higher accuracy means raters agree with the gold standard.",
+        "noCasesWithGold": "No cases in this study have a gold standard set. Set gold standard classifications on individual cases to see accuracy metrics.",
+        "casesWithGold": "{{count}} of {{total}} cases have gold standard",
+        "casesEvaluated": "{{count}} cases",
+        "consensusRate": "Consensus: {{rate}}%",
+        "casesCorrect": "correct",
+        "hardCasesWarning": "{{count}} hard case(s) detected (accuracy < 50% in at least one system)",
+        "perCaseAccuracy": "Per-Case Accuracy vs. Gold Standard",
+        "case": "Case",
+        "noGoldStandard": "No gold standard",
+        "accuracyNote": "Accuracy shows the percentage of raters who matched the gold standard classification. Cases with < 50% accuracy in any system are flagged as hard cases.",
+        "perRaterAccuracy": "Per-Rater Accuracy vs. Gold Standard",
+        "rater": "Rater",
+        "casesCompleted": "Cases",
+        "cases": "cases",
+        "raterNote": "Shows each rater's accuracy across all gold standard cases in this study. Only cases with a gold standard set are included."
       }
     },
     "analytics": {

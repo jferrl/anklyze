@@ -5,6 +5,7 @@ import type {
   CreateStudyRequest,
   UpdateStudyRequest,
   StudyReliabilityResponse,
+  StudyGoldStandardResponse,
   StudyStatus,
   Case,
 } from '@/types';
@@ -158,6 +159,15 @@ export async function reorderStudyCases(
  */
 export async function getStudyReliabilityMetrics(studyId: string): Promise<StudyReliabilityResponse> {
   return apiRequest<StudyReliabilityResponse>(`/api/admin/studies/${studyId}/reliability`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * Get study gold standard accuracy metrics (admin only)
+ */
+export async function getStudyGoldStandardMetrics(studyId: string): Promise<StudyGoldStandardResponse> {
+  return apiRequest<StudyGoldStandardResponse>(`/api/admin/studies/${studyId}/accuracy`, {
     method: 'GET',
   });
 }

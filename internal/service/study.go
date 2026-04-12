@@ -15,6 +15,11 @@ type ReliabilityCalculator interface {
 	CalculateStudyReliabilityMetrics(study *domain.Study, cases []domain.Case, responsesByCase map[uuid.UUID][]domain.CaseResponse) (*domain.StudyReliabilityMetrics, error)
 }
 
+// GoldStandardCalculator computes study-level gold standard accuracy metrics.
+type GoldStandardCalculator interface {
+	CalculateStudyGoldStandardMetrics(study *domain.Study, cases []domain.Case, responsesByCase map[uuid.UUID][]domain.CaseResponse) (*domain.StudyGoldStandardMetrics, error)
+}
+
 // StudyService manages all study-related business logic including case-study
 // relationship management, response validation, and reliability metrics.
 type StudyService interface {
@@ -26,6 +31,9 @@ type StudyService interface {
 	// Reliability metrics (orchestrates data fetching + ReliabilityCalculator call)
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
 
+	// Gold standard accuracy metrics (orchestrates data fetching + GoldStandardCalculator call)
+	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
+
 	// Background updates after response submission
 	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
 }
@@ -36,6 +44,7 @@ type studyService struct {
 	caseRepo          repository.CaseRepository
 	responseRepo      repository.CaseResponseRepository
 	reliabilityCalc   ReliabilityCalculator
+	goldStandardCalc  GoldStandardCalculator
 	statsCache        StudyStatsCache
 }
 
@@ -46,6 +55,7 @@ func NewStudyService(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	reliabilityCalc ReliabilityCalculator,
+	goldStandardCalc GoldStandardCalculator,
 	statsCache StudyStatsCache,
 ) StudyService {
 	return &studyService{
@@ -54,6 +64,7 @@ func NewStudyService(
 		caseRepo:          caseRepo,
 		responseRepo:      responseRepo,
 		reliabilityCalc:   reliabilityCalc,
+		goldStandardCalc:  goldStandardCalc,
 		statsCache:        statsCache,
 	}
 }
@@ -138,6 +149,30 @@ func (s *studyService) GetReliabilityMetrics(ctx context.Context, studyID uuid.U
 	// Populate cache for subsequent requests.
 	s.statsCache.Set(studyID, metrics)
 	return metrics, nil
+}
+
+// GetGoldStandardMetrics orchestrates data fetching and calculates study-level
+// gold standard accuracy metrics by delegating to the GoldStandardCalculator.
+func (s *studyService) GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error) {
+	study, err := s.studyRepo.GetByID(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+	if study == nil {
+		return nil, domain.ErrNotFound
+	}
+
+	cases, err := s.studyRepo.GetCases(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+
+	responsesByCase, err := s.studyResponseRepo.GetAllByStudy(ctx, studyID)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.goldStandardCalc.CalculateStudyGoldStandardMetrics(study, cases, responsesByCase)
 }
 
 // UpdateAfterResponse invalidates the stats cache and updates study counters

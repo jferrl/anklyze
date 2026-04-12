@@ -18,6 +18,7 @@ type StudyService interface {
 	RemoveCase(ctx context.Context, studyID, caseID uuid.UUID) error
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
+	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
 	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
 }
 

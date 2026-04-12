@@ -20,6 +20,7 @@ import { studyApi } from '@/services';
 import { cn } from '@/lib/utils';
 import { PerCaseAgreementSection } from './components/PerCaseAgreementSection';
 import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
+import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
 
 export function StudyReliabilityPage() {
   const { t } = useTranslation();
@@ -38,6 +39,12 @@ export function StudyReliabilityPage() {
     enabled: !!id,
   });
 
+  const { data: goldStandard, isLoading: isLoadingGoldStandard } = useQuery({
+    queryKey: ['study-gold-standard', id],
+    queryFn: () => studyApi.getStudyGoldStandardMetrics(id!),
+    enabled: !!id,
+  });
+
   const handleExportCSV = useCallback(async () => {
     if (id && study) {
       await studyApi.downloadStudyResponsesCSV(
@@ -47,7 +54,7 @@ export function StudyReliabilityPage() {
     }
   }, [id, study]);
 
-  const isLoading = isLoadingStudy || isLoadingReliability;
+  const isLoading = isLoadingStudy || isLoadingReliability || isLoadingGoldStandard;
 
   if (isLoading) {
     return (
@@ -185,6 +192,11 @@ export function StudyReliabilityPage() {
 
         {/* Fleiss' Kappa Scores + Detailed Kappa Analysis */}
         <StudyKappaAnalysis reliability={reliability} />
+
+        {/* Gold Standard Accuracy */}
+        {goldStandard && (
+          <StudyGoldStandardSection metrics={goldStandard} />
+        )}
 
         {/* Per-Case Agreement */}
         <PerCaseAgreementSection

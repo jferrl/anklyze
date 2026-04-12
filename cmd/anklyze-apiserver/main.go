@@ -174,7 +174,7 @@ func main() {
 
 	// Initialize study service — orchestrates case-study relationships, response validation,
 	// reliability metrics, and divergence analysis.
-	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService, statsCache)
+	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService, statsService, statsCache)
 
 	dbStatus := "connected"
 	if !dbHealthy {

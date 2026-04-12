@@ -54,6 +54,7 @@ export {
   reorderStudyCases,
   // Study analytics
   getStudyReliabilityMetrics,
+  getStudyGoldStandardMetrics,
   exportStudyResponses,
   downloadStudyResponsesCSV,
 } from './studyService';
@@ -126,6 +127,7 @@ export const studyApi = {
   removeCaseFromStudy: studyService.removeCaseFromStudy,
   reorderStudyCases: studyService.reorderStudyCases,
   getStudyReliabilityMetrics: studyService.getStudyReliabilityMetrics,
+  getStudyGoldStandardMetrics: studyService.getStudyGoldStandardMetrics,
   exportStudyResponses: studyService.exportStudyResponses,
   downloadStudyResponsesCSV: studyService.downloadStudyResponsesCSV,
 };

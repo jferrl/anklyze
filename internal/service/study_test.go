@@ -194,6 +194,16 @@ func (m *mockReliabilityCalculator) CalculateStudyReliabilityMetrics(_ *domain.S
 	return m.metrics, m.err
 }
 
+// mockGoldStandardCalculator is a mock for GoldStandardCalculator.
+type mockGoldStandardCalculator struct {
+	metrics *domain.StudyGoldStandardMetrics
+	err     error
+}
+
+func (m *mockGoldStandardCalculator) CalculateStudyGoldStandardMetrics(_ *domain.Study, _ []domain.Case, _ map[uuid.UUID][]domain.CaseResponse) (*domain.StudyGoldStandardMetrics, error) {
+	return m.metrics, m.err
+}
+
 // --- Test helpers ---
 
 func newStudyService(
@@ -203,7 +213,7 @@ func newStudyService(
 	responseRepo *mockCaseResponseRepository,
 	calc *mockReliabilityCalculator,
 ) StudyService {
-	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, NewTTLStatsCache(time.Hour))
+	return NewStudyService(studyRepo, studyRespRepo, caseRepo, responseRepo, calc, &mockGoldStandardCalculator{}, NewTTLStatsCache(time.Hour))
 }
 
 // --- Tests for IsCaseInStudy ---
@@ -349,7 +359,7 @@ func TestGetReliabilityMetrics_CacheHit(t *testing.T) {
 	studyRepo := &mockStudyRepository{studyErr: errors.New("should not be called")}
 	calc := &mockReliabilityCalculator{err: errors.New("should not be called")}
 
-	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, cache)
+	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, &mockGoldStandardCalculator{}, cache)
 	result, err := svc.GetReliabilityMetrics(context.Background(), studyID)
 	if err != nil {
 		t.Errorf("unexpected error on cache hit: %v", err)
@@ -372,7 +382,7 @@ func TestGetReliabilityMetrics_CacheMissPopulates(t *testing.T) {
 	studyRepo := &mockStudyRepository{study: study, cases: cases}
 	calc := &mockReliabilityCalculator{metrics: computed}
 
-	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, cache)
+	svc := NewStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, calc, &mockGoldStandardCalculator{}, cache)
 	result, err := svc.GetReliabilityMetrics(context.Background(), studyID)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

@@ -316,6 +316,7 @@ func registerAdminStudyRoutes(adminStudies *gin.RouterGroup, studyHandler *Study
 
 	// Analytics and export
 	adminStudies.GET("/:id/reliability", studyHandler.GetStudyReliabilityMetrics)
+	adminStudies.GET("/:id/accuracy", studyHandler.GetStudyGoldStandardAccuracy)
 	adminStudies.GET("/:id/export", studyHandler.ExportStudyResponses)
 }
 

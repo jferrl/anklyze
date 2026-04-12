@@ -635,6 +635,25 @@
         "perCaseAgreement": "Acuerdo por Caso",
         "noCaseMetrics": "No hay métricas de casos disponibles",
         "agreementNote": "El porcentaje de acuerdo muestra con qué frecuencia los evaluadores seleccionaron la misma clasificación para cada caso. Los casos con bajo acuerdo (< 60%) están resaltados."
+      },
+      "goldStandard": {
+        "title": "Precisión vs. Gold Standard",
+        "description": "Mide con qué frecuencia los evaluadores coinciden con la clasificación de referencia experta. Mayor precisión significa mayor concordancia con el gold standard.",
+        "noCasesWithGold": "Ningún caso en este estudio tiene un gold standard configurado. Establezca clasificaciones gold standard en casos individuales para ver métricas de precisión.",
+        "casesWithGold": "{{count}} de {{total}} casos tienen gold standard",
+        "casesEvaluated": "{{count}} casos",
+        "consensusRate": "Consenso: {{rate}}%",
+        "casesCorrect": "correctos",
+        "hardCasesWarning": "{{count}} caso(s) difícil(es) detectado(s) (precisión < 50% en al menos un sistema)",
+        "perCaseAccuracy": "Precisión por Caso vs. Gold Standard",
+        "case": "Caso",
+        "noGoldStandard": "Sin gold standard",
+        "accuracyNote": "La precisión muestra el porcentaje de evaluadores que coincidieron con la clasificación gold standard. Los casos con < 50% de precisión en cualquier sistema se marcan como casos difíciles.",
+        "perRaterAccuracy": "Precisión por Evaluador vs. Gold Standard",
+        "rater": "Evaluador",
+        "casesCompleted": "Casos",
+        "cases": "casos",
+        "raterNote": "Muestra la precisión de cada evaluador en todos los casos con gold standard de este estudio. Solo se incluyen los casos con gold standard configurado."
       }
     },
     "analytics": {
