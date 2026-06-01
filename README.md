@@ -29,7 +29,6 @@
 <p align="center">
   <a href="https://www.anklyze.es"><strong>Start Classifying</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://api.anklyze.es/swagger/index.html">API Docs</a>
   &nbsp;·&nbsp;
   <a href="#how-it-works">Learn More</a>
 </p>
