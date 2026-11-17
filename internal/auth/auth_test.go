@@ -327,3 +327,10 @@ func TestValidator_Close(t *testing.T) {
 		})
 	}
 }
+
+// WithJWTSecret makes the validator check HMAC tokens with a static secret, so tests need no JWKS server.
+func WithJWTSecret(secret string) ValidatorOption {
+	return func(v *Validator) {
+		v.jwtSecret = []byte(secret)
+	}
+}

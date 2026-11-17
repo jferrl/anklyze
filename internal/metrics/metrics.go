@@ -125,16 +125,3 @@ func RegisterMetricsEndpoint(router *gin.Engine, gatherer prometheus.Gatherer) {
 		h.ServeHTTP(c.Writer, c.Request)
 	})
 }
-
-// DefaultMetrics is a convenience constructor that uses the default Prometheus
-// registry. Use this in main; use New with a custom registry in tests.
-func DefaultMetrics() *Metrics {
-	return New(prometheus.DefaultRegisterer)
-}
-
-// Handler returns an http.Handler for the /metrics endpoint backed by the
-// default Prometheus gatherer. Useful when you need the raw handler outside of
-// a Gin context (e.g. a dedicated metrics port).
-func Handler() http.Handler {
-	return promhttp.Handler()
-}

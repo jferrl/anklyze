@@ -138,22 +138,6 @@ func IsAuthenticated(c *gin.Context) bool {
 	return GetClaims(c) != nil
 }
 
-// HasRole returns true if the authenticated user has the specified role.
-// It checks the database user role first, then falls back to JWT claims.
-// Returns false if the user is not authenticated.
-func HasRole(c *gin.Context, role Role) bool {
-	// If not authenticated and no synced user, user has no role
-	if GetClaims(c) == nil && GetUser(c) == nil {
-		return false
-	}
-	return GetUserRole(c) == role
-}
-
-// IsAdmin returns true if the authenticated user has the admin role.
-func IsAdmin(c *gin.Context) bool {
-	return HasRole(c, RoleAdmin)
-}
-
 // UserSyncMiddleware creates a middleware that loads the authenticated user from the database.
 // It must be used after Middleware. On each authenticated request, it fetches the user.
 // If the user doesn't exist (first login), it creates them via SyncOnLogin.

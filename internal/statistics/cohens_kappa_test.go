@@ -16,7 +16,7 @@ func TestCohensKappa_PerfectAgreement(t *testing.T) {
 		{"B", "B"},
 	}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestCohensKappa_NoAgreement(t *testing.T) {
 		{"B", "A"},
 	}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -66,7 +66,7 @@ func TestCohensKappa_PartialAgreement(t *testing.T) {
 		{"B", "B"},
 	}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -82,7 +82,7 @@ func TestCohensKappa_EmptyRatings(t *testing.T) {
 
 	ratings := [][2]string{}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -99,7 +99,7 @@ func TestCohensKappa_SingleRating(t *testing.T) {
 		{"A", "A"},
 	}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -126,7 +126,7 @@ func TestCohensKappa_KnownValue(t *testing.T) {
 		{"B", "A"}, {"B", "A"}, // 2 B-A
 	}
 
-	kappa, err := CohensKappa(ratings)
+	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
