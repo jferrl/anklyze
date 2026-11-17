@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Loader2, Plus, PlusCircle, Trash2, FolderOpen } from 'lucide-react';
+import { Loader2, Plus, PlusCircle, Trash2 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { StatusBadge } from './StatusBadge';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import {
   Select,
   SelectContent,
@@ -10,8 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../components/ui/select';
-import { cn } from '@/lib/utils';
-import type { Case, CaseStatus } from '@/types';
+import type { Case } from '@/types';
 
 interface StudyCasesStepProps {
   studyCases: Case[];
@@ -26,17 +25,6 @@ interface StudyCasesStepProps {
   onAddAllCases: () => void;
   onRemoveCase: (id: string) => void;
   studyId?: string;
-}
-
-function getCaseStatusBadge(status: CaseStatus, t: (key: string) => string) {
-  switch (status) {
-    case 'draft':
-      return <Badge variant="outline" className="text-xs">{t('cases.status.draft')}</Badge>;
-    case 'published':
-      return <Badge className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">{t('cases.status.published')}</Badge>;
-    case 'closed':
-      return <Badge variant="secondary" className="text-xs">{t('cases.status.closed')}</Badge>;
-  }
 }
 
 export function StudyCasesStep({
@@ -58,33 +46,26 @@ export function StudyCasesStep({
   const totalCases = studyCases.length;
 
   return (
-    <div className="animate-fade-in">
-      <Card className="chart-card">
+    <div>
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <FolderOpen className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <CardTitle>{t('admin.studies.cases', 'Study Cases')}</CardTitle>
-              <CardDescription>
-                {t('admin.studies.casesDesc', 'Add published cases to this study for multi-rater analysis')}
-              </CardDescription>
-            </div>
-            <Badge variant="secondary">
-              {totalCases} {totalCases === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
-            </Badge>
-          </div>
+          <CardTitle className="text-base">{t('admin.studies.cases', 'Study Cases')}</CardTitle>
+          <CardDescription>
+            {t('admin.studies.casesDesc', 'Add published cases to this study for multi-rater analysis')}
+          </CardDescription>
+          <CardAction className="text-sm tabular-nums text-muted-foreground">
+            {totalCases} {totalCases === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
+          </CardAction>
         </CardHeader>
         <CardContent>
           {/* Add case form - only for draft studies */}
           {canEdit && (
-            <div className="flex gap-3 mb-6">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
               <Select
                 value={selectedCaseId}
                 onValueChange={onSelectCase}
               >
-                <SelectTrigger className="flex-1 h-12">
+                <SelectTrigger className="flex-1">
                   <SelectValue placeholder={t('admin.studies.selectCase', 'Select a case to add...')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +85,6 @@ export function StudyCasesStep({
               <Button
                 onClick={onAddCase}
                 disabled={!selectedCaseId || !studyId || isAddingCase || isAddingAll}
-                className="h-12 gap-2"
               >
                 {isAddingCase ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -118,7 +98,6 @@ export function StudyCasesStep({
                   variant="outline"
                   onClick={onAddAllCases}
                   disabled={!studyId || isAddingCase || isAddingAll}
-                  className="h-12 gap-2"
                 >
                   {isAddingAll ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -133,38 +112,28 @@ export function StudyCasesStep({
 
           {/* Cases list */}
           {totalCases === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                <FolderOpen className="w-8 h-8 text-muted-foreground/50" />
-              </div>
-              <p className="text-muted-foreground font-medium">
+            <div className="border-t py-8 text-center">
+              <p className="text-sm font-medium text-foreground">
                 {t('admin.studies.noCases', 'No cases in this study yet')}
               </p>
-              <p className="text-sm text-muted-foreground/70 mt-1">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t('admin.studies.addCasesHint', 'Add published cases to get started')}
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y border-t">
               {studyCases.map((caseItem, index) => (
-                <div
-                  key={caseItem.id}
-                  className={cn(
-                    'flex items-center gap-3 p-4 rounded-xl',
-                    'bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50',
-                    'transition-all duration-200 group'
-                  )}
-                >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary font-medium text-sm">
+                <div key={caseItem.id} className="flex items-center gap-3 py-3">
+                  <span className="w-6 text-right text-sm tabular-nums text-muted-foreground">
                     {index + 1}
-                  </div>
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground truncate">
+                    <p className="truncate text-sm font-medium text-foreground">
                       {caseItem.title}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
-                      {getCaseStatusBadge(caseItem.status, t)}
-                      <span className="text-xs text-muted-foreground">
+                      <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} />
+                      <span className="text-xs tabular-nums text-muted-foreground">
                         {caseItem.response_count} {t('admin.studies.responses')}
                       </span>
                     </div>
@@ -175,7 +144,7 @@ export function StudyCasesStep({
                       size="icon"
                       onClick={() => onRemoveCase(caseItem.id)}
                       disabled={isRemovingCase}
-                      className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
                       {isRemovingCase ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, ChevronRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { ChevronRight } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import type { CaseResponse } from '@/types';
 import {
@@ -18,78 +17,85 @@ interface PreviousResponsesProps {
 
 export function PreviousResponses({ responses }: PreviousResponsesProps) {
   const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   if (responses.length === 0) {
     return null;
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle
-          className="flex items-center justify-between cursor-pointer"
+    <section className="rounded-lg border bg-card">
+      <h2>
+        <button
+          type="button"
+          aria-expanded={isExpanded}
           onClick={() => setIsExpanded(!isExpanded)}
+          className="flex w-full items-center justify-between gap-2 rounded-lg px-4 py-3 text-left text-base font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5" />
-            {t('studies.previousResponses')} ({responses.length})
+          <span>
+            {t('studies.previousResponses')}{' '}
+            <span className="font-normal text-muted-foreground tabular-nums">({responses.length})</span>
           </span>
           <ChevronRight
-            className={`h-5 w-5 transition-transform ${
-              isExpanded ? 'rotate-90' : ''
-            }`}
+            className={`h-4 w-4 text-muted-foreground ${isExpanded ? 'rotate-90' : ''}`}
           />
-        </CardTitle>
-      </CardHeader>
+        </button>
+      </h2>
       {isExpanded && (
-        <CardContent>
-          <div className="space-y-4">
-            {responses.map((response, index) => (
-              <div
-                key={response.id}
-                className="border rounded-lg p-4 text-sm"
-              >
-                <div className="text-muted-foreground mb-2">
-                  {t('studies.response')} #{responses.length - index} -{' '}
+        <div className="divide-y border-t">
+          {responses.map((response, index) => {
+            const c = response.classification;
+            const aoSubtype = c.ao_ota && getAOOTASubtypeLabel(t, c.ao_ota.code);
+            const systems = [
+              c.danis_weber && {
+                swatch: 'bg-sys-dw',
+                label: 'Danis-Weber',
+                value: getDanisWeberDisplayName(t, c.danis_weber.type),
+              },
+              c.lauge_hansen && {
+                swatch: 'bg-sys-lh',
+                label: 'Lauge-Hansen',
+                value: getLaugeHansenFullName(t, c.lauge_hansen.type),
+              },
+              c.ao_ota && {
+                swatch: 'bg-sys-ao',
+                label: 'AO/OTA',
+                value: getAOOTADisplayName(t, c.ao_ota.code),
+              },
+              c.bartonicek && {
+                swatch: 'bg-sys-bt',
+                label: 'Bartonicek',
+                value: getBartonicekDisplayName(t, c.bartonicek.type, c.fracture_type),
+              },
+            ].filter((s) => !!s);
+
+            return (
+              <div key={response.id} className="px-4 py-3">
+                <div className="text-xs text-muted-foreground tabular-nums">
+                  {t('studies.response')} #{responses.length - index} ·{' '}
                   {new Date(response.created_at).toLocaleString()}
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {response.classification.danis_weber && (
-                    <div>
-                      <span className="font-medium">Danis-Weber:</span>{' '}
-                      {getDanisWeberDisplayName(t, response.classification.danis_weber.type)}
+                <dl className="mt-2 divide-y text-sm">
+                  {systems.map((s) => (
+                    <div key={s.label} className="flex items-baseline justify-between gap-4 py-1.5">
+                      <dt className="flex shrink-0 items-center gap-2 text-muted-foreground">
+                        <span className={`h-2 w-2 ${s.swatch}`} aria-hidden="true" />
+                        {s.label}
+                      </dt>
+                      <dd className="flex flex-wrap items-center justify-end gap-2 text-right font-medium">
+                        {s.value}
+                        {s.label === 'AO/OTA' && aoSubtype && (
+                          <Badge variant="outline">{aoSubtype}</Badge>
+                        )}
+                      </dd>
                     </div>
-                  )}
-                  {response.classification.lauge_hansen && (
-                    <div>
-                      <span className="font-medium">Lauge-Hansen:</span>{' '}
-                      {getLaugeHansenFullName(t, response.classification.lauge_hansen.type)}
-                    </div>
-                  )}
-                  {response.classification.ao_ota && (
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium">AO/OTA:</span>{' '}
-                      {getAOOTADisplayName(t, response.classification.ao_ota.code)}
-                      {getAOOTASubtypeLabel(t, response.classification.ao_ota.code) && (
-                        <Badge variant="outline" className="border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-600 dark:bg-violet-950/40 dark:text-violet-300 text-[10px]">
-                          {getAOOTASubtypeLabel(t, response.classification.ao_ota.code)}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-                  {response.classification.bartonicek && (
-                    <div>
-                      <span className="font-medium">Bartonicek:</span>{' '}
-                      {getBartonicekDisplayName(t, response.classification.bartonicek.type, response.classification.fracture_type)}
-                    </div>
-                  )}
-                </div>
+                  ))}
+                </dl>
               </div>
-            ))}
-          </div>
-        </CardContent>
+            );
+          })}
+        </div>
       )}
-    </Card>
+    </section>
   );
 }

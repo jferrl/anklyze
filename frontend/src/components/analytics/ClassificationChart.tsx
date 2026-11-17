@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   Cell,
+  LabelList,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -13,18 +14,6 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { BarChart3, PieChart as PieChartIcon, List } from 'lucide-react';
-
-// Modern, harmonious color palette
-const CHART_COLORS = [
-  { main: '#3B82F6', light: '#3B82F620', name: 'blue' },
-  { main: '#10B981', light: '#10B98120', name: 'emerald' },
-  { main: '#F59E0B', light: '#F59E0B20', name: 'amber' },
-  { main: '#8B5CF6', light: '#8B5CF620', name: 'violet' },
-  { main: '#EC4899', light: '#EC489920', name: 'pink' },
-  { main: '#06B6D4', light: '#06B6D420', name: 'cyan' },
-  { main: '#F97316', light: '#F9731620', name: 'orange' },
-  { main: '#84CC16', light: '#84CC1620', name: 'lime' },
-];
 
 interface ChartDataItem {
   name: string;
@@ -37,43 +26,61 @@ interface ClassificationChartProps {
   data: Record<string, number>;
   title?: string;
   systemLabel: string;
+  /** Identity colour of the classification system being plotted. */
+  color?: string;
 }
 
 type ViewMode = 'donut' | 'bar' | 'list';
+
+const VIEWS: { mode: ViewMode; icon: typeof BarChart3; labelKey: string }[] = [
+  { mode: 'bar', icon: BarChart3, labelKey: 'admin.analytics.viewBar' },
+  { mode: 'donut', icon: PieChartIcon, labelKey: 'admin.analytics.viewDonut' },
+  { mode: 'list', icon: List, labelKey: 'admin.analytics.viewList' },
+];
 
 export function ClassificationChart({
   data,
   title,
   systemLabel,
+  color = 'var(--chart-5)',
 }: ClassificationChartProps) {
   const { t } = useTranslation();
-  const [viewMode, setViewMode] = useState<ViewMode>('donut');
+  const [viewMode, setViewMode] = useState<ViewMode>('bar');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const chartData = useMemo(() => {
     const total = Object.values(data).reduce((sum, val) => sum + val, 0);
     return Object.entries(data)
-      .map(([name, value], index) => ({
+      .map(([name, value]) => ({
         name: name || t('admin.analytics.unspecified'),
         value: value as number,
-        fill: CHART_COLORS[index % CHART_COLORS.length].main,
+        fill: color,
         percentage: total > 0 ? (value / total) * 100 : 0,
       }))
       .sort((a, b) => b.value - a.value);
-  }, [data, t]);
+  }, [data, t, color]);
+
+  // Donut slices are one hue stepped light to dark by share, largest darkest.
+  const donutData = useMemo(
+    () =>
+      chartData.map((item, index) => ({
+        ...item,
+        fill: `color-mix(in oklch, ${color} ${Math.round(
+          100 - (index / Math.max(chartData.length - 1, 1)) * 75
+        )}%, var(--card))`,
+      })),
+    [chartData, color]
+  );
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
   if (chartData.length === 0) {
     return (
-      <div className="chart-card flex flex-col items-center justify-center min-h-[400px] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
-          <BarChart3 className="w-8 h-8 text-muted-foreground/50" />
-        </div>
-        <p className="text-muted-foreground font-medium">
+      <div className="chart-card flex min-h-[200px] flex-col items-center justify-center text-center">
+        <p className="text-sm font-medium text-foreground">
           {t('admin.analytics.noData')}
         </p>
-        <p className="text-sm text-muted-foreground/70 mt-1">
+        <p className="mt-1 text-sm text-muted-foreground">
           {t('admin.analytics.noDataSubtitle', 'No classifications recorded yet')}
         </p>
       </div>
@@ -81,47 +88,42 @@ export function ClassificationChart({
   }
 
   return (
-    <div className="chart-card chart-enter">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="chart-card">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">
+          <h3 className="text-base font-semibold text-foreground">
             {title || systemLabel}
           </h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm tabular-nums text-muted-foreground">
             {total} {t('admin.analytics.totalClassifications', 'total classifications')}
           </p>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg">
-          {[
-            { mode: 'donut' as ViewMode, icon: PieChartIcon, label: 'Donut' },
-            { mode: 'bar' as ViewMode, icon: BarChart3, label: 'Bar' },
-            { mode: 'list' as ViewMode, icon: List, label: 'List' },
-          ].map(({ mode, icon: Icon, label }) => (
+        <div className="flex shrink-0 gap-0.5 rounded-md border p-0.5">
+          {VIEWS.map(({ mode, icon: Icon, labelKey }) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
               className={cn(
-                'p-2 rounded-md transition-all duration-200',
+                'rounded-sm p-1.5 transition-colors duration-150',
                 viewMode === mode
-                  ? 'bg-background shadow-sm text-foreground'
+                  ? 'bg-accent text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               )}
-              title={label}
+              title={t(labelKey)}
+              aria-label={t(labelKey)}
+              aria-pressed={viewMode === mode}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="h-4 w-4" />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Chart Content */}
-      <div className="min-h-[320px]">
+      <div>
         {viewMode === 'donut' && (
           <DonutView
-            data={chartData}
+            data={donutData}
             total={total}
             hoveredIndex={hoveredIndex}
             setHoveredIndex={setHoveredIndex}
@@ -130,39 +132,31 @@ export function ClassificationChart({
         {viewMode === 'bar' && (
           <BarView data={chartData} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} />
         )}
-        {viewMode === 'list' && (
-          <ListView data={chartData} />
-        )}
+        {viewMode === 'list' && <ListView data={chartData} />}
       </div>
 
-      {/* Legend */}
-      {viewMode !== 'list' && (
-        <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-border/50">
-          {chartData.slice(0, 6).map((item, index) => (
+      {/* The bar view labels each bar on its axis, so only the donut needs a legend. */}
+      {viewMode === 'donut' && (
+        <div className="mt-6 flex flex-wrap gap-2 border-t pt-4">
+          {donutData.slice(0, 6).map((item, index) => (
             <div
               key={item.name}
-              className={cn(
-                'legend-item',
-                hoveredIndex === index && 'bg-muted border-border'
-              )}
+              className={cn('legend-item rounded-sm', hoveredIndex === index && 'bg-muted')}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <span
-                className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: item.fill }}
-              />
-              <span className="text-sm font-medium truncate max-w-[120px]">
+              <span className="size-2.5 shrink-0" style={{ backgroundColor: item.fill }} />
+              <span className="max-w-[120px] truncate text-sm font-medium">
                 {item.name}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs tabular-nums text-muted-foreground">
                 {item.percentage.toFixed(1)}%
               </span>
             </div>
           ))}
-          {chartData.length > 6 && (
+          {donutData.length > 6 && (
             <div className="legend-item text-muted-foreground">
-              <span className="text-sm">+{chartData.length - 6} more</span>
+              <span className="text-sm tabular-nums">{t('admin.analytics.moreCount', { count: donutData.length - 6 })}</span>
             </div>
           )}
         </div>
@@ -171,7 +165,11 @@ export function ClassificationChart({
   );
 }
 
-// Donut Chart View
+const dimmed = (hoveredIndex: number | null, index: number) => ({
+  opacity: hoveredIndex === null || hoveredIndex === index ? 1 : 0.4,
+  transition: 'opacity 0.15s ease-out',
+});
+
 function DonutView({
   data,
   total,
@@ -183,6 +181,7 @@ function DonutView({
   hoveredIndex: number | null;
   setHoveredIndex: (index: number | null) => void;
 }) {
+  const { t } = useTranslation();
   const centerData = hoveredIndex !== null ? data[hoveredIndex] : null;
 
   return (
@@ -197,21 +196,16 @@ function DonutView({
             cy="50%"
             innerRadius={80}
             outerRadius={130}
-            paddingAngle={2}
+            isAnimationActive={false}
             onMouseEnter={(_, index) => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
             {data.map((entry, index) => (
               <Cell
                 key={entry.name}
-                fill={entry.fill}
-                stroke="transparent"
-                style={{
-                  filter: hoveredIndex === index ? 'brightness(1.1)' : 'none',
-                  transform: hoveredIndex === index ? 'scale(1.02)' : 'scale(1)',
-                  transformOrigin: 'center',
-                  transition: 'filter 0.2s ease-out, transform 0.2s ease-out',
-                }}
+                stroke="var(--card)"
+                strokeWidth={2}
+                style={{ fill: entry.fill, ...dimmed(hoveredIndex, index) }}
               />
             ))}
           </Pie>
@@ -219,31 +213,20 @@ function DonutView({
         </PieChart>
       </ResponsiveContainer>
 
-      {/* Center Label */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          {centerData ? (
-            <>
-              <p className="text-3xl font-bold text-foreground">
-                {centerData.value}
-              </p>
-              <p className="text-sm text-muted-foreground max-w-[100px] truncate">
-                {centerData.name}
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-3xl font-bold text-foreground">{total}</p>
-              <p className="text-sm text-muted-foreground">Total</p>
-            </>
-          )}
+          <p className="text-2xl font-semibold tabular-nums text-foreground">
+            {centerData ? centerData.value : total}
+          </p>
+          <p className="max-w-[100px] truncate text-sm text-muted-foreground">
+            {centerData ? centerData.name : t('common.total')}
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-// Bar Chart View
 function BarView({
   data,
   hoveredIndex,
@@ -254,11 +237,11 @@ function BarView({
   setHoveredIndex: (index: number | null) => void;
 }) {
   return (
-    <ResponsiveContainer width="100%" height={320}>
+    <ResponsiveContainer width="100%" height={Math.max(160, data.length * 36 + 20)}>
       <BarChart
         data={data}
         layout="vertical"
-        margin={{ left: 0, right: 20, top: 10, bottom: 10 }}
+        margin={{ left: 0, right: 40, top: 10, bottom: 10 }}
         onMouseLeave={() => setHoveredIndex(null)}
       >
         <XAxis type="number" hide />
@@ -274,7 +257,7 @@ function BarView({
               y={y}
               dy={4}
               textAnchor="end"
-              className="text-xs fill-muted-foreground"
+              className="fill-muted-foreground text-xs"
             >
               {payload.value.length > 12
                 ? payload.value.slice(0, 12) + '...'
@@ -285,79 +268,55 @@ function BarView({
         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
         <Bar
           dataKey="value"
-          radius={[0, 6, 6, 0]}
+          barSize={20}
+          radius={[0, 4, 4, 0]}
+          isAnimationActive={false}
           onMouseEnter={(_, index) => setHoveredIndex(index)}
         >
           {data.map((entry, index) => (
-            <Cell
-              key={entry.name}
-              fill={entry.fill}
-              style={{
-                opacity: hoveredIndex === null || hoveredIndex === index ? 1 : 0.4,
-                transition: 'opacity 0.2s ease-out',
-              }}
-            />
+            <Cell key={entry.name} style={{ fill: entry.fill, ...dimmed(hoveredIndex, index) }} />
           ))}
+          <LabelList
+            dataKey="value"
+            position="right"
+            className="fill-foreground text-xs tabular-nums"
+          />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
-// List View
 function ListView({ data }: { data: ChartDataItem[] }) {
+  const { t } = useTranslation();
   return (
-    <div className="space-y-3">
-      {data.map((item, index) => (
-        <div
-          key={item.name}
-          className="group flex items-center gap-4 p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors duration-200"
-          style={{ animationDelay: `${index * 50}ms` }}
-        >
-          <div
-            className="w-2 h-10 rounded-full flex-shrink-0"
-            style={{ backgroundColor: item.fill }}
-          />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-foreground truncate">{item.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {item.value} responses
+    <div className="divide-y border-t">
+      {data.map((item) => (
+        <div key={item.name} className="flex items-center gap-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">{item.name}</p>
+            <p className="text-xs tabular-nums text-muted-foreground">
+              {t('admin.analytics.responsesCount', { count: item.value })}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-24 h-2 rounded-full bg-muted/50 overflow-hidden">
-              <div
-                className="h-full rounded-full bar-grow"
-                style={{
-                  backgroundColor: item.fill,
-                  width: `${item.percentage}%`,
-                  animationDelay: `${index * 50 + 100}ms`,
-                }}
-              />
-            </div>
-            <span className="text-sm font-medium text-foreground w-12 text-right">
-              {item.percentage.toFixed(1)}%
-            </span>
+          <div className="h-1.5 w-24 overflow-hidden rounded-sm bg-muted">
+            <div
+              className="h-full rounded-sm"
+              style={{ backgroundColor: item.fill, width: `${item.percentage}%` }}
+            />
           </div>
+          <span className="w-14 text-right text-sm font-medium tabular-nums text-foreground">
+            {item.percentage.toFixed(1)}%
+          </span>
         </div>
       ))}
     </div>
   );
 }
 
-// Custom Tooltip
-interface TooltipPayloadItem {
-  payload: {
-    name: string;
-    value: number;
-    fill: string;
-    percentage: number;
-  };
-}
-
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: TooltipPayloadItem[];
+  payload?: { payload: ChartDataItem }[];
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
@@ -366,14 +325,11 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   const data = payload[0].payload;
 
   return (
-    <div className="bg-popover/95 backdrop-blur-sm border border-border rounded-lg shadow-xl px-3 py-2">
-      <p className="font-medium text-foreground">{data.name}</p>
-      <div className="flex items-center gap-2 mt-1">
-        <span
-          className="w-2 h-2 rounded-full"
-          style={{ backgroundColor: data.fill }}
-        />
-        <span className="text-sm text-muted-foreground">
+    <div className="rounded-md border bg-popover px-3 py-2 text-popover-foreground shadow-md">
+      <p className="text-sm font-medium">{data.name}</p>
+      <div className="mt-1 flex items-center gap-2">
+        <span className="size-2 shrink-0" style={{ backgroundColor: data.fill }} />
+        <span className="text-sm tabular-nums text-muted-foreground">
           {data.value} ({data.percentage.toFixed(1)}%)
         </span>
       </div>

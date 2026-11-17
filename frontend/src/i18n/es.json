@@ -6,93 +6,109 @@
     "studies": "Estudios",
     "admin": "Admin",
     "dashboard": "Panel",
-    "manageCases": "Gestionar Casos",
-    "manageStudies": "Gestionar Estudios",
+    "manageCases": "Gestionar casos",
+    "manageStudies": "Gestionar estudios",
     "profile": "Perfil"
   },
   "breadcrumbs": {
     "classify": "Clasificar",
     "cases": "Casos",
-    "caseDetail": "Detalle del Caso",
+    "caseDetail": "Detalle del caso",
     "studies": "Estudios",
-    "studyDetail": "Detalle del Estudio",
+    "studyDetail": "Detalle del estudio",
     "admin": "Admin",
     "dashboard": "Panel",
-    "newCase": "Nuevo Caso",
-    "editCase": "Editar Caso",
-    "newStudy": "Nuevo Estudio",
-    "editStudy": "Editar Estudio",
+    "newCase": "Nuevo caso",
+    "editCase": "Editar caso",
+    "newStudy": "Nuevo estudio",
+    "editStudy": "Editar estudio",
     "analytics": "Analíticas",
     "reliability": "Fiabilidad",
     "divergence": "Divergencia",
     "cohorts": "Cohortes",
-    "newCohort": "Nueva Cohorte",
-    "editCohort": "Editar Cohorte",
-    "cohortDetail": "Detalle de Cohorte",
+    "newCohort": "Nueva cohorte",
+    "editCohort": "Editar cohorte",
+    "cohortDetail": "Detalle de cohorte",
     "profile": "Perfil"
   },
   "app": {
-    "title": "Clasificación de Fracturas de Tobillo",
+    "title": "Clasificación de fracturas de tobillo",
     "description": "Responda las preguntas para obtener la clasificación Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek",
-    "tagline": "Clasificación de Fracturas"
+    "tagline": "Clasificación de fracturas"
   },
   "landing": {
-    "badge": "Herramienta de Apoyo a la Decisión Clínica",
-    "headline": "Clasifica Fracturas de Tobillo",
-    "headlineHighlight": "en Segundos",
-    "subheadline": "Obtén clasificaciones instantáneas de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek con nuestro algoritmo basado en evidencia.",
-    "startClassifying": "Comenzar a Clasificar",
-    "learnMore": "Saber Más",
-    "features": {
-      "title": "¿Por qué Anklyze?",
-      "subtitle": "Diseñado para cirujanos ortopédicos que necesitan clasificación de fracturas precisa y rápida en el punto de atención.",
-      "accurate": {
-        "title": "Basado en Evidencia",
-        "description": "Clasificaciones derivadas de literatura revisada por pares y algoritmos clínicos validados."
+    "startClassifying": "Comenzar a clasificar",
+    "nav": {
+      "method": "Cómo funciona",
+      "systems": "Sistemas",
+      "studies": "Estudios",
+      "signIn": "Iniciar sesión"
+    },
+    "hero": {
+      "title": "Cuatro clasificaciones de fractura de tobillo con un solo conjunto de respuestas.",
+      "lede": "Anklyze sigue un único árbol de decisión elaborado por cirujanos ortopédicos. Responda lo que ve en la radiografía y obtendrá a la vez Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek.",
+      "secondary": "Ver cómo se llega a un resultado"
+    },
+    "example": {
+      "caption": "Ejemplo: fractura aislada de maléolo lateral, leída a través del árbol. N/C indica que el sistema no es aplicable."
+    },
+    "method": {
+      "title": "Cómo funciona",
+      "answer": {
+        "title": "Responda lo que ve",
+        "body": "Las preguntas siguen la fractura: qué maléolos están afectados, el nivel de la fractura de peroné, el patrón del trazo. Se responde con las teclas numéricas y no se pregunta nada que el árbol no necesite."
       },
-      "fast": {
-        "title": "Resultados Instantáneos",
-        "description": "Obtén clasificaciones completas en menos de 30 segundos con nuestro cuestionario guiado."
+      "narrow": {
+        "title": "El árbol se va cerrando",
+        "body": "Cada respuesta determina la siguiente pregunta. El camino recorrido permanece en pantalla, de modo que un colega puede comprobar cómo se llegó al resultado."
       },
-      "comprehensive": {
-        "title": "Cuatro Sistemas",
-        "description": "Clasificaciones Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek en una sola herramienta."
+      "result": {
+        "title": "Un resultado en cuatro sistemas",
+        "body": "El final del camino contiene la clasificación en los cuatro sistemas. Cuando un sistema no es aplicable a la fractura, el resultado lo indica en lugar de forzar un código."
       }
     },
-    "howItWorks": {
-      "title": "Cómo Funciona",
-      "subtitle": "Tres simples pasos para una clasificación precisa de fracturas",
-      "step1": {
-        "title": "Selecciona la Ubicación",
-        "description": "Identifica qué maléolos están involucrados: medial, lateral o posterior."
+    "systems": {
+      "title": "Los cuatro sistemas",
+      "lede": "Cada sistema describe la misma fractura desde un ángulo distinto. Anklyze los presenta juntos, sin tener que deducir cada uno por separado.",
+      "colSystem": "Sistema",
+      "colBasis": "Clasifica según",
+      "colExample": "Ejemplo",
+      "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
+      "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
+      "aoota": "Código alfanumérico de hueso, segmento, tipo y grupo.",
+      "bartonicek": "Morfología del fragmento del maléolo posterior."
+    },
+    "studies": {
+      "title": "Pensado para estudios de fiabilidad",
+      "lede": "Los investigadores publican casos con sus imágenes, invitan a evaluadores a clasificarlos de forma independiente y analizan su grado de acuerdo.",
+      "cta": "Iniciar sesión en un estudio",
+      "cases": {
+        "term": "Casos",
+        "body": "Radiografías y TAC de una fractura, clasificados por cada evaluador sin ver a los demás."
       },
-      "step2": {
-        "title": "Responde las Preguntas",
-        "description": "Nuestro algoritmo se adapta para mostrar solo preguntas relevantes según tus selecciones."
+      "agreement": {
+        "term": "Acuerdo",
+        "body": "Kappa por sistema de clasificación, con su interpretación de Landis y Koch."
       },
-      "step3": {
-        "title": "Obtén la Clasificación",
-        "description": "Recibe clasificaciones detalladas con notas clínicas y consideraciones de tratamiento."
+      "gold": {
+        "term": "Patrón de referencia",
+        "body": "La precisión de cada evaluador frente a la clasificación de referencia fijada por el estudio."
       }
     },
     "cta": {
-      "title": "¿Listo para Clasificar?",
-      "subtitle": "Comienza a usar Anklyze ahora. Sin registro requerido.",
-      "button": "Clasifica Tu Primera Fractura"
+      "title": "Empiece por la primera pregunta."
     },
     "footer": {
-      "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos.",
-      "copyright": "Anklyze",
-      "apiDocs": "API Docs"
+      "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos."
     }
   },
   "form": {
     "classifying": "Clasificando...",
-    "classify": "Clasificar Fractura",
+    "classify": "Clasificar fractura",
     "back": "Atrás",
     "actions": "Acciones",
-    "reset": "Empezar de Nuevo",
-    "keyboardHint": "Teclado: 1-9 seleccionar, Enter enviar, Retroceso atrás",
+    "reset": "Empezar de nuevo",
+    "keyboardHint": "Teclado: 1-9 seleccionar, enter enviar, retroceso atrás",
     "progress": "Progreso",
     "questions": {
       "involved_malleoli": "¿Qué maléolos tiene fracturados?",
@@ -161,7 +177,7 @@
       },
       "fibularLevelHighLow": {
         "high": "Suprasindesmal",
-        "low": "Baja (Transindesmal / Infrasindesmal)"
+        "low": "Baja (transindesmal / infrasindesmal)"
       },
       "fibularLevelForTransverse": {
         "infrasindesmal": "Infrasindesmal",
@@ -195,8 +211,8 @@
         "conminuta": "Conminuta/ala de mariposa"
       },
       "fibulaMorphologyTri": {
-        "transverse": "Transversa/Oblicua (Baja medial, alta lateral)",
-        "spiral": "Espiroidea (Baja anterior, alta posterior)"
+        "transverse": "Transversa/Oblicua (baja medial, alta lateral)",
+        "spiral": "Espiroidea (baja anterior, alta posterior)"
       },
       "fibulaMorphologyTriMulti": {
         "oblique": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa",
@@ -220,12 +236,12 @@
         "malleolus_fracture": "Fractura del maléolo/avulsión"
       },
       "suprasindesmalType": {
-        "simple_diaphyseal": "Diafisaria Simple",
+        "simple_diaphyseal": "Diafisaria simple",
         "multifragmentary": "Multifragmentaria/ala de mariposa",
         "proximal": "Proximal (1/3 proximal de peroné)"
       },
       "suprasindesmalTypeLP": {
-        "simple_diaphyseal": "Diafisaria Simple",
+        "simple_diaphyseal": "Diafisaria simple",
         "multifragmentary": "Multifragmentaria/ala de mariposa",
         "proximal": "Proximal (1/3 proximal de peroné)"
       },
@@ -259,11 +275,11 @@
       "yes": "Sí",
       "no": "No",
       "high": "Suprasindesmal",
-      "low": "Baja (Transindesmal / Infrasindesmal)"
+      "low": "Baja (transindesmal / infrasindesmal)"
     }
   },
   "results": {
-    "title": "Resultados de la Clasificación",
+    "title": "Resultados de la clasificación",
     "noClassification": "No se pudo determinar la clasificación con los datos proporcionados.",
     "laugeHansen": {
       "title": "Clasificación Lauge-Hansen",
@@ -281,25 +297,25 @@
       "title": "Clasificación Bartonicek",
       "description": "Clasificación del maléolo posterior"
     },
-    "clinicalNotes": "Notas Clínicas",
+    "clinicalNotes": "Notas clínicas",
     "fractureDescriptions": {
       "none_selected": "No se ha seleccionado ninguna fractura",
       "unimaleolar_posterior": "Fractura unimaleolar maléolo posterior",
       "unimaleolar_medial": "Fractura unimaleolar maléolo medial",
       "unimaleolar_lateral": "Fractura unimaleolar maléolo lateral",
-      "bimaleolar_medial_posterior": "Fractura bimaleolar (Medial + Posterior)",
-      "bimaleolar_lateral_posterior": "Fractura bimaleolar (Lateral + Posterior)",
-      "bimaleolar_lateral_medial": "Fractura bimaleolar (Lateral + Medial)",
+      "bimaleolar_medial_posterior": "Fractura bimaleolar (medial + posterior)",
+      "bimaleolar_lateral_posterior": "Fractura bimaleolar (lateral + posterior)",
+      "bimaleolar_lateral_medial": "Fractura bimaleolar (lateral + medial)",
       "trimaleolar": "Fractura trimaleolar",
       "distal_tibia": "Fractura de tibia distal",
       "posterior_distal_tibia": "Fractura de tibia distal (maléolo posterior)"
     },
     "classifications": {
       "laugeHansen": {
-        "SA_name": "Supinación-Aducción",
-        "SER_name": "Supinación-Rotación Externa",
-        "PER_name": "Pronación-Rotación Externa",
-        "PA_name": "Pronación-Abducción",
+        "SA_name": "Supinación-aducción",
+        "SER_name": "Supinación-rotación externa",
+        "PER_name": "Pronación-rotación externa",
+        "PA_name": "Pronación-abducción",
         "ambiguous_name": "No clasificable",
         "not_classifiable_name": "No clasificable"
       },
@@ -324,7 +340,7 @@
       "exceptional": "No posible (excepcional)"
     },
     "impossibleBanner": {
-      "title": "Clasificacion No Posible"
+      "title": "Clasificacion no posible"
     },
     "impossibleReasons": {
       "exceptional": "Este patron de fractura esta fuera de los sistemas de clasificacion estandar.",
@@ -333,13 +349,18 @@
   },
   "classify": {
     "flowDiagram": {
-      "title": "Flujo de Clasificación",
+      "title": "Flujo de clasificación",
       "description": "Guía visual del proceso de decisión de clasificación",
-      "show": "Mostrar Flujo",
-      "hide": "Ocultar Flujo",
+      "show": "Mostrar flujo",
+      "hide": "Ocultar flujo",
       "resetZoom": "Restablecer zoom",
-      "loading": "Cargando diagrama..."
-    }
+      "loading": "Cargando diagrama...",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar"
+    },
+    "failed": "No se pudo completar la clasificación",
+    "stepOf": "Paso {{current}} de {{total}}",
+    "ctAnswer": "TAC: {{answer}}"
   },
   "language": {
     "toggle": "Cambiar idioma"
@@ -348,11 +369,13 @@
     "toggle": "Cambiar tema"
   },
   "comparison": {
-    "compare": "Comparar Escenarios",
-    "addAnother": "Añadir Otro Escenario",
-    "clear": "Limpiar Comparación",
-    "startOver": "Empezar de Nuevo",
-    "scenario": "Escenario"
+    "compare": "Comparar escenarios",
+    "addAnother": "Añadir otro escenario",
+    "clear": "Limpiar comparación",
+    "startOver": "Empezar de nuevo",
+    "scenario": "Escenario",
+    "agree": "Los escenarios coinciden",
+    "differ": "Los escenarios difieren"
   },
   "share": {
     "button": "Compartir",
@@ -361,14 +384,7 @@
   },
   "login": {
     "title": "Iniciar sesión",
-    "welcome": "Bienvenido de nuevo",
-    "subtitle": "Inicia sesión para acceder a estudios clínicos y herramientas de clasificación de fracturas.",
-    "feature1Title": "Clasificación Instantánea",
-    "feature1Desc": "Obtén clasificaciones Lauge-Hansen, Danis-Weber, AO/OTA en segundos.",
-    "feature2Title": "Estudios Clínicos",
-    "feature2Desc": "Participa en estudios de clasificación de fracturas y compara resultados.",
-    "feature3Title": "Seguimiento de Progreso",
-    "feature3Desc": "Monitorea tu historial de clasificaciones y mejora con el tiempo."
+    "lede": "Inicie sesión para clasificar los casos de un estudio y revisar sus respuestas."
   },
   "auth": {
     "signIn": "Inicia sesión para continuar",
@@ -378,7 +394,7 @@
     "signInButton": "Iniciar sesión",
     "notConfigured": "Autenticación no configurada",
     "contactAdmin": "Por favor contacta al administrador para configurar la autenticación.",
-    "backToHome": "Volver al Inicio",
+    "backToHome": "Volver al inicio",
     "signOut": "Cerrar sesión"
   },
   "common": {
@@ -392,7 +408,13 @@
     "next": "Siguiente",
     "of": "de",
     "add": "Agregar",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "select": "Seleccionar...",
+    "total": "Total",
+    "notAvailable": "N/D",
+    "noData": "No hay datos disponibles",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente"
   },
   "cases": {
     "title": "Título",
@@ -405,28 +427,29 @@
     },
     "images": {
       "xray": "Radiografía",
-      "tac": "TAC"
+      "tac": "TAC",
+      "ct": "TAC"
     },
     "noCases": "No hay casos disponibles",
     "noCasesDescription": "No hay casos publicados en este momento. Vuelve más tarde.",
     "responses": "respuestas",
     "responded": "Respondido",
     "notFound": "Caso no encontrado",
-    "backToList": "Volver a Casos",
+    "backToList": "Volver a casos",
     "includesTAC": "Incluye TAC",
     "expired": "Expirado",
     "response": "Respuesta",
-    "imageGallery": "Galería de Imágenes",
+    "imageGallery": "Galería de imágenes",
     "noImages": "No hay imágenes disponibles",
     "ctScanAutoDetected": "Imágenes de TAC detectadas - pregunta de TAC respondida automáticamente",
     "ctScanAutoNo": "Sin imágenes de TAC disponibles - pregunta de TAC respondida automáticamente",
-    "myResponses": "Mis Respuestas",
-    "pageTitle": "Casos Clínicos",
+    "myResponses": "Mis respuestas",
+    "pageTitle": "Casos clínicos",
     "pageSubtitle": "Clasifica casos de fracturas de tobillo y compara tu evaluación con otros clínicos.",
     "imagesCount": "imágenes",
-    "viewOrReanswer": "Ver o Responder de Nuevo",
-    "startClassification": "Iniciar Clasificación",
-    "yourProgress": "Tu Progreso",
+    "viewOrReanswer": "Ver o responder de nuevo",
+    "startClassification": "Iniciar clasificación",
+    "yourProgress": "Tu progreso",
     "completedCount": "completados",
     "pendingCount": "pendientes",
     "searchPlaceholder": "Buscar casos...",
@@ -435,12 +458,12 @@
     "filterCompleted": "Completados",
     "noMatchingCases": "No hay casos que coincidan",
     "tryDifferentFilter": "Intenta ajustar tu búsqueda o criterios de filtro.",
-    "clearFilters": "Limpiar Filtros",
+    "clearFilters": "Limpiar filtros",
     "daysLeft": "{{count}} días restantes",
     "yourResponses": "{{count}} respuesta(s) enviada(s)",
-    "submitSuccess": "Respuesta Enviada",
+    "submitSuccess": "Respuesta enviada",
     "submitSuccessDescription": "Tu clasificación ha sido registrada correctamente.",
-    "submitError": "Error al Enviar",
+    "submitError": "Error al enviar",
     "clickToEnlarge": "Clic para ampliar",
     "zoomIn": "Acercar",
     "zoomOut": "Alejar",
@@ -454,9 +477,15 @@
     "nav": {
       "prev": "Anterior",
       "next": "Siguiente",
-      "nextCase": "Siguiente Caso",
+      "nextCase": "Siguiente caso",
       "keyboardHint": "para navegar"
-    }
+    },
+    "loadListError": "No se pudieron cargar los casos",
+    "loadError": "No se pudo cargar el caso",
+    "submitResponseError": "No se pudo enviar la respuesta",
+    "missingData": "Faltan datos",
+    "imageLoadFailed": "Error al cargar",
+    "closeLightbox": "Cerrar visor de imágenes"
   },
   "studies": {
     "title": "Título",
@@ -469,48 +498,48 @@
     "noStudies": "No hay estudios disponibles",
     "responses": "respuestas",
     "notFound": "Estudio no encontrado",
-    "backToList": "Volver a Estudios",
+    "backToList": "Volver a estudios",
     "response": "Respuesta",
     "noImages": "No hay imágenes disponibles",
     "noImagesInCategory": "No hay imágenes en esta categoría",
-    "submitAnother": "Enviar Otra Respuesta",
-    "previousResponses": "Respuestas Anteriores",
-    "studyExpired": "Estudio Expirado",
+    "submitAnother": "Enviar otra respuesta",
+    "previousResponses": "Respuestas anteriores",
+    "studyExpired": "Estudio expirado",
     "studyExpiredDescription": "Este estudio ha pasado su fecha límite y ya no acepta respuestas.",
-    "responseSubmitted": "Respuesta Enviada",
+    "responseSubmitted": "Respuesta enviada",
     "responseSubmittedDescription": "Tu clasificación ha sido registrada. Puedes enviar otra respuesta si deseas cambiar tu respuesta.",
-    "classificationResult": "Resultado de la Clasificación",
+    "classificationResult": "Resultado de la clasificación",
     "reviewAndSubmit": "Revisa tu clasificación a continuación y envía tu respuesta.",
-    "changeAnswer": "Cambiar Respuesta",
-    "submitResponse": "Enviar Respuesta",
-    "classifyFracture": "Clasificar Fractura",
+    "changeAnswer": "Cambiar respuesta",
+    "submitResponse": "Enviar respuesta",
+    "classifyFracture": "Clasificar fractura",
     "classifyFractureDescription": "Responde las preguntas a continuación para clasificar este caso de fractura de tobillo.",
-    "alreadyResponded": "Ya Has Respondido",
+    "alreadyResponded": "Ya has respondido",
     "alreadyRespondedDescription": "Ya has enviado una respuesta a este estudio. Este estudio solo permite una respuesta por participante.",
-    "referenceComparison": "Comparación con la Referencia"
+    "referenceComparison": "Comparación con la referencia"
   },
   "admin": {
     "cases": {
-      "title": "Gestión de Casos",
+      "title": "Gestión de casos",
       "subtitle": "Crear y gestionar casos clínicos de pacientes",
-      "create": "Crear Caso",
-      "createFirst": "Crea Tu Primer Caso",
-      "createCase": "Crear Nuevo Caso",
-      "editCase": "Editar Caso",
+      "create": "Crear caso",
+      "createFirst": "Crea tu primer caso",
+      "createCase": "Crear nuevo caso",
+      "editCase": "Editar caso",
       "search": "Buscar casos...",
       "filterStatus": "Filtrar por estado",
       "allStatuses": "Todos los estados",
       "noCases": "No se encontraron casos",
       "noCasesDesc": "Crea tu primer caso para comenzar.",
       "analytics": "Analíticas",
-      "divergence": "Análisis de Divergencia",
+      "divergence": "Análisis de divergencia",
       "publish": "Publicar",
-      "close": "Cerrar Caso",
+      "close": "Cerrar caso",
       "exportCSV": "Exportar CSV",
-      "backToList": "Volver a Casos",
+      "backToList": "Volver a casos",
       "notFound": "Caso no encontrado",
       "notFoundDescription": "El caso que buscas no existe o ha sido eliminado.",
-      "details": "Detalles del Caso",
+      "details": "Detalles del caso",
       "detailsDescription": "Información básica sobre el caso clínico",
       "titlePlaceholder": "Introduce el título del caso...",
       "descriptionPlaceholder": "Introduce una descripción del caso clínico...",
@@ -522,11 +551,11 @@
       "noImages": "No hay imágenes subidas",
       "pending": "Pendiente",
       "deleteConfirm": {
-        "title": "Eliminar Caso",
+        "title": "Eliminar caso",
         "description": "¿Estás seguro de que quieres eliminar este caso? Esta acción no se puede deshacer."
       },
       "publishConfirm": {
-        "title": "Publicar Caso",
+        "title": "Publicar caso",
         "description": "Una vez publicado, los usuarios podrán ver y responder a este caso. El caso no se puede editar después de publicar. ¿Estás seguro?"
       },
       "errors": {
@@ -543,25 +572,26 @@
       },
       "validationSettings": "Validación",
       "validationSettingsDescription": "Configura las opciones del caso de validación",
-      "referenceClassification": "Clasificación de Referencia (Gold Standard)",
+      "referenceClassification": "Clasificación de referencia (gold standard)",
       "referenceClassificationDescription": "Establece la clasificación correcta para comparar con las respuestas de los participantes",
-      "clearReference": "Borrar Referencia",
-      "setReference": "Establecer Clasificación de Referencia",
+      "clearReference": "Borrar referencia",
+      "setReference": "Establecer clasificación de referencia",
       "changeReference": "Cambiar",
-      "responseOptions": "Opciones de Respuesta",
-
-      "showReferenceAfterSubmit": "Mostrar Referencia Después de Enviar",
+      "responseOptions": "Opciones de respuesta",
+      "showReferenceAfterSubmit": "Mostrar referencia después de enviar",
       "showReferenceAfterSubmitDescription": "Muestra la clasificación correcta después de que los participantes envíen su respuesta",
       "decisionPathConfigured": "Ruta de decisión configurada para análisis de divergencia",
-      "backToCases": "Volver a Casos"
+      "backToCases": "Volver a casos",
+      "pendingUpload": "Carga pendiente",
+      "impossibleClassification": "No clasificable (imposible)"
     },
     "studies": {
-      "title": "Gestión de Estudios",
+      "title": "Gestión de estudios",
       "subtitle": "Crear y gestionar estudios de casos clínicos",
-      "create": "Crear Estudio",
-      "createFirst": "Crea Tu Primer Estudio",
-      "createTitle": "Crear Estudio",
-      "editTitle": "Editar Estudio",
+      "create": "Crear estudio",
+      "createFirst": "Crea tu primer estudio",
+      "createTitle": "Crear estudio",
+      "editTitle": "Editar estudio",
       "search": "Buscar estudios...",
       "filterStatus": "Filtrar por estado",
       "allStatuses": "Todos los estados",
@@ -576,7 +606,7 @@
       "cases_plural": "casos",
       "rater": "evaluador",
       "raters_plural": "evaluadores",
-      "backToList": "Volver a Estudios",
+      "backToList": "Volver a estudios",
       "notFound": "Estudio no encontrado",
       "notFoundDescription": "El estudio que buscas no existe o ha sido eliminado.",
       "details": "Detalles",
@@ -594,14 +624,14 @@
       "addCasesHint": "Agrega casos publicados para comenzar",
       "addAllCases": "Agregar todos",
       "step": "Paso",
-      "activateConfirmTitle": "Activar Estudio",
+      "activateConfirmTitle": "Activar estudio",
       "activateConfirmDescription": "Una vez activado, el estudio estará disponible para que los evaluadores asignados envíen clasificaciones. No se podrán agregar o eliminar casos después de la activación.",
       "raters": {
         "title": "Evaluadores",
         "description": "Asignar evaluadores"
       },
       "deleteConfirm": {
-        "title": "Eliminar Estudio",
+        "title": "Eliminar estudio",
         "description": "¿Estás seguro de que quieres eliminar este estudio? Esta acción no se puede deshacer."
       },
       "errors": {
@@ -616,28 +646,28 @@
         "created": "Creado",
         "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"
       },
-      "configureGoldStandardInput": "Configurar Gold Standard",
+      "configureGoldStandardInput": "Configurar gold standard",
       "configureGoldStandardInputDesc": "Complete el cuestionario de clasificación para establecer el gold standard. Esto captura tanto el resultado de la clasificación como la ruta de decisión para el análisis de divergencia.",
       "goldStandardClassified": "Clasificación gold standard generada exitosamente",
-      "startOver": "Empezar de Nuevo",
-      "saveAsGoldStandard": "Guardar como Gold Standard",
-      "classifyGoldStandard": "Generar Clasificación",
-      "backToStudy": "Volver al Estudio",
+      "startOver": "Empezar de nuevo",
+      "saveAsGoldStandard": "Guardar como gold standard",
+      "classifyGoldStandard": "Generar clasificación",
+      "backToStudy": "Volver al estudio",
       "reliability": {
-        "totalCases": "Casos Totales",
-        "completeRaters": "Evaluadores Completos",
+        "totalCases": "Casos totales",
+        "completeRaters": "Evaluadores completos",
         "lowAgreementCases": "casos con bajo acuerdo",
         "casesWithReference": "casos con referencia",
         "totalComparisons": "comparaciones totales",
-        "fleissKappa": "Kappa de Fleiss (Fiabilidad Inter-Evaluador)",
+        "fleissKappa": "Kappa de Fleiss (fiabilidad inter-evaluador)",
         "fleissKappaDescription": "El Kappa de Fleiss mide el acuerdo entre múltiples evaluadores en múltiples casos. Requiere 3+ evaluadores que completaron todos los casos.",
         "notEnoughData": "No hay suficientes datos",
-        "perCaseAgreement": "Acuerdo por Caso",
+        "perCaseAgreement": "Acuerdo por caso",
         "noCaseMetrics": "No hay métricas de casos disponibles",
         "agreementNote": "El porcentaje de acuerdo muestra con qué frecuencia los evaluadores seleccionaron la misma clasificación para cada caso. Los casos con bajo acuerdo (< 60%) están resaltados."
       },
       "goldStandard": {
-        "title": "Precisión vs. Gold Standard",
+        "title": "Precisión vs. gold standard",
         "description": "Mide con qué frecuencia los evaluadores coinciden con la clasificación de referencia experta. Mayor precisión significa mayor concordancia con el gold standard.",
         "noCasesWithGold": "Ningún caso en este estudio tiene un gold standard configurado. Establezca clasificaciones gold standard en casos individuales para ver métricas de precisión.",
         "casesWithGold": "{{count}} de {{total}} casos tienen gold standard",
@@ -645,11 +675,11 @@
         "consensusRate": "Consenso: {{rate}}%",
         "casesCorrect": "correctos",
         "hardCasesWarning": "{{count}} caso(s) difícil(es) detectado(s) (precisión < 50% en al menos un sistema)",
-        "perCaseAccuracy": "Precisión por Caso vs. Gold Standard",
+        "perCaseAccuracy": "Precisión por caso vs. gold standard",
         "case": "Caso",
         "noGoldStandard": "Sin gold standard",
         "accuracyNote": "La precisión muestra el porcentaje de evaluadores que coincidieron con la clasificación gold standard. Los casos con < 50% de precisión en cualquier sistema se marcan como casos difíciles.",
-        "perRaterAccuracy": "Precisión por Evaluador vs. Gold Standard",
+        "perRaterAccuracy": "Precisión por evaluador vs. gold standard",
         "rater": "Evaluador",
         "casesCompleted": "Casos",
         "cases": "casos",
@@ -657,46 +687,57 @@
       }
     },
     "analytics": {
-      "totalResponses": "Total de Respuestas",
-      "uniqueRespondents": "Participantes Únicos",
-      "avgResponseTime": "Tiempo Promedio",
+      "totalResponses": "Total de respuestas",
+      "uniqueRespondents": "Participantes únicos",
+      "avgResponseTime": "Tiempo promedio",
       "responsesPerUser": "Respuestas/Usuario",
-      "classificationDistribution": "Distribución de Clasificaciones",
+      "classificationDistribution": "Distribución de clasificaciones",
       "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
       "distributionTitle": "Distribución {{system}}",
-      "reliabilityMetrics": "Métricas de Fiabilidad",
+      "reliabilityMetrics": "Métricas de fiabilidad",
       "noData": "No hay datos de respuestas disponibles",
-      "unspecified": "No especificado"
+      "unspecified": "No especificado",
+      "actualPredicted": "Real / predicho",
+      "low": "Bajo",
+      "high": "Alto",
+      "viewBar": "Gráfico de barras",
+      "viewDonut": "Gráfico de anillo",
+      "viewList": "Lista",
+      "moreCount": "+{{count}} más",
+      "responsesCount_one": "{{count}} respuesta",
+      "responsesCount_other": "{{count}} respuestas",
+      "noDataSubtitle": "Aún no hay clasificaciones registradas",
+      "totalClassifications": "clasificaciones en total"
     },
     "reliability": {
-      "title": "Fiabilidad Inter-Evaluador",
-      "hasGoldStandard": "Gold Standard Establecido",
-      "exportDetailed": "Exportar CSV Detallado",
-      "viewDivergence": "Análisis de Divergencia",
-      "totalResponses": "Total de Respuestas",
-      "uniqueRaters": "Evaluadores Únicos",
+      "title": "Fiabilidad inter-evaluador",
+      "hasGoldStandard": "Gold standard establecido",
+      "exportDetailed": "Exportar CSV detallado",
+      "viewDivergence": "Análisis de divergencia",
+      "totalResponses": "Total de respuestas",
+      "uniqueRaters": "Evaluadores únicos",
       "correctResponses": "Correctas",
       "incorrectResponses": "Incorrectas",
-      "goldStandardAccuracy": "Precisión vs Gold Standard",
+      "goldStandardAccuracy": "Precisión vs gold standard",
       "overallAccuracy": "General",
-      "kappaScores": "Puntuaciones de Acuerdo Kappa",
-      "kappaInterpretation": "Guía de Interpretación Kappa",
+      "kappaScores": "Puntuaciones de acuerdo kappa",
+      "kappaInterpretation": "Guía de interpretación kappa",
       "kappaPoor": "Pobre",
       "kappaSlight": "Ligero",
       "kappaFair": "Aceptable",
       "kappaModerate": "Moderado",
       "kappaSubstantial": "Sustancial",
-      "kappaAlmostPerfect": "Casi Perfecto",
-      "detailedAnalysis": "Análisis Detallado por Sistema",
+      "kappaAlmostPerfect": "Casi perfecto",
+      "detailedAnalysis": "Análisis detallado por sistema",
       "detailedDescription": "Matriz de confusión y distribución de categorías por sistema de clasificación",
       "metrics": "Métricas",
-      "percentAgreement": "Porcentaje de Acuerdo",
+      "percentAgreement": "Porcentaje de acuerdo",
       "cohensKappa": "Kappa de Cohen",
       "fleissKappa": "Kappa de Fleiss",
-      "weightedKappa": "Kappa Ponderado",
+      "weightedKappa": "Kappa ponderado",
       "weightedKappaDescription": "El Kappa ponderado tiene en cuenta la gravedad de los desacuerdos en clasificaciones ordinales. Los desacuerdos entre categorías adyacentes se penalizan menos que los distantes.",
-      "confidenceInterval": "Intervalo de Confianza del {{level}}%",
-      "diagnosticMetrics": "Rendimiento Diagnóstico por Categoría",
+      "confidenceInterval": "Intervalo de confianza del {{level}}%",
+      "diagnosticMetrics": "Rendimiento diagnóstico por categoría",
       "diagnosticMetricsDescription": "La sensibilidad, especificidad y valores predictivos muestran qué tan bien los evaluadores identifican cada categoría de clasificación comparado con el gold standard.",
       "diagnosticMetricsNote": "Valores más cercanos al 100% indican mejor rendimiento diagnóstico. El F1 Score es la media armónica de sensibilidad y VPP, proporcionando una medida equilibrada de precisión.",
       "category": "Categoría",
@@ -708,28 +749,28 @@
       "ppvDescription": "Valor Predictivo Positivo: proporción de predicciones positivas que son correctas (VP / (VP + FP))",
       "npv": "VPN",
       "npvDescription": "Valor Predictivo Negativo: proporción de predicciones negativas que son correctas (VN / (VN + FN))",
-      "f1Score": "F1 Score",
+      "f1Score": "F1 score",
       "f1ScoreDescription": "Media armónica de sensibilidad y VPP, proporcionando una medida equilibrada de precisión (2 × VPP × Sensibilidad / (VPP + Sensibilidad))",
-      "categoryCounts": "Distribución por Categoría",
-      "confusionMatrix": "Matriz de Confusión",
+      "categoryCounts": "Distribución por categoría",
+      "confusionMatrix": "Matriz de confusión",
       "noDataForSystem": "No hay datos disponibles para este sistema de clasificación",
       "noGoldStandard": "No se ha establecido el gold standard para este caso",
-      "setGoldStandard": "Establecer Gold Standard",
-      "clearGoldStandard": "Eliminar Gold Standard",
+      "setGoldStandard": "Establecer gold standard",
+      "clearGoldStandard": "Eliminar gold standard",
       "goldStandardSet": "Clasificación gold standard establecida",
       "goldStandardCleared": "Gold standard eliminado",
-      "accuracyTitle": "Precisión vs. Gold Standard",
+      "accuracyTitle": "Precisión vs. gold standard",
       "accuracyDescription": "Comparación de las respuestas de los evaluadores con la clasificación de referencia",
       "consensusMatchesGold": "El consenso coincide con el gold standard",
       "consensusDoesNotMatch": "El consenso no coincide con el gold standard",
-      "majorityVote": "Voto Mayoritario",
-      "hardCase": "Caso Difícil",
+      "majorityVote": "Voto mayoritario",
+      "hardCase": "Caso difícil",
       "hardCaseDescription": "Uno o más sistemas tienen menos del 50% de precisión",
-      "casesWithGold": "Casos con Gold Standard",
-      "meanAccuracy": "Precisión Media",
-      "consensusRate": "Tasa de Consenso",
-      "perRaterAccuracy": "Precisión por Evaluador",
-      "perCaseAccuracy": "Precisión por Caso",
+      "casesWithGold": "Casos con gold standard",
+      "meanAccuracy": "Precisión media",
+      "consensusRate": "Tasa de consenso",
+      "perRaterAccuracy": "Precisión por evaluador",
+      "perCaseAccuracy": "Precisión por caso",
       "agreement": "acuerdo",
       "raters2": "2 evaluadores",
       "ratersMulti": "multi-evaluador",
@@ -743,63 +784,82 @@
         "aoOtaDesc": "Clasificación completa",
         "bartonicek": "Bartonicek",
         "bartonicekDesc": "Maléolo posterior"
-      }
+      },
+      "ciShort": "IC del {{level}}%",
+      "kappaLegend": "< 0 pobre · 0–0.20 ligero · 0.21–0.40 aceptable · 0.41–0.60 moderado · 0.61–0.80 sustancial · 0.81–1.00 casi perfecto",
+      "subjects": "Casos (sujetos)",
+      "categories": "Categorías",
+      "ratersCount_one": "{{count}} evaluador",
+      "ratersCount_other": "{{count}} evaluadores",
+      "casesCount_one": "{{count}} caso",
+      "casesCount_other": "{{count}} casos",
+      "goldStandard": "Gold standard",
+      "goldStandardGroups": {
+        "infrasyndesmotic": "A (infrasindesmal)",
+        "transyndesmotic": "B (transindesmal)",
+        "suprasyndesmotic": "C (suprasindesmal)",
+        "distalTibia": "Tibia distal",
+        "other": "Otros"
+      },
+      "systemMetrics": "Métricas de {{system}}",
+      "systemDetail": "Análisis detallado de {{system}}"
     },
     "dashboard": {
-      "title": "Panel de Administración",
+      "title": "Panel de administración",
       "subtitle": "Resumen de todos los estudios y respuestas",
-      "totalCases": "Total de Casos",
-      "totalResponses": "Total de Respuestas",
-      "uniqueParticipants": "Participantes Únicos",
-      "completedCases": "Casos Completados",
+      "totalCases": "Total de casos",
+      "totalResponses": "Total de respuestas",
+      "uniqueParticipants": "Participantes únicos",
+      "completedCases": "Casos completados",
       "drafts": "borradores",
       "active": "activos",
       "avgPerCase": "~{{count}} promedio por caso",
       "acrossAllCases": "en todos los casos",
       "stillActive": "aún activos",
-      "recentActivity": "Actividad Reciente",
+      "recentActivity": "Actividad reciente",
       "recentActivityDesc": "Estudios con respuestas recientes",
       "noRecentActivity": "Sin actividad reciente",
       "responses": "respuestas",
-      "needsAttention": "Requiere Atención",
+      "needsAttention": "Requiere atención",
       "needsAttentionDesc": "Estudios que pueden necesitar tu atención",
       "allGood": "¡Todos los estudios van bien!",
       "pastDeadline": "Fecha límite pasada",
       "noResponses": "Sin respuestas aún",
-      "statusBreakdown": "Distribución por Estado",
-      "statusBreakdownDesc": "Distribución de estudios por estado"
+      "statusBreakdown": "Distribución por estado",
+      "statusBreakdownDesc": "Distribución de estudios por estado",
+      "percentOfTotal": "{{percent}}% del total"
     },
     "divergence": {
-      "title": "Análisis de Divergencia",
-      "goldStandardRequired": "Gold Standard Requerido",
-      "analysisUnavailable": "Análisis No Disponible",
+      "title": "Análisis de divergencia",
+      "goldStandardRequired": "Gold standard requerido",
+      "analysisUnavailable": "Análisis no disponible",
       "goldStandardRequiredDesc": "Este estudio necesita un gold standard (entrada de referencia) configurado para realizar el análisis de divergencia.",
-      "configureGoldStandard": "Configurar Gold Standard",
-      "goldStandardConfigured": "Gold Standard Configurado",
-      "viewReliability": "Ver Fiabilidad",
-      "totalResponses": "Respuestas Totales",
-      "pathCoverage": "Cobertura de Ruta",
+      "configureGoldStandard": "Configurar gold standard",
+      "goldStandardConfigured": "Gold standard configurado",
+      "viewReliability": "Ver fiabilidad",
+      "totalResponses": "Respuestas totales",
+      "pathCoverage": "Cobertura de ruta",
       "pathCoverageOf": "{{count}} de {{total}} con seguimiento",
-      "mostConfusing": "Más Confuso",
+      "mostConfusing": "Más confuso",
       "errorRate": "{{percent}}% de error",
-      "avgBackClicks": "Promedio Clics Atrás",
+      "avgBackClicks": "Promedio clics atrás",
       "correlation": "Correlación: {{type}}",
-      "correctPathRate": "Tasa de Ruta Correcta",
+      "correctPathRate": "Tasa de ruta correcta",
       "correctPathCount": "{{count}} de {{total}} correctos",
-      "uniquePaths": "Rutas Únicas",
+      "uniquePaths": "Rutas únicas",
       "uniquePathsDesc": "Diferentes rutas tomadas",
-      "firstDivergence": "Primera Divergencia",
+      "firstDivergence": "Primera divergencia",
       "firstDivergenceDesc": "Primer error más común",
-      "firstDivergenceDistribution": "Puntos de Primera Divergencia",
-      "questionLevelAnalysis": "Análisis por Pregunta",
+      "firstDivergenceDistribution": "Puntos de primera divergencia",
+      "questionLevelAnalysis": "Análisis por pregunta",
       "questionLevelAnalysisDesc": "Tasas de error y errores comunes para cada pregunta en el flujo de clasificación",
       "noQuestionData": "No hay datos de preguntas disponibles aún",
-      "decisionPaths": "Rutas de Decisión",
+      "decisionPaths": "Rutas de decisión",
       "pathAnalysisDesc": "Rutas de decisión de los usuarios comparadas con el gold standard",
-      "goldStandardPath": "Ruta Gold Standard",
+      "goldStandardPath": "Ruta gold standard",
       "notConfigured": "No configurado",
       "noPathData": "No hay datos de rutas disponibles",
-      "backClickAnalysis": "Análisis de Clics Atrás",
+      "backClickAnalysis": "Análisis de clics atrás",
       "backClickTooltip": "Analiza la correlación entre usar el botón atrás y la corrección de la respuesta final. Positivo = más clics atrás correlaciona con respuestas correctas. Negativo = más clics atrás correlaciona con respuestas incorrectas.",
       "averageBackClicks": "Promedio de clics atrás",
       "correlationLabel": "Correlación",
@@ -809,7 +869,7 @@
       "correlationPositiveDesc": "Los usuarios que usan más el botón atrás tienden a obtener la respuesta correcta, sugiriendo que revisar ayuda.",
       "correlationNegativeDesc": "Los usuarios que usan más el botón atrás tienden a obtener respuestas incorrectas, sugiriendo confusión.",
       "correlationNoneDesc": "No hay relación clara entre el uso del botón atrás y la corrección.",
-      "highBackClickBreakdown": "Desglose Clics Atrás Altos (>2)",
+      "highBackClickBreakdown": "Desglose clics atrás altos (>2)",
       "correctWithHighBack": "Respuestas correctas",
       "incorrectWithHighBack": "Respuestas incorrectas",
       "answersCount": "{{total}} respuestas · {{errors}} errores",
@@ -817,43 +877,43 @@
       "correct": "Correcto: {{percent}}%",
       "error": "Error: {{percent}}%",
       "avgTime": "Tiempo prom.: {{seconds}}s",
-      "commonWrongAnswers": "Errores Comunes",
+      "commonWrongAnswers": "Errores comunes",
       "correctAnswer": "Correcta",
       "showLess": "Mostrar menos",
       "showAll": "Mostrar todo ({{count}})",
       "questions": {
-        "involved_malleoli": "Maléolos Involucrados",
-        "fibular_level": "Nivel del Peroné",
-        "lateral_morphology": "Morfología Lateral",
-        "medial_morphology": "Morfología Medial",
-        "suprasindesmal_type": "Tipo Suprasindesmal",
-        "fibula_trace_pattern": "Patrón de Trazo del Peroné",
-        "posterior_fracture_type": "Tipo de Fractura Posterior",
+        "involved_malleoli": "Maléolos involucrados",
+        "fibular_level": "Nivel del peroné",
+        "lateral_morphology": "Morfología lateral",
+        "medial_morphology": "Morfología medial",
+        "suprasindesmal_type": "Tipo suprasindesmal",
+        "fibula_trace_pattern": "Patrón de trazo del peroné",
+        "posterior_fracture_type": "Tipo de fractura posterior",
         "has_ct_scan": "Tiene TAC",
-        "fibula_infrasindesmal_transverse": "Peroné Infrasindesmal Transverso",
-        "fibular_level_for_transverse": "Nivel del Peroné para Transverso"
+        "fibula_infrasindesmal_transverse": "Peroné infrasindesmal transverso",
+        "fibular_level_for_transverse": "Nivel del peroné para transverso"
       }
     }
   },
   "profile": {
-    "pageTitle": "Configuración del Perfil",
+    "pageTitle": "Configuración del perfil",
     "pageDescription": "Gestiona la información de tu perfil profesional",
-    "title": "Tu Perfil",
-    "displayName": "Nombre para Mostrar",
+    "title": "Tu perfil",
+    "displayName": "Nombre para mostrar",
     "displayNamePlaceholder": "Tu nombre",
-    "yearsExperience": "Años de Experiencia",
+    "yearsExperience": "Años de experiencia",
     "specialty": "Especialidad",
     "selectSpecialty": "Seleccionar especialidad",
-    "trainingLevel": "Nivel de Formación",
+    "trainingLevel": "Nivel de formación",
     "selectTrainingLevel": "Seleccionar nivel",
     "institution": "Institución",
     "institutionPlaceholder": "Nombre del hospital o universidad",
     "notSpecified": "No especificado",
     "saved": "Perfil guardado correctamente",
     "saveFailed": "Error al guardar el perfil",
-    "save": "Guardar Perfil",
+    "save": "Guardar perfil",
     "specialties": {
-      "footAnkle": "Pie y Tobillo",
+      "footAnkle": "Pie y tobillo",
       "other": "Otro"
     },
     "trainingLevels": {
@@ -889,5 +949,15 @@
     "invalidStateTransition": "Esta accion no esta permitida en el estado actual del caso. Por favor, actualice y vuelva a intentarlo.",
     "publishFailed": "Error al publicar el caso. Por favor, intentelo de nuevo.",
     "closeFailed": "Error al cerrar el caso. Por favor, intentelo de nuevo."
+  },
+  "command": {
+    "searchPlaceholder": "Escriba un comando o busque...",
+    "noResults": "No se encontraron resultados.",
+    "navigation": "Navegación",
+    "admin": "Admin",
+    "settings": "Configuración",
+    "lightMode": "Cambiar a modo claro",
+    "darkMode": "Cambiar a modo oscuro",
+    "account": "Cuenta"
   }
 }

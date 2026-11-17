@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Save, User } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -119,17 +119,7 @@ export function UserProfileForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center gap-4 pb-4 border-b border-border/50">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <User className="w-6 h-6 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            {t('profile.title', 'Your Profile')}
-          </h2>
-          <p className="text-sm text-muted-foreground">{profile?.email}</p>
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground">{profile?.email}</p>
 
       <div className="grid gap-6 sm:grid-cols-2">
         {/* Display Name */}
@@ -220,7 +210,7 @@ export function UserProfileForm() {
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end border-t pt-4">
         <Button type="submit" disabled={mutation.isPending} className="gap-2">
           {mutation.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />

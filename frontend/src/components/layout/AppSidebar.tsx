@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Activity,
-  Sparkles,
+  Workflow,
   BookOpen,
   ChevronUp,
   LogOut,
@@ -33,9 +33,10 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Logo } from '../Logo';
 import { ThemeSwitcher } from '../ThemeSwitcher';
 import { LanguageSwitcher } from '../LanguageSwitcher';
-import { getAvatarUrl, getInitials } from '../../lib/avatar';
+import { getInitials } from '../../lib/avatar';
 
 export function AppSidebar() {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ export function AppSidebar() {
     {
       title: t('nav.classify'),
       url: '/classify',
-      icon: Sparkles,
+      icon: Workflow,
     },
     {
       title: t('nav.cases'),
@@ -83,8 +84,7 @@ export function AppSidebar() {
     return location.pathname.startsWith(url);
   };
 
-  // Get avatar URL with fallback to generated avatar
-  const avatarUrl = getAvatarUrl(profile?.avatarUrl, profile?.displayName, profile?.email);
+  const avatarUrl = profile?.avatarUrl;
   const initials = getInitials(profile?.displayName, profile?.email);
 
   return (
@@ -94,9 +94,9 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Activity className="size-4" />
-                </div>
+                <span className="flex size-8 items-center justify-center text-primary">
+                  <Logo className="size-8" />
+                </span>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Anklyze</span>
                   <span className="truncate text-xs text-muted-foreground">
@@ -187,9 +187,9 @@ export function AppSidebar() {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
+                  <Avatar className="h-8 w-8 rounded-md">
                     <AvatarImage src={avatarUrl} alt={profile?.displayName} />
-                    <AvatarFallback className="rounded-lg">
+                    <AvatarFallback className="rounded-md">
                       {initials}
                     </AvatarFallback>
                   </Avatar>

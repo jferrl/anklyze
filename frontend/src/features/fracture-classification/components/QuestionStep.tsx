@@ -108,7 +108,7 @@ export function QuestionStep({
     <QuestionCard questionKey={question.id} className={className}>
       {/* Question Header */}
       <QuestionCardHeader>
-        <QuestionCardTitle>{question.title}</QuestionCardTitle>
+        <QuestionCardTitle id={`${question.id}-title`}>{question.title}</QuestionCardTitle>
         {question.description && (
           <p className="text-sm text-muted-foreground">
             {question.description}
@@ -118,7 +118,11 @@ export function QuestionStep({
 
       {/* Options */}
       <QuestionCardContent>
-        <div className="grid gap-3">
+        <div
+          role="radiogroup"
+          aria-labelledby={`${question.id}-title`}
+          className="divide-y overflow-hidden rounded-lg border bg-card"
+        >
           {options.map((option, index) => (
             <SelectionCard
               key={option.value}

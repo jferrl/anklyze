@@ -1,11 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  FileText,
-  ChevronRight,
-  Type,
-  AlignLeft,
-  Calendar,
-} from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
@@ -40,24 +34,16 @@ export function CaseDetailsStep({
   const { t } = useTranslation();
 
   return (
-    <div className="animate-fade-in">
-      <Card className="chart-card">
+    <div>
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle>{t('admin.cases.details')}</CardTitle>
-              <CardDescription>{t('admin.cases.detailsDescription')}</CardDescription>
-            </div>
-          </div>
+          <CardTitle className="text-base">{t('admin.cases.details')}</CardTitle>
+          <CardDescription>{t('admin.cases.detailsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Title Field */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center gap-2">
-              <Type className="w-4 h-4 text-muted-foreground" />
+            <Label htmlFor="title">
               {t('cases.title')} <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -66,14 +52,12 @@ export function CaseDetailsStep({
               onChange={(e) => onUpdateField('title', e.target.value)}
               placeholder={t('admin.cases.titlePlaceholder')}
               disabled={!canEdit}
-              className="h-12 text-base"
             />
           </div>
 
           {/* Description Field */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="flex items-center gap-2">
-              <AlignLeft className="w-4 h-4 text-muted-foreground" />
+            <Label htmlFor="description">
               {t('cases.description')}
               <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
             </Label>
@@ -90,8 +74,7 @@ export function CaseDetailsStep({
 
           {/* Deadline Field */}
           <div className="space-y-2">
-            <Label htmlFor="deadline" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
+            <Label htmlFor="deadline">
               {t('cases.deadline')}
               <span className="text-muted-foreground text-xs">({t('common.optional')})</span>
             </Label>
@@ -101,7 +84,6 @@ export function CaseDetailsStep({
               value={deadline}
               onChange={(e) => onUpdateField('deadline', e.target.value)}
               disabled={!canEditAlways}
-              className="h-12"
             />
           </div>
         </CardContent>
@@ -109,9 +91,9 @@ export function CaseDetailsStep({
 
       {/* Navigation */}
       <div className="flex justify-end mt-6">
-        <Button onClick={onNext} className="gap-2">
+        <Button onClick={onNext}>
           {t('common.next')}
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight />
         </Button>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Progress } from '@/components/ui';
 
 /**
@@ -63,20 +64,21 @@ export function FormProgress({
   showProgressBar = true,
   showStepCounter = true,
 }: FormProgressProps) {
+  const { t } = useTranslation();
   // Calculate progress percentage (0-100)
   const progress = totalSteps > 0
     ? Math.round((currentStep / totalSteps) * 100)
     : 0;
 
   // Default label format
-  const defaultLabel = `Step ${currentStep} of ${totalSteps}`;
+  const defaultLabel = t('classify.stepOf', { current: currentStep, total: totalSteps });
   const displayLabel = label || defaultLabel;
 
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Step counter */}
       {showStepCounter && (
-        <div className="text-sm text-muted-foreground font-medium">
+        <div className="text-sm text-muted-foreground tabular-nums">
           {displayLabel}
         </div>
       )}
@@ -85,7 +87,6 @@ export function FormProgress({
       {showProgressBar && (
         <Progress
           value={progress}
-          className="h-2"
           aria-label={displayLabel}
           aria-valuenow={progress}
           aria-valuemin={0}

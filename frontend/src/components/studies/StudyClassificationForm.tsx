@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Loader2, Sparkles } from 'lucide-react';
+import { ChevronLeft, Loader2, Workflow } from 'lucide-react';
 import type { FractureInput, ClassificationResult } from '@/types';
 import { isFormComplete, calculateProgress } from '@/features/fracture-classification/utils/formValidation';
 import { ClassificationFormQuestions } from '@/features/fracture-classification/components/ClassificationFormQuestions';
@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
 
 // QuestionAnswer represents a single answer in the user's decision path
 export interface QuestionAnswer {
@@ -143,11 +142,11 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
       };
       await onClassify(formData as FractureInput, answerTracking);
     } catch (err) {
-      setFormState(prev => ({ ...prev, error: err instanceof Error ? err.message : 'Classification failed' }));
+      setFormState(prev => ({ ...prev, error: err instanceof Error ? err.message : t('classify.failed') }));
     } finally {
       setFormState(prev => ({ ...prev, loading: false }));
     }
-  }, [formData, tracking, buildDecisionPath, onClassify]);
+  }, [formData, tracking, buildDecisionPath, onClassify, t]);
 
   // Keyboard shortcuts: 1-9 select, Enter submit, Backspace go back
   useKeyboardNavigation({
@@ -173,31 +172,17 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>{t('form.progress')}</span>
-            <span>{progress}%</span>
+            <span className="tabular-nums">{progress}%</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5" />
         </div>
       )}
 
       {/* Auto CT-scan indicator */}
-      {hasTACImages && (
-        <Alert className="border-primary/20 bg-primary/5">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <AlertDescription className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-0">TAC</Badge>
-            {t('cases.ctScanAutoDetected')}
-          </AlertDescription>
-        </Alert>
-      )}
-      {!hasTACImages && (
-        <Alert className="border-muted-foreground/20 bg-muted/50">
-          <Sparkles className="h-4 w-4 text-muted-foreground" />
-          <AlertDescription className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-muted text-muted-foreground border-0">TAC</Badge>
-            {t('cases.ctScanAutoNo')}
-          </AlertDescription>
-        </Alert>
-      )}
+      <p className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Badge variant="outline">{t('cases.images.ct')}</Badge>
+        {hasTACImages ? t('cases.ctScanAutoDetected') : t('cases.ctScanAutoNo')}
+      </p>
 
       {/* Back button */}
       {canGoBack && (
@@ -221,15 +206,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
       )}
 
       {/* Submit button */}
-      <Button
-        type="submit"
-        size="lg"
-        className={cn(
-          "w-full font-semibold transition-shadow duration-300",
-          isFormComplete(formData) && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
-        )}
-        disabled={!isFormComplete(formData) || loading}
-      >
+      <Button type="submit" className="w-full" disabled={!isFormComplete(formData) || loading}>
         {loading ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -237,7 +214,7 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
           </>
         ) : (
           <>
-            <Sparkles className="h-4 w-4 mr-2" />
+            <Workflow className="h-4 w-4 mr-2" />
             {t('form.classify')}
           </>
         )}

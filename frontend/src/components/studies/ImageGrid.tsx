@@ -10,6 +10,9 @@ interface ImageGridProps {
   onImageClick: (index: number) => void;
 }
 
+// Thumbnails sit on the black image well in both themes, so they use fixed neutrals, not theme tokens.
+const THUMB = 'aspect-square overflow-hidden rounded-md border border-neutral-800 bg-neutral-900';
+
 function GridImage({
   image,
   url,
@@ -23,6 +26,7 @@ function GridImage({
   index: number;
   onImageClick: (index: number) => void;
 }) {
+  const { t } = useTranslation();
   const handleClick = () => onImageClick(index);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') onImageClick(index);
@@ -30,15 +34,15 @@ function GridImage({
 
   // Still loading batch URLs
   if (isLoadingUrls) {
-    return <Skeleton className="aspect-square rounded-lg" />;
+    return <Skeleton className="aspect-square rounded-md bg-neutral-900" />;
   }
 
   // Batch loaded but this image has no URL (generation failed server-side)
   if (!url) {
     return (
-      <div className="aspect-square rounded-lg overflow-hidden bg-muted flex flex-col items-center justify-center gap-2">
-        <AlertCircle className="h-6 w-6 text-destructive/60" />
-        <span className="text-xs text-muted-foreground">Failed to load</span>
+      <div className={`${THUMB} flex flex-col items-center justify-center gap-2`}>
+        <AlertCircle className="h-5 w-5 text-destructive" />
+        <span className="text-xs text-neutral-400">{t('cases.imageLoadFailed')}</span>
       </div>
     );
   }
@@ -47,7 +51,7 @@ function GridImage({
     <div
       role="button"
       tabIndex={0}
-      className="aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer hover:ring-2 hover:ring-primary transition-shadow"
+      className={`${THUMB} cursor-zoom-in transition-colors duration-150 hover:border-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
@@ -55,7 +59,7 @@ function GridImage({
         src={url}
         alt={image.filename}
         loading="lazy"
-        className="w-full h-full object-cover"
+        className="h-full w-full object-contain"
       />
     </div>
   );
@@ -66,14 +70,14 @@ export function ImageGrid({ images, imageUrls, isLoadingUrls, onImageClick }: Im
 
   if (!isLoadingUrls && images.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="py-8 text-center text-sm text-neutral-400">
         {t('studies.noImagesInCategory')}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
       {images.map((image, index) => (
         <GridImage
           key={image.id}

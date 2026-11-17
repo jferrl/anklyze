@@ -4,10 +4,9 @@ export class LandingPage {
   readonly page: Page;
   readonly logo: Locator;
   readonly heroTitle: Locator;
-  readonly heroBadge: Locator;
   readonly startClassifyingButton: Locator;
   readonly learnMoreButton: Locator;
-  readonly featuresSection: Locator;
+  readonly systemsSection: Locator;
   readonly howItWorksSection: Locator;
   readonly ctaSection: Locator;
   readonly footer: Locator;
@@ -19,12 +18,11 @@ export class LandingPage {
     this.page = page;
     this.logo = page.locator('nav').getByText('Anklyze');
     this.heroTitle = page.locator('h1');
-    this.heroBadge = page.locator('section').first().locator('[class*="badge"]');
     this.startClassifyingButton = page.locator('nav').getByRole('link', { name: /start classifying|comenzar/i });
-    this.learnMoreButton = page.getByRole('link', { name: /learn more|saber más/i });
-    this.featuresSection = page.locator('section').filter({ hasText: /why anklyze|por qué/i });
+    this.learnMoreButton = page.getByRole('link', { name: /see how a result|ver cómo se llega/i });
+    this.systemsSection = page.locator('#systems');
     this.howItWorksSection = page.locator('#how-it-works');
-    this.ctaSection = page.locator('section').filter({ hasText: /ready to classify|listo para clasificar/i });
+    this.ctaSection = page.locator('section').filter({ hasText: /first question|primera pregunta/i });
     this.footer = page.locator('footer');
     this.themeSwitcher = page.locator('#theme-switch');
     this.languageSwitcher = page.locator('nav button').filter({ has: page.locator('svg.lucide-globe') });
@@ -70,7 +68,7 @@ export class LandingPage {
     await expect(this.page.getByRole('menu')).toBeHidden();
 
     // Wait for UI to update with new language (no page reload)
-    const expectedText = lang === 'en' ? /classify ankle fractures/i : /clasifica fracturas/i;
+    const expectedText = lang === 'en' ? /ankle fracture classifications/i : /clasificaciones de fractura/i;
     await expect(this.heroTitle).toContainText(expectedText);
   }
 
@@ -79,11 +77,9 @@ export class LandingPage {
     await expect(this.startClassifyingButton).toBeVisible();
   }
 
-  async expectFeaturesVisible() {
-    await expect(this.featuresSection).toBeVisible();
-    // Check all 4 feature cards
-    const featureCards = this.page.locator('section').filter({ hasText: /why anklyze|por qué/i }).locator('[class*="card"]');
-    await expect(featureCards).toHaveCount(4);
+  async expectSystemsVisible() {
+    await expect(this.systemsSection).toBeVisible();
+    await expect(this.systemsSection.locator('tbody tr')).toHaveCount(4);
   }
 
   async expectHowItWorksVisible() {

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   Upload,
   X,
-  Image as ImageIcon,
   Loader2,
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
@@ -50,37 +49,28 @@ export function ImageGrid({
 
   if (existingImages.length === 0 && pendingUploads.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-          <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-        </div>
-        <p className="text-muted-foreground font-medium">{t('admin.cases.noImages')}</p>
-        <p className="text-sm text-muted-foreground/70 mt-1">
-          {t('admin.cases.dragOrClick')}
-        </p>
-      </div>
+      <p className="py-6 text-center text-sm text-muted-foreground">{t('admin.cases.noImages')}</p>
     );
   }
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
       {/* Existing images */}
-      {existingImages.map((image, index) => {
+      {existingImages.map((image) => {
         if (!imageUrls[image.id]) {
           fetchImageUrl(image);
         }
         return (
           <div
             key={image.id}
-            className="relative group animate-fade-in"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className="group relative"
           >
-            <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-1 ring-border/50 transition-all group-hover:ring-primary/30 group-hover:shadow-lg">
+            <div className="aspect-square overflow-hidden rounded-md border bg-muted">
               {imageUrls[image.id] ? (
                 <img
                   src={imageUrls[image.id]}
                   alt={image.filename}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  className="h-full w-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -92,7 +82,7 @@ export function ImageGrid({
               <Button
                 variant="destructive"
                 size="icon"
-                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                className="absolute top-2 right-2 h-8 w-8 opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-visible:opacity-100"
                 onClick={() => onDeleteExisting(image.id)}
               >
                 <X className="h-4 w-4" />
@@ -103,21 +93,20 @@ export function ImageGrid({
       })}
 
       {/* Pending uploads */}
-      {pendingUploads.map((upload, index) => (
+      {pendingUploads.map((upload) => (
         <div
           key={upload.id}
-          className="relative group animate-fade-in"
-          style={{ animationDelay: `${(existingImages.length + index) * 50}ms` }}
+          className="relative"
         >
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted ring-2 ring-dashed ring-primary/50">
+          <div className="relative aspect-square overflow-hidden rounded-md border border-dashed border-primary bg-muted">
             <img
               src={upload.preview}
-              alt="Pending upload"
+              alt={t('admin.cases.pendingUpload')}
               className="w-full h-full object-cover opacity-75"
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
-              <Badge className="bg-primary/90 text-primary-foreground shadow-lg">
-                <Upload className="w-3 h-3 mr-1" />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <Badge>
+                <Upload />
                 {t('admin.cases.pending')}
               </Badge>
             </div>
@@ -125,7 +114,7 @@ export function ImageGrid({
           <Button
             variant="destructive"
             size="icon"
-            className="absolute top-2 right-2 h-8 w-8 shadow-lg"
+            className="absolute top-2 right-2 h-8 w-8"
             onClick={() => onRemovePending(upload.id)}
           >
             <X className="h-4 w-4" />

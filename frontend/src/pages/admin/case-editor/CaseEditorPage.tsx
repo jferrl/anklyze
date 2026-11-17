@@ -3,17 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Save, Send, AlertCircle, Loader2, Sparkles,
+  Save, Send, AlertCircle, Loader2,
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Skeleton } from '@/components/ui/skeleton';
+import { StatusBadge } from '../components/StatusBadge';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { caseApi } from '@/services';
-import { cn } from '@/lib/utils';
 import type { ImageCategory } from '@/types';
 import { CaseDetailsStep } from '../components/CaseDetailsStep';
 import { useCaseEditorForm } from './useCaseEditorForm';
@@ -131,60 +132,42 @@ export function CaseEditorPage() {
 
   if (isEditing && isLoadingCase) {
     return (
-      <div className="min-h-screen bg-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
-          </div>
-          <p className="text-muted-foreground mt-4 font-medium">{t('common.loading')}</p>
-        </div>
+      <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6" aria-busy="true">
+        <span className="sr-only">{t('common.loading')}</span>
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-80 w-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-mesh">
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <header className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                  {isEditing ? t('admin.cases.editCase') : t('admin.cases.createCase')}
-                </h1>
-                {existingCase && (
-                  <Badge variant="outline" className={cn('mt-1',
-                    existingCase.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                    existingCase.status === 'closed' && 'border-muted-foreground/50'
-                  )}>
-                    {t(`cases.status.${existingCase.status}`)}
-                  </Badge>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSave} disabled={isSaving} className="gap-2">
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+    <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
+        <PageHeader
+          title={
+            <span className="flex flex-wrap items-center gap-3">
+              {isEditing ? t('admin.cases.editCase') : t('admin.cases.createCase')}
+              {existingCase && (
+                <StatusBadge status={existingCase.status} label={t(`cases.status.${existingCase.status}`)} />
+              )}
+            </span>
+          }
+          actions={
+            <>
+              <Button variant="outline" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
                 {t('common.save')}
               </Button>
               {canPublish && (
-                <Button onClick={handlePublish} disabled={isSaving}
-                  className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
-                  <Send className="h-4 w-4" />{t('admin.cases.publish')}
+                <Button onClick={handlePublish} disabled={isSaving}>
+                  <Send />{t('admin.cases.publish')}
                 </Button>
               )}
-            </div>
-          </div>
-        </header>
+            </>
+          }
+        />
 
         {error && (
-          <Alert variant="destructive" className="mb-6 animate-fade-in">
+          <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -213,7 +196,6 @@ export function CaseEditorPage() {
             <CaseGoldStandardCard caseData={existingCase} />
           )}
         </div>
-      </div>
 
       <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
         <AlertDialogContent>

@@ -31,15 +31,15 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
   });
 
   return (
-    <div className="hidden md:block chart-card p-0">
+    <div className="hidden md:block overflow-hidden rounded-lg border bg-card">
       <Table className="table-fixed">
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id} className="border-border/50 hover:bg-transparent">
+            <TableRow key={headerGroup.id} className="hover:bg-transparent">
               {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
-                  className={header.column.columnDef.meta?.className}
+                  className={cn('text-muted-foreground', header.column.columnDef.meta?.className)}
                   style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                 >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -49,15 +49,10 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map((row, index) => (
+          {table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              className={cn(
-                'border-border/30 hover:bg-muted/30 transition-colors duration-200',
-                'opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]',
-                onRowClick && 'cursor-pointer'
-              )}
-              style={{ animationDelay: `${index * 30}ms` }}
+              className={cn('transition-colors duration-150 hover:bg-muted', onRowClick && 'cursor-pointer')}
               onClick={() => onRowClick?.(row.original)}
             >
               {row.getVisibleCells().map(cell => (

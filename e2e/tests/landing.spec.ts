@@ -10,9 +10,9 @@ test.describe('Landing Page', () => {
   });
 
   test.describe('Page Load', () => {
-    test('should display hero section with title and badge', async () => {
+    test('should display hero section with title', async () => {
       await expect(landingPage.heroTitle).toBeVisible();
-      await expect(landingPage.heroTitle).toContainText(/ankle fractures|fracturas de tobillo/i);
+      await expect(landingPage.heroTitle).toContainText(/ankle fracture|fractura de tobillo/i);
     });
 
     test('should display navigation with logo and start button', async () => {
@@ -20,8 +20,8 @@ test.describe('Landing Page', () => {
       await expect(landingPage.startClassifyingButton).toBeVisible();
     });
 
-    test('should display features section with 4 features', async () => {
-      await landingPage.expectFeaturesVisible();
+    test('should display the four classification systems', async () => {
+      await landingPage.expectSystemsVisible();
     });
 
     test('should display how it works section with 3 steps', async () => {
@@ -39,7 +39,7 @@ test.describe('Landing Page', () => {
       await expect(landingPage.page).toHaveURL('/classify');
     });
 
-    test('should scroll to how it works section when clicking Learn More', async () => {
+    test('should scroll to how it works section when clicking the secondary hero link', async () => {
       await landingPage.clickLearnMore();
       await expect(landingPage.howItWorksSection).toBeInViewport();
     });
@@ -54,12 +54,12 @@ test.describe('Landing Page', () => {
 
   test.describe('CTA Section', () => {
     test('should display call to action section', async ({ page }) => {
-      const ctaTitle = page.locator('section').filter({ hasText: /ready to classify|listo para clasificar/i }).locator('h2');
+      const ctaTitle = page.locator('section').filter({ hasText: /first question|primera pregunta/i }).locator('h2');
       await expect(ctaTitle).toBeVisible();
     });
 
     test('should navigate to classification from CTA button', async ({ page }) => {
-      const ctaButton = page.locator('section').filter({ hasText: /ready to classify|listo para clasificar/i }).getByRole('link');
+      const ctaButton = page.locator('section').filter({ hasText: /first question|primera pregunta/i }).getByRole('link');
       await ctaButton.click();
       await expect(page).toHaveURL('/classify');
     });

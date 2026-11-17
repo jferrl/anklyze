@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Sparkles,
+  Workflow,
   BookOpen,
   LayoutDashboard,
   FileText,
@@ -52,13 +52,13 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder={t('command.searchPlaceholder', 'Type a command or search...')} />
+      <CommandInput placeholder={t('command.searchPlaceholder')} />
       <CommandList>
-        <CommandEmpty>{t('command.noResults', 'No results found.')}</CommandEmpty>
+        <CommandEmpty>{t('command.noResults')}</CommandEmpty>
 
-        <CommandGroup heading={t('command.navigation', 'Navigation')}>
+        <CommandGroup heading={t('command.navigation')}>
           <CommandItem onSelect={() => runCommand(() => navigate('/classify'))}>
-            <Sparkles className="mr-2 h-4 w-4" />
+            <Workflow className="mr-2 h-4 w-4" />
             <span>{t('nav.classify')}</span>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => navigate('/studies'))}>
@@ -70,7 +70,7 @@ export function CommandPalette() {
         {isAdmin && (
           <>
             <CommandSeparator />
-            <CommandGroup heading={t('command.admin', 'Admin')}>
+            <CommandGroup heading={t('command.admin')}>
               <CommandItem onSelect={() => runCommand(() => navigate('/admin'))}>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 <span>{t('nav.dashboard')}</span>
@@ -84,7 +84,7 @@ export function CommandPalette() {
         )}
 
         <CommandSeparator />
-        <CommandGroup heading={t('command.settings', 'Settings')}>
+        <CommandGroup heading={t('command.settings')}>
           <CommandItem onSelect={() => runCommand(toggleTheme)}>
             {theme === 'dark' ? (
               <Sun className="mr-2 h-4 w-4" />
@@ -93,14 +93,14 @@ export function CommandPalette() {
             )}
             <span>
               {theme === 'dark'
-                ? t('command.lightMode', 'Switch to light mode')
-                : t('command.darkMode', 'Switch to dark mode')}
+                ? t('command.lightMode')
+                : t('command.darkMode')}
             </span>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
-        <CommandGroup heading={t('command.account', 'Account')}>
+        <CommandGroup heading={t('command.account')}>
           <CommandItem onSelect={() => runCommand(signOut)}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>{t('auth.signOut')}</span>

@@ -2,10 +2,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ImageIcon, ZoomIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { Spinner } from '../components/ui/spinner';
-import { Card, CardContent } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
   getPublishedCase,
@@ -76,7 +74,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
     enabled: !!id,
   });
 
-  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load case' : null;
+  const error = queryError instanceof Error ? queryError.message : queryError ? t('cases.loadError') : null;
 
   // Derive active tab: user override takes precedence, otherwise default based on images
   const defaultTab = (() => {
@@ -112,7 +110,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
   // Handle response submission with mutation
   const submitMutation = useMutation({
     mutationFn: async () => {
-      if (!classification.result || !id) throw new Error('Missing data');
+      if (!classification.result || !id) throw new Error(t('cases.missingData'));
       const timeTakenMs = Date.now() - startTimeRef.current;
       return submitCaseResponse(id, {
         classification: classification.result,
@@ -151,7 +149,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
       queryClient.invalidateQueries({ queryKey: ['case-navigation'] });
     },
     onError: (err) => {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
+      const errorMessage = err instanceof Error ? err.message : t('cases.submitResponseError');
       setSubmitState({ status: 'error', error: errorMessage });
       toast.error(t('cases.submitError'), {
         description: errorMessage,
@@ -200,23 +198,19 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <Spinner size="lg" />
-          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-        </div>
+      <div className="flex flex-col items-center gap-4 py-24">
+        <Spinner size="lg" />
+        <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
       </div>
     );
   }
 
   if (error || !caseData) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {error || t('cases.notFound')}
-          </CardContent>
-        </Card>
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
+        <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
+          {error || t('cases.notFound')}
+        </div>
       </div>
     );
   }
@@ -229,116 +223,83 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
   const canReanswer = false;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Case Navigation Bar */}
-      <div className="border-b bg-muted/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-2">
-          <CaseNavigationBar
-            prevCase={caseNav.prevCase}
-            nextCase={caseNav.nextCase}
-            currentIndex={caseNav.currentIndex}
-            totalFiltered={caseNav.totalFiltered}
-            isLoading={caseNav.isLoading}
-          />
-        </div>
-      </div>
+    <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+      <CaseNavigationBar
+        prevCase={caseNav.prevCase}
+        nextCase={caseNav.nextCase}
+        currentIndex={caseNav.currentIndex}
+        totalFiltered={caseNav.totalFiltered}
+        isLoading={caseNav.isLoading}
+      />
 
-      {/* Hero Section with Case Info */}
-      <div className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-8">
-          <CaseHeader
-            title={caseData.title}
-            description={caseData.description}
+      <CaseHeader
+        title={caseData.title}
+        description={caseData.description}
+        hasTACImages={caseData.has_tac_images}
+        myResponseCount={caseData.my_response_count}
+        deadline={caseData.deadline}
+      />
+
+      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+        {/* Images: the larger column, kept in view while answering */}
+        <div className="lg:sticky lg:top-4 lg:self-start">
+          <section className="overflow-hidden rounded-lg border bg-card">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'xray' | 'tac')}>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
+                <h2 className="text-base font-semibold">{t('cases.imageGallery')}</h2>
+                <TabsList>
+                  <TabsTrigger value="xray" disabled={xrayImages.length === 0} className="gap-1.5">
+                    {t('cases.images.xray')}
+                    <span className="text-xs text-muted-foreground tabular-nums">{xrayImages.length}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="tac" disabled={tacImages.length === 0} className="gap-1.5">
+                    {t('cases.images.ct')}
+                    <span className="text-xs text-muted-foreground tabular-nums">{tacImages.length}</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+                <TabsContent value="xray" className="mt-0 bg-neutral-950 p-4">
+                  <ImageGrid
+                    images={xrayImages}
+                    imageUrls={imageUrls}
+                    isLoadingUrls={isLoadingUrls}
+                    onImageClick={openLightbox}
+                  />
+                </TabsContent>
+
+                <TabsContent value="tac" className="mt-0 bg-neutral-950 p-4">
+                  <ImageGrid
+                    images={tacImages}
+                    imageUrls={imageUrls}
+                    isLoadingUrls={isLoadingUrls}
+                    onImageClick={openLightbox}
+                  />
+                </TabsContent>
+            </Tabs>
+            <p className="border-t px-4 py-2 text-xs text-muted-foreground">
+              {t('cases.clickToEnlarge')}
+            </p>
+          </section>
+        </div>
+
+        <div className="space-y-6">
+          <ClassificationPanel
             hasTACImages={caseData.has_tac_images}
-            myResponseCount={caseData.my_response_count}
-            deadline={caseData.deadline}
+            classificationResult={classification.result}
+            submitting={submitMutation.isPending}
+            submitError={submitState.status === 'error' ? submitState.error : null}
+            submitSuccess={submitState.status === 'success'}
+            isExpired={!!isExpired}
+            cannotSubmit={cannotSubmit}
+            canReanswer={canReanswer}
+            onClassify={handleClassify}
+            onSubmit={handleSubmitResponse}
+            onReanswer={handleReanswer}
+            onNextCase={handleNextCase}
+            hasNextCase={!!caseNav.nextPendingCase}
           />
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-8 lg:grid-cols-5">
-          {/* Left column - Images (takes more space) */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Image gallery with modern styling */}
-            <div className="sticky top-4">
-              <Card className="overflow-hidden border-border/50 shadow-lg">
-                <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 px-6 py-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-primary" />
-                      {t('cases.imageGallery')}
-                    </h2>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <ZoomIn className="h-3 w-3" />
-                      {t('cases.clickToEnlarge')}
-                    </span>
-                  </div>
-                </div>
-                <CardContent className="p-0">
-                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'xray' | 'tac')}>
-                    <div className="px-4 pt-4">
-                      <TabsList className="w-full grid grid-cols-2">
-                        <TabsTrigger value="xray" disabled={xrayImages.length === 0} className="gap-2">
-                          X-Ray
-                          <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{xrayImages.length}</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="tac" disabled={tacImages.length === 0} className="gap-2">
-                          TAC
-                          <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{tacImages.length}</span>
-                        </TabsTrigger>
-                      </TabsList>
-                    </div>
-
-                    <TabsContent value="xray" className="mt-0 p-4">
-                      <ImageGrid
-                        images={xrayImages}
-                        imageUrls={imageUrls}
-                        isLoadingUrls={isLoadingUrls}
-                        onImageClick={openLightbox}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="tac" className="mt-0 p-4">
-                      <ImageGrid
-                        images={tacImages}
-                        imageUrls={imageUrls}
-                        isLoadingUrls={isLoadingUrls}
-                        onImageClick={openLightbox}
-                      />
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-
-              {/* Previous Responses - only show if there are responses */}
-              {myResponses.length > 0 && (
-                <div className="mt-6">
-                  <PreviousResponses responses={myResponses} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right column - Classification form (main focus) */}
-          <div className="lg:col-span-3">
-            <ClassificationPanel
-              hasTACImages={caseData.has_tac_images}
-              classificationResult={classification.result}
-              submitting={submitMutation.isPending}
-              submitError={submitState.status === 'error' ? submitState.error : null}
-              submitSuccess={submitState.status === 'success'}
-              isExpired={!!isExpired}
-              cannotSubmit={cannotSubmit}
-              canReanswer={canReanswer}
-              onClassify={handleClassify}
-              onSubmit={handleSubmitResponse}
-              onReanswer={handleReanswer}
-              onNextCase={handleNextCase}
-              hasNextCase={!!caseNav.nextPendingCase}
-            />
-          </div>
+          <PreviousResponses responses={myResponses} />
         </div>
       </div>
 

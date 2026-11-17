@@ -331,3 +331,13 @@ export function getKappaInterpretation(kappa: number): {
   if (kappa <= 0.8) return { label: 'Substantial', color: 'green' };
   return { label: 'Almost Perfect', color: 'emerald' };
 }
+
+/** kappaInterpretationKey maps an interpretation label ("Almost Perfect", or the API's "almost_perfect") to its i18n key. */
+export function kappaInterpretationKey(label: string): string {
+  const pascal = label
+    .toLowerCase()
+    .split(/[\s_]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join('');
+  return `admin.reliability.kappa${pascal}`;
+}

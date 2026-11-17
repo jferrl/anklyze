@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { FileText, Type, AlignLeft } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
@@ -23,24 +22,16 @@ export function StudyDetailsStep({
   const { t } = useTranslation();
 
   return (
-    <div className="animate-fade-in">
-      <Card className="chart-card">
+    <div>
+      <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle>{t('admin.studies.details', 'Details')}</CardTitle>
-              <CardDescription>{t('admin.studies.detailsDescription', 'Basic study information')}</CardDescription>
-            </div>
-          </div>
+          <CardTitle className="text-base">{t('admin.studies.details', 'Details')}</CardTitle>
+          <CardDescription>{t('admin.studies.detailsDescription', 'Basic study information')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Title Field */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center gap-2">
-              <Type className="w-4 h-4 text-muted-foreground" />
+            <Label htmlFor="title">
               {t('admin.studies.titleLabel', 'Title')} <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -49,14 +40,12 @@ export function StudyDetailsStep({
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder={t('admin.studies.titlePlaceholder', 'Enter study title...')}
               disabled={isReadOnly}
-              className="h-12 text-base"
             />
           </div>
 
           {/* Description Field */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="flex items-center gap-2">
-              <AlignLeft className="w-4 h-4 text-muted-foreground" />
+            <Label htmlFor="description">
               {t('admin.studies.descriptionLabel', 'Description')}
               <span className="text-muted-foreground text-xs">({t('common.optional', 'Optional')})</span>
             </Label>

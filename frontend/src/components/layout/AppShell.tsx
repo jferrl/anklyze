@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '../ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { Separator } from '../ui/separator';
-import { ScrollArea } from '../ui/scroll-area';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -33,7 +32,7 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
       <AppSidebar />
       <SidebarInset>
         {/* Header with trigger and breadcrumbs */}
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b bg-background px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           {breadcrumbs && breadcrumbs.length > 0 && (
@@ -64,13 +63,7 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          <ScrollArea className="h-full w-full">
-            <div className="w-full max-w-full overflow-x-hidden">
-              {children}
-            </div>
-          </ScrollArea>
-        </main>
+        <main className="min-w-0 flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -1,4 +1,5 @@
-import { Badge } from '@/components/ui';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import type { FractureInput } from '@/types';
 
@@ -13,6 +14,7 @@ interface BreadcrumbTrailProps {
 function getBreadcrumbTrail(
   formData: Partial<FractureInput>,
   options: ReturnType<typeof getLocalFormOptions>,
+  t: TFunction,
 ): { label: string; key: string }[] {
   const trail: { label: string; key: string }[] = [];
 
@@ -70,7 +72,7 @@ function getBreadcrumbTrail(
   // CT scan
   if (formData.has_ct_scan !== undefined) {
     const label = formData.has_ct_scan ? options.labels.yes : options.labels.no;
-    trail.push({ label: `CT: ${label}`, key: 'has_ct_scan' });
+    trail.push({ label: t('classify.ctAnswer', { answer: label }), key: 'has_ct_scan' });
   }
 
   // Posterior fracture type
@@ -114,25 +116,24 @@ function getBreadcrumbTrail(
 }
 
 /**
- * Renders a breadcrumb trail of answered form questions as badges separated by chevrons.
+ * Renders the answered questions as a plain text path separated by chevrons.
  */
 export function BreadcrumbTrail({ formData, options }: BreadcrumbTrailProps) {
-  const trail = getBreadcrumbTrail(formData, options);
+  const { t } = useTranslation();
+  const trail = getBreadcrumbTrail(formData, options, t);
 
   if (trail.length === 0) {
     return null;
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
       {trail.map((item, index) => (
         <div key={item.key} className="flex items-center gap-2">
-          <Badge variant="secondary" className="text-sm px-3 py-1">
+          <span className={index === trail.length - 1 ? 'text-foreground' : undefined}>
             {item.label}
-          </Badge>
-          {index < trail.length - 1 && (
-            <span className="text-muted-foreground text-sm">&rsaquo;</span>
-          )}
+          </span>
+          {index < trail.length - 1 && <span aria-hidden="true">&rsaquo;</span>}
         </div>
       ))}
     </div>

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Share2, RotateCcw, GitCompare } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { ClassificationResult } from '@/components/ClassificationResult';
 import { generateShareUrl, copyToClipboard } from '@/utils/shareUrl';
 import type { ClassificationResult as Result, FractureInput } from '@/types';
@@ -111,55 +111,46 @@ export function ResultsPanel({
 
       {/* Action Buttons */}
       {(showReset || showCompare || showShare) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {t('form.actions')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Reset Button */}
-              {showReset && onReset && (
-                <Button
-                  variant="outline"
-                  onClick={onReset}
-                  disabled={loading}
-                  className="w-full gap-2"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  {t('form.reset')}
-                </Button>
-              )}
+        <div className="flex flex-wrap gap-2 border-t pt-4">
+          {/* Reset Button */}
+          {showReset && onReset && (
+            <Button
+              variant="outline"
+              onClick={onReset}
+              disabled={loading}
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              {t('form.reset')}
+            </Button>
+          )}
 
-              {/* Compare Button */}
-              {showCompare && onCompare && (
-                <Button
-                  variant="outline"
-                  onClick={onCompare}
-                  disabled={loading}
-                  className="w-full gap-2"
-                >
-                  <GitCompare className="h-4 w-4" />
-                  {t('comparison.compare')}
-                </Button>
-              )}
+          {/* Compare Button */}
+          {showCompare && onCompare && (
+            <Button
+              variant="outline"
+              onClick={onCompare}
+              disabled={loading}
+              className="gap-2"
+            >
+              <GitCompare className="h-4 w-4" />
+              {t('comparison.compare')}
+            </Button>
+          )}
 
-              {/* Share Button */}
-              {showShare && (
-                <Button
-                  variant="outline"
-                  onClick={handleShare}
-                  disabled={loading || !input}
-                  className="w-full gap-2"
-                >
-                  <Share2 className="h-4 w-4" />
-                  {t('share.button')}
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+          {/* Share Button */}
+          {showShare && (
+            <Button
+              variant="outline"
+              onClick={handleShare}
+              disabled={loading || !input}
+              className="gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              {t('share.button')}
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

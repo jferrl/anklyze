@@ -1,12 +1,11 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, RotateCcw, Loader2, AlertCircle, Stethoscope, Sparkles, Ban, ArrowRight } from 'lucide-react';
+import { Check, CheckCircle2, RotateCcw, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import type { ClassificationResult, FractureInput } from '@/types';
 import { ClassificationResult as ClassificationResultComponent } from '../ClassificationResult';
 import { CaseClassificationForm, type AnswerTracking } from './StudyClassificationForm';
-import { cn } from '@/lib/utils';
 
 interface ClassificationPanelProps {
   hasTACImages: boolean;
@@ -24,6 +23,30 @@ interface ClassificationPanelProps {
   onNextCase?: () => void;
   /** Whether there is a next pending case available */
   hasNextCase?: boolean;
+}
+
+function Notice({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
+  return (
+    <div className="flex gap-3 rounded-lg border bg-muted p-4">
+      <span className="mt-0.5 shrink-0">{icon}</span>
+      <div className="min-w-0 space-y-1">
+        <h3 className="text-base font-semibold">{title}</h3>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Panel({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+  return (
+    <section className="rounded-lg border bg-card">
+      <div className="border-b px-4 py-3">
+        <h2 className="text-base font-semibold">{title}</h2>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="p-4">{children}</div>
+    </section>
+  );
 }
 
 export function ClassificationPanel({
@@ -46,141 +69,82 @@ export function ClassificationPanel({
   // Study expired state
   if (isExpired) {
     return (
-      <Card className="border-destructive/30 bg-destructive/5">
-        <CardContent className="py-12">
-          <div className="flex flex-col items-center text-center">
-            <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-              <AlertCircle className="h-8 w-8 text-destructive" />
-            </div>
-            <h3 className="text-lg font-semibold text-destructive mb-2">
-              {t('studies.studyExpired')}
-            </h3>
-            <p className="text-muted-foreground max-w-sm">
-              {t('studies.studyExpiredDescription')}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <Notice
+        icon={<AlertCircle className="h-4 w-4 text-destructive" />}
+        title={t('studies.studyExpired')}
+      >
+        <p className="text-sm text-muted-foreground">{t('studies.studyExpiredDescription')}</p>
+      </Notice>
     );
   }
 
   // Already responded state (single response mode)
-  if (cannotSubmit) {
+  if (cannotSubmit && !submitSuccess) {
     return (
-      <Card className="border-amber-500/30 bg-amber-500/5">
-        <CardContent className="py-12">
-          <div className="flex flex-col items-center text-center">
-            <div className="h-16 w-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-4">
-              <Ban className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-amber-600 dark:text-amber-400 mb-2">
-              {t('studies.alreadyResponded', 'Already Responded')}
-            </h3>
-            <p className="text-muted-foreground max-w-sm">
-              {t('studies.alreadyRespondedDescription', 'You have already submitted a response to this study. This study only allows one response per participant.')}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <Notice
+        icon={<Check className="h-4 w-4 text-success" />}
+        title={t('studies.alreadyResponded', 'Already Responded')}
+      >
+        <p className="text-sm text-muted-foreground">
+          {t('studies.alreadyRespondedDescription', 'You have already submitted a response to this study. This study only allows one response per participant.')}
+        </p>
+      </Notice>
     );
   }
 
   // Success state
   if (submitSuccess) {
     return (
-      <Card className="border-green-500/30 bg-green-500/5 overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-green-500 to-green-400" />
-        <CardContent className="py-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="h-20 w-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6 animate-in zoom-in duration-300">
-              <CheckCircle2 className="h-10 w-10 text-green-500" />
-            </div>
-            <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">
-              {t('studies.responseSubmitted')}
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-sm">
-              {t('studies.responseSubmittedDescription')}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              {canReanswer && (
-                <Button
-                  onClick={onReanswer}
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 border-green-500/30 hover:bg-green-500/10"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  {t('studies.submitAnother')}
-                </Button>
-              )}
-              {hasNextCase && onNextCase && (
-                <Button
-                  onClick={onNextCase}
-                  size="lg"
-                  className="gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
-                >
-                  {t('cases.nav.nextCase')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
+      <Notice
+        icon={<Check className="h-4 w-4 text-success" />}
+        title={t('studies.responseSubmitted')}
+      >
+        <p className="text-sm text-muted-foreground">{t('studies.responseSubmittedDescription')}</p>
+        {(canReanswer || (hasNextCase && onNextCase)) && (
+          <div className="flex flex-col gap-2 pt-3 sm:flex-row">
+            {canReanswer && (
+              <Button onClick={onReanswer} variant="outline" className="gap-2">
+                <RotateCcw className="h-4 w-4" />
+                {t('studies.submitAnother')}
+              </Button>
+            )}
+            {hasNextCase && onNextCase && (
+              <Button onClick={onNextCase} className="gap-2">
+                {t('cases.nav.nextCase')}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </Notice>
     );
   }
 
   // Classification result review state
   if (classificationResult) {
     return (
-      <div className="space-y-6">
-        <Card className="overflow-hidden border-border/50 shadow-lg">
-          <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 px-6 py-4 border-b">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold">{t('studies.classificationResult')}</h2>
-                <p className="text-sm text-muted-foreground">{t('studies.reviewAndSubmit')}</p>
-              </div>
-            </div>
-          </div>
-          <CardContent className="p-6">
-            <ClassificationResultComponent result={classificationResult} />
-          </CardContent>
-        </Card>
+      <div className="space-y-4">
+        <Panel title={t('studies.classificationResult')} description={t('studies.reviewAndSubmit')}>
+          <ClassificationResultComponent result={classificationResult} />
+        </Panel>
 
         {submitError && (
-          <Alert variant="destructive" className="animate-in slide-in-from-top-2">
+          <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{submitError}</AlertDescription>
           </Alert>
         )}
 
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={onReanswer}
-            disabled={submitting}
-            className="flex-1 h-12"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={onReanswer} disabled={submitting} className="flex-1 gap-2">
+            <RotateCcw className="h-4 w-4" />
             {t('studies.changeAnswer')}
           </Button>
-          <Button
-            onClick={onSubmit}
-            disabled={submitting}
-            className={cn(
-              "flex-1 h-12 font-semibold transition-all duration-300",
-              !submitting && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
-            )}
-          >
+          <Button onClick={onSubmit} disabled={submitting} className="flex-1 gap-2">
             {submitting ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <CheckCircle2 className="h-4 w-4 mr-2" />
+              <CheckCircle2 className="h-4 w-4" />
             )}
             {t('studies.submitResponse')}
           </Button>
@@ -191,24 +155,8 @@ export function ClassificationPanel({
 
   // Initial classification form state
   return (
-    <Card className="overflow-hidden border-border/50 shadow-lg">
-      <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 px-6 py-4 border-b">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Stethoscope className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">{t('studies.classifyFracture')}</h2>
-            <p className="text-sm text-muted-foreground">{t('studies.classifyFractureDescription')}</p>
-          </div>
-        </div>
-      </div>
-      <CardContent className="p-6">
-        <CaseClassificationForm
-          hasTACImages={hasTACImages}
-          onClassify={onClassify}
-        />
-      </CardContent>
-    </Card>
+    <Panel title={t('studies.classifyFracture')} description={t('studies.classifyFractureDescription')}>
+      <CaseClassificationForm hasTACImages={hasTACImages} onClassify={onClassify} />
+    </Panel>
   );
 }
