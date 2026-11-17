@@ -63,8 +63,8 @@
         "body": "Todas las preguntas pertenecen a un único árbol con 165 caminos terminales. Cada respuesta determina la siguiente pregunta y cada camino termina en una clasificación en los cuatro sistemas. El árbol está publicado en el repositorio como diagrama y como tabla."
       },
       "tested": {
-        "term": "Comprobado contra el diagrama",
-        "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama que el árbol, de modo que el código se comprueba contra el árbol que implementa."
+        "term": "Comprobado en parte contra el diagrama",
+        "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama que el árbol. Hoy cubren 88 de los 165 caminos; el resto aún no se comprueba de forma automática."
       },
       "notClassifiable": {
         "term": "No clasificable es un resultado",

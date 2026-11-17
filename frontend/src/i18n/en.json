@@ -63,8 +63,8 @@
         "body": "Every question belongs to a single tree with 165 terminal paths. Each answer decides the next question, and each path ends in a classification in all four systems. The tree is published in the repository as a diagram and as a table."
       },
       "tested": {
-        "term": "Tested against the diagram",
-        "body": "The classification engine's tests are generated from the same diagram as the tree, so the code is checked against the tree it implements."
+        "term": "Partly tested against the diagram",
+        "body": "The classification engine's tests are generated from the same diagram as the tree. They currently cover 88 of the 165 paths; the rest are not yet tested automatically."
       },
       "notClassifiable": {
         "term": "Not classifiable is a result",
