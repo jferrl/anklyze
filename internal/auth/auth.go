@@ -75,14 +75,6 @@ type Validator struct {
 // ValidatorOption configures a Validator.
 type ValidatorOption func(*Validator)
 
-// WithJWTSecret sets a static JWT secret for validation.
-// This is useful for testing or when JWKS is not available.
-func WithJWTSecret(secret string) ValidatorOption {
-	return func(v *Validator) {
-		v.jwtSecret = []byte(secret)
-	}
-}
-
 // NewValidator creates a new JWT validator for Supabase Auth.
 // It fetches the JWKS from the Supabase project URL and caches it.
 func NewValidator(ctx context.Context, supabaseURL string, opts ...ValidatorOption) (*Validator, error) {
