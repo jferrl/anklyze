@@ -60,7 +60,7 @@ export async function getPublishedCase(caseId: string): Promise<UserCaseDetail> 
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error(t('errors.caseNotFound'));
+      throw new Error(t('errors.caseNotFound'), { cause: error });
     }
     throw error;
   }
@@ -80,7 +80,7 @@ export async function getImageSignedURL(
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error(t('errors.imageNotFound'));
+      throw new Error(t('errors.imageNotFound'), { cause: error });
     }
     throw error;
   }
@@ -113,7 +113,7 @@ export async function getAdminImageSignedURL(
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error('Image not found');
+      throw new Error('Image not found', { cause: error });
     }
     throw error;
   }
@@ -135,10 +135,10 @@ export async function submitCaseResponse(
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('409')) {
-        throw new Error('You have already submitted a response to this case');
+        throw new Error('You have already submitted a response to this case', { cause: error });
       }
       if (error.message.includes('400')) {
-        throw new Error('Cannot submit response');
+        throw new Error('Cannot submit response', { cause: error });
       }
     }
     throw error;
@@ -205,7 +205,7 @@ export async function getCase(caseId: string): Promise<CaseWithImages> {
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error('Case not found');
+      throw new Error('Case not found', { cause: error });
     }
     throw error;
   }

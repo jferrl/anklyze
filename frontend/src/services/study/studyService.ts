@@ -53,7 +53,7 @@ export async function getStudy(studyId: string): Promise<StudyWithCases> {
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      throw new Error('Study not found');
+      throw new Error('Study not found', { cause: error });
     }
     throw error;
   }
