@@ -16,10 +16,10 @@ describe('getQuestionSteps', () => {
       involved_malleoli: 'trimaleolar',
       fibular_level: 'transindesmal',
       fibula_trace_count: 'single',
-      lateral_morphology: 'simple',
-      medial_subtype: 'transverse',
+      lateral_morphology: 'spiral',
+      medial_subtype: 'open_mortise',
       has_ct_scan: true,
-    } as Partial<FractureInput>;
+    };
     expect(ids(formData)).toEqual([
       'involved_malleoli',
       'fibular_level',
