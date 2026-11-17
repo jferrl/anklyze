@@ -30,7 +30,7 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
       if (errorCode) {
         const t = i18n.t.bind(i18n);
         // Normalize error code to lowercase for i18n lookup
-        throw new Error(t(`errors.${errorCode.toLowerCase()}`, apiError.message));
+        throw new Error(t(`errors.${errorCode.toLowerCase()}`, apiError.message), { cause: error });
       }
     }
     throw error;
