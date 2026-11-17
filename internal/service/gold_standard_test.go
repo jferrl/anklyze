@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"sort"
 	"testing"
 
 	"github.com/google/uuid"
@@ -434,6 +435,158 @@ func TestCalculateGoldStandardAccuracy_ResponseDistribution(t *testing.T) {
 	}
 	if dist["Weber C"] != 1 {
 		t.Errorf("Weber C count = %d, want 1", dist["Weber C"])
+	}
+}
+
+// Pins the full output for a study covering all four systems, so refactors
+// of CalculateStudyGoldStandardMetrics cannot change any reported number.
+func TestCalculateStudyGoldStandardMetrics_FullOutput(t *testing.T) {
+	t.Parallel()
+
+	u1 := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	u2 := uuid.MustParse("00000000-0000-0000-0000-000000000002")
+	u3 := uuid.MustParse("00000000-0000-0000-0000-000000000003")
+
+	study := &domain.Study{ID: uuid.MustParse("00000000-0000-0000-0000-0000000000aa"), Title: "Pinned"}
+	allSystems := domain.Case{ID: uuid.MustParse("00000000-0000-0000-0000-00000000000a"), Title: "All systems", CaseOrder: 1}
+	weberOnly := domain.Case{ID: uuid.MustParse("00000000-0000-0000-0000-00000000000b"), Title: "Weber only", CaseOrder: 2}
+	noGold := domain.Case{ID: uuid.MustParse("00000000-0000-0000-0000-00000000000c"), Title: "No gold", CaseOrder: 3}
+
+	makeGoldStandard(t, &allSystems, domain.ClassificationResult{
+		DanisWeber:  &domain.DanisWeberClassification{Type: domain.DanisWeberB},
+		LaugeHansen: &domain.LaugeHansenClassification{Type: domain.LaugeHansenSER},
+		AOOTA:       &domain.AOOTAClassification{Code: domain.AOOTAB1},
+		Bartonicek:  &domain.BartonicekClassification{Type: domain.BartonicekType2},
+	})
+	makeGoldStandard(t, &weberOnly, domain.ClassificationResult{
+		DanisWeber: &domain.DanisWeberClassification{Type: domain.DanisWeberA},
+	})
+
+	responsesByCase := map[uuid.UUID][]domain.CaseResponse{
+		allSystems.ID: {
+			{UserID: u1, DanisWeberType: ptr("Weber B"), LaugeHansenType: ptr("SER"), AOOTACode: ptr("44-B1"), BartonicekType: ptr("Bartonicek 2")},
+			{UserID: u2, DanisWeberType: ptr("Weber B"), LaugeHansenType: ptr("SA"), AOOTACode: ptr("44-B2"), BartonicekType: ptr("Bartonicek 3")},
+			{UserID: u3, DanisWeberType: ptr("Weber A"), LaugeHansenType: ptr("SER"), AOOTACode: ptr("44-B2"), BartonicekType: ptr("Bartonicek 3")},
+		},
+		weberOnly.ID: {
+			{UserID: u1, DanisWeberType: ptr("Weber A")},
+			{UserID: u2, DanisWeberType: ptr("Weber A")},
+		},
+		noGold.ID: {
+			{UserID: u1, DanisWeberType: ptr("Weber C")},
+		},
+	}
+
+	result, err := NewStatisticsService().CalculateStudyGoldStandardMetrics(
+		study, []domain.Case{allSystems, weberOnly, noGold}, responsesByCase,
+	)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Raters come out of a map, so order them before comparing.
+	sort.Slice(result.PerRaterAccuracy, func(i, j int) bool {
+		return result.PerRaterAccuracy[i].UserID.String() < result.PerRaterAccuracy[j].UserID.String()
+	})
+	got, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		t.Fatalf("failed to marshal result: %v", err)
+	}
+
+	const want = `{
+  "study_id": "00000000-0000-0000-0000-0000000000aa",
+  "study_title": "Pinned",
+  "total_cases": 3,
+  "cases_with_gold": 2,
+  "danis_weber_accuracy": {
+    "system": "danis_weber",
+    "mean_accuracy": 83.33333333333333,
+    "cases_evaluated": 2,
+    "consensus_correct": 2,
+    "consensus_total": 2,
+    "consensus_rate": 100
+  },
+  "lauge_hansen_accuracy": {
+    "system": "lauge_hansen",
+    "mean_accuracy": 66.66666666666666,
+    "cases_evaluated": 1,
+    "consensus_correct": 1,
+    "consensus_total": 1,
+    "consensus_rate": 100
+  },
+  "ao_ota_accuracy": {
+    "system": "ao_ota",
+    "mean_accuracy": 33.33333333333333,
+    "cases_evaluated": 1,
+    "consensus_correct": 0,
+    "consensus_total": 1,
+    "consensus_rate": 0
+  },
+  "bartonicek_accuracy": {
+    "system": "bartonicek",
+    "mean_accuracy": 33.33333333333333,
+    "cases_evaluated": 1,
+    "consensus_correct": 0,
+    "consensus_total": 1,
+    "consensus_rate": 0
+  },
+  "per_case_accuracy": [
+    {
+      "case_order": 1,
+      "case_id": "00000000-0000-0000-0000-00000000000a",
+      "case_title": "All systems",
+      "has_gold_standard": true,
+      "danis_weber_accuracy": 66.66666666666666,
+      "lauge_hansen_accuracy": 66.66666666666666,
+      "ao_ota_accuracy": 33.33333333333333,
+      "bartonicek_accuracy": 33.33333333333333,
+      "is_hard_case": true
+    },
+    {
+      "case_order": 2,
+      "case_id": "00000000-0000-0000-0000-00000000000b",
+      "case_title": "Weber only",
+      "has_gold_standard": true,
+      "danis_weber_accuracy": 100,
+      "is_hard_case": false
+    },
+    {
+      "case_order": 3,
+      "case_id": "00000000-0000-0000-0000-00000000000c",
+      "case_title": "No gold",
+      "has_gold_standard": false,
+      "is_hard_case": false
+    }
+  ],
+  "per_rater_accuracy": [
+    {
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "cases_completed": 2,
+      "danis_weber_accuracy": 100,
+      "lauge_hansen_accuracy": 100,
+      "ao_ota_accuracy": 100,
+      "bartonicek_accuracy": 100
+    },
+    {
+      "user_id": "00000000-0000-0000-0000-000000000002",
+      "cases_completed": 2,
+      "danis_weber_accuracy": 100,
+      "lauge_hansen_accuracy": 0,
+      "ao_ota_accuracy": 0,
+      "bartonicek_accuracy": 0
+    },
+    {
+      "user_id": "00000000-0000-0000-0000-000000000003",
+      "cases_completed": 1,
+      "danis_weber_accuracy": 0,
+      "lauge_hansen_accuracy": 100,
+      "ao_ota_accuracy": 0,
+      "bartonicek_accuracy": 0
+    }
+  ]
+}`
+	if string(got) != want {
+		t.Errorf("metrics changed\n got: %s\nwant: %s", got, want)
 	}
 }
 
