@@ -421,7 +421,8 @@
     "noData": "No data available",
     "previousPage": "Previous page",
     "nextPage": "Next page",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "moreActions": "More actions"
   },
   "cases": {
     "title": "Title",
@@ -497,7 +498,8 @@
     "myResponsesCount_other": "{{count}} responses",
     "gallery": {
       "previousImage": "Previous image",
-      "nextImage": "Next image"
+      "nextImage": "Next image",
+      "viewer": "Image viewer"
     },
     "continueWithCase": "Continue with case {{number}}",
     "startWithCase": "Start with case {{number}}",
@@ -605,7 +607,9 @@
       "pendingUpload": "Pending upload",
       "impossibleClassification": "Not classifiable (impossible)",
       "noDeadline": "No deadline",
-      "referenceAfterSave": "The gold standard can be set after the case is saved."
+      "referenceAfterSave": "The gold standard can be set after the case is saved.",
+      "deleteImage": "Delete image",
+      "removeUpload": "Remove image from upload"
     },
     "studies": {
       "title": "Study management",
@@ -714,7 +718,8 @@
       "closeStudy": "Close study",
       "casesLocked": "Cases cannot be changed once the study is active or closed.",
       "closeConfirmTitle": "Close “{{title}}”?",
-      "closeConfirmDescription": "The study will be marked as closed and cannot be reopened or edited from here. Results stay available. Closing the study does not close its cases: raters can keep submitting responses until each case is closed or passes its deadline."
+      "closeConfirmDescription": "The study will be marked as closed and cannot be reopened or edited from here. Results stay available. Closing the study does not close its cases: raters can keep submitting responses until each case is closed or passes its deadline.",
+      "removeCaseNamed": "Remove “{{title}}” from the study"
     },
     "analytics": {
       "totalResponses": "Total responses",

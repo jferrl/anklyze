@@ -10,7 +10,26 @@ const KEY_MAP = {
   suprasindesmal_type: 'st',
   fibula_infrasindesmal_transverse: 'fit',
   fibular_level_for_transverse: 'flt',
-} as const;
+  has_ct_scan: 'ct',
+  fibula_trace_pattern: 'tp',
+  articular_involvement: 'ai',
+  has_articular_depression: 'ad',
+  is_posterior_posteromedial: 'ppm',
+  fibula_trace_count: 'tc',
+  lateral_subtype: 'ls',
+  infrasindesmal_morphology: 'im',
+  medial_subtype: 'ms',
+  has_fibula_head_shortening: 'fhs',
+} as const satisfies Record<keyof FractureInput, string>;
+
+// Encoded as '1' / '0'.
+const BOOLEAN_FIELDS = new Set<keyof FractureInput>([
+  'fibula_infrasindesmal_transverse',
+  'has_ct_scan',
+  'has_articular_depression',
+  'is_posterior_posteromedial',
+  'has_fibula_head_shortening',
+]);
 
 // Reverse map for decoding
 const REVERSE_KEY_MAP = Object.fromEntries(
@@ -50,7 +69,7 @@ export function decodeParamsToInput(params: URLSearchParams): Partial<FractureIn
     if (value !== null) {
       hasAnyParam = true;
       // Handle boolean field
-      if (fullKey === 'fibula_infrasindesmal_transverse') {
+      if (BOOLEAN_FIELDS.has(fullKey)) {
         (input as Record<string, unknown>)[fullKey] = value === '1';
       } else {
         (input as Record<string, unknown>)[fullKey] = value;

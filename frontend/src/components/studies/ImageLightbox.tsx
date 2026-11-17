@@ -66,14 +66,10 @@ export function ImageLightbox({
   }, []);
 
   const zoomOut = useCallback(() => {
-    setScale((s) => {
-      const next = Math.max(s - ZOOM_STEP, MIN_SCALE);
-      if (next === MIN_SCALE) {
-        setPosition({ x: 0, y: 0 });
-      }
-      return next;
-    });
-  }, []);
+    const next = Math.max(scale - ZOOM_STEP, MIN_SCALE);
+    setScale(next);
+    if (next === MIN_SCALE) setPosition({ x: 0, y: 0 });
+  }, [scale]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -183,6 +179,8 @@ export function ImageLightbox({
   return (
     <div
       role="dialog"
+      aria-modal="true"
+      aria-label={t('cases.gallery.viewer')}
       className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
       onClick={onClose}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}

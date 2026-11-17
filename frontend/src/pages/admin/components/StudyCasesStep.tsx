@@ -145,6 +145,7 @@ export function StudyCasesStep({
                       variant="ghost"
                       size="icon"
                       onClick={() => onRemoveCase(caseItem.id)}
+                      aria-label={t('admin.studies.removeCaseNamed', { title: caseItem.title })}
                       disabled={isRemovingCase}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >

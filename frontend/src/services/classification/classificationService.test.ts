@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeAll, afterAll } from 'vitest'
-import { classifyFracture, validateCombination } from './classificationService'
+import { classifyFracture } from './classificationService'
 import { mockFractureInput, mockClassificationResult } from '@/test/mocks/mockData'
 import { server } from '@/test/mocks/server'
 import { http, HttpResponse } from 'msw'
@@ -147,57 +147,6 @@ describe('classificationService', () => {
 
       expect(result.impossible).toBe(true)
       expect(result.impossible_key).toBeDefined()
-    })
-  })
-
-  describe('validateCombination', () => {
-    it('should validate a valid combination', async () => {
-      const result = await validateCombination({
-        involved_malleoli: mockFractureInput.involved_malleoli,
-        fibular_level: mockFractureInput.fibular_level,
-      })
-
-      expect(result).toBe(true)
-    })
-
-    it('should return true for 404 (endpoint not implemented)', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-
-      server.use(
-        http.post(`${API_BASE_URL}/api/validate`, () => {
-          // Return a response with 404 in the error message for the catch block to detect
-          return HttpResponse.json(
-            { error: '404 Not Found', message: 'Endpoint not found' },
-            { status: 404 }
-          )
-        })
-      )
-
-      const result = await validateCombination({
-        involved_malleoli: 'lateral_only',
-      })
-
-      expect(result).toBe(true)
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Validate endpoint not implemented, assuming valid combination'
-      )
-
-      consoleSpy.mockRestore()
-    })
-
-    it('should throw for other errors', async () => {
-      server.use(
-        http.post(`${API_BASE_URL}/api/validate`, () => {
-          return HttpResponse.json(
-            { error: 'Server error' },
-            { status: 500 }
-          )
-        })
-      )
-
-      await expect(
-        validateCombination({ involved_malleoli: 'lateral_only' })
-      ).rejects.toThrow()
     })
   })
 })

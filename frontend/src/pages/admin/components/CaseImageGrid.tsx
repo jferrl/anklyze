@@ -81,6 +81,7 @@ export function ImageGrid({
                 size="icon"
                 className="absolute top-2 right-2 h-8 w-8 opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-visible:opacity-100"
                 onClick={() => onDeleteExisting(image.id)}
+                aria-label={t('admin.cases.deleteImage')}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -113,6 +114,7 @@ export function ImageGrid({
             size="icon"
             className="absolute top-2 right-2 h-8 w-8"
             onClick={() => onRemovePending(upload.id)}
+            aria-label={t('admin.cases.removeUpload')}
           >
             <X className="h-4 w-4" />
           </Button>

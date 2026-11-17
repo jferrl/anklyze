@@ -421,7 +421,8 @@
     "noData": "No hay datos disponibles",
     "previousPage": "Página anterior",
     "nextPage": "Página siguiente",
-    "notSet": "Sin definir"
+    "notSet": "Sin definir",
+    "moreActions": "Más acciones"
   },
   "cases": {
     "title": "Título",
@@ -497,7 +498,8 @@
     "myResponsesCount_other": "{{count}} respuestas",
     "gallery": {
       "previousImage": "Imagen anterior",
-      "nextImage": "Imagen siguiente"
+      "nextImage": "Imagen siguiente",
+      "viewer": "Visor de imágenes"
     },
     "continueWithCase": "Continuar con el caso {{number}}",
     "startWithCase": "Empezar por el caso {{number}}",
@@ -605,7 +607,9 @@
       "pendingUpload": "Carga pendiente",
       "impossibleClassification": "No clasificable (imposible)",
       "noDeadline": "Sin fecha límite",
-      "referenceAfterSave": "El patrón de referencia podrá definirse una vez guardado el caso."
+      "referenceAfterSave": "El patrón de referencia podrá definirse una vez guardado el caso.",
+      "deleteImage": "Eliminar imagen",
+      "removeUpload": "Quitar imagen de la subida"
     },
     "studies": {
       "title": "Gestión de estudios",
@@ -714,7 +718,8 @@
       "closeStudy": "Cerrar estudio",
       "casesLocked": "Los casos no se pueden modificar una vez que el estudio está activo o cerrado.",
       "closeConfirmTitle": "¿Cerrar «{{title}}»?",
-      "closeConfirmDescription": "El estudio quedará marcado como cerrado y no podrá reabrirse ni editarse desde aquí. Los resultados seguirán disponibles. Cerrar el estudio no cierra sus casos: los evaluadores podrán seguir enviando respuestas hasta que cada caso se cierre o venza su fecha límite."
+      "closeConfirmDescription": "El estudio quedará marcado como cerrado y no podrá reabrirse ni editarse desde aquí. Los resultados seguirán disponibles. Cerrar el estudio no cierra sus casos: los evaluadores podrán seguir enviando respuestas hasta que cada caso se cierre o venza su fecha límite.",
+      "removeCaseNamed": "Quitar «{{title}}» del estudio"
     },
     "analytics": {
       "totalResponses": "Total de respuestas",

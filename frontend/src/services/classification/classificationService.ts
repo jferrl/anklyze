@@ -36,30 +36,3 @@ export async function classifyFracture(input: FractureInput): Promise<Classifica
     throw error;
   }
 }
-
-/**
- * Validate if a fracture combination is anatomically possible
- * @param input - Partial fracture input to validate
- * @returns Promise resolving to true if valid, false otherwise
- * @throws {AuthRequiredError} - When authentication is required
- * @throws {ForbiddenError} - When access is forbidden
- *
- * Note: This function is a placeholder. The /api/validate endpoint
- * may need to be implemented on the backend.
- */
-export async function validateCombination(input: Partial<FractureInput>): Promise<boolean> {
-  try {
-    const result = await apiRequest<{ valid: boolean }>('/api/validate', {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
-    return result.valid;
-  } catch (error) {
-    // If the endpoint doesn't exist (404), return true (assume valid)
-    if (error instanceof Error && error.message.includes('404')) {
-      console.warn('Validate endpoint not implemented, assuming valid combination');
-      return true;
-    }
-    throw error;
-  }
-}
