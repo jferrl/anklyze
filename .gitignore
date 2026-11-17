@@ -47,3 +47,7 @@ bin/
 .planning/
 anklyze-apiserver
 cases_data/
+# Impeccable: local screenshots, decision sketches and editor cache. Surface briefs are committed.
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/hook.cache.json

@@ -6,16 +6,12 @@ export function ClassifyPage() {
   const { isAdmin } = useAuth();
 
   return (
-    <div className="h-full">
-      {/* Content Section */}
-      <section className="py-8 md:py-12 w-full overflow-x-hidden">
-        <div className="w-full mx-auto px-2 sm:px-4 container">
-          <FractureForm />
-        </div>
-      </section>
+    <>
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
+        <FractureForm />
+      </div>
 
-      {/* Flow Diagram Sidebar */}
       {isAdmin && <FlowDiagramSidebar />}
-    </div>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Save, User } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -25,6 +25,8 @@ const TRAINING_LEVELS: { value: TrainingLevel; labelKey: string }[] = [
   { value: 'resident', labelKey: 'profile.trainingLevels.resident' },
   { value: 'attending', labelKey: 'profile.trainingLevels.attending' },
 ];
+
+const NONE = '__none__';
 
 export function UserProfileForm() {
   const { t } = useTranslation();
@@ -109,6 +111,10 @@ export function UserProfileForm() {
     mutation.mutate(data);
   };
 
+  // A stored value outside the option list falls back to "not specified" so the trigger is never blank.
+  const specialty = SPECIALTIES.find((s) => s.value === form.specialty);
+  const trainingLevel = TRAINING_LEVELS.find((l) => l.value === form.trainingLevel);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -119,21 +125,11 @@ export function UserProfileForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center gap-4 pb-4 border-b border-border/50">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <User className="w-6 h-6 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            {t('profile.title', 'Your Profile')}
-          </h2>
-          <p className="text-sm text-muted-foreground">{profile?.email}</p>
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground">{profile?.email}</p>
 
       <div className="grid gap-6 sm:grid-cols-2">
         {/* Display Name */}
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="displayName">
             {t('profile.displayName', 'Display Name')}
           </Label>
@@ -146,7 +142,7 @@ export function UserProfileForm() {
         </div>
 
         {/* Years of Experience */}
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="yearsExperience">
             {t('profile.yearsExperience', 'Years of Experience')}
           </Label>
@@ -162,16 +158,18 @@ export function UserProfileForm() {
         </div>
 
         {/* Specialty */}
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="specialty">
             {t('profile.specialty', 'Specialty')}
           </Label>
-          <Select value={form.specialty || '__none__'} onValueChange={(v) => updateField('specialty', v === '__none__' ? '' : v)}>
+          <Select value={specialty?.value ?? NONE} onValueChange={(v) => updateField('specialty', v === NONE ? '' : v)}>
             <SelectTrigger id="specialty">
-              <SelectValue placeholder={t('profile.selectSpecialty', 'Select specialty')} />
+              <SelectValue>
+                {specialty ? t(specialty.labelKey, specialty.value) : t('profile.notSpecified', 'Not specified')}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__none__">
+              <SelectItem value={NONE}>
                 {t('profile.notSpecified', 'Not specified')}
               </SelectItem>
               {SPECIALTIES.map((s) => (
@@ -184,16 +182,18 @@ export function UserProfileForm() {
         </div>
 
         {/* Training Level */}
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="trainingLevel">
             {t('profile.trainingLevel', 'Training Level')}
           </Label>
-          <Select value={form.trainingLevel || '__none__'} onValueChange={(v) => updateField('trainingLevel', v === '__none__' ? '' : v)}>
+          <Select value={trainingLevel?.value ?? NONE} onValueChange={(v) => updateField('trainingLevel', v === NONE ? '' : v)}>
             <SelectTrigger id="trainingLevel">
-              <SelectValue placeholder={t('profile.selectTrainingLevel', 'Select level')} />
+              <SelectValue>
+                {trainingLevel ? t(trainingLevel.labelKey, trainingLevel.value) : t('profile.notSpecified', 'Not specified')}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__none__">
+              <SelectItem value={NONE}>
                 {t('profile.notSpecified', 'Not specified')}
               </SelectItem>
               {TRAINING_LEVELS.map((level) => (
@@ -206,7 +206,7 @@ export function UserProfileForm() {
         </div>
 
         {/* Institution */}
-        <div className="space-y-2 sm:col-span-2">
+        <div className="flex flex-col gap-2 sm:col-span-2">
           <Label htmlFor="institution">
             {t('profile.institution', 'Institution')}
           </Label>
@@ -220,7 +220,7 @@ export function UserProfileForm() {
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end border-t pt-4">
         <Button type="submit" disabled={mutation.isPending} className="gap-2">
           {mutation.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />

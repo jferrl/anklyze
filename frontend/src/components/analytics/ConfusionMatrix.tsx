@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface ConfusionMatrixProps {
@@ -6,13 +7,19 @@ interface ConfusionMatrixProps {
   title?: string;
 }
 
+// Single-hue tint capped at 45% so the foreground ink stays readable in both themes.
+const tint = (share: number) =>
+  share === 0
+    ? undefined
+    : `color-mix(in oklch, var(--primary) ${Math.round(8 + share * 37)}%, transparent)`;
+
 export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
+  const { t } = useTranslation();
   const { labels, values, maxValue } = useMemo(() => {
     if (!matrix || Object.keys(matrix).length === 0) {
       return { labels: [], values: [], maxValue: 0 };
     }
 
-    // Get all unique labels from both rows and columns
     const allLabels = new Set<string>();
     Object.keys(matrix).forEach((row) => {
       allLabels.add(row);
@@ -20,46 +27,20 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
     });
     const sortedLabels = Array.from(allLabels).sort();
 
-    // Build 2D array
     const vals: number[][] = sortedLabels.map((row) =>
       sortedLabels.map((col) => matrix[row]?.[col] ?? 0)
     );
 
-    // Find max value for color scaling
-    let max = 0;
-    vals.forEach((row) => {
-      row.forEach((val) => {
-        if (val > max) max = val;
-      });
-    });
-
-    return { labels: sortedLabels, values: vals, maxValue: max };
+    return { labels: sortedLabels, values: vals, maxValue: Math.max(0, ...vals.flat()) };
   }, [matrix]);
 
   if (labels.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        No data available
+      <div className="py-8 text-center text-sm text-muted-foreground">
+        {t('common.noData')}
       </div>
     );
   }
-
-  const getCellColor = (value: number) => {
-    if (maxValue === 0) return 'bg-muted/30';
-    const intensity = value / maxValue;
-    if (intensity === 0) return 'bg-muted/30';
-    if (intensity < 0.25) return 'bg-blue-100 dark:bg-blue-900/30';
-    if (intensity < 0.5) return 'bg-blue-200 dark:bg-blue-800/40';
-    if (intensity < 0.75) return 'bg-blue-300 dark:bg-blue-700/50';
-    return 'bg-blue-400 dark:bg-blue-600/60';
-  };
-
-  const getCellTextColor = (value: number) => {
-    if (maxValue === 0) return 'text-muted-foreground';
-    const intensity = value / maxValue;
-    if (intensity > 0.5) return 'text-foreground font-medium';
-    return 'text-muted-foreground';
-  };
 
   return (
     <div className="space-y-4">
@@ -68,16 +49,17 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse text-sm tabular-nums">
           <thead>
             <tr>
-              <th className="p-2 text-xs font-medium text-muted-foreground text-left">
-                Actual / Predicted
+              <th scope="col" className="p-2 text-left text-xs font-medium text-muted-foreground">
+                {t('admin.analytics.actualPredicted')}
               </th>
               {labels.map((label) => (
                 <th
                   key={label}
-                  className="p-2 text-xs font-medium text-muted-foreground text-center min-w-[60px]"
+                  scope="col"
+                  className="min-w-[60px] p-2 text-right text-xs font-medium text-muted-foreground"
                 >
                   {label}
                 </th>
@@ -87,18 +69,18 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
           <tbody>
             {values.map((row, i) => (
               <tr key={labels[i]}>
-                <td className="p-2 text-xs font-medium text-muted-foreground">
+                <th scope="row" className="p-2 text-left text-xs font-medium text-muted-foreground">
                   {labels[i]}
-                </td>
+                </th>
                 {row.map((value, j) => (
                   <td
                     key={`${labels[i]}-${labels[j]}`}
                     className={cn(
-                      'p-2 text-center text-sm border border-border/30 transition-colors',
-                      getCellColor(value),
-                      getCellTextColor(value),
-                      i === j && 'ring-2 ring-primary/30 ring-inset'
+                      'border p-2 text-right',
+                      value === 0 ? 'text-muted-foreground' : 'text-foreground',
+                      i === j && 'font-semibold outline outline-1 -outline-offset-1 outline-primary'
                     )}
+                    style={{ backgroundColor: maxValue > 0 ? tint(value / maxValue) : undefined }}
                   >
                     {value}
                   </td>
@@ -109,17 +91,14 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
         </table>
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-        <span>Low</span>
-        <div className="flex gap-1">
-          <div className="w-4 h-4 rounded bg-muted/30" />
-          <div className="w-4 h-4 rounded bg-blue-100 dark:bg-blue-900/30" />
-          <div className="w-4 h-4 rounded bg-blue-200 dark:bg-blue-800/40" />
-          <div className="w-4 h-4 rounded bg-blue-300 dark:bg-blue-700/50" />
-          <div className="w-4 h-4 rounded bg-blue-400 dark:bg-blue-600/60" />
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <span>{t('admin.analytics.low')}</span>
+        <div className="flex gap-0.5">
+          {[0.1, 0.4, 0.7, 1].map((share) => (
+            <span key={share} className="h-3 w-5 border" style={{ backgroundColor: tint(share) }} />
+          ))}
         </div>
-        <span>High</span>
+        <span>{t('admin.analytics.high')}</span>
       </div>
     </div>
   );

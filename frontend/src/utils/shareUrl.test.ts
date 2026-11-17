@@ -34,7 +34,7 @@ describe('shareUrl', () => {
 
       expect(params.get('m')).toBe('trimaleolar')
       expect(params.get('pt')).toBe('posterolateral')
-      expect(params.get('mm')).toBe('transverse')
+      expect(params.get('mm')).toBe('transverse_oblique')
       expect(params.get('fl')).toBe('suprasindesmal')
       expect(params.get('lm')).toBe('spiral')
       expect(params.get('st')).toBe('simple_diaphyseal')
@@ -101,7 +101,7 @@ describe('shareUrl', () => {
       const params = new URLSearchParams()
       params.set('m', 'trimaleolar')
       params.set('pt', 'posterolateral')
-      params.set('mm', 'transverse')
+      params.set('mm', 'transverse_oblique')
       params.set('fl', 'suprasindesmal')
       params.set('lm', 'spiral')
       params.set('st', 'simple_diaphyseal')
@@ -352,5 +352,29 @@ describe('shareUrl', () => {
       const finalTextareas = document.querySelectorAll('textarea').length
       expect(finalTextareas).toBe(initialTextareas)
     })
+  })
+
+  it('round-trips every answer field', () => {
+    const input = {
+      involved_malleoli: 'trimaleolar',
+      posterior_fracture_type: 'extraincisural',
+      medial_morphology: 'transverse_oblique',
+      fibular_level: 'transindesmal',
+      lateral_morphology: 'spiral',
+      suprasindesmal_type: 'proximal',
+      fibula_infrasindesmal_transverse: true,
+      fibular_level_for_transverse: 'infrasindesmal',
+      has_ct_scan: true,
+      fibula_trace_pattern: 'parasindesmotic_short',
+      articular_involvement: 'small_without_extension',
+      has_articular_depression: false,
+      is_posterior_posteromedial: true,
+      fibula_trace_count: 'single',
+      lateral_subtype: 'simple',
+      infrasindesmal_morphology: 'avulsion',
+      medial_subtype: 'open_mortise',
+      has_fibula_head_shortening: false,
+    } as FractureInput
+    expect(decodeParamsToInput(encodeInputToParams(input))).toEqual(input)
   })
 })

@@ -2,20 +2,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import {
-  BarChart3,
-  Users,
-  FileText,
-  CheckCircle2,
-  Loader2,
-  Sparkles,
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { StatCard } from '../../components/analytics';
-import { caseApi } from '@/services';
+import { StatCard, StatGroup } from '../../components/analytics';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Skeleton } from '@/components/ui/skeleton';
+import { caseApi, studyApi } from '@/services';
 import { RecentActivityCard } from './components/RecentActivityCard';
 import { NeedsAttentionCard } from './components/NeedsAttentionCard';
-import { StatusBreakdown } from './components/StatusBreakdown';
+import { StudiesInProgressCard } from './components/StudiesInProgressCard';
 
 export function AdminDashboardPage() {
   const { t } = useTranslation();
@@ -27,6 +22,15 @@ export function AdminDashboardPage() {
     staleTime: 0,
     refetchOnMount: 'always',
   });
+
+  // shortcut: first 100 studies, newest first; paginate if a site ever runs more.
+  const { data: studiesData, isLoading: isLoadingStudies } = useQuery({
+    queryKey: ['admin-studies', 'dashboard'],
+    queryFn: () => studyApi.listStudies(undefined, 1, 100),
+  });
+  const studies = studiesData?.studies ?? [];
+  const activeStudies = studies.filter((s) => s.status === 'active').length;
+  const draftStudies = studies.filter((s) => s.status === 'draft').length;
 
   const stats = useMemo(() => {
     if (!data) return { totalCases: 0, draftCases: 0, publishedCases: 0, closedCases: 0, totalResponses: 0, totalUniqueUsers: 0, avgResponsesPerCase: 0 };
@@ -45,94 +49,69 @@ export function AdminDashboardPage() {
   const recentActiveCases = data?.recent_active_cases ?? [];
   const casesNeedingAttention = data?.cases_needing_attention ?? [];
 
-  if (isLoading) {
+  if (isLoading || isLoadingStudies) {
     return (
-      <div className="min-h-screen bg-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
-          </div>
-          <p className="text-muted-foreground mt-4 font-medium">
-            {t('common.loading', 'Loading dashboard...')}
-          </p>
+      <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6" aria-busy="true">
+        <span className="sr-only">{t('common.loading', 'Loading dashboard...')}</span>
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-48 w-full" />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-mesh">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <header className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                {t('admin.dashboard.title')}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {t('admin.dashboard.subtitle')}
-              </p>
-            </div>
-            <Button
-              onClick={() => navigate('/admin/cases/new')}
-              size="lg"
-              className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
-            >
-              <Sparkles className="w-4 h-4" />
+    <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+      <PageHeader
+        title={t('admin.dashboard.title')}
+        description={t('admin.dashboard.subtitle')}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => navigate('/admin/studies/new')}>
+              <Plus />
+              {t('admin.studies.create')}
+            </Button>
+            <Button onClick={() => navigate('/admin/cases/new')}>
+              <Plus />
               {t('admin.cases.create', 'Create Case')}
             </Button>
-          </div>
-        </header>
+          </>
+        }
+      />
 
-        {/* Stats Grid */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            title={t('admin.dashboard.totalCases', 'Total Cases')}
-            value={stats.totalCases}
-            subtitle={`${stats.draftCases} ${t('admin.dashboard.drafts')}, ${stats.publishedCases} ${t('admin.dashboard.active')}`}
-            icon={FileText}
-            color="blue"
-            delay={0}
-          />
-          <StatCard
-            title={t('admin.dashboard.totalResponses')}
-            value={stats.totalResponses}
-            subtitle={t('admin.dashboard.avgPerCase', { count: stats.avgResponsesPerCase })}
-            icon={BarChart3}
-            color="emerald"
-            delay={50}
-          />
-          <StatCard
-            title={t('admin.dashboard.uniqueParticipants')}
-            value={stats.totalUniqueUsers}
-            subtitle={t('admin.dashboard.acrossAllCases', 'Across all cases')}
-            icon={Users}
-            color="amber"
-            delay={100}
-          />
-          <StatCard
-            title={t('admin.dashboard.completedCases', 'Completed Cases')}
-            value={stats.closedCases}
-            subtitle={`${stats.publishedCases} ${t('admin.dashboard.stillActive')}`}
-            icon={CheckCircle2}
-            color="violet"
-            delay={150}
-          />
-        </section>
+      <StatGroup>
+        <StatCard
+          title={t('admin.dashboard.totalCases', 'Total Cases')}
+          value={stats.totalCases}
+          subtitle={`${t('admin.dashboard.draftsCount', { count: stats.draftCases })}, ${t('admin.dashboard.activeCount', { count: stats.publishedCases })}, ${t('admin.dashboard.closedCount', { count: stats.closedCases })}`}
+        />
+        <StatCard
+          title={t('admin.dashboard.totalResponses')}
+          value={stats.totalResponses}
+          subtitle={t('admin.dashboard.avgPerCase', { count: stats.avgResponsesPerCase })}
+        />
+        <StatCard
+          title={t('admin.dashboard.uniqueParticipants')}
+          value={stats.totalUniqueUsers}
+          subtitle={t('admin.dashboard.acrossAllCases', 'Across all cases')}
+        />
+        <StatCard
+          title={t('admin.dashboard.activeStudies')}
+          value={activeStudies}
+          subtitle={t('admin.dashboard.draftsCount', { count: draftStudies })}
+        />
+      </StatGroup>
 
-        {/* Activity & Attention Grid */}
-        <section className="grid lg:grid-cols-2 gap-6 mb-8">
-          <RecentActivityCard cases={recentActiveCases} />
-          <NeedsAttentionCard cases={casesNeedingAttention} />
-        </section>
+      <StudiesInProgressCard studies={studies} />
 
-        {/* Status Breakdown */}
-        <StatusBreakdown stats={stats} />
-      </div>
+      <section className="grid gap-6 lg:grid-cols-2">
+        <RecentActivityCard cases={recentActiveCases} />
+        <NeedsAttentionCard cases={casesNeedingAttention} />
+      </section>
     </div>
   );
 }

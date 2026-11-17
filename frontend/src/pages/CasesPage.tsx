@@ -2,21 +2,11 @@ import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import {
-  FileText,
-  Clock,
-  Users,
-  CheckCircle2,
-  ImageIcon,
-  Search,
-  Filter,
-  ArrowRight,
-  CalendarDays,
-} from 'lucide-react';
+import { FileText, Users, Check, ImageIcon, Search, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Spinner } from '../components/ui/spinner';
+import { Skeleton } from '../components/ui/skeleton';
 import { EmptyState } from '../components/ui/empty-state';
-import { Card, CardContent } from '../components/ui/card';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
 import { Progress } from '../components/ui/progress';
@@ -24,11 +14,12 @@ import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { listPublishedCases } from '@/services';
 import type { UserCaseItem } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 
 export function CasesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = searchParams.get('q') || '';
@@ -56,7 +47,7 @@ export function CasesPage() {
 
   const cases = useMemo(() => data?.cases ?? [], [data]);
   const total = data?.total ?? 0;
-  const error = queryError instanceof Error ? queryError.message : queryError ? 'Failed to load cases' : null;
+  const error = queryError instanceof Error ? queryError.message : queryError ? t('cases.loadListError') : null;
 
   // Find the index of the first pending case (for "next up" highlight)
   const firstPendingIndex = useMemo(
@@ -96,160 +87,146 @@ export function CasesPage() {
     const daysLeft = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
     return {
-      text: date.toLocaleDateString(),
+      text: formatDate(date, i18n.language),
       isExpired,
       daysLeft,
       isUrgent: !isExpired && daysLeft <= 3,
     };
   };
 
+  // Row links and the continue action carry the same filters so previous/next inside a case keeps working.
+  const filterParams = new URLSearchParams();
+  if (filterStatus !== 'all') filterParams.set('status', filterStatus);
+  if (searchQuery) filterParams.set('q', searchQuery);
+  const filterQuery = filterParams.toString();
+  const firstPending = firstPendingIndex >= 0 ? cases[firstPendingIndex] : null;
+  const allAnswered = firstPendingIndex === -1;
+
+  const filterTabs: { value: FilterStatus; label: string; count: number }[] = [
+    { value: 'all', label: t('cases.filterAll'), count: stats.total },
+    { value: 'pending', label: t('cases.filterPending'), count: stats.pending },
+    { value: 'completed', label: t('cases.filterCompleted'), count: stats.completed },
+  ];
+
   return (
-    <div className="h-full">
-      {/* Header */}
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">{t('cases.pageTitle')}</h1>
-              <p className="text-muted-foreground mt-2">{t('cases.pageSubtitle')}</p>
-            </div>
-
-            {!loading && cases.length > 0 && (
-              <div className="flex items-center gap-6 p-4 rounded-xl border bg-card">
-                <div className="flex-1 min-w-[200px]">
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">{t('cases.yourProgress')}</span>
-                    <span className="font-medium">{stats.completed} / {stats.total}</span>
-                  </div>
-                  <Progress value={stats.progress} className="h-2" />
-                </div>
-                <div className="hidden sm:flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <span className="text-muted-foreground">{stats.completed} {t('cases.completedCount')}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-2 rounded-full bg-orange-500" />
-                    <span className="text-muted-foreground">{stats.pending} {t('cases.pendingCount')}</span>
-                  </div>
-                </div>
+    <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+      <PageHeader
+        title={t('cases.pageTitle')}
+        description={t('cases.pageSubtitle')}
+        actions={
+          !loading && cases.length > 0 && (
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end sm:gap-4">
+              <div className="w-full space-y-2 sm:w-56">
+                {allAnswered ? (
+                  <p className="flex items-center gap-1.5 text-sm font-medium tabular-nums">
+                    <Check className="h-4 w-4 text-success" aria-hidden="true" />
+                    {t('cases.allAnswered', { total: stats.total })}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground tabular-nums">
+                    <span className="font-medium text-foreground">{stats.completed} / {stats.total}</span>{' '}
+                    {t('cases.completedCount')}
+                  </p>
+                )}
+                <Progress value={stats.progress} className="h-1.5" aria-label={t('cases.yourProgress')} />
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="border-b bg-background sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="relative w-full sm:w-[300px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('cases.searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
+              {firstPending && (
+                <Button asChild>
+                  <Link to={`/cases/${firstPending.id}${filterQuery ? `?${filterQuery}` : ''}`}>
+                    {stats.completed === 0
+                      ? t('cases.startWithCase', { number: firstPendingIndex + 1 })
+                      : t('cases.continueWithCase', { number: firstPendingIndex + 1 })}
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </Button>
+              )}
             </div>
+          )
+        }
+      />
 
-            <Tabs value={filterStatus} onValueChange={(v) => setFilterStatus(v as FilterStatus)}>
-              <TabsList>
-                <TabsTrigger value="all" className="gap-1.5">
-                  <Filter className="h-3.5 w-3.5" />
-                  {t('cases.filterAll')}
-                  {stats.total > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {stats.total}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="pending" className="gap-1.5">
-                  {t('cases.filterPending')}
-                  {stats.pending > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {stats.pending}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="completed" className="gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  {t('cases.filterCompleted')}
-                  {stats.completed > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {stats.completed}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+      <div className="sticky top-12 z-10 -mt-3 mb-3 flex flex-col gap-3 bg-background py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:w-[300px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder={t('cases.searchPlaceholder')}
+            aria-label={t('cases.searchPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
         </div>
+
+        <Tabs value={filterStatus} onValueChange={(v) => setFilterStatus(v as FilterStatus)}>
+          <TabsList>
+            {filterTabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5">
+                {tab.label}
+                {tab.count > 0 && (
+                  <span className="text-xs text-muted-foreground tabular-nums">{tab.count}</span>
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Spinner size="lg" />
-          </div>
-        ) : error ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              {error}
-            </CardContent>
-          </Card>
-        ) : filteredCases.length === 0 ? (
-          <Card>
-            <CardContent>
-              <EmptyState
-                icon={FileText}
-                title={
-                  searchQuery || filterStatus !== 'all'
-                    ? t('cases.noMatchingCases')
-                    : t('cases.noCases')
-                }
-                description={
-                  searchQuery || filterStatus !== 'all'
-                    ? t('cases.tryDifferentFilter')
-                    : t('cases.noCasesDescription')
-                }
-                action={
-                  (searchQuery || filterStatus !== 'all') && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setFilterStatus('all');
-                      }}
-                    >
-                      {t('cases.clearFilters')}
-                    </Button>
-                  )
-                }
-              />
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {filteredCases.map(({ caseItem, originalIndex }) => {
-              const params = new URLSearchParams();
-              if (filterStatus !== 'all') params.set('status', filterStatus);
-              if (searchQuery) params.set('q', searchQuery);
-              return (
-                <CaseRow
-                  key={caseItem.id}
-                  caseItem={caseItem}
-                  caseNumber={originalIndex + 1}
-                  isNextUp={originalIndex === firstPendingIndex}
-                  filterParams={params.toString()}
-                  formatDeadline={formatDeadline}
-                />
-              );
-            })}
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <div className="divide-y rounded-lg border bg-card">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="space-y-2 px-4 py-3">
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className="rounded-lg border bg-card py-8 text-center text-sm text-muted-foreground">
+          {error}
+        </div>
+      ) : filteredCases.length === 0 ? (
+        <div className="rounded-lg border bg-card">
+          <EmptyState
+            icon={FileText}
+            title={
+              searchQuery || filterStatus !== 'all'
+                ? t('cases.noMatchingCases')
+                : t('cases.noCases')
+            }
+            description={
+              searchQuery || filterStatus !== 'all'
+                ? t('cases.tryDifferentFilter')
+                : t('cases.noCasesDescription')
+            }
+            action={
+              (searchQuery || filterStatus !== 'all') && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilterStatus('all');
+                  }}
+                >
+                  {t('cases.clearFilters')}
+                </Button>
+              )
+            }
+          />
+        </div>
+      ) : (
+        <div className="divide-y overflow-hidden rounded-lg border bg-card">
+          {filteredCases.map(({ caseItem, originalIndex }) => (
+            <CaseRow
+              key={caseItem.id}
+              caseItem={caseItem}
+              caseNumber={originalIndex + 1}
+              isNextUp={originalIndex === firstPendingIndex}
+              filterParams={filterQuery}
+              formatDeadline={formatDeadline}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -273,128 +250,76 @@ function CaseRow({ caseItem, caseNumber, isNextUp, filterParams, formatDeadline 
   const caseUrl = `/cases/${caseItem.id}${filterParams ? `?${filterParams}` : ''}`;
   const completed = caseItem.has_responded;
 
+  const meta = (
+    <>
+      {deadline ? (
+        <span className={cn(deadline.isExpired && 'text-destructive', deadline.isUrgent && 'text-warning')}>
+          {deadline.isExpired
+            ? t('cases.expired')
+            : deadline.isUrgent
+              ? t('cases.daysLeft', { count: deadline.daysLeft })
+              : deadline.text}
+        </span>
+      ) : (
+        <span className="hidden md:block" />
+      )}
+      <span className="inline-flex items-center gap-1">
+        <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
+        {caseItem.image_count}
+        <span className="sr-only">{t('cases.imagesCount')}</span>
+      </span>
+      {/* Empty cells keep the desktop grid columns aligned down the list. */}
+      {caseItem.has_tac_images ? (
+        <Badge variant="outline">{t('cases.images.ct')}</Badge>
+      ) : (
+        <span className="hidden md:block" />
+      )}
+      <span className="inline-flex items-center gap-1">
+        <Users className="h-3.5 w-3.5" aria-hidden="true" />
+        {caseItem.response_count}
+        <span className="sr-only">{t('cases.responses')}</span>
+      </span>
+    </>
+  );
+
   return (
     <Link
       to={caseUrl}
-      className={cn(
-        'group block rounded-lg border bg-card transition-colors',
-        completed
-          ? 'opacity-60 hover:opacity-80'
-          : 'hover:bg-accent/50',
-        isNextUp && !completed && 'ring-2 ring-primary/50 border-primary/30',
-      )}
+      className="flex items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-accent focus-visible:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
     >
-      <div className="flex items-center gap-4 px-4 py-3 sm:px-5 sm:py-4">
-        {/* Case number */}
-        <div className={cn(
-          'hidden sm:flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold shrink-0',
-          completed
-            ? 'bg-green-500/10 text-green-600 dark:text-green-400'
-            : 'bg-muted text-muted-foreground',
-        )}>
-          {completed ? <CheckCircle2 className="h-5 w-5" /> : caseNumber}
-        </div>
+      <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+        {completed ? (
+          <Check className="h-4 w-4 text-success" aria-hidden="true" />
+        ) : (
+          <span className="h-2.5 w-2.5 rounded-full border border-muted-foreground" />
+        )}
+        <span className="sr-only">
+          {completed ? t('cases.responded') : t('cases.filterPending')}
+        </span>
+      </span>
 
-        {/* Main content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-xs text-muted-foreground sm:hidden">
-              {t('cases.caseNumber', { number: caseNumber })}
-            </span>
-            {isNextUp && !completed && (
-              <Badge className="bg-primary/10 text-primary border-primary/20 text-xs px-1.5 py-0">
-                {t('cases.nextUp')}
-              </Badge>
-            )}
-          </div>
-          <h3 className={cn(
-            'font-medium truncate',
-            !completed && 'group-hover:text-primary transition-colors',
-          )}>
-            {caseItem.title}
-          </h3>
-          {caseItem.description && (
-            <p className="text-sm text-muted-foreground truncate mt-0.5">
-              {caseItem.description}
-            </p>
-          )}
-        </div>
+      <span className="w-6 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
+        {caseNumber}
+      </span>
 
-        {/* Metadata */}
-        <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground shrink-0">
-          <span className="inline-flex items-center gap-1">
-            <ImageIcon className="h-3.5 w-3.5" />
-            {caseItem.image_count}
-          </span>
-          {caseItem.has_tac_images && (
-            <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-600 dark:text-blue-400">
-              TAC
-            </Badge>
-          )}
-          <span className="inline-flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
-            {caseItem.response_count}
-          </span>
-          {deadline && (
-            <span className={cn(
-              'inline-flex items-center gap-1',
-              deadline.isExpired && 'text-destructive',
-              deadline.isUrgent && 'text-orange-600 dark:text-orange-400',
-            )}>
-              {deadline.isExpired ? (
-                <Clock className="h-3.5 w-3.5" />
-              ) : (
-                <CalendarDays className="h-3.5 w-3.5" />
-              )}
-              {deadline.isExpired
-                ? t('cases.expired')
-                : deadline.isUrgent
-                  ? t('cases.daysLeft', { count: deadline.daysLeft })
-                  : deadline.text}
-            </span>
-          )}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate text-sm font-medium">{caseItem.title}</h3>
+          {isNextUp && !completed && <Badge variant="outline">{t('cases.nextUp')}</Badge>}
         </div>
-
-        {/* Status + arrow */}
-        <div className="flex items-center gap-3 shrink-0">
-          {completed && (
-            <Badge variant="secondary" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hidden sm:flex">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              {t('cases.responded')}
-            </Badge>
-          )}
-          <ArrowRight className={cn(
-            'h-4 w-4 text-muted-foreground transition-transform',
-            !completed && 'group-hover:translate-x-1 group-hover:text-primary',
-          )} />
+        {caseItem.description && (
+          <p className="truncate text-sm text-muted-foreground">{caseItem.description}</p>
+        )}
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground tabular-nums md:hidden">
+          {meta}
         </div>
       </div>
 
-      {/* Mobile metadata row */}
-      <div className="flex md:hidden items-center gap-3 px-4 pb-3 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1">
-          <ImageIcon className="h-3 w-3" />
-          {caseItem.image_count} {t('cases.imagesCount')}
-        </span>
-        {caseItem.has_tac_images && (
-          <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-600 dark:text-blue-400 h-5">
-            TAC
-          </Badge>
-        )}
-        <span className="inline-flex items-center gap-1">
-          <Users className="h-3 w-3" />
-          {caseItem.response_count} {t('cases.responses')}
-        </span>
-        {deadline && (
-          <span className={cn(
-            'inline-flex items-center gap-1',
-            deadline.isExpired && 'text-destructive',
-            deadline.isUrgent && 'text-orange-600 dark:text-orange-400',
-          )}>
-            {deadline.isExpired ? t('cases.expired') : deadline.text}
-          </span>
-        )}
+      <div className="hidden shrink-0 grid-cols-[auto_2.5rem_3rem_2.5rem] items-center justify-items-end gap-4 text-xs text-muted-foreground tabular-nums md:grid">
+        {meta}
       </div>
+
+      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </Link>
   );
 }

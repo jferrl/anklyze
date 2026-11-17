@@ -3,24 +3,26 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Save, Send, AlertCircle, Loader2, Sparkles,
+  Save, Send, AlertCircle, Loader2,
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { StatusBadge } from '../components/StatusBadge';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { caseApi } from '@/services';
-import { cn } from '@/lib/utils';
 import type { ImageCategory } from '@/types';
 import { CaseDetailsStep } from '../components/CaseDetailsStep';
 import { useCaseEditorForm } from './useCaseEditorForm';
 import { useCaseEditorMutations } from './useCaseEditorMutations';
 import { CaseImagesStep } from './CaseImagesStep';
-import { CaseEditorStepper } from './CaseEditorStepper';
 import { CaseGoldStandardCard } from './CaseGoldStandardCard';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 interface PendingUpload {
   id: string;
@@ -29,8 +31,8 @@ interface PendingUpload {
   preview: string;
 }
 
-type Step = 'details' | 'images';
-const STEPS: Step[] = ['details', 'images'];
+// A save can fail from the buttons at the bottom of the page, far below the error banner.
+const scrollIntoViewOnMount = (el: HTMLElement | null) => el?.scrollIntoView({ block: 'nearest' });
 
 export function CaseEditorPage() {
   const { t } = useTranslation();
@@ -38,13 +40,14 @@ export function CaseEditorPage() {
   const isEditing = !!id && id !== 'new';
 
   const [pageState, setPageState] = useState({
-    step: 'details' as Step,
     error: null as string | null,
+    titleError: null as string | null,
+    imagesError: null as string | null,
     showPublishDialog: false,
   });
-  const { step: currentStep, error, showPublishDialog } = pageState;
-  const setCurrentStep = (step: Step) => setPageState(p => ({ ...p, step }));
+  const { error, titleError, imagesError, showPublishDialog } = pageState;
   const setError = (error: string | null) => setPageState(p => ({ ...p, error }));
+  const setTitleError = (titleError: string | null) => setPageState(p => ({ ...p, titleError }));
   const setShowPublishDialog = (v: boolean) => setPageState(p => ({ ...p, showPublishDialog: v }));
 
   const { data: existingCase, isLoading: isLoadingCase } = useQuery({
@@ -52,6 +55,7 @@ export function CaseEditorPage() {
     queryFn: () => caseApi.getCase(id!),
     enabled: isEditing,
   });
+  useRecordTitle(existingCase?.title);
 
   const { form, updateForm } = useCaseEditorForm(existingCase);
   const { title, description, deadline } = form;
@@ -72,15 +76,15 @@ export function CaseEditorPage() {
       clearPendingUploads: () => setPendingUploads([]),
     });
 
-  const currentStepIndex = STEPS.indexOf(currentStep);
-  const goToNextStep = () => {
-    const next = STEPS[currentStepIndex + 1];
-    if (next) setCurrentStep(next);
+  // Scrolls the section with the failed check into view, then moves focus to its field.
+  const revealField = (sectionId: string, fieldId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ block: 'start' });
+    document.getElementById(fieldId)?.focus({ preventScroll: true });
   };
-  const goToPrevStep = () => { if (currentStepIndex > 0) setCurrentStep(STEPS[currentStepIndex - 1]); };
 
   const createOnDrop = useCallback(
     (category: ImageCategory) => (files: File[]) => {
+      setPageState(p => ({ ...p, imagesError: null }));
       setPendingUploads(prev => [...prev, ...files.map(file => ({
         id: Math.random().toString(36).substring(7), file, category, preview: URL.createObjectURL(file),
       }))]);
@@ -95,9 +99,14 @@ export function CaseEditorPage() {
     });
   };
 
-  const handleSave = async () => {
-    setError(null);
-    if (!title.trim()) { setError(t('admin.cases.errors.titleRequired')); setCurrentStep('details'); return; }
+  // Returns false when validation stops the save, so publishing does not go ahead.
+  const handleSave = async (): Promise<boolean> => {
+    setPageState(p => ({ ...p, error: null, imagesError: null }));
+    if (!title.trim()) {
+      setTitleError(t('admin.cases.errors.titleRequired'));
+      revealField('case-details', 'title');
+      return false;
+    }
     const data = {
       title: title.trim(), description: description.trim() || undefined,
       deadline: deadline ? new Date(deadline).toISOString() : undefined,
@@ -111,109 +120,101 @@ export function CaseEditorPage() {
     } else {
       await createMutation.mutateAsync(data);
     }
+    return true;
   };
 
   const handlePublish = () => {
     const total = (existingCase?.images?.length ?? 0) + pendingUploads.length;
-    if (total === 0) { setError(t('admin.cases.errors.imagesRequired')); setCurrentStep('images'); return; }
+    if (total === 0) {
+      setPageState(p => ({ ...p, imagesError: t('admin.cases.errors.imagesRequired') }));
+      revealField('case-images', 'case-images-dropzone');
+      return;
+    }
     setShowPublishDialog(true);
   };
 
   const confirmPublish = async () => {
-    if (isEditing) { await handleSave(); publishMutation.mutate(id!); }
+    if (isEditing && (await handleSave())) publishMutation.mutate(id!);
   };
 
   const existingImages = existingCase?.images ?? [];
-  const totalImages = existingImages.length + pendingUploads.length;
   const canPublish = isEditing && existingCase?.status === 'draft';
   const canEdit = !isEditing || existingCase?.status === 'draft';
   const canEditAlways = !isEditing || existingCase?.status !== 'closed';
 
+  const actions = (
+    <>
+      <Button variant="outline" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+        {t('common.save')}
+      </Button>
+      {canPublish && (
+        <Button onClick={handlePublish} disabled={isSaving}>
+          <Send />{t('admin.cases.publish')}
+        </Button>
+      )}
+    </>
+  );
+
   if (isEditing && isLoadingCase) {
     return (
-      <div className="min-h-screen bg-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
-          </div>
-          <p className="text-muted-foreground mt-4 font-medium">{t('common.loading')}</p>
-        </div>
+      <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6" aria-busy="true">
+        <span className="sr-only">{t('common.loading')}</span>
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-80 w-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-mesh">
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <header className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                  {isEditing ? t('admin.cases.editCase') : t('admin.cases.createCase')}
-                </h1>
-                {existingCase && (
-                  <Badge variant="outline" className={cn('mt-1',
-                    existingCase.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400',
-                    existingCase.status === 'closed' && 'border-muted-foreground/50'
-                  )}>
-                    {t(`cases.status.${existingCase.status}`)}
-                  </Badge>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSave} disabled={isSaving} className="gap-2">
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {t('common.save')}
-              </Button>
-              {canPublish && (
-                <Button onClick={handlePublish} disabled={isSaving}
-                  className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
-                  <Send className="h-4 w-4" />{t('admin.cases.publish')}
-                </Button>
+    <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 sm:px-6">
+        <PageHeader
+          title={
+            <span className="flex flex-wrap items-center gap-3">
+              {isEditing ? t('admin.cases.editCase') : t('admin.cases.createCase')}
+              {existingCase && (
+                <StatusBadge status={existingCase.status} label={t(`cases.status.${existingCase.status}`)} />
               )}
-            </div>
-          </div>
-        </header>
+            </span>
+          }
+          actions={actions}
+        />
 
         {error && (
-          <Alert variant="destructive" className="mb-6 animate-fade-in">
+          <Alert variant="destructive" ref={scrollIntoViewOnMount}>
             <AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        <CaseEditorStepper
-          steps={STEPS} isEditing={isEditing} currentStep={currentStep}
-          title={title} totalImages={totalImages} onStepClick={setCurrentStep}
-        />
+        <CaseDetailsStep title={title} description={description} deadline={deadline}
+          canEdit={canEdit} canEditAlways={canEditAlways}
+          titleError={titleError}
+          onUpdateField={(field, value) => {
+            if (field === 'title' && titleError) setTitleError(null);
+            updateForm(field as keyof typeof form, value);
+          }} />
 
-        <div className="space-y-6">
-          {currentStep === 'details' && (
-            <CaseDetailsStep title={title} description={description} deadline={deadline}
-              canEdit={canEdit} canEditAlways={canEditAlways}
-              onUpdateField={(field, value) => updateForm(field as keyof typeof form, value)}
-              onNext={goToNextStep} />
-          )}
-          {currentStep === 'images' && (
-            <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
-              canEdit={canEdit} caseId={id}
-              onRemovePending={removePendingUpload}
-              onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
-              onDrop={createOnDrop} onPrev={goToPrevStep} />
-          )}
+        <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
+          canEdit={canEdit} caseId={id} error={imagesError}
+          onRemovePending={removePendingUpload}
+          onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
+          onDrop={createOnDrop} />
 
-          {isEditing && existingCase && existingCase.status !== 'closed' && (
-            <CaseGoldStandardCard caseData={existingCase} />
-          )}
-        </div>
-      </div>
+        {isEditing && existingCase && existingCase.status !== 'closed' && (
+          <CaseGoldStandardCard caseData={existingCase} />
+        )}
+        {!isEditing && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('admin.reliability.goldStandard')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">{t('admin.cases.referenceAfterSave')}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-6">{actions}</div>
 
       <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
         <AlertDialogContent>

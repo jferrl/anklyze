@@ -22,19 +22,19 @@ export function FilterBar({
   filterValue, onFilterChange, filterPlaceholder, filterOptions,
 }: FilterBarProps) {
   return (
-    <div className="chart-card mb-6">
-      <div className="flex flex-col sm:flex-row gap-4">
+    <div>
+      <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 bg-muted/30 border-border/50 focus:bg-background"
+            className="pl-9"
           />
         </div>
         <Select value={filterValue} onValueChange={onFilterChange}>
-          <SelectTrigger className="w-full sm:w-[180px] bg-muted/30 border-border/50">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder={filterPlaceholder} />
           </SelectTrigger>
           <SelectContent>

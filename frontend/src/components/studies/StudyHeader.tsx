@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock, Users, Scan, CalendarClock } from 'lucide-react';
-import { Badge } from '../ui/badge';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
 
 interface CaseHeaderProps {
   title: string;
@@ -28,67 +30,59 @@ export function CaseHeader({
   myResponseCount,
   deadline,
 }: CaseHeaderProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { deadlineDate, isExpired, daysRemaining } = useMemo(
     () => computeDeadlineInfo(deadline),
     [deadline]
   );
+  const isUrgent = !isExpired && daysRemaining !== null && daysRemaining <= 3;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-          {description && (
-            <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              {description}
-            </p>
+    <PageHeader
+      title={title}
+      description={description}
+      actions={
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground tabular-nums">
+          {hasTACImages && (
+            <span className="inline-flex items-center gap-1.5">
+              <Scan className="h-3.5 w-3.5" />
+              {t('cases.includesTAC')}
+            </span>
+          )}
+
+          <span className="inline-flex items-center gap-1.5">
+            <Users className="h-3.5 w-3.5" />
+            {myResponseCount === 0
+              ? t('cases.myResponsesNone')
+              : t('cases.myResponsesCount', { count: myResponseCount })}
+          </span>
+
+          {deadlineDate && (
+            <span
+              className={cn(
+                'inline-flex items-center gap-1.5',
+                isExpired && 'text-destructive',
+                isUrgent && 'text-warning',
+              )}
+            >
+              {isExpired ? (
+                <>
+                  <Clock className="h-3.5 w-3.5" />
+                  {t('cases.expired')}
+                </>
+              ) : (
+                <>
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  {daysRemaining !== null && daysRemaining > 0
+                    ? t('cases.daysLeft', { count: daysRemaining })
+                    : formatDate(deadlineDate, i18n.language)}
+                </>
+              )}
+            </span>
           )}
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        {hasTACImages && (
-          <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 gap-1.5 px-3 py-1">
-            <Scan className="h-3.5 w-3.5" />
-            {t('cases.includesTAC')}
-          </Badge>
-        )}
-
-        <Badge variant="outline" className="gap-1.5 px-3 py-1">
-          <Users className="h-3.5 w-3.5" />
-          {myResponseCount} {t('cases.myResponses')}
-        </Badge>
-
-        {deadlineDate && (
-          <Badge
-            variant={isExpired ? 'destructive' : 'outline'}
-            className={
-              isExpired
-                ? 'gap-1.5 px-3 py-1'
-                : daysRemaining !== null && daysRemaining <= 3
-                ? 'gap-1.5 px-3 py-1 border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                : 'gap-1.5 px-3 py-1'
-            }
-          >
-            {isExpired ? (
-              <>
-                <Clock className="h-3.5 w-3.5" />
-                {t('cases.expired')}
-              </>
-            ) : (
-              <>
-                <CalendarClock className="h-3.5 w-3.5" />
-                {daysRemaining !== null && daysRemaining > 0
-                  ? t('cases.daysLeft', { count: daysRemaining })
-                  : deadlineDate.toLocaleDateString()
-                }
-              </>
-            )}
-          </Badge>
-        )}
-      </div>
-    </div>
+      }
+    />
   );
 }

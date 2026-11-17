@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
 });
 
 import { HomeRedirect } from './components/auth/HomeRedirect';
+import { NotFoundPage } from './components/NotFoundPage';
 import { ClassifyPage } from './pages/ClassifyPage';
 import { CasesPage } from './pages/CasesPage';
 import { CaseDetailPage } from './pages/CaseDetailPage';
@@ -48,7 +49,7 @@ function App() {
                 path="/classify"
                 element={
                   <ProtectedRoute>
-                    <AppShell breadcrumbs={[{ labelKey: 'classify' }]}>
+                    <AppShell>
                       <ClassifyPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -58,7 +59,7 @@ function App() {
                 path="/cases"
                 element={
                   <ProtectedRoute>
-                    <AppShell breadcrumbs={[{ labelKey: 'cases' }]}>
+                    <AppShell>
                       <CasesPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -68,12 +69,7 @@ function App() {
                 path="/cases/:id"
                 element={
                   <ProtectedRoute>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'cases', href: '/cases' },
-                        { labelKey: 'caseDetail' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/cases' }, { record: true }]}>
                       <CaseDetailPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -83,7 +79,7 @@ function App() {
                 path="/profile"
                 element={
                   <ProtectedRoute>
-                    <AppShell breadcrumbs={[{ labelKey: 'profile' }]}>
+                    <AppShell>
                       <ProfilePage />
                     </AppShell>
                   </ProtectedRoute>
@@ -95,7 +91,7 @@ function App() {
                 path="/admin"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell breadcrumbs={[{ labelKey: 'admin' }, { labelKey: 'dashboard' }]}>
+                    <AppShell>
                       <AdminDashboardPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -106,12 +102,7 @@ function App() {
                 path="/admin/cases"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin', href: '/admin' },
-                        { labelKey: 'cases' },
-                      ]}
-                    >
+                    <AppShell>
                       <AdminCasesPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -121,13 +112,7 @@ function App() {
                 path="/admin/cases/new"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'cases', href: '/admin/cases' },
-                        { labelKey: 'newCase' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { labelKey: 'newCase' }]}>
                       <CaseEditorPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -137,13 +122,7 @@ function App() {
                 path="/admin/cases/:id/edit"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'cases', href: '/admin/cases' },
-                        { labelKey: 'editCase' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true }]}>
                       <CaseEditorPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -153,13 +132,7 @@ function App() {
                 path="/admin/cases/:id/analytics"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'cases', href: '/admin/cases' },
-                        { labelKey: 'analytics' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true, href: '../edit' }, { labelKey: 'analytics' }]}>
                       <CaseAnalyticsPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -169,13 +142,7 @@ function App() {
                 path="/admin/cases/:id/reliability"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'cases', href: '/admin/cases' },
-                        { labelKey: 'reliability' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true, href: '../edit' }, { labelKey: 'reliability' }]}>
                       <CaseReliabilityPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -188,12 +155,7 @@ function App() {
                 path="/admin/studies"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin', href: '/admin' },
-                        { labelKey: 'studies' },
-                      ]}
-                    >
+                    <AppShell>
                       <AdminStudiesPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -203,13 +165,7 @@ function App() {
                 path="/admin/studies/new"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'studies', href: '/admin/studies' },
-                        { labelKey: 'newStudy' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'studies', href: '/admin/studies' }, { labelKey: 'newStudy' }]}>
                       <StudyEditorPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -219,13 +175,7 @@ function App() {
                 path="/admin/studies/:id/edit"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'studies', href: '/admin/studies' },
-                        { labelKey: 'editStudy' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'studies', href: '/admin/studies' }, { record: true }]}>
                       <StudyEditorPage />
                     </AppShell>
                   </ProtectedRoute>
@@ -235,22 +185,17 @@ function App() {
                 path="/admin/studies/:id/reliability"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell
-                      breadcrumbs={[
-                        { labelKey: 'admin' },
-                        { labelKey: 'studies', href: '/admin/studies' },
-                        { labelKey: 'reliability' },
-                      ]}
-                    >
+                    <AppShell breadcrumbs={[{ labelKey: 'studies', href: '/admin/studies' }, { record: true, href: '../edit' }, { labelKey: 'reliability' }]}>
                       <StudyReliabilityPage />
                     </AppShell>
                   </ProtectedRoute>
                 }
               />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <CommandPalette />
           </BrowserRouter>
-          <Toaster position="bottom-right" richColors closeButton />
+          <Toaster position="bottom-right" closeButton />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

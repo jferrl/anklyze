@@ -14,20 +14,19 @@ export function FlowDiagramSidebar() {
     <>
       {/* Toggle Button - Always visible on right edge */}
       <Button
-        variant="default"
-        size="lg"
+        variant="outline"
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-1/2 -translate-y-1/2 z-50 h-auto py-6 px-3 rounded-l-xl rounded-r-none border-r-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:px-4"
+        className="fixed top-1/2 -translate-y-1/2 z-50 h-auto py-4 px-2 rounded-r-none border-r-0"
         aria-label={isOpen ? t('classify.flowDiagram.hide') : t('classify.flowDiagram.show')}
         style={{ right: isOpen ? 'min(90vw, 1200px)' : '0' }}
       >
         <span className="flex flex-col items-center gap-3">
           {isOpen ? (
-            <PanelRightClose className="h-6 w-6" />
+            <PanelRightClose className="h-4 w-4" />
           ) : (
-            <PanelRightOpen className="h-6 w-6" />
+            <PanelRightOpen className="h-4 w-4" />
           )}
-          <span className="text-sm font-semibold writing-mode-vertical">
+          <span className="text-sm font-medium writing-mode-vertical">
             {t('classify.flowDiagram.title')}
           </span>
         </span>
@@ -35,16 +34,16 @@ export function FlowDiagramSidebar() {
 
       {/* Sidebar Panel */}
       <div
-        className={`fixed right-0 top-16 bottom-0 z-40 bg-background border-l shadow-lg transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed right-0 top-12 bottom-0 z-40 bg-background border-l transform transition-transform duration-150 ${
+          isOpen ? 'translate-x-0 shadow-lg' : 'translate-x-full'
         }`}
         style={{ width: 'min(90vw, 1200px)' }}
       >
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b bg-muted/30 flex items-center justify-between gap-4 shrink-0">
+          <div className="p-4 border-b flex items-center justify-between gap-4 shrink-0">
             <div>
-              <h2 className="font-semibold text-lg">{t('classify.flowDiagram.title')}</h2>
+              <h2 className="text-base font-semibold">{t('classify.flowDiagram.title')}</h2>
               <p className="text-sm text-muted-foreground mt-1">
                 {t('classify.flowDiagram.description')}
               </p>
@@ -55,7 +54,7 @@ export function FlowDiagramSidebar() {
               onClick={() => setIsOpen(false)}
               aria-label={t('classify.flowDiagram.hide')}
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
 

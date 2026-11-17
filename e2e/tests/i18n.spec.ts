@@ -8,7 +8,7 @@ test.describe('Internationalization (i18n)', () => {
       const landingPage = new LandingPage(page);
       await landingPage.goto();
 
-      await expect(page.getByText(/classify ankle fractures/i)).toBeVisible();
+      await expect(page.getByText(/ankle fracture classifications/i)).toBeVisible();
       await expect(page.getByText(/start classifying/i).first()).toBeVisible();
     });
 
@@ -19,7 +19,7 @@ test.describe('Internationalization (i18n)', () => {
       await landingPage.switchLanguage('es');
 
       // Wait for content to update
-      await expect(page.getByText(/clasifica fracturas de tobillo/i)).toBeVisible();
+      await expect(page.getByText(/clasificaciones de fractura de tobillo/i)).toBeVisible();
     });
 
     test('should switch back to English', async ({ page }) => {
@@ -28,11 +28,11 @@ test.describe('Internationalization (i18n)', () => {
 
       // Switch to Spanish first
       await landingPage.switchLanguage('es');
-      await expect(page.getByText(/clasifica fracturas de tobillo/i)).toBeVisible();
+      await expect(page.getByText(/clasificaciones de fractura de tobillo/i)).toBeVisible();
 
       // Switch back to English
       await landingPage.switchLanguage('en');
-      await expect(page.getByText(/classify ankle fractures/i)).toBeVisible();
+      await expect(page.getByText(/ankle fracture classifications/i)).toBeVisible();
     });
   });
 

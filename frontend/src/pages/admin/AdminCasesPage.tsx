@@ -12,12 +12,10 @@ import {
   BarChart3,
   Send,
   Lock,
-  FileText,
-  Loader2,
-  Sparkles,
   Award,
 } from 'lucide-react';
-import { Button } from '../../components/ui/button';
+import type { TFunction } from 'i18next';
+import { Button, buttonVariants } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import {
   DropdownMenu,
@@ -40,18 +38,23 @@ import { toast } from 'sonner';
 import { caseApi, InputValidationError } from '@/services';
 import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatDate as formatDateIn } from '@/lib/format';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Skeleton } from '@/components/ui/skeleton';
+import { StatusBadge } from './components/StatusBadge';
 import { DataTable } from './components/DataTable';
 import { FilterBar } from './components/FilterBar';
+import { NoMatchState } from './components/NoMatchState';
 import { Pagination } from './components/Pagination';
 import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminCasesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Case | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -73,7 +76,7 @@ export function AdminCasesPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
-      setDeleteId(null);
+      setDeleteTarget(null);
     },
   });
 
@@ -113,18 +116,16 @@ export function AdminCasesPage() {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
+  const isFiltered = searchQuery.trim() !== '' || statusFilter !== 'all';
+
   const filteredCases = cases.filter((caseItem) =>
     caseItem.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = useCallback((dateString?: string) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString?: string) => (dateString ? formatDateIn(dateString, i18n.language) : ''),
+    [i18n.language]
+  );
 
   const isDeadlinePassed = useCallback((deadline?: string) => {
     if (!deadline) return false;
@@ -134,7 +135,7 @@ export function AdminCasesPage() {
   // Memoized action handlers
   const handleView = useCallback((id: string) => navigate(`/cases/${id}`), [navigate]);
   const handleEdit = useCallback((id: string) => navigate(`/admin/cases/${id}/edit`), [navigate]);
-  const handleDelete = useCallback((id: string) => setDeleteId(id), []);
+  const handleDelete = useCallback((caseItem: Case) => setDeleteTarget(caseItem), []);
   const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation]);
   const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
   const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
@@ -149,9 +150,7 @@ export function AdminCasesPage() {
   const columns = useMemo<ColumnDef<Case, unknown>[]>(() => [
     {
       id: 'title',
-      header: () => (
-        <span className="text-muted-foreground font-medium">{t('admin.cases.table.title')}</span>
-      ),
+      header: () => t('admin.cases.table.title'),
       cell: ({ row }) => {
         const caseItem = row.original;
         return (
@@ -159,7 +158,7 @@ export function AdminCasesPage() {
             <div className="flex items-center gap-1.5">
               <span className="font-medium text-foreground truncate">{caseItem.title}</span>
               {caseItem.gold_standard && (
-                <Award className="w-4 h-4 text-amber-500 flex-shrink-0" aria-label={t('admin.reliability.goldStandardSet')} />
+                <Award className="h-4 w-4 shrink-0 text-primary" aria-label={t('admin.reliability.goldStandardSet')} />
               )}
             </div>
             {caseItem.description && (
@@ -167,83 +166,63 @@ export function AdminCasesPage() {
                 {caseItem.description}
               </span>
             )}
-            {caseItem.has_tac_images && (
-              <Badge variant="outline" className="w-fit text-xs border-primary/30 text-primary">
-                TAC
-              </Badge>
-            )}
           </div>
         );
       },
     },
     {
+      id: 'ct',
+      header: () => t('cases.images.ct'),
+      size: 64,
+      cell: ({ row }) =>
+        row.original.has_tac_images ? (
+          <Badge variant="outline" className="font-normal">
+            {t('cases.images.ct')}
+          </Badge>
+        ) : null,
+    },
+    {
       id: 'status',
-      header: () => (
-        <span className="text-muted-foreground font-medium">{t('admin.cases.table.status')}</span>
-      ),
-      size: 100,
+      header: () => t('admin.cases.table.status'),
+      size: 130,
       cell: ({ row }) => {
         const caseItem = row.original;
         return (
-          <Badge
-            variant="outline"
-            className={cn(
-              'font-medium whitespace-nowrap',
-              caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-              caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-              caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
-            )}
-          >
-            {t(`cases.status.${caseItem.status}`)}
-          </Badge>
+          <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} className="shrink-0" />
         );
       },
     },
     {
       id: 'responses',
-      header: () => (
-        <span className="text-muted-foreground font-medium text-center block">{t('admin.cases.table.responses')}</span>
-      ),
-      size: 80,
-      meta: { className: 'text-center' },
+      header: () => t('admin.cases.table.responses'),
+      size: 120,
+      meta: { className: 'text-right' },
       cell: ({ row }) => {
         const caseItem = row.original;
         return (
-          <span className={cn(
-            'inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-sm font-medium',
-            caseItem.response_count > 0
-              ? 'bg-primary/10 text-primary'
-              : 'bg-muted/50 text-muted-foreground'
-          )}>
-            {caseItem.response_count}
-          </span>
+<span className="tabular-nums">{caseItem.response_count}</span>
         );
       },
     },
     {
       id: 'created',
-      header: () => (
-        <span className="text-muted-foreground font-medium">{t('admin.cases.table.created')}</span>
-      ),
-      size: 100,
-      meta: { className: 'hidden lg:table-cell text-muted-foreground text-sm' },
+      header: () => t('admin.cases.table.created'),
+      size: 130,
+      meta: { className: 'hidden lg:table-cell text-muted-foreground tabular-nums' },
       cell: ({ row }) => {
         return <span>{formatDate(row.original.created_at)}</span>;
       },
     },
     {
       id: 'deadline',
-      header: () => (
-        <span className="text-muted-foreground font-medium">{t('admin.cases.table.deadline')}</span>
-      ),
-      size: 100,
-      meta: { className: 'hidden lg:table-cell' },
+      header: () => t('admin.cases.table.deadline'),
+      size: 130,
+      meta: { className: 'hidden lg:table-cell tabular-nums' },
       cell: ({ row }) => {
         const caseItem = row.original;
         return caseItem.deadline ? (
           <span
             className={cn(
-              'text-sm',
               isDeadlinePassed(caseItem.deadline)
                 ? 'text-destructive font-medium'
                 : 'text-muted-foreground'
@@ -252,20 +231,23 @@ export function AdminCasesPage() {
             {formatDate(caseItem.deadline)}
           </span>
         ) : (
-          <span className="text-muted-foreground/50 text-sm">-</span>
+          <span className="text-muted-foreground">
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">{t('admin.cases.noDeadline')}</span>
+          </span>
         );
       },
     },
     {
       id: 'actions',
       header: () => null,
-      size: 50,
+      size: 56,
       cell: ({ row }) => {
         const caseItem = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="icon" className="hover:bg-muted/50">
+              <Button variant="ghost" size="icon" aria-label={t('common.moreActions')}>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -286,7 +268,7 @@ export function AdminCasesPage() {
               )}
               <DropdownMenuSeparator />
               {caseItem.status === 'draft' && (
-                <DropdownMenuItem onClick={() => handlePublish(caseItem.id)} className="text-emerald-600 dark:text-emerald-400">
+                <DropdownMenuItem onClick={() => handlePublish(caseItem.id)} className="text-success">
                   <Send className="h-4 w-4 mr-2" />
                   {t('admin.cases.publish')}
                 </DropdownMenuItem>
@@ -298,7 +280,7 @@ export function AdminCasesPage() {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDelete(caseItem.id)} className="text-destructive">
+              <DropdownMenuItem onClick={() => handleDelete(caseItem)} className="text-destructive">
                 <Trash2 className="h-4 w-4 mr-2" />
                 {t('common.delete')}
               </DropdownMenuItem>
@@ -311,46 +293,27 @@ export function AdminCasesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <div className="absolute inset-0 w-16 h-16 rounded-2xl bg-primary/20 blur-xl mx-auto" />
-          </div>
-          <p className="text-muted-foreground mt-4 font-medium">
-            {t('common.loading', 'Loading cases...')}
-          </p>
-        </div>
+      <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6" aria-busy="true">
+        <span className="sr-only">{t('common.loading', 'Loading cases...')}</span>
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-96 w-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-mesh">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <header className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                {t('admin.cases.title')}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {t('admin.cases.subtitle')}
-              </p>
-            </div>
-            <Button
-              onClick={() => navigate('/admin/cases/new')}
-              size="lg"
-              className="gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
-            >
-              <Sparkles className="w-4 h-4" />
+    <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+        <PageHeader
+          title={t('admin.cases.title')}
+          description={t('admin.cases.subtitle')}
+          actions={
+            <Button onClick={() => navigate('/admin/cases/new')}>
+              <Plus />
               {t('admin.cases.create')}
             </Button>
-          </div>
-        </header>
+          }
+        />
 
         {/* Filters */}
         <FilterBar
@@ -364,36 +327,38 @@ export function AdminCasesPage() {
         />
 
         {/* Cases Table */}
-        {filteredCases.length === 0 ? (
-          <div className="chart-card text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-muted-foreground/50" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+        {filteredCases.length === 0 && isFiltered ? (
+          <NoMatchState
+            query={searchQuery}
+            statusLabel={statusFilter === 'all' ? undefined : t(`cases.status.${statusFilter}`)}
+            onClear={() => { setSearchQuery(''); setStatusFilter('all'); setPage(1); }}
+          />
+        ) : filteredCases.length === 0 ? (
+          <div className="rounded-lg border bg-card px-4 py-12 text-center">
+            <h2 className="text-base font-semibold text-foreground">
               {t('admin.cases.noCases')}
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            </h2>
+            <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-muted-foreground">
               {t('admin.cases.noCasesDesc')}
             </p>
-            <Button onClick={() => navigate('/admin/cases/new')} className="gap-2">
-              <Plus className="h-4 w-4" />
+            <Button onClick={() => navigate('/admin/cases/new')}>
+              <Plus />
               {t('admin.cases.createFirst')}
             </Button>
           </div>
         ) : (
           <>
             {/* Mobile: Card layout */}
-            <div className="md:hidden space-y-3">
-              {filteredCases.map((caseItem, index) => (
+            <div className="md:hidden divide-y rounded-lg border bg-card">
+              {filteredCases.map((caseItem) => (
                 <CaseCard
                   key={caseItem.id}
                   caseItem={caseItem}
-                  index={index}
                   formatDate={formatDate}
                   isDeadlinePassed={isDeadlinePassed}
                   onView={() => handleView(caseItem.id)}
                   onEdit={() => handleEdit(caseItem.id)}
-                  onDelete={() => handleDelete(caseItem.id)}
+                  onDelete={() => handleDelete(caseItem)}
                   onPublish={() => handlePublish(caseItem.id)}
                   onClose={() => handleClose(caseItem.id)}
                   onViewAnalytics={() => handleViewAnalytics(caseItem.id)}
@@ -423,27 +388,30 @@ export function AdminCasesPage() {
           onPageChange={setPage}
           showingText={t('admin.cases.table.showing', { from: (page - 1) * limit + 1, to: Math.min(page * limit, total), total })}
         />
-      </div>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.cases.deleteConfirm.title')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('admin.cases.deleteConfirm.description')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteId && deleteMutation.mutate(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('common.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        {deleteTarget && (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.cases.deleteConfirm.titleNamed', { title: deleteTarget.title })}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {deleteTarget.response_count > 0
+                  ? t('admin.cases.deleteConfirm.body', { count: deleteTarget.response_count })
+                  : t('admin.cases.deleteConfirm.bodyNoResponses')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteMutation.mutate(deleteTarget.id)}
+                className={buttonVariants({ variant: 'destructive' })}
+              >
+                {t('common.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        )}
       </AlertDialog>
     </div>
   );
@@ -451,7 +419,6 @@ export function AdminCasesPage() {
 
 interface CaseRowProps {
   caseItem: Case;
-  index: number;
   formatDate: (date?: string) => string;
   isDeadlinePassed: (deadline?: string) => boolean;
   onView: () => void;
@@ -460,12 +427,11 @@ interface CaseRowProps {
   onPublish: () => void;
   onClose: () => void;
   onViewAnalytics: () => void;
-  t: (key: string) => string;
+  t: TFunction;
 }
 
 const CaseCard = memo(function CaseCard({
   caseItem,
-  index,
   formatDate,
   isDeadlinePassed,
   onView,
@@ -480,46 +446,31 @@ const CaseCard = memo(function CaseCard({
     <div
       role="button"
       tabIndex={0}
-      className={cn(
-        'chart-card p-4 cursor-pointer hover:bg-muted/30 transition-colors',
-        'opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]'
-      )}
-      style={{ animationDelay: `${index * 30}ms` }}
+      className="cursor-pointer p-4 transition-colors duration-150 hover:bg-muted"
       onClick={onView}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onView()}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+          <div className="mb-1 flex items-start gap-2">
+            <span className="line-clamp-2 font-medium text-foreground">{caseItem.title}</span>
             {caseItem.gold_standard && (
-              <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+              <Award className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-label={t('admin.reliability.goldStandardSet')} />
             )}
-            <Badge
-              variant="outline"
-              className={cn(
-                'font-medium text-xs flex-shrink-0',
-                caseItem.status === 'published' && 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5',
-                caseItem.status === 'closed' && 'border-muted-foreground/50 bg-muted/30',
-                caseItem.status === 'draft' && 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/5'
-              )}
-            >
-              {t(`cases.status.${caseItem.status}`)}
-            </Badge>
           </div>
           {caseItem.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
               {caseItem.description}
             </p>
           )}
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <span className={cn(
-              'inline-flex items-center gap-1',
-              caseItem.response_count > 0 ? 'text-primary' : ''
-            )}>
-              <BarChart3 className="w-3.5 h-3.5" />
-              {caseItem.response_count} {t('admin.cases.table.responses').toLowerCase()}
-            </span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm tabular-nums text-muted-foreground">
+            <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} />
+            {caseItem.has_tac_images && (
+              <Badge variant="outline" className="font-normal">
+                {t('cases.images.ct')}
+              </Badge>
+            )}
+            <span>{t('admin.analytics.responsesCount', { count: caseItem.response_count })}</span>
             <span>{formatDate(caseItem.created_at)}</span>
             {caseItem.deadline && (
               <span className={cn(
@@ -529,15 +480,10 @@ const CaseCard = memo(function CaseCard({
               </span>
             )}
           </div>
-          {caseItem.has_tac_images && (
-            <Badge variant="outline" className="mt-2 text-xs border-primary/30 text-primary">
-              TAC
-            </Badge>
-          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="hover:bg-muted/50 flex-shrink-0">
+            <Button variant="ghost" size="icon" className="shrink-0" aria-label={t('common.moreActions')}>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -558,7 +504,7 @@ const CaseCard = memo(function CaseCard({
             )}
             <DropdownMenuSeparator />
             {caseItem.status === 'draft' && (
-              <DropdownMenuItem onClick={onPublish} className="text-emerald-600 dark:text-emerald-400">
+              <DropdownMenuItem onClick={onPublish} className="text-success">
                 <Send className="h-4 w-4 mr-2" />
                 {t('admin.cases.publish')}
               </DropdownMenuItem>

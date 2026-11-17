@@ -98,17 +98,17 @@ export function SvgDiagramViewer({ src, className }: SvgDiagramViewerProps) {
   return (
     <div className={className}>
       {/* Toolbar */}
-      <div className="flex items-center gap-1 p-2 border-b bg-muted/20">
-        <Button variant="ghost" size="icon" onClick={() => setScale((s) => clampScale(s + ZOOM_STEP))}>
+      <div className="flex items-center gap-1 p-2 border-b">
+        <Button variant="ghost" size="icon" onClick={() => setScale((s) => clampScale(s + ZOOM_STEP))} aria-label={t('classify.flowDiagram.zoomIn')}>
           <ZoomIn className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={() => setScale((s) => clampScale(s - ZOOM_STEP))}>
+        <Button variant="ghost" size="icon" onClick={() => setScale((s) => clampScale(s - ZOOM_STEP))} aria-label={t('classify.flowDiagram.zoomOut')}>
           <ZoomOut className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={resetView} title={t('classify.flowDiagram.resetZoom')}>
+        <Button variant="ghost" size="icon" onClick={resetView} title={t('classify.flowDiagram.resetZoom')} aria-label={t('classify.flowDiagram.resetZoom')}>
           <Maximize className="h-4 w-4" />
         </Button>
-        <span className="text-xs text-muted-foreground ml-2">{Math.round(scale * 100)}%</span>
+        <span className="text-xs text-muted-foreground ml-2 tabular-nums">{Math.round(scale * 100)}%</span>
       </div>
 
       {/* Pan/Zoom area */}

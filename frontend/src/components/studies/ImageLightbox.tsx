@@ -66,14 +66,10 @@ export function ImageLightbox({
   }, []);
 
   const zoomOut = useCallback(() => {
-    setScale((s) => {
-      const next = Math.max(s - ZOOM_STEP, MIN_SCALE);
-      if (next === MIN_SCALE) {
-        setPosition({ x: 0, y: 0 });
-      }
-      return next;
-    });
-  }, []);
+    const next = Math.max(scale - ZOOM_STEP, MIN_SCALE);
+    setScale(next);
+    if (next === MIN_SCALE) setPosition({ x: 0, y: 0 });
+  }, [scale]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -183,7 +179,9 @@ export function ImageLightbox({
   return (
     <div
       role="dialog"
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      aria-modal="true"
+      aria-label={t('cases.gallery.viewer')}
+      className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
       onClick={onClose}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
     >
@@ -192,7 +190,7 @@ export function ImageLightbox({
         {/* Zoom controls */}
         <div className="flex items-center gap-1 bg-black/40 rounded-lg p-1 backdrop-blur-sm">
           <button
-            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); zoomOut(); }}
             disabled={scale <= MIN_SCALE}
             aria-label={t('cases.zoomOut')}
@@ -202,7 +200,7 @@ export function ImageLightbox({
           </button>
 
           <button
-            className="text-white/70 hover:text-white px-2 py-1 rounded-md hover:bg-white/10 transition-colors text-sm font-mono min-w-[3.5rem] text-center"
+            className="text-white/70 hover:text-white px-2 py-1 rounded-md hover:bg-white/10 transition-colors duration-150 text-sm tabular-nums min-w-[3.5rem] text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); resetZoom(); }}
             title={t('cases.resetZoom')}
           >
@@ -210,7 +208,7 @@ export function ImageLightbox({
           </button>
 
           <button
-            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); zoomIn(); }}
             disabled={scale >= MAX_SCALE}
             aria-label={t('cases.zoomIn')}
@@ -221,7 +219,7 @@ export function ImageLightbox({
 
           {isZoomed && (
             <button
-              className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors ml-1 border-l border-white/10"
+              className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 ml-1 border-l border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               onClick={(e) => { e.stopPropagation(); resetZoom(); }}
               aria-label={t('cases.resetZoom')}
               title={t('cases.resetZoom')}
@@ -233,9 +231,9 @@ export function ImageLightbox({
 
         {/* Close button */}
         <button
-          className="text-white/70 hover:text-white p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
+          className="text-white/70 hover:text-white p-2 rounded-md bg-black/40 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
           onClick={onClose}
-          aria-label="Close lightbox"
+          aria-label={t('cases.closeLightbox')}
         >
           <X className="h-6 w-6" />
         </button>
@@ -269,7 +267,7 @@ export function ImageLightbox({
                       <img
                         src={imageUrls[image.id]}
                         alt={image.filename}
-                        className="max-w-full max-h-[75vh] object-contain rounded-lg select-none"
+                        className="max-w-full max-h-[75vh] object-contain select-none"
                         draggable={false}
                         onDoubleClick={(e) => { e.stopPropagation(); handleDoubleClick(); }}
                         onPointerDown={idx === currentIndex ? handlePointerDown : undefined}
@@ -284,7 +282,7 @@ export function ImageLightbox({
                       />
                     </div>
                   ) : (
-                    <div className="w-64 h-64 flex items-center justify-center bg-muted/20 rounded-lg">
+                    <div className="w-64 h-64 flex items-center justify-center rounded-md bg-white/5">
                       <Spinner size="lg" className="text-white/60" />
                     </div>
                   )}
@@ -303,7 +301,7 @@ export function ImageLightbox({
 
         {/* Counter + hint */}
         <div className="mt-4 text-center">
-          <p className="text-white/60 text-sm">
+          <p className="text-white/60 text-sm tabular-nums">
             {currentIndex + 1} / {images.length}
           </p>
           <p className="text-white/40 text-xs mt-1">

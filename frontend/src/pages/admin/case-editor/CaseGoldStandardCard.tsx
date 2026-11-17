@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Award, Trash2, Loader2, Check } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Trash2, Loader2, Check } from 'lucide-react';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -13,53 +13,39 @@ import {
 import { caseApi } from '@/services';
 import type { CaseWithImages, SetGoldStandardRequest, ClassificationResult } from '@/types';
 
-const DANIS_WEBER_OPTIONS = [
-  { value: 'Weber A', label: 'Weber A' },
-  { value: 'Weber B', label: 'Weber B' },
-  { value: 'Weber C', label: 'Weber C' },
-  { value: 'not_classifiable', label: 'Not classifiable' },
-];
+const DANIS_WEBER_OPTIONS = ['Weber A', 'Weber B', 'Weber C'];
 
-const LAUGE_HANSEN_OPTIONS = [
-  { value: 'SA', label: 'SA (Supination-Adduction)' },
-  { value: 'SER', label: 'SER (Supination-External Rotation)' },
-  { value: 'PER', label: 'PER (Pronation-External Rotation)' },
-  { value: 'PA', label: 'PA (Pronation-Abduction)' },
-  { value: 'not_classifiable', label: 'Not classifiable' },
-];
+const LAUGE_HANSEN_OPTIONS = ['SA', 'SER', 'PER', 'PA'];
 
+// Groups are keys of admin.reliability.goldStandardGroups.
 const AOOTA_OPTIONS = [
-  { group: 'A (Infrasyndesmotic)', items: [
+  { group: 'infrasyndesmotic', items: [
     { value: '44-A1', label: '44-A1' }, { value: '44-A1.2', label: '44-A1.2' }, { value: '44-A1.3', label: '44-A1.3' },
     { value: '44-A2', label: '44-A2' }, { value: '44-A2.2', label: '44-A2.2' }, { value: '44-A2.3', label: '44-A2.3' },
     { value: '44-A3', label: '44-A3' }, { value: '44-A3.2', label: '44-A3.2' }, { value: '44-A3.3', label: '44-A3.3' },
   ]},
-  { group: 'B (Transyndesmotic)', items: [
+  { group: 'transyndesmotic', items: [
     { value: '44-B', label: '44-B' },
     { value: '44-B1', label: '44-B1' }, { value: '44-B1.1', label: '44-B1.1' }, { value: '44-B1.2', label: '44-B1.2' }, { value: '44-B1.3', label: '44-B1.3' },
     { value: '44-B2', label: '44-B2' }, { value: '44-B2.1', label: '44-B2.1' }, { value: '44-B2.2', label: '44-B2.2' }, { value: '44-B2.3', label: '44-B2.3' },
     { value: '44-B3', label: '44-B3' }, { value: '44-B3.1', label: '44-B3.1' }, { value: '44-B3.2', label: '44-B3.2' }, { value: '44-B3.3', label: '44-B3.3' },
   ]},
-  { group: 'C (Suprasyndesmotic)', items: [
+  { group: 'suprasyndesmotic', items: [
     { value: '44-C1', label: '44-C1' }, { value: '44-C1.1', label: '44-C1.1' }, { value: '44-C1.2', label: '44-C1.2' }, { value: '44-C1.3', label: '44-C1.3' },
     { value: '44-C2', label: '44-C2' }, { value: '44-C2.1', label: '44-C2.1' }, { value: '44-C2.2', label: '44-C2.2' }, { value: '44-C2.3', label: '44-C2.3' },
     { value: '44-C3', label: '44-C3' }, { value: '44-C3.1', label: '44-C3.1' }, { value: '44-C3.2', label: '44-C3.2' }, { value: '44-C3.3', label: '44-C3.3' },
   ]},
-  { group: 'Distal Tibia', items: [
+  { group: 'distalTibia', items: [
     { value: '43-B1', label: '43-B1' }, { value: '43-B2', label: '43-B2' },
-  ]},
-  { group: 'Other', items: [
-    { value: 'not_classifiable', label: 'Not classifiable' },
   ]},
 ];
 
+// Each Bartonicek type is described by a form.options.posteriorType key.
 const BARTONICEK_OPTIONS = [
-  { value: 'Bartonicek 1', label: 'Bartonicek 1 (Extraincisural)' },
-  { value: 'Bartonicek 2', label: 'Bartonicek 2 (Posterolateral)' },
-  { value: 'Bartonicek 3', label: 'Bartonicek 3 (Posteromedial two-part)' },
-  { value: 'Bartonicek 4', label: 'Bartonicek 4 (Large triangular)' },
-  { value: 'not_classifiable', label: 'Not classifiable' },
-  { value: 'no_posterior_fracture', label: 'No posterior malleolus fracture' },
+  { value: 'Bartonicek 1', descKey: 'extraincisural' },
+  { value: 'Bartonicek 2', descKey: 'posterolateral' },
+  { value: 'Bartonicek 3', descKey: 'posteromedial_posterolateral' },
+  { value: 'Bartonicek 4', descKey: 'large_posterolateral' },
 ];
 
 const NONE_VALUE = '__none__';
@@ -120,92 +106,91 @@ export function CaseGoldStandardCard({ caseData }: CaseGoldStandardCardProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Gold Standard</CardTitle>
-              <CardDescription>{t('admin.reliability.accuracyDescription')}</CardDescription>
-            </div>
-          </div>
-          {hasGold && (
-            <Badge variant="outline" className="border-amber-500/50 text-amber-600 dark:text-amber-400">
-              <Check className="w-3 h-3 mr-1" />
+        <CardTitle className="text-base">{t('admin.reliability.goldStandard')}</CardTitle>
+        <CardDescription>{t('admin.reliability.accuracyDescription')}</CardDescription>
+        {hasGold && (
+          <CardAction>
+            <Badge variant="outline" className="font-normal">
+              <Check className="text-success" />
               {t('admin.reliability.goldStandardSet')}
             </Badge>
-          )}
-        </div>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Impossible toggle */}
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+        <div className="flex items-center gap-3 border-b pb-4">
           <Switch id="impossible" checked={impossible} onCheckedChange={setImpossible} />
           <Label htmlFor="impossible" className="text-sm font-medium cursor-pointer">
-            {t('classification.impossible', 'Not classifiable (impossible)')}
+            {t('admin.cases.impossibleClassification')}
           </Label>
         </div>
 
         {/* Classification dropdowns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Danis-Weber */}
+          {/* Lauge-Hansen */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Danis-Weber</Label>
-            <Select value={dw || NONE_VALUE} onValueChange={v => setDw(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-lh" />Lauge-Hansen</Label>
+            <Select value={lh || NONE_VALUE} onValueChange={v => setLh(v === NONE_VALUE ? '' : v)}>
+              <SelectTrigger className={lh ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
-                {DANIS_WEBER_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
+                {LAUGE_HANSEN_OPTIONS.map(v => (
+                  <SelectItem key={v} value={v}>{v} ({t(`results.classifications.laugeHansen.${v}_name`)})</SelectItem>
                 ))}
+                <SelectItem value="not_classifiable">{t('results.classifications.laugeHansen.not_classifiable_name')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Lauge-Hansen */}
+          {/* Danis-Weber */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Lauge-Hansen</Label>
-            <Select value={lh || NONE_VALUE} onValueChange={v => setLh(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-dw" />Danis-Weber</Label>
+            <Select value={dw || NONE_VALUE} onValueChange={v => setDw(v === NONE_VALUE ? '' : v)}>
+              <SelectTrigger className={dw ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
-                {LAUGE_HANSEN_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
+                {DANIS_WEBER_OPTIONS.map(v => (
+                  <SelectItem key={v} value={v}>{v}</SelectItem>
                 ))}
+                <SelectItem value="not_classifiable">{t('results.classifications.danisWeber.not_classifiable_name')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* AO/OTA */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">AO/OTA</Label>
+            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-ao" />AO/OTA</Label>
             <Select value={ao || NONE_VALUE} onValueChange={v => setAo(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectTrigger className={ao ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
                 {AOOTA_OPTIONS.map(group => (
                   <div key={group.group}>
-                    <div className="py-1.5 pl-3 pr-2 text-xs font-semibold text-muted-foreground">{group.group}</div>
+                    <div className="py-1.5 pl-3 pr-2 text-xs font-semibold text-muted-foreground">{t(`admin.reliability.goldStandardGroups.${group.group}`)}</div>
                     {group.items.map(o => (
                       <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                     ))}
                   </div>
                 ))}
+                <div className="py-1.5 pl-3 pr-2 text-xs font-semibold text-muted-foreground">{t('admin.reliability.goldStandardGroups.other')}</div>
+                <SelectItem value="not_classifiable">{t('results.classifications.aoOta.not_classifiable_name')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Bartonicek */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Bartonicek</Label>
+            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-bt" />Bartonicek</Label>
             <Select value={bt || NONE_VALUE} onValueChange={v => setBt(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectTrigger className={bt ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
                 {BARTONICEK_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  <SelectItem key={o.value} value={o.value}>{o.value} ({t(`form.options.posteriorType.${o.descKey}`)})</SelectItem>
                 ))}
+                <SelectItem value="not_classifiable">{t('results.classifications.bartonicek.not_classifiable_name')}</SelectItem>
+                <SelectItem value="no_posterior_fracture">{t('results.classifications.bartonicek.reason_no_posterior')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -216,21 +201,21 @@ export function CaseGoldStandardCard({ caseData }: CaseGoldStandardCardProps) {
           <div>
             {hasGold && (
               <Button variant="ghost" size="sm" onClick={() => clearMutation.mutate()} disabled={isSaving}
-                className="text-destructive hover:text-destructive gap-1.5">
-                <Trash2 className="w-4 h-4" />
+                className="text-destructive hover:text-destructive">
+                <Trash2 />
                 {t('admin.reliability.clearGoldStandard')}
               </Button>
             )}
           </div>
           <Button onClick={handleSave} disabled={isSaving || (!hasChanges && hasGold) || !hasAnyValue}
-            size="sm" className="gap-1.5">
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+            size="sm">
+            {isSaving ? <Loader2 className="animate-spin" /> : <Check />}
             {hasGold ? t('common.save') : t('admin.reliability.setGoldStandard')}
           </Button>
         </div>
 
         {saveMutation.isSuccess && (
-          <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('admin.reliability.goldStandardSet')}</p>
+          <p className="text-sm text-success" role="status">{t('admin.reliability.goldStandardSet')}</p>
         )}
       </CardContent>
     </Card>
