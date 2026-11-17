@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock, Users, Scan, CalendarClock } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -31,17 +31,10 @@ export function CaseHeader({
 }: CaseHeaderProps) {
   const { t } = useTranslation();
 
-  const [deadlineInfo, setDeadlineInfo] = useState<{
-    deadlineDate: Date | null;
-    isExpired: boolean;
-    daysRemaining: number | null;
-  }>({ deadlineDate: null, isExpired: false, daysRemaining: null });
-
-  useEffect(() => {
-    setDeadlineInfo(computeDeadlineInfo(deadline));
-  }, [deadline]);
-
-  const { deadlineDate, isExpired, daysRemaining } = deadlineInfo;
+  const { deadlineDate, isExpired, daysRemaining } = useMemo(
+    () => computeDeadlineInfo(deadline),
+    [deadline]
+  );
   const isUrgent = !isExpired && daysRemaining !== null && daysRemaining <= 3;
 
   return (
