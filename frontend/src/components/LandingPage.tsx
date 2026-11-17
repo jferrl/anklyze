@@ -7,6 +7,8 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import { Logo } from './Logo';
 
 const REPO_URL = 'https://github.com/jferrl/anklyze';
+const DECISION_TABLE_URL = `${REPO_URL}/blob/main/docs/decision_table.txt`;
+const METHODOLOGY_URL = `${REPO_URL}/blob/main/docs/RELIABILITY_ANALYSIS.md`;
 
 // One real terminal path of the decision tree (docs/decision_table.txt, lateral branch).
 const EXAMPLE_PATH = [
@@ -26,7 +28,7 @@ const SYSTEMS = [
 
 export function LandingPage() {
   const { t } = useTranslation();
-  const steps = ['answer', 'narrow', 'result'] as const;
+  const methodFacts = ['tree', 'tested', 'notClassifiable', 'judgement'] as const;
   const studyFacts = ['cases', 'agreement', 'gold'] as const;
 
   return (
@@ -38,7 +40,7 @@ export function LandingPage() {
             <span className="text-lg font-semibold tracking-tight text-foreground">Anklyze</span>
           </Link>
           <div className="flex items-center gap-1">
-            <a href="#how-it-works" className="hidden px-3 py-2 text-sm text-muted-foreground hover:text-foreground md:block">
+            <a href="#method" className="hidden px-3 py-2 text-sm text-muted-foreground hover:text-foreground md:block">
               {t('landing.nav.method')}
             </a>
             <a href="#systems" className="hidden px-3 py-2 text-sm text-muted-foreground hover:text-foreground md:block">
@@ -47,13 +49,13 @@ export function LandingPage() {
             <a href="#studies" className="hidden px-3 py-2 text-sm text-muted-foreground hover:text-foreground md:block">
               {t('landing.nav.studies')}
             </a>
+            <a href="#source" className="hidden px-3 py-2 text-sm text-muted-foreground hover:text-foreground md:block">
+              {t('landing.nav.source')}
+            </a>
             <ThemeSwitcher />
             <LanguageSwitcher />
             <Button variant="ghost" size="sm" asChild>
               <Link to="/login">{t('landing.nav.signIn')}</Link>
-            </Button>
-            <Button size="sm" className="max-sm:hidden" asChild>
-              <Link to="/classify">{t('landing.startClassifying')}</Link>
             </Button>
           </div>
         </nav>
@@ -73,7 +75,7 @@ export function LandingPage() {
                   {t('landing.startClassifying')}
                   <ArrowRight className="size-4" />
                 </Link>
-                <a href="#how-it-works" className="text-sm font-medium text-white underline decoration-white/40 hover:decoration-white">
+                <a href="#method" className="text-sm font-medium text-white underline decoration-white/40 hover:decoration-white">
                   {t('landing.hero.secondary')}
                 </a>
               </div>
@@ -92,9 +94,9 @@ export function LandingPage() {
                     </div>
                   </li>
                 ))}
-                <li className="grid grid-cols-2 bg-white text-[oklch(0.22_0.045_262)] sm:grid-cols-4">
+                <li className="grid grid-cols-2 gap-px bg-[oklch(0.89_0.012_262)] text-[oklch(0.22_0.045_262)] sm:grid-cols-4 lg:grid-cols-2">
                   {SYSTEMS.map((s) => (
-                    <div key={s.key} className="border-r border-[oklch(0.89_0.012_262)] px-4 py-4 last:border-r-0 max-sm:even:border-r-0 max-sm:[&:nth-child(-n+2)]:border-b">
+                    <div key={s.key} className="bg-white px-4 py-4">
                       <p className="flex items-center gap-1.5 text-xs text-[oklch(0.47_0.03_262)]">
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
@@ -111,22 +113,27 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="scroll-mt-8 border-b">
+        <section id="method" className="scroll-mt-8 border-b">
           <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:py-24">
-            <h2 className="font-display text-3xl lg:col-span-4 lg:text-4xl">{t('landing.method.title')}</h2>
-            <ol className="divide-y border-y lg:col-span-8">
-              {steps.map((step, i) => (
-                <li key={step} className="grid grid-cols-[2.5rem_1fr] gap-x-4 py-6">
-                  <span className="font-display text-2xl text-muted-foreground tabular-nums">{i + 1}</span>
-                  <div>
-                    <h3 className="text-lg font-semibold">{t(`landing.method.${step}.title`)}</h3>
-                    <p className="mt-1.5 max-w-[65ch] leading-relaxed text-muted-foreground">
-                      {t(`landing.method.${step}.body`)}
-                    </p>
-                  </div>
-                </li>
+            <div className="lg:col-span-4">
+              <h2 className="font-display text-3xl lg:text-4xl">{t('landing.method.title')}</h2>
+              <a
+                href={DECISION_TABLE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block text-sm font-medium text-primary underline underline-offset-4"
+              >
+                {t('landing.method.tableLink')}
+              </a>
+            </div>
+            <dl className="divide-y border-y lg:col-span-8">
+              {methodFacts.map((fact) => (
+                <div key={fact} className="grid gap-1 py-6 sm:grid-cols-[13rem_1fr] sm:gap-6">
+                  <dt className="font-semibold">{t(`landing.method.${fact}.term`)}</dt>
+                  <dd className="max-w-[65ch] leading-relaxed text-muted-foreground">{t(`landing.method.${fact}.body`)}</dd>
+                </div>
               ))}
-            </ol>
+            </dl>
           </div>
         </section>
 
@@ -168,9 +175,14 @@ export function LandingPage() {
             <div className="lg:col-span-5">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.studies.title')}</h2>
               <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.studies.lede')}</p>
-              <Button className="mt-6" asChild>
-                <Link to="/login">{t('landing.studies.cta')}</Link>
-              </Button>
+              <a
+                href={METHODOLOGY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
+              >
+                {t('landing.studies.methodologyLink')}
+              </a>
             </div>
             <dl className="divide-y divide-input border-y border-input lg:col-span-7">
               {studyFacts.map((fact) => (
@@ -183,16 +195,26 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="field-navy">
-          <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-16 sm:px-6 md:flex-row md:items-center md:justify-between lg:py-20">
-            <h2 className="font-display text-3xl lg:text-5xl">{t('landing.cta.title')}</h2>
-            <Link
-              to="/classify"
-              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[oklch(0.25_0.09_262)] transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              {t('landing.startClassifying')}
-              <ArrowRight className="size-4" />
-            </Link>
+        <section id="source" className="scroll-mt-8 border-b">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:py-24">
+            <div className="lg:col-span-5">
+              <h2 className="font-display text-3xl lg:text-4xl">{t('landing.source.title')}</h2>
+              <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.source.body')}</p>
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
+              >
+                {t('landing.source.repoLink')}
+              </a>
+            </div>
+            <div className="lg:col-span-7">
+              <h3 className="text-sm font-medium text-muted-foreground">{t('landing.source.citeTitle')}</h3>
+              <p className="mt-2 select-all border bg-card px-4 py-3 font-mono text-sm leading-relaxed">
+                {t('landing.source.citation', { url: REPO_URL })}
+              </p>
+            </div>
           </div>
         </section>
       </main>
@@ -201,7 +223,7 @@ export function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:px-6 md:flex-row md:items-center md:justify-between">
           <p className="flex items-center gap-3">
             <span className="font-medium text-foreground">Anklyze</span>
-            <span>© {new Date().getFullYear()}</span>
+            <span>{t('landing.footer.license')}</span>
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
               GitHub
             </a>

@@ -41,32 +41,38 @@
   "landing": {
     "startClassifying": "Comenzar a clasificar",
     "nav": {
-      "method": "Cómo funciona",
+      "method": "Método",
       "systems": "Sistemas",
-      "studies": "Estudios",
-      "signIn": "Iniciar sesión"
+      "studies": "Uso en investigación",
+      "signIn": "Iniciar sesión",
+      "source": "Código fuente"
     },
     "hero": {
       "title": "Cuatro clasificaciones de fractura de tobillo con un solo conjunto de respuestas.",
-      "lede": "Anklyze sigue un único árbol de decisión elaborado por cirujanos ortopédicos. Responda lo que ve en la radiografía y obtendrá a la vez Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek.",
-      "secondary": "Ver cómo se llega a un resultado"
+      "lede": "Anklyze es una herramienta de código abierto para clasificar fracturas de tobillo. Sigue un único árbol de decisión: responda lo que ve en la radiografía y obtendrá a la vez las clasificaciones de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek.",
+      "secondary": "Leer el método"
     },
     "example": {
       "caption": "Ejemplo: fractura aislada de maléolo lateral, leída a través del árbol. N/C indica que el sistema no es aplicable."
     },
     "method": {
-      "title": "Cómo funciona",
-      "answer": {
-        "title": "Responda lo que ve",
-        "body": "Las preguntas siguen la fractura: qué maléolos están afectados, el nivel de la fractura de peroné, el patrón del trazo. Se responde con las teclas numéricas y no se pregunta nada que el árbol no necesite."
+      "title": "Método",
+      "tableLink": "Ver todos los caminos del árbol de decisión",
+      "tree": {
+        "term": "Un único árbol de decisión",
+        "body": "Todas las preguntas pertenecen a un único árbol con 165 caminos terminales. Cada respuesta determina la siguiente pregunta y cada camino termina en una clasificación en los cuatro sistemas. El árbol está publicado en el repositorio como diagrama y como tabla."
       },
-      "narrow": {
-        "title": "El árbol se va cerrando",
-        "body": "Cada respuesta determina la siguiente pregunta. El camino recorrido permanece en pantalla, de modo que un colega puede comprobar cómo se llegó al resultado."
+      "tested": {
+        "term": "Comprobado contra el diagrama",
+        "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama que el árbol, de modo que el código se comprueba contra el árbol que implementa."
       },
-      "result": {
-        "title": "Un resultado en cuatro sistemas",
-        "body": "El final del camino contiene la clasificación en los cuatro sistemas. Cuando un sistema no es aplicable a la fractura, el resultado lo indica en lugar de forzar un código."
+      "notClassifiable": {
+        "term": "No clasificable es un resultado",
+        "body": "Cuando un sistema no es aplicable a la fractura, el resultado lo indica (N/C) en lugar de forzar un código."
+      },
+      "judgement": {
+        "term": "No sustituye al juicio clínico",
+        "body": "Anklyze hace explícito el razonamiento y conserva el camino que llevó a cada resultado. La decisión sigue siendo del cirujano; correlacione siempre con los hallazgos clínicos."
       }
     },
     "systems": {
@@ -81,9 +87,8 @@
       "bartonicek": "Morfología del fragmento del maléolo posterior."
     },
     "studies": {
-      "title": "Pensado para estudios de fiabilidad",
-      "lede": "Los investigadores publican casos con sus imágenes, invitan a evaluadores a clasificarlos de forma independiente y analizan su grado de acuerdo.",
-      "cta": "Iniciar sesión en un estudio",
+      "title": "Uso en investigación",
+      "lede": "El mismo clasificador se utiliza para realizar estudios de fiabilidad inter-evaluador: los investigadores publican casos con sus imágenes, los evaluadores los clasifican de forma independiente y la aplicación calcula su grado de acuerdo.",
       "cases": {
         "term": "Casos",
         "body": "Radiografías y TAC de una fractura, clasificados por cada evaluador sin ver a los demás."
@@ -95,13 +100,19 @@
       "gold": {
         "term": "Patrón de referencia",
         "body": "La precisión de cada evaluador frente a la clasificación de referencia fijada por el estudio."
-      }
-    },
-    "cta": {
-      "title": "Empiece por la primera pregunta."
+      },
+      "methodologyLink": "Leer la metodología estadística"
     },
     "footer": {
-      "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos."
+      "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos.",
+      "license": "Licencia Apache 2.0"
+    },
+    "source": {
+      "title": "Código abierto",
+      "body": "Anklyze es software libre con licencia Apache 2.0. El código, el árbol de decisión y la metodología estadística son públicos.",
+      "repoLink": "Código fuente en GitHub",
+      "citeTitle": "Cómo citar",
+      "citation": "Anklyze: clasificación de fracturas de tobillo [software]. 2026. Disponible en: {{url}}. Licencia Apache 2.0."
     }
   },
   "form": {
