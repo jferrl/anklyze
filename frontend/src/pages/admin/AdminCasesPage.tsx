@@ -231,7 +231,10 @@ export function AdminCasesPage() {
             {formatDate(caseItem.deadline)}
           </span>
         ) : (
-          <span className="text-muted-foreground">{t('admin.cases.noDeadline')}</span>
+          <span className="text-muted-foreground">
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">{t('admin.cases.noDeadline')}</span>
+          </span>
         );
       },
     },

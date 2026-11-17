@@ -9,7 +9,7 @@ import {
   XCircle,
   BarChart3,
 } from 'lucide-react';
-import { Button } from '../../components/ui/button';
+import { Button, buttonVariants } from '../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { studyApi, caseApi } from '@/services';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 type Step = 'details' | 'cases';
 
@@ -47,12 +48,14 @@ export function StudyEditorPage() {
     titleError: string | null;
     selectedCaseId: string;
     showActivateDialog: boolean;
-  }>({ step: 'details', error: null, titleError: null, selectedCaseId: '', showActivateDialog: false });
-  const { step: currentStep, error, titleError, selectedCaseId, showActivateDialog } = pageState;
+    showCloseDialog: boolean;
+  }>({ step: 'details', error: null, titleError: null, selectedCaseId: '', showActivateDialog: false, showCloseDialog: false });
+  const { step: currentStep, error, titleError, selectedCaseId, showActivateDialog, showCloseDialog } = pageState;
   const setCurrentStep = (step: Step) => setPageState(prev => ({ ...prev, step }));
   const setError = (error: string | null) => setPageState(prev => ({ ...prev, error }));
   const setSelectedCaseId = (selectedCaseId: string) => setPageState(prev => ({ ...prev, selectedCaseId }));
   const setShowActivateDialog = (showActivateDialog: boolean) => setPageState(prev => ({ ...prev, showActivateDialog }));
+  const setShowCloseDialog = (showCloseDialog: boolean) => setPageState(prev => ({ ...prev, showCloseDialog }));
 
   // Fetch existing study if editing
   const { data: study, isLoading: isLoadingStudy } = useQuery({
@@ -60,6 +63,7 @@ export function StudyEditorPage() {
     queryFn: () => studyApi.getStudy(id!),
     enabled: isEditing,
   });
+  useRecordTitle(study?.title);
 
   // Form state - use study data as defaults, allow local overrides
   const [formState, setFormState] = useState<{ dirty: boolean; title: string; description: string }>({
@@ -289,7 +293,7 @@ export function StudyEditorPage() {
                   </Button>
                   <Button
                     variant="destructiveOutline"
-                    onClick={() => closeMutation.mutate()}
+                    onClick={() => setShowCloseDialog(true)}
                     disabled={closeMutation.isPending}
                   >
                     {closeMutation.isPending ? <Loader2 className="animate-spin" /> : <XCircle />}
@@ -371,6 +375,25 @@ export function StudyEditorPage() {
                   <Play className="w-4 h-4" />
                 )}
                 {t('admin.studies.activate', 'Activate')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.studies.closeConfirmTitle', { title: study?.title })}</AlertDialogTitle>
+              <AlertDialogDescription>{t('admin.studies.closeConfirmDescription')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => closeMutation.mutate()}
+                className={buttonVariants({ variant: 'destructive' })}
+              >
+                <XCircle />
+                {t('admin.studies.closeStudy')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

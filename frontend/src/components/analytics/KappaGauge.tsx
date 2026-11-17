@@ -57,7 +57,7 @@ export function KappaGauge({ value, label, description, size = 'md', ci, min: sh
           {TICKS.map((tick) => (
             <span
               key={tick}
-              className="absolute inset-y-0 w-px bg-border"
+              className={cn('absolute inset-y-0 w-px', tick === 0 ? 'bg-muted-foreground' : 'bg-border')}
               style={{ left: `${pos(tick)}%` }}
             />
           ))}
@@ -74,8 +74,11 @@ export function KappaGauge({ value, label, description, size = 'md', ci, min: sh
             />
           )}
         </div>
-        <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted-foreground">
+        <div className="relative mt-1 flex justify-between text-[11px] tabular-nums text-muted-foreground">
           <span>{min}</span>
+          {min < 0 && (
+            <span className="absolute -translate-x-1/2" style={{ left: `${pos(0)}%` }}>0</span>
+          )}
           <span>1</span>
         </div>
       </div>

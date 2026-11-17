@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { KappaGauge, KappaLegend } from '../../../components/analytics';
 import type { ReliabilityMetrics } from '@/types';
+import { MethodNote } from './MethodNote';
 import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, formatPercent, kappaAxisMin } from './systems';
 
 interface KappaScoresSectionProps {
@@ -48,24 +49,37 @@ export function KappaScoresSection({ metrics }: KappaScoresSectionProps) {
                 <span className="size-2 shrink-0" style={{ backgroundColor: SYSTEM_COLOR[key] }} />
                 {SYSTEM_LABEL[key]}
               </p>
-              <p className="mt-2 font-display text-4xl tabular-nums">
-                {agreement ? formatPercent(agreement.percent_agreement) : '—'}
-              </p>
-              {hasKappa && (
-                <p className="mt-1 text-xs text-muted-foreground">{t('admin.reliability.percentAgreement')}</p>
+              {agreement ? (
+                <>
+                  <p className="mt-2 font-display text-4xl tabular-nums">
+                    {formatPercent(agreement.percent_agreement)}
+                  </p>
+                  {hasKappa && (
+                    <p className="mt-1 text-xs text-muted-foreground">{t('admin.reliability.percentAgreement')}</p>
+                  )}
+                </>
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {t('common.noData')}. {t('admin.reliability.noSystemData')}
+                </p>
               )}
             </div>
           )
         )}
       </div>
 
-      {kappaMissing && (
-        <p className="mt-6 rounded-md border bg-muted px-3 py-2 text-sm text-foreground">
-          {t('admin.reliability.kappaNeedsCases')}
+      <MethodNote className="mt-6">
+        <p className="tabular-nums">
+          {t('admin.reliability.method.percentAgreement', {
+            responses: metrics.total_responses,
+            raters: metrics.unique_raters,
+          })}
         </p>
-      )}
+        {hasKappa && <p>{t('admin.reliability.method.cohenSinglePair')}</p>}
+        {kappaMissing && <p>{t('admin.reliability.kappaNeedsCases')}</p>}
+      </MethodNote>
 
-      {hasKappa && <KappaLegend className="mt-6 border-t pt-3" />}
+      {hasKappa && <KappaLegend className="mt-4" />}
     </section>
   );
 }

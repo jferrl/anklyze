@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Info } from 'lucide-react';
 import { KappaGauge, KappaLegend } from '@/components/analytics';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { kappaInterpretationKey, type StudyReliabilityResponse } from '@/types';
+import { MethodNote } from './MethodNote';
 import { SystemTabs } from './SystemTabs';
 import { SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, kappaAxisMin, type SystemKey } from './systems';
 
@@ -23,26 +17,15 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
   const kappas = SYSTEM_KEYS.map((key) => ({ key, fleiss: reliability[`${key}_fleiss`] }));
   const min = kappaAxisMin(kappas.flatMap(({ fleiss }) => [fleiss?.kappa, fleiss?.confidence_interval?.lower]));
   const activeKappa = reliability[`${activeSystem}_fleiss`];
+  const ciLevel = kappas.find(({ fleiss }) => fleiss?.confidence_interval)?.fleiss?.confidence_interval?.level ?? 0.95;
 
   return (
     <div className="space-y-6">
       {/* Fleiss' Kappa Scores */}
       <section className="chart-card">
-        <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-base font-semibold text-foreground">
-            {t('admin.studies.reliability.fleissKappa', "Fleiss' Kappa (Inter-Rater Reliability)")}
-          </h2>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="w-4 h-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-sm">
-                <p>{t('admin.studies.reliability.fleissKappaDescription', "Fleiss' Kappa measures agreement among multiple raters across multiple cases. Requires 3+ raters who completed all cases.")}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        <h2 className="mb-4 text-base font-semibold text-foreground">
+          {t('admin.studies.reliability.fleissKappa', "Fleiss' Kappa (Inter-Rater Reliability)")}
+        </h2>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {kappas.map(({ key, fleiss }) => (
@@ -59,7 +42,18 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
           ))}
         </div>
 
-        <KappaLegend className="mt-6 border-t pt-3" />
+        <MethodNote className="mt-6">
+          <p className="tabular-nums">
+            {t('admin.reliability.method.fleissRaters', {
+              raters: reliability.complete_raters,
+              totalRaters: reliability.unique_raters,
+              cases: reliability.total_cases,
+            })}
+          </p>
+          <p>{t('admin.reliability.method.interval', { level: (ciLevel * 100).toFixed(0) })}</p>
+        </MethodNote>
+
+        <KappaLegend className="mt-4" />
       </section>
 
       {/* Detailed Kappa Analysis for the selected system */}

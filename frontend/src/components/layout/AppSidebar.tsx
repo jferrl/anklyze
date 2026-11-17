@@ -6,7 +6,6 @@ import {
   BookOpen,
   ChevronUp,
   LogOut,
-  Shield,
   FileText,
   LayoutDashboard,
   User,
@@ -53,7 +52,7 @@ export function AppSidebar() {
       icon: Workflow,
     },
     {
-      title: t('nav.cases'),
+      title: t('nav.myCases'),
       url: '/cases',
       icon: BookOpen,
     },
@@ -66,7 +65,7 @@ export function AppSidebar() {
       icon: LayoutDashboard,
     },
     {
-      title: t('nav.manageCases'),
+      title: t('nav.cases'),
       url: '/admin/cases',
       icon: FileText,
     },
@@ -99,9 +98,6 @@ export function AppSidebar() {
                 </span>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Anklyze</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {t('app.tagline')}
-                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -112,7 +108,6 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>{t('nav.main')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNavItems.map((item) => (
@@ -136,10 +131,7 @@ export function AppSidebar() {
         {/* Admin Navigation */}
         {isAdmin && (
           <SidebarGroup>
-            <SidebarGroupLabel>
-              <Shield className="size-3 mr-1" />
-              {t('nav.admin')}
-            </SidebarGroupLabel>
+            <SidebarGroupLabel>{t('nav.administration')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => (

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Spinner } from '../components/ui/spinner';
@@ -24,6 +24,7 @@ import { CaseNavigationBar } from '../components/cases/CaseNavigationBar';
 import type { AnswerTracking } from '../components/cases';
 import { useImageUrls } from '../hooks/useImageUrls';
 import { useCaseNavigation } from '../hooks/useCaseNavigation';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 // Wrapper extracts route param and keys the inner component by id,
 // so React resets all state automatically when navigating between cases.
@@ -35,7 +36,6 @@ export function CaseDetailPage() {
 function CaseDetailContent({ id }: { id: string | undefined }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // Case navigation (prev/next/position)
@@ -44,7 +44,9 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
   // Batch-fetch all signed URLs for this case (single request, cached by React Query)
   const { imageUrls, isLoading: isLoadingUrls } = useImageUrls(id);
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  // Large image per category, kept when switching tabs; the lightbox opens on and moves this index.
+  const [galleryIndex, setGalleryIndex] = useState({ xray: 0, tac: 0 });
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   // User's explicit tab choice; null means "use default based on available images"
   const [tabOverride, setTabOverride] = useState<'xray' | 'tac' | null>(null);
 
@@ -73,6 +75,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
     queryFn: () => getPublishedCase(id!),
     enabled: !!id,
   });
+  useRecordTitle(caseData?.title);
 
   const error = queryError instanceof Error ? queryError.message : queryError ? t('cases.loadError') : null;
 
@@ -170,31 +173,25 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
     startTimeRef.current = Date.now();
   }, []);
 
-  // Navigate to next pending case
-  const handleNextCase = useCallback(() => {
-    if (!caseNav.nextPendingCase) return;
-    const params = new URLSearchParams();
-    const status = searchParams.get('status');
-    const q = searchParams.get('q');
-    if (status && status !== 'all') params.set('status', status);
-    if (q) params.set('q', q);
-    const qs = params.toString();
-    navigate(`/cases/${caseNav.nextPendingCase.id}${qs ? `?${qs}` : ''}`);
-  }, [caseNav.nextPendingCase, navigate, searchParams]);
+  // After submitting: the next pending case, or back to the list when none is left; filters are kept.
+  const filterParams = new URLSearchParams();
+  const status = searchParams.get('status');
+  const q = searchParams.get('q');
+  if (status && status !== 'all') filterParams.set('status', status);
+  if (q) filterParams.set('q', q);
+  const qs = filterParams.toString() ? `?${filterParams}` : '';
+  const afterSubmitHref = caseNav.nextPendingCase ? `/cases/${caseNav.nextPendingCase.id}${qs}` : `/cases${qs}`;
 
-  // Image lightbox navigation
-  const openLightbox = (index: number) => setSelectedImageIndex(index);
-  const closeLightbox = () => setSelectedImageIndex(null);
-  const nextImage = () => {
-    setSelectedImageIndex(prev =>
-      prev !== null && prev < currentImages.length - 1 ? prev + 1 : prev
-    );
+  const setTabIndex = (tab: 'xray' | 'tac') => (index: number) =>
+    setGalleryIndex((prev) => ({ ...prev, [tab]: index }));
+  const openLightbox = (index: number) => {
+    setTabIndex(activeTab)(index);
+    setLightboxOpen(true);
   };
-  const prevImage = () => {
-    setSelectedImageIndex(prev =>
-      prev !== null && prev > 0 ? prev - 1 : prev
-    );
-  };
+  const nextImage = () =>
+    setGalleryIndex((prev) => ({ ...prev, [activeTab]: Math.min(prev[activeTab] + 1, currentImages.length - 1) }));
+  const prevImage = () =>
+    setGalleryIndex((prev) => ({ ...prev, [activeTab]: Math.max(prev[activeTab] - 1, 0) }));
 
   if (loading) {
     return (
@@ -270,6 +267,8 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
                     images={xrayImages}
                     imageUrls={imageUrls}
                     isLoadingUrls={isLoadingUrls}
+                    index={galleryIndex.xray}
+                    onIndexChange={setTabIndex('xray')}
                     onImageClick={openLightbox}
                   />
                 </TabsContent>
@@ -279,15 +278,12 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
                     images={tacImages}
                     imageUrls={imageUrls}
                     isLoadingUrls={isLoadingUrls}
+                    index={galleryIndex.tac}
+                    onIndexChange={setTabIndex('tac')}
                     onImageClick={openLightbox}
                   />
                 </TabsContent>
             </Tabs>
-            )}
-            {currentImages.length > 0 && (
-              <p className="border-t px-4 py-2 text-xs text-muted-foreground">
-                {t('cases.clickToEnlarge')}
-              </p>
             )}
           </section>
         </div>
@@ -305,7 +301,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
             onClassify={handleClassify}
             onSubmit={handleSubmitResponse}
             onReanswer={handleReanswer}
-            onNextCase={handleNextCase}
+            nextHref={afterSubmitHref}
             hasNextCase={!!caseNav.nextPendingCase}
           />
           <PreviousResponses responses={myResponses} />
@@ -313,12 +309,12 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
       </div>
 
       {/* Image lightbox */}
-      {selectedImageIndex !== null && (
+      {lightboxOpen && currentImages.length > 0 && (
         <ImageLightbox
           images={currentImages}
           imageUrls={imageUrls}
-          currentIndex={selectedImageIndex}
-          onClose={closeLightbox}
+          currentIndex={Math.min(galleryIndex[activeTab], currentImages.length - 1)}
+          onClose={() => setLightboxOpen(false)}
           onNext={nextImage}
           onPrev={prevImage}
         />

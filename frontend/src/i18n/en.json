@@ -8,7 +8,9 @@
     "dashboard": "Dashboard",
     "manageCases": "Manage cases",
     "manageStudies": "Manage studies",
-    "profile": "Profile"
+    "profile": "Profile",
+    "myCases": "My cases",
+    "administration": "Administration"
   },
   "breadcrumbs": {
     "classify": "Classify",
@@ -492,7 +494,14 @@
     "closeLightbox": "Close image viewer",
     "myResponsesNone": "No responses yet",
     "myResponsesCount_one": "{{count}} response",
-    "myResponsesCount_other": "{{count}} responses"
+    "myResponsesCount_other": "{{count}} responses",
+    "gallery": {
+      "previousImage": "Previous image",
+      "nextImage": "Next image"
+    },
+    "continueWithCase": "Continue with case {{number}}",
+    "startWithCase": "Start with case {{number}}",
+    "allAnswered": "All {{total}} cases answered"
   },
   "studies": {
     "title": "Title",
@@ -595,7 +604,8 @@
       "backToCases": "Back to cases",
       "pendingUpload": "Pending upload",
       "impossibleClassification": "Not classifiable (impossible)",
-      "noDeadline": "No deadline"
+      "noDeadline": "No deadline",
+      "referenceAfterSave": "The gold standard can be set after the case is saved."
     },
     "studies": {
       "title": "Study management",
@@ -702,7 +712,9 @@
         "raterNote": "Shows each rater's accuracy across all gold standard cases in this study. Only cases with a gold standard set are included."
       },
       "closeStudy": "Close study",
-      "casesLocked": "Cases cannot be changed once the study is active or closed."
+      "casesLocked": "Cases cannot be changed once the study is active or closed.",
+      "closeConfirmTitle": "Close “{{title}}”?",
+      "closeConfirmDescription": "The study will be marked as closed and cannot be reopened or edited from here. Results stay available. Closing the study does not close its cases: raters can keep submitting responses until each case is closed or passes its deadline."
     },
     "analytics": {
       "totalResponses": "Total responses",
@@ -821,11 +833,20 @@
       },
       "systemMetrics": "{{system}} metrics",
       "systemDetail": "{{system}}: detailed analysis",
-      "kappaNeedsCases": "Kappa needs several cases and this is a single case, so percent agreement is shown instead. Group cases in a study to obtain kappa."
+      "kappaNeedsCases": "Kappa needs several cases and this is a single case, so percent agreement is shown instead. Group cases in a study to obtain kappa.",
+      "method": {
+        "title": "Method",
+        "fleissRaters": "Fleiss' kappa is computed over the raters who answered every case; at least two such raters are needed. Raters included: {{raters}} of {{totalRaters}}. Cases: {{cases}}.",
+        "interval": "The {{level}}% interval is a normal approximation built on a simplified standard error, SE = √(2 / (N·n·(n−1)·(1−Pe)²)), with N cases, n raters and Pe the agreement expected by chance, and is limited to the range −1 to 1. A wide interval means the estimate is uncertain.",
+        "labels": "Interpretation labels follow Landis and Koch (1977).",
+        "percentAgreement": "Percent agreement is the share of responses that match the most common classification for this case, computed for each system over the responses that have a classification in that system. A single response counts as 100%. Responses: {{responses}}. Raters: {{raters}}.",
+        "cohenSinglePair": "With exactly two raters, Cohen's kappa is computed from one pair of ratings for this case, one per rater: it is 1 when they agree and 0 when they do not, and it has no confidence interval."
+      },
+      "noSystemData": "No response has a classification in this system."
     },
     "dashboard": {
       "title": "Admin dashboard",
-      "subtitle": "Overview of all cases and responses",
+      "subtitle": "Studies in progress, recent case activity and cases that need attention",
       "totalCases": "Total cases",
       "totalResponses": "Total responses",
       "uniqueParticipants": "Unique participants",
@@ -852,7 +873,14 @@
       "activeCount_one": "{{count}} active",
       "activeCount_other": "{{count}} active",
       "stillActiveCount_one": "{{count}} still active",
-      "stillActiveCount_other": "{{count}} still active"
+      "stillActiveCount_other": "{{count}} still active",
+      "studiesInProgress": "Studies in progress",
+      "studiesInProgressDesc": "Active studies first, then drafts",
+      "allStudies": "All studies",
+      "noStudiesInProgress": "No studies in progress.",
+      "activeStudies": "Active studies",
+      "closedCount_one": "{{count}} closed",
+      "closedCount_other": "{{count}} closed"
     },
     "divergence": {
       "title": "Divergence analysis",

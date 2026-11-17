@@ -32,7 +32,7 @@ export function CaseDetailsStep({
   const { t } = useTranslation();
 
   return (
-    <div>
+    <section id="case-details" className="scroll-mt-24">
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('admin.cases.details')}</CardTitle>
@@ -91,6 +91,6 @@ export function CaseDetailsStep({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

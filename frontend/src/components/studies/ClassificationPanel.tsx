@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Check, CheckCircle2, RotateCcw, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -19,9 +20,9 @@ interface ClassificationPanelProps {
   onClassify: (input: FractureInput, tracking?: AnswerTracking) => Promise<ClassificationResult>;
   onSubmit: () => void;
   onReanswer: () => void;
-  /** Called when user wants to navigate to next pending case */
-  onNextCase?: () => void;
-  /** Whether there is a next pending case available */
+  /** Where to go after submitting: the next pending case, or the cases list when none is left. */
+  nextHref?: string;
+  /** Whether nextHref points at a pending case rather than the list. */
   hasNextCase?: boolean;
 }
 
@@ -61,7 +62,7 @@ export function ClassificationPanel({
   onClassify,
   onSubmit,
   onReanswer,
-  onNextCase,
+  nextHref,
   hasNextCase = false,
 }: ClassificationPanelProps) {
   const { t } = useTranslation();
@@ -100,7 +101,7 @@ export function ClassificationPanel({
         title={t('studies.responseSubmitted')}
       >
         <p className="text-sm text-muted-foreground">{t('studies.responseSubmittedDescription')}</p>
-        {(canReanswer || (hasNextCase && onNextCase)) && (
+        {(canReanswer || nextHref) && (
           <div className="flex flex-col gap-2 pt-3 sm:flex-row">
             {canReanswer && (
               <Button onClick={onReanswer} variant="outline" className="gap-2">
@@ -108,10 +109,12 @@ export function ClassificationPanel({
                 {t('studies.submitAnother')}
               </Button>
             )}
-            {hasNextCase && onNextCase && (
-              <Button onClick={onNextCase} className="gap-2">
-                {t('cases.nav.nextCase')}
-                <ArrowRight className="h-4 w-4" />
+            {nextHref && (
+              <Button asChild variant="default" className="gap-2">
+                <Link to={nextHref}>
+                  {hasNextCase ? t('cases.nav.nextCase') : t('cases.backToList')}
+                  {hasNextCase && <ArrowRight className="h-4 w-4" />}
+                </Link>
               </Button>
             )}
           </div>

@@ -94,6 +94,14 @@ export function CasesPage() {
     };
   };
 
+  // Row links and the continue action carry the same filters so previous/next inside a case keeps working.
+  const filterParams = new URLSearchParams();
+  if (filterStatus !== 'all') filterParams.set('status', filterStatus);
+  if (searchQuery) filterParams.set('q', searchQuery);
+  const filterQuery = filterParams.toString();
+  const firstPending = firstPendingIndex >= 0 ? cases[firstPendingIndex] : null;
+  const allAnswered = firstPendingIndex === -1;
+
   const filterTabs: { value: FilterStatus; label: string; count: number }[] = [
     { value: 'all', label: t('cases.filterAll'), count: stats.total },
     { value: 'pending', label: t('cases.filterPending'), count: stats.pending },
@@ -107,12 +115,31 @@ export function CasesPage() {
         description={t('cases.pageSubtitle')}
         actions={
           !loading && cases.length > 0 && (
-            <div className="w-full space-y-2 sm:w-56">
-              <p className="text-sm text-muted-foreground tabular-nums">
-                <span className="font-medium text-foreground">{stats.completed} / {stats.total}</span>{' '}
-                {t('cases.completedCount')}
-              </p>
-              <Progress value={stats.progress} className="h-1.5" aria-label={t('cases.yourProgress')} />
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end sm:gap-4">
+              <div className="w-full space-y-2 sm:w-56">
+                {allAnswered ? (
+                  <p className="flex items-center gap-1.5 text-sm font-medium tabular-nums">
+                    <Check className="h-4 w-4 text-success" aria-hidden="true" />
+                    {t('cases.allAnswered', { total: stats.total })}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground tabular-nums">
+                    <span className="font-medium text-foreground">{stats.completed} / {stats.total}</span>{' '}
+                    {t('cases.completedCount')}
+                  </p>
+                )}
+                <Progress value={stats.progress} className="h-1.5" aria-label={t('cases.yourProgress')} />
+              </div>
+              {firstPending && (
+                <Button asChild>
+                  <Link to={`/cases/${firstPending.id}${filterQuery ? `?${filterQuery}` : ''}`}>
+                    {stats.completed === 0
+                      ? t('cases.startWithCase', { number: firstPendingIndex + 1 })
+                      : t('cases.continueWithCase', { number: firstPendingIndex + 1 })}
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </Button>
+              )}
             </div>
           )
         }
@@ -188,21 +215,16 @@ export function CasesPage() {
         </div>
       ) : (
         <div className="divide-y overflow-hidden rounded-lg border bg-card">
-          {filteredCases.map(({ caseItem, originalIndex }) => {
-            const params = new URLSearchParams();
-            if (filterStatus !== 'all') params.set('status', filterStatus);
-            if (searchQuery) params.set('q', searchQuery);
-            return (
-              <CaseRow
-                key={caseItem.id}
-                caseItem={caseItem}
-                caseNumber={originalIndex + 1}
-                isNextUp={originalIndex === firstPendingIndex}
-                filterParams={params.toString()}
-                formatDeadline={formatDeadline}
-              />
-            );
-          })}
+          {filteredCases.map(({ caseItem, originalIndex }) => (
+            <CaseRow
+              key={caseItem.id}
+              caseItem={caseItem}
+              caseNumber={originalIndex + 1}
+              isNextUp={originalIndex === firstPendingIndex}
+              filterParams={filterQuery}
+              formatDeadline={formatDeadline}
+            />
+          ))}
         </div>
       )}
     </div>

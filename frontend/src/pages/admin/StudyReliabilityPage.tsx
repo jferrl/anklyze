@@ -13,6 +13,7 @@ import { studyApi } from '@/services';
 import { PerCaseAgreementSection } from './components/PerCaseAgreementSection';
 import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
 import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 export function StudyReliabilityPage() {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ export function StudyReliabilityPage() {
     queryFn: () => studyApi.getStudy(id!),
     enabled: !!id,
   });
+  useRecordTitle(study?.title);
 
   const { data: reliability, isLoading: isLoadingReliability } = useQuery({
     queryKey: ['study-reliability', id],

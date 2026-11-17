@@ -79,7 +79,7 @@ export function CommandPalette() {
               </CommandItem>
               <CommandItem onSelect={() => runCommand(() => navigate('/admin/cases'))}>
                 <FileText className="mr-2 h-4 w-4" />
-                <span>{t('nav.manageCases')}</span>
+                <span>{t('nav.cases')}</span>
               </CommandItem>
               <CommandItem onSelect={() => runCommand(() => navigate('/admin/studies'))}>
                 <Activity className="mr-2 h-4 w-4" />

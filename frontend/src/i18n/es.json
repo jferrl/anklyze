@@ -8,7 +8,9 @@
     "dashboard": "Panel",
     "manageCases": "Gestionar casos",
     "manageStudies": "Gestionar estudios",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "myCases": "Mis casos",
+    "administration": "Administración"
   },
   "breadcrumbs": {
     "classify": "Clasificar",
@@ -492,7 +494,14 @@
     "closeLightbox": "Cerrar visor de imágenes",
     "myResponsesNone": "Sin respuestas",
     "myResponsesCount_one": "{{count}} respuesta",
-    "myResponsesCount_other": "{{count}} respuestas"
+    "myResponsesCount_other": "{{count}} respuestas",
+    "gallery": {
+      "previousImage": "Imagen anterior",
+      "nextImage": "Imagen siguiente"
+    },
+    "continueWithCase": "Continuar con el caso {{number}}",
+    "startWithCase": "Empezar por el caso {{number}}",
+    "allAnswered": "Los {{total}} casos están respondidos"
   },
   "studies": {
     "title": "Título",
@@ -595,7 +604,8 @@
       "backToCases": "Volver a casos",
       "pendingUpload": "Carga pendiente",
       "impossibleClassification": "No clasificable (imposible)",
-      "noDeadline": "Sin fecha límite"
+      "noDeadline": "Sin fecha límite",
+      "referenceAfterSave": "El patrón de referencia podrá definirse una vez guardado el caso."
     },
     "studies": {
       "title": "Gestión de estudios",
@@ -702,7 +712,9 @@
         "raterNote": "Muestra la precisión de cada evaluador en todos los casos con patrón de referencia de este estudio. Solo se incluyen los casos con patrón de referencia configurado."
       },
       "closeStudy": "Cerrar estudio",
-      "casesLocked": "Los casos no se pueden modificar una vez que el estudio está activo o cerrado."
+      "casesLocked": "Los casos no se pueden modificar una vez que el estudio está activo o cerrado.",
+      "closeConfirmTitle": "¿Cerrar «{{title}}»?",
+      "closeConfirmDescription": "El estudio quedará marcado como cerrado y no podrá reabrirse ni editarse desde aquí. Los resultados seguirán disponibles. Cerrar el estudio no cierra sus casos: los evaluadores podrán seguir enviando respuestas hasta que cada caso se cierre o venza su fecha límite."
     },
     "analytics": {
       "totalResponses": "Total de respuestas",
@@ -821,11 +833,20 @@
       },
       "systemMetrics": "Métricas de {{system}}",
       "systemDetail": "Análisis detallado de {{system}}",
-      "kappaNeedsCases": "El kappa requiere varios casos y este es un caso único, por lo que se muestra el porcentaje de acuerdo. Agrupe casos en un estudio para obtener el kappa."
+      "kappaNeedsCases": "El kappa requiere varios casos y este es un caso único, por lo que se muestra el porcentaje de acuerdo. Agrupe casos en un estudio para obtener el kappa.",
+      "method": {
+        "title": "Método",
+        "fleissRaters": "El kappa de Fleiss se calcula con los evaluadores que respondieron todos los casos; se necesitan al menos dos. Evaluadores incluidos: {{raters}} de {{totalRaters}}. Casos: {{cases}}.",
+        "interval": "El intervalo del {{level}}% es una aproximación normal basada en un error estándar simplificado, EE = √(2 / (N·n·(n−1)·(1−Pe)²)), con N casos, n evaluadores y Pe el acuerdo esperado por azar, y se limita al rango de −1 a 1. Un intervalo amplio indica que la estimación es incierta.",
+        "labels": "Las etiquetas de interpretación siguen a Landis y Koch (1977).",
+        "percentAgreement": "El porcentaje de acuerdo es la proporción de respuestas que coinciden con la clasificación más frecuente de este caso, calculada para cada sistema con las respuestas que tienen clasificación en ese sistema. Una única respuesta cuenta como 100%. Respuestas: {{responses}}. Evaluadores: {{raters}}.",
+        "cohenSinglePair": "Con exactamente dos evaluadores, el kappa de Cohen se calcula con un único par de valoraciones de este caso, una por evaluador: vale 1 si coinciden y 0 si no, y no tiene intervalo de confianza."
+      },
+      "noSystemData": "Ninguna respuesta tiene clasificación en este sistema."
     },
     "dashboard": {
       "title": "Panel de administración",
-      "subtitle": "Resumen de todos los casos y respuestas",
+      "subtitle": "Estudios en curso, actividad reciente de los casos y casos que requieren atención",
       "totalCases": "Total de casos",
       "totalResponses": "Total de respuestas",
       "uniqueParticipants": "Participantes únicos",
@@ -852,7 +873,14 @@
       "activeCount_one": "{{count}} activo",
       "activeCount_other": "{{count}} activos",
       "stillActiveCount_one": "{{count}} aún activo",
-      "stillActiveCount_other": "{{count}} aún activos"
+      "stillActiveCount_other": "{{count}} aún activos",
+      "studiesInProgress": "Estudios en curso",
+      "studiesInProgressDesc": "Primero los estudios activos, después los borradores",
+      "allStudies": "Todos los estudios",
+      "noStudiesInProgress": "No hay estudios en curso.",
+      "activeStudies": "Estudios activos",
+      "closedCount_one": "{{count}} cerrado",
+      "closedCount_other": "{{count}} cerrados"
     },
     "divergence": {
       "title": "Análisis de divergencia",

@@ -11,6 +11,7 @@ import { StatusBadge } from './components/StatusBadge';
 import { caseApi, downloadDetailedResponsesCSV } from '@/services';
 import { KappaScoresSection } from './components/KappaScoresSection';
 import { DetailedSystemAnalysis } from './components/DetailedSystemAnalysis';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 export function CaseReliabilityPage() {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export function CaseReliabilityPage() {
     queryFn: () => caseApi.getCase(id!),
     enabled: !!id,
   });
+  useRecordTitle(caseData?.title);
 
   const { data: metrics, isLoading: isLoadingMetrics } = useQuery({
     queryKey: ['case-reliability', id],

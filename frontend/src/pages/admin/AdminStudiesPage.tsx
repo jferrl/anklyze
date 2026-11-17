@@ -52,6 +52,7 @@ export function AdminStudiesPage() {
   const [statusFilter, setStatusFilter] = useState<StudyStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Study | null>(null);
+  const [closeTarget, setCloseTarget] = useState<Study | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -108,7 +109,7 @@ export function AdminStudiesPage() {
   const handleEdit = useCallback((id: string) => navigate(`/admin/studies/${id}/edit`), [navigate]);
   const handleDelete = useCallback((study: Study) => setDeleteTarget(study), []);
   const handleActivate = useCallback((id: string) => activateMutation.mutate(id), [activateMutation]);
-  const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
+  const handleClose = useCallback((study: Study) => setCloseTarget(study), []);
   const handleViewReliability = useCallback((id: string) => navigate(`/admin/studies/${id}/reliability`), [navigate]);
 
   const studyStatusOptions = useMemo(() => [
@@ -226,7 +227,7 @@ export function AdminStudiesPage() {
               {study.status === 'active' && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleClose(study.id)}>
+                  <DropdownMenuItem onClick={() => handleClose(study)}>
                     <Lock className="h-4 w-4 mr-2" />
                     {t('admin.studies.closeStudy')}
                   </DropdownMenuItem>
@@ -315,7 +316,7 @@ export function AdminStudiesPage() {
                   onEdit={() => handleEdit(study.id)}
                   onDelete={() => handleDelete(study)}
                   onActivate={() => handleActivate(study.id)}
-                  onClose={() => handleClose(study.id)}
+                  onClose={() => handleClose(study)}
                   onViewReliability={() => handleViewReliability(study.id)}
                   t={t}
                 />
@@ -363,6 +364,26 @@ export function AdminStudiesPage() {
                 className={buttonVariants({ variant: 'destructive' })}
               >
                 {t('common.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        )}
+      </AlertDialog>
+
+      <AlertDialog open={!!closeTarget} onOpenChange={() => setCloseTarget(null)}>
+        {closeTarget && (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.studies.closeConfirmTitle', { title: closeTarget.title })}</AlertDialogTitle>
+              <AlertDialogDescription>{t('admin.studies.closeConfirmDescription')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => closeMutation.mutate(closeTarget.id)}
+                className={buttonVariants({ variant: 'destructive' })}
+              >
+                {t('admin.studies.closeStudy')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

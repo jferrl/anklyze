@@ -22,6 +22,7 @@ const ClassificationChart = lazy(() =>
     })
 );
 import { caseApi, downloadCaseResponsesCSV } from '@/services';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 function formatDuration(ms: number) {
   const seconds = Math.floor(ms / 1000);
@@ -42,6 +43,7 @@ export function CaseAnalyticsPage() {
     queryFn: () => caseApi.getCase(id!),
     enabled: !!id,
   });
+  useRecordTitle(caseData?.title);
 
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['case-analytics', id],

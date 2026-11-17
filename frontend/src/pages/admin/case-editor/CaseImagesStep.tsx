@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useDropzone } from 'react-dropzone';
-import { Upload } from 'lucide-react';
+import { AlertCircle, Upload } from 'lucide-react';
+import { Alert, AlertDescription } from '../../../components/ui/alert';
 import {
   Card,
   CardContent,
@@ -24,6 +25,8 @@ interface CaseImagesStepProps {
   pendingUploads: PendingUpload[];
   canEdit: boolean;
   caseId?: string;
+  /** Shown inside the section, where the publish check scrolls to. */
+  error?: string | null;
   onRemovePending: (id: string) => void;
   onDeleteExisting: (imageId: string) => void;
   onDrop: (category: ImageCategory) => (files: File[]) => void;
@@ -34,6 +37,7 @@ export function CaseImagesStep({
   pendingUploads,
   canEdit,
   caseId,
+  error,
   onRemovePending,
   onDeleteExisting,
   onDrop,
@@ -63,13 +67,18 @@ export function CaseImagesStep({
   });
 
   return (
-    <div>
+    <section id="case-images" className="scroll-mt-24">
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('admin.cases.images')}</CardTitle>
           <CardDescription>{t('admin.cases.imagesDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           {/* X-ray Section */}
           <div className="space-y-4">
             <div className="flex items-baseline justify-between gap-3">
@@ -82,7 +91,7 @@ export function CaseImagesStep({
             {/* X-ray Dropzone */}
             {canEdit && (
               <div
-                {...xrayDropzone.getRootProps()}
+                {...xrayDropzone.getRootProps({ id: 'case-images-dropzone' })}
                 className={cn(
                   'cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-150 hover:bg-muted',
                   xrayDropzone.isDragActive ? 'border-primary bg-accent' : 'border-input'
@@ -166,6 +175,6 @@ export function CaseImagesStep({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

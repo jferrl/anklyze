@@ -8,6 +8,7 @@ import {
 import { Button } from '../../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '../components/StatusBadge';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -20,8 +21,8 @@ import { CaseDetailsStep } from '../components/CaseDetailsStep';
 import { useCaseEditorForm } from './useCaseEditorForm';
 import { useCaseEditorMutations } from './useCaseEditorMutations';
 import { CaseImagesStep } from './CaseImagesStep';
-import { StepFooter, StepIndicator } from '../components/EditorSteps';
 import { CaseGoldStandardCard } from './CaseGoldStandardCard';
+import { useRecordTitle } from '@/components/layout/recordTitle';
 
 interface PendingUpload {
   id: string;
@@ -30,8 +31,8 @@ interface PendingUpload {
   preview: string;
 }
 
-type Step = 'details' | 'images';
-const STEPS: Step[] = ['details', 'images'];
+// A save can fail from the buttons at the bottom of the page, far below the error banner.
+const scrollIntoViewOnMount = (el: HTMLElement | null) => el?.scrollIntoView({ block: 'nearest' });
 
 export function CaseEditorPage() {
   const { t } = useTranslation();
@@ -39,13 +40,12 @@ export function CaseEditorPage() {
   const isEditing = !!id && id !== 'new';
 
   const [pageState, setPageState] = useState({
-    step: 'details' as Step,
     error: null as string | null,
     titleError: null as string | null,
+    imagesError: null as string | null,
     showPublishDialog: false,
   });
-  const { step: currentStep, error, titleError, showPublishDialog } = pageState;
-  const setCurrentStep = (step: Step) => setPageState(p => ({ ...p, step }));
+  const { error, titleError, imagesError, showPublishDialog } = pageState;
   const setError = (error: string | null) => setPageState(p => ({ ...p, error }));
   const setTitleError = (titleError: string | null) => setPageState(p => ({ ...p, titleError }));
   const setShowPublishDialog = (v: boolean) => setPageState(p => ({ ...p, showPublishDialog: v }));
@@ -55,6 +55,7 @@ export function CaseEditorPage() {
     queryFn: () => caseApi.getCase(id!),
     enabled: isEditing,
   });
+  useRecordTitle(existingCase?.title);
 
   const { form, updateForm } = useCaseEditorForm(existingCase);
   const { title, description, deadline } = form;
@@ -75,15 +76,15 @@ export function CaseEditorPage() {
       clearPendingUploads: () => setPendingUploads([]),
     });
 
-  const currentStepIndex = STEPS.indexOf(currentStep);
-  const goToNextStep = () => {
-    const next = STEPS[currentStepIndex + 1];
-    if (next) setCurrentStep(next);
+  // Scrolls the section with the failed check into view, then moves focus to its field.
+  const revealField = (sectionId: string, fieldId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ block: 'start' });
+    document.getElementById(fieldId)?.focus({ preventScroll: true });
   };
-  const goToPrevStep = () => { if (currentStepIndex > 0) setCurrentStep(STEPS[currentStepIndex - 1]); };
 
   const createOnDrop = useCallback(
     (category: ImageCategory) => (files: File[]) => {
+      setPageState(p => ({ ...p, imagesError: null }));
       setPendingUploads(prev => [...prev, ...files.map(file => ({
         id: Math.random().toString(36).substring(7), file, category, preview: URL.createObjectURL(file),
       }))]);
@@ -98,13 +99,13 @@ export function CaseEditorPage() {
     });
   };
 
-  const handleSave = async () => {
-    setError(null);
+  // Returns false when validation stops the save, so publishing does not go ahead.
+  const handleSave = async (): Promise<boolean> => {
+    setPageState(p => ({ ...p, error: null, imagesError: null }));
     if (!title.trim()) {
-      setPageState(p => ({ ...p, step: 'details', titleError: t('admin.cases.errors.titleRequired') }));
-      // The field may only mount with this render, so focus it on the next frame.
-      requestAnimationFrame(() => document.getElementById('title')?.focus());
-      return;
+      setTitleError(t('admin.cases.errors.titleRequired'));
+      revealField('case-details', 'title');
+      return false;
     }
     const data = {
       title: title.trim(), description: description.trim() || undefined,
@@ -119,22 +120,41 @@ export function CaseEditorPage() {
     } else {
       await createMutation.mutateAsync(data);
     }
+    return true;
   };
 
   const handlePublish = () => {
     const total = (existingCase?.images?.length ?? 0) + pendingUploads.length;
-    if (total === 0) { setError(t('admin.cases.errors.imagesRequired')); setCurrentStep('images'); return; }
+    if (total === 0) {
+      setPageState(p => ({ ...p, imagesError: t('admin.cases.errors.imagesRequired') }));
+      revealField('case-images', 'case-images-dropzone');
+      return;
+    }
     setShowPublishDialog(true);
   };
 
   const confirmPublish = async () => {
-    if (isEditing) { await handleSave(); publishMutation.mutate(id!); }
+    if (isEditing && (await handleSave())) publishMutation.mutate(id!);
   };
 
   const existingImages = existingCase?.images ?? [];
   const canPublish = isEditing && existingCase?.status === 'draft';
   const canEdit = !isEditing || existingCase?.status === 'draft';
   const canEditAlways = !isEditing || existingCase?.status !== 'closed';
+
+  const actions = (
+    <>
+      <Button variant="outline" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+        {t('common.save')}
+      </Button>
+      {canPublish && (
+        <Button onClick={handlePublish} disabled={isSaving}>
+          <Send />{t('admin.cases.publish')}
+        </Button>
+      )}
+    </>
+  );
 
   if (isEditing && isLoadingCase) {
     return (
@@ -157,60 +177,44 @@ export function CaseEditorPage() {
               )}
             </span>
           }
-          actions={
-            <>
-              <Button variant="outline" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
-                {t('common.save')}
-              </Button>
-              {canPublish && (
-                <Button onClick={handlePublish} disabled={isSaving}>
-                  <Send />{t('admin.cases.publish')}
-                </Button>
-              )}
-            </>
-          }
+          actions={actions}
         />
 
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" ref={scrollIntoViewOnMount}>
             <AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        <StepIndicator
-          steps={[
-            { key: 'details', label: t('admin.cases.details') },
-            { key: 'images', label: t('admin.cases.images') },
-          ]}
-          current={currentStep}
-          onStepClick={setCurrentStep}
-        />
+        <CaseDetailsStep title={title} description={description} deadline={deadline}
+          canEdit={canEdit} canEditAlways={canEditAlways}
+          titleError={titleError}
+          onUpdateField={(field, value) => {
+            if (field === 'title' && titleError) setTitleError(null);
+            updateForm(field as keyof typeof form, value);
+          }} />
 
-        <div className="space-y-6">
-          {currentStep === 'details' && (
-            <CaseDetailsStep title={title} description={description} deadline={deadline}
-              canEdit={canEdit} canEditAlways={canEditAlways}
-              titleError={titleError}
-              onUpdateField={(field, value) => {
-                if (field === 'title' && titleError) setTitleError(null);
-                updateForm(field as keyof typeof form, value);
-              }} />
-          )}
-          {currentStep === 'images' && (
-            <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
-              canEdit={canEdit} caseId={id}
-              onRemovePending={removePendingUpload}
-              onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
-              onDrop={createOnDrop} />
-          )}
+        <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
+          canEdit={canEdit} caseId={id} error={imagesError}
+          onRemovePending={removePendingUpload}
+          onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
+          onDrop={createOnDrop} />
 
-          {isEditing && existingCase && existingCase.status !== 'closed' && (
-            <CaseGoldStandardCard caseData={existingCase} />
-          )}
-        </div>
+        {isEditing && existingCase && existingCase.status !== 'closed' && (
+          <CaseGoldStandardCard caseData={existingCase} />
+        )}
+        {!isEditing && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('admin.reliability.goldStandard')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">{t('admin.cases.referenceAfterSave')}</p>
+            </CardContent>
+          </Card>
+        )}
 
-        <StepFooter current={currentStepIndex} total={STEPS.length} onPrev={goToPrevStep} onNext={goToNextStep} />
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-6">{actions}</div>
 
       <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
         <AlertDialogContent>
