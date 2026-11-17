@@ -149,14 +149,12 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 
 	db := setupTestDB(t)
 
-	// Create repository with buffer size 1
-	repo := NewAuditRepository(db, 1)
-	t.Cleanup(func() { _ = repo.Close() })
+	// No background writer: with one started, it can drain the first entry
+	// before the second Save, and the buffer is never seen full.
+	repo := &AuditRepository{db: db, writeCh: make(chan *domain.AuditEntry, 1), done: make(chan struct{})}
 
 	ctx := context.Background()
 
-	// Block the background writer by filling the channel
-	// and not letting it process
 	entry1 := createTestEntry()
 	entry2 := createTestEntry()
 

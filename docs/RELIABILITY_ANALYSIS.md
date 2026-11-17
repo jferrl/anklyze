@@ -332,7 +332,7 @@ Read these before citing a number the app produced.
 - **Weighted kappa ignores codes outside the ordering.** Pairs containing a subgroup code such as `44-B1.2`, `44-A3`, `43-B1` or "not classifiable" are dropped, and the result is 0 when no pair is left.
 - **The Fleiss CI uses a simplified standard error**, described in the code as an approximation.
 - **Sensitivity, specificity, PPV, NPV and F1 are not computed.** The frontend has labels for them, but no backend code produces the values.
-- **The confusion matrix is not populated.** `statistics.ConfusionMatrix` exists and the frontend can render one, but the service never fills the field.
+- **No confusion matrix is computed.** The frontend can render one, but no backend code fills the field.
 
 ## 5. Open issues
 

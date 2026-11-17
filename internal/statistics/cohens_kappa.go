@@ -6,17 +6,6 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 )
 
-// CohensKappa calculates Cohen's Kappa for two raters.
-// ratings is a slice of [rater1_category, rater2_category] pairs.
-// Returns the Kappa value between -1 and 1, where:
-//   - 1 = perfect agreement
-//   - 0 = agreement expected by chance
-//   - < 0 = less than chance agreement
-func CohensKappa(ratings [][2]string) (float64, error) {
-	kappa, _, err := CohensKappaWithCI(ratings, 0.95)
-	return kappa, err
-}
-
 // CohensKappaWithCI calculates Cohen's Kappa with confidence interval.
 // ratings is a slice of [rater1_category, rater2_category] pairs.
 // confidenceLevel is typically 0.95 for 95% CI.
