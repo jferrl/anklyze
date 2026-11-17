@@ -3,29 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CaseMetrics } from '@/types';
-import { CaseMetricCard, getAgreementColorClass } from './CaseMetricCard';
-import type { ClassificationSystem } from './CaseMetricCard';
-import { SystemTabs } from './SystemTabs';
+import { CaseMetricCard } from './CaseMetricCard';
+import { SystemColumnHeads, SystemTabs } from './SystemTabs';
+import { SYSTEM_KEYS, SYSTEMS, agreementColorClass, formatPercent, type SystemKey } from './systems';
 
 interface PerCaseAgreementSectionProps {
   perCaseMetrics: CaseMetrics[];
 }
 
-const SYSTEMS: ClassificationSystem[] = ['danis_weber', 'lauge_hansen', 'ao_ota', 'bartonicek'];
-
-function getSystemLabel(key: string): string {
-  const labels: Record<string, string> = {
-    danis_weber: 'Danis-Weber',
-    lauge_hansen: 'Lauge-Hansen',
-    ao_ota: 'AO/OTA',
-    bartonicek: 'Bartonicek',
-  };
-  return labels[key] || key;
-}
-
 export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSectionProps) {
   const { t } = useTranslation();
-  const [activeSystem, setActiveSystem] = useState<ClassificationSystem>('danis_weber');
+  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
   const sortedMetrics = [...perCaseMetrics].sort((a, b) => a.case_order - b.case_order);
 
@@ -40,9 +28,9 @@ export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSect
 
         <SystemTabs
           className="md:hidden"
-          systems={SYSTEMS.map((key) => ({ key, label: getSystemLabel(key) }))}
+          systems={SYSTEMS}
           active={activeSystem}
-          onChange={(key) => setActiveSystem(key as ClassificationSystem)}
+          onChange={(key) => setActiveSystem(key as SystemKey)}
         />
       </div>
 
@@ -73,10 +61,7 @@ export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSect
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground w-12">#</th>
                   <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t('admin.studies.goldStandard.case')}</th>
                   <th className="text-right py-3 px-4 font-medium text-muted-foreground">{t('admin.studies.table.responses')}</th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-dw" />Danis-Weber</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-lh" />Lauge-Hansen</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-ao" />AO/OTA</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-bt" />Bartonicek</span></th>
+                  <SystemColumnHeads />
                 </tr>
               </thead>
               <tbody>
@@ -93,7 +78,7 @@ export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSect
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-foreground truncate max-w-[200px]">
+                        <span className="font-medium text-foreground">
                           {caseMetrics.case_title}
                         </span>
                         {caseMetrics.is_low_agreement && (
@@ -104,20 +89,14 @@ export function PerCaseAgreementSection({ perCaseMetrics }: PerCaseAgreementSect
                     <td className="py-3 px-4 text-right tabular-nums text-muted-foreground">
                       {caseMetrics.response_count}
                     </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', getAgreementColorClass(caseMetrics.danis_weber_agreement))}>
-                      {caseMetrics.danis_weber_agreement.toFixed(0)}%
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', getAgreementColorClass(caseMetrics.lauge_hansen_agreement))}>
-                      {caseMetrics.lauge_hansen_agreement.toFixed(0)}%
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', getAgreementColorClass(caseMetrics.ao_ota_agreement))}>
-                      {caseMetrics.ao_ota_agreement.toFixed(0)}%
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', getAgreementColorClass(caseMetrics.bartonicek_agreement ?? 0))}>
-                      {caseMetrics.bartonicek_agreement !== undefined
-                        ? `${caseMetrics.bartonicek_agreement.toFixed(0)}%`
-                        : '-'}
-                    </td>
+                    {SYSTEM_KEYS.map((key) => {
+                      const value = caseMetrics[`${key}_agreement`];
+                      return (
+                        <td key={key} className={cn('py-3 px-4 text-right font-medium tabular-nums', agreementColorClass(value))}>
+                          {value != null ? formatPercent(value) : '—'}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

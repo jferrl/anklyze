@@ -128,28 +128,13 @@ export function CaseGoldStandardCard({ caseData }: CaseGoldStandardCardProps) {
 
         {/* Classification dropdowns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Danis-Weber */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-dw" />Danis-Weber</Label>
-            <Select value={dw || NONE_VALUE} onValueChange={v => setDw(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder={t('common.select')} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
-                {DANIS_WEBER_OPTIONS.map(v => (
-                  <SelectItem key={v} value={v}>{v}</SelectItem>
-                ))}
-                <SelectItem value="not_classifiable">{t('results.classifications.danisWeber.not_classifiable_name')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Lauge-Hansen */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2"><span className="size-2 bg-sys-lh" />Lauge-Hansen</Label>
             <Select value={lh || NONE_VALUE} onValueChange={v => setLh(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder={t('common.select')} /></SelectTrigger>
+              <SelectTrigger className={lh ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
                 {LAUGE_HANSEN_OPTIONS.map(v => (
                   <SelectItem key={v} value={v}>{v} ({t(`results.classifications.laugeHansen.${v}_name`)})</SelectItem>
                 ))}
@@ -158,13 +143,28 @@ export function CaseGoldStandardCard({ caseData }: CaseGoldStandardCardProps) {
             </Select>
           </div>
 
+          {/* Danis-Weber */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2"><span className="size-2 bg-sys-dw" />Danis-Weber</Label>
+            <Select value={dw || NONE_VALUE} onValueChange={v => setDw(v === NONE_VALUE ? '' : v)}>
+              <SelectTrigger className={dw ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
+                {DANIS_WEBER_OPTIONS.map(v => (
+                  <SelectItem key={v} value={v}>{v}</SelectItem>
+                ))}
+                <SelectItem value="not_classifiable">{t('results.classifications.danisWeber.not_classifiable_name')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* AO/OTA */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2"><span className="size-2 bg-sys-ao" />AO/OTA</Label>
             <Select value={ao || NONE_VALUE} onValueChange={v => setAo(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder={t('common.select')} /></SelectTrigger>
+              <SelectTrigger className={ao ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
                 {AOOTA_OPTIONS.map(group => (
                   <div key={group.group}>
                     <div className="py-1.5 pl-3 pr-2 text-xs font-semibold text-muted-foreground">{t(`admin.reliability.goldStandardGroups.${group.group}`)}</div>
@@ -183,9 +183,9 @@ export function CaseGoldStandardCard({ caseData }: CaseGoldStandardCardProps) {
           <div className="space-y-2">
             <Label className="flex items-center gap-2"><span className="size-2 bg-sys-bt" />Bartonicek</Label>
             <Select value={bt || NONE_VALUE} onValueChange={v => setBt(v === NONE_VALUE ? '' : v)}>
-              <SelectTrigger><SelectValue placeholder={t('common.select')} /></SelectTrigger>
+              <SelectTrigger className={bt ? undefined : 'text-muted-foreground'}><SelectValue placeholder={t('common.select')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={NONE_VALUE}>-</SelectItem>
+                <SelectItem value={NONE_VALUE}>{t('common.notSet')}</SelectItem>
                 {BARTONICEK_OPTIONS.map(o => (
                   <SelectItem key={o.value} value={o.value}>{o.value} ({t(`form.options.posteriorType.${o.descKey}`)})</SelectItem>
                 ))}

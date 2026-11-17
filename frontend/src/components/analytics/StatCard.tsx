@@ -16,7 +16,7 @@ export function StatGroup({ children, className }: { children: ReactNode; classN
   return (
     <section
       className={cn(
-        'grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-4',
+        'grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4',
         className
       )}
     >

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Info } from 'lucide-react';
-import { KappaGauge } from '@/components/analytics';
+import { KappaGauge, KappaLegend } from '@/components/analytics';
 import {
   Tooltip,
   TooltipContent,
@@ -9,43 +9,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { kappaInterpretationKey, type StudyReliabilityResponse } from '@/types';
-
-type ClassificationSystem = 'danis_weber' | 'lauge_hansen' | 'ao_ota' | 'bartonicek';
+import { SystemTabs } from './SystemTabs';
+import { SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, kappaAxisMin, type SystemKey } from './systems';
 
 interface StudyKappaAnalysisProps {
   reliability: StudyReliabilityResponse;
 }
 
-function getSystemLabel(key: string): string {
-  const labels: Record<string, string> = {
-    danis_weber: 'Danis-Weber',
-    lauge_hansen: 'Lauge-Hansen',
-    ao_ota: 'AO/OTA',
-    bartonicek: 'Bartonicek',
-  };
-  return labels[key] || key;
-}
-
-function getActiveKappa(reliability: StudyReliabilityResponse, system: ClassificationSystem) {
-  switch (system) {
-    case 'danis_weber':
-      return reliability.danis_weber_fleiss;
-    case 'lauge_hansen':
-      return reliability.lauge_hansen_fleiss;
-    case 'ao_ota':
-      return reliability.ao_ota_fleiss;
-    case 'bartonicek':
-      return reliability.bartonicek_fleiss;
-  }
-}
-
 export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
   const { t } = useTranslation();
-  const [activeSystem] = useState<ClassificationSystem>('danis_weber');
+  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
-  const activeKappa = getActiveKappa(reliability, activeSystem);
-  const ratersAndCases = (k: { num_raters: number; num_subjects: number }) =>
-    `${t('admin.reliability.ratersCount', { count: k.num_raters })}, ${t('admin.reliability.casesCount', { count: k.num_subjects })}`;
+  const kappas = SYSTEM_KEYS.map((key) => ({ key, fleiss: reliability[`${key}_fleiss`] }));
+  const min = kappaAxisMin(kappas.flatMap(({ fleiss }) => [fleiss?.kappa, fleiss?.confidence_interval?.lower]));
+  const activeKappa = reliability[`${activeSystem}_fleiss`];
 
   return (
     <div className="space-y-6">
@@ -68,117 +45,89 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <KappaGauge
-            value={reliability.danis_weber_fleiss?.kappa}
-            ci={reliability.danis_weber_fleiss?.confidence_interval}
-            label="Danis-Weber"
-            description={reliability.danis_weber_fleiss
-              ? ratersAndCases(reliability.danis_weber_fleiss)
-              : t('admin.studies.reliability.notEnoughData', 'Not enough data')}
-            size="md"
-          />
-          <KappaGauge
-            value={reliability.lauge_hansen_fleiss?.kappa}
-            ci={reliability.lauge_hansen_fleiss?.confidence_interval}
-            label="Lauge-Hansen"
-            description={reliability.lauge_hansen_fleiss
-              ? ratersAndCases(reliability.lauge_hansen_fleiss)
-              : t('admin.studies.reliability.notEnoughData', 'Not enough data')}
-            size="md"
-          />
-          <KappaGauge
-            value={reliability.ao_ota_fleiss?.kappa}
-            ci={reliability.ao_ota_fleiss?.confidence_interval}
-            label="AO/OTA"
-            description={reliability.ao_ota_fleiss
-              ? ratersAndCases(reliability.ao_ota_fleiss)
-              : t('admin.studies.reliability.notEnoughData', 'Not enough data')}
-            size="md"
-          />
-          <KappaGauge
-            value={reliability.bartonicek_fleiss?.kappa}
-            ci={reliability.bartonicek_fleiss?.confidence_interval}
-            label="Bartonicek"
-            description={reliability.bartonicek_fleiss
-              ? ratersAndCases(reliability.bartonicek_fleiss)
-              : t('admin.studies.reliability.notEnoughData', 'Not enough data')}
-            size="md"
-          />
+          {kappas.map(({ key, fleiss }) => (
+            <KappaGauge
+              key={key}
+              value={fleiss?.kappa}
+              ci={fleiss?.confidence_interval}
+              min={min}
+              label={SYSTEM_LABEL[key]}
+              description={fleiss
+                ? `${t('admin.reliability.ratersCount', { count: fleiss.num_raters })}, ${t('admin.reliability.casesCount', { count: fleiss.num_subjects })}`
+                : t('admin.studies.reliability.notEnoughData')}
+            />
+          ))}
         </div>
 
-        <p className="mt-6 border-t pt-3 text-xs tabular-nums text-muted-foreground">
-          <span className="font-medium text-foreground">{t('admin.reliability.kappaInterpretation', 'Kappa Interpretation')}</span>
-          {' '}
-          {t('admin.reliability.kappaLegend')} (Landis & Koch, 1977)
-        </p>
+        <KappaLegend className="mt-6 border-t pt-3" />
       </section>
 
-      {/* Detailed Kappa Analysis for Active System */}
-      {activeKappa && (
-        <section className="chart-card">
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-base font-semibold text-foreground">
-              {t('admin.reliability.systemDetail', { system: getSystemLabel(activeSystem) })}
+      {/* Detailed Kappa Analysis for the selected system */}
+      {kappas.some(({ fleiss }) => fleiss) && (
+        <section className="space-y-4">
+          <SystemTabs systems={SYSTEMS} active={activeSystem} onChange={(key) => setActiveSystem(key as SystemKey)} />
+
+          <div className="chart-card">
+            <h2 className="mb-4 text-base font-semibold text-foreground">
+              {t('admin.reliability.systemDetail', { system: SYSTEM_LABEL[activeSystem] })}
             </h2>
-          </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-4 lg:grid-cols-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.fleissKappa')}</p>
-              <p className="text-2xl font-semibold tabular-nums text-foreground">
-                {activeKappa.kappa.toFixed(3)}
+            {!activeKappa ? (
+              <p className="border-t pt-4 text-sm text-muted-foreground">
+                {t('admin.studies.reliability.notEnoughData')}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {t(kappaInterpretationKey(activeKappa.interpretation), activeKappa.interpretation)}
-              </p>
-            </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-4 lg:grid-cols-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.fleissKappa')}</p>
+                    <p className="text-2xl font-semibold tabular-nums text-foreground">
+                      {activeKappa.kappa.toFixed(3)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t(kappaInterpretationKey(activeKappa.interpretation), activeKappa.interpretation)}
+                    </p>
+                  </div>
 
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.subjects')}</p>
-              <p className="text-2xl font-semibold tabular-nums text-foreground">
-                {activeKappa.num_subjects}
-              </p>
-            </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.subjects')}</p>
+                    <p className="text-2xl font-semibold tabular-nums text-foreground">
+                      {activeKappa.num_subjects}
+                    </p>
+                  </div>
 
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{t('admin.studies.raters.title')}</p>
-              <p className="text-2xl font-semibold tabular-nums text-foreground">
-                {activeKappa.num_raters}
-              </p>
-            </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('admin.studies.raters.title')}</p>
+                    <p className="text-2xl font-semibold tabular-nums text-foreground">
+                      {activeKappa.num_raters}
+                    </p>
+                  </div>
 
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.categories')}</p>
-              <p className="text-2xl font-semibold tabular-nums text-foreground">
-                {activeKappa.num_categories}
-              </p>
-            </div>
-          </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.categories')}</p>
+                    <p className="text-2xl font-semibold tabular-nums text-foreground">
+                      {activeKappa.num_categories}
+                    </p>
+                  </div>
+                </div>
 
-          {activeKappa.confidence_interval && (
-            <div className="mt-4 border-t pt-3">
-              <p className="text-sm tabular-nums text-foreground">
-                <span className="font-medium">{t('admin.reliability.confidenceInterval', { level: 95 })}:</span>{' '}
-                [{activeKappa.confidence_interval.lower.toFixed(3)}, {activeKappa.confidence_interval.upper.toFixed(3)}]
-              </p>
-            </div>
-          )}
+                {activeKappa.confidence_interval && (
+                  <div className="mt-4 border-t pt-3">
+                    <p className="text-sm tabular-nums text-foreground">
+                      <span className="font-medium">{t('admin.reliability.confidenceInterval', { level: 95 })}:</span>{' '}
+                      [{activeKappa.confidence_interval.lower.toFixed(3)}, {activeKappa.confidence_interval.upper.toFixed(3)}]
+                    </p>
+                  </div>
+                )}
 
-          {activeKappa.note && (
-            <div className="mt-4 rounded-md border border-warning/30 bg-warning/10 p-3">
-              <div className="flex items-start gap-2">
-                <Info className="w-4 h-4 text-warning mt-0.5 shrink-0" />
-                <div>
-                  <span className="text-sm font-medium text-foreground">
-                    {t('admin.reliability.fleissKappa')}
-                  </span>
-                  <p className="text-sm text-muted-foreground mt-1">
+                {activeKappa.note && (
+                  <p className="mt-4 rounded-md border bg-muted px-3 py-2 text-sm text-foreground">
                     {t('admin.reliability.fleissKappaNote')}
                   </p>
-                </div>
-              </div>
-            </div>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </section>
       )}
     </div>

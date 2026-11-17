@@ -14,7 +14,8 @@ import {
   Users,
   FileText,
 } from 'lucide-react';
-import { Button } from '../../components/ui/button';
+import type { TFunction } from 'i18next';
+import { Button, buttonVariants } from '../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,21 +35,23 @@ import {
 } from '../../components/ui/alert-dialog';
 import { studyApi } from '@/services';
 import type { Study, StudyStatus } from '@/types';
+import { formatDate as formatDateIn } from '@/lib/format';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { DataTable } from './components/DataTable';
 import { FilterBar } from './components/FilterBar';
+import { NoMatchState } from './components/NoMatchState';
 import { Pagination } from './components/Pagination';
 import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminStudiesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<StudyStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Study | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -68,7 +71,7 @@ export function AdminStudiesPage() {
     mutationFn: studyApi.deleteStudy,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-studies'], refetchType: 'all' });
-      setDeleteId(null);
+      setDeleteTarget(null);
     },
   });
 
@@ -90,22 +93,20 @@ export function AdminStudiesPage() {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
+  const isFiltered = searchQuery.trim() !== '' || statusFilter !== 'all';
+
   const filteredStudies = studies.filter((study) =>
     study.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = useCallback((dateString?: string) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString?: string) => (dateString ? formatDateIn(dateString, i18n.language) : ''),
+    [i18n.language]
+  );
 
   // Memoized action handlers
   const handleEdit = useCallback((id: string) => navigate(`/admin/studies/${id}/edit`), [navigate]);
-  const handleDelete = useCallback((id: string) => setDeleteId(id), []);
+  const handleDelete = useCallback((study: Study) => setDeleteTarget(study), []);
   const handleActivate = useCallback((id: string) => activateMutation.mutate(id), [activateMutation]);
   const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
   const handleViewReliability = useCallback((id: string) => navigate(`/admin/studies/${id}/reliability`), [navigate]);
@@ -209,29 +210,32 @@ export function AdminStudiesPage() {
                 <Pencil className="h-4 w-4 mr-2" />
                 {t('common.edit')}
               </DropdownMenuItem>
-              {study.status !== 'draft' && (
-                <DropdownMenuItem onClick={() => handleViewReliability(study.id)}>
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  {t('admin.studies.viewReliability')}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleViewReliability(study.id)}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                {t('admin.studies.viewReliability')}
+              </DropdownMenuItem>
               {study.status === 'draft' && study.case_count > 0 && (
-                <DropdownMenuItem onClick={() => handleActivate(study.id)} className="text-success">
-                  <Play className="h-4 w-4 mr-2" />
-                  {t('admin.studies.activate')}
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleActivate(study.id)} className="text-success">
+                    <Play className="h-4 w-4 mr-2" />
+                    {t('admin.studies.activate')}
+                  </DropdownMenuItem>
+                </>
               )}
               {study.status === 'active' && (
-                <DropdownMenuItem onClick={() => handleClose(study.id)}>
-                  <Lock className="h-4 w-4 mr-2" />
-                  {t('admin.studies.close')}
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleClose(study.id)}>
+                    <Lock className="h-4 w-4 mr-2" />
+                    {t('admin.studies.closeStudy')}
+                  </DropdownMenuItem>
+                </>
               )}
               {study.status === 'draft' && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleDelete(study.id)} className="text-destructive">
+                  <DropdownMenuItem onClick={() => handleDelete(study)} className="text-destructive">
                     <Trash2 className="h-4 w-4 mr-2" />
                     {t('common.delete')}
                   </DropdownMenuItem>
@@ -280,7 +284,13 @@ export function AdminStudiesPage() {
         />
 
         {/* Studies Table */}
-        {filteredStudies.length === 0 ? (
+        {filteredStudies.length === 0 && isFiltered ? (
+          <NoMatchState
+            query={searchQuery}
+            statusLabel={statusFilter === 'all' ? undefined : t(`studies.status.${statusFilter}`)}
+            onClear={() => { setSearchQuery(''); setStatusFilter('all'); setPage(1); }}
+          />
+        ) : filteredStudies.length === 0 ? (
           <div className="rounded-lg border bg-card px-4 py-12 text-center">
             <h2 className="text-base font-semibold text-foreground">
               {t('admin.studies.noStudies', 'No studies yet')}
@@ -303,7 +313,7 @@ export function AdminStudiesPage() {
                   study={study}
                   formatDate={formatDate}
                   onEdit={() => handleEdit(study.id)}
-                  onDelete={() => handleDelete(study.id)}
+                  onDelete={() => handleDelete(study)}
                   onActivate={() => handleActivate(study.id)}
                   onClose={() => handleClose(study.id)}
                   onViewReliability={() => handleViewReliability(study.id)}
@@ -335,24 +345,28 @@ export function AdminStudiesPage() {
         />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.studies.deleteConfirm.title', 'Delete Study')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('admin.studies.deleteConfirm.description', 'Are you sure you want to delete this study? This action cannot be undone.')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteId && deleteMutation.mutate(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('common.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        {deleteTarget && (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.studies.deleteConfirm.titleNamed', { title: deleteTarget.title })}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {deleteTarget.case_count > 0
+                  ? t('admin.studies.deleteConfirm.body', { count: deleteTarget.case_count })
+                  : t('admin.studies.deleteConfirm.bodyNoCases')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteMutation.mutate(deleteTarget.id)}
+                className={buttonVariants({ variant: 'destructive' })}
+              >
+                {t('common.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        )}
       </AlertDialog>
     </div>
   );
@@ -366,7 +380,7 @@ interface StudyRowProps {
   onActivate: () => void;
   onClose: () => void;
   onViewReliability: () => void;
-  t: (key: string) => string;
+  t: TFunction;
 }
 
 const StudyCard = memo(function StudyCard({
@@ -388,16 +402,14 @@ const StudyCard = memo(function StudyCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground truncate">{study.title}</span>
-            <StatusBadge status={study.status} label={t(`studies.status.${study.status}`)} className="shrink-0" />
-          </div>
+          <p className="mb-1 line-clamp-2 font-medium text-foreground">{study.title}</p>
           {study.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
               {study.description}
             </p>
           )}
-          <div className="flex flex-wrap items-center gap-3 text-sm tabular-nums text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm tabular-nums text-muted-foreground">
+            <StatusBadge status={study.status} label={t(`studies.status.${study.status}`)} />
             <span className="inline-flex items-center gap-1">
               <FileText className="w-3.5 h-3.5" />
               {study.case_count} {study.case_count === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
@@ -423,24 +435,27 @@ const StudyCard = memo(function StudyCard({
               <Pencil className="h-4 w-4 mr-2" />
               {t('common.edit')}
             </DropdownMenuItem>
-            {study.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewReliability}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.studies.viewReliability')}
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onViewReliability}>
+              <BarChart3 className="h-4 w-4 mr-2" />
+              {t('admin.studies.viewReliability')}
+            </DropdownMenuItem>
             {study.status === 'draft' && study.case_count > 0 && (
-              <DropdownMenuItem onClick={onActivate} className="text-success">
-                <Play className="h-4 w-4 mr-2" />
-                {t('admin.studies.activate')}
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onActivate} className="text-success">
+                  <Play className="h-4 w-4 mr-2" />
+                  {t('admin.studies.activate')}
+                </DropdownMenuItem>
+              </>
             )}
             {study.status === 'active' && (
-              <DropdownMenuItem onClick={onClose}>
-                <Lock className="h-4 w-4 mr-2" />
-                {t('admin.studies.close')}
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onClose}>
+                  <Lock className="h-4 w-4 mr-2" />
+                  {t('admin.studies.closeStudy')}
+                </DropdownMenuItem>
+              </>
             )}
             {study.status === 'draft' && (
               <>

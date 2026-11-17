@@ -51,7 +51,7 @@ export function StudyCasesStep({
         <CardHeader>
           <CardTitle className="text-base">{t('admin.studies.cases', 'Study Cases')}</CardTitle>
           <CardDescription>
-            {t('admin.studies.casesDesc', 'Add published cases to this study for multi-rater analysis')}
+            {canEdit ? t('admin.studies.casesDesc') : t('admin.studies.casesLocked')}
           </CardDescription>
           <CardAction className="text-sm tabular-nums text-muted-foreground">
             {totalCases} {totalCases === 1 ? t('admin.studies.case') : t('admin.studies.cases_plural')}
@@ -116,9 +116,11 @@ export function StudyCasesStep({
               <p className="text-sm font-medium text-foreground">
                 {t('admin.studies.noCases', 'No cases in this study yet')}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t('admin.studies.addCasesHint', 'Add published cases to get started')}
-              </p>
+              {canEdit && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t('admin.studies.addCasesHint')}
+                </p>
+              )}
             </div>
           ) : (
             <div className="divide-y border-t">

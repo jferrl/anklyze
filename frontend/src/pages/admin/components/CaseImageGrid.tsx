@@ -47,11 +47,8 @@ export function ImageGrid({
     }
   };
 
-  if (existingImages.length === 0 && pendingUploads.length === 0) {
-    return (
-      <p className="py-6 text-center text-sm text-muted-foreground">{t('admin.cases.noImages')}</p>
-    );
-  }
+  // The section's count and dropzone already say there are no images.
+  if (existingImages.length === 0 && pendingUploads.length === 0) return null;
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

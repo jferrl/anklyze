@@ -242,8 +242,14 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
         {/* Images: the larger column, kept in view while answering */}
-        <div className="lg:sticky lg:top-4 lg:self-start">
+        <div className="lg:sticky lg:top-16 lg:self-start">
           <section className="overflow-hidden rounded-lg border bg-card">
+            {caseData.images.length === 0 ? (
+              <>
+                <h2 className="border-b px-4 py-3 text-base font-semibold">{t('cases.imageGallery')}</h2>
+                <p className="px-4 py-3 text-sm text-muted-foreground">{t('cases.noImages')}</p>
+              </>
+            ) : (
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'xray' | 'tac')}>
               <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
                 <h2 className="text-base font-semibold">{t('cases.imageGallery')}</h2>
@@ -259,7 +265,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
                 </TabsList>
               </div>
 
-                <TabsContent value="xray" className="mt-0 bg-neutral-950 p-4">
+                <TabsContent value="xray" className="mt-0">
                   <ImageGrid
                     images={xrayImages}
                     imageUrls={imageUrls}
@@ -268,7 +274,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
                   />
                 </TabsContent>
 
-                <TabsContent value="tac" className="mt-0 bg-neutral-950 p-4">
+                <TabsContent value="tac" className="mt-0">
                   <ImageGrid
                     images={tacImages}
                     imageUrls={imageUrls}
@@ -277,9 +283,12 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
                   />
                 </TabsContent>
             </Tabs>
-            <p className="border-t px-4 py-2 text-xs text-muted-foreground">
-              {t('cases.clickToEnlarge')}
-            </p>
+            )}
+            {currentImages.length > 0 && (
+              <p className="border-t px-4 py-2 text-xs text-muted-foreground">
+                {t('cases.clickToEnlarge')}
+              </p>
+            )}
           </section>
         </div>
 

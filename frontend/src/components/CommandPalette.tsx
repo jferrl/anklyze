@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
+  Activity,
   Workflow,
   BookOpen,
   LayoutDashboard,
@@ -53,7 +54,8 @@ export function CommandPalette() {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder={t('command.searchPlaceholder')} />
-      <CommandList>
+      {/* Tall enough for every group, so the last row is never cut mid-height. */}
+      <CommandList className="max-h-[min(32rem,70vh)]">
         <CommandEmpty>{t('command.noResults')}</CommandEmpty>
 
         <CommandGroup heading={t('command.navigation')}>
@@ -61,9 +63,9 @@ export function CommandPalette() {
             <Workflow className="mr-2 h-4 w-4" />
             <span>{t('nav.classify')}</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => navigate('/studies'))}>
+          <CommandItem onSelect={() => runCommand(() => navigate('/cases'))}>
             <BookOpen className="mr-2 h-4 w-4" />
-            <span>{t('nav.studies')}</span>
+            <span>{t('nav.cases')}</span>
           </CommandItem>
         </CommandGroup>
 
@@ -75,9 +77,13 @@ export function CommandPalette() {
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 <span>{t('nav.dashboard')}</span>
               </CommandItem>
-              <CommandItem onSelect={() => runCommand(() => navigate('/admin/studies'))}>
+              <CommandItem onSelect={() => runCommand(() => navigate('/admin/cases'))}>
                 <FileText className="mr-2 h-4 w-4" />
-                <span>{t('nav.manageStudies')}</span>
+                <span>{t('nav.manageCases')}</span>
+              </CommandItem>
+              <CommandItem onSelect={() => runCommand(() => navigate('/admin/studies'))}>
+                <Activity className="mr-2 h-4 w-4" />
+                <span>{t('nav.studies')}</span>
               </CommandItem>
             </CommandGroup>
           </>

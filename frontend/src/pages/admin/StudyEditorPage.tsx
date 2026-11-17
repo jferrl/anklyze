@@ -8,8 +8,6 @@ import {
   Play,
   XCircle,
   BarChart3,
-  ChevronRight,
-  ChevronLeft,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -18,6 +16,7 @@ import { StatusBadge } from './components/StatusBadge';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { StudyDetailsStep } from './components/StudyDetailsStep';
 import { StudyCasesStep } from './components/StudyCasesStep';
+import { StepFooter, StepIndicator } from './components/EditorSteps';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +28,6 @@ import {
   AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { studyApi, caseApi } from '@/services';
-import { cn } from '@/lib/utils';
 
 type Step = 'details' | 'cases';
 
@@ -46,10 +44,11 @@ export function StudyEditorPage() {
   const [pageState, setPageState] = useState<{
     step: Step;
     error: string | null;
+    titleError: string | null;
     selectedCaseId: string;
     showActivateDialog: boolean;
-  }>({ step: 'details', error: null, selectedCaseId: '', showActivateDialog: false });
-  const { step: currentStep, error, selectedCaseId, showActivateDialog } = pageState;
+  }>({ step: 'details', error: null, titleError: null, selectedCaseId: '', showActivateDialog: false });
+  const { step: currentStep, error, titleError, selectedCaseId, showActivateDialog } = pageState;
   const setCurrentStep = (step: Step) => setPageState(prev => ({ ...prev, step }));
   const setError = (error: string | null) => setPageState(prev => ({ ...prev, error }));
   const setSelectedCaseId = (selectedCaseId: string) => setPageState(prev => ({ ...prev, selectedCaseId }));
@@ -71,7 +70,15 @@ export function StudyEditorPage() {
   const title = formState.dirty ? formState.title : (study?.title ?? formState.title);
   const description = formState.dirty ? formState.description : (study?.description ?? formState.description);
 
-  const setTitle = (value: string) => setFormState(prev => ({ ...prev, dirty: true, title: value }));
+  const setTitle = (value: string) => {
+    if (titleError) setPageState(prev => ({ ...prev, titleError: null }));
+    setFormState(prev => ({ ...prev, dirty: true, title: value }));
+  };
+  const showTitleRequired = () => {
+    setPageState(prev => ({ ...prev, step: 'details', titleError: t('admin.studies.titleRequired') }));
+    // The field may only mount with this render, so focus it on the next frame.
+    requestAnimationFrame(() => document.getElementById('title')?.focus());
+  };
   const setDescription = (value: string) => setFormState(prev => ({ ...prev, dirty: true, description: value }));
 
   // Fetch available cases (published, not in a study)
@@ -172,8 +179,7 @@ export function StudyEditorPage() {
     setError(null);
 
     if (!title.trim()) {
-      setError(t('admin.studies.titleRequired', 'Title is required'));
-      setCurrentStep('details');
+      showTitleRequired();
       return;
     }
 
@@ -217,7 +223,7 @@ export function StudyEditorPage() {
       // When moving to cases step, ensure study is created first
       if (STEPS[nextIndex] === 'cases' && !isEditing) {
         if (!title.trim()) {
-          setError(t('admin.studies.titleRequired', 'Title is required'));
+          showTitleRequired();
           return;
         }
         // Create the study first, navigation happens in onSuccess
@@ -282,12 +288,12 @@ export function StudyEditorPage() {
                     {t('admin.studies.viewReliability', 'Reliability')}
                   </Button>
                   <Button
-                    variant="destructive"
+                    variant="destructiveOutline"
                     onClick={() => closeMutation.mutate()}
                     disabled={closeMutation.isPending}
                   >
                     {closeMutation.isPending ? <Loader2 className="animate-spin" /> : <XCircle />}
-                    {t('admin.studies.close', 'Close')}
+                    {t('admin.studies.closeStudy')}
                   </Button>
                 </>
               )}
@@ -301,25 +307,12 @@ export function StudyEditorPage() {
           </Alert>
         )}
 
-        <ol className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          {STEPS.map((step, index) => (
-            <li key={step}>
-              <button
-                onClick={() => setCurrentStep(step)}
-                aria-current={step === currentStep ? 'step' : undefined}
-                className={cn(
-                  'flex items-baseline gap-2 transition-colors duration-150',
-                  step === currentStep
-                    ? 'font-medium text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                <span className="tabular-nums">{index + 1}</span>
-                {stepLabels[step]}
-              </button>
-            </li>
-          ))}
-        </ol>
+        {/* A new study has to be created before its cases step exists, so steps are not clickable yet. */}
+        <StepIndicator
+          steps={STEPS.map((key) => ({ key, label: stepLabels[key] }))}
+          current={currentStep}
+          onStepClick={isEditing ? setCurrentStep : undefined}
+        />
 
         {/* Step Content */}
         <div className="space-y-6">
@@ -329,6 +322,7 @@ export function StudyEditorPage() {
               title={title}
               description={description}
               isReadOnly={isReadOnly}
+              titleError={titleError}
               onTitleChange={setTitle}
               onDescriptionChange={setDescription}
             />
@@ -354,30 +348,7 @@ export function StudyEditorPage() {
 
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between border-t pt-6">
-          <Button
-            variant="outline"
-            onClick={goToPrevStep}
-            disabled={currentStepIndex === 0}
-          >
-            <ChevronLeft />
-            {t('common.previous', 'Previous')}
-          </Button>
-
-          <div className="text-sm tabular-nums text-muted-foreground">
-            {t('admin.studies.step', 'Step')} {currentStepIndex + 1} {t('common.of', 'of')} {isEditing ? STEPS.length : STEPS.length - 1}
-          </div>
-
-          {currentStep !== 'cases' ? (
-            <Button onClick={goToNextStep}>
-              {t('common.next', 'Next')}
-              <ChevronRight />
-            </Button>
-          ) : (
-            <div />
-          )}
-        </div>
+        <StepFooter current={currentStepIndex} total={STEPS.length} onPrev={goToPrevStep} onNext={goToNextStep} />
 
         {/* Activate Confirmation Dialog */}
         <AlertDialog open={showActivateDialog} onOpenChange={setShowActivateDialog}>

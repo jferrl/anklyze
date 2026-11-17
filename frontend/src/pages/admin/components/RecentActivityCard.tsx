@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { formatDate } from '@/lib/format';
 import { StatusBadge } from './StatusBadge';
 
 interface RecentActivityCase {
@@ -16,7 +17,7 @@ interface RecentActivityCardProps {
 }
 
 export function RecentActivityCard({ cases }: RecentActivityCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -49,12 +50,12 @@ export function RecentActivityCard({ cases }: RecentActivityCardProps) {
                 <div className="mt-1 flex items-center gap-2">
                   <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} />
                   <span className="text-xs tabular-nums text-muted-foreground">
-                    {caseItem.response_count} {t('admin.dashboard.responses')}
+                    {t('admin.analytics.responsesCount', { count: caseItem.response_count })}
                   </span>
                 </div>
               </div>
               <span className="text-xs tabular-nums text-muted-foreground">
-                {new Date(caseItem.updated_at).toLocaleDateString()}
+                {formatDate(caseItem.updated_at, i18n.language)}
               </span>
               <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
             </button>

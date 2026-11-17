@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Clock, Users, Scan, CalendarClock } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
 
 interface CaseHeaderProps {
   title: string;
@@ -29,7 +30,7 @@ export function CaseHeader({
   myResponseCount,
   deadline,
 }: CaseHeaderProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { deadlineDate, isExpired, daysRemaining } = useMemo(
     () => computeDeadlineInfo(deadline),
@@ -52,7 +53,9 @@ export function CaseHeader({
 
           <span className="inline-flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5" />
-            {myResponseCount} {t('cases.myResponses')}
+            {myResponseCount === 0
+              ? t('cases.myResponsesNone')
+              : t('cases.myResponsesCount', { count: myResponseCount })}
           </span>
 
           {deadlineDate && (
@@ -73,7 +76,7 @@ export function CaseHeader({
                   <CalendarClock className="h-3.5 w-3.5" />
                   {daysRemaining !== null && daysRemaining > 0
                     ? t('cases.daysLeft', { count: daysRemaining })
-                    : deadlineDate.toLocaleDateString()}
+                    : formatDate(deadlineDate, i18n.language)}
                 </>
               )}
             </span>

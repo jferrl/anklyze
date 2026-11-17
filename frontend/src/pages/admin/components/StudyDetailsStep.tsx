@@ -10,6 +10,7 @@ interface StudyDetailsStepProps {
   isReadOnly: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
+  titleError?: string | null;
 }
 
 export function StudyDetailsStep({
@@ -18,6 +19,7 @@ export function StudyDetailsStep({
   isReadOnly,
   onTitleChange,
   onDescriptionChange,
+  titleError,
 }: StudyDetailsStepProps) {
   const { t } = useTranslation();
 
@@ -40,7 +42,12 @@ export function StudyDetailsStep({
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder={t('admin.studies.titlePlaceholder', 'Enter study title...')}
               disabled={isReadOnly}
+              aria-invalid={titleError ? true : undefined}
+              aria-describedby={titleError ? 'title-error' : undefined}
             />
+            {titleError && (
+              <p id="title-error" className="text-sm text-destructive">{titleError}</p>
+            )}
           </div>
 
           {/* Description Field */}

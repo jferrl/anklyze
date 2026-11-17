@@ -68,16 +68,12 @@ function GridImage({
 export function ImageGrid({ images, imageUrls, isLoadingUrls, onImageClick }: ImageGridProps) {
   const { t } = useTranslation();
 
-  if (!isLoadingUrls && images.length === 0) {
-    return (
-      <div className="py-8 text-center text-sm text-neutral-400">
-        {t('studies.noImagesInCategory')}
-      </div>
-    );
+  if (images.length === 0) {
+    return <p className="px-4 py-3 text-sm text-muted-foreground">{t('studies.noImagesInCategory')}</p>;
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 bg-neutral-950 p-4 md:grid-cols-3">
       {images.map((image, index) => (
         <GridImage
           key={image.id}

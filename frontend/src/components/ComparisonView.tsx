@@ -108,7 +108,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
               const different = isDifferent(row.raw);
               const Mark = different ? EqualNot : Equal;
               return (
-                <tr key={row.title} className="border-t">
+                <tr key={row.title} className={cn('border-t', different && 'bg-muted')}>
                   <th scope="row" className="p-4 align-top font-normal text-muted-foreground">
                     <span className="flex items-center gap-2">
                       <span aria-hidden="true" className={cn('size-2.5 shrink-0', row.swatch)} />
@@ -116,7 +116,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
                       <Mark
                         role="img"
                         aria-label={t(different ? 'comparison.differ' : 'comparison.agree')}
-                        className={cn('ml-auto size-4 shrink-0', different ? 'text-warning' : 'text-success')}
+                        className={cn('ml-auto size-4 shrink-0', different ? 'text-foreground' : 'text-muted-foreground')}
                       />
                     </span>
                   </th>
@@ -124,7 +124,7 @@ export function ComparisonView({ scenarios }: ComparisonViewProps) {
                     const subtitle = row.subtitle?.(scenario);
                     return (
                       <td key={scenario.id} className="border-l p-4 align-top">
-                        <p className={cn('font-display text-2xl', different ? 'text-warning' : 'text-foreground')}>
+                        <p className="font-display text-2xl text-foreground">
                           {row.value(scenario) || '-'}
                         </p>
                         {subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useMemo, useCallback } from 'react';
+import { lazy, Suspense, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -9,7 +9,8 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { SystemTabs } from './components/SystemTabs';
-import { SYSTEM_COLOR } from './components/systems';
+import { SYSTEM_COLOR, SYSTEM_LABEL, SYSTEMS, type SystemKey } from './components/systems';
+import { formatDate } from '@/lib/format';
 
 const ClassificationChart = lazy(() =>
   import('../../components/analytics/ClassificationChart')
@@ -22,13 +23,6 @@ const ClassificationChart = lazy(() =>
 );
 import { caseApi, downloadCaseResponsesCSV } from '@/services';
 
-const CLASSIFICATION_SYSTEMS = [
-  { key: 'danis_weber', label: 'Danis-Weber', description: 'Fibula fracture level' },
-  { key: 'lauge_hansen', label: 'Lauge-Hansen', description: 'Mechanism of injury' },
-  { key: 'ao_ota', label: 'AO/OTA', description: 'Comprehensive classification' },
-  { key: 'bartonicek', label: 'Bartonicek', description: 'Posterior malleolus' },
-];
-
 function formatDuration(ms: number) {
   const seconds = Math.floor(ms / 1000);
   if (seconds < 60) return `${seconds}s`;
@@ -38,10 +32,10 @@ function formatDuration(ms: number) {
 }
 
 export function CaseAnalyticsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [activeSystem, setActiveSystem] = useState('danis_weber');
+  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
   const { data: caseData, isLoading: isLoadingCase } = useQuery({
     queryKey: ['case', id],
@@ -61,26 +55,7 @@ export function CaseAnalyticsPage() {
     }
   }, [id, caseData]);
 
-  const getDistributionData = useMemo(() => {
-    if (!analytics) return {};
-    switch (activeSystem) {
-      case 'danis_weber':
-        return analytics.danis_weber_distribution || {};
-      case 'lauge_hansen':
-        return analytics.lauge_hansen_distribution || {};
-      case 'ao_ota':
-        return analytics.ao_ota_distribution || {};
-      case 'bartonicek':
-        return analytics.bartonicek_distribution || {};
-      default:
-        return {};
-    }
-  }, [analytics, activeSystem]);
-
-  const activeSystemInfo = useMemo(
-    () => CLASSIFICATION_SYSTEMS.find(s => s.key === activeSystem),
-    [activeSystem]
-  );
+  const distribution = analytics?.[`${activeSystem}_distribution`] ?? {};
 
   if (isLoadingCase || isLoadingAnalytics) {
     return (
@@ -126,7 +101,7 @@ export function CaseAnalyticsPage() {
             <span className="flex flex-wrap items-center gap-3">
               <StatusBadge status={caseData.status} label={t(`cases.status.${caseData.status}`)} />
               {caseData.deadline && (
-                <span className="tabular-nums">{new Date(caseData.deadline).toLocaleDateString()}</span>
+                <span className="tabular-nums">{formatDate(caseData.deadline, i18n.language)}</span>
               )}
             </span>
           }
@@ -177,15 +152,13 @@ export function CaseAnalyticsPage() {
             </p>
           </div>
 
-          <SystemTabs systems={CLASSIFICATION_SYSTEMS} active={activeSystem} onChange={setActiveSystem} />
+          <SystemTabs systems={SYSTEMS} active={activeSystem} onChange={(key) => setActiveSystem(key as SystemKey)} />
 
           <Suspense fallback={<Skeleton className="h-96 w-full" />}>
             <ClassificationChart
-              data={getDistributionData}
-              title={t('admin.analytics.distributionTitle', '{{system}} Distribution', {
-                system: activeSystemInfo?.label,
-              })}
-              systemLabel={activeSystemInfo?.label || ''}
+              data={distribution}
+              title={t('admin.analytics.distributionTitle', { system: SYSTEM_LABEL[activeSystem] })}
+              systemLabel={SYSTEM_LABEL[activeSystem]}
               color={SYSTEM_COLOR[activeSystem]}
             />
           </Suspense>

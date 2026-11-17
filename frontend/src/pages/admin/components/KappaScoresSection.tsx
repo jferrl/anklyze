@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { KappaGauge } from '../../../components/analytics';
+import { KappaGauge, KappaLegend } from '../../../components/analytics';
 import type { ReliabilityMetrics } from '@/types';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, formatPercent, kappaAxisMin } from './systems';
 
 interface KappaScoresSectionProps {
   metrics: ReliabilityMetrics;
@@ -9,48 +10,62 @@ interface KappaScoresSectionProps {
 export function KappaScoresSection({ metrics }: KappaScoresSectionProps) {
   const { t } = useTranslation();
 
+  const rows = SYSTEM_KEYS.map((key) => {
+    const agreement = metrics[`${key}_agreement`];
+    const fleiss = agreement?.fleiss_kappa;
+    return {
+      key,
+      agreement,
+      kappa: fleiss ?? agreement?.cohens_kappa,
+      ci: fleiss === undefined ? agreement?.cohens_kappa_ci : undefined,
+    };
+  });
+  const hasKappa = rows.some((r) => r.kappa != null);
+  const kappaMissing = rows.some((r) => r.kappa == null);
+  const min = kappaAxisMin(rows.flatMap((r) => [r.kappa, r.ci?.lower]));
+
   return (
     <section className="chart-card">
       <h2 className="text-base font-semibold text-foreground mb-4">
-        {t('admin.reliability.kappaScores')}
+        {hasKappa ? t('admin.reliability.kappaScores') : t('admin.reliability.percentAgreement')}
       </h2>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <KappaGauge
-          value={metrics.danis_weber_agreement?.fleiss_kappa ?? metrics.danis_weber_agreement?.cohens_kappa}
-          ci={metrics.danis_weber_agreement?.fleiss_kappa === undefined ? metrics.danis_weber_agreement?.cohens_kappa_ci : undefined}
-          label={t('admin.reliability.systems.danisWeber')}
-          description={`${(metrics.danis_weber_agreement?.percent_agreement ?? 0).toFixed(1)}% ${t('admin.reliability.agreement')}`}
-          size="md"
-        />
-        <KappaGauge
-          value={metrics.lauge_hansen_agreement?.fleiss_kappa ?? metrics.lauge_hansen_agreement?.cohens_kappa}
-          ci={metrics.lauge_hansen_agreement?.fleiss_kappa === undefined ? metrics.lauge_hansen_agreement?.cohens_kappa_ci : undefined}
-          label={t('admin.reliability.systems.laugeHansen')}
-          description={`${(metrics.lauge_hansen_agreement?.percent_agreement ?? 0).toFixed(1)}% ${t('admin.reliability.agreement')}`}
-          size="md"
-        />
-        <KappaGauge
-          value={metrics.ao_ota_agreement?.fleiss_kappa ?? metrics.ao_ota_agreement?.cohens_kappa}
-          ci={metrics.ao_ota_agreement?.fleiss_kappa === undefined ? metrics.ao_ota_agreement?.cohens_kappa_ci : undefined}
-          label={t('admin.reliability.systems.aoOta')}
-          description={`${(metrics.ao_ota_agreement?.percent_agreement ?? 0).toFixed(1)}% ${t('admin.reliability.agreement')}`}
-          size="md"
-        />
-        <KappaGauge
-          value={metrics.bartonicek_agreement?.fleiss_kappa ?? metrics.bartonicek_agreement?.cohens_kappa}
-          ci={metrics.bartonicek_agreement?.fleiss_kappa === undefined ? metrics.bartonicek_agreement?.cohens_kappa_ci : undefined}
-          label={t('admin.reliability.systems.bartonicek')}
-          description={`${(metrics.bartonicek_agreement?.percent_agreement ?? 0).toFixed(1)}% ${t('admin.reliability.agreement')}`}
-          size="md"
-        />
+        {rows.map(({ key, agreement, kappa, ci }) =>
+          kappa != null ? (
+            <KappaGauge
+              key={key}
+              value={kappa}
+              ci={ci}
+              min={min}
+              label={SYSTEM_LABEL[key]}
+              description={`${formatPercent(agreement?.percent_agreement ?? 0)} ${t('admin.reliability.agreement')}`}
+            />
+          ) : (
+            // Without a kappa, percent agreement is the figure; an empty gauge would say nothing.
+            <div key={key} className="min-w-0">
+              <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <span className="size-2 shrink-0" style={{ backgroundColor: SYSTEM_COLOR[key] }} />
+                {SYSTEM_LABEL[key]}
+              </p>
+              <p className="mt-2 font-display text-4xl tabular-nums">
+                {agreement ? formatPercent(agreement.percent_agreement) : '—'}
+              </p>
+              {hasKappa && (
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.reliability.percentAgreement')}</p>
+              )}
+            </div>
+          )
+        )}
       </div>
 
-      <p className="mt-6 border-t pt-3 text-xs tabular-nums text-muted-foreground">
-        <span className="font-medium text-foreground">{t('admin.reliability.kappaInterpretation')}</span>
-        {' '}
-        {`< 0 ${t('admin.reliability.kappaPoor')} · 0–0.20 ${t('admin.reliability.kappaSlight')} · 0.21–0.40 ${t('admin.reliability.kappaFair')} · 0.41–0.60 ${t('admin.reliability.kappaModerate')} · 0.61–0.80 ${t('admin.reliability.kappaSubstantial')} · 0.81–1.00 ${t('admin.reliability.kappaAlmostPerfect')} (Landis & Koch, 1977)`}
-      </p>
+      {kappaMissing && (
+        <p className="mt-6 rounded-md border bg-muted px-3 py-2 text-sm text-foreground">
+          {t('admin.reliability.kappaNeedsCases')}
+        </p>
+      )}
+
+      {hasKappa && <KappaLegend className="mt-6 border-t pt-3" />}
     </section>
   );
 }

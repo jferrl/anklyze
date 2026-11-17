@@ -9,46 +9,16 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import type { StudyGoldStandardResponse } from '@/types';
-import { getAgreementColorClass } from './CaseMetricCard';
-import type { ClassificationSystem } from './CaseMetricCard';
-import { SystemTabs } from './SystemTabs';
-import { SYSTEM_COLOR } from './systems';
+import { SystemColumnHeads, SystemTabs } from './SystemTabs';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, agreementColorClass, formatPercent, type SystemKey } from './systems';
 
 interface StudyGoldStandardSectionProps {
   metrics: StudyGoldStandardResponse;
 }
 
-const SYSTEMS: ClassificationSystem[] = ['danis_weber', 'lauge_hansen', 'ao_ota', 'bartonicek'];
-
-function getSystemLabel(key: string): string {
-  const labels: Record<string, string> = {
-    danis_weber: 'Danis-Weber',
-    lauge_hansen: 'Lauge-Hansen',
-    ao_ota: 'AO/OTA',
-    bartonicek: 'Bartonicek',
-  };
-  return labels[key] || key;
-}
-
-function getAccuracyForSystem(
-  metrics: StudyGoldStandardResponse,
-  system: ClassificationSystem
-) {
-  switch (system) {
-    case 'danis_weber':
-      return metrics.danis_weber_accuracy;
-    case 'lauge_hansen':
-      return metrics.lauge_hansen_accuracy;
-    case 'ao_ota':
-      return metrics.ao_ota_accuracy;
-    case 'bartonicek':
-      return metrics.bartonicek_accuracy;
-  }
-}
-
 export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionProps) {
   const { t } = useTranslation();
-  const [activeSystem, setActiveSystem] = useState<ClassificationSystem>('danis_weber');
+  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
   if (metrics.cases_with_gold === 0) {
     return (
@@ -98,18 +68,18 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
         </p>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-4 lg:grid-cols-4">
-          {SYSTEMS.map((system) => {
-            const agg = getAccuracyForSystem(metrics, system);
+          {SYSTEM_KEYS.map((system) => {
+            const agg = metrics[`${system}_accuracy`];
             return (
               <div key={system}>
                 <p className="mb-1 flex items-center gap-2 text-sm text-muted-foreground">
                   <span className="size-2 shrink-0" style={{ backgroundColor: SYSTEM_COLOR[system] }} />
-                  {getSystemLabel(system)}
+                  {SYSTEM_LABEL[system]}
                 </p>
                 {agg ? (
                   <>
-                    <p className={cn('text-2xl font-semibold tabular-nums', getAgreementColorClass(agg.mean_accuracy))}>
-                      {agg.mean_accuracy.toFixed(1)}%
+                    <p className={cn('text-2xl font-semibold tabular-nums', agreementColorClass(agg.mean_accuracy))}>
+                      {formatPercent(agg.mean_accuracy)}
                     </p>
                     <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                       {t('admin.studies.goldStandard.casesEvaluated', '{{count}} cases', { count: agg.cases_evaluated })}
@@ -117,7 +87,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     <div className="mt-1 tabular-nums">
                       <p className="text-xs text-muted-foreground">
                         {t('admin.studies.goldStandard.consensusRate', 'Consensus: {{rate}}%', {
-                          rate: agg.consensus_rate.toFixed(0),
+                          rate: agg.consensus_rate.toFixed(1),
                         })}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -126,7 +96,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     </div>
                   </>
                 ) : (
-                  <p className="text-2xl font-semibold text-muted-foreground">-</p>
+                  <p className="text-2xl font-semibold text-muted-foreground">—</p>
                 )}
               </div>
             );
@@ -156,9 +126,9 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
 
           <SystemTabs
             className="md:hidden"
-            systems={SYSTEMS.map((key) => ({ key, label: getSystemLabel(key) }))}
+            systems={SYSTEMS}
             active={activeSystem}
-            onChange={(key) => setActiveSystem(key as ClassificationSystem)}
+            onChange={(key) => setActiveSystem(key as SystemKey)}
           />
         </div>
 
@@ -171,10 +141,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                 <th className="text-left py-3 px-4 font-medium text-muted-foreground">
                   {t('admin.studies.goldStandard.case', 'Case')}
                 </th>
-                <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-dw" />Danis-Weber</span></th>
-                <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-lh" />Lauge-Hansen</span></th>
-                <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-ao" />AO/OTA</span></th>
-                <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-bt" />Bartonicek</span></th>
+                <SystemColumnHeads />
               </tr>
             </thead>
             <tbody>
@@ -184,7 +151,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     <tr key={pca.case_id} className="border-b">
                       <td className="py-3 px-4 tabular-nums text-muted-foreground">{pca.case_order}</td>
                       <td className="py-3 px-4">
-                        <span className="font-medium text-foreground truncate max-w-[200px]">
+                        <span className="font-medium text-foreground">
                           {pca.case_title}
                         </span>
                       </td>
@@ -206,7 +173,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     <td className="py-3 px-4 tabular-nums text-muted-foreground">{pca.case_order}</td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-foreground truncate max-w-[200px]">
+                        <span className="font-medium text-foreground">
                           {pca.case_title}
                         </span>
                         {pca.is_hard_case && (
@@ -214,18 +181,14 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                         )}
                       </div>
                     </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', pca.danis_weber_accuracy != null ? getAgreementColorClass(pca.danis_weber_accuracy) : '')}>
-                      {pca.danis_weber_accuracy != null ? `${pca.danis_weber_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', pca.lauge_hansen_accuracy != null ? getAgreementColorClass(pca.lauge_hansen_accuracy) : '')}>
-                      {pca.lauge_hansen_accuracy != null ? `${pca.lauge_hansen_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', pca.ao_ota_accuracy != null ? getAgreementColorClass(pca.ao_ota_accuracy) : '')}>
-                      {pca.ao_ota_accuracy != null ? `${pca.ao_ota_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', pca.bartonicek_accuracy != null ? getAgreementColorClass(pca.bartonicek_accuracy) : '')}>
-                      {pca.bartonicek_accuracy != null ? `${pca.bartonicek_accuracy.toFixed(0)}%` : '-'}
-                    </td>
+                    {SYSTEM_KEYS.map((key) => {
+                      const value = pca[`${key}_accuracy`];
+                      return (
+                        <td key={key} className={cn('py-3 px-4 text-right font-medium tabular-nums', agreementColorClass(value))}>
+                          {value != null ? formatPercent(value) : '—'}
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })}
@@ -238,16 +201,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
           {sortedCases.map((pca) => {
             if (!pca.has_gold_standard) return null;
 
-            const getAccuracy = (): number | undefined => {
-              switch (activeSystem) {
-                case 'danis_weber': return pca.danis_weber_accuracy ?? undefined;
-                case 'lauge_hansen': return pca.lauge_hansen_accuracy ?? undefined;
-                case 'ao_ota': return pca.ao_ota_accuracy ?? undefined;
-                case 'bartonicek': return pca.bartonicek_accuracy ?? undefined;
-              }
-            };
-
-            const accuracy = getAccuracy();
+            const accuracy = pca[`${activeSystem}_accuracy`];
 
             return (
               <div
@@ -264,9 +218,9 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                   {pca.is_hard_case && <AlertTriangle className="w-4 h-4 text-warning" />}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{getSystemLabel(activeSystem)}</span>
-                  <span className={cn('text-base font-semibold tabular-nums', accuracy != null ? getAgreementColorClass(accuracy) : '')}>
-                    {accuracy != null ? `${accuracy.toFixed(0)}%` : '-'}
+                  <span className="text-sm text-muted-foreground">{SYSTEM_LABEL[activeSystem]}</span>
+                  <span className={cn('text-base font-semibold tabular-nums', agreementColorClass(accuracy))}>
+                    {accuracy != null ? formatPercent(accuracy) : '—'}
                   </span>
                 </div>
               </div>
@@ -300,10 +254,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                   <th className="text-right py-3 px-4 font-medium text-muted-foreground">
                     {t('admin.studies.goldStandard.casesCompleted', 'Cases')}
                   </th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-dw" />Danis-Weber</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-lh" />Lauge-Hansen</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-ao" />AO/OTA</span></th>
-                  <th className="text-right py-3 px-4 font-medium text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-2 bg-sys-bt" />Bartonicek</span></th>
+                  <SystemColumnHeads />
                 </tr>
               </thead>
               <tbody>
@@ -322,18 +273,14 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     <td className="py-3 px-4 text-right tabular-nums text-muted-foreground">
                       {rater.cases_completed}
                     </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', rater.danis_weber_accuracy != null ? getAgreementColorClass(rater.danis_weber_accuracy) : '')}>
-                      {rater.danis_weber_accuracy != null ? `${rater.danis_weber_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', rater.lauge_hansen_accuracy != null ? getAgreementColorClass(rater.lauge_hansen_accuracy) : '')}>
-                      {rater.lauge_hansen_accuracy != null ? `${rater.lauge_hansen_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', rater.ao_ota_accuracy != null ? getAgreementColorClass(rater.ao_ota_accuracy) : '')}>
-                      {rater.ao_ota_accuracy != null ? `${rater.ao_ota_accuracy.toFixed(0)}%` : '-'}
-                    </td>
-                    <td className={cn('py-3 px-4 text-right font-medium tabular-nums', rater.bartonicek_accuracy != null ? getAgreementColorClass(rater.bartonicek_accuracy) : '')}>
-                      {rater.bartonicek_accuracy != null ? `${rater.bartonicek_accuracy.toFixed(0)}%` : '-'}
-                    </td>
+                    {SYSTEM_KEYS.map((key) => {
+                      const value = rater[`${key}_accuracy`];
+                      return (
+                        <td key={key} className={cn('py-3 px-4 text-right font-medium tabular-nums', agreementColorClass(value))}>
+                          {value != null ? formatPercent(value) : '—'}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -343,16 +290,7 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
           {/* Mobile: Card layout */}
           <div className="divide-y border-t md:hidden">
             {metrics.per_rater_accuracy.map((rater) => {
-              const getAccuracy = (): number | undefined => {
-                switch (activeSystem) {
-                  case 'danis_weber': return rater.danis_weber_accuracy ?? undefined;
-                  case 'lauge_hansen': return rater.lauge_hansen_accuracy ?? undefined;
-                  case 'ao_ota': return rater.ao_ota_accuracy ?? undefined;
-                  case 'bartonicek': return rater.bartonicek_accuracy ?? undefined;
-                }
-              };
-
-              const accuracy = getAccuracy();
+              const accuracy = rater[`${activeSystem}_accuracy`];
 
               return (
                 <div key={rater.user_id} className="py-3">
@@ -365,9 +303,9 @@ export function StudyGoldStandardSection({ metrics }: StudyGoldStandardSectionPr
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{getSystemLabel(activeSystem)}</span>
-                    <span className={cn('text-base font-semibold tabular-nums', accuracy != null ? getAgreementColorClass(accuracy) : '')}>
-                      {accuracy != null ? `${accuracy.toFixed(0)}%` : '-'}
+                    <span className="text-sm text-muted-foreground">{SYSTEM_LABEL[activeSystem]}</span>
+                    <span className={cn('text-base font-semibold tabular-nums', agreementColorClass(accuracy))}>
+                      {accuracy != null ? formatPercent(accuracy) : '—'}
                     </span>
                   </div>
                 </div>

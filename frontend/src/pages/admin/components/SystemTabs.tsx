@@ -1,11 +1,23 @@
 import { cn } from '@/lib/utils';
-import { SYSTEM_COLOR } from './systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL } from './systems';
 
 interface SystemTabsProps {
   systems: { key: string; label: string }[];
   active: string;
   onChange: (key: string) => void;
   className?: string;
+}
+
+/** SystemColumnHeads renders one right-aligned table header per system, in display order. */
+export function SystemColumnHeads() {
+  return SYSTEM_KEYS.map((key) => (
+    <th key={key} className="py-3 px-4 text-right font-medium text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5">
+        <span className="size-2" style={{ backgroundColor: SYSTEM_COLOR[key] }} />
+        {SYSTEM_LABEL[key]}
+      </span>
+    </th>
+  ));
 }
 
 /** SystemTabs switches between the four classification systems, each marked with its identity swatch. */

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDropzone } from 'react-dropzone';
-import { ChevronLeft, ChevronRight, Upload } from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Upload } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -28,8 +27,6 @@ interface CaseImagesStepProps {
   onRemovePending: (id: string) => void;
   onDeleteExisting: (imageId: string) => void;
   onDrop: (category: ImageCategory) => (files: File[]) => void;
-  onPrev: () => void;
-  onNext?: () => void;
 }
 
 export function CaseImagesStep({
@@ -40,8 +37,6 @@ export function CaseImagesStep({
   onRemovePending,
   onDeleteExisting,
   onDrop,
-  onPrev,
-  onNext,
 }: CaseImagesStepProps) {
   const { t } = useTranslation();
 
@@ -171,20 +166,6 @@ export function CaseImagesStep({
           </div>
         </CardContent>
       </Card>
-
-      {/* Navigation */}
-      <div className="flex justify-between mt-6">
-        <Button variant="outline" onClick={onPrev}>
-          <ChevronLeft />
-          {t('common.previous')}
-        </Button>
-        {onNext && (
-          <Button onClick={onNext}>
-            {t('common.next')}
-            <ChevronRight />
-          </Button>
-        )}
-      </div>
     </div>
   );
 }

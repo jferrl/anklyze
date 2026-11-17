@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
 });
 
 import { HomeRedirect } from './components/auth/HomeRedirect';
+import { NotFoundPage } from './components/NotFoundPage';
 import { ClassifyPage } from './pages/ClassifyPage';
 import { CasesPage } from './pages/CasesPage';
 import { CaseDetailPage } from './pages/CaseDetailPage';
@@ -247,10 +248,11 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <CommandPalette />
           </BrowserRouter>
-          <Toaster position="bottom-right" richColors closeButton />
+          <Toaster position="bottom-right" closeButton />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

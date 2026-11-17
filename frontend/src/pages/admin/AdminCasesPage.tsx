@@ -14,7 +14,8 @@ import {
   Lock,
   Award,
 } from 'lucide-react';
-import { Button } from '../../components/ui/button';
+import type { TFunction } from 'i18next';
+import { Button, buttonVariants } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import {
   DropdownMenu,
@@ -37,21 +38,23 @@ import { toast } from 'sonner';
 import { caseApi, InputValidationError } from '@/services';
 import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatDate as formatDateIn } from '@/lib/format';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { DataTable } from './components/DataTable';
 import { FilterBar } from './components/FilterBar';
+import { NoMatchState } from './components/NoMatchState';
 import { Pagination } from './components/Pagination';
 import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminCasesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Case | null>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -73,7 +76,7 @@ export function AdminCasesPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-cases'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['admin-cases-all'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['published-cases'], refetchType: 'all' });
-      setDeleteId(null);
+      setDeleteTarget(null);
     },
   });
 
@@ -113,18 +116,16 @@ export function AdminCasesPage() {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
+  const isFiltered = searchQuery.trim() !== '' || statusFilter !== 'all';
+
   const filteredCases = cases.filter((caseItem) =>
     caseItem.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = useCallback((dateString?: string) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString?: string) => (dateString ? formatDateIn(dateString, i18n.language) : ''),
+    [i18n.language]
+  );
 
   const isDeadlinePassed = useCallback((deadline?: string) => {
     if (!deadline) return false;
@@ -134,7 +135,7 @@ export function AdminCasesPage() {
   // Memoized action handlers
   const handleView = useCallback((id: string) => navigate(`/cases/${id}`), [navigate]);
   const handleEdit = useCallback((id: string) => navigate(`/admin/cases/${id}/edit`), [navigate]);
-  const handleDelete = useCallback((id: string) => setDeleteId(id), []);
+  const handleDelete = useCallback((caseItem: Case) => setDeleteTarget(caseItem), []);
   const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation]);
   const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
   const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
@@ -165,14 +166,20 @@ export function AdminCasesPage() {
                 {caseItem.description}
               </span>
             )}
-            {caseItem.has_tac_images && (
-              <Badge variant="outline" className="w-fit font-normal">
-                {t('cases.images.ct')}
-              </Badge>
-            )}
           </div>
         );
       },
+    },
+    {
+      id: 'ct',
+      header: () => t('cases.images.ct'),
+      size: 64,
+      cell: ({ row }) =>
+        row.original.has_tac_images ? (
+          <Badge variant="outline" className="font-normal">
+            {t('cases.images.ct')}
+          </Badge>
+        ) : null,
     },
     {
       id: 'status',
@@ -224,7 +231,7 @@ export function AdminCasesPage() {
             {formatDate(caseItem.deadline)}
           </span>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className="text-muted-foreground">{t('admin.cases.noDeadline')}</span>
         );
       },
     },
@@ -270,7 +277,7 @@ export function AdminCasesPage() {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDelete(caseItem.id)} className="text-destructive">
+              <DropdownMenuItem onClick={() => handleDelete(caseItem)} className="text-destructive">
                 <Trash2 className="h-4 w-4 mr-2" />
                 {t('common.delete')}
               </DropdownMenuItem>
@@ -317,7 +324,13 @@ export function AdminCasesPage() {
         />
 
         {/* Cases Table */}
-        {filteredCases.length === 0 ? (
+        {filteredCases.length === 0 && isFiltered ? (
+          <NoMatchState
+            query={searchQuery}
+            statusLabel={statusFilter === 'all' ? undefined : t(`cases.status.${statusFilter}`)}
+            onClear={() => { setSearchQuery(''); setStatusFilter('all'); setPage(1); }}
+          />
+        ) : filteredCases.length === 0 ? (
           <div className="rounded-lg border bg-card px-4 py-12 text-center">
             <h2 className="text-base font-semibold text-foreground">
               {t('admin.cases.noCases')}
@@ -342,7 +355,7 @@ export function AdminCasesPage() {
                   isDeadlinePassed={isDeadlinePassed}
                   onView={() => handleView(caseItem.id)}
                   onEdit={() => handleEdit(caseItem.id)}
-                  onDelete={() => handleDelete(caseItem.id)}
+                  onDelete={() => handleDelete(caseItem)}
                   onPublish={() => handlePublish(caseItem.id)}
                   onClose={() => handleClose(caseItem.id)}
                   onViewAnalytics={() => handleViewAnalytics(caseItem.id)}
@@ -374,24 +387,28 @@ export function AdminCasesPage() {
         />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.cases.deleteConfirm.title')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('admin.cases.deleteConfirm.description')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteId && deleteMutation.mutate(deleteId)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('common.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        {deleteTarget && (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('admin.cases.deleteConfirm.titleNamed', { title: deleteTarget.title })}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {deleteTarget.response_count > 0
+                  ? t('admin.cases.deleteConfirm.body', { count: deleteTarget.response_count })
+                  : t('admin.cases.deleteConfirm.bodyNoResponses')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteMutation.mutate(deleteTarget.id)}
+                className={buttonVariants({ variant: 'destructive' })}
+              >
+                {t('common.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        )}
       </AlertDialog>
     </div>
   );
@@ -407,7 +424,7 @@ interface CaseRowProps {
   onPublish: () => void;
   onClose: () => void;
   onViewAnalytics: () => void;
-  t: (key: string) => string;
+  t: TFunction;
 }
 
 const CaseCard = memo(function CaseCard({
@@ -432,23 +449,25 @@ const CaseCard = memo(function CaseCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-foreground truncate">{caseItem.title}</span>
+          <div className="mb-1 flex items-start gap-2">
+            <span className="line-clamp-2 font-medium text-foreground">{caseItem.title}</span>
             {caseItem.gold_standard && (
-              <Award className="h-4 w-4 shrink-0 text-primary" />
+              <Award className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-label={t('admin.reliability.goldStandardSet')} />
             )}
-            <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} className="shrink-0" />
           </div>
           {caseItem.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
               {caseItem.description}
             </p>
           )}
-          <div className="flex flex-wrap items-center gap-3 text-sm tabular-nums text-muted-foreground">
-            <span className="inline-flex items-center gap-1 tabular-nums">
-              <BarChart3 className="w-3.5 h-3.5" />
-              {caseItem.response_count} {t('admin.cases.table.responses').toLowerCase()}
-            </span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm tabular-nums text-muted-foreground">
+            <StatusBadge status={caseItem.status} label={t(`cases.status.${caseItem.status}`)} />
+            {caseItem.has_tac_images && (
+              <Badge variant="outline" className="font-normal">
+                {t('cases.images.ct')}
+              </Badge>
+            )}
+            <span>{t('admin.analytics.responsesCount', { count: caseItem.response_count })}</span>
             <span>{formatDate(caseItem.created_at)}</span>
             {caseItem.deadline && (
               <span className={cn(
@@ -458,11 +477,6 @@ const CaseCard = memo(function CaseCard({
               </span>
             )}
           </div>
-          {caseItem.has_tac_images && (
-            <Badge variant="outline" className="mt-2 font-normal">
-              {t('cases.images.ct')}
-            </Badge>
-          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>

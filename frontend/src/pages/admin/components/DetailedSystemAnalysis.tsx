@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Info } from 'lucide-react';
 import { ConfusionMatrix } from '../../../components/analytics';
@@ -9,28 +9,16 @@ import {
   TooltipTrigger,
 } from '../../../components/ui/tooltip';
 import { SystemTabs } from './SystemTabs';
-import { SYSTEM_COLOR } from './systems';
-import type { ReliabilityMetrics, SystemAgreement, ConfidenceInterval } from '@/types';
-
-const CLASSIFICATION_SYSTEM_KEYS = ['danis_weber', 'lauge_hansen', 'ao_ota', 'bartonicek'] as const;
+import { SYSTEM_COLOR, SYSTEM_LABEL, SYSTEMS, formatPercent, type SystemKey } from './systems';
+import type { ReliabilityMetrics, ConfidenceInterval } from '@/types';
 
 function formatKappaWithCI(kappa: number | undefined, ci?: ConfidenceInterval): string {
-  if (kappa === undefined) return '-';
+  if (kappa === undefined) return '—';
   const kappaStr = kappa.toFixed(3);
   if (ci) {
     return `${kappaStr} [${ci.lower.toFixed(2)}, ${ci.upper.toFixed(2)}]`;
   }
   return kappaStr;
-}
-
-function getSystemLabel(t: (key: string) => string, key: string): string {
-  const keyMap: Record<string, string> = {
-    danis_weber: 'danisWeber',
-    lauge_hansen: 'laugeHansen',
-    ao_ota: 'aoOta',
-    bartonicek: 'bartonicek',
-  };
-  return t(`admin.reliability.systems.${keyMap[key]}`);
 }
 
 interface DetailedSystemAnalysisProps {
@@ -39,22 +27,9 @@ interface DetailedSystemAnalysisProps {
 
 export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps) {
   const { t } = useTranslation();
-  const [activeSystem, setActiveSystem] = useState('danis_weber');
+  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
-  const getSystemAgreement = useMemo((): SystemAgreement | undefined => {
-    switch (activeSystem) {
-      case 'danis_weber':
-        return metrics.danis_weber_agreement;
-      case 'lauge_hansen':
-        return metrics.lauge_hansen_agreement;
-      case 'ao_ota':
-        return metrics.ao_ota_agreement;
-      case 'bartonicek':
-        return metrics.bartonicek_agreement;
-      default:
-        return undefined;
-    }
-  }, [metrics, activeSystem]);
+  const getSystemAgreement = metrics[`${activeSystem}_agreement`];
 
   return (
     <section className="space-y-4">
@@ -68,9 +43,9 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
       </div>
 
       <SystemTabs
-        systems={CLASSIFICATION_SYSTEM_KEYS.map((key) => ({ key, label: getSystemLabel(t, key) }))}
+        systems={SYSTEMS}
         active={activeSystem}
-        onChange={setActiveSystem}
+        onChange={(key) => setActiveSystem(key as SystemKey)}
       />
 
       {/* System Details */}
@@ -79,7 +54,7 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
           {/* Metrics */}
           <div className="chart-card">
             <h3 className="text-base font-semibold text-foreground mb-2">
-              {t('admin.reliability.systemMetrics', { system: getSystemLabel(t, activeSystem) })}
+              {t('admin.reliability.systemMetrics', { system: SYSTEM_LABEL[activeSystem] })}
             </h3>
 
             <div>
@@ -88,7 +63,7 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
                   {t('admin.reliability.percentAgreement')}
                 </span>
                 <span className="text-base font-semibold tabular-nums text-foreground">
-                  {getSystemAgreement.percent_agreement.toFixed(1)}%
+                  {formatPercent(getSystemAgreement.percent_agreement)}
                 </span>
               </div>
 
@@ -154,23 +129,6 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
                 </div>
               )}
 
-              {getSystemAgreement.fleiss_kappa === undefined &&
-               getSystemAgreement.fleiss_kappa_note && (
-                <div className="mt-3 rounded-md border border-warning/30 bg-warning/10 p-3">
-                  <div className="flex items-start gap-2">
-                    <Info className="w-4 h-4 text-warning mt-0.5 shrink-0" />
-                    <div>
-                      <span className="text-sm font-medium text-foreground">
-                        {t('admin.reliability.fleissKappa')}
-                      </span>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {t('admin.reliability.fleissKappaNote')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Category Counts */}
               <div className="pt-4">
                 <h4 className="text-sm font-medium text-foreground mb-3">
@@ -189,7 +147,7 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">{category}</span>
                             <span className="font-medium tabular-nums">
-                              {count} ({percentage.toFixed(1)}%)
+                              {count} ({formatPercent(percentage)})
                             </span>
                           </div>
                           <div className="h-1.5 overflow-hidden rounded-sm bg-muted">
@@ -213,7 +171,7 @@ export function DetailedSystemAnalysis({ metrics }: DetailedSystemAnalysisProps)
             </h3>
             <ConfusionMatrix
               matrix={getSystemAgreement.confusion_matrix}
-              title={getSystemLabel(t, activeSystem)}
+              title={SYSTEM_LABEL[activeSystem]}
             />
           </div>
         </div>

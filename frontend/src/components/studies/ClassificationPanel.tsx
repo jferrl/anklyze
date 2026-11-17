@@ -83,10 +83,10 @@ export function ClassificationPanel({
     return (
       <Notice
         icon={<Check className="h-4 w-4 text-success" />}
-        title={t('studies.alreadyResponded', 'Already Responded')}
+        title={t('studies.alreadyResponded')}
       >
         <p className="text-sm text-muted-foreground">
-          {t('studies.alreadyRespondedDescription', 'You have already submitted a response to this study. This study only allows one response per participant.')}
+          {t('studies.alreadyRespondedDescription')}
         </p>
       </Notice>
     );

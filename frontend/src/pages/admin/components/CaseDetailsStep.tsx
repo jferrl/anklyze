@@ -1,6 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from 'lucide-react';
-import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
@@ -19,7 +17,7 @@ export interface CaseDetailsStepProps {
   canEdit: boolean;
   canEditAlways: boolean;
   onUpdateField: (field: string, value: string) => void;
-  onNext: () => void;
+  titleError?: string | null;
 }
 
 export function CaseDetailsStep({
@@ -29,7 +27,7 @@ export function CaseDetailsStep({
   canEdit,
   canEditAlways,
   onUpdateField,
-  onNext,
+  titleError,
 }: CaseDetailsStepProps) {
   const { t } = useTranslation();
 
@@ -52,7 +50,12 @@ export function CaseDetailsStep({
               onChange={(e) => onUpdateField('title', e.target.value)}
               placeholder={t('admin.cases.titlePlaceholder')}
               disabled={!canEdit}
+              aria-invalid={titleError ? true : undefined}
+              aria-describedby={titleError ? 'title-error' : undefined}
             />
+            {titleError && (
+              <p id="title-error" className="text-sm text-destructive">{titleError}</p>
+            )}
           </div>
 
           {/* Description Field */}
@@ -88,14 +91,6 @@ export function CaseDetailsStep({
           </div>
         </CardContent>
       </Card>
-
-      {/* Navigation */}
-      <div className="flex justify-end mt-6">
-        <Button onClick={onNext}>
-          {t('common.next')}
-          <ChevronRight />
-        </Button>
-      </div>
     </div>
   );
 }

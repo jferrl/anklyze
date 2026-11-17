@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import type { CaseResponse } from '@/types';
+import { formatDateTime } from '@/lib/format';
 import {
   getDanisWeberDisplayName,
   getLaugeHansenFullName,
@@ -16,7 +17,7 @@ interface PreviousResponsesProps {
 }
 
 export function PreviousResponses({ responses }: PreviousResponsesProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
 
   if (responses.length === 0) {
@@ -47,15 +48,15 @@ export function PreviousResponses({ responses }: PreviousResponsesProps) {
             const c = response.classification;
             const aoSubtype = c.ao_ota && getAOOTASubtypeLabel(t, c.ao_ota.code);
             const systems = [
-              c.danis_weber && {
-                swatch: 'bg-sys-dw',
-                label: 'Danis-Weber',
-                value: getDanisWeberDisplayName(t, c.danis_weber.type),
-              },
               c.lauge_hansen && {
                 swatch: 'bg-sys-lh',
                 label: 'Lauge-Hansen',
                 value: getLaugeHansenFullName(t, c.lauge_hansen.type),
+              },
+              c.danis_weber && {
+                swatch: 'bg-sys-dw',
+                label: 'Danis-Weber',
+                value: getDanisWeberDisplayName(t, c.danis_weber.type),
               },
               c.ao_ota && {
                 swatch: 'bg-sys-ao',
@@ -73,7 +74,7 @@ export function PreviousResponses({ responses }: PreviousResponsesProps) {
               <div key={response.id} className="px-4 py-3">
                 <div className="text-xs text-muted-foreground tabular-nums">
                   {t('studies.response')} #{responses.length - index} ·{' '}
-                  {new Date(response.created_at).toLocaleString()}
+                  {formatDateTime(response.created_at, i18n.language)}
                 </div>
                 <dl className="mt-2 divide-y text-sm">
                   {systems.map((s) => (

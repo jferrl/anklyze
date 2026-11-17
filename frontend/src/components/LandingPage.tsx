@@ -18,10 +18,10 @@ const EXAMPLE_PATH = [
 ] as const;
 
 const SYSTEMS = [
-  { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER', example: 'SER' },
-  { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B', example: 'B' },
+  { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER', example: 'SA · SER · PA · PER' },
+  { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B', example: 'A · B · C' },
   { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-B1.1' },
-  { key: 'bartonicek', name: 'Bartonicek', swatch: 'bg-sys-bt', code: null, example: '2' },
+  { key: 'bartonicek', name: 'Bartonicek', swatch: 'bg-sys-bt', code: null, example: '1 – 4' },
 ] as const;
 
 export function LandingPage() {
@@ -49,10 +49,10 @@ export function LandingPage() {
             </a>
             <ThemeSwitcher />
             <LanguageSwitcher />
-            <Button variant="ghost" size="sm" className="max-sm:hidden" asChild>
+            <Button variant="ghost" size="sm" asChild>
               <Link to="/login">{t('landing.nav.signIn')}</Link>
             </Button>
-            <Button size="sm" asChild>
+            <Button size="sm" className="max-sm:hidden" asChild>
               <Link to="/classify">{t('landing.startClassifying')}</Link>
             </Button>
           </div>
@@ -62,8 +62,8 @@ export function LandingPage() {
       <main>
         <section className="field-navy">
           <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:py-20">
-            <div className="lg:col-span-6 lg:pt-4">
-              <h1 className="font-display text-[clamp(2.25rem,4.4vw,3.75rem)]">{t('landing.hero.title')}</h1>
+            <div className="lg:col-span-7 lg:pt-4">
+              <h1 className="font-display text-[clamp(2.25rem,4.6vw,4.25rem)]">{t('landing.hero.title')}</h1>
               <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/80">{t('landing.hero.lede')}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link
@@ -79,7 +79,7 @@ export function LandingPage() {
               </div>
             </div>
 
-            <figure className="lg:col-span-6">
+            <figure className="lg:col-span-5">
               <ol className="border border-white/25">
                 {EXAMPLE_PATH.map(([question, answer], i) => (
                   <li key={question} className="grid grid-cols-[2.5rem_1fr] border-b border-white/25">
@@ -99,7 +99,7 @@ export function LandingPage() {
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
-                      <p className="font-display mt-2 text-2xl sm:text-3xl" data-numeric>
+                      <p className="font-display mt-2 text-2xl" data-numeric>
                         {s.code ?? <span className="text-[oklch(0.47_0.03_262)]">N/C</span>}
                       </p>
                     </div>
@@ -154,7 +154,7 @@ export function LandingPage() {
                         </span>
                       </th>
                       <td className="py-5 pr-6 text-muted-foreground max-sm:hidden">{t(`landing.systems.${s.key}`)}</td>
-                      <td className="font-display py-5 text-right align-top text-2xl whitespace-nowrap">{s.example}</td>
+                      <td className="font-display py-5 text-right align-top text-xl whitespace-nowrap">{s.example}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -20,7 +20,7 @@ import { CaseDetailsStep } from '../components/CaseDetailsStep';
 import { useCaseEditorForm } from './useCaseEditorForm';
 import { useCaseEditorMutations } from './useCaseEditorMutations';
 import { CaseImagesStep } from './CaseImagesStep';
-import { CaseEditorStepper } from './CaseEditorStepper';
+import { StepFooter, StepIndicator } from '../components/EditorSteps';
 import { CaseGoldStandardCard } from './CaseGoldStandardCard';
 
 interface PendingUpload {
@@ -41,11 +41,13 @@ export function CaseEditorPage() {
   const [pageState, setPageState] = useState({
     step: 'details' as Step,
     error: null as string | null,
+    titleError: null as string | null,
     showPublishDialog: false,
   });
-  const { step: currentStep, error, showPublishDialog } = pageState;
+  const { step: currentStep, error, titleError, showPublishDialog } = pageState;
   const setCurrentStep = (step: Step) => setPageState(p => ({ ...p, step }));
   const setError = (error: string | null) => setPageState(p => ({ ...p, error }));
+  const setTitleError = (titleError: string | null) => setPageState(p => ({ ...p, titleError }));
   const setShowPublishDialog = (v: boolean) => setPageState(p => ({ ...p, showPublishDialog: v }));
 
   const { data: existingCase, isLoading: isLoadingCase } = useQuery({
@@ -98,7 +100,12 @@ export function CaseEditorPage() {
 
   const handleSave = async () => {
     setError(null);
-    if (!title.trim()) { setError(t('admin.cases.errors.titleRequired')); setCurrentStep('details'); return; }
+    if (!title.trim()) {
+      setPageState(p => ({ ...p, step: 'details', titleError: t('admin.cases.errors.titleRequired') }));
+      // The field may only mount with this render, so focus it on the next frame.
+      requestAnimationFrame(() => document.getElementById('title')?.focus());
+      return;
+    }
     const data = {
       title: title.trim(), description: description.trim() || undefined,
       deadline: deadline ? new Date(deadline).toISOString() : undefined,
@@ -125,7 +132,6 @@ export function CaseEditorPage() {
   };
 
   const existingImages = existingCase?.images ?? [];
-  const totalImages = existingImages.length + pendingUploads.length;
   const canPublish = isEditing && existingCase?.status === 'draft';
   const canEdit = !isEditing || existingCase?.status === 'draft';
   const canEditAlways = !isEditing || existingCase?.status !== 'closed';
@@ -172,30 +178,39 @@ export function CaseEditorPage() {
           </Alert>
         )}
 
-        <CaseEditorStepper
-          steps={STEPS} isEditing={isEditing} currentStep={currentStep}
-          title={title} totalImages={totalImages} onStepClick={setCurrentStep}
+        <StepIndicator
+          steps={[
+            { key: 'details', label: t('admin.cases.details') },
+            { key: 'images', label: t('admin.cases.images') },
+          ]}
+          current={currentStep}
+          onStepClick={setCurrentStep}
         />
 
         <div className="space-y-6">
           {currentStep === 'details' && (
             <CaseDetailsStep title={title} description={description} deadline={deadline}
               canEdit={canEdit} canEditAlways={canEditAlways}
-              onUpdateField={(field, value) => updateForm(field as keyof typeof form, value)}
-              onNext={goToNextStep} />
+              titleError={titleError}
+              onUpdateField={(field, value) => {
+                if (field === 'title' && titleError) setTitleError(null);
+                updateForm(field as keyof typeof form, value);
+              }} />
           )}
           {currentStep === 'images' && (
             <CaseImagesStep existingImages={existingImages} pendingUploads={pendingUploads}
               canEdit={canEdit} caseId={id}
               onRemovePending={removePendingUpload}
               onDeleteExisting={(imageId) => deleteImageMutation.mutate({ caseId: id!, imageId })}
-              onDrop={createOnDrop} onPrev={goToPrevStep} />
+              onDrop={createOnDrop} />
           )}
 
           {isEditing && existingCase && existingCase.status !== 'closed' && (
             <CaseGoldStandardCard caseData={existingCase} />
           )}
         </div>
+
+        <StepFooter current={currentStepIndex} total={STEPS.length} onPrev={goToPrevStep} onNext={goToNextStep} />
 
       <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
         <AlertDialogContent>

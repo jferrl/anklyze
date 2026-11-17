@@ -227,6 +227,8 @@ function DonutView({
   );
 }
 
+const MAX_LABEL = 24;
+
 function BarView({
   data,
   hoveredIndex,
@@ -236,12 +238,15 @@ function BarView({
   hoveredIndex: number | null;
   setHoveredIndex: (index: number | null) => void;
 }) {
+  // shortcut: label width is estimated at 7px per character of text-xs, measure the text if labels get clipped.
+  const labelWidth = Math.min(180, Math.max(...data.map((d) => Math.min(d.name.length, MAX_LABEL))) * 7 + 12);
+
   return (
-    <ResponsiveContainer width="100%" height={Math.max(160, data.length * 36 + 20)}>
+    <ResponsiveContainer width="100%" height={data.length * 36 + 8}>
       <BarChart
         data={data}
         layout="vertical"
-        margin={{ left: 0, right: 40, top: 10, bottom: 10 }}
+        margin={{ left: 0, right: 40, top: 4, bottom: 4 }}
         onMouseLeave={() => setHoveredIndex(null)}
       >
         <XAxis type="number" hide />
@@ -250,7 +255,7 @@ function BarView({
           type="category"
           axisLine={false}
           tickLine={false}
-          width={100}
+          width={labelWidth}
           tick={({ x, y, payload }) => (
             <text
               x={x}
@@ -259,8 +264,8 @@ function BarView({
               textAnchor="end"
               className="fill-muted-foreground text-xs"
             >
-              {payload.value.length > 12
-                ? payload.value.slice(0, 12) + '...'
+              {payload.value.length > MAX_LABEL
+                ? payload.value.slice(0, MAX_LABEL - 1) + '…'
                 : payload.value}
             </text>
           )}

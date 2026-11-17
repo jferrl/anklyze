@@ -136,6 +136,10 @@ export function FractureForm() {
     return (
       <div className="space-y-6">
         {header()}
+        <section className="space-y-4">
+          <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
+          <BreadcrumbTrail variant="list" formData={lastInput} options={options} />
+        </section>
         <ResultsPanel
           result={result}
           input={lastInput}
@@ -151,58 +155,71 @@ export function FractureForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {header(
-        <Button type="button" variant="outline" onClick={handleReset} className="gap-2">
-          <RotateCcw className="h-4 w-4" />
-          {t('form.reset')}
-        </Button>
+        formData.involved_malleoli && (
+          <Button type="button" variant="outline" onClick={handleReset} className="gap-2">
+            <RotateCcw className="h-4 w-4" />
+            {t('form.reset')}
+          </Button>
+        )
       )}
 
-      <div className="max-w-2xl space-y-6">
-        {formData.involved_malleoli && (
-          <div className="space-y-3">
-            <FormProgress
-              currentStep={currentStep}
-              totalSteps={totalSteps}
-              showStepCounter={false}
-            />
-            <BreadcrumbTrail formData={formData} options={options} />
+      <div className="lg:grid lg:grid-cols-[minmax(0,42rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+        <div className="max-w-2xl space-y-6">
+          {formData.involved_malleoli && (
+            <div className="space-y-3">
+              <FormProgress
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+                showStepCounter={false}
+              />
+              <BreadcrumbTrail formData={formData} options={options} className="lg:hidden" />
+            </div>
+          )}
+
+          {canGoBack && formData.involved_malleoli && (
+            <Button type="button" variant="ghost" onClick={goBack} className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              {t('form.back')}
+            </Button>
+          )}
+
+          {/* Questions — single source of truth */}
+          <ClassificationFormQuestions
+            formData={formData}
+            onUpdate={updateFormData}
+          />
+
+          {error && (
+            <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-4">
+            <Button
+              type="submit"
+              disabled={!isFormComplete(formData) || loading}
+              className="gap-2"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Workflow className="h-4 w-4" />
+              )}
+              {loading ? t('form.classifying') : t('form.classify')}
+            </Button>
+            <p className="text-xs text-muted-foreground">{t('form.keyboardHint')}</p>
           </div>
-        )}
-
-        {canGoBack && formData.involved_malleoli && (
-          <Button type="button" variant="ghost" onClick={goBack} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            {t('form.back')}
-          </Button>
-        )}
-
-        {/* Questions — single source of truth */}
-        <ClassificationFormQuestions
-          formData={formData}
-          onUpdate={updateFormData}
-        />
-
-        {error && (
-          <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3">
-            <p className="text-sm text-destructive">{error}</p>
-          </div>
-        )}
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-4">
-          <Button
-            type="submit"
-            disabled={!isFormComplete(formData) || loading}
-            className="gap-2"
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Workflow className="h-4 w-4" />
-            )}
-            {loading ? t('form.classifying') : t('form.classify')}
-          </Button>
-          <p className="text-xs text-muted-foreground">{t('form.keyboardHint')}</p>
         </div>
+
+        <aside className="hidden space-y-3 lg:sticky lg:top-16 lg:block lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+          <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
+          {formData.involved_malleoli ? (
+            <BreadcrumbTrail variant="list" formData={formData} options={options} />
+          ) : (
+            <p className="text-sm text-muted-foreground">{t('classify.pathEmpty')}</p>
+          )}
+        </aside>
       </div>
     </form>
   );

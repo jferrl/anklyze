@@ -3,7 +3,7 @@
  */
 export function getInitials(name?: string, email?: string): string {
   if (name) {
-    const parts = name.trim().split(' ').filter(Boolean);
+    const parts = name.trim().split(' ').filter((part) => part && !/^(dr|dra|prof|mr|mrs|ms)\.?$/i.test(part));
     if (parts.length >= 2) {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }

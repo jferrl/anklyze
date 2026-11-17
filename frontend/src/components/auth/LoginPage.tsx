@@ -32,7 +32,7 @@ export function LoginPage() {
 
     const { error } = await signInWithEmail(email, password);
     if (error) {
-      setError(error.message);
+      setError(t(/invalid login credentials/i.test(error.message) ? 'auth.invalidCredentials' : 'auth.signInFailed'));
       setLoading(false);
     } else {
       navigate(from, { replace: true });

@@ -9,21 +9,32 @@ interface KappaGaugeProps {
   size?: 'sm' | 'md' | 'lg';
   /** Confidence interval of the kappa, drawn on the scale and printed beside it. */
   ci?: { lower: number; upper: number; level?: number };
+  /** Left end of the scale. Gauges shown together must share it; alone, it follows the value. */
+  min?: -1 | 0;
 }
 
 // Landis & Koch band boundaries.
 const TICKS = [0, 0.2, 0.4, 0.6, 0.8];
 
+/** KappaLegend is the one Landis & Koch interpretation line printed under any set of kappas. */
+export function KappaLegend({ className }: { className?: string }) {
+  const { t } = useTranslation();
+  return (
+    <p className={cn('text-xs tabular-nums text-muted-foreground', className)}>
+      <span className="font-medium text-foreground">{t('admin.reliability.kappaInterpretation')}</span>{' '}
+      {t('admin.reliability.kappaLegend')} (Landis & Koch, 1977)
+    </p>
+  );
+}
 
 /** KappaGauge shows a kappa as the number itself, its Landis & Koch band, and its place on a scale. */
-export function KappaGauge({ value, label, description, size = 'md', ci }: KappaGaugeProps) {
+export function KappaGauge({ value, label, description, size = 'md', ci, min: sharedMin }: KappaGaugeProps) {
   const hasValue = value !== undefined && value !== null;
   const { t } = useTranslation();
   const interpretation = hasValue
     ? t(kappaInterpretationKey(getKappaInterpretation(value).label))
     : t('common.notAvailable');
-  // Kappa can be negative; the scale only widens to -1 when the value or its interval needs it.
-  const min = (hasValue && value < 0) || (ci && ci.lower < 0) ? -1 : 0;
+  const min = sharedMin ?? ((hasValue && value < 0) || (ci && ci.lower < 0) ? -1 : 0);
   const pos = (v: number) => ((Math.max(min, Math.min(1, v)) - min) / (1 - min)) * 100;
 
   return (

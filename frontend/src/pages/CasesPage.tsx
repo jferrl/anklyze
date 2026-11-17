@@ -14,11 +14,12 @@ import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { listPublishedCases } from '@/services';
 import type { UserCaseItem } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
 
 type FilterStatus = 'all' | 'completed' | 'pending';
 
 export function CasesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = searchParams.get('q') || '';
@@ -86,7 +87,7 @@ export function CasesPage() {
     const daysLeft = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
     return {
-      text: date.toLocaleDateString(),
+      text: formatDate(date, i18n.language),
       isExpired,
       daysLeft,
       isUrgent: !isExpired && daysLeft <= 3,
@@ -117,7 +118,7 @@ export function CasesPage() {
         }
       />
 
-      <div className="sticky top-0 z-10 -mt-3 mb-3 flex flex-col gap-3 bg-background py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="sticky top-12 z-10 -mt-3 mb-3 flex flex-col gap-3 bg-background py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-[300px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -229,18 +230,7 @@ function CaseRow({ caseItem, caseNumber, isNextUp, filterParams, formatDeadline 
 
   const meta = (
     <>
-      <span className="inline-flex items-center gap-1">
-        <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
-        {caseItem.image_count}
-        <span className="sr-only">{t('cases.imagesCount')}</span>
-      </span>
-      {caseItem.has_tac_images && <Badge variant="outline">{t('cases.images.ct')}</Badge>}
-      <span className="inline-flex items-center gap-1">
-        <Users className="h-3.5 w-3.5" aria-hidden="true" />
-        {caseItem.response_count}
-        <span className="sr-only">{t('cases.responses')}</span>
-      </span>
-      {deadline && (
+      {deadline ? (
         <span className={cn(deadline.isExpired && 'text-destructive', deadline.isUrgent && 'text-warning')}>
           {deadline.isExpired
             ? t('cases.expired')
@@ -248,7 +238,25 @@ function CaseRow({ caseItem, caseNumber, isNextUp, filterParams, formatDeadline 
               ? t('cases.daysLeft', { count: deadline.daysLeft })
               : deadline.text}
         </span>
+      ) : (
+        <span className="hidden md:block" />
       )}
+      <span className="inline-flex items-center gap-1">
+        <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
+        {caseItem.image_count}
+        <span className="sr-only">{t('cases.imagesCount')}</span>
+      </span>
+      {/* Empty cells keep the desktop grid columns aligned down the list. */}
+      {caseItem.has_tac_images ? (
+        <Badge variant="outline">{t('cases.images.ct')}</Badge>
+      ) : (
+        <span className="hidden md:block" />
+      )}
+      <span className="inline-flex items-center gap-1">
+        <Users className="h-3.5 w-3.5" aria-hidden="true" />
+        {caseItem.response_count}
+        <span className="sr-only">{t('cases.responses')}</span>
+      </span>
     </>
   );
 
@@ -285,7 +293,7 @@ function CaseRow({ caseItem, caseNumber, isNextUp, filterParams, formatDeadline 
         </div>
       </div>
 
-      <div className="hidden shrink-0 items-center gap-4 text-xs text-muted-foreground tabular-nums md:flex">
+      <div className="hidden shrink-0 grid-cols-[auto_2.5rem_3rem_2.5rem] items-center justify-items-end gap-4 text-xs text-muted-foreground tabular-nums md:grid">
         {meta}
       </div>
 

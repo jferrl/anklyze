@@ -71,7 +71,7 @@ export function AdminDashboardPage() {
         <StatCard
           title={t('admin.dashboard.totalCases', 'Total Cases')}
           value={stats.totalCases}
-          subtitle={`${stats.draftCases} ${t('admin.dashboard.drafts')}, ${stats.publishedCases} ${t('admin.dashboard.active')}`}
+          subtitle={`${t('admin.dashboard.draftsCount', { count: stats.draftCases })}, ${t('admin.dashboard.activeCount', { count: stats.publishedCases })}`}
         />
         <StatCard
           title={t('admin.dashboard.totalResponses')}
@@ -86,7 +86,7 @@ export function AdminDashboardPage() {
         <StatCard
           title={t('admin.dashboard.completedCases', 'Completed Cases')}
           value={stats.closedCases}
-          subtitle={`${stats.publishedCases} ${t('admin.dashboard.stillActive')}`}
+          subtitle={t('admin.dashboard.stillActiveCount', { count: stats.publishedCases })}
         />
       </StatGroup>
 
