@@ -94,6 +94,39 @@ func (s *StatisticsService) calculateSystemAccuracy(
 	}
 }
 
+// systemAccum accumulates one system's per-case accuracy across a study.
+type systemAccum struct {
+	totalAccuracy    float64
+	casesEvaluated   int
+	consensusCorrect int
+}
+
+func (a *systemAccum) add(sa *domain.SystemAccuracy) {
+	if sa == nil {
+		return
+	}
+	a.totalAccuracy += sa.Accuracy
+	a.casesEvaluated++
+	if sa.MajorityMatchesGold {
+		a.consensusCorrect++
+	}
+}
+
+// aggregate returns nil when no case had data for the system.
+func (a *systemAccum) aggregate(system string) *domain.AggregateAccuracy {
+	if a.casesEvaluated == 0 {
+		return nil
+	}
+	return &domain.AggregateAccuracy{
+		System:           system,
+		MeanAccuracy:     a.totalAccuracy / float64(a.casesEvaluated),
+		CasesEvaluated:   a.casesEvaluated,
+		ConsensusCorrect: a.consensusCorrect,
+		ConsensusTotal:   a.casesEvaluated,
+		ConsensusRate:    float64(a.consensusCorrect) / float64(a.casesEvaluated) * 100,
+	}
+}
+
 // CalculateStudyGoldStandardMetrics calculates gold standard accuracy across a study.
 func (s *StatisticsService) CalculateStudyGoldStandardMetrics(
 	study *domain.Study,
@@ -110,19 +143,7 @@ func (s *StatisticsService) CalculateStudyGoldStandardMetrics(
 		TotalCases: len(cases),
 	}
 
-	// Accumulators for aggregate accuracy
-	type systemAccum struct {
-		totalAccuracy    float64
-		casesEvaluated   int
-		consensusCorrect int
-		consensusTotal   int
-	}
-	accum := map[string]*systemAccum{
-		"danis_weber":  {},
-		"lauge_hansen": {},
-		"ao_ota":       {},
-		"bartonicek":   {},
-	}
+	var danisWeber, laugeHansen, aoOTA, bartonicek systemAccum
 
 	// Per-rater tracking: userID -> system -> (correct, total)
 	raterScores := make(map[uuid.UUID]map[string]*accuracyScore)
@@ -135,134 +156,81 @@ func (s *StatisticsService) CalculateStudyGoldStandardMetrics(
 			return nil, err
 		}
 
-		pca := domain.PerCaseAccuracy{
-			CaseOrder: c.CaseOrder,
-			CaseID:    c.ID,
-			CaseTitle: c.Title,
-			HasGold:   gsAccuracy.HasGold,
-		}
-
+		metrics.PerCaseAccuracy = append(metrics.PerCaseAccuracy, perCaseAccuracy(&c, gsAccuracy))
 		if !gsAccuracy.HasGold {
-			metrics.PerCaseAccuracy = append(metrics.PerCaseAccuracy, pca)
 			continue
 		}
 
 		metrics.CasesWithGold++
 
-		gold := gsAccuracy.GoldStandard
+		danisWeber.add(gsAccuracy.DanisWeberAccuracy)
+		laugeHansen.add(gsAccuracy.LaugeHansenAccuracy)
+		aoOTA.add(gsAccuracy.AOOTAAccuracy)
+		bartonicek.add(gsAccuracy.BartonicekAccuracy)
 
-		// Aggregate per-system accuracy
-		systemResults := map[string]*domain.SystemAccuracy{
-			"danis_weber":  gsAccuracy.DanisWeberAccuracy,
-			"lauge_hansen": gsAccuracy.LaugeHansenAccuracy,
-			"ao_ota":       gsAccuracy.AOOTAAccuracy,
-			"bartonicek":   gsAccuracy.BartonicekAccuracy,
-		}
-
-		for sys, sa := range systemResults {
-			if sa == nil {
-				continue
-			}
-			a := accum[sys]
-			a.totalAccuracy += sa.Accuracy
-			a.casesEvaluated++
-			a.consensusTotal++
-			if sa.MajorityMatchesGold {
-				a.consensusCorrect++
-			}
-		}
-
-		// Set per-case accuracy values
-		if gsAccuracy.DanisWeberAccuracy != nil {
-			v := gsAccuracy.DanisWeberAccuracy.Accuracy
-			pca.DanisWeberAccuracy = &v
-		}
-		if gsAccuracy.LaugeHansenAccuracy != nil {
-			v := gsAccuracy.LaugeHansenAccuracy.Accuracy
-			pca.LaugeHansenAccuracy = &v
-		}
-		if gsAccuracy.AOOTAAccuracy != nil {
-			v := gsAccuracy.AOOTAAccuracy.Accuracy
-			pca.AOOTAAccuracy = &v
-		}
-		if gsAccuracy.BartonicekAccuracy != nil {
-			v := gsAccuracy.BartonicekAccuracy.Accuracy
-			pca.BartonicekAccuracy = &v
-		}
-
-		// Flag hard cases (any system < 50% accuracy)
-		pca.IsHardCase = isHardCase(pca)
-
-		metrics.PerCaseAccuracy = append(metrics.PerCaseAccuracy, pca)
-
-		// Track per-rater accuracy
-		if gold != nil {
-			s.trackRaterAccuracy(raterScores, responses, gold)
-		}
+		s.trackRaterAccuracy(raterScores, responses, gsAccuracy.GoldStandard)
 	}
 
-	// Build aggregate accuracy per system
-	for sys, a := range accum {
-		if a.casesEvaluated == 0 {
-			continue
-		}
-		agg := &domain.AggregateAccuracy{
-			System:           sys,
-			MeanAccuracy:     a.totalAccuracy / float64(a.casesEvaluated),
-			CasesEvaluated:   a.casesEvaluated,
-			ConsensusCorrect: a.consensusCorrect,
-			ConsensusTotal:   a.consensusTotal,
-		}
-		if a.consensusTotal > 0 {
-			agg.ConsensusRate = float64(a.consensusCorrect) / float64(a.consensusTotal) * 100
-		}
+	metrics.DanisWeberAccuracy = danisWeber.aggregate("danis_weber")
+	metrics.LaugeHansenAccuracy = laugeHansen.aggregate("lauge_hansen")
+	metrics.AOOTAAccuracy = aoOTA.aggregate("ao_ota")
+	metrics.BartonicekAccuracy = bartonicek.aggregate("bartonicek")
 
-		switch sys {
-		case "danis_weber":
-			metrics.DanisWeberAccuracy = agg
-		case "lauge_hansen":
-			metrics.LaugeHansenAccuracy = agg
-		case "ao_ota":
-			metrics.AOOTAAccuracy = agg
-		case "bartonicek":
-			metrics.BartonicekAccuracy = agg
-		}
-	}
-
-	// Build per-rater accuracy
 	for userID, systems := range raterScores {
-		pra := domain.PerRaterAccuracy{
-			UserID: userID,
-		}
-		maxCases := 0
-		for _, score := range systems {
-			if score.total > maxCases {
-				maxCases = score.total
-			}
-		}
-		pra.CasesCompleted = maxCases
-
-		if s := systems["danis_weber"]; s != nil && s.total > 0 {
-			v := float64(s.correct) / float64(s.total) * 100
-			pra.DanisWeberAccuracy = &v
-		}
-		if s := systems["lauge_hansen"]; s != nil && s.total > 0 {
-			v := float64(s.correct) / float64(s.total) * 100
-			pra.LaugeHansenAccuracy = &v
-		}
-		if s := systems["ao_ota"]; s != nil && s.total > 0 {
-			v := float64(s.correct) / float64(s.total) * 100
-			pra.AOOTAAccuracy = &v
-		}
-		if s := systems["bartonicek"]; s != nil && s.total > 0 {
-			v := float64(s.correct) / float64(s.total) * 100
-			pra.BartonicekAccuracy = &v
-		}
-
-		metrics.PerRaterAccuracy = append(metrics.PerRaterAccuracy, pra)
+		metrics.PerRaterAccuracy = append(metrics.PerRaterAccuracy, perRaterAccuracy(userID, systems))
 	}
 
 	return metrics, nil
+}
+
+// perCaseAccuracy builds the per-case row; accuracy fields stay nil without a gold standard.
+func perCaseAccuracy(c *domain.Case, gsAccuracy *domain.GoldStandardAccuracy) domain.PerCaseAccuracy {
+	pca := domain.PerCaseAccuracy{
+		CaseOrder: c.CaseOrder,
+		CaseID:    c.ID,
+		CaseTitle: c.Title,
+		HasGold:   gsAccuracy.HasGold,
+	}
+	if !gsAccuracy.HasGold {
+		return pca
+	}
+
+	pca.DanisWeberAccuracy = accuracyOf(gsAccuracy.DanisWeberAccuracy)
+	pca.LaugeHansenAccuracy = accuracyOf(gsAccuracy.LaugeHansenAccuracy)
+	pca.AOOTAAccuracy = accuracyOf(gsAccuracy.AOOTAAccuracy)
+	pca.BartonicekAccuracy = accuracyOf(gsAccuracy.BartonicekAccuracy)
+	pca.IsHardCase = isHardCase(pca)
+	return pca
+}
+
+func accuracyOf(sa *domain.SystemAccuracy) *float64 {
+	if sa == nil {
+		return nil
+	}
+	v := sa.Accuracy
+	return &v
+}
+
+// perRaterAccuracy turns one rater's correct/total counts into percentages.
+func perRaterAccuracy(userID uuid.UUID, systems map[string]*accuracyScore) domain.PerRaterAccuracy {
+	pra := domain.PerRaterAccuracy{UserID: userID}
+	for _, score := range systems {
+		pra.CasesCompleted = max(pra.CasesCompleted, score.total)
+	}
+	pra.DanisWeberAccuracy = systems["danis_weber"].percent()
+	pra.LaugeHansenAccuracy = systems["lauge_hansen"].percent()
+	pra.AOOTAAccuracy = systems["ao_ota"].percent()
+	pra.BartonicekAccuracy = systems["bartonicek"].percent()
+	return pra
+}
+
+// percent is nil for a rater who gave no answer for the system.
+func (a *accuracyScore) percent() *float64 {
+	if a == nil || a.total == 0 {
+		return nil
+	}
+	v := float64(a.correct) / float64(a.total) * 100
+	return &v
 }
 
 // trackRaterAccuracy updates per-rater accuracy scores for a single case.
