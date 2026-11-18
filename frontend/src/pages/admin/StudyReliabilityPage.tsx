@@ -17,6 +17,7 @@ import { SystemTabs } from './components/SystemTabs';
 import { LOW_AGREEMENT_PCT, SYSTEMS, useSystemParam } from './components/systems';
 import { buildReliabilityFiguresCsv, downloadText, fileSlug } from './components/reliabilityCsv';
 import { useRecordTitle } from '@/components/layout/recordTitle';
+import { formatNumber } from '@/lib/format';
 
 const PANEL_ID = 'study-system-panel';
 const BACK_LINK =
@@ -171,8 +172,8 @@ export function StudyReliabilityPage() {
 
           {/* The counts follow the headline kappas and lead into the per-case tables below. */}
           <StatGroup>
-            <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
-            <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
+            <StatCard title={t('admin.studies.reliability.totalCases')} value={formatNumber(reliability.total_cases, 0)} />
+            <StatCard title={t('admin.reliability.totalResponses')} value={formatNumber(reliability.total_responses, 0)} />
             <StatCard
               title={t('admin.studies.reliability.completeRaters')}
               value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
@@ -180,7 +181,7 @@ export function StudyReliabilityPage() {
             />
             <StatCard
               title={t('admin.studies.reliability.lowAgreementCasesTitle')}
-              value={lowAgreementCases}
+              value={formatNumber(lowAgreementCases, 0)}
               subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
             />
           </StatGroup>

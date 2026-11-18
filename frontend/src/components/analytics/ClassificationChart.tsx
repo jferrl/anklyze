@@ -234,7 +234,7 @@ function DonutView({
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="text-center">
           <p className="text-2xl font-semibold tabular-nums text-foreground">
-            {centerData ? centerData.value : total}
+            {formatNumber(centerData ? centerData.value : total, 0)}
           </p>
           <p className="max-w-[100px] truncate text-sm text-muted-foreground">
             {centerData ? centerData.name : t('common.total')}
@@ -310,6 +310,7 @@ function BarView({
             <LabelList
               dataKey="value"
               position="right"
+              formatter={(value) => formatNumber(Number(value), 0)}
               className="fill-foreground text-xs tabular-nums"
             />
           </Bar>
@@ -362,7 +363,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <div className="mt-1 flex items-center gap-2">
         <span className="size-2 shrink-0" style={{ backgroundColor: data.fill }} />
         <span className="text-sm tabular-nums text-muted-foreground">
-          {data.value} ({formatPercent(data.percentage)})
+          {formatNumber(data.value, 0)} ({formatPercent(data.percentage)})
         </span>
       </div>
     </div>
