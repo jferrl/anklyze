@@ -35,7 +35,7 @@ describe('Button', () => {
 
       const button = screen.getByRole('button')
       expect(button).toHaveAttribute('data-variant', 'default')
-      expect(button).toHaveClass('bg-primary')
+      expect(button).toHaveClass('bg-primary-fill')
     })
 
     it('renders destructive variant correctly', () => {
