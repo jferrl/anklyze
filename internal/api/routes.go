@@ -1,7 +1,12 @@
 package api
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -39,6 +44,7 @@ func SetupRoutes(
 
 	// CORS middleware
 	router.Use(CORSMiddleware(cfg.CORSAllowOrigin))
+	router.Use(BodyLimitMiddleware())
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
@@ -324,12 +330,58 @@ func registerAdminStudyRoutes(adminStudies *gin.RouterGroup, studyHandler *Study
 func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
 			return
+		}
+
+		c.Next()
+	}
+}
+
+// MaxJSONBodySize caps request bodies on non-upload routes.
+const MaxJSONBodySize = 1 << 20 // 1 MiB
+
+// BodyLimitMiddleware rejects oversized request bodies with 413. Multipart
+// requests (image uploads) get MaxImageSize, everything else MaxJSONBodySize.
+func BodyLimitMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		limit := int64(MaxJSONBodySize)
+		if strings.HasPrefix(c.GetHeader("Content-Type"), "multipart/form-data") {
+			limit = MaxImageSize
+		}
+
+		tooLarge := func() {
+			c.AbortWithStatusJSON(http.StatusRequestEntityTooLarge, ErrorResponse{
+				Code:    CodeInvalidInput,
+				Message: fmt.Sprintf("Request body exceeds %d bytes", limit),
+			})
+		}
+
+		if c.Request.ContentLength > limit {
+			tooLarge()
+			return
+		}
+
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, limit)
+
+		// Unknown length (chunked): handlers would turn the read error into a
+		// 400, so read it here to report 413. Bounded by limit.
+		if c.Request.ContentLength < 0 {
+			b, err := io.ReadAll(c.Request.Body)
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				tooLarge()
+				return
+			}
+			if err != nil {
+				_ = c.AbortWithError(http.StatusBadRequest, err)
+				return
+			}
+			c.Request.Body = io.NopCloser(bytes.NewReader(b))
 		}
 
 		c.Next()
