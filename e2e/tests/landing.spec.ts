@@ -20,6 +20,10 @@ test.describe('Landing Page', () => {
       await expect(landingPage.startClassifyingButton).toBeVisible();
     });
 
+    test('should display the hero figure: ankle plate, example path and its four codes', async () => {
+      await landingPage.expectHeroFigureVisible();
+    });
+
     test('should display the four classification systems', async () => {
       await landingPage.expectSystemsVisible();
     });
