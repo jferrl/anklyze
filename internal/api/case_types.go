@@ -75,9 +75,11 @@ func (n *NullableTime) UnmarshalJSON(b []byte) error {
 // SubmitResponseRequest is the request body for submitting a classification response.
 type SubmitResponseRequest struct {
 	Classification domain.ClassificationResult `json:"classification" binding:"required"`
-	TimeTakenMS    int64                       `json:"time_taken_ms"`
+	// Input is the final form state that was classified, including has_ct_scan.
+	Input       domain.FractureInput `json:"input" binding:"required"`
+	TimeTakenMS int64                `json:"time_taken_ms"`
 
-	// Answer tracking fields for divergence analysis
+	// Answer tracking fields for divergence analysis (recorded, never used to classify)
 	AnswerPath      []domain.QuestionAnswer `json:"answer_path,omitempty"`
 	DecisionPath    string                  `json:"decision_path,omitempty"`
 	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty"`

@@ -154,7 +154,7 @@ func main() {
 
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, jwksReady)
-	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
+	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, classificationService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, caseRepo, studyService)
 
 	srv := &http.Server{
