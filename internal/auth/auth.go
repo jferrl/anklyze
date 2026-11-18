@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/MicahParks/keyfunc/v3"
@@ -80,6 +81,9 @@ type ValidatorOption func(*Validator)
 func NewValidator(ctx context.Context, supabaseURL string, opts ...ValidatorOption) (*Validator, error) {
 	if supabaseURL == "" {
 		return nil, errors.New("supabase URL is required")
+	}
+	if u, err := url.Parse(supabaseURL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+		return nil, errors.New("supabase URL must be an absolute http(s) URL")
 	}
 
 	v := &Validator{

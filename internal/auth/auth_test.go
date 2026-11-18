@@ -165,6 +165,9 @@ func TestNewValidator(t *testing.T) {
 			opts:        []ValidatorOption{WithJWTSecret("test-secret")},
 			wantErr:     true,
 		},
+		{name: "error when URL has no scheme", supabaseURL: "supabase.co", opts: []ValidatorOption{WithJWTSecret("s")}, wantErr: true},
+		{name: "error when scheme is not http(s)", supabaseURL: "ftp://x.supabase.co", opts: []ValidatorOption{WithJWTSecret("s")}, wantErr: true},
+		{name: "error when URL has no host", supabaseURL: "https://", opts: []ValidatorOption{WithJWTSecret("s")}, wantErr: true},
 	}
 
 	for _, tt := range tests {
