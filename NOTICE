@@ -46,8 +46,8 @@ Third-party content
     (right tibia, fibula and talus), licensed under
     CC BY-SA 2.1 Japan in the files; the database licence page now grants
     CC BY 4.0, https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
-    Changes: tibia and fibula cut 100 mm above the joint, meshes refined by one
-    Loop subdivision step, cuts closed, ambient occlusion baked per vertex,
+    Changes: tibia and fibula cut 100 mm above the joint, small holes in the
+    source meshes closed, meshes refined by one Loop subdivision step, cuts closed, ambient occlusion baked per vertex,
     malleolus regions tagged, positions quantised
     (frontend/scripts/build-ankle-model.mjs).
     The adapted model is licensed under CC BY-SA 4.0

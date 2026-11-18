@@ -345,8 +345,10 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   if (view) {
     pivot.rotation.set(pitch, yaw, 0);
     pivot.updateMatrixWorld();
-    const box = new Box3().setFromPoints(rel.map((p) => p.clone().applyQuaternion(pivot.quaternion)));
-    const [w, h] = [box.max.x - box.min.x, box.max.y - box.min.y].map((v) => v * 1.04);
+    // Every point, not the sample, so no malleolus tip falls outside; 7% margin on each side clears
+    // the tips and the highlight outline drawn round them.
+    const box = new Box3().setFromPoints(points.map((p) => p.clone().sub(center).applyQuaternion(pivot.quaternion)));
+    const [w, h] = [box.max.x - box.min.x, box.max.y - box.min.y].map((v) => v * 1.14);
     frame = { w, h, cx: (box.max.x + box.min.x) / 2, cy: (box.max.y + box.min.y) / 2 };
   } else {
     const h = 2.04 * fitHeight(rel);

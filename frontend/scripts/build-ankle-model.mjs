@@ -258,20 +258,11 @@ function prepare({ pos, index, level }) {
   const keep = [...new Set(index)];
   const to = new Map(keep.map((v, i) => [v, i]));
   const used = keep.flatMap((v) => [pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]]);
-  const { pos: p, index: idx } = loopSubdivide(used, index.map((v) => to.get(v)));
+  const { pos: p, index: idx } = loopSubdivide(...fillHoles(used, index.map((v) => to.get(v)), level));
 
-  const edges = new Map();
-  for (let t = 0; t < idx.length; t += 3) {
-    for (let k = 0; k < 3; k++) {
-      const [a, b] = [idx[t + k], idx[t + ((k + 1) % 3)]];
-      const rev = `${b}:${a}`;
-      if (edges.has(rev)) edges.delete(rev);
-      else edges.set(`${a}:${b}`, [a, b]);
-    }
-  }
   // Each open edge a->b on the cut plane runs along the rim; the cap walks it the other way.
   const onCut = (v) => level !== undefined && Math.abs(p[v * 3 + 1] - level) < 0.01;
-  const next = new Map([...edges.values()].filter(([a, b]) => onCut(a) && onCut(b)).map(([a, b]) => [b, a]));
+  const next = new Map([...openEdges(idx)].filter(([a, b]) => onCut(a) && onCut(b)).map(([a, b]) => [b, a]));
   while (next.size) {
     const [start] = next.keys();
     const loop = [start];
@@ -284,6 +275,44 @@ function prepare({ pos, index, level }) {
     loop.forEach((_, i) => idx.push(base, base + 1 + i, base + 1 + ((i + 1) % loop.length)));
   }
   return { pos: p, index: idx };
+}
+
+// The source meshes have small holes (on the talus they read as dark pits, the inside showing
+// through). Each open loop off the cut plane is closed with a fan round its centroid, on shared
+// vertices, so the subdivision step that follows smooths the patch into the surface.
+function fillHoles(pos, index, level) {
+  const p = [...pos];
+  const idx = [...index];
+  const next = new Map();
+  for (const [a, b] of openEdges(idx)) next.set(b, a);
+  const onCut = (v) => level !== undefined && Math.abs(p[v * 3 + 1] - level) < 0.01;
+  let holes = 0;
+  while (next.size) {
+    const [start] = next.keys();
+    const loop = [start];
+    for (let v = next.get(start); v !== start && v !== undefined && loop.length < 10000; v = next.get(v)) loop.push(v);
+    loop.forEach((v) => next.delete(v));
+    if (loop.length < 3 || loop.every(onCut)) continue;
+    const c = p.length / 3;
+    p.push(...[0, 1, 2].map((k) => avg(loop.map((v) => p[v * 3 + k]))));
+    loop.forEach((v, i) => idx.push(c, v, loop[(i + 1) % loop.length]));
+    holes++;
+  }
+  if (holes) console.log(`filled ${holes} holes`);
+  return [p, idx];
+}
+
+function openEdges(idx) {
+  const edges = new Map();
+  for (let t = 0; t < idx.length; t += 3) {
+    for (let k = 0; k < 3; k++) {
+      const [a, b] = [idx[t + k], idx[t + ((k + 1) % 3)]];
+      const rev = `${b}:${a}`;
+      if (edges.has(rev)) edges.delete(rev);
+      else edges.set(`${a}:${b}`, [a, b]);
+    }
+  }
+  return edges.values();
 }
 
 // One Loop subdivision step. Open edges (the cut rims) use the boundary rules, so a rim stays on
