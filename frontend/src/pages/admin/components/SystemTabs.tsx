@@ -59,7 +59,7 @@ export function SystemTabs({ systems, active, onChange, className, panelId }: Sy
     <div
       role="tablist"
       aria-label={t('admin.reliability.classificationSystem')}
-      className={cn('flex w-fit max-w-full flex-wrap gap-0.5 rounded-md border bg-card p-0.5', className)}
+      className={cn('grid grid-cols-2 gap-0.5 rounded-md border bg-card p-0.5 sm:flex sm:w-fit sm:max-w-full sm:flex-wrap', className)}
     >
       {systems.map(({ key, label }, i) => (
         <button
