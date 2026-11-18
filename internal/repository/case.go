@@ -45,11 +45,6 @@ type CaseRepository interface {
 	// Close changes a case status to closed.
 	Close(ctx context.Context, id uuid.UUID) error
 
-	// IncrementResponseCount increments the response count for a case.
-	IncrementResponseCount(ctx context.Context, caseID uuid.UUID) error
-	// UpdateUniqueUsers recalculates and updates the unique users count.
-	UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID, count int) error
-
 	// GetByIDs batch loads cases by their IDs.
 	GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error)
 
@@ -72,10 +67,6 @@ type CaseResponseRepository interface {
 	// GetByUserAndCases batch loads responses for a user across multiple cases.
 	// Returns a map keyed by case ID for O(1) lookup.
 	GetByUserAndCases(ctx context.Context, userID uuid.UUID, caseIDs []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
-	// CountByCase counts the total responses for a case.
-	CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error)
-	// CountUniqueUsersByCase counts unique users who responded to a case.
-	CountUniqueUsersByCase(ctx context.Context, caseID uuid.UUID) (int64, error)
 
 	// HasUserResponded checks if a user has already submitted a response to a case.
 	HasUserResponded(ctx context.Context, userID, caseID uuid.UUID) (bool, error)
@@ -91,6 +82,4 @@ type CaseResponseRepository interface {
 type CaseAnalyticsRepository interface {
 	// GetSummary retrieves aggregated analytics for a case.
 	GetSummary(ctx context.Context, caseID uuid.UUID) (*domain.CaseAnalyticsSummary, error)
-	// GetClassificationDistribution retrieves distribution for a specific classification system.
-	GetClassificationDistribution(ctx context.Context, caseID uuid.UUID, system string) (map[string]int64, error)
 }
