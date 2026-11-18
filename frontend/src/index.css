@@ -260,37 +260,33 @@
     animation: bar-grow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Landing hero, once on load, one timeline: the anatomy plate draws its bones
-     (0-1200ms, mostly drawn by 600ms), then the example path's answers fill in step by step from 600ms
-     (--step 0..4) while the plate marks answers 1 and 2, then the four codes
-     resolve together at 1360ms. Explains one set of answers -> four classifications. */
-  .path-answer {
+  /* Landing hero figure, once on load (timeline in LandingPage.tsx): the plate is there from the
+     first frame; answers and their marks fade in at --at, the fracture line draws along its length. */
+  .fig-in {
     animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(600ms + var(--step) * 120ms);
+    animation-delay: var(--at);
   }
 
-  .path-result {
-    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 1360ms;
-  }
-
-  /* pathLength="1" normalises every stroke so all draw at the same rate; the 2-unit
-     gap keeps a round cap from dotting the path end before it draws. */
-  @keyframes plate-draw {
+  /* pathLength="1"; the 2-unit gap keeps a round cap from dotting the path end before it draws. */
+  @keyframes fig-draw {
     from { stroke-dashoffset: 1; }
     to { stroke-dashoffset: 0; }
   }
 
-  .plate-draw {
+  .fig-draw {
     stroke-dasharray: 1 2;
-    animation: plate-draw 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: fig-draw 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: var(--at);
   }
+}
 
-  .plate-fade {
-    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: var(--at);
-  }
+/* Plate tones from the sheet tokens, so they hold on white and on the dark theme's warm paper. */
+.fig-sheet {
+  --bone: color-mix(in oklab, var(--field-ink) 6%, var(--sheet));
+  --bone-line: color-mix(in oklab, var(--sheet-muted) 80%, var(--sheet));
+  --cartilage: color-mix(in oklab, var(--sheet-muted) 13%, var(--sheet));
+  --hl: var(--field-ink);
+  --hl-fill: color-mix(in oklab, var(--field-ink) 22%, var(--sheet));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -300,10 +296,8 @@
   }
 
   /* The global rule keeps animation delays, which would hide the hero content. */
-  .path-answer,
-  .path-result,
-  .plate-draw,
-  .plate-fade {
+  .fig-in,
+  .fig-draw {
     animation: none !important;
   }
 }
@@ -326,7 +320,7 @@
 
 /* Results and reliability pages get printed for papers and case notes. */
 @media print {
-  .path-answer, .path-result, .plate-draw, .plate-fade {
+  .fig-in, .fig-draw {
     animation: none !important;
   }
   [data-slot="sidebar"], [data-slot="sidebar-container"], [data-slot="sidebar-gap"], header.sticky, [data-sonner-toaster], button {
