@@ -19,6 +19,7 @@ var (
 	ErrStudyClosed               = errors.New("study is closed and no longer accepting responses")
 	ErrAlreadyResponded          = errors.New("already submitted a response to this case")
 	ErrNotStudyMember            = errors.New("you are not assigned to this study")
+	ErrStorageNotConfigured      = errors.New("image storage is not configured")
 )
 
 // FieldError represents a validation error for a specific field.
@@ -47,6 +48,7 @@ const (
 	ErrCodeStudyClosed               = "STUDY_CLOSED"
 	ErrCodeAlreadyResponded          = "ALREADY_RESPONDED"
 	ErrCodeNotStudyMember            = "NOT_STUDY_MEMBER"
+	ErrCodeStorageNotConfigured      = "STORAGE_NOT_CONFIGURED"
 
 	// Auth errors
 	ErrCodeTokenExpired = "TOKEN_EXPIRED"
