@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import { StatusBadge } from './components/StatusBadge';
 import { SystemTabs } from './components/SystemTabs';
 import { CaseAgreementSection } from './components/CaseAgreementSection';
 import { LoadError } from './components/LoadError';
-import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, type SystemKey } from './components/systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, useSystemParam } from './components/systems';
 
 const ClassificationChart = lazy(() =>
   import('@/components/analytics/ClassificationChart')
@@ -27,6 +27,7 @@ const ClassificationChart = lazy(() =>
     })
 );
 
+const PANEL_ID = 'case-system-panel';
 const BACK_LINK =
   'inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring';
 
@@ -48,7 +49,7 @@ function BackLink({ to, label }: { to: string; label: string }) {
 export function CaseReportPage() {
   const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
+  const [activeSystem, setActiveSystem] = useSystemParam();
 
   const caseQuery = useQuery({
     queryKey: ['case', id],
@@ -177,16 +178,18 @@ export function CaseReportPage() {
               <p className="text-sm text-muted-foreground">{t('admin.analytics.distributionDescription')}</p>
             </div>
 
-            <SystemTabs systems={SYSTEMS} active={activeSystem} onChange={(key) => setActiveSystem(key as SystemKey)} />
+            <SystemTabs systems={SYSTEMS} active={activeSystem} onChange={setActiveSystem} panelId={PANEL_ID} />
 
-            <Suspense fallback={<Skeleton className="h-80 w-full" />}>
-              <ClassificationChart
-                data={analytics[`${activeSystem}_distribution`] ?? {}}
-                title={t('admin.analytics.distributionTitle', { system: SYSTEM_LABEL[activeSystem] })}
-                systemLabel={SYSTEM_LABEL[activeSystem]}
-                color={SYSTEM_COLOR[activeSystem]}
-              />
-            </Suspense>
+            <div id={PANEL_ID} role="tabpanel" aria-labelledby={`${PANEL_ID}-tab-${activeSystem}`}>
+              <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+                <ClassificationChart
+                  data={analytics[`${activeSystem}_distribution`] ?? {}}
+                  title={t('admin.analytics.distributionTitle', { system: SYSTEM_LABEL[activeSystem] })}
+                  systemLabel={SYSTEM_LABEL[activeSystem]}
+                  color={SYSTEM_COLOR[activeSystem]}
+                />
+              </Suspense>
+            </div>
           </section>
         </>
       )}
@@ -219,6 +222,7 @@ function CaseReportSkeleton() {
           <div key={key} className="space-y-3 bg-card p-4">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-4 w-28" />
           </div>
         ))}
       </div>

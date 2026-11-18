@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ArrowLeft, Download, Loader2 } from 'lucide-react';
@@ -14,7 +14,7 @@ import { PerCaseAgreementSection } from './components/PerCaseAgreementSection';
 import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
 import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
 import { SystemTabs } from './components/SystemTabs';
-import { LOW_AGREEMENT_PCT, SYSTEMS, SYSTEM_KEYS, type SystemKey } from './components/systems';
+import { LOW_AGREEMENT_PCT, SYSTEMS, useSystemParam } from './components/systems';
 import { buildReliabilityFiguresCsv, downloadText, fileSlug } from './components/reliabilityCsv';
 import { useRecordTitle } from '@/components/layout/recordTitle';
 
@@ -30,17 +30,8 @@ const isNotFound = (error: unknown) => {
 export function StudyReliabilityPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [system, setSystem] = useSystemParam();
   const [exporting, setExporting] = useState<'figures' | 'responses' | null>(null);
-
-  const requested = searchParams.get('system');
-  const system: SystemKey = SYSTEM_KEYS.find((key) => key === requested) ?? 'lauge_hansen';
-  const setSystem = (key: string) =>
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('system', key);
-      return next;
-    }, { replace: true });
 
   // A missing study is final; only other failures are worth a retry.
   const retry = (count: number, error: unknown) => !isNotFound(error) && count < 1;

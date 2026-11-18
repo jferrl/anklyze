@@ -1,3 +1,5 @@
+import { useSearchParams } from 'react-router-dom';
+
 /** SYSTEM_KEYS is the one display order of the classification systems. */
 export const SYSTEM_KEYS = ['lauge_hansen', 'danis_weber', 'ao_ota', 'bartonicek'] as const;
 
@@ -49,6 +51,31 @@ export function agreementColorClass(value: number | null | undefined): string {
  */
 export function activeColumn(key: SystemKey, active?: SystemKey): string {
   return key === active ? 'bg-accent' : '';
+}
+
+/** useSystemParam keeps the selected system in the URL (?system=), so a reload or a shared link keeps the tab. */
+export function useSystemParam(): [SystemKey, (key: string) => void] {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requested = searchParams.get('system');
+  const system = SYSTEM_KEYS.find((key) => key === requested) ?? 'lauge_hansen';
+  const setSystem = (key: string) =>
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('system', key);
+      return next;
+    }, { replace: true });
+  return [system, setSystem];
+}
+
+/** mostCommon returns the answers given most often (several on a tie), their count and the number of answers. */
+export function mostCommon(counts: Record<string, number>): { answers: string[]; count: number; total: number } {
+  const entries = Object.entries(counts);
+  const count = Math.max(0, ...entries.map(([, n]) => n));
+  return {
+    answers: entries.filter(([, n]) => n === count && count > 0).map(([answer]) => answer).sort(),
+    count,
+    total: entries.reduce((sum, [, n]) => sum + n, 0),
+  };
 }
 
 /** kappaAxisMin gives gauges shown together one axis: -1 if any value or CI bound is negative, else 0. */

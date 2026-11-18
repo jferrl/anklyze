@@ -128,6 +128,16 @@ export function ClassificationChart({
         className="animate-fade-in"
         onAnimationEnd={(e) => e.animationName === 'bar-grow' && setGrowBars(false)}
       >
+        {/* The SVG is pointer-only and hidden from assistive tech; the list below reads the same figures. */}
+        {viewMode !== 'list' && (
+          <ul className="sr-only">
+            {chartData.map((item) => (
+              <li key={item.name}>
+                {item.name}: {t('admin.analytics.responsesCount', { count: item.value })} ({formatPercent(item.percentage)})
+              </li>
+            ))}
+          </ul>
+        )}
         {viewMode === 'donut' && (
           <DonutView
             data={donutData}
@@ -192,10 +202,11 @@ function DonutView({
   const centerData = hoveredIndex !== null ? data[hoveredIndex] : null;
 
   return (
-    <div className="relative">
+    <div className="relative" aria-hidden="true">
       <ResponsiveContainer width="100%" height={320}>
-        <PieChart>
+        <PieChart accessibilityLayer={false}>
           <Pie
+            rootTabIndex={-1}
             data={data}
             dataKey="value"
             nameKey="name"
@@ -251,57 +262,60 @@ function BarView({
   const labelWidth = Math.min(180, Math.max(...data.map((d) => Math.min(d.name.length, MAX_LABEL))) * 7 + 12);
 
   return (
-    <ResponsiveContainer width="100%" height={data.length * 36 + 8}>
-      <BarChart
-        data={data}
-        layout="vertical"
-        margin={{ left: 0, right: 40, top: 4, bottom: 4 }}
-        onMouseLeave={() => setHoveredIndex(null)}
-      >
-        <XAxis type="number" hide />
-        <YAxis
-          dataKey="name"
-          type="category"
-          axisLine={false}
-          tickLine={false}
-          width={labelWidth}
-          tick={({ x, y, payload }) => (
-            <text
-              x={x}
-              y={y}
-              dy={4}
-              textAnchor="end"
-              className="fill-muted-foreground text-xs"
-            >
-              {payload.value.length > MAX_LABEL
-                ? payload.value.slice(0, MAX_LABEL - 1) + '…'
-                : payload.value}
-            </text>
-          )}
-        />
-        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-        <Bar
-          dataKey="value"
-          barSize={20}
-          radius={[0, 4, 4, 0]}
-          isAnimationActive={false}
-          onMouseEnter={(_, index) => setHoveredIndex(index)}
+    <div aria-hidden="true">
+      <ResponsiveContainer width="100%" height={data.length * 36 + 8}>
+        <BarChart
+          accessibilityLayer={false}
+          data={data}
+          layout="vertical"
+          margin={{ left: 0, right: 40, top: 4, bottom: 4 }}
+          onMouseLeave={() => setHoveredIndex(null)}
         >
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.name}
-              className={grow ? 'bar-grow' : undefined}
-              style={{ fill: entry.fill, transformBox: 'fill-box', ...dimmed(hoveredIndex, index) }}
-            />
-          ))}
-          <LabelList
-            dataKey="value"
-            position="right"
-            className="fill-foreground text-xs tabular-nums"
+          <XAxis type="number" hide />
+          <YAxis
+            dataKey="name"
+            type="category"
+            axisLine={false}
+            tickLine={false}
+            width={labelWidth}
+            tick={({ x, y, payload }) => (
+              <text
+                x={x}
+                y={y}
+                dy={4}
+                textAnchor="end"
+                className="fill-muted-foreground text-xs"
+              >
+                {payload.value.length > MAX_LABEL
+                  ? payload.value.slice(0, MAX_LABEL - 1) + '…'
+                  : payload.value}
+              </text>
+            )}
           />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+          <Bar
+            dataKey="value"
+            barSize={20}
+            radius={[0, 4, 4, 0]}
+            isAnimationActive={false}
+            onMouseEnter={(_, index) => setHoveredIndex(index)}
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={entry.name}
+                className={grow ? 'bar-grow' : undefined}
+                style={{ fill: entry.fill, transformBox: 'fill-box', ...dimmed(hoveredIndex, index) }}
+              />
+            ))}
+            <LabelList
+              dataKey="value"
+              position="right"
+              className="fill-foreground text-xs tabular-nums"
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
