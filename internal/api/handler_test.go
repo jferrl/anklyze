@@ -770,10 +770,6 @@ func TestHandler_GetAnalyticsDistribution(t *testing.T) {
 			system:      "ao-ota",
 			queryParams: "?from=2024-01-01&to=2024-06-30",
 		},
-		{
-			name:   "unknown system returns empty distribution",
-			system: "unknown",
-		},
 	}
 
 	for _, tt := range tests {

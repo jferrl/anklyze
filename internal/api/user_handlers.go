@@ -1,11 +1,9 @@
 package api
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
@@ -80,10 +78,7 @@ func GetCurrentUser(c *gin.Context) {
 	// Fall back to JWT claims if user sync failed
 	claims := auth.GetClaims(c)
 	if claims == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "unauthorized",
-			"message": "authentication required",
-		})
+		unauthorized(c)
 		return
 	}
 
@@ -99,7 +94,7 @@ func GetCurrentUser(c *gin.Context) {
 func (h *UserHandler) GetUserProfile(c *gin.Context) {
 	user := auth.GetUser(c)
 	if user == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		unauthorized(c)
 		return
 	}
 
@@ -133,30 +128,22 @@ func (h *UserHandler) GetUserProfile(c *gin.Context) {
 // UpdateUserProfile handles PUT /api/me/profile
 // Updates the user's expertise profile fields.
 func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-	userID, err := uuid.Parse(userIDStr.(string))
+	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id"})
+		unauthorized(c)
 		return
 	}
 
 	var req UpdateUserProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
 	// Validate specialty if provided
 	if req.Specialty != nil && *req.Specialty != "" {
 		if !domain.IsValidSpecialty(*req.Specialty) {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":        "invalid specialty",
-				"valid_values": domain.ValidSpecialties(),
-			})
+			validValues(c, "invalid specialty", domain.ValidSpecialties())
 			return
 		}
 	}
@@ -164,10 +151,7 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 	// Validate training level if provided
 	if req.TrainingLevel != nil && *req.TrainingLevel != "" {
 		if !domain.IsValidTrainingLevel(*req.TrainingLevel) {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":        "invalid training level",
-				"valid_values": domain.ValidTrainingLevels(),
-			})
+			validValues(c, "invalid training level", domain.ValidTrainingLevels())
 			return
 		}
 	}
@@ -182,8 +166,7 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 	}
 
 	if err := h.userRepo.UpdateProfile(c.Request.Context(), userID, profile); err != nil {
-		slog.Error("failed to update user profile", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update profile"})
+		HandleError(c, err, "failed to update profile")
 		return
 	}
 
@@ -219,4 +202,13 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 		TrainingLevel:   trainingLevel,
 		Institution:     institution,
 	})
+}
+
+// validValues answers a value outside a closed set, listing the accepted ones.
+func validValues[T ~string](c *gin.Context, message string, valid []T) {
+	values := make([]string, len(valid))
+	for i, v := range valid {
+		values[i] = string(v)
+	}
+	c.JSON(http.StatusBadRequest, ErrorResponse{Code: CodeInvalidInput, Message: message, ValidValues: values})
 }

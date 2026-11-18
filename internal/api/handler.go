@@ -115,7 +115,7 @@ func (h *Handler) GetAnalyticsSummary(c *gin.Context) {
 
 	summary, err := h.analyticsRepo.GetSummary(from, to)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics summary"})
+		HandleError(c, err, "failed to get analytics summary")
 		return
 	}
 
@@ -129,21 +129,28 @@ func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
 
 	trends, err := h.analyticsRepo.GetTrends(from, to, granularity)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics trends"})
+		HandleError(c, err, "failed to get analytics trends")
 		return
 	}
 
 	c.JSON(http.StatusOK, trends)
 }
 
+// validDistributionSystems are the systems AnalyticsRepository.GetDistribution knows.
+var validDistributionSystems = map[string]bool{"danis-weber": true, "lauge-hansen": true, "ao-ota": true}
+
 // GetAnalyticsDistribution handles GET /api/analytics/distribution/:system
 func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 	system := c.Param("system")
+	if !validDistributionSystems[system] {
+		badRequest(c, "unknown classification system")
+		return
+	}
 	from, to := parseDateRange(c)
 
 	distribution, err := h.analyticsRepo.GetDistribution(system, from, to)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get distribution"})
+		HandleError(c, err, "failed to get distribution")
 		return
 	}
 
