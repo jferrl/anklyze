@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import type { PerRaterAccuracy, StudyGoldStandardResponse } from '@/types';
+import { formatNumber } from '@/lib/format';
 import { MethodNote } from './MethodNote';
 import { CASE_LINK, caseReportPath } from './caseLink';
 import { SystemColumnHeads, SystemListHead } from './SystemTabs';
@@ -128,11 +129,11 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
         <div className="overflow-hidden rounded-lg border bg-card">
           <div className="md:hidden">
             <SystemListHead label={t('admin.studies.goldStandard.case')} system={activeSystem} />
-            <div key={activeSystem} className="animate-fade-in divide-y">
+            <div className="divide-y">
               {sortedCases.map((pca) => (
                 <div key={pca.case_id} className={cn('flex items-center justify-between gap-3 px-4 py-3', pca.is_hard_case && 'bg-warning/10')}>
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="text-xs tabular-nums text-muted-foreground">{pca.case_order}</span>
+                    <span className="text-xs tabular-nums text-muted-foreground">{formatNumber(pca.case_order, 0)}</span>
                     <Link to={caseReportPath(pca.case_id)} className={cn('truncate', CASE_LINK)}>{pca.case_title}</Link>
                     {pca.is_hard_case && (
                       <AlertTriangle role="img" aria-label={hardCaseLabel} className="size-4 shrink-0 text-warning" />
@@ -162,7 +163,7 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
               <tbody>
                 {sortedCases.map((pca) => (
                   <tr key={pca.case_id} className={cn('border-b last:border-0', pca.is_hard_case && 'bg-warning/10')}>
-                    <td className="px-4 py-3 tabular-nums text-muted-foreground">{pca.case_order}</td>
+                    <td className="px-4 py-3 tabular-nums text-muted-foreground">{formatNumber(pca.case_order, 0)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Link to={caseReportPath(pca.case_id)} className={CASE_LINK}>{pca.case_title}</Link>
@@ -223,7 +224,7 @@ function PerRaterAccuracyTable({ raters, activeSystem }: { raters: PerRaterAccur
       <div className="overflow-hidden rounded-lg border bg-card">
         <div className="md:hidden">
           <SystemListHead label={t('admin.studies.goldStandard.rater')} system={activeSystem} />
-          <div key={activeSystem} className="animate-fade-in divide-y">
+          <div className="divide-y">
             {sorted.map((rater, i) => (
               <div key={rater.user_id} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div className="min-w-0">
@@ -256,7 +257,7 @@ function PerRaterAccuracyTable({ raters, activeSystem }: { raters: PerRaterAccur
                     <p className="truncate font-medium text-foreground">{name(rater, i)}</p>
                     {email(rater) && <p className="truncate text-xs text-muted-foreground">{rater.user_email}</p>}
                   </td>
-                  <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{rater.cases_completed}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatNumber(rater.cases_completed, 0)}</td>
                   {SYSTEM_KEYS.map((key) => (
                     <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', accuracyColorClass(rater[`${key}_accuracy`]), activeColumn(key, activeSystem))}>
                       {percentOrDash(rater[`${key}_accuracy`])}
