@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -138,9 +140,53 @@ func IsAuthenticated(c *gin.Context) bool {
 	return GetClaims(c) != nil
 }
 
+const (
+	roleSyncTTL = 10 * time.Minute
+	roleSyncMax = 10_000
+)
+
+// roleSyncCache remembers which role was last pushed to Supabase per user, so a
+// stale token (role still "authenticated") doesn't trigger a push per request.
+type roleSyncCache struct {
+	mu sync.Mutex
+	m  map[uuid.UUID]roleSyncEntry
+}
+
+type roleSyncEntry struct {
+	role domain.UserRole
+	at   time.Time
+}
+
+var roleSyncs = &roleSyncCache{m: make(map[uuid.UUID]roleSyncEntry)}
+
+// shouldSync reports whether role needs pushing and records it if so. The TTL
+// retries a push that failed (the sync is fire-and-forget).
+func (c *roleSyncCache) shouldSync(id uuid.UUID, role domain.UserRole, now time.Time) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if e, ok := c.m[id]; ok && e.role == role && now.Sub(e.at) < roleSyncTTL {
+		return false
+	}
+	if len(c.m) >= roleSyncMax {
+		for k, e := range c.m {
+			if now.Sub(e.at) >= roleSyncTTL {
+				delete(c.m, k)
+			}
+		}
+		if len(c.m) >= roleSyncMax {
+			clear(c.m) // shortcut: drops live entries too; worst case is a few extra syncs
+		}
+	}
+	c.m[id] = roleSyncEntry{role: role, at: now}
+	return true
+}
+
 // UserSyncMiddleware creates a middleware that loads the authenticated user from the database.
-// It must be used after Middleware. On each authenticated request, it fetches the user.
+// It must be used after Middleware. On each authenticated request it fetches the user, so
+// role changes made directly in the database take effect immediately.
 // If the user doesn't exist (first login), it creates them via SyncOnLogin.
+// The role push to Supabase runs at most once per role per TTL. The cache is process-wide
+// because routes.go builds this middleware once per route group.
 func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims := GetClaims(c)
@@ -190,7 +236,7 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 			// For existing users, sync role to Supabase if it differs from JWT.
 			// Fire-and-forget: use a detached context so the request isn't blocked.
 			jwtRole := claims.GetRole()
-			if string(user.Role) != string(jwtRole) {
+			if string(user.Role) != string(jwtRole) && roleSyncs.shouldSync(userID, user.Role, time.Now()) {
 				go userSvc.SyncRoleToSupabase(context.WithoutCancel(c.Request.Context()), userID, user.Role)
 			}
 		}
