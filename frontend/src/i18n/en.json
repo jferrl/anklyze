@@ -389,6 +389,66 @@
     "pathTitle": "Path",
     "pathEmpty": "Your answers will be listed here as you go."
   },
+  "anatomy": {
+    "title": "Anatomy",
+    "show": "Show anatomy",
+    "hide": "Hide anatomy",
+    "front": "Front (AP)",
+    "side": "Side (lateral)",
+    "lateral": "Lateral",
+    "medial": "Medial",
+    "posteriorMalleolus": "Posterior malleolus",
+    "back": "Back",
+    "frontSide": "Front",
+    "fibularLevel": "Fibular fracture level",
+    "level": {
+      "infra": "Infrasyndesmotic",
+      "trans": "Transsyndesmotic",
+      "supra": "Suprasyndesmotic",
+      "supra_far": "Suprasyndesmotic, > 6 cm from the joint",
+      "proximal": "Proximal fibula, above the drawing"
+    },
+    "structures": {
+      "lateral": "lateral malleolus",
+      "medial": "medial malleolus",
+      "posterior": "posterior malleolus"
+    },
+    "summary": {
+      "empty": "Ankle schematic, front and side views. No malleolus selected yet.",
+      "views": "Ankle schematic, front and side views.",
+      "highlighted": "Highlighted: {{list}}.",
+      "fibula": {
+        "infra": "Fibular fracture below the syndesmosis (infrasyndesmotic).",
+        "trans": "Fibular fracture at the level of the syndesmosis (transsyndesmotic).",
+        "supra": "Fibular fracture above the syndesmosis (suprasyndesmotic).",
+        "supra_far": "Fibular fracture above the syndesmosis, more than 6 cm from the joint.",
+        "proximal": "Fibular fracture in the proximal fibula, above the drawing."
+      },
+      "posteriorType": "Posterior malleolus: {{type}}."
+    },
+    "fields": {
+      "involved_malleoli": "Malleoli",
+      "articular_involvement": "Articular surface",
+      "has_articular_depression": "Articular depression",
+      "medial_morphology": "Medial morphology",
+      "fibula_infrasindesmal_transverse": "Infrasyndesmotic fibula",
+      "fibular_level": "Fibular level",
+      "fibula_trace_count": "Fibular traces",
+      "lateral_morphology": "Fibular morphology",
+      "infrasindesmal_morphology": "Fibular morphology",
+      "lateral_subtype": "Lateral subtype",
+      "suprasindesmal_type": "Suprasyndesmotic type",
+      "fibula_trace_pattern": "Trace pattern",
+      "medial_subtype": "Medial subtype",
+      "has_fibula_head_shortening": "Fibular head shortening",
+      "posterior_fracture_type": "Posterior fragment"
+    },
+    "schematic": "Schematic, not to scale; it shows the level, not the shape of the fracture.",
+    "creditFront": "Front view adapted from",
+    "creditFrontBy": "by DrFO.Tn,",
+    "creditSide": "; side view adapted from",
+    "creditSideLicense": ", public domain."
+  },
   "language": {
     "toggle": "Toggle language"
   },

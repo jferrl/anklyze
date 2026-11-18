@@ -9,6 +9,20 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { AnatomyView } from '@/components/anatomy/AnatomyView';
+
+// Per viewer; off by default so the radiograph, not a schematic, shapes the first reading.
+const ANATOMY_KEY = 'anklyze-case-anatomy';
+
+function readAnatomyPref(): boolean {
+  try {
+    return localStorage.getItem(ANATOMY_KEY) === 'on';
+  } catch {
+    return false;
+  }
+}
 
 // QuestionAnswer represents a single answer in the user's decision path
 export interface QuestionAnswer {
@@ -63,6 +77,16 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
   }));
 
   const canGoBack = formHistory.length > 0;
+
+  const [showAnatomy, setShowAnatomy] = useState(readAnatomyPref);
+  const toggleAnatomy = (on: boolean) => {
+    setShowAnatomy(on);
+    try {
+      localStorage.setItem(ANATOMY_KEY, on ? 'on' : 'off');
+    } catch {
+      // Storage unavailable (private mode): the choice lasts for this page only.
+    }
+  };
 
   const goBack = useCallback(() => {
     if (formHistory.length === 0) return;
@@ -178,11 +202,21 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
         </div>
       )}
 
-      {/* Auto CT-scan indicator */}
-      <p className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Badge variant="outline">{t('cases.images.ct')}</Badge>
-        {hasTACImages ? t('cases.ctScanAutoDetected') : t('cases.ctScanAutoNo')}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        {/* Auto CT-scan indicator */}
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Badge variant="outline">{t('cases.images.ct')}</Badge>
+          {hasTACImages ? t('cases.ctScanAutoDetected') : t('cases.ctScanAutoNo')}
+        </p>
+        <Label className="font-normal text-muted-foreground">
+          <Switch checked={showAnatomy} onCheckedChange={toggleAnatomy} />
+          {t('anatomy.show')}
+        </Label>
+      </div>
+
+      {showAnatomy && (
+        <AnatomyView formData={formData} hasTACImages={hasTACImages} className="border-y py-4" />
+      )}
 
       {/* Back button */}
       {canGoBack && (
