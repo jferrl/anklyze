@@ -248,7 +248,8 @@ function FrontView({ state }: { state: AnatomyState }) {
     <div className="relative self-end">
       <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="var(--card)" strokeLinecap="round" strokeLinejoin="round">
         <defs>
-          <Spot id={`${id}-lateral`} cx={244} cy={330} r={124} />
+          {/* The lateral malleolus is the fibula below the plafond (y≈244), so it meets the transsyndesmotic band without overlapping it. */}
+          <Spot id={`${id}-lateral`} cx={244} cy={368} r={124} />
           <Spot id={`${id}-medial`} cx={395} cy={262} r={52} />
           <clipPath id={`${id}-fibula`}>
             <path d={FIBULA_INTACT} />
