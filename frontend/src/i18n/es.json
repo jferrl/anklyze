@@ -447,7 +447,22 @@
     "creditFront": "Vista frontal adaptada de",
     "creditFrontBy": "de DrFO.Tn,",
     "creditSide": "; vista lateral adaptada de",
-    "creditSideLicense": ", dominio público."
+    "creditSideLicense": ", dominio público.",
+    "model3d": {
+      "open": "Explorar en 3D",
+      "close": "Volver al dibujo",
+      "loading": "Cargando el modelo 3D…",
+      "reset": "Restablecer vista",
+      "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista.",
+      "canvas": "Modelo 3D de un tobillo derecho",
+      "posterior": "Posterior",
+      "noWebGL": "Este navegador no puede mostrar 3D (WebGL 2 está desactivado o no es compatible); se mantiene el dibujo.",
+      "loadFailed": "No se pudo cargar el modelo 3D; se muestra el dibujo.",
+      "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales, astrágalo y parte superior del calcáneo.",
+      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo.",
+      "caption": "Huesos de un adulto, a escala; las marcas indican el nivel, no la forma de la fractura. Tobillo derecho de",
+      "credit": ", © The Database Center for Life Science, recortado y simplificado para Anklyze;"
+    }
   },
   "language": {
     "toggle": "Cambiar idioma"

@@ -1,5 +1,7 @@
-import { useId, useMemo } from 'react';
+import { lazy, Suspense, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Rotate3d } from 'lucide-react';
+import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
@@ -27,6 +29,17 @@ const BANDS: Record<Exclude<FibulaMark, 'proximal'>, [number, number]> = {
   supra_far: [104, 143],
 };
 
+// three.js and the model load only when someone opens the 3D view.
+const Anatomy3D = lazy(() => import('./Anatomy3D'));
+
+function hasWebGL2(): boolean {
+  try {
+    return !!document.createElement('canvas').getContext('webgl2');
+  } catch {
+    return false;
+  }
+}
+
 // State changes fade or recolour in 150ms on the house curve; nothing moves.
 const ink = 'transition-[color,fill,stroke,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]';
 const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
@@ -39,7 +52,36 @@ const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
 export function AnatomyView({ formData, hasTACImages, showReading = true, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
   const state = getAnatomyState(formData);
-  const summary = useSummary(state);
+  const [view3d, setView3d] = useState(false);
+  const [notice, setNotice] = useState<'noWebGL' | 'loadFailed'>();
+  const summary = useSummary(state, view3d);
+
+  function toggle3d() {
+    if (!view3d && !hasWebGL2()) return setNotice('noWebGL');
+    setNotice(undefined);
+    setView3d(!view3d);
+  }
+
+  const fibulaCaption = (
+    <p aria-hidden="true" className="text-xs">
+      <span className={cn(on(state.lateral || !!state.fibula), 'block', state.fibula ? 'font-medium text-primary' : 'text-muted-foreground')}>
+        {t('anatomy.fibularLevel')}
+      </span>
+      <span className={cn('block min-h-4 text-primary', on(!!state.fibula))}>
+        {state.fibula && t(`anatomy.level.${state.fibula}`)}
+      </span>
+    </p>
+  );
+  const posteriorCaption = (
+    <p aria-hidden="true" className="text-xs">
+      <span className={cn(ink, 'block', state.posterior ? 'font-medium text-primary' : 'text-muted-foreground')}>
+        {t('anatomy.posteriorMalleolus')}
+      </span>
+      <span className={cn('block min-h-4 text-primary', on(!!state.posteriorType))}>
+        {state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
+      </span>
+    </p>
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -55,31 +97,47 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
 
   return (
     <figure className={cn('space-y-3', className)}>
-      <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-4">
-        <div className="space-y-1">
-          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
-          <FrontView state={state} />
-          <p aria-hidden="true" className="text-xs">
-            <span className={cn(on(state.lateral || !!state.fibula), 'block', state.fibula ? 'font-medium text-primary' : 'text-muted-foreground')}>
-              {t('anatomy.fibularLevel')}
-            </span>
-            <span className={cn('block min-h-4 text-primary', on(!!state.fibula))}>
-              {state.fibula && t(`anatomy.level.${state.fibula}`)}
-            </span>
-          </p>
+      {view3d ? (
+        <div className="space-y-3">
+          <Suspense fallback={<p className="grid aspect-square place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}>
+            <Anatomy3D
+              state={state}
+              onFail={() => {
+                setView3d(false);
+                setNotice('loadFailed');
+              }}
+            />
+          </Suspense>
+          <div className="grid grid-cols-2 gap-4">
+            {fibulaCaption}
+            {posteriorCaption}
+          </div>
         </div>
-        <div className="space-y-1">
-          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
-          <SideView state={state} />
-          <p aria-hidden="true" className="text-xs">
-            <span className={cn(ink, 'block', state.posterior ? 'font-medium text-primary' : 'text-muted-foreground')}>
-              {t('anatomy.posteriorMalleolus')}
-            </span>
-            <span className={cn('block min-h-4 text-primary', on(!!state.posteriorType))}>
-              {state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
-            </span>
-          </p>
+      ) : (
+        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-4">
+          <div className="space-y-1">
+            <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
+            <FrontView state={state} />
+            {fibulaCaption}
+          </div>
+          <div className="space-y-1">
+            <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
+            <SideView state={state} />
+            {posteriorCaption}
+          </div>
         </div>
+      )}
+
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Button type="button" variant="outline" size="sm" aria-pressed={view3d} onClick={toggle3d}>
+          <Rotate3d />
+          {view3d ? t('anatomy.model3d.close') : t('anatomy.model3d.open')}
+        </Button>
+        {notice && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t(`anatomy.model3d.${notice}`)}
+          </p>
+        )}
       </div>
 
       <p className="sr-only" aria-live="polite">{summary}</p>
@@ -95,6 +153,19 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
         </dl>
       )}
 
+      {view3d ? (
+        <figcaption className="text-xs text-muted-foreground">
+          {t('anatomy.model3d.caption')}{' '}
+          <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener noreferrer" className="underline">
+            BodyParts3D
+          </a>
+          {t('anatomy.model3d.credit')}{' '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
+            CC BY-SA 4.0
+          </a>
+          .
+        </figcaption>
+      ) : (
       <figcaption className="text-xs text-muted-foreground">
         {t('anatomy.schematic')}{' '}
         {t('anatomy.creditFront')}{' '}
@@ -111,20 +182,21 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
         </a>
         {t('anatomy.creditSideLicense')}
       </figcaption>
+      )}
     </figure>
   );
 }
 
-function useSummary(state: AnatomyState): string {
+function useSummary(state: AnatomyState, model3d: boolean): string {
   const { t, i18n } = useTranslation();
   const parts = [
     state.lateral && t('anatomy.structures.lateral'),
     state.medial && t('anatomy.structures.medial'),
     state.posterior && t('anatomy.structures.posterior'),
   ].filter((part): part is string => !!part);
-  if (parts.length === 0 && !state.fibula) return t('anatomy.summary.empty');
+  if (parts.length === 0 && !state.fibula) return t(model3d ? 'anatomy.model3d.empty' : 'anatomy.summary.empty');
 
-  const sentences = [t('anatomy.summary.views')];
+  const sentences = [t(model3d ? 'anatomy.model3d.views' : 'anatomy.summary.views')];
   if (parts.length > 0) {
     sentences.push(t('anatomy.summary.highlighted', { list: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(parts) }));
   }

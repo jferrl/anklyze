@@ -447,7 +447,22 @@
     "creditFront": "Front view adapted from",
     "creditFrontBy": "by DrFO.Tn,",
     "creditSide": "; side view adapted from",
-    "creditSideLicense": ", public domain."
+    "creditSideLicense": ", public domain.",
+    "model3d": {
+      "open": "Explore in 3D",
+      "close": "Back to the drawing",
+      "loading": "Loading the 3D model…",
+      "reset": "Reset view",
+      "hint": "Drag to turn the model, or select it and use the arrow keys; Home resets the view.",
+      "canvas": "3D model of a right ankle",
+      "posterior": "Posterior",
+      "noWebGL": "This browser cannot show 3D (WebGL 2 is off or unsupported), so the drawing stays.",
+      "loadFailed": "The 3D model could not be loaded, so the drawing is shown.",
+      "views": "3D model of a right ankle: distal tibia and fibula, talus and the top of the calcaneus.",
+      "empty": "3D model of a right ankle. No malleolus selected yet.",
+      "caption": "One adult's bones, to scale; the marks show the level, not the shape of the fracture. Right ankle from",
+      "credit": ", © The Database Center for Life Science, cut and simplified for Anklyze;"
+    }
   },
   "language": {
     "toggle": "Toggle language"
