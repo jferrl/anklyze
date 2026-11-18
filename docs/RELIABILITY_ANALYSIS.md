@@ -318,7 +318,7 @@ These are agreement weights (1 on the diagonal), the complement of the penalty t
 
 ```go
 var AOOTAOrdering = []string{
-    "44-A1", "44-A2",
+    "44-A1", "44-A2", "44-A3",
     "44-B1", "44-B2", "44-B3",
     "44-C1", "44-C2", "44-C3",
 }
@@ -354,7 +354,7 @@ Read these before citing a number the app produced.
 - **Kappa is per study, never per case.** The per-case page shows percent agreement and category counts only.
 - **Cohen's kappa appears only with exactly two complete raters.** With three or more, Fleiss' kappa is the only kappa. With exactly two, both are shown. They differ a little because Fleiss' kappa pools the two raters' category frequencies and Cohen's kappa keeps each rater's own.
 - **Cases without an answer are dropped per system.** Fleiss' kappa needs the same number of ratings for every case. When a complete rater gave no answer in a system (for example no Bartonicek type), that case is left out of that system and the other raters keep all their data. Dropping the rater instead would discard that rater's answers on every other case, and would leave no raters at all when a case has no answer from anyone. The cost is that a system's kappa describes only the cases every complete rater answered, which may be easier cases. Compare `num_subjects` with the study's total cases and report `num_cases_excluded` with the figure. Before this change the empty answer was counted as a missing rating for that case, which distorted kappa.
-- **Weighted kappa compares AO/OTA groups.** `44-B1.2` counts as `44-B1`. Codes outside the ordering are excluded and counted: `44-A3` and its subgroups (the ordering has no A3), `44-B` (subtype not classifiable), `43-B1`, `43-B2` and "not classifiable". The count is `num_pairs_excluded`. Report it with the figure.
+- **Weighted kappa compares AO/OTA groups.** `44-B1.2` counts as `44-B1`. Codes outside the ordering are excluded and counted: `44-B` (subtype not classifiable), `43-B1`, `43-B2` and "not classifiable". The count is `num_pairs_excluded`. Report it with the figure.
 - **The Fleiss CI is a bootstrap, the Cohen CI is not.** The Cohen interval uses the normal approximation in section 4.1, which has zero width when raters agree on every case or on none. Read a Cohen interval of [1, 1] as "no information on uncertainty", not as certainty.
 - **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The code reports 1, and Cohen's kappa then has no interval.
 - **At least 2 usable cases are needed.** With fewer, no Fleiss or Cohen result is returned for that system.

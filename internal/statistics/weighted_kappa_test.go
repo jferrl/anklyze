@@ -86,7 +86,7 @@ func TestWeightedKappa_ExtremeDisagreement(t *testing.T) {
 func TestWeightedKappa_AOOTAOrdering(t *testing.T) {
 	t.Parallel()
 
-	aoOTA := []string{"44-A1", "44-A2", "44-B1", "44-B2", "44-B3", "44-C1", "44-C2", "44-C3"}
+	aoOTA := []string{"44-A1", "44-A2", "44-A3", "44-B1", "44-B2", "44-B3", "44-C1", "44-C2", "44-C3"}
 
 	// Perfect agreement on adjacent codes should have high weighted kappa
 	ratings := [][2]string{
@@ -177,17 +177,17 @@ func TestAOOTAGroup(t *testing.T) {
 	}
 }
 
-// Hand computed on the AO/OTA ordering (k = 8, linear weight 1 - |i-j|/7):
-// pairs (B1,B1) (B2,B3) (C1,C3) (B1,A1) have weights 1, 6/7, 5/7, 5/7, so Po = 23/28.
-// Marginals: rater 1 B1 .5, B2 .25, C1 .25; rater 2 A1, B1, B3, C3 .25 each, so Pe = 37/56.
-// kappa_w = (23/28 - 37/56) / (1 - 37/56) = 9/19. The pairs (A3,A1) and (43-B1,B1) are outside the ordering.
+// Hand computed on the AO/OTA ordering (k = 9, linear weight 1 - |i-j|/8):
+// pairs (B1,B1) (B2,B3) (C1,C3) (B1,A1) have weights 1, 7/8, 6/8, 5/8, so Po = 13/16.
+// Marginals: rater 1 B1 .5, B2 .25, C1 .25; rater 2 A1, B1, B3, C3 .25 each, so Pe = 43/64.
+// kappa_w = (13/16 - 43/64) / (1 - 43/64) = 3/7. The pairs (43-B2,A1) and (43-B1,B1) are outside the ordering.
 func TestWeightedKappa_AOOTAHandComputedWithExclusions(t *testing.T) {
 	t.Parallel()
 
 	ratings := [][2]string{
 		{"44-B1", "44-B1"},
 		{"44-B2", "44-B3"},
-		{"44-A3", "44-A1"},
+		{"43-B2", "44-A1"},
 		{"44-C1", "44-C3"},
 		{"43-B1", "44-B1"},
 		{"44-B1", "44-A1"},
@@ -198,7 +198,7 @@ func TestWeightedKappa_AOOTAHandComputedWithExclusions(t *testing.T) {
 	if excluded != 2 {
 		t.Errorf("excluded = %d, want 2", excluded)
 	}
-	if want := 9.0 / 19.0; math.Abs(kappa-want) > 1e-12 {
+	if want := 3.0 / 7.0; math.Abs(kappa-want) > 1e-12 {
 		t.Errorf("kappa = %v, want %v", kappa, want)
 	}
 }
@@ -206,7 +206,7 @@ func TestWeightedKappa_AOOTAHandComputedWithExclusions(t *testing.T) {
 func TestWeightedKappa_AllPairsExcluded(t *testing.T) {
 	t.Parallel()
 
-	ratings := [][2]string{{"44-A3", "44-A3"}, {"not_classifiable", "44-B1"}}
+	ratings := [][2]string{{"43-B2", "43-B2"}, {"not_classifiable", "44-B1"}}
 
 	kappa, excluded := WeightedKappa(ratings, AOOTAOrdering, domain.KappaWeightLinear)
 
@@ -230,5 +230,15 @@ func TestWeightedKappa_QuadraticHandComputed(t *testing.T) {
 	}
 	if want := 8.0 / 13.0; math.Abs(kappa-want) > 1e-12 {
 		t.Errorf("kappa = %v, want %v", kappa, want)
+	}
+}
+
+func TestWeightedKappa_AOOTAIncludesA3(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{{AOOTAGroup("44-A3.2"), "44-A3"}, {AOOTAGroup("44-A3.3"), "44-B1"}, {"44-B1", "44-B1"}}
+
+	if _, excluded := WeightedKappa(ratings, AOOTAOrdering, domain.KappaWeightLinear); excluded != 0 {
+		t.Errorf("excluded = %d, want 0: 44-A3 subgroups belong to the ordering", excluded)
 	}
 }
