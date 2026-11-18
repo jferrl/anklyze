@@ -13,8 +13,6 @@ import (
 type UserRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
 	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
-	UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error
-	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 }
 
 // UserService orchestrates user operations across database and external services.
@@ -47,23 +45,6 @@ func (s *UserService) SyncOnLogin(ctx context.Context, userID uuid.UUID, email, 
 	s.syncRoleToSupabase(ctx, userID, user.Role)
 
 	return user, nil
-}
-
-// UpdateRole updates a user's role and syncs to Supabase.
-func (s *UserService) UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error {
-	if err := s.repo.UpdateRole(ctx, id, role); err != nil {
-		return err
-	}
-
-	// Sync role to Supabase app_metadata
-	s.syncRoleToSupabase(ctx, id, role)
-
-	return nil
-}
-
-// GetByEmail retrieves a user by email.
-func (s *UserService) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	return s.repo.GetByEmail(ctx, email)
 }
 
 // SyncRoleToSupabase syncs the user's role to Supabase app_metadata.

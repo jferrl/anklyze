@@ -74,27 +74,6 @@ func (r *UserRepository) GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domai
 	return users, nil
 }
 
-// UpdateRole updates a user's role.
-func (r *UserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error {
-	if err := r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", id).Update("role", role).Error; err != nil {
-		return fmt.Errorf("update role: %w", err)
-	}
-	return nil
-}
-
-// GetByEmail retrieves a user by their email address.
-func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	var user domain.User
-	result := r.db.WithContext(ctx).Take(&user, "email = ?", email)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("get by email: %w", result.Error)
-	}
-	return &user, nil
-}
-
 // UpdateProfile updates a user's expertise profile fields.
 func (r *UserRepository) UpdateProfile(ctx context.Context, id uuid.UUID, profile domain.UserProfileUpdate) error {
 	updates := make(map[string]any)

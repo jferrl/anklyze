@@ -13,8 +13,6 @@ import (
 type mockUserRepository struct {
 	getByIDFunc     func(ctx context.Context, id uuid.UUID) (*domain.User, error)
 	syncOnLoginFunc func(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
-	updateRoleFunc  func(ctx context.Context, id uuid.UUID, role domain.UserRole) error
-	getByEmailFunc  func(ctx context.Context, email string) (*domain.User, error)
 }
 
 func (m *mockUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
@@ -27,20 +25,6 @@ func (m *mockUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain
 func (m *mockUserRepository) SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error) {
 	if m.syncOnLoginFunc != nil {
 		return m.syncOnLoginFunc(ctx, userID, email, provider)
-	}
-	return nil, errors.New("not implemented")
-}
-
-func (m *mockUserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role domain.UserRole) error {
-	if m.updateRoleFunc != nil {
-		return m.updateRoleFunc(ctx, id, role)
-	}
-	return errors.New("not implemented")
-}
-
-func (m *mockUserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	if m.getByEmailFunc != nil {
-		return m.getByEmailFunc(ctx, email)
 	}
 	return nil, errors.New("not implemented")
 }
@@ -127,96 +111,6 @@ func TestUserService_GetByID(t *testing.T) {
 
 			if tt.wantUser != nil && got.ID != tt.wantUser.ID {
 				t.Errorf("GetByID() got ID = %v, want %v", got.ID, tt.wantUser.ID)
-			}
-		})
-	}
-}
-
-func TestUserService_GetByEmail(t *testing.T) {
-	t.Parallel()
-
-	testUser := &domain.User{
-		ID:    uuid.New(),
-		Email: "test@example.com",
-		Role:  domain.UserRoleUser,
-	}
-
-	tests := []struct {
-		name      string
-		email     string
-		setupRepo func() *mockUserRepository
-		wantUser  *domain.User
-		wantErr   bool
-	}{
-		{
-			name:  "success - user found by email",
-			email: "test@example.com",
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					getByEmailFunc: func(_ context.Context, email string) (*domain.User, error) {
-						if email == "test@example.com" {
-							return testUser, nil
-						}
-						return nil, errors.New("user not found")
-					},
-				}
-			},
-			wantUser: testUser,
-			wantErr:  false,
-		},
-		{
-			name:  "error - user not found",
-			email: "notfound@example.com",
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					getByEmailFunc: func(_ context.Context, _ string) (*domain.User, error) {
-						return nil, errors.New("user not found")
-					},
-				}
-			},
-			wantUser: nil,
-			wantErr:  true,
-		},
-		{
-			name:  "success - case sensitivity",
-			email: "TEST@EXAMPLE.COM",
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					getByEmailFunc: func(_ context.Context, email string) (*domain.User, error) {
-						// Simulating case-insensitive lookup
-						if email == "TEST@EXAMPLE.COM" {
-							return testUser, nil
-						}
-						return nil, errors.New("user not found")
-					},
-				}
-			},
-			wantUser: testUser,
-			wantErr:  false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			repo := tt.setupRepo()
-			svc := NewUserService(repo, nil)
-
-			got, err := svc.GetByEmail(context.Background(), tt.email)
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetByEmail() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-
-			if tt.wantUser != nil && got == nil {
-				t.Errorf("GetByEmail() got nil, want %v", tt.wantUser)
-				return
-			}
-
-			if tt.wantUser != nil && got.Email != tt.wantUser.Email {
-				t.Errorf("GetByEmail() got Email = %v, want %v", got.Email, tt.wantUser.Email)
 			}
 		})
 	}
@@ -360,89 +254,6 @@ func TestUserService_SyncOnLogin(t *testing.T) {
 				if got.Role != tt.wantUser.Role {
 					t.Errorf("SyncOnLogin() got Role = %v, want %v", got.Role, tt.wantUser.Role)
 				}
-			}
-		})
-	}
-}
-
-func TestUserService_UpdateRole(t *testing.T) {
-	t.Parallel()
-
-	testUserID := uuid.New()
-
-	tests := []struct {
-		name      string
-		userID    uuid.UUID
-		role      domain.UserRole
-		setupRepo func() *mockUserRepository
-		wantErr   bool
-	}{
-		{
-			name:   "success - update to admin",
-			userID: testUserID,
-			role:   domain.UserRoleAdmin,
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					updateRoleFunc: func(_ context.Context, _ uuid.UUID, _ domain.UserRole) error {
-						return nil
-					},
-				}
-			},
-			wantErr: false,
-		},
-		{
-			name:   "success - update to user",
-			userID: testUserID,
-			role:   domain.UserRoleUser,
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					updateRoleFunc: func(_ context.Context, _ uuid.UUID, _ domain.UserRole) error {
-						return nil
-					},
-				}
-			},
-			wantErr: false,
-		},
-		{
-			name:   "error - user not found",
-			userID: uuid.New(),
-			role:   domain.UserRoleAdmin,
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					updateRoleFunc: func(_ context.Context, _ uuid.UUID, _ domain.UserRole) error {
-						return errors.New("user not found")
-					},
-				}
-			},
-			wantErr: true,
-		},
-		{
-			name:   "error - database error",
-			userID: testUserID,
-			role:   domain.UserRoleAdmin,
-			setupRepo: func() *mockUserRepository {
-				return &mockUserRepository{
-					updateRoleFunc: func(_ context.Context, _ uuid.UUID, _ domain.UserRole) error {
-						return errors.New("database connection lost")
-					},
-				}
-			},
-			wantErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			repo := tt.setupRepo()
-			// AuthAdmin is nil - role sync to Supabase will be skipped
-			svc := NewUserService(repo, nil)
-
-			err := svc.UpdateRole(context.Background(), tt.userID, tt.role)
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UpdateRole() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
