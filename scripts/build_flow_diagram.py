@@ -53,6 +53,9 @@ ALIASES = {
     "Fractura tibia distal": "Fractura de tibia distal",
 }
 
+# Label for the start node, whose source label is a placeholder.
+START = {"es": "Inicio", "en": "Start"}
+
 # Drawio questions with no es.json counterpart.
 EXTRA_EN = {
     "¿A qué nivel está la fractura?": "At what level is the fracture?",
@@ -225,6 +228,8 @@ def build(lang, tree, table, tmp):
         c.set("style", set_style(style, fillColor=light_dark(bg), strokeColor=light_dark(line), fontColor=light_dark(FOREGROUND)))
         stats["colours"] += bool(re.search(r"color\s*:", value))
         lines = label_lines(value)
+        if lines == ["bli"]:  # the source's start node carries a placeholder label
+            lines = [START[lang]]
         stats["labels"] += bool(lines)
         if lang == "en":
             out = [translate(ln, table) for ln in lines]
