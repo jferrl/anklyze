@@ -124,7 +124,7 @@ func TestAuditRepository_Save(t *testing.T) {
 
 			db := setupTestDB(t)
 			repo := NewAuditRepository(db, 10)
-			t.Cleanup(func() { _ = repo.Close() })
+			t.Cleanup(func() { _ = repo.Close(context.Background()) })
 
 			err := repo.Save(context.Background(), tt.entry)
 			if (err != nil) != tt.wantErr {
@@ -151,7 +151,7 @@ func TestAuditRepository_Save_BufferFull(t *testing.T) {
 
 	// No background writer: with one started, it can drain the first entry
 	// before the second Save, and the buffer is never seen full.
-	repo := &AuditRepository{db: db, writeCh: make(chan *domain.AuditEntry, 1), done: make(chan struct{})}
+	repo := &AuditRepository{db: db, writeCh: make(chan *domain.AuditEntry, 1)}
 
 	ctx := context.Background()
 
@@ -174,7 +174,7 @@ func TestAuditRepository_Save_Concurrent(t *testing.T) {
 
 	db := setupTestDB(t)
 	repo := NewAuditRepository(db, 100)
-	t.Cleanup(func() { _ = repo.Close() })
+	t.Cleanup(func() { _ = repo.Close(context.Background()) })
 
 	ctx := context.Background()
 	const numGoroutines = 50
@@ -212,7 +212,7 @@ func TestAuditRepository_Save_NonBlocking(t *testing.T) {
 
 	db := setupTestDB(t)
 	repo := NewAuditRepository(db, 10)
-	t.Cleanup(func() { _ = repo.Close() })
+	t.Cleanup(func() { _ = repo.Close(context.Background()) })
 
 	ctx := context.Background()
 	entry := createTestEntry()
