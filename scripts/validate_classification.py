@@ -174,8 +174,8 @@ EXPECTED_COUNTS = {
     'lateral_only': 13,
     'medial_posterior': 6,
     'lateral_posterior': 40,
-    'lateral_medial': 18,
-    'trimaleolar': 65,
+    'lateral_medial': 20,
+    'trimaleolar': 75,
 }
 
 for branch, expected in EXPECTED_COUNTS.items():

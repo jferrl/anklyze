@@ -63,8 +63,8 @@
         "body": "Todas las preguntas pertenecen a un único árbol con 165 caminos terminales. Cada respuesta determina la siguiente pregunta y cada camino termina en una clasificación en los cuatro sistemas. El árbol está publicado en el repositorio como diagrama y como tabla."
       },
       "tested": {
-        "term": "Comprobado en parte contra el diagrama",
-        "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama que el árbol. Hoy cubren 88 de los 165 caminos; el resto aún no se comprueba de forma automática."
+        "term": "Comprobado contra el diagrama",
+        "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama que el árbol. Cubren los 165 caminos. En uno de ellos no se comprueba el código AO/OTA, porque el diagrama se está corrigiendo en ese punto."
       },
       "notClassifiable": {
         "term": "No clasificable es un resultado",
@@ -182,7 +182,7 @@
       },
       "medialMorphologyLM": {
         "vertical": "Vertical",
-        "transverse_oblique": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "transverse_oblique": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       "fibularLevel": {
         "infrasindesmal": "Infrasindesmal",
@@ -234,8 +234,8 @@
         "conminuta": "Conminuta/ala de mariposa"
       },
       "infrasindesmalMorphology": {
-        "avulsion": "Avulsión de la punta del maleolo",
-        "malleolus_fracture": "Fractura de maleolo lateral"
+        "avulsion": "Avulsión de la punta del maléolo",
+        "malleolus_fracture": "Fractura de maléolo lateral"
       },
       "infrasindesmalMorphologyLMTri": {
         "avulsion": "Avulsión",
@@ -243,7 +243,7 @@
       },
       "lateralSubtype": {
         "simple": "Fractura simple",
-        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wagstaffe)"
       },
       "medialSubtype": {
         "open_mortise": "Abierta la mortaja",

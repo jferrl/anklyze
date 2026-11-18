@@ -13,90 +13,69 @@ Defaults:
 """
 
 import json
-import sys
 import re
+import subprocess
+import sys
 
 INPUT_PATH = sys.argv[1] if len(sys.argv) > 1 else "/tmp/classification_test_cases.json"
 OUTPUT_PATH = sys.argv[2] if len(sys.argv) > 2 else "internal/rules/engine_drawio_test.go"
 
 # --- Label-to-domain-value mappings ---
-# These map the normalized form labels (from parse_drawio_test_cases.py FORM_LABELS)
-# to the Go domain constant values used in FractureInput.
+# Answer labels come from the form (es.json, already normalized by
+# parse_drawio_test_cases.py); option keys are the domain values, and the Go
+# constant for each value is read from internal/domain/fracture.go.
+I18N_PATH = "frontend/src/i18n/es.json"
+DOMAIN_PATH = "internal/domain/fracture.go"
 
-INVOLVED_MALLEOLI = {
-    'Maléolo posterior': 'domain.InvolvedPosteriorOnly',
-    'Maléolo medial': 'domain.InvolvedMedialOnly',
-    'Maléolo lateral': 'domain.InvolvedLateralOnly',
-    'Maléolos medial y posterior': 'domain.InvolvedMedialPosterior',
-    'Maléolos lateral y posterior': 'domain.InvolvedLateralPosterior',
-    'Maléolos lateral y medial': 'domain.InvolvedLateralMedial',
-    'Maléolos medial, lateral y posterior': 'domain.InvolvedTrimaleolar',
+# FractureInput field -> es.json option groups whose keys are that field's values.
+FIELD_GROUPS = {
+    'InvolvedMalleoli': ('involvedMalleoli',),
+    'PosteriorFractureType': ('posteriorType', 'posteriorTypeMedPost', 'posteriorTypeLPInfra'),
+    'MedialMorphology': ('medialMorphology', 'medialMorphologyLM'),
+    'FibularLevel': ('fibularLevel',),
+    'FibulaTraceCount': ('fibulaTraceCount',),
+    'LateralMorphology': ('lateralMorphology', 'lateralMorphologyMulti', 'lateralMorphologyLP',
+                          'fibulaMorphologyLM', 'fibulaMorphologyLMMulti',
+                          'fibulaMorphologyTri', 'fibulaMorphologyTriMulti'),
+    'InfrasindesmalMorphology': ('infrasindesmalMorphology', 'infrasindesmalMorphologyLMTri'),
+    'LateralSubtype': ('lateralSubtype',),
+    'MedialSubtype': ('medialSubtype',),
+    'SuprasindesmalType': ('suprasindesmalType', 'suprasindesmalTypeLP'),
+    'FibulaTracePattern': ('fibulaTracePattern', 'fibulaTracePatternLP', 'fibulaTracePatternMultiLP'),
+    'ArticularInvolvement': ('articularInvolvement',),
 }
 
-FIBULAR_LEVEL = {
-    'Infrasindesmal': 'domain.FibularLevelInfrasindesmal',
-    'Transindesmal': 'domain.FibularLevelTransindesmal',
-    'Suprasindesmal': 'domain.FibularLevelSuprasindesmal',
-}
+# Yes/no questions, matched by a keyword of the question text.
+BOOL_QUESTIONS = (
+    ('tac', 'HasCTScan'),
+    ('depresión articular', 'HasArticularDepression'),
+    ('es infrasindesmal', 'FibulaInfrasindesmalTransverse'),
+    ('acortamiento', 'HasFibulaHeadShortening'),
+    ('posteromedial', 'IsPosteriorPosteromedial'),
+)
 
-LATERAL_MORPHOLOGY = {
-    # 2-option form (lateral_only, lateral_posterior)
-    'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta': 'domain.LateralMorphologyOblique',
-    'Espiroidea (Baja anterior, alta posterior)': 'domain.LateralMorphologySpiral',
-    # 3-option form: lateral_medial
-    'Transversa/Oblicua (Baja medial, alta lateral)': 'domain.LateralMorphologyTransverse',
-    'Conminuta/ala de mariposa': None,  # branch-dependent: see map_lateral_morphology()
-}
 
-SUPRASINDESMAL_TYPE = {
-    'Diafisaria Simple': 'domain.SuprasindesmalSimpleDiaphyseal',
-    'Multifragmentaria': 'domain.SuprasindesmalMultifragmentary',
-    'Proximal': 'domain.SuprasindesmalProximal',
-}
+def load_label_map():
+    """Return {form label: (FractureInput field, Go constant)}."""
+    with open(DOMAIN_PATH, encoding='utf-8') as f:
+        src = f.read()
+    consts = {(typ, val): f'domain.{name}'
+              for name, typ, val in re.findall(r'^\s*(\w+)\s+(\w+)\s*=\s*"([^"]*)"', src, re.M)}
+    struct = src[src.index('type FractureInput struct'):]
+    field_types = dict(re.findall(r'^\s*(\w+)\s+\*?(\w+)\s+`', struct, re.M))
 
-FIBULA_TRACE = {
-    'Parasindesmal de trazo oblicuo corto/transverso/conminuto': 'domain.FibulaTraceParasindesmoticShort',
-    'Parasindesmal de trazo oblicuo largo/espiroideo': 'domain.FibulaTraceParasindesmoticLong',
-    'Suprasindesmal (>6cm de superficie articular)': 'domain.FibulaTraceSuprasindesmoticFar',
-}
+    with open(I18N_PATH, encoding='utf-8') as f:
+        options = json.load(f)['form']['options']
+    label_map = {}
+    for field, groups in FIELD_GROUPS.items():
+        for group in groups:
+            for value, label in options[group].items():
+                entry = (field, consts[(field_types[field], value)])
+                assert label_map.setdefault(label, entry) == entry, f"ambiguous form label: {label}"
+    return label_map
 
-ARTICULAR_INVOLVEMENT = {
-    '>1/3 de superficie articular con extensión metafisaria': 'domain.ArticularLargeWithExtension',
-    '<1/3 de superficie articular sin extensión metafisaria': 'domain.ArticularSmallWithoutExtension',
-}
 
-MEDIAL_MORPHOLOGY = {
-    'Vertical': 'domain.MedialMorphologyVertical',
-    'Transverso/oblicuo': 'domain.MedialMorphologyTransverse',
-}
-
-POSTERIOR_TYPE = {
-    'Fragmento extraincisural': 'domain.PosteriorExtraincisural',
-    'Fragmento posterolateral': 'domain.PosteriorPosterolateral',
-    'Fragmento posteromedial y posterolateral': 'domain.PosteriorPosteromedialPosterolateral',
-    'Gran fragmento triangular posterolateral': 'domain.PosteriorLargePosterolateral',
-    'Fragmento extraincisural postero-medial': 'domain.PosteriorExtraincisuralPosteromedial',
-}
-
-INFRASINDESMAL_MORPHOLOGY = {
-    'Avulsión punta del peroné': 'domain.LateralSubtypeAvulsion',
-    'Fractura del maléolo': 'domain.LateralSubtypeMalleolusFracture',
-}
-
-LATERAL_SUBTYPE = {
-    'Simple': 'domain.LateralSubtypeSimple',
-    'Fractura simple': 'domain.LateralSubtypeSimple',
-    'Rotura de sindesmosis': 'domain.LateralSubtypeSyndesmosisRupture',
-    'Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)': 'domain.LateralSubtypeSyndesmosisRupture',
-    'Ala de mariposa / cuña': 'domain.LateralSubtypeButterfly',
-    'Multifragmentaria': 'domain.LateralSubtypeButterfly',
-    'Fractura en ala de maliposa/multifragmentaria': 'domain.LateralSubtypeButterfly',
-}
-
-MEDIAL_SUBTYPE = {
-    'Abierta mortaja': 'domain.MedialSubtypeOpenMortise',
-    'Fractura del maléolo': 'domain.MedialSubtypeMalleolusFracture',
-}
+LABEL_MAP = load_label_map()
 
 YES_NO = {
     'Sí': True,
@@ -164,7 +143,7 @@ BARTONICEK_MAP = {
 
 # Expected fracture_type per branch
 FRACTURE_TYPE_MAP = {
-    'posterior_only_distal_tibia': 'distal_tibia',
+    'posterior_only_distal_tibia': 'posterior_distal_tibia',
     'posterior_only': 'unimaleolar_posterior',
     'medial_only_distal_tibia': 'distal_tibia',
     'medial_only': 'unimaleolar_medial',
@@ -176,158 +155,46 @@ FRACTURE_TYPE_MAP = {
 }
 
 
-# Question patterns for matching drawio questions to input fields
-# The drawio uses slightly different question text than the form labels,
-# so we match on keywords.
+NO_POSTERIOR_BRANCHES = ('medial_only', 'lateral_only', 'lateral_medial')
 
-def is_question(q, *keywords):
-    """Check if question text contains all keywords (case-insensitive)."""
-    ql = q.lower()
-    return all(k.lower() in ql for k in keywords)
+# Drawio terminal id -> why the engine disagrees with that path's codes.
+# These subtests are emitted with t.Skip until the clinician resolves them.
+KNOWN_DISCREPANCIES = {}
 
 
-def map_lateral_morphology(label, branch):
-    """Map lateral morphology label to Go constant, handling branch-dependent mapping."""
-    if label == 'Conminuta/ala de mariposa':
-        if branch == 'lateral_medial':
-            return 'domain.LateralMorphologyConminuta'
-        else:
-            # trimaleolar: "Conminuta/ala de mariposa" also maps to Conminuta
-            return 'domain.LateralMorphologyConminuta'
-    if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
-        return 'domain.LateralMorphologyTransverse'
-    if label == 'Espiroidea (Baja anterior, alta posterior)':
-        return 'domain.LateralMorphologySpiral'
-    if label == 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta':
-        return 'domain.LateralMorphologyOblique'
-    raise ValueError(f"Unknown lateral morphology label: {label}")
-
-
-def clicks_to_input(clicks, branch):
+def clicks_to_input(clicks):
     """Convert a test case's clicks array to FractureInput field assignments."""
     fields = {}
     bool_fields = {}
 
-    for i, click in enumerate(clicks):
-        q = click['question']
+    for click in clicks:
+        q = click['question'].lower()
         label = click.get('label')
         if label is None:
             continue
 
-        # Involved malleoli
-        if is_question(q, 'maleolos', 'fracturados'):
-            fields['InvolvedMalleoli'] = INVOLVED_MALLEOLI[label]
-
-        # Articular involvement (posterior-only, medial-only)
-        elif is_question(q, 'afectación') and not is_question(q, 'articular', 'extensión'):
-            fields['ArticularInvolvement'] = ARTICULAR_INVOLVEMENT[label]
-
-        # Articular involvement medial (has important articular involvement?)
-        elif is_question(q, 'importante', 'afectación', 'articular'):
-            if label == 'Sí':
-                fields['ArticularInvolvement'] = 'domain.ArticularLargeWithExtension'
-            else:
-                fields['ArticularInvolvement'] = 'domain.ArticularSmallWithoutExtension'
-
-        # Articular depression
-        elif is_question(q, 'depresión articular') or is_question(q, 'depresión articular'):
-            bool_fields['HasArticularDepression'] = YES_NO[label]
-
-        # CT scan
-        elif is_question(q, 'tac'):
-            bool_fields['HasCTScan'] = YES_NO[label]
-
-        # Posterior fracture type (Bartonicek)
-        elif is_question(q, 'tipo', 'fractura') and 'posterior' in q.lower():
-            fields['PosteriorFractureType'] = POSTERIOR_TYPE[label]
-
-        elif is_question(q, 'tipo', 'fractura') and q.strip() in (
-            '¿Qué tipo de fractura es?',
-        ):
-            fields['PosteriorFractureType'] = POSTERIOR_TYPE[label]
-
-        # Posterior morphology (for lateral_posterior infrasindesmal CT path)
-        # Question: "¿Cuál es la morfología del maleolo posterior?" → maps to PosteriorFractureType
-        elif is_question(q, 'morfología', 'posterior'):
-            if label in POSTERIOR_TYPE:
-                fields['PosteriorFractureType'] = POSTERIOR_TYPE[label]
-
-        # Medial morphology
-        elif is_question(q, 'morfología') and is_question(q, 'medial'):
-            fields['MedialMorphology'] = MEDIAL_MORPHOLOGY[label]
-
-        elif q.strip() == '¿Qué morfología tiene?':
-            fields['MedialMorphology'] = MEDIAL_MORPHOLOGY[label]
-
-        # Fibular level
-        elif is_question(q, 'nivel') and is_question(q, 'fractura'):
-            val = FIBULAR_LEVEL.get(label)
-            if val:
-                if branch == 'lateral_medial' and fields.get('MedialMorphology') == 'domain.MedialMorphologyTransverse':
-                    # For transverse_oblique medial + fibular level question,
-                    # this goes to FibularLevel (not FibularLevelForTransverse)
-                    fields['FibularLevel'] = val
-                else:
-                    fields['FibularLevel'] = val
-
-        # Fibula infrasindesmal transverse (lateral_medial, yes/no)
-        elif is_question(q, 'peroné', 'infrasindesmal'):
-            bool_fields['FibulaInfrasindesmalTransverse'] = YES_NO[label]
-
-        # Lateral morphology (fibula morphology)
-        # Note: lateral_only infrasindesmal uses the SAME question for infrasindesmal morphology
-        elif is_question(q, 'morfología') and (
-            is_question(q, 'fractura del peroné') or
-            (is_question(q, 'fractura') and not is_question(q, 'medial') and not is_question(q, 'posterior'))
-        ):
-            if label in INFRASINDESMAL_MORPHOLOGY:
-                fields['InfrasindesmalMorphology'] = INFRASINDESMAL_MORPHOLOGY[label]
-            else:
-                fields['LateralMorphology'] = map_lateral_morphology(label, branch)
-
-        # Suprasindesmal type or lateral subtype
-        elif q.strip() == '¿De qué tipo?':
-            # Disambiguate: suprasindesmal type vs lateral subtype (transindesmal path)
-            prev_labels = [clicks[j]['label'] for j in range(max(0, i-3), i) if clicks[j].get('label')]
-            is_supra_context = any('Suprasindesmal' in pl or 'Proximal' in pl or 'Diafisaria' in pl
-                   for pl in prev_labels)
-            is_trans_context = any('Transindesmal' in pl for pl in prev_labels)
-            if is_supra_context and not is_trans_context:
-                fields['SuprasindesmalType'] = SUPRASINDESMAL_TYPE.get(label, f'UNKNOWN:{label}')
-            elif label in LATERAL_SUBTYPE:
-                fields['LateralSubtype'] = LATERAL_SUBTYPE[label]
-            elif label in SUPRASINDESMAL_TYPE:
-                fields['SuprasindesmalType'] = SUPRASINDESMAL_TYPE[label]
-
-        # Fibula trace pattern
-        elif is_question(q, 'trazo') and is_question(q, 'peroné'):
-            fields['FibulaTracePattern'] = FIBULA_TRACE[label]
-
-        # Infrasindesmal morphology (avulsion vs malleolus)
-        elif is_question(q, 'maleolo lateral') or is_question(q, 'maléolo lateral'):
-            fields['InfrasindesmalMorphology'] = INFRASINDESMAL_MORPHOLOGY[label]
-
-        # Medial subtype (open mortise vs malleolus fracture)
-        elif is_question(q, 'maleolo medial') or is_question(q, 'maléolo medial'):
-            if label in MEDIAL_SUBTYPE:
-                fields['MedialSubtype'] = MEDIAL_SUBTYPE[label]
-
-        # Posterior posteromedial
-        elif is_question(q, 'posterior', 'posteromedial'):
-            bool_fields['IsPosteriorPosteromedial'] = YES_NO[label]
-
-        # Fibula head shortening (Maisonneuve)
-        elif is_question(q, 'acortamiento') and is_question(q, 'cabeza', 'peroné'):
-            bool_fields['HasFibulaHeadShortening'] = YES_NO[label]
+        if label not in YES_NO:
+            if label not in LABEL_MAP:
+                raise ValueError(f"Unknown form label: {label}")
+            field, const = LABEL_MAP[label]
+            fields[field] = const
+        elif 'importante afectación articular' in q:
+            fields['ArticularInvolvement'] = (
+                'domain.ArticularLargeWithExtension' if YES_NO[label]
+                else 'domain.ArticularSmallWithoutExtension')
+        else:
+            field = next((f for kw, f in BOOL_QUESTIONS if kw in q), None)
+            if field is None:
+                raise ValueError(f"Unknown yes/no question: {click['question']}")
+            bool_fields[field] = YES_NO[label]
 
     return fields, bool_fields
 
 
 def determine_fracture_type(branch, fields):
     """Determine expected fracture_type based on branch and articular involvement."""
-    if branch in ('posterior_only', 'medial_only'):
-        if fields.get('ArticularInvolvement') == 'domain.ArticularLargeWithExtension':
-            return 'distal_tibia'
+    if fields.get('ArticularInvolvement') == 'domain.ArticularLargeWithExtension':
+        return FRACTURE_TYPE_MAP[f'{branch}_distal_tibia']
     return FRACTURE_TYPE_MAP.get(branch, branch)
 
 
@@ -344,7 +211,7 @@ def build_input_literal(fields, bool_fields):
     return '\n'.join(lines)
 
 
-def build_expected_checks(expected, fracture_type):
+def build_expected_checks(expected, fracture_type, branch):
     """Build Go assertion statements for expected classification results."""
     checks = []
 
@@ -415,6 +282,8 @@ def build_expected_checks(expected, fracture_type):
             checks.append(f'\t\t\t}}')
         else:
             checks.append(f'\t\t\t// TODO: unknown AO code "{ao}"')
+    elif ao == 'clasificable':
+        checks.append('\t\t\t// AO not asserted: drawio says "AO clasificable" without a code.')
     elif ao == 'no clasificable':
         # "no clasificable" → expect AOOTANotClassifiable
         checks.append(f'\t\t\tif result.AOOTA == nil {{')
@@ -446,13 +315,18 @@ def build_expected_checks(expected, fracture_type):
         checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, {go_val})')
         checks.append(f'\t\t\t}}')
     else:
-        # Missing Bartonicek → expect not_classifiable
+        # Drawio "no clasificable": the engine reports no_posterior_fracture when the
+        # posterior malleolus is not involved, not_classifiable otherwise.
+        if branch in NO_POSTERIOR_BRANCHES:
+            want, go_val = 'no_posterior_fracture', 'domain.BartonicekNoPosteriorFracture'
+        else:
+            want, go_val = 'not_classifiable', 'domain.BartonicekNotClassifiable'
         checks.append(f'\t\t\tif result.Bartonicek == nil {{')
-        checks.append(f'\t\t\t\tt.Fatal("Bartonicek is nil, want not_classifiable")')
+        checks.append(f'\t\t\t\tt.Fatal("Bartonicek is nil, want {want}")')
         checks.append(f'\t\t\t\treturn')
         checks.append(f'\t\t\t}}')
-        checks.append(f'\t\t\tif result.Bartonicek.Type != domain.BartonicekNotClassifiable {{')
-        checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)')
+        checks.append(f'\t\t\tif result.Bartonicek.Type != {go_val} {{')
+        checks.append(f'\t\t\t\tt.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, {go_val})')
         checks.append(f'\t\t\t}}')
 
     return '\n'.join(checks)
@@ -492,6 +366,7 @@ def main():
     lines.append('')
 
     errors = []
+    skipped = []
 
     for branch in sorted(test_cases.keys()):
         cases = test_cases[branch]
@@ -509,13 +384,17 @@ def main():
             expected = case['expected']
 
             try:
-                fields, bool_fields = clicks_to_input(clicks, branch)
+                fields, bool_fields = clicks_to_input(clicks)
                 fracture_type = determine_fracture_type(branch, fields)
                 input_literal = build_input_literal(fields, bool_fields)
-                expected_checks = build_expected_checks(expected, fracture_type)
+                expected_checks = build_expected_checks(expected, fracture_type, branch)
 
                 test_name = sanitize_test_name(desc)
                 lines.append(f'\tt.Run("{test_id}/{test_name}", func(t *testing.T) {{')
+                reason = KNOWN_DISCREPANCIES.get(case['terminal_id'])
+                if reason:
+                    skipped.append(f"{test_id} ({case['terminal_id']}): {reason}")
+                    lines.append(f'\t\tt.Skip({json.dumps("drawio/engine discrepancy: " + reason, ensure_ascii=False)})')
                 lines.append(f'\t\tresult, err := engine.Classify(domain.FractureInput{{')
                 lines.append(input_literal)
                 lines.append(f'\t\t}})')
@@ -542,8 +421,16 @@ def main():
 
     with open(OUTPUT_PATH, 'w') as f:
         f.write('\n'.join(lines))
+    try:
+        subprocess.run(['gofmt', '-w', OUTPUT_PATH], check=True)
+    except FileNotFoundError:
+        print("WARNING: gofmt not found; output is not formatted")
 
     print(f"Generated {OUTPUT_PATH}")
+    if skipped:
+        print(f"\nSkipped known discrepancies ({len(skipped)}):")
+        for s in skipped:
+            print(f"  {s}")
     if errors:
         print(f"\nErrors ({len(errors)}):")
         for e in errors:

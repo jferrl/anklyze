@@ -329,8 +329,8 @@ def verify_all(drawio_terminals, tree_terminals, table_terminals):
     for desc in sorted(tree_fracture_descs):
         found = False
         for ft in drawio_fracture_types:
-            # The tree strips "Fractura ", "maleolo ", "maleolos "
-            ft_short = ft.replace('Fractura ', '').replace('maleolo ', '').replace('maleolos ', '')
+            # The tree strips "Fractura ", "maléolo ", "maléolos "
+            ft_short = ft.replace('Fractura ', '').replace('maléolo ', '').replace('maléolos ', '')
             if desc == ft_short or desc in ft:
                 found = True
                 break
