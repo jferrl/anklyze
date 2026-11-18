@@ -6,7 +6,8 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/frontend.yml"
-  # No path filter on pull requests: both checks are required to merge.
+  # No path filter on pull requests: the check is required, so the job always reports.
+  # The changes job skips the build (a skipped job counts as passing) when nothing relevant changed.
   pull_request:
     branches: [main]
 
@@ -15,8 +16,27 @@ defaults:
     working-directory: frontend
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      relevant: ${{ steps.filter.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            relevant:
+              - 'frontend/**'
+              - '.github/workflows/frontend.yml'
+
   build:
     name: Build and Lint
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
 
     steps:
