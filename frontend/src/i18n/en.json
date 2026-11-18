@@ -565,7 +565,6 @@
       "divergence": "Divergence analysis",
       "publish": "Publish",
       "close": "Close case",
-      "exportCSV": "Export CSV",
       "backToList": "Back to cases",
       "notFound": "Case not found",
       "notFoundDescription": "The case you're looking for doesn't exist or has been deleted.",
@@ -699,33 +698,54 @@
       "reliability": {
         "totalCases": "Total cases",
         "completeRaters": "Complete raters",
-        "lowAgreementCases": "low agreement cases",
         "casesWithReference": "cases with reference",
         "totalComparisons": "total comparisons",
         "fleissKappa": "Fleiss' kappa (inter-rater reliability)",
         "notEnoughData": "Not enough data",
         "perCaseAgreement": "Agreement with the most common answer, per case",
         "noCaseMetrics": "No case metrics available",
-        "agreementNote": "Each figure is the share of responses that gave the most common answer for that case, not agreement between pairs of raters. Cases below 60% are highlighted."
+        "agreementNote": "Each figure is the share of responses that gave the most common answer for that case, not agreement between pairs of raters. Cases below {{threshold}}% in any system are shaded and marked with an icon.",
+        "lowAgreement": "Low agreement",
+        "retry": "Try again",
+        "loadFailed": "The reliability figures could not be loaded",
+        "loadFailedDescription": "Check your connection and try again. If it keeps failing, the server may be unavailable.",
+        "export": {
+          "figures": "Export figures (CSV)",
+          "responses": "Export responses (CSV)",
+          "figuresDone": "Figures exported",
+          "responsesDone": "Responses exported",
+          "figuresFailed": "The figures could not be exported. Try again.",
+          "responsesFailed": "The responses could not be exported. Try again."
+        },
+        "nOfM": "{{n}} of {{m}}",
+        "completeRatersNote": "Answered every case",
+        "lowAgreementCasesTitle": "Low-agreement cases",
+        "lowAgreementNote": "Below {{threshold}}% in at least one system"
       },
       "goldStandard": {
         "title": "Gold standard accuracy",
-        "description": "Measures how often raters match the expert reference classification. Higher accuracy means raters agree with the gold standard.",
-        "noCasesWithGold": "No cases in this study have a gold standard set. Set gold standard classifications on individual cases to see accuracy metrics.",
+        "noCasesWithGold": "No case in this study has a gold standard yet.",
         "casesWithGold": "{{count}} of {{total}} cases have a gold standard",
         "casesEvaluated": "{{count}} cases",
-        "consensusRate": "Consensus: {{rate}}%",
-        "casesCorrect": "correct",
-        "hardCasesWarning": "{{count}} hard case(s) detected (accuracy < 50% in at least one system)",
         "perCaseAccuracy": "Per-case accuracy vs. gold standard",
         "case": "Case",
         "noGoldStandard": "No gold standard",
-        "accuracyNote": "Accuracy shows the percentage of raters who matched the gold standard classification. Cases with < 50% accuracy in any system are flagged as hard cases.",
         "perRaterAccuracy": "Per-rater accuracy vs. gold standard",
         "rater": "Rater",
         "casesCompleted": "Cases",
-        "cases": "cases",
-        "raterNote": "Shows each rater's accuracy across all gold standard cases in this study. Only cases with a gold standard set are included."
+        "loadFailed": "Gold standard accuracy could not be loaded.",
+        "setGoldStandards": "Set gold standards",
+        "consensus": "Consensus correct in {{correct}} of {{total}} ({{rate}})",
+        "hardCases_one": "{{count}} hard case: accuracy below {{threshold}}% in at least one system",
+        "hardCases_other": "{{count}} hard cases: accuracy below {{threshold}}% in at least one system",
+        "method": {
+          "lead": "Accuracy is the share of raters whose answer matches the gold standard in a case, averaged over the cases that have one.",
+          "consensus": "Consensus counts the cases in which the most common answer matches the gold standard.",
+          "hardCase": "A case is a hard case when its accuracy is below {{threshold}}% in at least one system. Accuracy below {{threshold}}% is flagged.",
+          "perRater": "Per-rater accuracy is each rater's share of correct answers over the cases with a gold standard that the rater answered."
+        },
+        "anonymise": "Anonymise raters",
+        "raterN": "Rater {{n}}"
       },
       "closeStudy": "Close study",
       "casesLocked": "Cases cannot be changed once the study is active or closed.",
@@ -752,7 +772,6 @@
     "reliability": {
       "title": "Inter-rater reliability",
       "hasGoldStandard": "Gold standard set",
-      "exportDetailed": "Export detailed CSV",
       "viewDivergence": "Divergence analysis",
       "totalResponses": "Total responses",
       "uniqueRaters": "Unique raters",
@@ -769,9 +788,7 @@
       "kappaAlmostPerfect": "Almost perfect",
       "percentAgreement": "Agreement with the most common answer",
       "cohensKappa": "Cohen's kappa",
-      "fleissKappa": "Fleiss' kappa",
       "weightedKappa": "Weighted kappa",
-      "confidenceInterval": "{{level}}% confidence interval",
       "noGoldStandard": "No gold standard set for this case",
       "setGoldStandard": "Set gold standard",
       "clearGoldStandard": "Clear gold standard",
@@ -826,7 +843,10 @@
         "fleissCases": "For each system, only the cases that all of those raters answered in that system are used. A case where a rater gave no answer in a system is left out of that system and counted as excluded. A system needs at least two usable cases.",
         "cohen": "When exactly two raters answered every case, Cohen's kappa is shown too, computed across the cases both answered in that system. Its {{level}}% interval is a normal approximation, kappa ± z·SE with SE = √(Po·(1−Po) / (N·(1−Pe)²)), limited to the range −1 to 1. It has no width when Po is 0 or 1.",
         "weighted": "AO/OTA weighted kappa uses linear weights over the order 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Subgroup codes are compared by their group (44-B1.2 counts as 44-B1). A pair with a code outside that order, such as 43-B1 or not classifiable, is left out and counted.",
-        "noKappaPerCase": "Kappa is not computed for a single case: one case gives each rater one rating, so kappa could only be 1 or 0. Kappa is reported per study."
+        "noKappaPerCase": "Kappa is not computed for a single case: one case gives each rater one rating, so kappa could only be 1 or 0. Kappa is reported per study.",
+        "fleissLead": "Fleiss' kappa over the {{raters}} of {{totalRaters}} raters who answered every case, with a {{level}}% bootstrap confidence interval.",
+        "more": "Show full method",
+        "less": "Hide full method"
       },
       "noSystemData": "No response has a classification in this system.",
       "casesExcluded_one": "{{count}} case excluded",
@@ -840,7 +860,10 @@
         "linear": "linear",
         "quadratic": "quadratic"
       },
-      "lowAgreement": "Low agreement: under {{threshold}}"
+      "lowAgreement": "Low agreement: under {{threshold}}",
+      "classificationSystem": "Classification system",
+      "smallSample_one": "Based on {{count}} case; interpret with caution",
+      "smallSample_other": "Based on {{count}} cases; interpret with caution"
     },
     "dashboard": {
       "title": "Admin dashboard",
@@ -962,7 +985,9 @@
       "noResponses": "No responses yet. Rater agreement and the classification distribution appear once raters classify this case.",
       "exported": "CSV downloaded",
       "loadFailed": "Could not load the case report",
-      "agreementNeedsTwo": "Rater agreement needs at least two responses."
+      "agreementNeedsTwo": "Rater agreement needs at least two responses.",
+      "exportResponses": "Export responses (CSV)",
+      "exportDetailed": "Export with rater details (CSV)"
     }
   },
   "profile": {

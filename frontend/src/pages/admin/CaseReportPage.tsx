@@ -139,8 +139,8 @@ export function CaseReportPage() {
         }
         actions={
           <>
-            {exportButton(exportResponses, t('admin.cases.exportCSV'), 'outline')}
-            {exportButton(exportDetailed, t('admin.reliability.exportDetailed'), 'default')}
+            {exportButton(exportResponses, t('admin.report.exportResponses'), 'outline')}
+            {exportButton(exportDetailed, t('admin.report.exportDetailed'), 'outline')}
           </>
         }
       />

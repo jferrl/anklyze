@@ -1,18 +1,27 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { KappaGauge, KappaLegend } from '@/components/analytics';
-import { kappaInterpretationKey, type StudyReliabilityResponse } from '@/types';
+import type { ConfidenceInterval, StudyReliabilityResponse } from '@/types';
 import { MethodNote } from './MethodNote';
-import { SystemTabs } from './SystemTabs';
-import { SYSTEM_KEYS, SYSTEM_LABEL, SYSTEMS, kappaAxisMin, type SystemKey } from './systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin, type SystemKey } from './systems';
 
 interface StudyKappaAnalysisProps {
   reliability: StudyReliabilityResponse;
 }
 
+/** RULED_GRID splits one ruled box into gauge cells (DESIGN.md, The Ruled Box Rule). */
+const RULED_GRID = 'grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-4';
+
+// A small sample or an interval with no width makes the kappa unstable; say so under the gauge.
+function caution(t: TFunction, cases: number, ci?: ConfidenceInterval) {
+  return cases < SMALL_SAMPLE_CASES || (ci && ci.lower === ci.upper)
+    ? t('admin.reliability.smallSample', { count: cases })
+    : undefined;
+}
+
+/** StudyKappaAnalysis is the headline of the study page: one kappa per system, its legend and its method. */
 export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
   const { t } = useTranslation();
-  const [activeSystem, setActiveSystem] = useState<SystemKey>('lauge_hansen');
 
   const kappas = SYSTEM_KEYS.map((key) => ({ key, fleiss: reliability[`${key}_fleiss`] }));
   const min = kappaAxisMin(kappas.flatMap(({ fleiss }) => [fleiss?.kappa, fleiss?.confidence_interval?.lower]));
@@ -21,164 +30,147 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
   const hasCohen = cohens.some(({ cohen }) => cohen);
   const cohenMin = kappaAxisMin(cohens.flatMap(({ cohen }) => [cohen?.kappa, cohen?.confidence_interval?.lower]));
   const weighted = reliability.ao_ota_cohen?.weighted_kappa;
-  const activeKappa = reliability[`${activeSystem}_fleiss`];
-  const ciLevel = kappas.find(({ fleiss }) => fleiss?.confidence_interval)?.fleiss?.confidence_interval?.level ?? 0.95;
+  const level = ((kappas.find(({ fleiss }) => fleiss?.confidence_interval)?.fleiss?.confidence_interval?.level ?? 0.95) * 100).toFixed(0);
 
   return (
-    <div className="space-y-6">
-      {/* Fleiss' Kappa Scores */}
-      <section className="chart-card">
-        <h2 className="mb-4 text-base font-semibold text-foreground">
-          {t('admin.studies.reliability.fleissKappa', "Fleiss' Kappa (Inter-Rater Reliability)")}
+    <div className="space-y-4">
+      <section aria-labelledby="fleiss-heading" className="space-y-3">
+        <h2 id="fleiss-heading" className="text-base font-semibold text-foreground">
+          {t('admin.studies.reliability.fleissKappa')}
         </h2>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className={RULED_GRID}>
           {kappas.map(({ key, fleiss }) => (
-            <KappaGauge
-              key={key}
-              value={fleiss?.kappa}
-              ci={fleiss?.confidence_interval}
-              min={min}
-              label={SYSTEM_LABEL[key]}
-              description={fleiss
-                ? [
-                    t('admin.reliability.ratersCount', { count: fleiss.num_raters }),
-                    t('admin.reliability.casesCount', { count: fleiss.num_subjects }),
-                    fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
-                  ].filter(Boolean).join(', ')
-                : t('admin.studies.reliability.notEnoughData')}
-            />
+            <div key={key} className="bg-card p-4">
+              <KappaGauge
+                value={fleiss?.kappa}
+                ci={fleiss?.confidence_interval}
+                min={min}
+                label={SYSTEM_LABEL[key]}
+                swatch={SYSTEM_COLOR[key]}
+                description={fleiss
+                  ? [
+                      t('admin.reliability.ratersCount', { count: fleiss.num_raters }),
+                      t('admin.reliability.casesCount', { count: fleiss.num_subjects }),
+                      fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
+                    ].filter(Boolean).join(', ')
+                  : t('admin.studies.reliability.notEnoughData')}
+                caution={fleiss && caution(t, fleiss.num_subjects, fleiss.confidence_interval)}
+              />
+            </div>
           ))}
         </div>
+      </section>
 
-        {hasCohen && (
-          <div className="mt-8 border-t pt-6">
-            <h2 className="mb-4 text-base font-semibold text-foreground">
-              {t('admin.reliability.cohensKappa')} ({t('admin.reliability.raters2')})
-            </h2>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {cohens.map(({ key, cohen }) => (
+      {hasCohen && (
+        <section aria-labelledby="cohen-heading" className="space-y-3 pt-2">
+          <h2 id="cohen-heading" className="text-base font-semibold text-foreground">
+            {t('admin.reliability.cohensKappa')} ({t('admin.reliability.raters2')})
+          </h2>
+          <div className={RULED_GRID}>
+            {cohens.map(({ key, cohen }) => (
+              <div key={key} className="bg-card p-4">
                 <KappaGauge
-                  key={key}
                   value={cohen?.kappa}
                   ci={cohen?.confidence_interval}
                   min={cohenMin}
                   label={SYSTEM_LABEL[key]}
+                  swatch={SYSTEM_COLOR[key]}
                   description={cohen
                     ? [
                         t('admin.reliability.casesCount', { count: cohen.num_subjects }),
                         cohen.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: cohen.num_cases_excluded }),
                       ].filter(Boolean).join(', ')
                     : t('admin.studies.reliability.notEnoughData')}
+                  caution={cohen && caution(t, cohen.num_subjects, cohen.confidence_interval)}
                 />
-              ))}
-            </div>
-
-            <div className="mt-6 max-w-sm">
-              {weighted ? (
-                <KappaGauge
-                  size="sm"
-                  value={weighted.kappa}
-                  label={`${SYSTEM_LABEL.ao_ota} ${t('admin.reliability.weightedKappa').toLowerCase()} (${t(`admin.reliability.weightType.${weighted.type}`)})`}
-                  description={[
-                    t('admin.reliability.pairsCount', { count: weighted.num_pairs }),
-                    weighted.num_pairs_excluded > 0 && t('admin.reliability.pairsExcluded', { count: weighted.num_pairs_excluded }),
-                  ].filter(Boolean).join('; ')}
-                />
-              ) : (
-                reliability.ao_ota_cohen && (
+              </div>
+            ))}
+            {reliability.ao_ota_cohen && (
+              <div className="bg-card p-4 sm:col-span-2 lg:col-span-4">
+                {weighted ? (
+                  <div className="max-w-sm">
+                    <KappaGauge
+                      size="sm"
+                      value={weighted.kappa}
+                      swatch={SYSTEM_COLOR.ao_ota}
+                      label={`${SYSTEM_LABEL.ao_ota} ${t('admin.reliability.weightedKappa').toLowerCase()} (${t(`admin.reliability.weightType.${weighted.type}`)})`}
+                      description={[
+                        t('admin.reliability.pairsCount', { count: weighted.num_pairs }),
+                        weighted.num_pairs_excluded > 0 && t('admin.reliability.pairsExcluded', { count: weighted.num_pairs_excluded }),
+                      ].filter(Boolean).join('; ')}
+                    />
+                  </div>
+                ) : (
                   <p className="text-sm text-muted-foreground">{t('admin.reliability.weightedUnavailable')}</p>
-                )
-              )}
-            </div>
-          </div>
-        )}
-
-        <MethodNote className="mt-6">
-          <p className="tabular-nums">
-            {t('admin.reliability.method.fleissRaters', {
-              raters: reliability.complete_raters,
-              totalRaters: reliability.unique_raters,
-              cases: reliability.total_cases,
-            })}
-          </p>
-          <p>{t('admin.reliability.method.fleissCases')}</p>
-          <p>{t('admin.reliability.method.interval', { level: (ciLevel * 100).toFixed(0) })}</p>
-          {hasCohen && <p>{t('admin.reliability.method.cohen', { level: (ciLevel * 100).toFixed(0) })}</p>}
-          {weighted && <p>{t('admin.reliability.method.weighted')}</p>}
-        </MethodNote>
-
-        <KappaLegend className="mt-4" />
-      </section>
-
-      {/* Detailed Kappa Analysis for the selected system */}
-      {kappas.some(({ fleiss }) => fleiss) && (
-        <section className="space-y-4">
-          <SystemTabs systems={SYSTEMS} active={activeSystem} onChange={(key) => setActiveSystem(key as SystemKey)} />
-
-          <div className="chart-card">
-            <h2 className="mb-4 text-base font-semibold text-foreground">
-              {t('admin.reliability.systemDetail', { system: SYSTEM_LABEL[activeSystem] })}
-            </h2>
-
-            {!activeKappa ? (
-              <p className="border-t pt-4 text-sm text-muted-foreground">
-                {t('admin.studies.reliability.notEnoughData')}
-              </p>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-4 lg:grid-cols-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.fleissKappa')}</p>
-                    <p className="text-2xl font-semibold tabular-nums text-foreground">
-                      {activeKappa.kappa.toFixed(3)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t(kappaInterpretationKey(activeKappa.interpretation), activeKappa.interpretation)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.subjects')}</p>
-                    <p className="text-2xl font-semibold tabular-nums text-foreground">
-                      {activeKappa.num_subjects}
-                    </p>
-                    {activeKappa.num_cases_excluded > 0 && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {t('admin.reliability.casesExcluded', { count: activeKappa.num_cases_excluded })}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('admin.studies.raters.title')}</p>
-                    <p className="text-2xl font-semibold tabular-nums text-foreground">
-                      {activeKappa.num_raters}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{t('admin.reliability.categories')}</p>
-                    <p className="text-2xl font-semibold tabular-nums text-foreground">
-                      {activeKappa.num_categories}
-                    </p>
-                  </div>
-                </div>
-
-                {activeKappa.confidence_interval && (
-                  <div className="mt-4 border-t pt-3">
-                    <p className="text-sm tabular-nums text-foreground">
-                      <span className="font-medium">{t('admin.reliability.confidenceInterval', { level: 95 })}:</span>{' '}
-                      [{activeKappa.confidence_interval.lower.toFixed(3)}, {activeKappa.confidence_interval.upper.toFixed(3)}]
-                    </p>
-                  </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         </section>
       )}
+
+      <KappaLegend />
+
+      <MethodNote
+        lead={t('admin.reliability.method.fleissLead', {
+          raters: reliability.complete_raters,
+          totalRaters: reliability.unique_raters,
+          level,
+        })}
+      >
+        <p className="tabular-nums">
+          {t('admin.reliability.method.fleissRaters', {
+            raters: reliability.complete_raters,
+            totalRaters: reliability.unique_raters,
+            cases: reliability.total_cases,
+          })}
+        </p>
+        <p>{t('admin.reliability.method.fleissCases')}</p>
+        <p>{t('admin.reliability.method.interval', { level })}</p>
+        {hasCohen && <p>{t('admin.reliability.method.cohen', { level })}</p>}
+        {weighted && <p>{t('admin.reliability.method.weighted')}</p>}
+      </MethodNote>
     </div>
+  );
+}
+
+interface KappaSystemDetailProps {
+  reliability: StudyReliabilityResponse;
+  system: SystemKey;
+}
+
+/** KappaSystemDetail lists the counts behind one system's kappa; the kappa itself is in the gauge above. */
+export function KappaSystemDetail({ reliability, system }: KappaSystemDetailProps) {
+  const { t } = useTranslation();
+  const fleiss = reliability[`${system}_fleiss`];
+
+  if (!fleiss) {
+    return (
+      <p className="rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground">
+        {t('admin.studies.reliability.notEnoughData')}
+      </p>
+    );
+  }
+
+  const cells = [
+    {
+      label: t('admin.reliability.subjects'),
+      value: fleiss.num_subjects,
+      note: fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
+    },
+    { label: t('admin.studies.raters.title'), value: fleiss.num_raters },
+    { label: t('admin.reliability.categories'), value: fleiss.num_categories },
+  ];
+
+  return (
+    <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border bg-border">
+      {cells.map(({ label, value, note }) => (
+        <div key={label} className="min-w-0 bg-card p-4">
+          <dt className="text-sm text-muted-foreground">{label}</dt>
+          <dd className="mt-1 text-2xl font-semibold tabular-nums">{value}</dd>
+          {note && <dd className="mt-1 text-xs text-muted-foreground">{note}</dd>}
+        </div>
+      ))}
+    </dl>
   );
 }
