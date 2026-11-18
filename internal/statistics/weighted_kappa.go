@@ -9,7 +9,7 @@ import (
 
 // AOOTAOrdering defines the natural order of AO/OTA classifications.
 var AOOTAOrdering = []string{
-	"44-A1", "44-A2",
+	"44-A1", "44-A2", "44-A3",
 	"44-B1", "44-B2", "44-B3",
 	"44-C1", "44-C2", "44-C3",
 }

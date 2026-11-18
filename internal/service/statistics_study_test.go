@@ -242,7 +242,7 @@ func TestStudyReliability_CohenAOOTAWeightedMapsSubgroupsAndExcludes(t *testing.
 	t.Parallel()
 
 	f := newStudyFixture("ao_ota", [][]string{
-		{"44-B1.2", "44-B2", "44-A3", "44-C1", "43-B1", "44-B1"},
+		{"44-B1.2", "44-B2", "43-B2", "44-C1", "43-B1", "44-B1"},
 		{"44-B1", "44-B3", "44-A1", "44-C3", "44-B1", "44-A1"},
 	})
 
@@ -257,8 +257,8 @@ func TestStudyReliability_CohenAOOTAWeightedMapsSubgroupsAndExcludes(t *testing.
 	if w == nil {
 		t.Fatal("expected a weighted kappa for AO/OTA")
 	}
-	if !approx(w.Kappa, 9.0/19.0, 1e-12) {
-		t.Errorf("weighted kappa = %v, want %v", w.Kappa, 9.0/19.0)
+	if !approx(w.Kappa, 3.0/7.0, 1e-12) {
+		t.Errorf("weighted kappa = %v, want %v", w.Kappa, 3.0/7.0)
 	}
 	if w.NumPairs != 4 || w.NumPairsExcluded != 2 || w.Type != domain.KappaWeightLinear {
 		t.Errorf("pairs %d, excluded %d, type %q; want 4, 2, linear", w.NumPairs, w.NumPairsExcluded, w.Type)
@@ -269,8 +269,8 @@ func TestStudyReliability_WeightedKappaNilWhenTooFewPairsRemain(t *testing.T) {
 	t.Parallel()
 
 	f := newStudyFixture("ao_ota", [][]string{
-		{"44-A3", "44-B1", "43-B1"},
-		{"44-A3", "44-B2", "44-B1"},
+		{"43-B2", "44-B1", "43-B1"},
+		{"43-B2", "44-B2", "44-B1"},
 	})
 
 	got := f.metrics(t).AOOTACohen
