@@ -55,8 +55,14 @@ export function buildReliabilityFiguresCsv(
   return [HEADER, ...rows].map((row) => row.map(csvField).join(',')).join('\r\n') + '\r\n';
 }
 
-/** fileSlug turns a study title into a safe, lower-case file name part. */
-export function fileSlug(title: string): string {
+/** fileDate is the local date as YYYY-MM-DD for export file names; toISOString would give the UTC date. */
+export function fileDate(now = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+/** fileSlug turns a study or case title into a safe, lower-case file name part. */
+export function fileSlug(title: string, fallback = 'study'): string {
   const slug = title
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
@@ -64,7 +70,7 @@ export function fileSlug(title: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .slice(0, 60)
     .replace(/^-+|-+$/g, '');
-  return slug || 'study';
+  return slug || fallback;
 }
 
 /** downloadText saves text as a file through a temporary object URL. */

@@ -5,9 +5,9 @@ const DATE: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year:
 const fixed = (digits: number, language: string) =>
   new Intl.NumberFormat(language, { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
-/** formatKappa prints a kappa or a CI bound with two decimals in the interface language ("0,38" in es). */
+/** formatKappa prints a kappa or a CI bound with two decimals in the interface language ("0,38" in es), negatives with a true minus ("−0.10"). */
 export function formatKappa(value: number, language: string = i18n.language): string {
-  return fixed(2, language).format(value);
+  return fixed(2, language).format(value).replace('-', '−');
 }
 
 /** formatNumber prints a figure with a fixed number of decimals in the interface language. */

@@ -48,7 +48,6 @@ export function StudiesInProgressCard({ studies, now }: { studies: Study[]; now:
             <TableRow className="hover:bg-transparent">
               <TableHead className="pl-4 text-muted-foreground">{t('admin.studies.table.title')}</TableHead>
               <TableHead className="text-right text-muted-foreground">{t('admin.studies.table.cases')}</TableHead>
-              <TableHead className="hidden text-right text-muted-foreground sm:table-cell">{t('admin.studies.table.raters')}</TableHead>
               <TableHead className="text-right text-muted-foreground">{t('admin.studies.table.completeRaters')}</TableHead>
               <TableHead className="hidden text-right text-muted-foreground sm:table-cell">{t('admin.studies.table.responses')}</TableHead>
               <TableHead className="hidden pr-4 text-right text-muted-foreground md:table-cell">{t('admin.studies.table.created')}</TableHead>
@@ -71,8 +70,9 @@ export function StudiesInProgressCard({ studies, now }: { studies: Study[]; now:
                   </span>
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{n(study.case_count)}</TableCell>
-                <TableCell className="hidden text-right tabular-nums sm:table-cell">{n(study.unique_raters)}</TableCell>
-                <TableCell className="text-right tabular-nums">{n(study.complete_raters)}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  {t('admin.studies.reliability.nOfM', { n: study.complete_raters, m: study.unique_raters })}
+                </TableCell>
                 <TableCell className="hidden text-right tabular-nums sm:table-cell">{n(study.total_responses)}</TableCell>
                 <TableCell className="hidden pr-4 text-right tabular-nums text-muted-foreground md:table-cell">
                   {formatDate(study.created_at, i18n.language)}

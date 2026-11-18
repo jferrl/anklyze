@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CaseMetrics } from '@/types';
+import { formatNumber } from '@/lib/format';
 import { CaseMetricCard } from './CaseMetricCard';
 import { CASE_LINK, caseReportPath } from './caseLink';
 import { SystemColumnHeads, SystemListHead } from './SystemTabs';
@@ -34,7 +35,7 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
           <div className="overflow-hidden rounded-lg border bg-card">
             <div className="md:hidden">
               <SystemListHead label={t('admin.studies.goldStandard.case')} system={activeSystem} />
-              <div key={activeSystem} className="animate-fade-in divide-y">
+              <div className="divide-y">
                 {sortedMetrics.map((caseMetrics) => (
                   <CaseMetricCard key={caseMetrics.case_id} metrics={caseMetrics} activeSystem={activeSystem} />
                 ))}
@@ -57,7 +58,7 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
                       key={caseMetrics.case_id}
                       className={cn('border-b last:border-0', caseMetrics.is_low_agreement && 'bg-warning/10')}
                     >
-                      <td className="px-4 py-3 tabular-nums text-muted-foreground">{caseMetrics.case_order}</td>
+                      <td className="px-4 py-3 tabular-nums text-muted-foreground">{formatNumber(caseMetrics.case_order, 0)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Link to={caseReportPath(caseMetrics.case_id)} className={CASE_LINK}>
@@ -66,13 +67,13 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
                           {caseMetrics.is_low_agreement && (
                             <AlertCircle
                               role="img"
-                              aria-label={t('admin.studies.reliability.lowAgreement')}
+                              aria-label={t('admin.reliability.lowAgreement', { threshold: formatPercent(LOW_AGREEMENT_PCT) })}
                               className="size-4 shrink-0 text-warning"
                             />
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{caseMetrics.response_count}</td>
+                      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{formatNumber(caseMetrics.response_count, 0)}</td>
                       {SYSTEM_KEYS.map((key) => {
                         const value = caseMetrics[`${key}_agreement`];
                         return (

@@ -4,11 +4,11 @@ import { PanelRightOpen, PanelRightClose, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { SvgDiagramViewer } from './SvgDiagramViewer';
 
-const DIAGRAM_SRC = '/classification-flow.svg';
-
 export function FlowDiagramSidebar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  // Built per language by scripts/build_flow_diagram.py; Spanish is the source.
+  const diagramSrc = `/classification-flow.${i18n.language === 'en' ? 'en' : 'es'}.svg`;
 
   return (
     <>
@@ -61,7 +61,7 @@ export function FlowDiagramSidebar() {
           {/* Diagram Content — SVG viewer with pan/zoom */}
           {isOpen && (
             <SvgDiagramViewer
-              src={DIAGRAM_SRC}
+              src={diagramSrc}
               className="flex-1 flex flex-col overflow-hidden"
             />
           )}

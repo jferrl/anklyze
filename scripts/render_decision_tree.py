@@ -19,6 +19,26 @@ import html
 import re
 import sys
 import argparse
+import importlib.util
+import os
+
+# Output language. Spanish is the draw.io's own; English reuses the diagram build's translations
+# (scripts/build_flow_diagram.py) so the text files and the diagram never disagree.
+TR = lambda text: text
+NC = 'no clasificable'
+ENGLISH = False
+
+
+def use_english():
+    global TR, NC, ENGLISH
+    ENGLISH = True
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_flow_diagram.py')
+    spec = importlib.util.spec_from_file_location('build_flow_diagram', path)
+    flow = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(flow)
+    table = flow.i18n_map()
+    TR = lambda text: ' | '.join(flow.translate(part.strip(), table) for part in text.split(' | '))
+    NC = 'not classifiable'
 
 ATTRIBUTION = (
     "# Decision tree by Laura Paniagua Andrés (Hospital de León).\n"
@@ -160,9 +180,9 @@ def render_tree(cells, children, root_id, out):
         text = node['text']
 
         if t == 'decision':
-            out.write(f'{prefix}Q: {text}\n')
+            out.write(f'{prefix}Q: {TR(text)}\n')
         elif t == 'option':
-            out.write(f'{prefix}├── {text}\n')
+            out.write(f'{prefix}├── {TR(text)}\n')
         elif t == 'terminal':
             codes = parse_terminal_codes(text)
             parts = []
@@ -173,7 +193,7 @@ def render_tree(cells, children, root_id, out):
             code_str = ' '.join(parts)
             # Short fracture type
             ft = codes['fracture_type']
-            ft_short = ft.replace('Fractura ', '').replace('maléolo ', '').replace('maléolos ', '')
+            ft_short = TR(ft) if ENGLISH else ft.replace('Fractura ', '').replace('maléolo ', '').replace('maléolos ', '')
             out.write(f'{prefix}╰── [{code_str}] {ft_short}\n')
             terminal_count[0] += 1
         else:
@@ -187,7 +207,7 @@ def render_tree(cells, children, root_id, out):
     out.write(f"# Source: drawio diagram (source of truth)\n")
     out.write(ATTRIBUTION)
     out.write(f"# Legend: Q=Question, ├──=Answer option, ╰──=Terminal [AO LH Weber Bartonicek]\n")
-    out.write(f"# N/C = no clasificable\n")
+    out.write(f"# N/C = {NC}\n")
     out.write("#\n\n")
 
     _render(root_id, 0, set())
@@ -297,7 +317,7 @@ def render_table(cells, children, parents, root_id, out):
         w = c['weber'] or 'N/C'
         b = c['bartonicek'] or 'N/C'
         # Skip first answer (malleoli selection — redundant with branch)
-        answer_path = ' → '.join(p['answers'][1:]) if len(p['answers']) > 1 else '(direct)'
+        answer_path = ' → '.join(TR(a) for a in p['answers'][1:]) if len(p['answers']) > 1 else '(direct)'
         out.write(f"  {ao:<12} {lh:<5} {w:<3} {b:<3} {answer_path}\n")
 
 
@@ -306,10 +326,13 @@ def main():
     parser.add_argument('--table', action='store_true', help='Output flat path table instead of tree')
     parser.add_argument('--drawio', default='docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio')
     parser.add_argument('-o', '--output', default=None, help='Output file (default: stdout)')
-    parser.add_argument('--both', action='store_true', help='Output both tree and table to docs/')
+    parser.add_argument('--both', action='store_true', help='Write tree and table to docs/, in Spanish and English')
+    parser.add_argument('--lang', choices=('es', 'en'), default='es', help='Language for single-file output')
     args = parser.parse_args()
 
     cells, children, parents, root_id = parse_drawio(args.drawio)
+    if args.lang == 'en' and not args.both:
+        use_english()
 
     term_count = sum(1 for c in cells.values() if c['type'] == 'terminal')
     dec_count = sum(1 for c in cells.values() if c['type'] == 'decision')
@@ -323,6 +346,14 @@ def main():
         with open('docs/decision_table.txt', 'w') as f:
             render_table(cells, children, parents, root_id, f)
         print("Wrote docs/decision_table.txt", file=sys.stderr)
+
+        use_english()
+        with open('docs/decision_tree.en.txt', 'w') as f:
+            render_tree(cells, children, root_id, f)
+        print("Wrote docs/decision_tree.en.txt", file=sys.stderr)
+        with open('docs/decision_table.en.txt', 'w') as f:
+            render_table(cells, children, parents, root_id, f)
+        print("Wrote docs/decision_table.en.txt", file=sys.stderr)
         return
 
     out = open(args.output, 'w') if args.output else sys.stdout

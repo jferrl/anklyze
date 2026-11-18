@@ -1,0 +1,737 @@
+# Ankle Fracture Classification Decision Tree
+# Source: drawio diagram (source of truth)
+# Decision tree by Laura Paniagua Andrés (Hospital de León).
+# Copyright 2026 Laura Paniagua Andrés. CC BY 4.0; see LICENSE-CC-BY-4.0 and NOTICE.
+# Legend: Q=Question, ├──=Answer option, ╰──=Terminal [AO LH Weber Bartonicek]
+# N/C = not classifiable
+#
+
+Q: Which malleoli are fractured?
+│   ├── Posterior malleolus
+│   │   Q: What is the involvement?
+│   │   │   ├── >1/3 articular surface with metaphyseal extension
+│   │   │   │   Q: Is articular depression present?
+│   │   │   │   │   ├── No
+│   │   │   │   │   │   ╰── [AO:43-B1 LH:N/C W:N/C Bart:N/C] Distal tibia fracture
+│   │   │   │   │   ├── Yes
+│   │   │   │   │   │   ╰── [AO:43-B2 LH:N/C W:N/C Bart:N/C] Distal tibia fracture
+│   │   │   ├── <1/3 articular surface without metaphyseal extension
+│   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   ├── Yes
+│   │   │   │   │   │   Q: What type of fracture is it?
+│   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] Unimalleolar posterior malleolus fracture
+│   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:2] Unimalleolar posterior malleolus fracture
+│   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:3] Unimalleolar posterior malleolus fracture
+│   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:4] Unimalleolar posterior malleolus fracture
+│   │   │   │   │   ├── No
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] Unimalleolar posterior malleolus fracture
+│   ├── Medial malleolus
+│   │   Q: Is there significant articular involvement with metaphyseal extension?
+│   │   │   ├── Yes
+│   │   │   │   Q: Is there articular depression?
+│   │   │   │   │   ├── Yes
+│   │   │   │   │   │   ╰── [AO:43-B2 LH:N/C W:N/C Bart:N/C] Distal tibia fracture
+│   │   │   │   │   ├── No
+│   │   │   │   │   │   ╰── [AO:43-B1 LH:N/C W:N/C Bart:N/C] Distal tibia fracture
+│   │   │   ├── No
+│   │   │   │   Q: What morphology does it have?
+│   │   │   │   │   ├── Vertical
+│   │   │   │   │   │   ╰── [AO:N/C LH:SA W:N/C Bart:N/C] Unimalleolar medial malleolus fracture
+│   │   │   │   │   ├── Transverse/oblique
+│   │   │   │   │   │   ╰── [AO:N/C LH:N/C W:N/C Bart:N/C] Unimalleolar medial malleolus fracture
+│   ├── Lateral malleolus
+│   │   Q: At what level is the fracture?
+│   │   │   ├── Infrasyndesmotic
+│   │   │   │   Q: What is the morphology of the fracture?
+│   │   │   │   │   ├── Avulsion of the lateral malleolus tip
+│   │   │   │   │   │   ╰── [AO:44-A1.2 LH:SA W:A Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   ├── Lateral malleolus fracture
+│   │   │   │   │   │   ╰── [AO:44-A1.3 LH:SA W:A Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   ├── Transsyndesmotic
+│   │   │   │   Q: How many fracture traces does the fibula have?
+│   │   │   │   │   ├── 1
+│   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   ├── Spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   Q: What type?
+│   │   │   │   │   │   │   │   │   ├── Simple fracture
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:SER W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   │   │   ├── Associated anterior syndesmosis rupture (Tillaux/Wagstaffe)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:SER W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   Q: What type?
+│   │   │   │   │   │   │   │   │   ├── Simple fracture
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B1.1 LH:PA W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   │   │   ├── Associated anterior syndesmosis rupture (Tillaux/Wagstaffe)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B1.2 LH:PA W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   ├── >1
+│   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   ├── Main trace direction is spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:SER W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Main trace direction is oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:PA W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Comminuted (multiple fragments with no clear direction)
+│   │   │   │   │   │   │   │   ╰── [AO:44-B1.3 LH:PA W:B Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   ├── Suprasyndesmotic
+│   │   │   │   Q: What type?
+│   │   │   │   │   ├── Simple diaphyseal
+│   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PA W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   ╰── [AO:44-C1 LH:PER W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   ├── Multifragmentary/butterfly wing
+│   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Comminuted parasyndesmotic (< 6 cm from articular surface)
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PA W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   ╰── [AO:44-C2 LH:PER W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   │   │   │   │   ├── Proximal (1/3 proximal fibula)
+│   │   │   │   │   │   ╰── [AO:44-C3 LH:PER W:C Bart:N/C] Unimalleolar lateral malleolus fracture
+│   ├── Medial and posterior malleoli
+│   │   Q: Do you have a CT scan?
+│   │   │   ├── Yes
+│   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   ├── Extraincisural posteromedial fragment
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] Bimalleolar fracture (medial + posterior)
+│   │   │   │   │   ├── Posterior extraincisural fragment
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:1] Bimalleolar fracture (medial + posterior)
+│   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:2] Bimalleolar fracture (medial + posterior)
+│   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:3] Bimalleolar fracture (medial + posterior)
+│   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:4] Bimalleolar fracture (medial + posterior)
+│   │   │   ├── No
+│   │   │   │   ╰── [AO:N/C LH:PA W:N/C Bart:N/C] Bimalleolar fracture (medial + posterior)
+│   ├── Lateral and posterior malleoli
+│   │   Q: At what level is the fibular fracture?
+│   │   │   ├── Infrasyndesmotic
+│   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   ├── No
+│   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   ├── Yes
+│   │   │   │   │   │   Q: What is the morphology of the posterior malleolus?
+│   │   │   │   │   │   │   ├── Posterior extraincisural fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SA W:A Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   ├── Transsyndesmotic
+│   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   ├── Comminuted (multiple fragments with no clear direction)
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   ├── Main direction is spiral (low anterior, high posterior) but may have multiple fragments
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   ├── Main direction is oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   ├── Suprasyndesmotic
+│   │   │   │   Q: What type?
+│   │   │   │   │   ├── Simple diaphyseal
+│   │   │   │   │   │   Q: What is the fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   ├── Multifragmentary/butterfly wing
+│   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Comminuted parasyndesmotic (< 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   ├── Proximal (1/3 proximal fibula)
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:1] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:2] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:3] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:4] Bimalleolar fracture (lateral + posterior)
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + posterior)
+│   ├── Lateral and medial malleoli
+│   │   Q: What is the morphology of the medial malleolus fracture?
+│   │   │   ├── Vertical
+│   │   │   │   Q: Is the fibular fracture infrasyndesmotic?
+│   │   │   │   │   ├── Yes
+│   │   │   │   │   │   ╰── [AO:44-A2 LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   ├── No
+│   │   │   │   │   │   Q: At what level is the fibular fracture?
+│   │   │   │   │   │   │   ├── Infrasyndesmotic
+│   │   │   │   │   │   │   │   Q: What is the lateral malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Transverse
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Avulsion
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── Suprasyndesmotic
+│   │   │   │   │   │   │   │   Q: What type?
+│   │   │   │   │   │   │   │   │   ├── Simple diaphyseal
+│   │   │   │   │   │   │   │   │   │   Q: What is the fibular fracture trace pattern?
+│   │   │   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Multifragmentary/butterfly wing
+│   │   │   │   │   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   │   │   │   │   ├── Comminuted parasyndesmotic (< 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Proximal (1/3 proximal fibula)
+│   │   │   │   │   │   │   │   │   │   Q: Shortening at the fibula head level?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── Transsyndesmotic
+│   │   │   │   │   │   │   │   Q: How many fracture traces does the fibula have?
+│   │   │   │   │   │   │   │   │   ├── 1
+│   │   │   │   │   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   │   │   │   │   ├── Oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── >1
+│   │   │   │   │   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   │   │   │   │   ├── Main trace direction is oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Comminuted/butterfly
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Main trace direction is spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   ├── Transverse/oblique/avulsion/open mortise
+│   │   │   │   Q: At what level is the fibular fracture?
+│   │   │   │   │   ├── Infrasyndesmotic
+│   │   │   │   │   │   Q: What is the lateral malleolus like?
+│   │   │   │   │   │   │   ├── Transverse
+│   │   │   │   │   │   │   │   ╰── [AO:44-A2.3 LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── Avulsion
+│   │   │   │   │   │   │   │   ╰── [AO:44-A2.2 LH:SA W:A Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   ├── Suprasyndesmotic
+│   │   │   │   │   │   Q: What type?
+│   │   │   │   │   │   │   ├── Simple diaphyseal
+│   │   │   │   │   │   │   │   Q: What is the fibular fracture trace pattern?
+│   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── Multifragmentary/butterfly wing
+│   │   │   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   │   │   ├── Comminuted parasyndesmotic (< 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PA W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── Proximal (1/3 proximal fibula)
+│   │   │   │   │   │   │   │   Q: Shortening at the fibula head level?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.2 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.1 LH:PER W:C Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   ├── Transsyndesmotic
+│   │   │   │   │   │   Q: How many fracture traces does the fibula have?
+│   │   │   │   │   │   │   ├── 1
+│   │   │   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   │   │   ├── Oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.2 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.1 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   ├── >1
+│   │   │   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   │   │   ├── Main trace direction is oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Comminuted/butterfly
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:PA W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   │   │   │   │   │   │   │   │   ├── Main trace direction is spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B2.3 LH:SER W:B Bart:N/C] Bimalleolar fracture (lateral + medial)
+│   ├── Medial, lateral and posterior malleoli
+│   │   Q: At what level is the fibular fracture?
+│   │   │   ├── Transsyndesmotic
+│   │   │   │   Q: How many fracture traces does the fibula have?
+│   │   │   │   │   ├── 1
+│   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   ├── Transverse/oblique (low medial, high lateral)
+│   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.2 LH:SER W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.1 LH:SER W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   ├── >1
+│   │   │   │   │   │   Q: What is the morphology of the fibular fracture?
+│   │   │   │   │   │   │   ├── Main trace direction is spiral (low anterior, high posterior)
+│   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:SER W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:SER W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:SER W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:SER W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:SER W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:SER W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Main trace direction is oblique (low medial, high lateral) or transverse
+│   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Comminuted/butterfly
+│   │   │   │   │   │   │   │   Q: What is the medial malleolus like?
+│   │   │   │   │   │   │   │   │   ├── Malleolus fracture/avulsion
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-B3.3 LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Open mortise
+│   │   │   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:N/C LH:PA W:B Bart:N/C] Trimalleolar fracture
+│   │   │   ├── Infrasyndesmotic
+│   │   │   │   Q: What is the lateral malleolus fracture like?
+│   │   │   │   │   ├── Transverse
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:44-A3.3 LH:N/C W:A Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   ├── Avulsion
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:44-A3.2 LH:N/C W:A Bart:N/C] Trimalleolar fracture
+│   │   │   ├── Suprasyndesmotic
+│   │   │   │   Q: What type?
+│   │   │   │   │   ├── Simple diaphyseal
+│   │   │   │   │   │   Q: What is the fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PA W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C1.3 LH:PER W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   ├── Multifragmentary/butterfly wing
+│   │   │   │   │   │   Q: What is the main fibular fracture trace pattern?
+│   │   │   │   │   │   │   ├── Comminuted parasyndesmotic (< 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PA W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── Suprasyndesmotic (> 6 cm from articular surface)
+│   │   │   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C2.3 LH:PER W:C Bart:N/C] Trimalleolar fracture
+│   │   │   │   │   ├── Proximal (1/3 proximal fibula)
+│   │   │   │   │   │   Q: Do you have a CT scan?
+│   │   │   │   │   │   │   ├── Yes
+│   │   │   │   │   │   │   │   Q: What type of posterior malleolus fracture is it?
+│   │   │   │   │   │   │   │   │   ├── Extraincisural fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:1] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:2] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Posteromedial and posterolateral fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:3] Trimalleolar fracture
+│   │   │   │   │   │   │   │   │   ├── Large posterolateral triangular fragment
+│   │   │   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:4] Trimalleolar fracture
+│   │   │   │   │   │   │   ├── No
+│   │   │   │   │   │   │   │   ╰── [AO:44-C3.3 LH:PER W:C Bart:N/C] Trimalleolar fracture
+
+# Total terminals: 230

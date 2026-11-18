@@ -27,4 +27,4 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 ## Open decisions
 - Signature interaction: none beyond the working classifier; the example path is static. The classifier keeps the answered path on screen beside the questions and above the result.
-- No raster assets ship; the oversized `classification-flow.svg` (14 MB) is not used on the landing page.
+- No raster assets ship; the flow diagram SVGs (`classification-flow.{es,en}.svg`, about 1 MB each) are not used on the landing page.
