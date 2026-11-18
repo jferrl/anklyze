@@ -7,7 +7,9 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import { Logo } from './Logo';
 
 const REPO_URL = 'https://github.com/jferrl/anklyze';
-const DECISION_TABLE_URL = `${REPO_URL}/blob/main/docs/decision_table.txt`;
+// The decision table in the reader's language; Spanish is the draw.io's own.
+const decisionTableUrl = (language: string) =>
+  `${REPO_URL}/blob/main/docs/decision_table${language.startsWith('en') ? '.en' : ''}.txt`;
 const METHODOLOGY_URL = `${REPO_URL}/blob/main/docs/RELIABILITY_ANALYSIS.md`;
 
 // One real terminal path of the decision tree (docs/decision_table.txt, lateral branch).
@@ -27,7 +29,7 @@ const SYSTEMS = [
 ] as const;
 
 export function LandingPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const methodFacts = ['tree', 'tested', 'notClassifiable', 'judgement'] as const;
   const studyFacts = ['cases', 'agreement', 'gold'] as const;
 
@@ -120,7 +122,7 @@ export function LandingPage() {
             <div className="lg:col-span-4">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.method.title')}</h2>
               <a
-                href={DECISION_TABLE_URL}
+                href={decisionTableUrl(i18n.language)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-block text-sm font-medium text-primary underline underline-offset-4"

@@ -213,8 +213,8 @@ classify-validate:
 # Just render the decision tree (for quick reference)
 classify-tree:
 	@python3 scripts/render_decision_tree.py --both
-	@echo "Tree: docs/decision_tree.txt"
-	@echo "Table: docs/decision_table.txt"
+	@echo "Tree: docs/decision_tree.txt, docs/decision_tree.en.txt"
+	@echo "Table: docs/decision_table.txt, docs/decision_table.en.txt"
 
 # Just regenerate and run the engine tests
 classify-test:

@@ -1,0 +1,187 @@
+# Ankle Fracture Classification — All Terminal Paths
+# Total: 165 paths across 7 branches
+# Source: drawio diagram (source of truth)
+# Decision tree by Laura Paniagua Andrés (Hospital de León).
+# Copyright 2026 Laura Paniagua Andrés. CC BY 4.0; see LICENSE-CC-BY-4.0 and NOTICE.
+#
+# Branch       AO           LH    W   B   Path (answers in order)
+# ------------ ------------ ----- --- --- --------------------------------------------------
+
+## post (7 paths)
+  N/C          PA    N/C N/C <1/3 articular surface without metaphyseal extension → No
+  N/C          PA    N/C 1   <1/3 articular surface without metaphyseal extension → Yes → Extraincisural fragment
+  N/C          PA    N/C 2   <1/3 articular surface without metaphyseal extension → Yes → Posterolateral fragment
+  N/C          PA    N/C 3   <1/3 articular surface without metaphyseal extension → Yes → Posteromedial and posterolateral fragment
+  N/C          PA    N/C 4   <1/3 articular surface without metaphyseal extension → Yes → Large posterolateral triangular fragment
+  43-B1        N/C   N/C N/C >1/3 articular surface with metaphyseal extension → No
+  43-B2        N/C   N/C N/C >1/3 articular surface with metaphyseal extension → Yes
+
+## medial (4 paths)
+  N/C          N/C   N/C N/C No → Transverse/oblique
+  N/C          SA    N/C N/C No → Vertical
+  43-B1        N/C   N/C N/C Yes → No
+  43-B2        N/C   N/C N/C Yes → Yes
+
+## lateral (13 paths)
+  44-A1.2      SA    A   N/C Infrasyndesmotic → Avulsion of the lateral malleolus tip
+  44-A1.3      SA    A   N/C Infrasyndesmotic → Lateral malleolus fracture
+  44-C1        PA    C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace
+  44-C1        PER   C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace
+  44-C2        PER   C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace
+  44-C2        PA    C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface)
+  44-C3        PER   C   N/C Suprasyndesmotic → Proximal (1/3 proximal fibula)
+  44-B1.2      SER   B   N/C Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Associated anterior syndesmosis rupture (Tillaux/Wagstaffe)
+  44-B1.1      SER   B   N/C Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Simple fracture
+  44-B1.2      PA    B   N/C Transsyndesmotic → 1 → Oblique (low medial, high lateral) or transverse → Associated anterior syndesmosis rupture (Tillaux/Wagstaffe)
+  44-B1.1      PA    B   N/C Transsyndesmotic → 1 → Oblique (low medial, high lateral) or transverse → Simple fracture
+  44-B1.3      PA    B   N/C Transsyndesmotic → >1 → Comminuted (multiple fragments with no clear direction)
+  44-B1.3      SER   B   N/C Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior)
+
+## med+post (6 paths)
+  N/C          PA    N/C N/C No
+  N/C          PA    N/C 1   Yes → Posterior extraincisural fragment
+  N/C          PA    N/C 1   Yes → Extraincisural posteromedial fragment
+  N/C          PA    N/C 2   Yes → Posterolateral fragment
+  N/C          PA    N/C 3   Yes → Posteromedial and posterolateral fragment
+  N/C          PA    N/C 4   Yes → Large posterolateral triangular fragment
+
+## lat+post (40 paths)
+  N/C          SA    A   N/C Infrasyndesmotic → No
+  N/C          SA    A   1   Infrasyndesmotic → Yes → Posterior extraincisural fragment
+  N/C          SA    A   2   Infrasyndesmotic → Yes → Posterolateral fragment
+  N/C          SA    A   3   Infrasyndesmotic → Yes → Posteromedial and posterolateral fragment
+  N/C          SA    A   4   Infrasyndesmotic → Yes → Large posterolateral triangular fragment
+  N/C          PA    C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → No
+  N/C          PA    C   1   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Extraincisural fragment
+  N/C          PA    C   2   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Posterolateral fragment
+  N/C          PA    C   3   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Posteromedial and posterolateral fragment
+  N/C          PA    C   4   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Large posterolateral triangular fragment
+  N/C          PER   C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → No
+  N/C          PER   C   1   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Extraincisural fragment
+  N/C          PER   C   2   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Posterolateral fragment
+  N/C          PER   C   3   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Posteromedial and posterolateral fragment
+  N/C          PER   C   4   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Large posterolateral triangular fragment
+  N/C          PER   C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → No
+  N/C          PER   C   1   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Extraincisural fragment
+  N/C          PER   C   2   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Posterolateral fragment
+  N/C          PER   C   3   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Posteromedial and posterolateral fragment
+  N/C          PER   C   4   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Large posterolateral triangular fragment
+  N/C          PA    C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → No
+  N/C          PA    C   1   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Extraincisural fragment
+  N/C          PA    C   2   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Posterolateral fragment
+  N/C          PA    C   3   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Posteromedial and posterolateral fragment
+  N/C          PA    C   4   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Large posterolateral triangular fragment
+  N/C          PER   C   N/C Suprasyndesmotic → Proximal (1/3 proximal fibula) → No
+  N/C          PER   C   1   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Extraincisural fragment
+  N/C          PER   C   2   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Posterolateral fragment
+  N/C          PER   C   3   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Posteromedial and posterolateral fragment
+  N/C          PER   C   4   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Large posterolateral triangular fragment
+  N/C          SER   B   N/C Transsyndesmotic → Main direction is spiral (low anterior, high posterior) but may have multiple fragments → No
+  N/C          SER   B   1   Transsyndesmotic → Main direction is spiral (low anterior, high posterior) but may have multiple fragments → Yes → Extraincisural fragment
+  N/C          SER   B   2   Transsyndesmotic → Main direction is spiral (low anterior, high posterior) but may have multiple fragments → Yes → Posterolateral fragment
+  N/C          SER   B   3   Transsyndesmotic → Main direction is spiral (low anterior, high posterior) but may have multiple fragments → Yes → Posteromedial and posterolateral fragment
+  N/C          SER   B   4   Transsyndesmotic → Main direction is spiral (low anterior, high posterior) but may have multiple fragments → Yes → Large posterolateral triangular fragment
+  N/C          PA    B   N/C Transsyndesmotic → Main direction is oblique (low medial, high lateral) or transverse → No
+  N/C          PA    B   1   Transsyndesmotic → Main direction is oblique (low medial, high lateral) or transverse → Yes → Extraincisural fragment
+  N/C          PA    B   2   Transsyndesmotic → Main direction is oblique (low medial, high lateral) or transverse → Yes → Posterolateral fragment
+  N/C          PA    B   3   Transsyndesmotic → Main direction is oblique (low medial, high lateral) or transverse → Yes → Posteromedial and posterolateral fragment
+  N/C          PA    B   4   Transsyndesmotic → Main direction is oblique (low medial, high lateral) or transverse → Yes → Large posterolateral triangular fragment
+
+## lat+med (20 paths)
+  44-A2.2      SA    A   N/C Transverse/oblique/avulsion/open mortise → Infrasyndesmotic → Avulsion
+  44-A2.3      SA    A   N/C Transverse/oblique/avulsion/open mortise → Infrasyndesmotic → Transverse
+  44-C1.1      PA    C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Open mortise
+  44-C1.2      PA    C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Malleolus fracture/avulsion
+  44-C1.1      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Open mortise
+  44-C1.2      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Malleolus fracture/avulsion
+  44-C2.1      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Open mortise
+  44-C2.2      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Malleolus fracture/avulsion
+  44-C2.1      PA    C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Open mortise
+  44-C2.2      PA    C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Malleolus fracture/avulsion
+  44-C3.1      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Proximal (1/3 proximal fibula) → No
+  44-C3.2      PER   C   N/C Transverse/oblique/avulsion/open mortise → Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes
+  44-B2.1      SER   B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise
+  44-B2.2      SER   B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion
+  44-B2.1      PA    B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → 1 → Oblique (low medial, high lateral) or transverse → Open mortise
+  44-B2.2      PA    B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → 1 → Oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion
+  44-B2.3      PA    B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → >1 → Comminuted/butterfly
+  44-B2.3      SER   B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior)
+  44-B2.3      PA    B   N/C Transverse/oblique/avulsion/open mortise → Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse
+  44-A2        SA    A   N/C Vertical → Yes
+
+## trimaleolar (75 paths)
+  44-C1.3      PA    C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → No
+  44-C1.3      PA    C   1   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Extraincisural fragment
+  44-C1.3      PA    C   2   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Posterolateral fragment
+  44-C1.3      PA    C   3   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Posteromedial and posterolateral fragment
+  44-C1.3      PA    C   4   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace → Yes → Large posterolateral triangular fragment
+  44-C1.3      PER   C   N/C Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → No
+  44-C1.3      PER   C   1   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Extraincisural fragment
+  44-C1.3      PER   C   2   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Posterolateral fragment
+  44-C1.3      PER   C   3   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Posteromedial and posterolateral fragment
+  44-C1.3      PER   C   4   Suprasyndesmotic → Simple diaphyseal → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace → Yes → Large posterolateral triangular fragment
+  44-C2.3      PER   C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → No
+  44-C2.3      PER   C   1   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Extraincisural fragment
+  44-C2.3      PER   C   2   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Posterolateral fragment
+  44-C2.3      PER   C   3   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Posteromedial and posterolateral fragment
+  44-C2.3      PER   C   4   Suprasyndesmotic → Multifragmentary/butterfly wing → Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace → Yes → Large posterolateral triangular fragment
+  44-C2.3      PA    C   N/C Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → No
+  44-C2.3      PA    C   1   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Extraincisural fragment
+  44-C2.3      PA    C   2   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Posterolateral fragment
+  44-C2.3      PA    C   3   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Posteromedial and posterolateral fragment
+  44-C2.3      PA    C   4   Suprasyndesmotic → Multifragmentary/butterfly wing → Comminuted parasyndesmotic (< 6 cm from articular surface) → Yes → Large posterolateral triangular fragment
+  44-C3.3      PER   C   N/C Suprasyndesmotic → Proximal (1/3 proximal fibula) → No
+  44-C3.3      PER   C   1   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Extraincisural fragment
+  44-C3.3      PER   C   2   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Posterolateral fragment
+  44-C3.3      PER   C   3   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Posteromedial and posterolateral fragment
+  44-C3.3      PER   C   4   Suprasyndesmotic → Proximal (1/3 proximal fibula) → Yes → Large posterolateral triangular fragment
+  44-A3.2      N/C   A   N/C Infrasyndesmotic → Avulsion → No
+  44-A3.2      N/C   A   1   Infrasyndesmotic → Avulsion → Yes → Extraincisural fragment
+  44-A3.2      N/C   A   2   Infrasyndesmotic → Avulsion → Yes → Posterolateral fragment
+  44-A3.2      N/C   A   3   Infrasyndesmotic → Avulsion → Yes → Posteromedial and posterolateral fragment
+  44-A3.2      N/C   A   4   Infrasyndesmotic → Avulsion → Yes → Large posterolateral triangular fragment
+  44-A3.3      N/C   A   N/C Infrasyndesmotic → Transverse → No
+  44-A3.3      N/C   A   1   Infrasyndesmotic → Transverse → Yes → Extraincisural fragment
+  44-A3.3      N/C   A   2   Infrasyndesmotic → Transverse → Yes → Posterolateral fragment
+  44-A3.3      N/C   A   3   Infrasyndesmotic → Transverse → Yes → Posteromedial and posterolateral fragment
+  44-A3.3      N/C   A   4   Infrasyndesmotic → Transverse → Yes → Large posterolateral triangular fragment
+  44-B3.1      SER   B   N/C Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise → No
+  44-B3.1      SER   B   1   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise → Yes → Extraincisural fragment
+  44-B3.1      SER   B   2   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise → Yes → Posterolateral fragment
+  44-B3.1      SER   B   3   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise → Yes → Posteromedial and posterolateral fragment
+  44-B3.1      SER   B   4   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Open mortise → Yes → Large posterolateral triangular fragment
+  44-B3.2      SER   B   N/C Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion → No
+  44-B3.2      SER   B   1   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Extraincisural fragment
+  44-B3.2      SER   B   2   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Posterolateral fragment
+  44-B3.2      SER   B   3   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Posteromedial and posterolateral fragment
+  44-B3.2      SER   B   4   Transsyndesmotic → 1 → Spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Large posterolateral triangular fragment
+  44-B3.1      PA    B   N/C Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Open mortise → No
+  44-B3.1      PA    B   1   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Open mortise → Yes → Extraincisural fragment
+  44-B3.1      PA    B   2   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Open mortise → Yes → Posterolateral fragment
+  44-B3.1      PA    B   3   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Open mortise → Yes → Posteromedial and posterolateral fragment
+  44-B3.1      PA    B   4   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Open mortise → Yes → Large posterolateral triangular fragment
+  44-B3.2      PA    B   N/C Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Malleolus fracture/avulsion → No
+  44-B3.2      PA    B   1   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Malleolus fracture/avulsion → Yes → Extraincisural fragment
+  44-B3.2      PA    B   2   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Malleolus fracture/avulsion → Yes → Posterolateral fragment
+  44-B3.2      PA    B   3   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Malleolus fracture/avulsion → Yes → Posteromedial and posterolateral fragment
+  44-B3.2      PA    B   4   Transsyndesmotic → 1 → Transverse/oblique (low medial, high lateral) → Malleolus fracture/avulsion → Yes → Large posterolateral triangular fragment
+  N/C          SER   B   N/C Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Open mortise → No
+  N/C          SER   B   1   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Open mortise → Yes → Extraincisural fragment
+  N/C          SER   B   2   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Open mortise → Yes → Posterolateral fragment
+  N/C          SER   B   3   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Open mortise → Yes → Posteromedial and posterolateral fragment
+  N/C          SER   B   4   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Open mortise → Yes → Large posterolateral triangular fragment
+  44-B3.3      SER   B   N/C Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Malleolus fracture/avulsion → No
+  44-B3.3      SER   B   1   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Extraincisural fragment
+  44-B3.3      SER   B   2   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Posterolateral fragment
+  44-B3.3      SER   B   3   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Posteromedial and posterolateral fragment
+  44-B3.3      SER   B   4   Transsyndesmotic → >1 → Main trace direction is spiral (low anterior, high posterior) → Malleolus fracture/avulsion → Yes → Large posterolateral triangular fragment
+  N/C          PA    B   N/C Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Open mortise → No
+  N/C          PA    B   1   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Open mortise → Yes → Extraincisural fragment
+  N/C          PA    B   2   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Open mortise → Yes → Posterolateral fragment
+  N/C          PA    B   3   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Open mortise → Yes → Posteromedial and posterolateral fragment
+  N/C          PA    B   4   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Open mortise → Yes → Large posterolateral triangular fragment
+  44-B3.3      PA    B   N/C Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion → No
+  44-B3.3      PA    B   1   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion → Yes → Extraincisural fragment
+  44-B3.3      PA    B   2   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion → Yes → Posterolateral fragment
+  44-B3.3      PA    B   3   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion → Yes → Posteromedial and posterolateral fragment
+  44-B3.3      PA    B   4   Transsyndesmotic → >1 → Main trace direction is oblique (low medial, high lateral) or transverse → Malleolus fracture/avulsion → Yes → Large posterolateral triangular fragment
