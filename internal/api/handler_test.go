@@ -25,7 +25,6 @@ func newTestClassificationSvc() service.ClassificationService {
 type stubAudit struct{}
 
 func (stubAudit) Save(context.Context, *domain.AuditEntry) error { return nil }
-func (stubAudit) Close() error                                   { return nil }
 
 // stubAnalytics returns empty but well-formed analytics.
 type stubAnalytics struct{}

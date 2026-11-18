@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"sync/atomic"
@@ -10,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
+	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/timeutil"
 )
@@ -17,7 +19,6 @@ import (
 // AuditRepository defines the audit persistence interface needed by the handler.
 type AuditRepository interface {
 	Save(ctx context.Context, entry *domain.AuditEntry) error
-	Close() error
 }
 
 // AnalyticsRepository defines the analytics query interface needed by the handler.
@@ -86,7 +87,8 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		slog.Warn("failed to create audit entry", "error", err)
 	} else {
 		// Use request context for audit save - non-blocking due to buffered channel
-		if err := h.auditRepo.Save(c.Request.Context(), auditEntry); err != nil {
+		// A full buffer is already counted and rate-limit logged by the repository.
+		if err := h.auditRepo.Save(c.Request.Context(), auditEntry); err != nil && !errors.Is(err, repository.ErrBufferFull) {
 			slog.Warn("failed to save audit entry", "error", err)
 		}
 	}

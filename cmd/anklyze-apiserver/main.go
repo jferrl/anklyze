@@ -203,8 +203,10 @@ func main() {
 		slog.Error("server forced to shutdown", "error", err)
 	}
 
-	// Close audit repositories to flush pending writes
-	if err := auditRepo.Close(); err != nil {
+	// Flush pending audit entries; the HTTP server is drained, so no new ones arrive.
+	auditCtx, auditCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer auditCancel()
+	if err := auditRepo.Close(auditCtx); err != nil {
 		slog.Error("failed to close audit repository", "error", err)
 	}
 	// Stop JWKS retry probe goroutine if running
