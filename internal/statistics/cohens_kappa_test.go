@@ -277,7 +277,6 @@ func TestCohensKappaWithCI_DifferentConfidenceLevels(t *testing.T) {
 }
 
 // Doc example, 100 cases: Po = 0.88, Pe = 0.452, kappa = 0.428 / 0.548 = 0.7810.
-// SE = sqrt(0.88 * 0.12 / (100 * 0.548^2)) = 0.05930, so the 95% CI is 0.7810 +/- 1.96 * 0.05930 = [0.6648, 0.8972].
 func TestCohensKappaWithCI_HandComputed(t *testing.T) {
 	t.Parallel()
 
@@ -303,14 +302,19 @@ func TestCohensKappaWithCI_HandComputed(t *testing.T) {
 	if ci == nil {
 		t.Fatal("expected confidence interval, got nil")
 	}
-	if ci.Lower < 0.6647 || ci.Lower > 0.6649 || ci.Upper < 0.8971 || ci.Upper > 0.8973 {
-		t.Errorf("CI = [%v, %v], want about [0.6648, 0.8972]", ci.Lower, ci.Upper)
+	if kappa < ci.Lower || kappa > ci.Upper {
+		t.Errorf("kappa %v outside its CI [%v, %v]", kappa, ci.Lower, ci.Upper)
+	}
+
+	// Regression value of the seeded bootstrap, not hand computed: it changes only if the
+	// seed, the number of resamples or the percentile rule changes.
+	if ci.Lower != 0.6521 || ci.Upper != 0.8905 {
+		t.Errorf("CI = [%v, %v], want [0.6521, 0.8905]", ci.Lower, ci.Upper)
 	}
 }
 
-// Po = 0.7, Pe = 0.6*0.5 + 0.4*0.5 = 0.5, kappa = 0.4. SE = sqrt(0.7 * 0.3 / (10 * 0.25)) = 0.2898,
-// so the interval is 0.4 +/- 0.5681 = [-0.1681, 0.9681].
-func TestCohensKappaWithCI_NegativeLowerBound(t *testing.T) {
+// Po = 0.7, Pe = 0.6*0.5 + 0.4*0.5 = 0.5, kappa = 0.4.
+func TestCohensKappaWithCI_SmallSample(t *testing.T) {
 	t.Parallel()
 
 	ratings := [][2]string{
@@ -325,7 +329,101 @@ func TestCohensKappaWithCI_NegativeLowerBound(t *testing.T) {
 	if kappa < 0.4-1e-9 || kappa > 0.4+1e-9 {
 		t.Errorf("kappa = %v, want 0.4", kappa)
 	}
-	if ci == nil || ci.Lower != -0.1681 || ci.Upper != 0.9681 {
-		t.Errorf("CI = %+v, want [-0.1681, 0.9681]", ci)
+	if ci == nil {
+		t.Fatal("expected confidence interval, got nil")
+	}
+	if ci.Lower >= kappa || ci.Upper <= kappa {
+		t.Errorf("kappa %v outside its CI [%v, %v]", kappa, ci.Lower, ci.Upper)
+	}
+	if ci.Lower < -1 || ci.Upper > 1 {
+		t.Errorf("CI [%v, %v] outside [-1, 1]", ci.Lower, ci.Upper)
+	}
+
+	// Regression value of the seeded bootstrap, not hand computed.
+	if ci.Lower != -0.2 || ci.Upper != 1 {
+		t.Errorf("CI = [%v, %v], want [-0.2, 1]", ci.Lower, ci.Upper)
+	}
+}
+
+func TestCohensKappaWithCI_Reproducible(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{
+		{"A", "A"}, {"A", "B"}, {"B", "B"}, {"B", "A"}, {"C", "C"}, {"A", "A"}, {"B", "C"},
+	}
+
+	_, first, _ := CohensKappaWithCI(ratings, 0.95)
+	_, second, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if first == nil || second == nil || *first != *second {
+		t.Errorf("intervals differ between runs: %+v vs %+v", first, second)
+	}
+}
+
+// Raters agree on every case but on two categories, so resamples that hold both are
+// perfect and resamples that hold one are skipped: the interval is [1, 1] and the
+// point estimate is inside it.
+func TestCohensKappaWithCI_AgreeOnEveryCase(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{{"A", "A"}, {"A", "A"}, {"B", "B"}, {"B", "B"}, {"B", "B"}}
+
+	kappa, ci, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if kappa != 1 || ci == nil || ci.Lower != 1 || ci.Upper != 1 {
+		t.Errorf("kappa = %v, CI = %+v, want 1 and [1, 1]", kappa, ci)
+	}
+}
+
+// Raters never agree: the old normal approximation gave zero width here. The bootstrap
+// still varies across resamples.
+func TestCohensKappaWithCI_AgreeOnNoCase(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{
+		{"A", "B"}, {"B", "A"}, {"A", "B"}, {"B", "A"}, {"A", "C"}, {"C", "A"}, {"B", "C"}, {"C", "B"},
+	}
+
+	kappa, ci, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if kappa >= 0 {
+		t.Fatalf("kappa = %v, want negative", kappa)
+	}
+	if ci == nil || ci.Upper-ci.Lower <= 0 {
+		t.Errorf("CI = %+v, want a non-zero width", ci)
+	}
+	if ci != nil && (ci.Lower < -1 || ci.Upper > 1) {
+		t.Errorf("CI [%v, %v] outside [-1, 1]", ci.Lower, ci.Upper)
+	}
+}
+
+// Almost perfect agreement: some resamples are perfect (kappa = 1) and others are not,
+// so the upper bound reaches 1 while the lower bound stays below it.
+func TestCohensKappaWithCI_PerfectResamplesAreNotUniversal(t *testing.T) {
+	t.Parallel()
+
+	var ratings [][2]string
+	for range 9 {
+		ratings = append(ratings, [2]string{"A", "A"}, [2]string{"B", "B"})
+	}
+	ratings = append(ratings, [2]string{"A", "B"})
+
+	kappa, ci, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if ci == nil {
+		t.Fatal("expected confidence interval, got nil")
+	}
+	if ci.Upper != 1 || ci.Lower >= kappa {
+		t.Errorf("kappa = %v, CI = [%v, %v], want upper 1 and lower below kappa", kappa, ci.Lower, ci.Upper)
+	}
+}
+
+func TestCohensKappaWithCI_OneCategoryHasNoInterval(t *testing.T) {
+	t.Parallel()
+
+	kappa, ci, _ := CohensKappaWithCI([][2]string{{"A", "A"}, {"A", "A"}, {"A", "A"}}, 0.95)
+
+	if kappa != 1 || ci != nil {
+		t.Errorf("kappa = %v, CI = %+v, want 1 and no interval", kappa, ci)
 	}
 }
