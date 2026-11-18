@@ -34,14 +34,8 @@ func (m *mockCaseResponseRepository) GetByUserAndCase(_ context.Context, _, _ uu
 func (m *mockCaseResponseRepository) GetByUserAndCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
-func (m *mockCaseResponseRepository) CountByCase(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
-}
 func (m *mockCaseResponseRepository) HasUserResponded(_ context.Context, _, _ uuid.UUID) (bool, error) {
 	return false, nil
-}
-func (m *mockCaseResponseRepository) CountUniqueUsersByCase(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
 }
 func (m *mockCaseResponseRepository) GetResponsesWithUserExpertise(_ context.Context, _ uuid.UUID) ([]domain.ResponseWithExpertise, error) {
 	return nil, nil
@@ -100,7 +94,6 @@ func (m *mockStudyRepository) AddCases(_ context.Context, _ uuid.UUID, _ []repos
 // mockStudyResponseRepository is a minimal mock for StudyResponseRepository.
 type mockStudyResponseRepository struct {
 	responsesByCase map[uuid.UUID][]domain.CaseResponse
-	casesCompleted  int
 	err             error
 }
 
@@ -112,21 +105,6 @@ func (m *mockStudyResponseRepository) GetAllByStudy(_ context.Context, _ uuid.UU
 		return m.responsesByCase, nil
 	}
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
-}
-func (m *mockStudyResponseRepository) GetCompleteRaterResponses(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
-	return make(map[uuid.UUID][]domain.CaseResponse), nil
-}
-func (m *mockStudyResponseRepository) CountUniqueRaters(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
-}
-func (m *mockStudyResponseRepository) CountCompleteRaters(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
-}
-func (m *mockStudyResponseRepository) GetRaterCaseCompletion(_ context.Context, _ uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
-	return make(map[uuid.UUID][]uuid.UUID), nil
-}
-func (m *mockStudyResponseRepository) CountUserCasesCompleted(_ context.Context, _, _ uuid.UUID) (int, error) {
-	return m.casesCompleted, m.err
 }
 
 // mockCaseRepositoryForStudy is a mock for CaseRepository used in study service tests.
@@ -167,12 +145,6 @@ func (m *mockCaseRepositoryForStudy) UpdateImage(_ context.Context, _ *domain.Ca
 	return nil
 }
 func (m *mockCaseRepositoryForStudy) UpdateHasTACImages(_ context.Context, _ uuid.UUID) error {
-	return nil
-}
-func (m *mockCaseRepositoryForStudy) IncrementResponseCount(_ context.Context, _ uuid.UUID) error {
-	return nil
-}
-func (m *mockCaseRepositoryForStudy) UpdateUniqueUsers(_ context.Context, _ uuid.UUID, _ int) error {
 	return nil
 }
 func (m *mockCaseRepositoryForStudy) GetImagesForCases(_ context.Context, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseImage, error) {

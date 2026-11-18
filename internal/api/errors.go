@@ -2,13 +2,16 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/storage"
 )
 
 // ErrorResponse is the standard API error format.
@@ -152,6 +155,26 @@ func loadCase(c *gin.Context, repo repository.CaseRepository, id uuid.UUID) (*do
 	return cs, true
 }
 
+// caseFromPath is parseID on ":id" followed by loadCase.
+func caseFromPath(c *gin.Context, repo repository.CaseRepository) (uuid.UUID, *domain.Case, bool) {
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return uuid.Nil, nil, false
+	}
+	cs, ok := loadCase(c, repo, id)
+	return id, cs, ok
+}
+
+// studyFromPath is caseFromPath for studies.
+func studyFromPath(c *gin.Context, repo repository.StudyRepository) (uuid.UUID, *domain.Study, bool) {
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
+		return uuid.Nil, nil, false
+	}
+	study, ok := loadStudy(c, repo, id)
+	return id, study, ok
+}
+
 // loadStudy is loadCase for studies.
 func loadStudy(c *gin.Context, repo repository.StudyRepository, id uuid.UUID) (*domain.Study, bool) {
 	study, err := repo.GetByID(c.Request.Context(), id)
@@ -164,4 +187,39 @@ func loadStudy(c *gin.Context, repo repository.StudyRepository, id uuid.UUID) (*
 		return nil, false
 	}
 	return study, true
+}
+
+// loadPublishedCase is loadCase that also answers 404 for a case that is not published.
+func loadPublishedCase(c *gin.Context, repo repository.CaseRepository, id uuid.UUID) (*domain.Case, bool) {
+	cs, ok := loadCase(c, repo, id)
+	if ok && !cs.IsPublished() {
+		notFound(c, "case not found")
+		return nil, false
+	}
+	return cs, ok
+}
+
+// loadCaseImage fetches an image of the given case, answering 404 when it is
+// missing or belongs to another case.
+func loadCaseImage(c *gin.Context, repo repository.CaseRepository, caseID, imageID uuid.UUID) (*domain.CaseImage, bool) {
+	image, err := repo.GetImageByID(c.Request.Context(), imageID)
+	if err != nil {
+		HandleError(c, err, "failed to get image")
+		return nil, false
+	}
+	if image == nil || image.CaseID != caseID {
+		notFound(c, "image not found")
+		return nil, false
+	}
+	return image, true
+}
+
+// writeSignedURL answers with a signed URL for the stored file at path.
+func writeSignedURL(c *gin.Context, st storage.Storage, path string, ttl time.Duration) {
+	url, err := st.GetSignedURL(c.Request.Context(), path, ttl)
+	if err != nil {
+		HandleError(c, fmt.Errorf("generate signed URL: %w", err), "Failed to generate image URL")
+		return
+	}
+	c.JSON(http.StatusOK, SignedURLResponse{URL: url, ExpiresAt: time.Now().Add(ttl)})
 }

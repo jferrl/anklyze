@@ -35,11 +35,8 @@ func NewCaseAnalyticsHandler(
 
 // GetCaseAnalytics handles GET /api/admin/cases/:id/analytics
 func (h *CaseAnalyticsHandler) GetCaseAnalytics(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
+	id, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-	if _, ok := loadCase(c, h.caseRepo, id); !ok {
 		return
 	}
 
@@ -54,12 +51,8 @@ func (h *CaseAnalyticsHandler) GetCaseAnalytics(c *gin.Context) {
 
 // GetReliabilityMetrics handles GET /api/admin/cases/:id/reliability
 func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
+	caseID, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
@@ -99,12 +92,7 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 
 // GetGoldStandardAccuracy handles GET /api/admin/cases/:id/accuracy
 func (h *CaseAnalyticsHandler) GetGoldStandardAccuracy(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	caseID, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -131,12 +119,8 @@ func (h *CaseAnalyticsHandler) GetGoldStandardAccuracy(c *gin.Context) {
 
 // ExportResponses handles GET /api/admin/cases/:id/export
 func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
+	caseID, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
@@ -173,12 +157,8 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 // ExportDetailedResponses handles GET /api/admin/cases/:id/export/detailed
 // Exports responses with user expertise data.
 func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
+	caseID, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 

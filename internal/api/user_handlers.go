@@ -47,31 +47,7 @@ func GetCurrentUser(c *gin.Context) {
 	// First try to get the synced user from database (has authoritative role)
 	user := auth.GetUser(c)
 	if user != nil {
-		specialty := ""
-		if user.Specialty != nil {
-			specialty = *user.Specialty
-		}
-		trainingLevel := ""
-		if user.TrainingLevel != nil {
-			trainingLevel = *user.TrainingLevel
-		}
-		institution := ""
-		if user.Institution != nil {
-			institution = *user.Institution
-		}
-
-		c.JSON(http.StatusOK, UserProfileResponse{
-			ID:              user.ID.String(),
-			Email:           user.Email,
-			Role:            string(user.Role),
-			DisplayName:     user.DisplayName,
-			AvatarURL:       user.AvatarURL,
-			Provider:        user.Provider,
-			YearsExperience: user.YearsExperience,
-			Specialty:       specialty,
-			TrainingLevel:   trainingLevel,
-			Institution:     institution,
-		})
+		c.JSON(http.StatusOK, newUserProfileResponse(user))
 		return
 	}
 
@@ -98,31 +74,7 @@ func (h *UserHandler) GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	specialty := ""
-	if user.Specialty != nil {
-		specialty = *user.Specialty
-	}
-	trainingLevel := ""
-	if user.TrainingLevel != nil {
-		trainingLevel = *user.TrainingLevel
-	}
-	institution := ""
-	if user.Institution != nil {
-		institution = *user.Institution
-	}
-
-	c.JSON(http.StatusOK, UserProfileResponse{
-		ID:              user.ID.String(),
-		Email:           user.Email,
-		Role:            string(user.Role),
-		DisplayName:     user.DisplayName,
-		AvatarURL:       user.AvatarURL,
-		Provider:        user.Provider,
-		YearsExperience: user.YearsExperience,
-		Specialty:       specialty,
-		TrainingLevel:   trainingLevel,
-		Institution:     institution,
-	})
+	c.JSON(http.StatusOK, newUserProfileResponse(user))
 }
 
 // UpdateUserProfile handles PUT /api/me/profile
@@ -177,31 +129,7 @@ func (h *UserHandler) UpdateUserProfile(c *gin.Context) {
 		return
 	}
 
-	specialty := ""
-	if user.Specialty != nil {
-		specialty = *user.Specialty
-	}
-	trainingLevel := ""
-	if user.TrainingLevel != nil {
-		trainingLevel = *user.TrainingLevel
-	}
-	institution := ""
-	if user.Institution != nil {
-		institution = *user.Institution
-	}
-
-	c.JSON(http.StatusOK, UserProfileResponse{
-		ID:              user.ID.String(),
-		Email:           user.Email,
-		Role:            string(user.Role),
-		DisplayName:     user.DisplayName,
-		AvatarURL:       user.AvatarURL,
-		Provider:        user.Provider,
-		YearsExperience: user.YearsExperience,
-		Specialty:       specialty,
-		TrainingLevel:   trainingLevel,
-		Institution:     institution,
-	})
+	c.JSON(http.StatusOK, newUserProfileResponse(user))
 }
 
 // validValues answers a value outside a closed set, listing the accepted ones.
@@ -211,4 +139,26 @@ func validValues[T ~string](c *gin.Context, message string, valid []T) {
 		values[i] = string(v)
 	}
 	c.JSON(http.StatusBadRequest, ErrorResponse{Code: CodeInvalidInput, Message: message, ValidValues: values})
+}
+
+func newUserProfileResponse(u *domain.User) UserProfileResponse {
+	return UserProfileResponse{
+		ID:              u.ID.String(),
+		Email:           u.Email,
+		Role:            string(u.Role),
+		DisplayName:     u.DisplayName,
+		AvatarURL:       u.AvatarURL,
+		Provider:        u.Provider,
+		YearsExperience: u.YearsExperience,
+		Specialty:       deref(u.Specialty),
+		TrainingLevel:   deref(u.TrainingLevel),
+		Institution:     deref(u.Institution),
+	}
+}
+
+func deref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

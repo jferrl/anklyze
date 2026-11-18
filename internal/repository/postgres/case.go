@@ -265,30 +265,6 @@ func (r *CaseRepository) Close(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-// IncrementResponseCount increments the response count for a case.
-func (r *CaseRepository) IncrementResponseCount(ctx context.Context, caseID uuid.UUID) error {
-	err := r.db.WithContext(ctx).
-		Model(&domain.Case{}).
-		Where("id = ?", caseID).
-		UpdateColumn("response_count", gorm.Expr("response_count + 1")).Error
-	if err != nil {
-		return fmt.Errorf("increment response count: %w", err)
-	}
-	return nil
-}
-
-// UpdateUniqueUsers updates the unique users count for a case.
-func (r *CaseRepository) UpdateUniqueUsers(ctx context.Context, caseID uuid.UUID, count int) error {
-	err := r.db.WithContext(ctx).
-		Model(&domain.Case{}).
-		Where("id = ?", caseID).
-		Update("unique_users", count).Error
-	if err != nil {
-		return fmt.Errorf("update unique users: %w", err)
-	}
-	return nil
-}
-
 // GetByIDs batch loads cases by their IDs.
 // Returns results in unordered fashion (caller should sort if needed).
 func (r *CaseRepository) GetByIDs(ctx context.Context, ids []uuid.UUID) ([]domain.Case, error) {
@@ -444,33 +420,6 @@ func (r *CaseResponseRepository) GetByUserAndCases(ctx context.Context, userID u
 		result[resp.CaseID] = append(result[resp.CaseID], resp)
 	}
 	return result, nil
-}
-
-// CountByCase counts the total responses for a case.
-func (r *CaseResponseRepository) CountByCase(ctx context.Context, caseID uuid.UUID) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Where("case_id = ?", caseID).
-		Count(&count).Error
-	if err != nil {
-		return 0, fmt.Errorf("count by case: %w", err)
-	}
-	return count, nil
-}
-
-// CountUniqueUsersByCase counts unique users who responded to a case.
-func (r *CaseResponseRepository) CountUniqueUsersByCase(ctx context.Context, caseID uuid.UUID) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Where("case_id = ?", caseID).
-		Distinct("user_id").
-		Count(&count).Error
-	if err != nil {
-		return 0, fmt.Errorf("count unique users by case: %w", err)
-	}
-	return count, nil
 }
 
 // updateCaseCounters updates the response_count and unique_users for a case.
@@ -656,49 +605,4 @@ func (r *CaseAnalyticsRepository) getAllDistributions(ctx context.Context, caseI
 		}
 	}
 	return dw, lh, ao, bt, nil
-}
-
-// GetClassificationDistribution retrieves distribution for a specific classification system.
-func (r *CaseAnalyticsRepository) GetClassificationDistribution(ctx context.Context, caseID uuid.UUID, system string) (map[string]int64, error) {
-	columnName := ""
-	switch system {
-	case "danis-weber", "danis_weber":
-		columnName = "danis_weber_type"
-	case "lauge-hansen", "lauge_hansen":
-		columnName = "lauge_hansen_type"
-	case "ao-ota", "ao_ota":
-		columnName = "ao_ota_code"
-	case "bartonicek":
-		columnName = "bartonicek_type"
-	default:
-		return nil, errors.New("unknown classification system")
-	}
-
-	return r.getDistribution(ctx, caseID, columnName)
-}
-
-// getDistribution is a helper to get distribution for a column.
-func (r *CaseAnalyticsRepository) getDistribution(ctx context.Context, caseID uuid.UUID, columnName string) (map[string]int64, error) {
-	var rows []struct {
-		Value string
-		Count int64
-	}
-
-	err := r.db.WithContext(ctx).
-		Model(&domain.CaseResponse{}).
-		Select(columnName+" as value, COUNT(*) as count").
-		Where("case_id = ? AND "+columnName+" IS NOT NULL", caseID).
-		Group(columnName).
-		Scan(&rows).Error
-
-	if err != nil {
-		return nil, fmt.Errorf("get distribution for %s: %w", columnName, err)
-	}
-
-	result := make(map[string]int64)
-	for _, row := range rows {
-		result[row.Value] = row.Count
-	}
-
-	return result, nil
 }

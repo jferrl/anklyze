@@ -73,12 +73,7 @@ func sanitizeFilename(name string) string {
 
 // UploadImage handles POST /api/admin/cases/:id/images
 func (h *CaseImageHandler) UploadImage(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	caseID, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -203,13 +198,8 @@ func (h *CaseImageHandler) DeleteImage(c *gin.Context) {
 		return
 	}
 
-	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil {
-		HandleError(c, err, "failed to get image")
-		return
-	}
-	if image == nil || image.CaseID != caseID {
-		notFound(c, "image not found")
+	image, ok := loadCaseImage(c, h.caseRepo, caseID, imageID)
+	if !ok {
 		return
 	}
 
@@ -254,13 +244,8 @@ func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
 		return
 	}
 
-	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil {
-		HandleError(c, err, "failed to get image")
-		return
-	}
-	if image == nil || image.CaseID != caseID {
-		notFound(c, "image not found")
+	image, ok := loadCaseImage(c, h.caseRepo, caseID, imageID)
+	if !ok {
 		return
 	}
 
@@ -286,12 +271,8 @@ func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
 // GetAdminCaseImages handles GET /api/admin/cases/:id/images
 // Returns images with signed URLs for admin preview.
 func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
+	caseID, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
@@ -328,12 +309,7 @@ func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
 
 // ReorderImages handles PUT /api/admin/cases/:id/images/reorder
 func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	caseID, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -388,25 +364,10 @@ func (h *CaseImageHandler) GetAdminImageSignedURL(c *gin.Context) {
 	}
 
 	// Get image
-	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil {
-		HandleError(c, err, "failed to get image")
-		return
-	}
-	if image == nil || image.CaseID != caseID {
-		notFound(c, "image not found")
+	image, ok := loadCaseImage(c, h.caseRepo, caseID, imageID)
+	if !ok {
 		return
 	}
 
-	// Generate signed URL
-	url, err := h.storage.GetSignedURL(c.Request.Context(), image.StoragePath, h.signedURLDuration)
-	if err != nil {
-		HandleError(c, fmt.Errorf("generate signed URL: %w", err), "Failed to generate image URL")
-		return
-	}
-
-	c.JSON(http.StatusOK, SignedURLResponse{
-		URL:       url,
-		ExpiresAt: time.Now().Add(h.signedURLDuration),
-	})
+	writeSignedURL(c, h.storage, image.StoragePath, h.signedURLDuration)
 }
