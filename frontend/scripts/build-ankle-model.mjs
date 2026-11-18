@@ -7,8 +7,6 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { gzipSync, inflateRawSync } from 'node:zlib';
-import { BufferGeometry, BufferAttribute } from 'three';
-import { SimplifyModifier } from 'three/addons/modifiers/SimplifyModifier.js';
 
 const ARCHIVE = 'https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/BodyParts3D_3.0_obj_95.zip';
 const OUT = new URL('../public/models/ankle/ankle.bin', import.meta.url);
@@ -24,6 +22,7 @@ const SOURCES = {
 const REGION = { none: 0, lateral: 1, medial: 2, posterior: 3 };
 const SHAFT_MM = 100; // tibia and fibula are cut this far above the plafond
 const STEP_MM = 0.05; // position quantisation
+const AO_MM = 7; // occlusion search radius
 
 const objs = process.argv[2] ? readLocal(process.argv[2]) : await fetchArchive();
 
@@ -38,18 +37,20 @@ const plafond = Math.min(...verts(raw.tibia.pos).filter((v) => Math.hypot(v[0] -
 const cut = plafond + SHAFT_MM;
 
 const parts = {
-  tibia: await prepare(clip(raw.tibia, cut, -1), 0.9),
-  fibula: await prepare(clip(raw.fibula, cut, -1), 0.9),
-  talus: await prepare(raw.talus, 0.75),
+  tibia: prepare(clip(raw.tibia, cut, -1)),
+  fibula: prepare(clip(raw.fibula, cut, -1)),
+  talus: prepare(raw.talus),
 };
+const occlusion = bakeOcclusion(Object.values(parts));
 
 // Distal tibia landmarks for the regions, measured on the cut tibia. The regions are half-spaces,
 // so the viewer can draw their boundaries per pixel; the per-vertex tags place the labels.
 const tib = verts(parts.tibia.pos);
 const low = tib.filter((v) => v[1] < plafond + 12);
 const lowB = bounds(low.flat());
-const medialEdge = talus.max[0] - 4; // medial to the medial talar facet
-const posteriorEdge = lowB.min[2] + (lowB.max[2] - lowB.min[2]) * 0.3;
+// Snapped to the 0.1 mm the manifest stores, so the tags agree with the planes the viewer draws.
+const medialEdge = dome[0] + round(talus.max[0] - 4 - dome[0]); // medial to the medial talar facet
+const posteriorEdge = dome[1] + round(lowB.min[2] + (lowB.max[2] - lowB.min[2]) * 0.3 - dome[1]);
 const TOP = { lateral: 2, medial: 4, posterior: 12 }; // mm above the plafond
 
 parts.tibia.region = tib.map(([x, y, z]) => {
@@ -92,7 +93,8 @@ const proximal = { x: round(avg(top.map((v) => v[0]))), z: round(avg(top.map((v)
 // Origin at the plafond over the talar dome; quantise into one shared grid.
 const origin = [dome[0], plafond, dome[1]];
 const all = Object.values(parts).flatMap((p) => verts(p.pos));
-const min = [0, 1, 2].map((i) => Math.min(...all.map((v) => v[i])) - origin[i]);
+// Floored to the 0.1 mm the manifest stores, so decoding lands where encoding started.
+const min = [0, 1, 2].map((i) => Math.floor((Math.min(...all.map((v) => v[i])) - origin[i]) * 10) / 10);
 const chunks = [];
 let offset = 0;
 const push = (typed) => {
@@ -104,7 +106,7 @@ const push = (typed) => {
   return at;
 };
 const manifest = {
-  source: 'BodyParts3D 3.0, The Database Center for Life Science; cut, simplified and tagged for Anklyze',
+  source: 'BodyParts3D 3.0, The Database Center for Life Science; cut, refined and tagged for Anklyze',
   units: 'mm',
   quant: { min: min.map(round), step: STEP_MM },
   plafond: 0,
@@ -114,7 +116,7 @@ const manifest = {
   proximal: { ...proximal, x: round(proximal.x - origin[0]), z: round(proximal.z - origin[2]) },
   parts: [],
 };
-for (const [name, p] of Object.entries(parts)) {
+for (const [n, [name, p]] of Object.entries(parts).entries()) {
   const q = new Uint16Array(p.pos.length);
   for (let i = 0; i < q.length; i++) q[i] = Math.round((p.pos[i] - origin[i % 3] - min[i % 3]) / STEP_MM);
   manifest.parts.push({
@@ -124,6 +126,7 @@ for (const [name, p] of Object.entries(parts)) {
     position: push(q),
     index: push(Uint16Array.from(p.index)),
     region: push(Uint8Array.from(p.region)),
+    occlusion: push(occlusion[n]),
   });
 }
 const json = Buffer.from(JSON.stringify(manifest));
@@ -144,7 +147,8 @@ check(count('fibula', REGION.lateral) > 20, 'lateral region empty');
 check(count('tibia', REGION.medial) > 20, 'medial region empty');
 check(count('tibia', REGION.posterior) > 20, 'posterior region empty');
 check(manifest.syndesmosis > 10 && manifest.syndesmosis < 50, `syndesmosis at ${manifest.syndesmosis} mm`);
-check(gz <= 150 * 1024, `asset is ${gz} bytes gzipped`);
+check(gz <= 400 * 1024, `asset is ${gz} bytes gzipped`);
+check(Math.max(...Object.values(parts).map((p) => p.pos.length / 3)) < 65536, 'a part outgrew 16-bit indices');
 
 mkdirSync(new URL('.', OUT), { recursive: true });
 writeFileSync(OUT, file);
@@ -246,15 +250,15 @@ function clip({ pos, index }, level, keep) {
   return out;
 }
 
-// Simplifies, then closes each open rim with a fan of separate vertices so the cut face shades flat.
-async function prepare({ pos, index, level }, keep) {
-  const g = new BufferGeometry();
-  g.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3));
-  g.setIndex(index);
-  const used = new Set(index).size;
-  const s = await new SimplifyModifier().modify(g, Math.floor(used * (1 - keep)));
-  const p = Array.from(s.getAttribute('position').array);
-  const idx = Array.from(s.getIndex().array);
+// Refines the 95%-reduced source with one Loop subdivision step, so the bone shades smooth
+// rather than faceted, then closes each open rim with a fan of separate vertices so the cut face
+// shades flat.
+function prepare({ pos, index, level }) {
+  // Drop the vertices the clip left unused.
+  const keep = [...new Set(index)];
+  const to = new Map(keep.map((v, i) => [v, i]));
+  const used = keep.flatMap((v) => [pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]]);
+  const { pos: p, index: idx } = loopSubdivide(used, index.map((v) => to.get(v)));
 
   const edges = new Map();
   for (let t = 0; t < idx.length; t += 3) {
@@ -280,6 +284,110 @@ async function prepare({ pos, index, level }, keep) {
     loop.forEach((_, i) => idx.push(base, base + 1 + i, base + 1 + ((i + 1) % loop.length)));
   }
   return { pos: p, index: idx };
+}
+
+// One Loop subdivision step. Open edges (the cut rims) use the boundary rules, so a rim stays on
+// its cut plane.
+function loopSubdivide(pos, index) {
+  const n = pos.length / 3;
+  const edges = new Map();
+  const key = (a, b) => (a < b ? `${a}:${b}` : `${b}:${a}`);
+  for (let t = 0; t < index.length; t += 3) {
+    for (let k = 0; k < 3; k++) {
+      const [a, b, c] = [index[t + k], index[t + ((k + 1) % 3)], index[t + ((k + 2) % 3)]];
+      const e = edges.get(key(a, b)) ?? { a, b, opp: [] };
+      e.opp.push(c);
+      edges.set(key(a, b), e);
+    }
+  }
+  const out = [];
+  const at = (v, k) => pos[v * 3 + k];
+  const ring = Array.from({ length: n }, () => new Set());
+  const rim = Array.from({ length: n }, () => []);
+  for (const e of edges.values()) {
+    ring[e.a].add(e.b);
+    ring[e.b].add(e.a);
+    if (e.opp.length !== 2) rim[e.a].push(e.b), rim[e.b].push(e.a);
+  }
+  for (let v = 0; v < n; v++) {
+    const [r, m] = [rim[v], [...ring[v]]];
+    for (let k = 0; k < 3; k++) {
+      if (r.length === 2) out.push(0.75 * at(v, k) + 0.125 * (at(r[0], k) + at(r[1], k)));
+      else if (r.length) out.push(at(v, k));
+      else {
+        const beta = m.length > 3 ? 3 / (8 * m.length) : 3 / 16;
+        out.push((1 - m.length * beta) * at(v, k) + beta * m.reduce((sum, u) => sum + at(u, k), 0));
+      }
+    }
+  }
+  for (const e of edges.values()) {
+    e.id = out.length / 3;
+    for (let k = 0; k < 3; k++) {
+      const mid = at(e.a, k) + at(e.b, k);
+      out.push(e.opp.length === 2 ? 0.375 * mid + 0.125 * (at(e.opp[0], k) + at(e.opp[1], k)) : 0.5 * mid);
+    }
+  }
+  const idx = [];
+  for (let t = 0; t < index.length; t += 3) {
+    const [a, b, c] = index.slice(t, t + 3);
+    const [ab, bc, ca] = [key(a, b), key(b, c), key(c, a)].map((k) => edges.get(k).id);
+    idx.push(a, ab, ca, ab, b, bc, ca, bc, c, ab, bc, ca);
+  }
+  return { pos: out, index: idx };
+}
+
+
+// Per-vertex ambient occlusion, 0 open to 255 enclosed: the share of nearby surface, on every bone,
+// that lies in front of the vertex's normal. Creases and the joint spaces darken; flats and crests
+// stay open. A point-based approximation, cheap enough to need no ray tracing.
+function bakeOcclusion(list) {
+  const all = [];
+  for (const p of list) {
+    const normals = vertexNormals(p.pos, p.index);
+    for (let i = 0; i < p.pos.length; i += 3) all.push([p.pos[i], p.pos[i + 1], p.pos[i + 2], ...normals.slice(i, i + 3)]);
+  }
+  const cell = (x) => Math.floor(x / AO_MM);
+  const grid = new Map();
+  for (const v of all) {
+    const k = `${cell(v[0])},${cell(v[1])},${cell(v[2])}`;
+    if (!grid.has(k)) grid.set(k, []);
+    grid.get(k).push(v);
+  }
+  let i = 0;
+  return list.map((p) => {
+    const out = new Uint8Array(p.pos.length / 3);
+    for (let j = 0; j < out.length; j++, i++) {
+      const [x, y, z, nx, ny, nz] = all[i];
+      let [hit, total] = [0, 0];
+      for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) {
+        for (const u of grid.get(`${cell(x) + a},${cell(y) + b},${cell(z) + c}`) ?? []) {
+          const d = [u[0] - x, u[1] - y, u[2] - z];
+          const len = Math.hypot(...d);
+          if (len < 0.3 || len > AO_MM) continue;
+          const w = 1 - len / AO_MM;
+          hit += w * Math.max(0, (d[0] * nx + d[1] * ny + d[2] * nz) / len);
+          total += w;
+        }
+      }
+      out[j] = Math.round(255 * Math.min(1, total ? (2 * hit) / total : 0));
+    }
+    return out;
+  });
+}
+
+function vertexNormals(pos, index) {
+  const n = new Float64Array(pos.length);
+  for (let t = 0; t < index.length; t += 3) {
+    const f = faceNormal(pos, index, t);
+    for (let k = 0; k < 3; k++) for (let c = 0; c < 3; c++) n[index[t + k] * 3 + c] += f[c];
+  }
+  for (let i = 0; i < n.length; i += 3) {
+    const l = Math.hypot(n[i], n[i + 1], n[i + 2]) || 1;
+    n[i] /= l;
+    n[i + 1] /= l;
+    n[i + 2] /= l;
+  }
+  return Array.from(n);
 }
 
 function verts(pos) {

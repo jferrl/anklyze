@@ -415,8 +415,8 @@
       "posterior": "posterior malleolus"
     },
     "summary": {
-      "empty": "Ankle schematic, front and side views. No malleolus selected yet.",
-      "views": "Ankle schematic, front and side views.",
+      "empty": "Model of a right ankle, front and side views. No malleolus selected yet.",
+      "views": "Model of a right ankle, front and side views.",
       "highlighted": "Highlighted: {{list}}.",
       "fibula": {
         "infra": "Fibular fracture below the syndesmosis (infrasyndesmotic).",
@@ -447,20 +447,19 @@
     "note": "Marks show the level, not the fracture shape.",
     "sources": {
       "title": "Sources",
-      "front": "Front view adapted from <work>‘Weber Classification – latin.svg’</work> by DrFO.Tn, <license>CC BY 4.0</license>.",
-      "side": "Side view adapted from <work>‘Ankle.svg’</work>, U.S. government drawing, public domain.",
-      "model": "3D model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and simplified for Anklyze; <license>CC BY-SA 4.0</license>."
+      "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>."
     },
     "model3d": {
       "open": "Explore in 3D",
-      "close": "Back to the drawing",
+      "close": "Back to front and side views",
       "loading": "Loading the 3D model…",
       "reset": "Reset view",
+      "hintShort": "Drag to rotate",
       "hint": "Drag to turn the model, or select it and use the arrow keys; Home resets the view.",
       "canvas": "3D model of a right ankle",
       "posterior": "Posterior",
-      "noWebGL": "This browser cannot show 3D (WebGL 2 is off or unsupported), so the drawing stays.",
-      "loadFailed": "The 3D model could not be loaded, so the drawing is shown.",
+      "noWebGL": "This browser cannot show the ankle model (WebGL 2 is off or unsupported), so it is described in text.",
+      "loadFailed": "The ankle model could not be loaded, so it is described in text.",
       "views": "3D model of a right ankle: the distal tibia and fibula and the talus.",
       "empty": "3D model of a right ankle. No malleolus selected yet."
     }

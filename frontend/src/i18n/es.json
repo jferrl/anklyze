@@ -415,8 +415,8 @@
       "posterior": "maléolo posterior"
     },
     "summary": {
-      "empty": "Esquema del tobillo, proyecciones frontal y lateral. Aún no ha seleccionado ningún maléolo.",
-      "views": "Esquema del tobillo, proyecciones frontal y lateral.",
+      "empty": "Modelo de un tobillo derecho, vistas frontal y lateral. Aún no ha seleccionado ningún maléolo.",
+      "views": "Modelo de un tobillo derecho, vistas frontal y lateral.",
       "highlighted": "Resaltado: {{list}}.",
       "fibula": {
         "infra": "Fractura de peroné por debajo de la sindesmosis (infrasindesmal).",
@@ -447,20 +447,19 @@
     "note": "Las marcas indican el nivel, no la forma de la fractura.",
     "sources": {
       "title": "Fuentes",
-      "front": "Vista frontal adaptada de <work>‘Weber Classification – latin.svg’</work> de DrFO.Tn, <license>CC BY 4.0</license>.",
-      "side": "Vista lateral adaptada de <work>‘Ankle.svg’</work>, dibujo del gobierno de EE. UU., dominio público.",
-      "model": "Modelo 3D: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y simplificado para Anklyze; <license>CC BY-SA 4.0</license>."
+      "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>."
     },
     "model3d": {
       "open": "Explorar en 3D",
-      "close": "Volver al dibujo",
+      "close": "Volver a las vistas frontal y lateral",
       "loading": "Cargando el modelo 3D…",
       "reset": "Restablecer vista",
+      "hintShort": "Arrastre para girar",
       "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista.",
       "canvas": "Modelo 3D de un tobillo derecho",
       "posterior": "Posterior",
-      "noWebGL": "Este navegador no puede mostrar 3D (WebGL 2 está desactivado o no es compatible); se mantiene el dibujo.",
-      "loadFailed": "No se pudo cargar el modelo 3D; se muestra el dibujo.",
+      "noWebGL": "Este navegador no puede mostrar el modelo del tobillo (WebGL 2 está desactivado o no es compatible); se describe en texto.",
+      "loadFailed": "No se pudo cargar el modelo del tobillo; se describe en texto.",
       "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales y astrágalo.",
       "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo."
     }

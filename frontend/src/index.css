@@ -289,17 +289,18 @@
   --hl-fill: color-mix(in oklab, var(--field-ink) 22%, var(--sheet));
 }
 
-/* The same plate tones on an app card (AnatomyView): navy on white in light; in dark, bone reads
-   pale on the dark card, as on a radiograph, and the accent stays the brightest thing drawn. */
+/* The rendered ankle in the classifier (AnatomyView): ivory bone on a neutral backdrop, overlaid
+   with the accent as a translucent tint (--hl-tint) and crisp lines (--hl), as the landing plate is. */
 .fig-card {
-  --bone: color-mix(in oklab, var(--primary) 6%, var(--card));
+  --fig-backdrop: color-mix(in oklab, var(--muted-foreground) 9%, var(--card));
   --bone-line: color-mix(in oklab, var(--muted-foreground) 85%, var(--card));
   --hl: var(--primary);
-  --hl-fill: color-mix(in oklab, var(--primary-fill) 30%, var(--card));
+  --hl-tint: oklch(0.45 0.14 262);
+  --hl-halo: var(--card);
 }
 .dark .fig-card {
-  --bone: color-mix(in oklab, var(--foreground) 13%, var(--card));
-  --hl-fill: color-mix(in oklab, var(--primary-fill) 75%, var(--card));
+  --fig-backdrop: color-mix(in oklab, black 30%, var(--card));
+  --hl-tint: var(--primary-fill);
 }
 
 @media (prefers-reduced-motion: reduce) {

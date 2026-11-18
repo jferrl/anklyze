@@ -1,4 +1,4 @@
-import { lazy, Suspense, useId, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { ChevronDown, Rotate3d } from 'lucide-react';
 import { Button } from '@/components/ui';
@@ -6,31 +6,20 @@ import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
 import type { FractureInput } from '@/types';
-import { getAnatomyState, type AnatomyState, type FibulaMark } from './anatomyState';
-import { CALCANEUS, FIBULA_INTACT, TALUS, TIBIA } from './frontBones';
-import { LAT_FIBULA, LAT_TALUS, LAT_TIBIA } from './lateralBones';
+import { getAnatomyState, type AnatomyState } from './anatomyState';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
   /** Case context: CT availability comes from the case images, as in the form. */
   hasTACImages?: boolean;
-  /** Lists the answers under the drawing; off where the answer path is already shown beside it. */
+  /** Lists the answers under the figure; off where the answer path is already shown beside it. */
   showReading?: boolean;
   className?: string;
 }
 
-// Vertical extent of each fibular level in frontBones units. The plafond is at y≈246, the top of
-// the tibiofibular contact (syndesmosis) at y≈196, and 6 cm above the joint at y≈145 (the distal
-// tibia, about 5 cm wide, spans ~88 units).
-const BANDS: Record<Exclude<FibulaMark, 'proximal'>, [number, number]> = {
-  infra: [249, 268],
-  trans: [199, 244],
-  supra: [149, 194],
-  supra_far: [104, 143],
-};
-
-// three.js and the model load only when someone opens the 3D view.
+// three.js and the model load after the page, once per page, for the views and the 3D model alike.
 const Anatomy3D = lazy(() => import('./Anatomy3D'));
+const AnkleView = lazy(() => import('./Anatomy3D').then((m) => ({ default: m.AnkleView })));
 
 function hasWebGL2(): boolean {
   try {
@@ -45,22 +34,21 @@ const ink = 'transition-[color,fill,stroke,opacity] duration-200 ease-[cubic-bez
 const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
 
 /**
- * AnatomyView draws the ankle from the front and the side and highlights what the answers
- * describe: the fractured malleoli and the level of the fibular fracture. Everything drawn is
- * also stated in text.
+ * AnatomyView renders a model of the ankle from the front and the side, or free to turn in 3D, and
+ * highlights what the answers describe: the fractured malleoli and the level of the fibular
+ * fracture. Everything shown is also stated in text.
  */
 export function AnatomyView({ formData, hasTACImages, showReading = true, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
   const state = getAnatomyState(formData);
   const [view3d, setView3d] = useState(false);
-  const [notice, setNotice] = useState<'noWebGL' | 'loadFailed'>();
+  // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
+  const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
   const summary = useSummary(state, view3d);
-
-  function toggle3d() {
-    if (!view3d && !hasWebGL2()) return setNotice('noWebGL');
-    setNotice(undefined);
-    setView3d(!view3d);
-  }
+  const failed = () => {
+    setView3d(false);
+    setNotice('loadFailed');
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -91,41 +79,46 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
 
   return (
     <figure className={cn('fig-card space-y-3', className)}>
-      {view3d ? (
-        <Suspense fallback={<p className="grid aspect-square place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}>
-          <Anatomy3D
-            state={state}
-            onFail={() => {
-              setView3d(false);
-              setNotice('loadFailed');
-            }}
-          />
+      {notice ? (
+        <p className="rounded-sm bg-(--fig-backdrop) p-3 text-sm">{summary}</p>
+      ) : view3d ? (
+        <Suspense fallback={<p className="grid aspect-[4/5] place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}>
+          <Anatomy3D state={state} onFail={failed} />
         </Suspense>
       ) : (
-        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-x-4 gap-y-1">
-          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
-          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
-          <FrontView state={state} />
-          <SideView state={state} />
+        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,4fr)] items-end gap-x-3 gap-y-1">
+          <p aria-hidden="true" className="self-start text-xs text-muted-foreground">{t('anatomy.front')}</p>
+          <p aria-hidden="true" className="self-start text-xs text-muted-foreground">{t('anatomy.side')}</p>
+          <Suspense fallback={<div className="aspect-[3/4] rounded-sm bg-(--fig-backdrop)" />}>
+            <AnkleView state={state} view="front" onFail={failed} />
+          </Suspense>
+          <div className="self-start">
+            <Suspense fallback={<div className="aspect-square rounded-sm bg-(--fig-backdrop)" />}>
+              <AnkleView state={state} view="side" onFail={failed} />
+            </Suspense>
+            <p aria-hidden="true" className="mt-1 flex justify-between gap-2 text-xs leading-4 text-muted-foreground">
+              <span>{t('anatomy.back')}</span>
+              <span>{t('anatomy.frontSide')}</span>
+            </p>
+          </div>
         </div>
       )}
-      {/* One caption row for both views, in the drawing's columns, so switching keeps it in place. */}
-      <div className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-x-4">
+      {/* One caption row for both views, in the figure's columns, so switching keeps it in place. */}
+      <div className="grid grid-cols-[minmax(0,5fr)_minmax(0,4fr)] gap-x-3">
         {fibulaCaption}
         {posteriorCaption}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <Button type="button" variant="outline" size="sm" aria-pressed={view3d} onClick={toggle3d}>
+      {notice ? (
+        <p role="status" className="text-xs text-muted-foreground">
+          {t(`anatomy.model3d.${notice}`)}
+        </p>
+      ) : (
+        <Button type="button" variant="outline" size="sm" aria-pressed={view3d} onClick={() => setView3d(!view3d)}>
           <Rotate3d />
           {view3d ? t('anatomy.model3d.close') : t('anatomy.model3d.open')}
         </Button>
-        {notice && (
-          <p role="status" className="text-xs text-muted-foreground">
-            {t(`anatomy.model3d.${notice}`)}
-          </p>
-        )}
-      </div>
+      )}
 
       <p className="sr-only" aria-live="polite">{summary}</p>
 
@@ -182,161 +175,6 @@ function useSummary(state: AnatomyState, model3d: boolean): string {
   return sentences.join(' ');
 }
 
-// Both drawings share the landing plate's language (--bone, --hl in index.css): flat bone tint
-// with 1.5px outlines, highlights as an accent fill plus a 2.5px accent outline that tapers out at
-// its ends, and HTML labels on leader lines.
-const LINE = { strokeWidth: 1.5, vectorEffect: 'non-scaling-stroke' } as const;
-const BOLD = { strokeWidth: 2.5, vectorEffect: 'non-scaling-stroke' } as const;
-const HL = 'fill-(--hl-fill) stroke-(--hl)';
-
-type ViewBox = [number, number, number, number];
-const FRONT_BOX: ViewBox = [200, 100, 210, 212];
-const SIDE_BOX: ViewBox = [94, 66, 150, 196];
-
-/**
- * Spot limits a highlight to a disc round its structure: the tint ends on a clean arc (`${id}`),
- * and the bold outline tapers out across it (`${id}-line`) instead of stopping square.
- */
-function Spot({ id, cx, cy, r }: { id: string; cx: number; cy: number; r: number }) {
-  const disc = (suffix: string, radius: number, fade: number) => (
-    <>
-      <radialGradient id={`${id}${suffix}-g`} cx={cx} cy={cy} r={radius} gradientUnits="userSpaceOnUse">
-        <stop offset={1 - fade / radius} stopColor="white" />
-        <stop offset="1" stopColor="white" stopOpacity="0" />
-      </radialGradient>
-      <mask id={`${id}${suffix}`} maskUnits="userSpaceOnUse" x={cx - radius} y={cy - radius} width={2 * radius} height={2 * radius}>
-        <circle cx={cx} cy={cy} r={radius} fill={`url(#${id}${suffix}-g)`} />
-      </mask>
-    </>
-  );
-  return (
-    <>
-      {disc('', r, 1)}
-      {disc('-line', r + 4, 10)}
-    </>
-  );
-}
-
-/** Label sets a structure's name in the page type over a drawing, hanging below a point of its viewBox. */
-function Label({ box, x, y, on, children }: { box: ViewBox; x: number; y: number; on: boolean; children: ReactNode }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{ left: `${((x - box[0]) / box[2]) * 100}%`, top: `${((y - box[1]) / box[3]) * 100}%` }}
-      className={cn(ink, 'absolute -translate-x-1/2 whitespace-nowrap text-xs leading-4', on ? 'font-semibold text-primary' : 'text-muted-foreground')}
-    >
-      {children}
-    </span>
-  );
-}
-
-/** Leader joins a structure (the dot) to the label below it. */
-function Leader({ x, y, to, on }: { x: number; y: number; to: number; on: boolean }) {
-  return (
-    <g className={cn(ink, on ? 'fill-(--hl) stroke-(--hl)' : 'fill-(--bone-line) stroke-(--bone-line)')}>
-      <path d={`M${x},${y} V${to}`} vectorEffect="non-scaling-stroke" strokeWidth="1" />
-      <circle cx={x} cy={y} r="1.8" stroke="none" />
-    </g>
-  );
-}
-
-function useSvgId() {
-  // useId's punctuation is not safe inside url(#...).
-  return 'anatomy' + useId().replace(/[^\w-]/g, '');
-}
-
-function FrontView({ state }: { state: AnatomyState }) {
-  const { t } = useTranslation();
-  const id = useSvgId();
-
-  return (
-    <div className="relative self-end">
-      <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" strokeLinecap="round" strokeLinejoin="round">
-        <defs>
-          {/* The lateral malleolus is the fibula below the plafond (y≈244), so it meets the transsyndesmotic band without overlapping it. */}
-          <Spot id={`${id}-lateral`} cx={244} cy={368} r={124} />
-          <Spot id={`${id}-medial`} cx={395} cy={262} r={52} />
-          <clipPath id={`${id}-fibula`}>
-            <path d={FIBULA_INTACT} />
-          </clipPath>
-        </defs>
-
-        {/* Back to front; each fill hides what lies behind it. */}
-        <g className="fill-(--bone) stroke-(--bone-line)" {...LINE}>
-          <path d={CALCANEUS} />
-          <path d={TALUS} />
-          <path d={TIBIA} />
-          <path d={FIBULA_INTACT} />
-        </g>
-
-        <g className={cn(HL, on(state.lateral))}>
-          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral)`} stroke="none" />
-          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral-line)`} fill="none" {...BOLD} />
-        </g>
-        <g className={cn(HL, on(state.medial))}>
-          <path d={TIBIA} mask={`url(#${id}-medial)`} stroke="none" />
-          <path d={TIBIA} mask={`url(#${id}-medial-line)`} fill="none" {...BOLD} />
-        </g>
-
-        {/* The fibular level: the fibula tinted between two rings, with a bracket beside it. */}
-        {(Object.keys(BANDS) as (keyof typeof BANDS)[]).map((mark) => {
-          const [top, bottom] = BANDS[mark];
-          return (
-            <g key={mark} className={cn(HL, on(state.fibula === mark))}>
-              <g clipPath={`url(#${id}-fibula)`}>
-                <rect x="220" y={top} width="60" height={bottom - top} stroke="none" />
-                <path d={`M220,${top} h60 M220,${bottom} h60`} fill="none" {...BOLD} />
-              </g>
-              <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" {...BOLD} />
-            </g>
-          );
-        })}
-
-        {/* Proximal fibula: outside the drawing, so only an arrow up the shaft. */}
-        <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" {...BOLD} className={cn('stroke-(--hl)', on(state.fibula === 'proximal'))} />
-
-        <Leader x={232.5} y={270.5} to={282} on={state.lateral} />
-        <Leader x={374} y={252} to={265} on={state.medial} />
-      </svg>
-      <Label box={FRONT_BOX} x={232.5} y={284} on={state.lateral}>
-        {t('anatomy.lateral')}
-      </Label>
-      <Label box={FRONT_BOX} x={374} y={267} on={state.medial}>
-        {t('anatomy.medial')}
-      </Label>
-    </div>
-  );
-}
-
-function SideView({ state }: { state: AnatomyState }) {
-  const { t } = useTranslation();
-  const id = useSvgId();
-
-  return (
-    <div className="w-full max-w-56 self-end">
-      <svg viewBox={SIDE_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <defs>
-          <Spot id={`${id}-posterior`} cx={118} cy={205} r={48.5} />
-        </defs>
-        <g className="fill-(--bone) stroke-(--bone-line)" {...LINE}>
-          <path d={LAT_TALUS} />
-          <path d={`${LAT_TIBIA} Z`} />
-          <path d={LAT_FIBULA} fill="none" strokeOpacity="0.45" />
-        </g>
-        {/* The posterior lip of the tibia; its extent is schematic, not a fragment. */}
-        <g className={cn(HL, on(state.posterior))}>
-          <path d={`${LAT_TIBIA} Z`} mask={`url(#${id}-posterior)`} stroke="none" />
-          <path d={LAT_TIBIA} mask={`url(#${id}-posterior-line)`} fill="none" {...BOLD} />
-        </g>
-      </svg>
-      <p aria-hidden="true" className="flex justify-between gap-2 text-xs leading-4 text-muted-foreground">
-        <span>{t('anatomy.back')}</span>
-        <span>{t('anatomy.frontSide')}</span>
-      </p>
-    </div>
-  );
-}
-
 // The full credits stay in the page, one click away; NOTICE has the complete text.
 function Sources() {
   const { t } = useTranslation();
@@ -349,15 +187,6 @@ function Sources() {
         <ChevronDown aria-hidden="true" className="size-3.5 transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] group-open:rotate-180 motion-reduce:transition-none" />
       </summary>
       <ul className="mt-1 space-y-1">
-        <li>
-          <Trans
-            i18nKey="anatomy.sources.front"
-            components={{ work: link('https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg'), license: link('https://creativecommons.org/licenses/by/4.0/') }}
-          />
-        </li>
-        <li>
-          <Trans i18nKey="anatomy.sources.side" components={{ work: link('https://commons.wikimedia.org/wiki/File:Ankle.svg') }} />
-        </li>
         <li>
           <Trans
             i18nKey="anatomy.sources.model"

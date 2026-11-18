@@ -18,15 +18,16 @@ export interface AnkleModel {
   regions: { lateralTop: number; medialTop: number; medialX: number; posteriorTop: number; posteriorZ: number };
   bands: Record<Exclude<FibulaMark, 'proximal'>, Band>;
   proximal: { x: number; z: number; y: [number, number] };
-  parts: { name: string; positions: Float32Array; index: Uint16Array; region: Uint8Array }[];
+  /** occlusion is baked ambient occlusion per vertex, 0 open to 255 enclosed. */
+  parts: { name: string; positions: Float32Array; index: Uint16Array; region: Uint8Array; occlusion: Uint8Array }[];
 }
 
 interface Manifest extends Omit<AnkleModel, 'parts'> {
   quant: { min: [number, number, number]; step: number };
-  parts: { name: string; vertices: number; triangles: number; position: number; index: number; region: number }[];
+  parts: { name: string; vertices: number; triangles: number; position: number; index: number; region: number; occlusion: number }[];
 }
 
-/** parseAnkleModel decodes ankle.bin: a JSON manifest, then quantised positions, indices and regions per bone. */
+/** parseAnkleModel decodes ankle.bin: a JSON manifest, then quantised positions, indices, regions and occlusion per bone. */
 export function parseAnkleModel(buffer: ArrayBuffer): AnkleModel {
   const jsonLength = new DataView(buffer).getUint32(0, true);
   const manifest = JSON.parse(new TextDecoder().decode(new Uint8Array(buffer, 4, jsonLength))) as Manifest;
@@ -47,6 +48,7 @@ export function parseAnkleModel(buffer: ArrayBuffer): AnkleModel {
         positions,
         index: new Uint16Array(buffer, base + p.index, p.triangles * 3),
         region: new Uint8Array(buffer, base + p.region, p.vertices),
+        occlusion: new Uint8Array(buffer, base + p.occlusion, p.vertices),
       };
     }),
   };
