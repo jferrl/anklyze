@@ -200,13 +200,8 @@ func (h *CaseResponseHandler) GetBatchImageSignedURLs(c *gin.Context) {
 		return
 	}
 
-	// Verify case is published
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	_, ok = loadPublishedCase(c, h.caseRepo, caseID)
 	if !ok {
-		return
-	}
-	if !cs.IsPublished() {
-		notFound(c, "case not found")
 		return
 	}
 
@@ -251,36 +246,16 @@ func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
 		return
 	}
 
-	// Verify case is published
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	_, ok = loadPublishedCase(c, h.caseRepo, caseID)
 	if !ok {
-		return
-	}
-	if !cs.IsPublished() {
-		notFound(c, "case not found")
 		return
 	}
 
 	// Get image
-	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil {
-		HandleError(c, err, "failed to get image")
-		return
-	}
-	if image == nil || image.CaseID != caseID {
-		notFound(c, "image not found")
+	image, ok := loadCaseImage(c, h.caseRepo, caseID, imageID)
+	if !ok {
 		return
 	}
 
-	// Generate signed URL
-	url, err := h.storage.GetSignedURL(c.Request.Context(), image.StoragePath, h.signedURLDuration)
-	if err != nil {
-		HandleError(c, fmt.Errorf("generate signed URL: %w", err), "Failed to generate image URL")
-		return
-	}
-
-	c.JSON(http.StatusOK, SignedURLResponse{
-		URL:       url,
-		ExpiresAt: time.Now().Add(h.signedURLDuration),
-	})
+	writeSignedURL(c, h.storage, image.StoragePath, h.signedURLDuration)
 }
