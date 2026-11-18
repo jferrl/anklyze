@@ -705,7 +705,7 @@
         "noCaseMetrics": "No hay métricas de casos disponibles",
         "noResponses": "Todavía no hay respuestas. Las cifras aparecerán cuando los evaluadores completen casos.",
         "openStudy": "Abrir el editor del estudio",
-        "agreementNote": "Cada cifra es la proporción de respuestas que dieron la respuesta más frecuente de ese caso, no la concordancia entre pares de evaluadores. Un guion indica que menos de dos respuestas tienen clasificación en ese sistema, por lo que no hay concordancia que informar. Los casos por debajo del {{threshold}}% en algún sistema aparecen sombreados y marcados con un icono.",
+        "agreementNote": "Cada cifra es la proporción de respuestas que dieron la respuesta más frecuente de ese caso, no la concordancia entre pares de evaluadores. Un guion indica que menos de dos respuestas tienen clasificación en ese sistema, por lo que no hay concordancia que informar. Los casos por debajo del {{threshold}}% en Lauge-Hansen, Danis-Weber o AO/OTA aparecen sombreados y marcados con un icono; Bartonicek no marca el caso.",
         "retry": "Reintentar",
         "loadFailed": "No se pudieron cargar las cifras de fiabilidad",
         "loadFailedDescription": "Compruebe su conexión e inténtelo de nuevo. Si el error persiste, es posible que el servidor no esté disponible.",
@@ -720,7 +720,7 @@
         "nOfM": "{{n, number}} de {{m, number}}",
         "completeRatersNote": "Respondieron todos los casos",
         "lowAgreementCasesTitle": "Casos con concordancia baja",
-        "lowAgreementNote": "Por debajo del {{threshold}}% en al menos un sistema"
+        "lowAgreementNote": "Por debajo del {{threshold}}% en Lauge-Hansen, Danis-Weber o AO/OTA"
       },
       "goldStandard": {
         "title": "Precisión frente al patrón de referencia",
@@ -812,7 +812,7 @@
         "fleissCases": "Para cada sistema solo se usan los casos que todos esos evaluadores respondieron en ese sistema. Un caso en el que algún evaluador no dio respuesta en un sistema se omite de ese sistema y se cuenta como excluido. Cada sistema necesita al menos dos casos utilizables.",
         "noVariation": "Cuando todos los evaluadores dieron la misma respuesta en todos los casos, la concordancia esperada por azar es 1 y el kappa es 0/0, por lo que se muestra como indefinido y no como 1. La concordancia perfecta en casos con respuestas distintas es un kappa real de 1.",
         "cohen": "Cuando exactamente dos evaluadores respondieron todos los casos, también se muestra el kappa de Cohen, calculado con los casos que ambos respondieron en ese sistema. Su intervalo del {{level}}% es un bootstrap por percentiles, construido igual que el de Fleiss: los casos se remuestrean con reemplazo 2000 veces con una semilla fija, y se omiten los remuestreos en los que todas las valoraciones caen en una sola categoría. El intervalo se limita al rango de −1 a 1.",
-        "weighted": "El kappa ponderado de AO/OTA usa pesos lineales sobre el orden 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Los códigos de subgrupo se comparan por su grupo (44-B1.2 cuenta como 44-B1). Un par con un código fuera de ese orden, como 43-B1 o no clasificable, se omite y se cuenta.",
+        "weighted": "El kappa ponderado de AO/OTA usa pesos lineales sobre el orden 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Los códigos de subgrupo se comparan por su grupo (44-B1.2 cuenta como 44-B1), por lo que dos evaluadores que solo difieren en el subgrupo cuentan como concordancia total. Un par con un código fuera de ese orden, como 43-B1 o no clasificable, se omite y se cuenta.",
         "noKappaPerCase": "El kappa no se calcula para un caso individual: un caso da a cada evaluador una sola valoración, por lo que el kappa solo podría valer 1 o 0. El kappa se informa por estudio.",
         "fleissLead": "Kappa de Fleiss calculado con los {{raters, number}} de {{totalRaters, number}} evaluadores que respondieron todos los casos, con un intervalo de confianza bootstrap del {{level}}%.",
         "more": "Mostrar el método completo",
