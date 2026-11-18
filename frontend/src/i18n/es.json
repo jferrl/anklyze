@@ -24,14 +24,14 @@
     "editCase": "Editar caso",
     "newStudy": "Nuevo estudio",
     "editStudy": "Editar estudio",
-    "analytics": "Analíticas",
     "reliability": "Fiabilidad",
     "divergence": "Divergencia",
     "cohorts": "Estudios",
     "newCohort": "Nuevo estudio",
     "editCohort": "Editar estudio",
     "cohortDetail": "Detalle del estudio",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "report": "Informe"
   },
   "app": {
     "title": "Clasificación de fracturas de tobillo",
@@ -430,11 +430,12 @@
     "select": "Seleccionar…",
     "total": "Total",
     "notAvailable": "N/D",
-    "noData": "No hay datos disponibles",
     "previousPage": "Página anterior",
     "nextPage": "Página siguiente",
     "notSet": "Sin definir",
-    "moreActions": "Más acciones"
+    "moreActions": "Más acciones",
+    "retry": "Reintentar",
+    "skipToContent": "Saltar al contenido"
   },
   "cases": {
     "title": "Título",
@@ -561,7 +562,6 @@
       "allStatuses": "Todos los estados",
       "noCases": "No se encontraron casos",
       "noCasesDesc": "Cree su primer caso para comenzar.",
-      "analytics": "Analíticas",
       "divergence": "Análisis de divergencia",
       "publish": "Publicar",
       "close": "Cerrar caso",
@@ -615,13 +615,13 @@
       "showReferenceAfterSubmit": "Mostrar referencia después de enviar",
       "showReferenceAfterSubmitDescription": "Muestra la clasificación correcta después de que los participantes envíen su respuesta",
       "decisionPathConfigured": "Ruta de decisión configurada para análisis de divergencia",
-      "backToCases": "Volver a casos",
       "pendingUpload": "Carga pendiente",
       "impossibleClassification": "No clasificable (imposible)",
       "noDeadline": "Sin fecha límite",
       "referenceAfterSave": "El patrón de referencia podrá definirse una vez guardado el caso.",
       "deleteImage": "Eliminar imagen",
-      "removeUpload": "Quitar imagen de la subida"
+      "removeUpload": "Quitar imagen de la subida",
+      "report": "Informe"
     },
     "studies": {
       "title": "Gestión de estudios",
@@ -686,7 +686,8 @@
         "raters": "Evaluadores",
         "responses": "Respuestas",
         "created": "Creado",
-        "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"
+        "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios",
+        "completeRaters": "Evaluadores completos"
       },
       "configureGoldStandardInput": "Configurar patrón de referencia",
       "configureGoldStandardInputDesc": "Complete el cuestionario de clasificación para establecer el patrón de referencia. Esto captura tanto el resultado de la clasificación como la ruta de decisión para el análisis de divergencia.",
@@ -733,14 +734,9 @@
       "removeCaseNamed": "Quitar «{{title}}» del estudio"
     },
     "analytics": {
-      "totalResponses": "Total de respuestas",
-      "uniqueRespondents": "Participantes únicos",
-      "avgResponseTime": "Tiempo promedio",
-      "responsesPerUser": "Respuestas por usuario",
       "classificationDistribution": "Distribución de clasificaciones",
       "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
       "distributionTitle": "Distribución {{system}}",
-      "reliabilityMetrics": "Métricas de fiabilidad",
       "noData": "No hay datos de respuestas disponibles",
       "unspecified": "No especificado",
       "viewBar": "Gráfico de barras",
@@ -750,7 +746,8 @@
       "responsesCount_one": "{{count}} respuesta",
       "responsesCount_other": "{{count}} respuestas",
       "noDataSubtitle": "Aún no hay clasificaciones registradas",
-      "totalClassifications": "clasificaciones en total"
+      "totalClassifications": "clasificaciones en total",
+      "meanResponseTime": "Tiempo medio por respuesta"
     },
     "reliability": {
       "title": "Fiabilidad inter-evaluador",
@@ -770,15 +767,11 @@
       "kappaModerate": "Moderado",
       "kappaSubstantial": "Sustancial",
       "kappaAlmostPerfect": "Casi perfecto",
-      "detailedAnalysis": "Análisis detallado por sistema",
-      "detailedDescription": "Distribución de categorías por sistema de clasificación",
       "percentAgreement": "Acuerdo con la respuesta más frecuente",
       "cohensKappa": "Kappa de Cohen",
       "fleissKappa": "Kappa de Fleiss",
       "weightedKappa": "Kappa ponderado",
       "confidenceInterval": "Intervalo de confianza del {{level}}%",
-      "categoryCounts": "Distribución por categoría",
-      "noDataForSystem": "No hay datos disponibles para este sistema de clasificación",
       "noGoldStandard": "No se ha establecido el patrón de referencia para este caso",
       "setGoldStandard": "Establecer patrón de referencia",
       "clearGoldStandard": "Borrar patrón de referencia",
@@ -823,7 +816,6 @@
         "distalTibia": "Tibia distal",
         "other": "Otros"
       },
-      "systemMetrics": "Métricas de {{system}}",
       "systemDetail": "Análisis detallado de {{system}}",
       "method": {
         "title": "Método",
@@ -847,18 +839,19 @@
       "weightType": {
         "linear": "lineal",
         "quadratic": "cuadrático"
-      }
+      },
+      "lowAgreement": "Concordancia baja: inferior al {{threshold}}"
     },
     "dashboard": {
       "title": "Panel de administración",
-      "subtitle": "Estudios en curso, actividad reciente de los casos y casos que requieren atención",
+      "subtitle": "Casos que requieren atención, estudios actuales y actividad reciente de los casos",
       "totalCases": "Total de casos",
       "totalResponses": "Total de respuestas",
       "uniqueParticipants": "Participantes únicos",
       "completedCases": "Casos completados",
       "drafts": "borradores",
       "active": "activos",
-      "avgPerCase": "~{{count}} promedio por caso",
+      "avgPerCase": "{{value}} por caso de media",
       "acrossAllCases": "en todos los casos",
       "stillActive": "aún activos",
       "recentActivity": "Actividad reciente",
@@ -866,9 +859,7 @@
       "noRecentActivity": "Sin actividad reciente",
       "responses": "respuestas",
       "needsAttention": "Requiere atención",
-      "needsAttentionDesc": "Casos que pueden necesitar su atención",
-      "allGood": "Ningún caso requiere atención.",
-      "pastDeadline": "Fecha límite pasada",
+      "needsAttentionDesc": "Casos publicados sin respuestas o con la fecha límite vencida",
       "noResponses": "Sin respuestas aún",
       "statusBreakdown": "Casos por estado",
       "statusBreakdownDesc": "Número de casos en cada estado",
@@ -879,13 +870,17 @@
       "activeCount_other": "{{count}} activos",
       "stillActiveCount_one": "{{count}} aún activo",
       "stillActiveCount_other": "{{count}} aún activos",
-      "studiesInProgress": "Estudios en curso",
-      "studiesInProgressDesc": "Primero los estudios activos, después los borradores",
       "allStudies": "Todos los estudios",
-      "noStudiesInProgress": "No hay estudios en curso.",
       "activeStudies": "Estudios activos",
       "closedCount_one": "{{count}} cerrado",
-      "closedCount_other": "{{count}} cerrados"
+      "closedCount_other": "{{count}} cerrados",
+      "pastDeadlineOn": "Fecha límite vencida el {{date}}",
+      "moreCount_one": "Mostrar {{count}} más",
+      "moreCount_other": "Mostrar {{count}} más",
+      "loadFailed": "No se pudo cargar el panel",
+      "currentStudies": "Estudios actuales",
+      "currentStudiesDesc": "Primero los estudios activos, después los borradores y los cerrados en los últimos 30 días",
+      "noCurrentStudies": "No hay estudios activos, en borrador ni cerrados recientemente."
     },
     "divergence": {
       "title": "Análisis de divergencia",
@@ -960,6 +955,14 @@
       "noMatchStatus": "Sin resultados con el estado «{{status}}».",
       "noMatchBoth": "Sin resultados para «{{query}}» con el estado «{{status}}».",
       "clearSearch": "Borrar búsqueda"
+    },
+    "report": {
+      "backToCase": "Volver al caso",
+      "deadline": "Fecha límite: {{date}}",
+      "noResponses": "Todavía no hay respuestas. La concordancia entre evaluadores y la distribución de clasificaciones aparecerán cuando los evaluadores clasifiquen este caso.",
+      "exported": "CSV descargado",
+      "loadFailed": "No se pudo cargar el informe del caso",
+      "agreementNeedsTwo": "La concordancia entre evaluadores necesita al menos dos respuestas."
     }
   },
   "profile": {

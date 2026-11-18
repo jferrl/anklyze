@@ -24,14 +24,14 @@
     "editCase": "Edit case",
     "newStudy": "New study",
     "editStudy": "Edit study",
-    "analytics": "Analytics",
     "reliability": "Reliability",
     "divergence": "Divergence",
     "cohorts": "Studies",
     "newCohort": "New study",
     "editCohort": "Edit study",
     "cohortDetail": "Study detail",
-    "profile": "Profile"
+    "profile": "Profile",
+    "report": "Report"
   },
   "app": {
     "title": "Ankle fracture classification",
@@ -430,11 +430,12 @@
     "select": "Select…",
     "total": "Total",
     "notAvailable": "N/A",
-    "noData": "No data available",
     "previousPage": "Previous page",
     "nextPage": "Next page",
     "notSet": "Not set",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "retry": "Retry",
+    "skipToContent": "Skip to content"
   },
   "cases": {
     "title": "Title",
@@ -561,7 +562,6 @@
       "allStatuses": "All statuses",
       "noCases": "No cases found",
       "noCasesDesc": "Create your first case to get started.",
-      "analytics": "Analytics",
       "divergence": "Divergence analysis",
       "publish": "Publish",
       "close": "Close case",
@@ -615,13 +615,13 @@
       "showReferenceAfterSubmit": "Show reference after submit",
       "showReferenceAfterSubmitDescription": "Display the correct classification after participants submit their response",
       "decisionPathConfigured": "Decision path configured for divergence analysis",
-      "backToCases": "Back to cases",
       "pendingUpload": "Pending upload",
       "impossibleClassification": "Not classifiable (impossible)",
       "noDeadline": "No deadline",
       "referenceAfterSave": "The gold standard can be set after the case is saved.",
       "deleteImage": "Delete image",
-      "removeUpload": "Remove image from upload"
+      "removeUpload": "Remove image from upload",
+      "report": "Report"
     },
     "studies": {
       "title": "Study management",
@@ -686,7 +686,8 @@
         "raters": "Raters",
         "responses": "Responses",
         "created": "Created",
-        "showing": "Showing {{from}}-{{to}} of {{total}} studies"
+        "showing": "Showing {{from}}-{{to}} of {{total}} studies",
+        "completeRaters": "Complete raters"
       },
       "configureGoldStandardInput": "Configure gold standard",
       "configureGoldStandardInputDesc": "Complete the classification questionnaire to set the gold standard. This captures both the classification result and the decision path for divergence analysis.",
@@ -733,14 +734,9 @@
       "removeCaseNamed": "Remove “{{title}}” from the study"
     },
     "analytics": {
-      "totalResponses": "Total responses",
-      "uniqueRespondents": "Unique respondents",
-      "avgResponseTime": "Avg. response time",
-      "responsesPerUser": "Responses per user",
       "classificationDistribution": "Classification distribution",
       "distributionDescription": "How respondents classified this case across different systems",
       "distributionTitle": "{{system}} distribution",
-      "reliabilityMetrics": "Reliability metrics",
       "noData": "No response data available",
       "unspecified": "Not specified",
       "viewBar": "Bar chart",
@@ -750,7 +746,8 @@
       "responsesCount_one": "{{count}} response",
       "responsesCount_other": "{{count}} responses",
       "noDataSubtitle": "No classifications recorded yet",
-      "totalClassifications": "total classifications"
+      "totalClassifications": "total classifications",
+      "meanResponseTime": "Mean time per response"
     },
     "reliability": {
       "title": "Inter-rater reliability",
@@ -770,15 +767,11 @@
       "kappaModerate": "Moderate",
       "kappaSubstantial": "Substantial",
       "kappaAlmostPerfect": "Almost perfect",
-      "detailedAnalysis": "Detailed system analysis",
-      "detailedDescription": "Category distribution per classification system",
       "percentAgreement": "Agreement with the most common answer",
       "cohensKappa": "Cohen's kappa",
       "fleissKappa": "Fleiss' kappa",
       "weightedKappa": "Weighted kappa",
       "confidenceInterval": "{{level}}% confidence interval",
-      "categoryCounts": "Category distribution",
-      "noDataForSystem": "No data available for this classification system",
       "noGoldStandard": "No gold standard set for this case",
       "setGoldStandard": "Set gold standard",
       "clearGoldStandard": "Clear gold standard",
@@ -823,7 +816,6 @@
         "distalTibia": "Distal tibia",
         "other": "Other"
       },
-      "systemMetrics": "{{system}} metrics",
       "systemDetail": "{{system}}: detailed analysis",
       "method": {
         "title": "Method",
@@ -847,18 +839,19 @@
       "weightType": {
         "linear": "linear",
         "quadratic": "quadratic"
-      }
+      },
+      "lowAgreement": "Low agreement: under {{threshold}}"
     },
     "dashboard": {
       "title": "Admin dashboard",
-      "subtitle": "Studies in progress, recent case activity and cases that need attention",
+      "subtitle": "Cases that need attention, current studies and recent case activity",
       "totalCases": "Total cases",
       "totalResponses": "Total responses",
       "uniqueParticipants": "Unique participants",
       "completedCases": "Completed cases",
       "drafts": "drafts",
       "active": "active",
-      "avgPerCase": "~{{count}} per case average",
+      "avgPerCase": "{{value}} per case on average",
       "acrossAllCases": "across all cases",
       "stillActive": "still active",
       "recentActivity": "Recent activity",
@@ -866,9 +859,7 @@
       "noRecentActivity": "No recent activity",
       "responses": "responses",
       "needsAttention": "Needs attention",
-      "needsAttentionDesc": "Cases that may need your attention",
-      "allGood": "No cases need attention.",
-      "pastDeadline": "Past deadline",
+      "needsAttentionDesc": "Published cases with no responses or a passed deadline",
       "noResponses": "No responses yet",
       "statusBreakdown": "Cases by status",
       "statusBreakdownDesc": "Number of cases in each status",
@@ -879,13 +870,17 @@
       "activeCount_other": "{{count}} active",
       "stillActiveCount_one": "{{count}} still active",
       "stillActiveCount_other": "{{count}} still active",
-      "studiesInProgress": "Studies in progress",
-      "studiesInProgressDesc": "Active studies first, then drafts",
       "allStudies": "All studies",
-      "noStudiesInProgress": "No studies in progress.",
       "activeStudies": "Active studies",
       "closedCount_one": "{{count}} closed",
-      "closedCount_other": "{{count}} closed"
+      "closedCount_other": "{{count}} closed",
+      "pastDeadlineOn": "Deadline passed on {{date}}",
+      "moreCount_one": "Show {{count}} more",
+      "moreCount_other": "Show {{count}} more",
+      "loadFailed": "Could not load the dashboard",
+      "currentStudies": "Current studies",
+      "currentStudiesDesc": "Active studies, then drafts, then studies closed in the last 30 days",
+      "noCurrentStudies": "No active, draft or recently closed studies."
     },
     "divergence": {
       "title": "Divergence analysis",
@@ -960,6 +955,14 @@
       "noMatchStatus": "No results with status “{{status}}”.",
       "noMatchBoth": "No results for “{{query}}” with status “{{status}}”.",
       "clearSearch": "Clear search"
+    },
+    "report": {
+      "backToCase": "Back to case",
+      "deadline": "Deadline {{date}}",
+      "noResponses": "No responses yet. Rater agreement and the classification distribution appear once raters classify this case.",
+      "exported": "CSV downloaded",
+      "loadFailed": "Could not load the case report",
+      "agreementNeedsTwo": "Rater agreement needs at least two responses."
     }
   },
   "profile": {

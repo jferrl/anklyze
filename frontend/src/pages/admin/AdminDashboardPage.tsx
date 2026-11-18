@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -8,15 +8,18 @@ import { StatCard, StatGroup } from '../../components/analytics';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { caseApi, studyApi } from '@/services';
+import { formatNumber } from '@/lib/format';
 import { RecentActivityCard } from './components/RecentActivityCard';
 import { NeedsAttentionCard } from './components/NeedsAttentionCard';
 import { StudiesInProgressCard } from './components/StudiesInProgressCard';
+import { LoadError } from './components/LoadError';
 
 export function AdminDashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [now] = useState(Date.now);
 
-  const { data, isLoading } = useQuery({
+  const dashboard = useQuery({
     queryKey: ['admin-dashboard'],
     queryFn: () => caseApi.getDashboard(),
     staleTime: 0,
@@ -24,94 +27,113 @@ export function AdminDashboardPage() {
   });
 
   // shortcut: first 100 studies, newest first; paginate if a site ever runs more.
-  const { data: studiesData, isLoading: isLoadingStudies } = useQuery({
+  const studiesQuery = useQuery({
     queryKey: ['admin-studies', 'dashboard'],
     queryFn: () => studyApi.listStudies(undefined, 1, 100),
   });
-  const studies = studiesData?.studies ?? [];
-  const activeStudies = studies.filter((s) => s.status === 'active').length;
-  const draftStudies = studies.filter((s) => s.status === 'draft').length;
 
-  const stats = useMemo(() => {
-    if (!data) return { totalCases: 0, draftCases: 0, publishedCases: 0, closedCases: 0, totalResponses: 0, totalUniqueUsers: 0, avgResponsesPerCase: 0 };
-    const s = data.stats;
-    return {
-      totalCases: s.total_cases,
-      draftCases: s.draft_cases,
-      publishedCases: s.published_cases,
-      closedCases: s.closed_cases,
-      totalResponses: s.total_responses,
-      totalUniqueUsers: s.total_unique_users,
-      avgResponsesPerCase: s.avg_responses_per_case,
-    };
-  }, [data]);
+  // The dashboard API caps its attention list at 5 with no total, so the card filters the published cases itself.
+  // shortcut: first 100 published cases (the API page limit); page through them if a site publishes more.
+  const publishedQuery = useQuery({
+    queryKey: ['admin-cases', 'published', 'dashboard'],
+    queryFn: () => caseApi.listCases('published', 1, 100),
+    refetchOnMount: 'always',
+  });
 
-  const recentActiveCases = data?.recent_active_cases ?? [];
-  const casesNeedingAttention = data?.cases_needing_attention ?? [];
+  const queries = [dashboard, studiesQuery, publishedQuery];
+  const header = (
+    <PageHeader
+      title={t('admin.dashboard.title')}
+      description={t('admin.dashboard.subtitle')}
+      actions={
+        <>
+          <Button variant="outline" onClick={() => navigate('/admin/studies/new')}>
+            <Plus />
+            {t('admin.studies.create')}
+          </Button>
+          <Button onClick={() => navigate('/admin/cases/new')}>
+            <Plus />
+            {t('admin.cases.create')}
+          </Button>
+        </>
+      }
+    />
+  );
 
-  if (isLoading || isLoadingStudies) {
+  if (queries.some((q) => q.isLoading)) {
     return (
       <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6" aria-busy="true">
-        <span className="sr-only">{t('common.loading', 'Loading dashboard...')}</span>
-        <Skeleton className="h-14 w-full" />
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-48 w-full" />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-64 w-full" />
+        <span className="sr-only">{t('common.loading')}</span>
+        {header}
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="space-y-2 bg-card p-4">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-7 w-14" />
+              <Skeleton className="h-3 w-32 max-w-full" />
+            </div>
+          ))}
         </div>
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-80 w-full" />
       </div>
     );
   }
 
+  const failed = queries.find((q) => q.isError);
+  if (failed || !dashboard.data) {
+    return (
+      <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+        {header}
+        <LoadError
+          title={t('admin.dashboard.loadFailed')}
+          error={failed?.error}
+          onRetry={() => queries.forEach((q) => q.isError && q.refetch())}
+        />
+      </div>
+    );
+  }
+
+  const s = dashboard.data.stats;
+  const studies = studiesQuery.data?.studies ?? [];
+  const n = (value: number) => formatNumber(value, 0);
+
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6">
-      <PageHeader
-        title={t('admin.dashboard.title')}
-        description={t('admin.dashboard.subtitle')}
-        actions={
-          <>
-            <Button variant="outline" onClick={() => navigate('/admin/studies/new')}>
-              <Plus />
-              {t('admin.studies.create')}
-            </Button>
-            <Button onClick={() => navigate('/admin/cases/new')}>
-              <Plus />
-              {t('admin.cases.create', 'Create Case')}
-            </Button>
-          </>
-        }
-      />
+      {header}
 
       <StatGroup>
         <StatCard
-          title={t('admin.dashboard.totalCases', 'Total Cases')}
-          value={stats.totalCases}
-          subtitle={`${t('admin.dashboard.draftsCount', { count: stats.draftCases })}, ${t('admin.dashboard.activeCount', { count: stats.publishedCases })}, ${t('admin.dashboard.closedCount', { count: stats.closedCases })}`}
+          title={t('admin.dashboard.totalCases')}
+          value={n(s.total_cases)}
+          subtitle={`${t('admin.dashboard.draftsCount', { count: s.draft_cases })}, ${t('admin.dashboard.activeCount', { count: s.published_cases })}, ${t('admin.dashboard.closedCount', { count: s.closed_cases })}`}
         />
         <StatCard
           title={t('admin.dashboard.totalResponses')}
-          value={stats.totalResponses}
-          subtitle={t('admin.dashboard.avgPerCase', { count: stats.avgResponsesPerCase })}
+          value={n(s.total_responses)}
+          subtitle={
+            s.total_cases > 0
+              ? t('admin.dashboard.avgPerCase', { value: formatNumber(s.total_responses / s.total_cases, 1) })
+              : undefined
+          }
         />
         <StatCard
           title={t('admin.dashboard.uniqueParticipants')}
-          value={stats.totalUniqueUsers}
-          subtitle={t('admin.dashboard.acrossAllCases', 'Across all cases')}
+          value={n(s.total_unique_users)}
+          subtitle={t('admin.dashboard.acrossAllCases')}
         />
         <StatCard
           title={t('admin.dashboard.activeStudies')}
-          value={activeStudies}
-          subtitle={t('admin.dashboard.draftsCount', { count: draftStudies })}
+          value={n(studies.filter((st) => st.status === 'active').length)}
+          subtitle={t('admin.dashboard.draftsCount', { count: studies.filter((st) => st.status === 'draft').length })}
         />
       </StatGroup>
 
-      <StudiesInProgressCard studies={studies} />
+      <NeedsAttentionCard published={publishedQuery.data?.cases ?? []} now={now} />
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <RecentActivityCard cases={recentActiveCases} />
-        <NeedsAttentionCard cases={casesNeedingAttention} />
-      </section>
+      <StudiesInProgressCard studies={studies} now={now} />
+
+      <RecentActivityCard cases={dashboard.data.recent_active_cases ?? []} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import './i18n/config';
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './components/ThemeProvider';
 import { AuthProvider } from './contexts/AuthContext';
@@ -30,8 +30,7 @@ import { CommandPalette } from './components/CommandPalette';
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })));
 const AdminCasesPage = lazy(() => import('./pages/admin/AdminCasesPage').then((m) => ({ default: m.AdminCasesPage })));
 const CaseEditorPage = lazy(() => import('./pages/admin/CaseEditorPage').then((m) => ({ default: m.CaseEditorPage })));
-const CaseAnalyticsPage = lazy(() => import('./pages/admin/CaseAnalyticsPage').then((m) => ({ default: m.CaseAnalyticsPage })));
-const CaseReliabilityPage = lazy(() => import('./pages/admin/CaseReliabilityPage').then((m) => ({ default: m.CaseReliabilityPage })));
+const CaseReportPage = lazy(() => import('./pages/admin/CaseReportPage').then((m) => ({ default: m.CaseReportPage })));
 const AdminStudiesPage = lazy(() => import('./pages/admin/AdminStudiesPage').then((m) => ({ default: m.AdminStudiesPage })));
 const StudyEditorPage = lazy(() => import('./pages/admin/StudyEditorPage').then((m) => ({ default: m.StudyEditorPage })));
 const StudyReliabilityPage = lazy(() => import('./pages/admin/StudyReliabilityPage').then((m) => ({ default: m.StudyReliabilityPage })));
@@ -133,25 +132,18 @@ function App() {
                 }
               />
               <Route
-                path="/admin/cases/:id/analytics"
+                path="/admin/cases/:id/report"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true, href: '../edit' }, { labelKey: 'analytics' }]}>
-                      <CaseAnalyticsPage />
+                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true, href: '../edit' }, { labelKey: 'report' }]}>
+                      <CaseReportPage />
                     </AppShell>
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/admin/cases/:id/reliability"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <AppShell breadcrumbs={[{ labelKey: 'cases', href: '/admin/cases' }, { record: true, href: '../edit' }, { labelKey: 'reliability' }]}>
-                      <CaseReliabilityPage />
-                    </AppShell>
-                  </ProtectedRoute>
-                }
-              />
+              {/* The case analytics and reliability pages merged into the report; old links still land there. */}
+              <Route path="/admin/cases/:id/analytics" element={<Navigate to="../report" relative="path" replace />} />
+              <Route path="/admin/cases/:id/reliability" element={<Navigate to="../report" relative="path" replace />} />
 
               {/* Admin Study Routes (formerly /admin/cohorts) */}
               {/* Studies are research projects grouping multiple cases for multi-rater reliability analysis */}

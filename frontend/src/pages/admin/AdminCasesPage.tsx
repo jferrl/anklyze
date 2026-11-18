@@ -138,7 +138,7 @@ export function AdminCasesPage() {
   const handleDelete = useCallback((caseItem: Case) => setDeleteTarget(caseItem), []);
   const handlePublish = useCallback((id: string) => publishMutation.mutate(id), [publishMutation]);
   const handleClose = useCallback((id: string) => closeMutation.mutate(id), [closeMutation]);
-  const handleViewAnalytics = useCallback((id: string) => navigate(`/admin/cases/${id}/analytics`), [navigate]);
+  const handleViewReport = useCallback((id: string) => navigate(`/admin/cases/${id}/report`), [navigate]);
 
   const statusOptions = useMemo(() => [
     { value: 'all', label: t('admin.cases.allStatuses') },
@@ -261,9 +261,9 @@ export function AdminCasesPage() {
                 {t('common.edit')}
               </DropdownMenuItem>
               {caseItem.status !== 'draft' && (
-                <DropdownMenuItem onClick={() => handleViewAnalytics(caseItem.id)}>
+                <DropdownMenuItem onClick={() => handleViewReport(caseItem.id)}>
                   <BarChart3 className="h-4 w-4 mr-2" />
-                  {t('admin.cases.analytics')}
+                  {t('admin.cases.report')}
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -289,7 +289,7 @@ export function AdminCasesPage() {
         );
       },
     },
-  ], [t, formatDate, isDeadlinePassed, handleView, handleEdit, handlePublish, handleClose, handleViewAnalytics, handleDelete]);
+  ], [t, formatDate, isDeadlinePassed, handleView, handleEdit, handlePublish, handleClose, handleViewReport, handleDelete]);
 
   if (isLoading) {
     return (
@@ -361,7 +361,7 @@ export function AdminCasesPage() {
                   onDelete={() => handleDelete(caseItem)}
                   onPublish={() => handlePublish(caseItem.id)}
                   onClose={() => handleClose(caseItem.id)}
-                  onViewAnalytics={() => handleViewAnalytics(caseItem.id)}
+                  onViewReport={() => handleViewReport(caseItem.id)}
                   t={t}
                 />
               ))}
@@ -426,7 +426,7 @@ interface CaseRowProps {
   onDelete: () => void;
   onPublish: () => void;
   onClose: () => void;
-  onViewAnalytics: () => void;
+  onViewReport: () => void;
   t: TFunction;
 }
 
@@ -439,7 +439,7 @@ const CaseCard = memo(function CaseCard({
   onDelete,
   onPublish,
   onClose,
-  onViewAnalytics,
+  onViewReport,
   t,
 }: CaseRowProps) {
   return (
@@ -497,9 +497,9 @@ const CaseCard = memo(function CaseCard({
               {t('common.edit')}
             </DropdownMenuItem>
             {caseItem.status !== 'draft' && (
-              <DropdownMenuItem onClick={onViewAnalytics}>
+              <DropdownMenuItem onClick={onViewReport}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('admin.cases.analytics')}
+                {t('admin.cases.report')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />

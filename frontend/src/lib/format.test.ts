@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatKappa, formatNumber, formatPercent } from './format';
+import { formatDuration, formatKappa, formatNumber, formatPercent } from './format';
 
 describe('number formatting', () => {
   it('prints kappa with two decimals in the interface language', () => {
@@ -16,5 +16,11 @@ describe('number formatting', () => {
   it('prints plain figures with fixed decimals', () => {
     expect(formatNumber(2.75, 1, 'en')).toBe('2.8');
     expect(formatNumber(2.75, 1, 'es')).toBe('2,8');
+  });
+
+  it('prints durations in seconds under a minute, else in minutes', () => {
+    expect(formatDuration(45_400, 'en')).toBe('45 sec');
+    expect(formatDuration(150_000, 'en')).toBe('2.5 min');
+    expect(formatDuration(150_000, 'es')).toBe('2,5 min');
   });
 });

@@ -3,7 +3,7 @@ import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CaseMetrics } from '@/types';
 
-import { agreementColorClass, formatPercent, type SystemKey } from './systems';
+import { LOW_AGREEMENT_PCT, agreementColorClass, formatPercent, type SystemKey } from './systems';
 
 interface CaseMetricCardProps {
   metrics: CaseMetrics;
@@ -22,7 +22,11 @@ export function CaseMetricCard({ metrics, activeSystem }: CaseMetricCardProps) {
           <span className="truncate font-medium text-foreground">{metrics.case_title}</span>
         </div>
         {metrics.is_low_agreement && (
-          <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
+          <AlertCircle
+            role="img"
+            aria-label={t('admin.reliability.lowAgreement', { threshold: formatPercent(LOW_AGREEMENT_PCT) })}
+            className="h-4 w-4 shrink-0 text-warning"
+          />
         )}
       </div>
       <div className="flex items-center justify-between">

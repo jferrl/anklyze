@@ -24,6 +24,19 @@ export function formatPercent(value: number, language: string = i18n.language): 
   }).format(value / 100);
 }
 
+/** formatDuration prints milliseconds as whole seconds under a minute, else minutes with one decimal ("45 sec", "2.5 min"). */
+export function formatDuration(ms: number, language: string = i18n.language): string {
+  const seconds = ms / 1000;
+  const [value, unit, digits] = seconds < 60 ? [Math.round(seconds), 'second', 0] : [seconds / 60, 'minute', 1];
+  return new Intl.NumberFormat(language, {
+    style: 'unit',
+    unit,
+    unitDisplay: 'short',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
 /** formatDate renders a date the same way everywhere, in the interface language. */
 export function formatDate(value: string | number | Date, language: string): string {
   return new Intl.DateTimeFormat(language, DATE).format(new Date(value));

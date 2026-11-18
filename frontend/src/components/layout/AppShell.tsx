@@ -37,6 +37,12 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
 
   return (
     <SidebarProvider>
+      <a
+        href="#content"
+        className="sr-only rounded-sm border bg-background text-sm font-medium text-foreground outline-none focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-50 focus-visible:px-3 focus-visible:py-2 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      >
+        {t('common.skipToContent')}
+      </a>
       <AppSidebar />
       <SidebarInset>
         <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b bg-background px-4">
@@ -75,7 +81,7 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
         </header>
 
         <RecordTitleContext.Provider value={setRecordTitle}>
-          <main className="min-w-0 flex-1">{children}</main>
+          <main id="content" tabIndex={-1} className="min-w-0 flex-1 outline-none">{children}</main>
         </RecordTitleContext.Provider>
       </SidebarInset>
     </SidebarProvider>

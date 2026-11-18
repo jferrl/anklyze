@@ -13,6 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import { formatNumber, formatPercent } from '@/lib/format';
 import { BarChart3, PieChart as PieChartIcon, List } from 'lucide-react';
 
 interface ChartDataItem {
@@ -47,6 +48,8 @@ export function ClassificationChart({
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>('bar');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // Bars grow once, on first mount; later system or view swaps only fade.
+  const [growBars, setGrowBars] = useState(true);
 
   const chartData = useMemo(() => {
     const total = Object.values(data).reduce((sum, val) => sum + val, 0);
@@ -90,12 +93,12 @@ export function ClassificationChart({
   return (
     <div className="chart-card">
       <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
+        <div key={systemLabel} className="animate-fade-in">
           <h3 className="text-base font-semibold text-foreground">
             {title || systemLabel}
           </h3>
           <p className="text-sm tabular-nums text-muted-foreground">
-            {total} {t('admin.analytics.totalClassifications', 'total classifications')}
+            {formatNumber(total, 0)} {t('admin.analytics.totalClassifications', 'total classifications')}
           </p>
         </div>
 
@@ -105,7 +108,7 @@ export function ClassificationChart({
               key={mode}
               onClick={() => setViewMode(mode)}
               className={cn(
-                'rounded-sm p-1.5 transition-colors duration-150',
+                'rounded-sm p-1.5 outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
                 viewMode === mode
                   ? 'bg-accent text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -120,7 +123,11 @@ export function ClassificationChart({
         </div>
       </div>
 
-      <div>
+      <div
+        key={`${systemLabel}-${viewMode}`}
+        className="animate-fade-in"
+        onAnimationEnd={(e) => e.animationName === 'bar-grow' && setGrowBars(false)}
+      >
         {viewMode === 'donut' && (
           <DonutView
             data={donutData}
@@ -130,9 +137,9 @@ export function ClassificationChart({
           />
         )}
         {viewMode === 'bar' && (
-          <BarView data={chartData} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} />
+          <BarView data={chartData} grow={growBars} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} />
         )}
-        {viewMode === 'list' && <ListView data={chartData} />}
+        {viewMode === 'list' && <ListView data={chartData} grow={growBars} />}
       </div>
 
       {/* The bar view labels each bar on its axis, so only the donut needs a legend. */}
@@ -150,7 +157,7 @@ export function ClassificationChart({
                 {item.name}
               </span>
               <span className="text-xs tabular-nums text-muted-foreground">
-                {item.percentage.toFixed(1)}%
+                {formatPercent(item.percentage)}
               </span>
             </div>
           ))}
@@ -167,7 +174,7 @@ export function ClassificationChart({
 
 const dimmed = (hoveredIndex: number | null, index: number) => ({
   opacity: hoveredIndex === null || hoveredIndex === index ? 1 : 0.4,
-  transition: 'opacity 0.15s ease-out',
+  transition: 'opacity 150ms cubic-bezier(0.16, 1, 0.3, 1)',
 });
 
 function DonutView({
@@ -231,10 +238,12 @@ const MAX_LABEL = 24;
 
 function BarView({
   data,
+  grow,
   hoveredIndex,
   setHoveredIndex,
 }: {
   data: ChartDataItem[];
+  grow: boolean;
   hoveredIndex: number | null;
   setHoveredIndex: (index: number | null) => void;
 }) {
@@ -279,7 +288,11 @@ function BarView({
           onMouseEnter={(_, index) => setHoveredIndex(index)}
         >
           {data.map((entry, index) => (
-            <Cell key={entry.name} style={{ fill: entry.fill, ...dimmed(hoveredIndex, index) }} />
+            <Cell
+              key={entry.name}
+              className={grow ? 'bar-grow' : undefined}
+              style={{ fill: entry.fill, transformBox: 'fill-box', ...dimmed(hoveredIndex, index) }}
+            />
           ))}
           <LabelList
             dataKey="value"
@@ -292,7 +305,7 @@ function BarView({
   );
 }
 
-function ListView({ data }: { data: ChartDataItem[] }) {
+function ListView({ data, grow }: { data: ChartDataItem[]; grow: boolean }) {
   const { t } = useTranslation();
   return (
     <div className="divide-y border-t">
@@ -306,12 +319,12 @@ function ListView({ data }: { data: ChartDataItem[] }) {
           </div>
           <div className="h-1.5 w-24 overflow-hidden rounded-sm bg-muted">
             <div
-              className="h-full rounded-sm"
+              className={cn('h-full rounded-sm', grow && 'bar-grow')}
               style={{ backgroundColor: item.fill, width: `${item.percentage}%` }}
             />
           </div>
-          <span className="w-14 text-right text-sm font-medium tabular-nums text-foreground">
-            {item.percentage.toFixed(1)}%
+          <span className="w-16 text-right text-sm font-medium tabular-nums text-foreground">
+            {formatPercent(item.percentage)}
           </span>
         </div>
       ))}
@@ -335,7 +348,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <div className="mt-1 flex items-center gap-2">
         <span className="size-2 shrink-0" style={{ backgroundColor: data.fill }} />
         <span className="text-sm tabular-nums text-muted-foreground">
-          {data.value} ({data.percentage.toFixed(1)}%)
+          {data.value} ({formatPercent(data.percentage)})
         </span>
       </div>
     </div>

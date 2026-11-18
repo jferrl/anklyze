@@ -99,5 +99,7 @@ export async function handleApiError(response: Response): Promise<never> {
   // Preserve code for i18n translation in service layers (support both formats)
   (err as Error & { code?: string; error_code?: string }).code = errorCode;
   (err as Error & { code?: string; error_code?: string }).error_code = errorCode;
+  // Pages tell a missing record (404) from a failure by the status.
+  (err as Error & { status?: number }).status = response.status;
   throw err;
 }
