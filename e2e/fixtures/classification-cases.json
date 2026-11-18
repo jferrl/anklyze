@@ -4,11 +4,11 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-112",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
         "answer": "Vertical"
       },
       {
@@ -29,12 +29,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-91",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -49,7 +49,7 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -66,12 +66,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-93",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -86,8 +86,8 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -103,12 +103,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-100",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -123,7 +123,7 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -140,12 +140,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-102",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -160,8 +160,8 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -177,12 +177,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-109",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -197,7 +197,7 @@
         "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -214,12 +214,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-111",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -234,8 +234,8 @@
         "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -251,12 +251,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-121",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -271,7 +271,7 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -288,12 +288,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-123",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -308,8 +308,8 @@
         "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -325,12 +325,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-139",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -358,12 +358,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-141",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -391,19 +391,19 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-152",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es el maleolo lateral?",
+        "question": "¿Cómo es el maléolo lateral?",
         "answer": "Avulsión"
       }
     ],
@@ -420,19 +420,19 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-154",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es el maleolo lateral?",
+        "question": "¿Cómo es el maléolo lateral?",
         "answer": "Transversa"
       }
     ],
@@ -449,12 +449,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-162",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -469,7 +469,7 @@
         "answer": "Oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -486,12 +486,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-164",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -506,8 +506,8 @@
         "answer": "Oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -523,12 +523,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-185",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -543,7 +543,7 @@
         "answer": "Espiroidea (baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       }
     ],
@@ -560,12 +560,12 @@
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-187",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -580,8 +580,8 @@
         "answer": "Espiroidea (baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       }
     ],
     "expected": {
@@ -597,12 +597,12 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-32",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -630,12 +630,12 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-43",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -663,12 +663,12 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-47",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y medial"
       },
       {
-        "question": "¿De qué morfología es la fractura del maleolo medial?",
-        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "question": "¿De qué morfología es la fractura del maléolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -696,8 +696,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-42",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -714,15 +714,15 @@
       "danis_weber": "Weber C",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C3 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 C3 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_2",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-246",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -743,15 +743,15 @@
       "danis_weber": "Weber C",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_3",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-247",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -772,15 +772,15 @@
       "danis_weber": "Weber C",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_4",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-251",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -801,15 +801,15 @@
       "danis_weber": "Weber C",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_5",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-252",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -830,15 +830,15 @@
       "danis_weber": "Weber C",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_6",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-18",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -846,7 +846,7 @@
       },
       {
         "question": "¿De qué morfología es la fractura?",
-        "answer": "Avulsión de la punta del maleolo"
+        "answer": "Avulsión de la punta del maléolo"
       }
     ],
     "expected": {
@@ -855,15 +855,15 @@
       "danis_weber": "Weber A",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 A1 subtipo | 44 A1.2 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 A1 subtipo | 44 A1.2 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_7",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-19",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -871,7 +871,7 @@
       },
       {
         "question": "¿De qué morfología es la fractura?",
-        "answer": "Fractura de maleolo lateral"
+        "answer": "Fractura de maléolo lateral"
       }
     ],
     "expected": {
@@ -880,15 +880,15 @@
       "danis_weber": "Weber A",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 A1 subtipo 44 A1.3 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 A1 subtipo 44 A1.3 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_8",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-22",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -913,15 +913,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_9",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-23",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -937,7 +937,7 @@
       },
       {
         "question": "¿De qué tipo?",
-        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wagstaffe)"
       }
     ],
     "expected": {
@@ -946,15 +946,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_10",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-38",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -979,15 +979,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_11",
     "terminal_id": "ln2etF4hYXnpLN-lJU8S-39",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -1003,7 +1003,7 @@
       },
       {
         "question": "¿De qué tipo?",
-        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wagstaffe)"
       }
     ],
     "expected": {
@@ -1012,15 +1012,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_12",
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-118",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -1041,15 +1041,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_only_13",
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-131",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo lateral"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo lateral"
       },
       {
         "question": "¿A qué nivel está la fractura?",
@@ -1070,15 +1070,15 @@
       "danis_weber": "Weber B",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
   },
   {
     "id": "lateral_posterior_1",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-61",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1093,7 +1093,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1110,8 +1110,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-62",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1126,7 +1126,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1143,8 +1143,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-63",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1159,7 +1159,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -1176,8 +1176,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-64",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1192,7 +1192,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -1209,8 +1209,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-70",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1225,7 +1225,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1242,8 +1242,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-71",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1258,7 +1258,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1275,8 +1275,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-72",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1291,7 +1291,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -1308,8 +1308,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-73",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1324,7 +1324,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -1341,8 +1341,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-81",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1361,7 +1361,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1378,8 +1378,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-82",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1398,7 +1398,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1415,8 +1415,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-83",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1435,7 +1435,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -1452,8 +1452,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-84",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1472,7 +1472,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -1489,8 +1489,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-90",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1509,7 +1509,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1526,8 +1526,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-91",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1546,7 +1546,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1563,8 +1563,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-92",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1583,7 +1583,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -1600,8 +1600,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-93",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1620,7 +1620,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -1637,8 +1637,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-99",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1653,7 +1653,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1670,8 +1670,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-100",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1686,7 +1686,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1703,8 +1703,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-101",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1719,7 +1719,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -1736,8 +1736,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-102",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1752,7 +1752,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -1769,8 +1769,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-204",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1798,8 +1798,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-213",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1831,8 +1831,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-216",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1860,8 +1860,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-242",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1893,8 +1893,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-258",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1913,7 +1913,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -1930,8 +1930,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-259",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1950,7 +1950,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -1967,8 +1967,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-260",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -1987,7 +1987,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -2004,8 +2004,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-261",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2024,7 +2024,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -2041,8 +2041,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-265",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2074,8 +2074,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-275",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2107,8 +2107,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-281",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2127,7 +2127,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -2144,8 +2144,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-282",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2164,7 +2164,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -2181,8 +2181,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-283",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2201,7 +2201,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -2218,8 +2218,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-284",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2238,7 +2238,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -2255,8 +2255,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-295",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2284,8 +2284,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-350",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2309,8 +2309,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-358",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2321,7 +2321,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "question": "¿Cuál es la morfología del maléolo posterior?",
         "answer": "Fragmento extraincisural posterior"
       }
     ],
@@ -2338,8 +2338,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-359",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2350,7 +2350,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "question": "¿Cuál es la morfología del maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -2367,8 +2367,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-360",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2379,7 +2379,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "question": "¿Cuál es la morfología del maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -2396,8 +2396,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-361",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2408,7 +2408,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "question": "¿Cuál es la morfología del maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -2425,8 +2425,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-24",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo medial"
       },
       {
         "question": "¿Tiene importante afectación articular con extensión metafisaria?",
@@ -2443,15 +2443,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo medial | AO no clasificable | Lauge-Hansen SA | Weber no clasificable | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo medial | AO no clasificable | Lauge-Hansen SA | Weber no clasificable | Bartonicek no clasificable"
   },
   {
     "id": "medial_only_2",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-25",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo medial"
       },
       {
         "question": "¿Tiene importante afectación articular con extensión metafisaria?",
@@ -2468,15 +2468,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo medial | AO no clasificable | Lauge-Hansen no clasificable | Weber no clasificable | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo medial | AO no clasificable | Lauge-Hansen no clasificable | Weber no clasificable | Bartonicek no clasificable"
   },
   {
     "id": "medial_only_3",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-341",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo medial"
       },
       {
         "question": "¿Tiene importante afectación articular con extensión metafisaria?",
@@ -2500,8 +2500,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-342",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo medial"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo medial"
       },
       {
         "question": "¿Tiene importante afectación articular con extensión metafisaria?",
@@ -2525,8 +2525,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-241",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
@@ -2546,15 +2546,15 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-343",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -2571,15 +2571,15 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-344",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -2596,15 +2596,15 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-345",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -2621,15 +2621,15 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-346",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural posterior"
       }
     ],
@@ -2646,15 +2646,15 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-347",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial y posterior"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural posteromedial"
       }
     ],
@@ -2671,8 +2671,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-16",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2693,15 +2693,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "Bartonicek 1"
     },
-    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 1"
+    "terminal": "Fractura unimaleolar maléolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 1"
   },
   {
     "id": "posterior_only_2",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-17",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2722,15 +2722,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "Bartonicek 2"
     },
-    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 2"
+    "terminal": "Fractura unimaleolar maléolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 2"
   },
   {
     "id": "posterior_only_3",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-18",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2751,15 +2751,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "Bartonicek 3"
     },
-    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 3"
+    "terminal": "Fractura unimaleolar maléolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 3"
   },
   {
     "id": "posterior_only_4",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-19",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2780,15 +2780,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "Bartonicek 4"
     },
-    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 4"
+    "terminal": "Fractura unimaleolar maléolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 4"
   },
   {
     "id": "posterior_only_5",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-333",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2812,8 +2812,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-334",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2837,8 +2837,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-335",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolo posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolo posterior"
       },
       {
         "question": "¿Cuál es la afectación?",
@@ -2855,15 +2855,15 @@
       "danis_weber": "No clasificable",
       "bartonicek": "No clasificable"
     },
-    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Lauge-Hansen PA | Weber no clasificable | Bartonicek no clasificable"
+    "terminal": "Fractura unimaleolar maléolo posterior | AO no clasificable | Lauge-Hansen PA | Weber no clasificable | Bartonicek no clasificable"
   },
   {
     "id": "trimaleolar_1",
     "terminal_id": "0S3fIhuK620pGgQrKJa_-159",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2882,7 +2882,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -2899,8 +2899,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-160",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2919,7 +2919,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -2936,8 +2936,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-161",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2956,7 +2956,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -2973,8 +2973,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-162",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -2993,7 +2993,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3010,8 +3010,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-168",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3030,7 +3030,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -3047,8 +3047,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-169",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3067,7 +3067,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -3084,8 +3084,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-170",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3104,7 +3104,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -3121,8 +3121,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-171",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3141,7 +3141,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3158,8 +3158,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-177",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3174,7 +3174,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -3191,8 +3191,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-178",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3207,7 +3207,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -3224,8 +3224,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-179",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3240,7 +3240,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -3257,8 +3257,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-180",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3273,7 +3273,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3290,8 +3290,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-220",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3323,8 +3323,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-224",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3356,8 +3356,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-227",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3385,8 +3385,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-303",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3418,8 +3418,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-308",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3438,7 +3438,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -3455,8 +3455,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-309",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3475,7 +3475,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -3492,8 +3492,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-310",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3512,7 +3512,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -3529,8 +3529,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-311",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3549,7 +3549,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3566,8 +3566,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-318",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3599,8 +3599,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-324",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3619,7 +3619,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -3636,8 +3636,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-325",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3656,7 +3656,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -3673,8 +3673,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-326",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3693,7 +3693,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -3710,8 +3710,8 @@
     "terminal_id": "0S3fIhuK620pGgQrKJa_-327",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3730,7 +3730,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3747,8 +3747,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-150",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3763,7 +3763,7 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -3784,8 +3784,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-167",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3800,8 +3800,8 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
@@ -3821,8 +3821,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-179",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3837,7 +3837,7 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -3845,7 +3845,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -3862,8 +3862,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-180",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3878,7 +3878,7 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -3886,7 +3886,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -3903,8 +3903,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-181",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3919,7 +3919,7 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -3927,7 +3927,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -3944,8 +3944,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-182",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -3960,7 +3960,7 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -3968,7 +3968,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -3985,8 +3985,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-187",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4001,15 +4001,15 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -4026,8 +4026,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-188",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4042,15 +4042,15 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4067,8 +4067,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-189",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4083,15 +4083,15 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -4108,8 +4108,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-190",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4124,15 +4124,15 @@
         "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -4149,8 +4149,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-236",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4165,7 +4165,7 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4186,8 +4186,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-245",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4202,7 +4202,7 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4210,7 +4210,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4227,8 +4227,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-246",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4243,7 +4243,7 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4251,7 +4251,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -4268,8 +4268,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-247",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4284,7 +4284,7 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4292,7 +4292,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -4309,8 +4309,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-262",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4325,8 +4325,8 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
@@ -4346,8 +4346,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-271",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4362,15 +4362,15 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4387,8 +4387,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-272",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4403,15 +4403,15 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -4428,8 +4428,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-273",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4444,15 +4444,15 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -4469,8 +4469,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-278",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4485,15 +4485,15 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -4510,8 +4510,8 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-292",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4526,7 +4526,7 @@
         "answer": "Espiroidea (Baja anterior, alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4534,7 +4534,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -4551,15 +4551,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-330",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Avulsión"
       },
       {
@@ -4580,15 +4580,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-339",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Avulsión"
       },
       {
@@ -4596,7 +4596,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4613,15 +4613,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-340",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Avulsión"
       },
       {
@@ -4629,7 +4629,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -4646,15 +4646,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-341",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Avulsión"
       },
       {
@@ -4662,7 +4662,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -4679,15 +4679,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-346",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Avulsión"
       },
       {
@@ -4695,7 +4695,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -4712,15 +4712,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-356",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Transversa"
       },
       {
@@ -4741,15 +4741,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-365",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Transversa"
       },
       {
@@ -4757,7 +4757,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4774,15 +4774,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-366",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Transversa"
       },
       {
@@ -4790,7 +4790,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -4807,15 +4807,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-367",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Transversa"
       },
       {
@@ -4823,7 +4823,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -4840,15 +4840,15 @@
     "terminal_id": "_oBYOCIyM_onSBWCery6-372",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
         "answer": "Infrasindesmal"
       },
       {
-        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "question": "¿Cómo es la fractura del maléolo lateral?",
         "answer": "Transversa"
       },
       {
@@ -4856,7 +4856,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -4873,8 +4873,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-208",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4889,7 +4889,7 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4910,8 +4910,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-225",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4926,8 +4926,8 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
@@ -4947,8 +4947,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-234",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -4963,7 +4963,7 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -4971,7 +4971,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -4988,8 +4988,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-235",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5004,7 +5004,7 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5012,7 +5012,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -5029,8 +5029,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-236",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5045,7 +5045,7 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5053,7 +5053,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -5070,8 +5070,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-241",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5086,15 +5086,15 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -5111,8 +5111,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-242",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5127,15 +5127,15 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -5152,8 +5152,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-243",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5168,15 +5168,15 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -5193,8 +5193,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-244",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5209,15 +5209,15 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -5234,8 +5234,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-354",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5250,7 +5250,7 @@
         "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5258,7 +5258,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -5275,8 +5275,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-387",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5291,7 +5291,7 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5312,8 +5312,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-396",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5328,7 +5328,7 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5336,7 +5336,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -5353,8 +5353,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-397",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5369,7 +5369,7 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5377,7 +5377,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -5394,8 +5394,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-398",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5410,7 +5410,7 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5418,7 +5418,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -5435,8 +5435,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-410",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5451,8 +5451,8 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
@@ -5472,8 +5472,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-419",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5488,15 +5488,15 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posterolateral"
       }
     ],
@@ -5513,8 +5513,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-420",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5529,15 +5529,15 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento posteromedial y posterolateral"
       }
     ],
@@ -5554,8 +5554,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-421",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5570,15 +5570,15 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Gran fragmento triangular posterolateral"
       }
     ],
@@ -5595,8 +5595,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-426",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5611,15 +5611,15 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
-        "answer": "Fractura del maleolo/avulsión"
+        "question": "¿Cómo es el maléolo medial?",
+        "answer": "Fractura del maléolo/avulsión"
       },
       {
         "question": "¿Tiene TAC?",
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],
@@ -5636,8 +5636,8 @@
     "terminal_id": "uS1iniuiHOxa1fF-oP1x-429",
     "path": [
       {
-        "question": "¿Qué maleolos tiene fracturados?",
-        "answer": "Maleolos medial, lateral y posterior"
+        "question": "¿Qué maléolos tiene fracturados?",
+        "answer": "Maléolos medial, lateral y posterior"
       },
       {
         "question": "¿A qué nivel está la fractura de peroné?",
@@ -5652,7 +5652,7 @@
         "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
       },
       {
-        "question": "¿Cómo es el maleolo medial?",
+        "question": "¿Cómo es el maléolo medial?",
         "answer": "Abierta la mortaja"
       },
       {
@@ -5660,7 +5660,7 @@
         "answer": "Sí"
       },
       {
-        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "question": "¿Qué tipo de fractura es el maléolo posterior?",
         "answer": "Fragmento extraincisural"
       }
     ],

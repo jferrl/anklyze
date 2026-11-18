@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -17,6 +18,7 @@ type CaseAdminHandler struct {
 	caseRepo     repository.CaseRepository
 	storage      storage.Storage
 	statsService StatisticsService
+	studyService StudyService
 }
 
 // NewCaseAdminHandler creates a new case admin handler.
@@ -24,11 +26,13 @@ func NewCaseAdminHandler(
 	caseRepo repository.CaseRepository,
 	storage storage.Storage,
 	statsService StatisticsService,
+	studyService StudyService,
 ) *CaseAdminHandler {
 	return &CaseAdminHandler{
 		caseRepo:     caseRepo,
 		storage:      storage,
 		statsService: statsService,
+		studyService: studyService,
 	}
 }
 
@@ -147,8 +151,9 @@ func (h *CaseAdminHandler) GetCase(c *gin.Context) {
 }
 
 // UpdateCase handles PUT /api/admin/cases/:id
-// Draft cases: all fields can be edited
-// Published/Closed cases: only description and deadline can be edited
+// Draft: title, description and deadline. Published: description and deadline.
+// Closed: nothing. A field the status does not allow is rejected, not ignored,
+// so raters never see a silently different case. A null deadline clears it.
 func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -173,19 +178,23 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 		return
 	}
 
-	// For draft cases, title can be edited
-	if cs.CanBeEdited() {
-		if req.Title != nil {
-			cs.Title = *req.Title
-		}
+	if req.Title != nil && !cs.CanBeEdited() {
+		HandleError(c, fmt.Errorf("%w: title can only be edited on draft cases", domain.ErrInvalidStateTransition), "Cannot update case")
+		return
+	}
+	if (req.Description != nil || req.Deadline.Set) && cs.Status == domain.CaseStatusClosed {
+		HandleError(c, fmt.Errorf("%w: closed cases cannot be edited", domain.ErrInvalidStateTransition), "Cannot update case")
+		return
 	}
 
-	// Description and deadline can always be edited (draft, published, or closed)
+	if req.Title != nil {
+		cs.Title = *req.Title
+	}
 	if req.Description != nil {
 		cs.Description = *req.Description
 	}
-	if req.Deadline != nil {
-		cs.Deadline = req.Deadline
+	if req.Deadline.Set {
+		cs.Deadline = req.Deadline.Value
 	}
 
 	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
@@ -228,6 +237,11 @@ func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
 		slog.Error("failed to delete case", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete case"})
 		return
+	}
+
+	// The case's responses went with it; recount and drop cached stats for its study.
+	if cs.StudyID != nil {
+		h.studyService.RefreshStudy(c.Request.Context(), *cs.StudyID)
 	}
 
 	c.Status(http.StatusNoContent)

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 	"time"
 
@@ -21,7 +22,8 @@ type StudyService interface {
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
 	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
-	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
+	RefreshStudy(ctx context.Context, studyID uuid.UUID)
+	InvalidateStats(studyID uuid.UUID)
 	ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error
 }
 
@@ -42,17 +44,42 @@ type CreateCaseRequest struct {
 
 // UpdateCaseRequest is the request body for updating a case.
 type UpdateCaseRequest struct {
-	Title       *string    `json:"title,omitempty" binding:"omitempty,max=255"`
-	Description *string    `json:"description,omitempty" binding:"omitempty,max=10000"`
-	Deadline    *time.Time `json:"deadline,omitempty"`
+	Title       *string      `json:"title,omitempty" binding:"omitempty,max=255"`
+	Description *string      `json:"description,omitempty" binding:"omitempty,max=10000"`
+	Deadline    NullableTime `json:"deadline"`
+}
+
+// NullableTime distinguishes an absent JSON field (Set false, leave unchanged)
+// from an explicit null (Set true, Value nil, clear the value).
+type NullableTime struct {
+	Set   bool
+	Value *time.Time
+}
+
+// UnmarshalJSON implements json.Unmarshaler. It runs for explicit null too,
+// which is what makes null distinguishable from an absent field.
+func (n *NullableTime) UnmarshalJSON(b []byte) error {
+	n.Set = true
+	if string(b) == "null" {
+		n.Value = nil
+		return nil
+	}
+	var t time.Time
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	n.Value = &t
+	return nil
 }
 
 // SubmitResponseRequest is the request body for submitting a classification response.
 type SubmitResponseRequest struct {
 	Classification domain.ClassificationResult `json:"classification" binding:"required"`
-	TimeTakenMS    int64                       `json:"time_taken_ms"`
+	// Input is the final form state that was classified, including has_ct_scan.
+	Input       domain.FractureInput `json:"input" binding:"required"`
+	TimeTakenMS int64                `json:"time_taken_ms"`
 
-	// Answer tracking fields for divergence analysis
+	// Answer tracking fields for divergence analysis (recorded, never used to classify)
 	AnswerPath      []domain.QuestionAnswer `json:"answer_path,omitempty"`
 	DecisionPath    string                  `json:"decision_path,omitempty"`
 	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty"`

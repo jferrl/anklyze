@@ -10,6 +10,7 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 )
 
@@ -18,6 +19,7 @@ type CaseResponseHandler struct {
 	caseRepo          repository.CaseRepository
 	responseRepo      repository.CaseResponseRepository
 	studyService      StudyService
+	classifier        service.ClassificationService
 	storage           storage.Storage
 	signedURLDuration time.Duration
 }
@@ -27,6 +29,7 @@ func NewCaseResponseHandler(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	studyService StudyService,
+	classifier service.ClassificationService,
 	storage storage.Storage,
 	signedURLDuration time.Duration,
 ) *CaseResponseHandler {
@@ -34,6 +37,7 @@ func NewCaseResponseHandler(
 		caseRepo:          caseRepo,
 		responseRepo:      responseRepo,
 		studyService:      studyService,
+		classifier:        classifier,
 		storage:           storage,
 		signedURLDuration: signedURLDuration,
 	}
@@ -103,6 +107,27 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
+	// The server is the authority: classify the form's final state and store the
+	// engine's result, rejecting a client copy that differs. answer_path is analytics only.
+	if err := validate.Struct(req.Input); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":  "invalid input",
+			"fields": validationFieldErrors(err),
+		})
+		return
+	}
+	expected, err := h.classifier.Classify(c.Request.Context(), req.Input)
+	if err != nil {
+		slog.Error("failed to classify submitted input", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to classify input"})
+		return
+	}
+	if !expected.SameClassification(req.Classification) {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "classification does not match the submitted input"})
+		return
+	}
+	req.Classification = *expected
+
 	// Build answer tracking if provided
 	var tracking *domain.AnswerTracking
 	if len(req.AnswerPath) > 0 || req.DecisionPath != "" || len(req.TimePerQuestion) > 0 || req.BackClicks > 0 {
@@ -123,14 +148,13 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 	}
 
 	if err := h.responseRepo.Save(c.Request.Context(), response); err != nil {
-		slog.Error("failed to save response", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save response"})
+		HandleError(c, err, "failed to save response")
 		return
 	}
 
 	// Update study user progress if case belongs to a study
 	if cs.StudyID != nil && h.studyService != nil {
-		h.studyService.UpdateAfterResponse(c.Request.Context(), *cs.StudyID)
+		h.studyService.RefreshStudy(c.Request.Context(), *cs.StudyID)
 	}
 
 	c.JSON(http.StatusCreated, SubmitResponseResult{Response: response})

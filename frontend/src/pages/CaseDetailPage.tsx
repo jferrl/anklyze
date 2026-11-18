@@ -12,6 +12,7 @@ import {
   classifyFracture,
   ForbiddenError,
 } from '@/services';
+import { buildSubmitResponseRequest } from '../services/study/responsePayload';
 import type { FractureInput, ClassificationResult } from '@/types';
 import type { UserCaseDetail } from '@/types';
 import {
@@ -54,8 +55,9 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
   // Classification state
   const [classification, setClassification] = useState<{
     result: ClassificationResult | null;
+    input: FractureInput | null;
     tracking: AnswerTracking | null;
-  }>({ result: null, tracking: null });
+  }>({ result: null, input: null, tracking: null });
 
   // Submit state as discriminated union
   type SubmitState =
@@ -107,26 +109,19 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
   // Handle classification form submission
   const handleClassify = useCallback(async (input: FractureInput, tracking?: AnswerTracking) => {
     const result = await classifyFracture(input);
-    setClassification({ result, tracking: tracking ?? null });
+    setClassification({ result, input, tracking: tracking ?? null });
     return result;
   }, []);
 
   // Handle response submission with mutation
   const submitMutation = useMutation({
     mutationFn: async () => {
-      if (!classification.result || !id) throw new Error(t('cases.missingData'));
+      if (!classification.result || !classification.input || !id) throw new Error(t('cases.missingData'));
       const timeTakenMs = Date.now() - startTimeRef.current;
-      return submitCaseResponse(id, {
-        classification: classification.result,
-        time_taken_ms: timeTakenMs,
-        // Include tracking data for analytics
-        ...(classification.tracking && {
-          answer_path: classification.tracking.answerPath,
-          decision_path: classification.tracking.decisionPath,
-          time_per_question: classification.tracking.timePerQuestion,
-          back_clicks: classification.tracking.backClicks,
-        }),
-      });
+      return submitCaseResponse(
+        id,
+        buildSubmitResponseRequest(classification.input, classification.result, timeTakenMs, classification.tracking),
+      );
     },
     onSuccess: () => {
       setSubmitState({ status: 'success' });
@@ -175,7 +170,7 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
 
   // Reset for re-answer
   const handleReanswer = useCallback(() => {
-    setClassification({ result: null, tracking: null });
+    setClassification({ result: null, input: null, tracking: null });
     setSubmitState({ status: 'idle' });
     startTimeRef.current = Date.now();
   }, []);

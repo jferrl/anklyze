@@ -9,7 +9,7 @@ import type {
   Specialty,
   TrainingLevel,
 } from '../domain/case';
-import type { ClassificationResult } from '../domain/fracture';
+import type { ClassificationResult, FractureInput } from '../domain/fracture';
 import type {
   Study,
   StudyReliabilityMetrics,
@@ -36,7 +36,8 @@ export interface CreateCaseRequest {
 export interface UpdateCaseRequest {
   title?: string;
   description?: string;
-  deadline?: string;
+  /** ISO date; null clears the deadline, omitted leaves it unchanged. */
+  deadline?: string | null;
 }
 
 /**
@@ -45,8 +46,10 @@ export interface UpdateCaseRequest {
  */
 export interface SubmitResponseRequest {
   classification: ClassificationResult;
+  /** Final form state that was classified, including has_ct_scan. */
+  input: FractureInput;
   time_taken_ms: number;
-  // Answer tracking for analytics
+  // Answer tracking for analytics (recorded only, never used to classify)
   answer_path?: QuestionAnswer[];
   decision_path?: string;
   time_per_question?: Record<string, number>;

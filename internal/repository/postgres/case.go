@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jferrl/anklyze/internal/domain"
 	"gorm.io/gorm"
 )
@@ -43,10 +44,13 @@ func (r *CaseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Cas
 	return &cs, nil
 }
 
-// Update updates a case.
+// Update writes the editable fields only; response counters are maintained by
+// the response repository and a full-row Save from a stale copy would overwrite them.
 func (r *CaseRepository) Update(ctx context.Context, cs *domain.Case) error {
 	cs.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Save(cs).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(cs).
+		Select("title", "description", "deadline", "gold_standard", "updated_at").
+		Updates(cs).Error; err != nil {
 		return fmt.Errorf("update: %w", err)
 	}
 	return nil
@@ -364,10 +368,24 @@ func NewCaseResponseRepository(db *gorm.DB) *CaseResponseRepository {
 	return &CaseResponseRepository{db: db}
 }
 
-// Save persists a case response and updates case counters.
+// caseResponseUniqueIndex is created by migration 000011.
+const caseResponseUniqueIndex = "idx_case_responses_case_user_unique"
+
+// mapCaseResponseError turns a unique violation on (case_id, user_id) into
+// domain.ErrAlreadyResponded, so a racing duplicate gets the same 409 as the pre-check.
+func mapCaseResponseError(err error) error {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" && pgErr.ConstraintName == caseResponseUniqueIndex {
+		return domain.ErrAlreadyResponded
+	}
+	return err
+}
+
+// Save persists a case response and updates case counters. It returns
+// domain.ErrAlreadyResponded if the user already has a response for the case.
 func (r *CaseResponseRepository) Save(ctx context.Context, response *domain.CaseResponse) error {
 	if err := r.db.WithContext(ctx).Create(response).Error; err != nil {
-		return fmt.Errorf("save case response: %w", err)
+		return fmt.Errorf("save case response: %w", mapCaseResponseError(err))
 	}
 
 	r.updateCaseCounters(ctx, response.CaseID)

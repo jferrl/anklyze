@@ -123,37 +123,37 @@ const (
 // FractureInput represents the input data for classification
 type FractureInput struct {
 	// Question 1: Which malleoli are fractured?
-	InvolvedMalleoli InvolvedMalleoli `json:"involved_malleoli" validate:"required"`
+	InvolvedMalleoli InvolvedMalleoli `json:"involved_malleoli" validate:"required,oneof=posterior_only medial_only lateral_only medial_posterior lateral_posterior lateral_medial trimaleolar"`
 
 	// For posterior malleolus: fracture type (Bartonicek)
-	PosteriorFractureType PosteriorFractureType `json:"posterior_fracture_type,omitempty"`
+	PosteriorFractureType PosteriorFractureType `json:"posterior_fracture_type,omitempty" validate:"omitempty,oneof=extraincisural posterolateral posteromedial_posterolateral large_posterolateral extraincisural_posteromedial"`
 
 	// For medial malleolus: morphology
-	MedialMorphology MedialMorphology `json:"medial_morphology,omitempty"`
+	MedialMorphology MedialMorphology `json:"medial_morphology,omitempty" validate:"omitempty,oneof=vertical transverse_oblique"`
 
 	// For lateral malleolus: fracture level
-	FibularLevel FibularLevel `json:"fibular_level,omitempty"`
+	FibularLevel FibularLevel `json:"fibular_level,omitempty" validate:"omitempty,oneof=infrasindesmal transindesmal suprasindesmal"`
 
 	// For lateral malleolus: morphology
-	LateralMorphology LateralMorphology `json:"lateral_morphology,omitempty"`
+	LateralMorphology LateralMorphology `json:"lateral_morphology,omitempty" validate:"omitempty,oneof=transverse oblique spiral conminuta"`
 
 	// For suprasindesmal: fracture type
-	SuprasindesmalType SuprasindesmalType `json:"suprasindesmal_type,omitempty"`
+	SuprasindesmalType SuprasindesmalType `json:"suprasindesmal_type,omitempty" validate:"omitempty,oneof=simple_diaphyseal multifragmentary proximal"`
 
 	// For bimaleolar lateral+medial: is fibula fracture infrasindesmal and transverse?
 	FibulaInfrasindesmalTransverse *bool `json:"fibula_infrasindesmal_transverse,omitempty"`
 
 	// For bimaleolar lateral+medial with transverse morphology: fibular level
-	FibularLevelForTransverse FibularLevel `json:"fibular_level_for_transverse,omitempty"`
+	FibularLevelForTransverse FibularLevel `json:"fibular_level_for_transverse,omitempty" validate:"omitempty,oneof=infrasindesmal transindesmal suprasindesmal"`
 
 	// CT scan availability - determines if Bartonicek can be classified
 	HasCTScan *bool `json:"has_ct_scan,omitempty"`
 
 	// Fibula trace pattern for suprasyndesmotic fractures (PA vs PER differentiation)
-	FibulaTracePattern FibulaTracePattern `json:"fibula_trace_pattern,omitempty"`
+	FibulaTracePattern FibulaTracePattern `json:"fibula_trace_pattern,omitempty" validate:"omitempty,oneof=parasindesmotic_short parasindesmotic_long suprasindesmotic_far"`
 
 	// Articular surface involvement for posterior-only and medial-only paths
-	ArticularInvolvement ArticularInvolvement `json:"articular_involvement,omitempty"`
+	ArticularInvolvement ArticularInvolvement `json:"articular_involvement,omitempty" validate:"omitempty,oneof=large_with_extension small_without_extension"`
 
 	// Whether articular depression is present (when articular_involvement = large_with_extension)
 	HasArticularDepression *bool `json:"has_articular_depression,omitempty"`
@@ -162,16 +162,16 @@ type FractureInput struct {
 	IsPosteriorPosteromedial *bool `json:"is_posterior_posteromedial,omitempty"`
 
 	// Number of fracture traces in fibula for transindesmal paths (single or multiple)
-	FibulaTraceCount FibulaTraceCount `json:"fibula_trace_count,omitempty"`
+	FibulaTraceCount FibulaTraceCount `json:"fibula_trace_count,omitempty" validate:"omitempty,oneof=single multiple"`
 
 	// Lateral subtype for transindesmal lateral-only paths (simple, syndesmosis_rupture, butterfly)
-	LateralSubtype LateralSubtype `json:"lateral_subtype,omitempty"`
+	LateralSubtype LateralSubtype `json:"lateral_subtype,omitempty" validate:"omitempty,oneof=simple syndesmosis_rupture butterfly avulsion malleolus_fracture"`
 
 	// Infrasindesmal morphology subtype (avulsion, malleolus_fracture)
-	InfrasindesmalMorphology LateralSubtype `json:"infrasindesmal_morphology,omitempty"`
+	InfrasindesmalMorphology LateralSubtype `json:"infrasindesmal_morphology,omitempty" validate:"omitempty,oneof=simple syndesmosis_rupture butterfly avulsion malleolus_fracture"`
 
 	// Medial subtype for bimalleolar paths (open_mortise, malleolus_fracture)
-	MedialSubtype MedialSubtype `json:"medial_subtype,omitempty"`
+	MedialSubtype MedialSubtype `json:"medial_subtype,omitempty" validate:"omitempty,oneof=open_mortise malleolus_fracture"`
 
 	// Whether fibula head shortening is present (proximal/Maisonneuve path)
 	HasFibulaHeadShortening *bool `json:"has_fibula_head_shortening,omitempty"`

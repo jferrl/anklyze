@@ -87,19 +87,13 @@ test.describe('Internationalization (i18n)', () => {
   test.describe('Form Options Language', () => {
     test('should load form options in the correct language', async ({ page }) => {
       const classifyPage = new ClassifyPage(page);
+      await classifyPage.goto();
 
-      // Navigate directly with English
-      await page.goto('/classify');
-
-      // Intercept the options API call
-      const optionsResponse = await page.waitForResponse(
-        (resp) => resp.url().includes('/api/options') && resp.status() === 200
+      // Options come from the i18n bundle (the /api/options endpoint is gone).
+      await expect(page.getByText('Which malleoli are fractured?')).toBeVisible();
+      await expect(page.locator('#involved_malleoli-trimaleolar')).toContainText(
+        'Medial, lateral and posterior malleoli'
       );
-
-      const options = await optionsResponse.json();
-
-      // Verify the options contain English labels (or check the Accept-Language header was sent)
-      expect(options).toHaveProperty('involved_malleoli');
     });
   });
 });
