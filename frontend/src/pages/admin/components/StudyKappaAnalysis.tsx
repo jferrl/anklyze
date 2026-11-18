@@ -3,7 +3,7 @@ import type { TFunction } from 'i18next';
 import { KappaGauge, KappaLegend } from '@/components/analytics';
 import type { FleissKappaResult, StudyReliabilityResponse } from '@/types';
 import { MethodNote } from './MethodNote';
-import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin, type SystemKey } from './systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin } from './systems';
 
 interface StudyKappaAnalysisProps {
   reliability: StudyReliabilityResponse;
@@ -56,6 +56,7 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
                   ? [
                       t('admin.reliability.ratersCount', { count: fleiss.num_raters }),
                       t('admin.reliability.casesCount', { count: fleiss.num_subjects }),
+                      t('admin.reliability.categoriesCount', { count: fleiss.num_categories }),
                       fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
                     ].filter(Boolean).join(', ')
                   : t('admin.studies.reliability.notEnoughData')}
@@ -137,46 +138,5 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
         {weighted && <p>{t('admin.reliability.method.weighted')}</p>}
       </MethodNote>
     </div>
-  );
-}
-
-interface KappaSystemDetailProps {
-  reliability: StudyReliabilityResponse;
-  system: SystemKey;
-}
-
-/** KappaSystemDetail lists the counts behind one system's kappa; the kappa itself is in the gauge above. */
-export function KappaSystemDetail({ reliability, system }: KappaSystemDetailProps) {
-  const { t } = useTranslation();
-  const fleiss = reliability[`${system}_fleiss`];
-
-  if (!fleiss) {
-    return (
-      <p className="rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground">
-        {t('admin.studies.reliability.notEnoughData')}
-      </p>
-    );
-  }
-
-  const cells = [
-    {
-      label: t('admin.reliability.subjects'),
-      value: fleiss.num_subjects,
-      note: fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
-    },
-    { label: t('admin.studies.raters.title'), value: fleiss.num_raters },
-    { label: t('admin.reliability.categories'), value: fleiss.num_categories },
-  ];
-
-  return (
-    <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border bg-border">
-      {cells.map(({ label, value, note }) => (
-        <div key={label} className="min-w-0 bg-card p-4">
-          <dt className="text-sm text-muted-foreground">{label}</dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums">{value}</dd>
-          {note && <dd className="mt-1 text-xs text-muted-foreground">{note}</dd>}
-        </div>
-      ))}
-    </dl>
   );
 }

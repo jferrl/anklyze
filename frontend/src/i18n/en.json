@@ -822,12 +822,12 @@
       },
       "ciShort": "{{level}}% CI",
       "kappaLegend": "< 0 poor · 0–0.20 slight · 0.21–0.40 fair · 0.41–0.60 moderate · 0.61–0.80 substantial · 0.81–1.00 almost perfect",
-      "subjects": "Cases (subjects)",
-      "categories": "Categories",
       "ratersCount_one": "{{count}} rater",
       "ratersCount_other": "{{count}} raters",
       "casesCount_one": "{{count}} case",
       "casesCount_other": "{{count}} cases",
+      "categoriesCount_one": "{{count}} category",
+      "categoriesCount_other": "{{count}} categories",
       "goldStandard": "Gold standard",
       "goldStandardGroups": {
         "infrasyndesmotic": "A (infrasyndesmotic)",
@@ -836,7 +836,6 @@
         "distalTibia": "Distal tibia",
         "other": "Other"
       },
-      "systemDetail": "{{system}}: detailed analysis",
       "method": {
         "title": "Method",
         "fleissRaters": "Fleiss' kappa is computed over the raters who answered every case; at least two such raters are needed. Raters included: {{raters}} of {{totalRaters}}. Cases: {{cases}}.",

@@ -822,12 +822,12 @@
       },
       "ciShort": "IC del {{level}}%",
       "kappaLegend": "< 0 pobre · 0–0.20 ligero · 0.21–0.40 aceptable · 0.41–0.60 moderado · 0.61–0.80 sustancial · 0.81–1.00 casi perfecto",
-      "subjects": "Casos (sujetos)",
-      "categories": "Categorías",
       "ratersCount_one": "{{count}} evaluador",
       "ratersCount_other": "{{count}} evaluadores",
       "casesCount_one": "{{count}} caso",
       "casesCount_other": "{{count}} casos",
+      "categoriesCount_one": "{{count}} categoría",
+      "categoriesCount_other": "{{count}} categorías",
       "goldStandard": "Patrón de referencia",
       "goldStandardGroups": {
         "infrasyndesmotic": "A (infrasindesmal)",
@@ -836,7 +836,6 @@
         "distalTibia": "Tibia distal",
         "other": "Otros"
       },
-      "systemDetail": "Análisis detallado de {{system}}",
       "method": {
         "title": "Método",
         "fleissRaters": "El kappa de Fleiss se calcula con los evaluadores que respondieron todos los casos; se necesitan al menos dos. Evaluadores incluidos: {{raters}} de {{totalRaters}}. Casos: {{cases}}.",
