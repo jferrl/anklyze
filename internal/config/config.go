@@ -132,6 +132,10 @@ func (c *Config) ValidateProduction() error {
 		errs = append(errs, "SUPABASE_URL is required in production (SEC-01: auth enforcement)")
 	}
 
+	if !c.HasS3Storage() {
+		errs = append(errs, "S3_ENDPOINT, S3_ACCESS_KEY and S3_SECRET_KEY are required in production (case images would be lost)")
+	}
+
 	if len(errs) > 0 {
 		return fmt.Errorf("production security validation failed:\n  - %s", strings.Join(errs, "\n  - "))
 	}

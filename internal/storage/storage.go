@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"path/filepath"
 	"time"
+
+	"github.com/jferrl/anklyze/internal/domain"
 )
 
 // Storage defines the interface for file storage operations.
@@ -20,7 +21,8 @@ type Storage interface {
 	GetSignedURL(ctx context.Context, path string, expiresIn time.Duration) (string, error)
 }
 
-// NoOpStorage is a no-op implementation for when storage is not configured.
+// NoOpStorage stands in when no storage is configured. Upload and GetSignedURL
+// fail with domain.ErrStorageNotConfigured instead of pretending to succeed.
 type NoOpStorage struct{}
 
 // NewNoOpStorage creates a new no-op storage instance.
@@ -28,24 +30,24 @@ func NewNoOpStorage() *NoOpStorage {
 	return &NoOpStorage{}
 }
 
-// Upload is a no-op.
+// Upload always fails: accepting the file would lose it.
 func (s *NoOpStorage) Upload(_ context.Context, _ string, _ io.Reader, _ string, _ int64) error {
-	return nil
+	return domain.ErrStorageNotConfigured
 }
 
-// Delete is a no-op.
+// Delete is a no-op: nothing was ever stored.
 func (s *NoOpStorage) Delete(_ context.Context, _ string) error {
 	return nil
 }
 
-// GetSignedURL returns an empty URL.
+// GetSignedURL always fails: an empty URL would render as a broken image.
 func (s *NoOpStorage) GetSignedURL(_ context.Context, _ string, _ time.Duration) (string, error) {
-	return "", nil
+	return "", domain.ErrStorageNotConfigured
 }
 
 // BuildStoragePath constructs a storage path for a case image.
-// Format: cases/{caseID}/{category}/{imageID}{ext}
-func BuildStoragePath(caseID, imageID, category, filename string) string {
-	ext := filepath.Ext(filename)
+// Format: cases/{caseID}/{category}/{imageID}{ext}. ext must be trusted
+// (derived from sniffed content), never taken from the client's filename.
+func BuildStoragePath(caseID, imageID, category, ext string) string {
 	return fmt.Sprintf("cases/%s/%s/%s%s", caseID, category, imageID, ext)
 }
