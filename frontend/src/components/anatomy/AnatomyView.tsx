@@ -28,8 +28,8 @@ const BANDS: Record<Exclude<FibulaMark, 'proximal'>, [number, number]> = {
   supra_far: [104, 143],
 };
 
-// State changes fade or recolour in 150ms on the house curve; nothing moves.
-const ink = 'transition-[color,fill,stroke,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]';
+// State changes fade or recolour in 200ms on the house curve; nothing moves.
+const ink = 'transition-[color,fill,stroke,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]';
 const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
 
 /**
@@ -55,28 +55,22 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
     : [];
 
   const fibulaCaption = (
-    <p aria-hidden="true" className="text-xs">
-      <span className={cn(on(state.lateral || !!state.fibula), 'block', state.fibula ? 'font-medium text-primary' : 'text-muted-foreground')}>
-        {t('anatomy.fibularLevel')}
-      </span>
-      <span className={cn('block min-h-4 text-primary', on(!!state.fibula))}>
-        {state.fibula && t(`anatomy.level.${state.fibula}`)}
-      </span>
-    </p>
+    <Caption
+      title={t('anatomy.fibularLevel')}
+      shown={state.lateral || !!state.fibula}
+      value={state.fibula && t(`anatomy.level.${state.fibula}`)}
+    />
   );
   const posteriorCaption = (
-    <p aria-hidden="true" className="text-xs">
-      <span className={cn(ink, 'block', state.posterior ? 'font-medium text-primary' : 'text-muted-foreground')}>
-        {t('anatomy.posteriorMalleolus')}
-      </span>
-      <span className={cn('block min-h-4 text-primary', on(!!state.posteriorType))}>
-        {state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
-      </span>
-    </p>
+    <Caption
+      title={t('anatomy.posteriorMalleolus')}
+      shown={state.posterior}
+      value={state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
+    />
   );
 
   return (
-    <figure className={cn('space-y-3', className)}>
+    <figure className={cn('fig-card space-y-3', className)}>
       {/* Headings, drawings and captions are rows of one grid, so both views share a baseline. */}
       <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-x-4 gap-y-1">
         <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
@@ -108,6 +102,20 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
   );
 }
 
+/** Caption names a structure the answers involve and its answer, or says the answer is pending. */
+function Caption({ title, shown, value }: { title: string; shown: boolean; value?: string }) {
+  const { t } = useTranslation();
+  return (
+    <p aria-hidden="true" className={cn(on(shown), 'text-xs')}>
+      <span className="block font-medium">{title}</span>
+      {/* The key restarts the fade when the answer changes. */}
+      <span key={value ?? ''} className={cn('block min-h-4 animate-fade-in', value ? 'text-primary' : 'text-muted-foreground')}>
+        {value ?? t('anatomy.notAnswered')}
+      </span>
+    </p>
+  );
+}
+
 function useSummary(state: AnatomyState): string {
   const { t, i18n } = useTranslation();
   const parts = [
@@ -128,11 +136,12 @@ function useSummary(state: AnatomyState): string {
   return sentences.join(' ');
 }
 
-// Both drawings share one language: 1.25px outlines and 2.25px highlights at any size, highlights
-// as a tint plus a bolder outline that fade out at their ends, and HTML labels on leader lines.
-const LINE = { strokeWidth: 1.25, vectorEffect: 'non-scaling-stroke' } as const;
-const BOLD = { strokeWidth: 2.25, vectorEffect: 'non-scaling-stroke' } as const;
-const TINT = 0.14;
+// Both drawings share the landing plate's language (--bone, --hl in index.css): flat bone tint
+// with 1.5px outlines, highlights as an accent fill plus a 2.5px accent outline that tapers out at
+// its ends, and HTML labels on leader lines.
+const LINE = { strokeWidth: 1.5, vectorEffect: 'non-scaling-stroke' } as const;
+const BOLD = { strokeWidth: 2.5, vectorEffect: 'non-scaling-stroke' } as const;
+const HL = 'fill-(--hl-fill) stroke-(--hl)';
 
 type ViewBox = [number, number, number, number];
 const FRONT_BOX: ViewBox = [200, 100, 210, 212];
@@ -168,7 +177,7 @@ function Label({ box, x, y, on, children }: { box: ViewBox; x: number; y: number
     <span
       aria-hidden="true"
       style={{ left: `${((x - box[0]) / box[2]) * 100}%`, top: `${((y - box[1]) / box[3]) * 100}%` }}
-      className={cn(ink, 'absolute -translate-x-1/2 whitespace-nowrap text-xs leading-4', on ? 'font-medium text-primary' : 'text-muted-foreground')}
+      className={cn(ink, 'absolute -translate-x-1/2 whitespace-nowrap text-xs leading-4', on ? 'font-semibold text-primary' : 'text-muted-foreground')}
     >
       {children}
     </span>
@@ -178,7 +187,7 @@ function Label({ box, x, y, on, children }: { box: ViewBox; x: number; y: number
 /** Leader joins a structure (the dot) to the label below it. */
 function Leader({ x, y, to, on }: { x: number; y: number; to: number; on: boolean }) {
   return (
-    <g className={cn(ink, on ? 'fill-primary stroke-primary' : 'fill-muted-foreground/60 stroke-muted-foreground/60')}>
+    <g className={cn(ink, on ? 'fill-(--hl) stroke-(--hl)' : 'fill-(--bone-line) stroke-(--bone-line)')}>
       <path d={`M${x},${y} V${to}`} vectorEffect="non-scaling-stroke" strokeWidth="1" />
       <circle cx={x} cy={y} r="1.8" stroke="none" />
     </g>
@@ -196,7 +205,7 @@ function FrontView({ state }: { state: AnatomyState }) {
 
   return (
     <div className="relative self-end">
-      <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="var(--card)" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" strokeLinecap="round" strokeLinejoin="round">
         <defs>
           {/* The lateral malleolus is the fibula below the plafond (y≈244), so it meets the transsyndesmotic band without overlapping it. */}
           <Spot id={`${id}-lateral`} cx={244} cy={368} r={124} />
@@ -207,19 +216,19 @@ function FrontView({ state }: { state: AnatomyState }) {
         </defs>
 
         {/* Back to front; each fill hides what lies behind it. */}
-        <g className="stroke-muted-foreground" {...LINE}>
+        <g className="fill-(--bone) stroke-(--bone-line)" {...LINE}>
           <path d={CALCANEUS} />
           <path d={TALUS} />
           <path d={TIBIA} />
           <path d={FIBULA_INTACT} />
         </g>
 
-        <g className={cn('fill-primary stroke-primary', on(state.lateral))}>
-          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral)`} fillOpacity={TINT} stroke="none" />
+        <g className={cn(HL, on(state.lateral))}>
+          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral)`} stroke="none" />
           <path d={FIBULA_INTACT} mask={`url(#${id}-lateral-line)`} fill="none" {...BOLD} />
         </g>
-        <g className={cn('fill-primary stroke-primary', on(state.medial))}>
-          <path d={TIBIA} mask={`url(#${id}-medial)`} fillOpacity={TINT} stroke="none" />
+        <g className={cn(HL, on(state.medial))}>
+          <path d={TIBIA} mask={`url(#${id}-medial)`} stroke="none" />
           <path d={TIBIA} mask={`url(#${id}-medial-line)`} fill="none" {...BOLD} />
         </g>
 
@@ -227,18 +236,18 @@ function FrontView({ state }: { state: AnatomyState }) {
         {(Object.keys(BANDS) as (keyof typeof BANDS)[]).map((mark) => {
           const [top, bottom] = BANDS[mark];
           return (
-            <g key={mark} className={cn('fill-primary stroke-primary', on(state.fibula === mark))}>
+            <g key={mark} className={cn(HL, on(state.fibula === mark))}>
               <g clipPath={`url(#${id}-fibula)`}>
-                <rect x="220" y={top} width="60" height={bottom - top} fillOpacity={TINT} stroke="none" />
-                <path d={`M220,${top} h60 M220,${bottom} h60`} fill="none" {...LINE} />
+                <rect x="220" y={top} width="60" height={bottom - top} stroke="none" />
+                <path d={`M220,${top} h60 M220,${bottom} h60`} fill="none" {...BOLD} />
               </g>
-              <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" {...LINE} />
+              <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" {...BOLD} />
             </g>
           );
         })}
 
         {/* Proximal fibula: outside the drawing, so only an arrow up the shaft. */}
-        <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" {...BOLD} className={cn('stroke-primary', on(state.fibula === 'proximal'))} />
+        <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" {...BOLD} className={cn('stroke-(--hl)', on(state.fibula === 'proximal'))} />
 
         <Leader x={232.5} y={270.5} to={282} on={state.lateral} />
         <Leader x={374} y={252} to={265} on={state.medial} />
@@ -263,14 +272,14 @@ function SideView({ state }: { state: AnatomyState }) {
         <defs>
           <Spot id={`${id}-posterior`} cx={118} cy={205} r={48.5} />
         </defs>
-        <g className="stroke-muted-foreground" {...LINE}>
+        <g className="fill-(--bone) stroke-(--bone-line)" {...LINE}>
           <path d={LAT_TALUS} />
-          <path d={LAT_TIBIA} />
-          <path d={LAT_FIBULA} strokeOpacity="0.45" />
+          <path d={`${LAT_TIBIA} Z`} />
+          <path d={LAT_FIBULA} fill="none" strokeOpacity="0.45" />
         </g>
         {/* The posterior lip of the tibia; its extent is schematic, not a fragment. */}
-        <g className={cn('fill-primary stroke-primary', on(state.posterior))}>
-          <path d={`${LAT_TIBIA} Z`} mask={`url(#${id}-posterior)`} fillOpacity={TINT} stroke="none" />
+        <g className={cn(HL, on(state.posterior))}>
+          <path d={`${LAT_TIBIA} Z`} mask={`url(#${id}-posterior)`} stroke="none" />
           <path d={LAT_TIBIA} mask={`url(#${id}-posterior-line)`} fill="none" {...BOLD} />
         </g>
       </svg>

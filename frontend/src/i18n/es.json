@@ -401,6 +401,7 @@
     "back": "Posterior",
     "frontSide": "Anterior",
     "fibularLevel": "Nivel de la fractura de peroné",
+    "notAnswered": "Aún no ha respondido",
     "level": {
       "infra": "Infrasindesmal",
       "trans": "Transindesmal",

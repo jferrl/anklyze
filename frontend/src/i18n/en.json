@@ -401,6 +401,7 @@
     "back": "Back",
     "frontSide": "Front",
     "fibularLevel": "Fibular fracture level",
+    "notAnswered": "Not answered yet",
     "level": {
       "infra": "Infrasyndesmotic",
       "trans": "Transsyndesmotic",
