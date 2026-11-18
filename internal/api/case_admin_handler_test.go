@@ -58,7 +58,7 @@ func TestCaseAdminHandler_UpdateCase(t *testing.T) {
 			cs := domain.NewCase(uuid.New(), "old", "old desc", &d)
 			cs.Status = tt.status
 			repo := &updateRepo{cs: cs}
-			h := NewCaseAdminHandler(repo, nil, nil)
+			h := NewCaseAdminHandler(repo, nil, nil, nil)
 			r := gin.New()
 			r.PUT("/cases/:id", h.UpdateCase)
 
