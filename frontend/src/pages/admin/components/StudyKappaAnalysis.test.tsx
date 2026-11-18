@@ -59,4 +59,11 @@ describe('StudyKappaAnalysis', () => {
     expect(screen.queryByRole('heading', { name: /Cohen's kappa/ })).not.toBeInTheDocument();
     expect(screen.queryByText(/weighted kappa/)).not.toBeInTheDocument();
   });
+
+  it('cautions under a kappa from fewer than ten cases, with two decimals', () => {
+    render(<StudyKappaAnalysis reliability={base} />);
+
+    expect(screen.getAllByText('Based on 8 cases; interpret with caution')).toHaveLength(2);
+    expect(screen.getAllByText('0.55')).toHaveLength(2);
+  });
 });

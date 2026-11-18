@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CaseMetrics } from '@/types';
 
+import { CASE_LINK, caseAnalyticsPath } from './caseLink';
 import { agreementColorClass, formatPercent, type SystemKey } from './systems';
 
 interface CaseMetricCardProps {
@@ -12,17 +14,19 @@ interface CaseMetricCardProps {
 
 export function CaseMetricCard({ metrics, activeSystem }: CaseMetricCardProps) {
   const { t } = useTranslation();
-  const agreement = metrics[`${activeSystem}_agreement`];
+  const agreement = metrics.response_count > 0 ? metrics[`${activeSystem}_agreement`] : null;
 
   return (
-    <div className="py-3">
+    <div className={cn('px-4 py-3', metrics.is_low_agreement && 'bg-warning/10')}>
       <div className="mb-1 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <span className="text-xs tabular-nums text-muted-foreground">{metrics.case_order}</span>
-          <span className="truncate font-medium text-foreground">{metrics.case_title}</span>
+          <Link to={caseAnalyticsPath(metrics.case_id)} className={cn('truncate', CASE_LINK)}>
+            {metrics.case_title}
+          </Link>
         </div>
         {metrics.is_low_agreement && (
-          <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
+          <AlertCircle role="img" aria-label={t('admin.studies.reliability.lowAgreement')} className="size-4 shrink-0 text-warning" />
         )}
       </div>
       <div className="flex items-center justify-between">
