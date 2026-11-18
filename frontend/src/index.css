@@ -27,6 +27,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-fill: var(--primary-fill);
+  --color-primary-fill-foreground: var(--primary-fill-foreground);
+  --color-sheet: var(--sheet);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -76,6 +79,11 @@
   --popover-foreground: oklch(0.22 0.045 262);
   --primary: oklch(0.31 0.095 262);
   --primary-foreground: oklch(0.985 0.003 255);
+  /* Filled surfaces (buttons, brand mark); the same navy as --primary in light. */
+  --primary-fill: var(--primary);
+  --primary-fill-foreground: var(--primary-foreground);
+  /* Paper on the navy field (landing result cells, hero button). */
+  --sheet: oklch(1 0 0);
   --secondary: oklch(0.955 0.008 258);
   --secondary-foreground: oklch(0.22 0.045 262);
   --muted: oklch(0.962 0.006 258);
@@ -122,6 +130,11 @@
   --popover-foreground: oklch(0.95 0.008 258);
   --primary: oklch(0.8 0.09 258);
   --primary-foreground: oklch(0.18 0.04 262);
+  /* --primary stays pale for links and accents; filled surfaces keep a saturated navy-blue. */
+  --primary-fill: oklch(0.5 0.14 262);
+  --primary-fill-foreground: oklch(0.985 0.003 255);
+  /* Softer paper so the landing's printed-chart cells do not glare on a dark page. */
+  --sheet: oklch(0.91 0.008 85);
   --secondary: oklch(0.255 0.024 262);
   --secondary-foreground: oklch(0.95 0.008 258);
   --muted: oklch(0.245 0.022 262);

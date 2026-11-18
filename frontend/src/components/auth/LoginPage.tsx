@@ -56,7 +56,7 @@ export function LoginPage() {
 
       <main className="flex flex-col">
         <div className="flex items-center justify-between p-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 text-primary lg:invisible">
+          <Link to="/" className="flex items-center gap-2 text-primary-fill lg:invisible">
             <Logo />
             <span className="text-lg font-semibold tracking-tight text-foreground">Anklyze</span>
           </Link>

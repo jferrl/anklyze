@@ -93,7 +93,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="hover:bg-transparent active:bg-transparent" asChild>
               <Link to="/">
-                <span className="flex size-8 items-center justify-center text-primary">
+                <span className="flex size-8 items-center justify-center text-primary-fill">
                   <Logo className="size-8" />
                 </span>
                 <div className="grid flex-1 text-left text-sm leading-tight">
