@@ -200,6 +200,7 @@ export function LandingPage() {
             <div className="lg:col-span-5">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.source.title')}</h2>
               <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.source.body')}</p>
+              <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-muted-foreground">{t('landing.source.authors')}</p>
               <a
                 href={REPO_URL}
                 target="_blank"

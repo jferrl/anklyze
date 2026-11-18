@@ -110,9 +110,10 @@
     "source": {
       "title": "Código abierto",
       "body": "Anklyze es software libre con licencia Apache 2.0. El código, el árbol de decisión y la metodología estadística son públicos.",
+      "authors": "Contenido clínico y árbol de decisión de Laura Paniagua Andres (traumatóloga, Hospital de León). Software de Jorge Ferrero Linacero. Los cuatro sistemas de clasificación pertenecen a sus autores originales; Anklyze no está vinculado a la AO Foundation ni a la Orthopaedic Trauma Association.",
       "repoLink": "Código fuente en GitHub",
       "citeTitle": "Cómo citar",
-      "citation": "Anklyze: clasificación de fracturas de tobillo [software]. 2026. Disponible en: {{url}}. Licencia Apache 2.0."
+      "citation": "Paniagua Andres L, Ferrero Linacero J. Anklyze: clasificación de fracturas de tobillo [software]. 2026. Disponible en: {{url}}. Licencia Apache 2.0."
     }
   },
   "form": {

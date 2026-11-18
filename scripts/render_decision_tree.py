@@ -20,6 +20,11 @@ import re
 import sys
 import argparse
 
+ATTRIBUTION = (
+    "# Decision tree by Laura Paniagua Andres (Hospital de León).\n"
+    "# Copyright 2026 the Anklyze authors. Apache License 2.0; see LICENSE and NOTICE.\n"
+)
+
 
 def parse_drawio(path):
     """Parse drawio XML and return cells dict, edges list, and root_id."""
@@ -180,6 +185,7 @@ def render_tree(cells, children, root_id, out):
 
     out.write("# Ankle Fracture Classification Decision Tree\n")
     out.write(f"# Source: drawio diagram (source of truth)\n")
+    out.write(ATTRIBUTION)
     out.write(f"# Legend: Q=Question, ├──=Answer option, ╰──=Terminal [AO LH Weber Bartonicek]\n")
     out.write(f"# N/C = no clasificable\n")
     out.write("#\n\n")
@@ -274,6 +280,7 @@ def render_table(cells, children, parents, root_id, out):
     out.write("# Ankle Fracture Classification — All Terminal Paths\n")
     out.write(f"# Total: {len(paths)} paths across {len(set(p['branch'] for p in paths))} branches\n")
     out.write(f"# Source: drawio diagram (source of truth)\n")
+    out.write(ATTRIBUTION)
     out.write("#\n")
     out.write(f"# {'Branch':<12} {'AO':<12} {'LH':<5} {'W':<3} {'B':<3} Path (answers in order)\n")
     out.write(f"# {'-'*12} {'-'*12} {'-'*5} {'-'*3} {'-'*3} {'-'*50}\n")

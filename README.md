@@ -133,6 +133,8 @@ e2e/                     Playwright tests
 docs/                    decision tree and reliability documentation
 ```
 
-## Licence
+## Licence and authors
 
-Apache License 2.0. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE). The licence covers the code and the decision tree.
+
+The clinical content and decision tree are by Laura Paniagua Andres (orthopaedic and trauma surgeon, Hospital de León). The software is by Jorge Ferrero Linacero. The four classification systems belong to their original authors; references are in [NOTICE](NOTICE). Anklyze is not affiliated with or endorsed by the AO Foundation or the Orthopaedic Trauma Association.
