@@ -47,12 +47,6 @@ func (m *mockResponseRepoForClassification) GetByUserAndCase(_ context.Context, 
 func (m *mockResponseRepoForClassification) GetByUserAndCases(_ context.Context, _ uuid.UUID, _ []uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error) {
 	return make(map[uuid.UUID][]domain.CaseResponse), nil
 }
-func (m *mockResponseRepoForClassification) CountByCase(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
-}
-func (m *mockResponseRepoForClassification) CountUniqueUsersByCase(_ context.Context, _ uuid.UUID) (int64, error) {
-	return 0, nil
-}
 func (m *mockResponseRepoForClassification) HasUserResponded(_ context.Context, _, _ uuid.UUID) (bool, error) {
 	return false, nil
 }

@@ -58,20 +58,4 @@ type StudyResponseRepository interface {
 	// GetAllByStudy retrieves all responses for all cases in a study.
 	// Returns a map of caseID -> responses.
 	GetAllByStudy(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
-
-	// GetCompleteRaterResponses retrieves responses only from raters who completed all cases.
-	// Returns a map of caseID -> responses (filtered to complete raters only).
-	GetCompleteRaterResponses(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]domain.CaseResponse, error)
-
-	// CountUniqueRaters counts unique users who responded to any case in the study.
-	CountUniqueRaters(ctx context.Context, studyID uuid.UUID) (int64, error)
-
-	// CountCompleteRaters counts users who responded to ALL cases in the study.
-	CountCompleteRaters(ctx context.Context, studyID uuid.UUID) (int64, error)
-
-	// GetRaterCaseCompletion returns a map of userID -> list of caseIDs they completed.
-	GetRaterCaseCompletion(ctx context.Context, studyID uuid.UUID) (map[uuid.UUID][]uuid.UUID, error)
-
-	// CountUserCasesCompleted counts how many cases a specific user has completed in a study.
-	CountUserCasesCompleted(ctx context.Context, studyID, userID uuid.UUID) (int, error)
 }

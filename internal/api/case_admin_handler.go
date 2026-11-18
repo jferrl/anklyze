@@ -115,12 +115,7 @@ func (h *CaseAdminHandler) ListCases(c *gin.Context) {
 
 // GetCase handles GET /api/admin/cases/:id
 func (h *CaseAdminHandler) GetCase(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	id, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -142,12 +137,7 @@ func (h *CaseAdminHandler) GetCase(c *gin.Context) {
 // Closed: nothing. A field the status does not allow is rejected, not ignored,
 // so raters never see a silently different case. A null deadline clears it.
 func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	_, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -187,12 +177,7 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 
 // DeleteCase handles DELETE /api/admin/cases/:id
 func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	id, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -220,12 +205,7 @@ func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
 
 // PublishCase handles PUT /api/admin/cases/:id/publish
 func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	id, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -252,12 +232,7 @@ func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
 
 // CloseCase handles PUT /api/admin/cases/:id/close
 func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	id, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -284,12 +259,7 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 // Sets or clears the gold standard classification for a case.
 // Only allowed on draft or published cases.
 func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	_, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -325,12 +295,7 @@ func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
 // Clears the gold standard classification for a case.
 // Only allowed on draft or published cases.
 func (h *CaseAdminHandler) DeleteGoldStandard(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, id)
+	_, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}

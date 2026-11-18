@@ -118,12 +118,8 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 		return
 	}
 
-	cs, ok := loadCase(c, h.caseRepo, id)
+	cs, ok := loadPublishedCase(c, h.caseRepo, id)
 	if !ok {
-		return
-	}
-	if cs.Status != domain.CaseStatusPublished {
-		notFound(c, "case not found")
 		return
 	}
 
