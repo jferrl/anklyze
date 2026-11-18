@@ -138,7 +138,7 @@
       "lateral_morphology": "What is the morphology of the fibular fracture?",
       "lateral_morphology_lm_tri": "What is the morphology of the fibular fracture?",
       "suprasindesmal_type": "What type?",
-      "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmal?",
+      "fibula_infrasindesmal_transverse": "Is the fibular fracture infrasyndesmotic?",
       "has_ct_scan": "Do you have a CT scan?",
       "fibula_trace_pattern": "What is the main fibular fracture trace pattern?",
       "fibula_trace_pattern_lp": "What is the main fibular fracture trace pattern?",
@@ -185,9 +185,9 @@
         "transverse_oblique": "Transverse/oblique/avulsion/open mortise"
       },
       "fibularLevel": {
-        "infrasindesmal": "Infrasyndesmal",
-        "transindesmal": "Transsyndesmal",
-        "suprasindesmal": "Suprasyndesmal"
+        "infrasindesmal": "Infrasyndesmotic",
+        "transindesmal": "Transsyndesmotic",
+        "suprasindesmal": "Suprasyndesmotic"
       },
       "fibularLevelHighLow": {
         "high": "Suprasyndesmotic",
@@ -234,7 +234,7 @@
         "conminuta": "Comminuted/butterfly"
       },
       "infrasindesmalMorphology": {
-        "avulsion": "Fibula tip avulsion",
+        "avulsion": "Avulsion of the lateral malleolus tip",
         "malleolus_fracture": "Lateral malleolus fracture"
       },
       "infrasindesmalMorphologyLMTri": {
@@ -242,8 +242,8 @@
         "malleolus_fracture": "Transverse"
       },
       "lateralSubtype": {
-        "simple": "Simple",
-        "syndesmosis_rupture": "Syndesmosis rupture"
+        "simple": "Simple fracture",
+        "syndesmosis_rupture": "Associated anterior syndesmosis rupture (Tillaux/Wagstaffe)"
       },
       "medialSubtype": {
         "open_mortise": "Open mortise",
@@ -260,19 +260,19 @@
         "proximal": "Proximal (1/3 proximal fibula)"
       },
       "fibulaTracePattern": {
-        "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
-        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "parasindesmotic_short": "Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace",
+        "parasindesmotic_long": "Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6 cm from articular surface)"
       },
       "fibulaTracePatternLP": {
-        "parasindesmotic_short": "Parasyndesmotic (<6cm from articular surface) short oblique/transverse trace",
-        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "parasindesmotic_short": "Parasyndesmotic (< 6 cm from articular surface) short oblique/transverse trace",
+        "parasindesmotic_long": "Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6 cm from articular surface)"
       },
       "fibulaTracePatternMultiLP": {
-        "parasindesmotic_short": "Comminuted parasyndesmotic (<6cm from articular surface)",
-        "parasindesmotic_long": "Parasyndesmotic (<6cm from articular surface) long oblique/spiral/butterfly wing trace",
-        "suprasindesmotic_far": "Suprasyndesmotic (> 6cm from articular surface)"
+        "parasindesmotic_short": "Comminuted parasyndesmotic (< 6 cm from articular surface)",
+        "parasindesmotic_long": "Parasyndesmotic (< 6 cm from articular surface) long oblique/spiral/butterfly wing trace",
+        "suprasindesmotic_far": "Suprasyndesmotic (> 6 cm from articular surface)"
       },
       "posteriorTypeLPInfra": {
         "extraincisural": "Posterior extraincisural fragment",
@@ -289,7 +289,7 @@
       "yes": "Yes",
       "no": "No",
       "high": "Suprasyndesmotic",
-      "low": "Low (transsyndesmal / infrasyndesmal)"
+      "low": "Low (transsyndesmotic / infrasyndesmotic)"
     }
   },
   "results": {
@@ -330,7 +330,7 @@
         "SER_name": "Supination-external rotation",
         "PER_name": "Pronation-external rotation",
         "PA_name": "Pronation-abduction",
-        "ambiguous_name": "Not classifiable",
+        "ambiguous_name": "Ambiguous",
         "not_classifiable_name": "Not classifiable"
       },
       "danisWeber": {
@@ -358,7 +358,7 @@
     },
     "impossibleReasons": {
       "exceptional": "This fracture pattern falls outside standard classification systems.",
-      "trimaleolar_infrasindesmal": "Trimaleolar fracture with infrasindesmal fibular level cannot be classified using standard systems."
+      "trimaleolar_infrasindesmal": "A trimalleolar fracture with an infrasyndesmotic fibular fracture cannot be classified using standard systems."
     }
   },
   "classify": {
@@ -843,7 +843,7 @@
       "goldStandard": "Gold standard",
       "goldStandardGroups": {
         "infrasyndesmotic": "A (infrasyndesmotic)",
-        "transyndesmotic": "B (transyndesmotic)",
+        "transyndesmotic": "B (transsyndesmotic)",
         "suprasyndesmotic": "C (suprasyndesmotic)",
         "distalTibia": "Distal tibia",
         "other": "Other"
@@ -956,11 +956,11 @@
         "fibular_level": "Fibular level",
         "lateral_morphology": "Lateral morphology",
         "medial_morphology": "Medial morphology",
-        "suprasindesmal_type": "Suprasyndesmal type",
+        "suprasindesmal_type": "Suprasyndesmotic type",
         "fibula_trace_pattern": "Fibula trace pattern",
         "posterior_fracture_type": "Posterior fracture type",
         "has_ct_scan": "Has CT scan",
-        "fibula_infrasindesmal_transverse": "Fibula infrasyndesmal transverse",
+        "fibula_infrasindesmal_transverse": "Fibula infrasyndesmotic transverse",
         "fibular_level_for_transverse": "Fibular level for transverse"
       }
     },
