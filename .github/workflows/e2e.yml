@@ -6,7 +6,7 @@ on:
 jobs:
   e2e-tests:
     name: Playwright E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Playwright 1.x does not support ubuntu-latest (26.04) yet
     timeout-minutes: 30
 
     services:
