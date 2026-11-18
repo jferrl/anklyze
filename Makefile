@@ -191,6 +191,7 @@ export-diagram:
 	@drawio --export --format svg --embed-svg-fonts false \
 		--output frontend/public/classification-flow.svg \
 		"docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
+	@python3 -I scripts/style_flow_svg.py frontend/public/classification-flow.svg
 	@echo "Done: frontend/public/classification-flow.svg"
 
 # === Classification Validation Pipeline ===
