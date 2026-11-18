@@ -94,19 +94,11 @@ func main() {
 	ruleEngine := rules.NewEngine()
 	classificationService := service.NewClassificationService(ruleEngine, caseResponseRepo)
 
-	// Initialize Supabase Auth validator if configured
 	ctx := context.Background()
-	var authValidator *auth.Validator
-	if cfg.HasSupabase() {
-		validator, err := auth.NewValidator(ctx, cfg.SupabaseURL)
-		if err != nil {
-			slog.Warn("Supabase auth initialization failed, authentication disabled", "error", err)
-		} else {
-			authValidator = validator
-			slog.Info("Supabase authentication enabled", "url", cfg.SupabaseURL)
-		}
-	} else {
-		slog.Info("no SUPABASE_URL configured, authentication disabled (all routes public)")
+	authValidator, err := initAuth(ctx, cfg)
+	if err != nil {
+		slog.Error("auth initialization failed, refusing to start", "error", err)
+		os.Exit(1)
 	}
 
 	// JWKS endpoint reachability probe (production only)
