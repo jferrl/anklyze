@@ -124,16 +124,7 @@ func (h *StudyHandler) CreateStudy(c *gin.Context) {
 
 // ListStudies lists all studies with optional status filter.
 func (h *StudyHandler) ListStudies(c *gin.Context) {
-	// Parse query parameters
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
-	if page < 1 {
-		page = 1
-	}
-	if limit < 1 || limit > MaxPageSize {
-		limit = 20
-	}
-	offset := (page - 1) * limit
+	page, limit, offset := getPagination(c)
 
 	// Parse status filter
 	var status *domain.StudyStatus
