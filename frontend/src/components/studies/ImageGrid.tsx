@@ -18,7 +18,7 @@ interface ImageGridProps {
 
 // Everything here sits on the black image well in both themes, so it uses fixed neutrals, not theme tokens.
 const OVERLAY_BUTTON =
-  'absolute rounded-md bg-black/60 p-2 text-white/80 backdrop-blur-sm transition-colors duration-150 hover:bg-black/80 hover:text-white disabled:pointer-events-none disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70';
+  'absolute rounded-md border border-white/15 bg-neutral-950/90 p-2 text-white/85 transition-colors duration-150 hover:bg-neutral-900 hover:text-white disabled:pointer-events-none disabled:opacity-30 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70';
 
 /** ImageGrid shows one radiograph large with a thumbnail strip to switch between the category's images. */
 export function ImageGrid({ images, imageUrls, isLoadingUrls, index, onIndexChange, onImageClick }: ImageGridProps) {
@@ -90,7 +90,7 @@ export function ImageGrid({ images, imageUrls, isLoadingUrls, index, onIndexChan
         {large}
         {multiple && (
           <>
-            <span className="absolute left-3 top-3 rounded-md bg-black/60 px-2 py-1 text-xs text-neutral-400 tabular-nums">
+            <span className="absolute left-3 top-3 rounded-md border border-white/15 bg-neutral-950/90 px-2 py-1 text-xs text-neutral-300 tabular-nums">
               {current + 1} / {images.length}
             </span>
             <button

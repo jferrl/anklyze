@@ -70,7 +70,7 @@ export function LandingPage() {
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link
                   to="/classify"
-                  className="inline-flex h-11 items-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[oklch(0.25_0.09_262)] transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="inline-flex h-11 items-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {t('landing.startClassifying')}
                   <ArrowRight className="size-4" />
@@ -94,15 +94,15 @@ export function LandingPage() {
                     </div>
                   </li>
                 ))}
-                <li className="grid grid-cols-2 gap-px bg-[oklch(0.89_0.012_262)] text-[oklch(0.22_0.045_262)] sm:grid-cols-4 lg:grid-cols-2">
+                <li className="grid grid-cols-2 gap-px bg-sheet-rule text-sheet-ink sm:grid-cols-4 lg:grid-cols-2">
                   {SYSTEMS.map((s) => (
                     <div key={s.key} className="bg-white px-4 py-4">
-                      <p className="flex items-center gap-1.5 text-xs text-[oklch(0.47_0.03_262)]">
+                      <p className="flex items-center gap-1.5 text-xs text-sheet-muted">
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
                       <p className="font-display mt-2 text-2xl" data-numeric>
-                        {s.code ?? <span className="text-[oklch(0.47_0.03_262)]">N/C</span>}
+                        {s.code ?? <span className="text-sheet-muted">N/C</span>}
                       </p>
                     </div>
                   ))}

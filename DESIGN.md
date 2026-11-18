@@ -201,7 +201,7 @@ Motion is state change only: content swaps fade in over 180ms on `cubic-bezier(0
 
 ## Elevation & Depth
 
-Flat. Surfaces at rest have no shadow; hierarchy comes from 1px rules, the white Sheet on cool Paper, and tonal washes. Floating layers that the platform lifts off the page (popovers, the chart tooltip, the slide-in flow diagram panel) are the only places a shadow appears.
+Flat. Surfaces at rest have no shadow; hierarchy comes from 1px rules, the white Sheet on cool Paper, and tonal washes. Floating layers that the platform lifts off the page (popovers, the chart tooltip) are the only places a shadow appears.
 
 ### Named Rules
 **The Ruled Box Rule.** Group facts in a box drawn with a 1px rule; split it into cells with `gap-px` over a Rule-coloured background or with `divide-y`, not with separate floating cards.

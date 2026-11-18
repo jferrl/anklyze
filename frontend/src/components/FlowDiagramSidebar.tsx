@@ -35,7 +35,7 @@ export function FlowDiagramSidebar() {
       {/* Sidebar Panel */}
       <div
         className={`fixed right-0 top-12 bottom-0 z-40 bg-background border-l transform transition-transform duration-150 ${
-          isOpen ? 'translate-x-0 shadow-lg' : 'translate-x-full'
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ width: 'min(90vw, 1200px)' }}
       >

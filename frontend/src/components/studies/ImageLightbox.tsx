@@ -188,9 +188,9 @@ export function ImageLightbox({
       {/* Top bar with close + zoom controls */}
       <div className="absolute top-4 left-0 right-0 z-10 flex items-center justify-between px-4">
         {/* Zoom controls */}
-        <div className="flex items-center gap-1 bg-black/40 rounded-lg p-1 backdrop-blur-sm">
+        <div className="flex items-center gap-1 rounded-lg border border-white/15 bg-neutral-950/90 p-1">
           <button
-            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="text-white/85 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); zoomOut(); }}
             disabled={scale <= MIN_SCALE}
             aria-label={t('cases.zoomOut')}
@@ -200,7 +200,7 @@ export function ImageLightbox({
           </button>
 
           <button
-            className="text-white/70 hover:text-white px-2 py-1 rounded-md hover:bg-white/10 transition-colors duration-150 text-sm tabular-nums min-w-[3.5rem] text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="text-white/85 hover:text-white px-2 py-1 rounded-md hover:bg-white/10 transition-colors duration-150 text-sm tabular-nums min-w-[3.5rem] text-center focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); resetZoom(); }}
             title={t('cases.resetZoom')}
           >
@@ -208,7 +208,7 @@ export function ImageLightbox({
           </button>
 
           <button
-            className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="text-white/85 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70"
             onClick={(e) => { e.stopPropagation(); zoomIn(); }}
             disabled={scale >= MAX_SCALE}
             aria-label={t('cases.zoomIn')}
@@ -219,7 +219,7 @@ export function ImageLightbox({
 
           {isZoomed && (
             <button
-              className="text-white/70 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 ml-1 border-l border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="text-white/85 hover:text-white p-2 rounded-md hover:bg-white/10 transition-colors duration-150 ml-1 border-l border-white/10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70"
               onClick={(e) => { e.stopPropagation(); resetZoom(); }}
               aria-label={t('cases.resetZoom')}
               title={t('cases.resetZoom')}
@@ -231,7 +231,7 @@ export function ImageLightbox({
 
         {/* Close button */}
         <button
-          className="text-white/70 hover:text-white p-2 rounded-md bg-black/40 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="text-white/85 hover:text-white p-2 rounded-md border border-white/15 bg-neutral-950/90 hover:bg-neutral-900 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70"
           onClick={onClose}
           aria-label={t('cases.closeLightbox')}
         >
