@@ -1,12 +1,16 @@
 package api
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -33,6 +37,38 @@ func NewCaseImageHandler(
 		storage:           storage,
 		signedURLDuration: signedURLDuration,
 	}
+}
+
+// imageExtensions maps sniffed content types to the extension used in the
+// storage key. These are the types the frontend dropzone accepts.
+var imageExtensions = map[string]string{
+	"image/jpeg": ".jpg",
+	"image/png":  ".png",
+	"image/gif":  ".gif",
+	"image/webp": ".webp",
+}
+
+const maxFilenameRunes = 100
+
+// sanitizeFilename reduces a client filename to a printable base name, dropping
+// path components and control or invisible formatting characters.
+func sanitizeFilename(name string) string {
+	if i := strings.LastIndexAny(name, `/\`); i >= 0 {
+		name = name[i+1:]
+	}
+	name = strings.TrimSpace(strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) {
+			return -1
+		}
+		return r
+	}, name))
+	if name == "" || name == "." || name == ".." {
+		return "image"
+	}
+	if r := []rune(name); len(r) > maxFilenameRunes {
+		name = string(r[:maxFilenameRunes])
+	}
+	return name
 }
 
 // UploadImage handles POST /api/admin/cases/:id/images
@@ -89,20 +125,32 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	// Validate content type
-	contentType := header.Header.Get("Content-Type")
-	if !isValidImageType(contentType) {
-		badRequest(c, "invalid file type, must be an image (JPEG, PNG, DICOM)")
+	// The client's Content-Type header is untrusted; sniff the bytes instead.
+	head := make([]byte, 512)
+	n, err := io.ReadFull(file, head)
+	if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrUnexpectedEOF) {
+		badRequest(c, "could not read file")
+		return
+	}
+	contentType := http.DetectContentType(head[:n])
+	ext, ok := imageExtensions[contentType]
+	if !ok {
+		badRequest(c, "invalid file type, must be an image (JPEG, PNG, GIF, WebP)")
+		return
+	}
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		HandleError(c, fmt.Errorf("rewind upload: %w", err), "failed to read file")
 		return
 	}
 
 	// Generate image ID and storage path
 	imageID := uuid.New()
-	storagePath := storage.BuildStoragePath(caseID.String(), imageID.String(), string(category), header.Filename)
+	storagePath := storage.BuildStoragePath(caseID.String(), imageID.String(), string(category), ext)
+	filename := sanitizeFilename(header.Filename)
 
 	// Upload to storage
 	if err := h.storage.Upload(c.Request.Context(), storagePath, file, contentType, header.Size); err != nil {
-		HandleError(c, err, "failed to upload image")
+		HandleError(c, fmt.Errorf("upload image: %w", err), "Failed to upload image")
 		return
 	}
 
@@ -111,7 +159,7 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 		caseID,
 		category,
 		displayOrder,
-		header.Filename,
+		filename,
 		contentType,
 		header.Size,
 		storagePath,
@@ -255,18 +303,25 @@ func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
 
 	// Generate signed URLs in parallel
 	response := make([]AdminImageResponse, len(images))
+	errs := make([]error, len(images))
 	var wg sync.WaitGroup
 	for i, img := range images {
 		response[i] = AdminImageResponse{CaseImage: img}
 		wg.Add(1)
 		go func(idx int, path string) {
 			defer wg.Done()
-			if url, err := h.storage.GetSignedURL(c.Request.Context(), path, h.signedURLDuration); err == nil {
-				response[idx].SignedURL = url
-			}
+			response[idx].SignedURL, errs[idx] = h.storage.GetSignedURL(c.Request.Context(), path, h.signedURLDuration)
 		}(i, img.StoragePath)
 	}
 	wg.Wait()
+
+	// Other failures leave that image without a URL; a missing backend fails the whole call.
+	for _, err := range errs {
+		if errors.Is(err, domain.ErrStorageNotConfigured) {
+			HandleError(c, fmt.Errorf("generate signed URLs: %w", err), "Failed to generate image URLs")
+			return
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{"images": response})
 }
@@ -346,7 +401,7 @@ func (h *CaseImageHandler) GetAdminImageSignedURL(c *gin.Context) {
 	// Generate signed URL
 	url, err := h.storage.GetSignedURL(c.Request.Context(), image.StoragePath, h.signedURLDuration)
 	if err != nil {
-		HandleError(c, err, "failed to generate image URL")
+		HandleError(c, fmt.Errorf("generate signed URL: %w", err), "Failed to generate image URL")
 		return
 	}
 

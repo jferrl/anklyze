@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -25,7 +26,6 @@ func newTestClassificationSvc() service.ClassificationService {
 type stubAudit struct{}
 
 func (stubAudit) Save(context.Context, *domain.AuditEntry) error { return nil }
-func (stubAudit) Close() error                                   { return nil }
 
 // stubAnalytics returns empty but well-formed analytics.
 type stubAnalytics struct{}
@@ -513,60 +513,102 @@ func TestHandler_ClassifyFracture_Trimaleolar(t *testing.T) {
 	}
 }
 
+// TestHandler_ClassifyFracture_InvalidInput checks that /api/classify rejects bad
+// payloads with 400 and the shared error shape. Without the validator the engine
+// would answer 200 "none_selected" for the missing and unknown-enum cases.
 func TestHandler_ClassifyFracture_InvalidInput(t *testing.T) {
 	t.Parallel()
 
-	h := setupTestHandler()
-	router := setupTestRouter(h)
-
-	req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader([]byte("invalid json")))
-	req.Header.Set("Content-Type", "application/json")
-	w := httptest.NewRecorder()
-
-	router.ServeHTTP(w, req)
-
-	if w.Code != http.StatusBadRequest {
-		t.Errorf("ClassifyFracture() with invalid JSON: status = %d, want %d", w.Code, http.StatusBadRequest)
+	tests := []struct {
+		name        string
+		body        string
+		wantMessage string
+	}{
+		{
+			name:        "malformed JSON",
+			body:        "invalid json",
+			wantMessage: "invalid input",
+		},
+		{
+			name:        "wrong JSON type for involved_malleoli",
+			body:        `{"involved_malleoli": 7}`,
+			wantMessage: "invalid input",
+		},
+		{
+			name:        "empty object misses involved_malleoli",
+			body:        `{}`,
+			wantMessage: "FractureInput.InvolvedMalleoli failed validation: required",
+		},
+		{
+			name:        "empty involved_malleoli",
+			body:        `{"involved_malleoli": ""}`,
+			wantMessage: "FractureInput.InvolvedMalleoli failed validation: required",
+		},
+		{
+			name:        "unknown involved_malleoli",
+			body:        `{"involved_malleoli": "bogus"}`,
+			wantMessage: "FractureInput.InvolvedMalleoli failed validation: oneof",
+		},
+		{
+			name:        "unknown fibular_level",
+			body:        `{"involved_malleoli": "lateral_only", "fibular_level": "bogus"}`,
+			wantMessage: "FractureInput.FibularLevel failed validation: oneof",
+		},
+		{
+			name:        "unknown lateral_morphology",
+			body:        `{"involved_malleoli": "lateral_only", "lateral_morphology": "bogus"}`,
+			wantMessage: "FractureInput.LateralMorphology failed validation: oneof",
+		},
+		{
+			name:        "unknown posterior_fracture_type",
+			body:        `{"involved_malleoli": "posterior_only", "posterior_fracture_type": "bogus"}`,
+			wantMessage: "FractureInput.PosteriorFractureType failed validation: oneof",
+		},
 	}
 
-	var errResp ErrorResponse
-	if err := json.Unmarshal(w.Body.Bytes(), &errResp); err != nil {
-		t.Fatalf("failed to unmarshal error response: %v", err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	if errResp.Code != CodeInvalidInput {
-		t.Errorf("expected code %q, got %q", CodeInvalidInput, errResp.Code)
+			router := setupTestRouter(setupTestHandler())
+
+			req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader([]byte(tt.body)))
+			req.Header.Set("Content-Type", "application/json")
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+
+			if w.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d; body: %s", w.Code, http.StatusBadRequest, w.Body.String())
+			}
+
+			var errResp ErrorResponse
+			if err := json.Unmarshal(w.Body.Bytes(), &errResp); err != nil {
+				t.Fatalf("failed to unmarshal error response: %v", err)
+			}
+			if errResp.Code != CodeInvalidInput {
+				t.Errorf("code = %q, want %q", errResp.Code, CodeInvalidInput)
+			}
+			if !strings.Contains(errResp.Message, tt.wantMessage) {
+				t.Errorf("message = %q, want containing %q", errResp.Message, tt.wantMessage)
+			}
+		})
 	}
 }
 
-func TestHandler_ClassifyFracture_EmptyInput(t *testing.T) {
+// TestHandler_ClassifyFracture_ValidMinimalInput checks the validator accepts a
+// payload with only the required field.
+func TestHandler_ClassifyFracture_ValidMinimalInput(t *testing.T) {
 	t.Parallel()
 
-	h := setupTestHandler()
-	router := setupTestRouter(h)
+	router := setupTestRouter(setupTestHandler())
 
-	input := domain.FractureInput{}
-	body, _ := json.Marshal(input)
-
-	req := httptest.NewRequest(http.MethodPost, "/api/classify", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/classify", strings.NewReader(`{"involved_malleoli": "lateral_only"}`))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
-
 	router.ServeHTTP(w, req)
 
 	if w.Code != http.StatusOK {
-		t.Fatalf("ClassifyFracture() status = %d, want %d", w.Code, http.StatusOK)
-	}
-
-	var result domain.ClassificationResult
-	if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
-		t.Fatalf("failed to unmarshal response: %v", err)
-	}
-
-	// Empty input should return "no fracture selected" description
-	expectedType := "none_selected"
-	if result.FractureType != expectedType {
-		t.Errorf("FractureType = %q, want %q", result.FractureType, expectedType)
+		t.Fatalf("status = %d, want %d; body: %s", w.Code, http.StatusOK, w.Body.String())
 	}
 }
 
@@ -653,10 +695,6 @@ func TestHandler_GetAnalyticsSummary(t *testing.T) {
 		{
 			name:        "custom date range",
 			queryParams: "?from=2024-01-01&to=2024-01-31",
-		},
-		{
-			name:        "invalid from date uses default",
-			queryParams: "?from=invalid&to=2024-01-31",
 		},
 	}
 
@@ -856,60 +894,50 @@ func TestGetLanguage(t *testing.T) {
 	}
 }
 
-func TestParseDateRange(t *testing.T) {
+func TestHandler_Analytics_InvalidQuery(t *testing.T) {
 	t.Parallel()
 
-	gin.SetMode(gin.TestMode)
-
 	tests := []struct {
-		name    string
-		fromStr string
-		toStr   string
+		name        string
+		path        string
+		wantMessage string
 	}{
-		{
-			name:    "custom date range parses correctly",
-			fromStr: "2024-01-15",
-			toStr:   "2024-02-15",
-		},
-		{
-			name:    "invalid dates use defaults",
-			fromStr: "invalid",
-			toStr:   "not-a-date",
-		},
-		{
-			name:    "empty dates use defaults",
-			fromStr: "",
-			toStr:   "",
-		},
+		{"summary malformed from", "/api/analytics/summary?from=invalid", "invalid 'from' date"},
+		{"summary malformed to", "/api/analytics/summary?to=31-01-2024", "invalid 'to' date"},
+		{"summary impossible date", "/api/analytics/summary?from=2024-02-30", "invalid 'from' date"},
+		{"summary from after to", "/api/analytics/summary?from=2024-12-31&to=2024-01-01", "must not be after"},
+		{"summary huge range", "/api/analytics/summary?from=0001-01-01", "must not exceed"},
+		{"trends malformed from", "/api/analytics/trends?from=invalid", "invalid 'from' date"},
+		{"trends from after to", "/api/analytics/trends?from=2024-12-31&to=2024-01-01", "must not be after"},
+		{"trends huge range", "/api/analytics/trends?from=2000-01-01&to=2024-01-01", "must not exceed"},
+		{"trends unknown granularity", "/api/analytics/trends?granularity=hourly", "granularity must be one of"},
+		{"trends wrong-case granularity", "/api/analytics/trends?granularity=Week", "granularity must be one of"},
+		{"distribution unknown system", "/api/analytics/distribution/bogus", "system must be one of"},
+		{"distribution malformed to", "/api/analytics/distribution/ao-ota?to=invalid", "invalid 'to' date"},
+		{"distribution from after to", "/api/analytics/distribution/ao-ota?from=2024-12-31&to=2024-01-01", "must not be after"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			router := setupTestRouter(setupTestHandler())
 			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
+			router.ServeHTTP(w, httptest.NewRequest(http.MethodGet, tt.path, nil))
 
-			url := "/test?"
-			if tt.fromStr != "" {
-				url += "from=" + tt.fromStr + "&"
+			if w.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d; body: %s", w.Code, http.StatusBadRequest, w.Body.String())
 			}
-			if tt.toStr != "" {
-				url += "to=" + tt.toStr
-			}
-			c.Request = httptest.NewRequest(http.MethodGet, url, nil)
 
-			from, to := parseDateRange(c)
-
-			// Basic sanity checks
-			if from.IsZero() {
-				t.Error("from should not be zero time")
+			var errResp ErrorResponse
+			if err := json.Unmarshal(w.Body.Bytes(), &errResp); err != nil {
+				t.Fatalf("failed to unmarshal error response: %v", err)
 			}
-			if to.IsZero() {
-				t.Error("to should not be zero time")
+			if errResp.Code != CodeInvalidInput {
+				t.Errorf("code = %q, want %q", errResp.Code, CodeInvalidInput)
 			}
-			if from.After(to) {
-				t.Error("from should be before or equal to to")
+			if !strings.Contains(errResp.Message, tt.wantMessage) {
+				t.Errorf("message = %q, want containing %q", errResp.Message, tt.wantMessage)
 			}
 		})
 	}

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -222,6 +224,10 @@ func (h *CaseResponseHandler) GetBatchImageSignedURLs(c *gin.Context) {
 	urls := make(map[string]SignedURLResponse, len(images))
 	for _, img := range images {
 		url, err := h.storage.GetSignedURL(c.Request.Context(), img.StoragePath, h.signedURLDuration)
+		if errors.Is(err, domain.ErrStorageNotConfigured) {
+			HandleError(c, fmt.Errorf("generate signed URLs: %w", err), "Failed to generate image URLs")
+			return
+		}
 		if err != nil {
 			slog.Error("failed to generate signed URL", "error", err, "image_id", img.ID)
 			continue
@@ -272,7 +278,7 @@ func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
 	// Generate signed URL
 	url, err := h.storage.GetSignedURL(c.Request.Context(), image.StoragePath, h.signedURLDuration)
 	if err != nil {
-		HandleError(c, err, "failed to generate image URL")
+		HandleError(c, fmt.Errorf("generate signed URL: %w", err), "Failed to generate image URL")
 		return
 	}
 

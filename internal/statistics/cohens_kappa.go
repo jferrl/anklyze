@@ -1,28 +1,13 @@
 package statistics
 
 import (
-	"math"
-
 	"github.com/jferrl/anklyze/internal/domain"
 )
 
-// CohensKappaWithCI calculates Cohen's Kappa with confidence interval.
-// ratings is a slice of [rater1_category, rater2_category] pairs.
-// confidenceLevel is typically 0.95 for 95% CI.
-// Returns the Kappa value, confidence interval, and any error.
-func CohensKappaWithCI(ratings [][2]string, confidenceLevel float64) (float64, *domain.ConfidenceInterval, error) {
-	n := len(ratings)
-	if n < 1 {
-		return 0, nil, nil
-	}
-
-	// Build contingency table
-	categories := ExtractCategories(ratings)
-	if len(categories) == 0 {
-		return 0, nil, nil
-	}
-
-	// Count agreements and category frequencies
+// cohenAgreement returns the observed agreement and the agreement expected by chance
+// for rating pairs. categories fixes the summation order so the result is deterministic.
+func cohenAgreement(ratings [][2]string, categories []string) (po, pe float64) {
+	n := float64(len(ratings))
 	observed := 0
 	rater1Counts := make(map[string]int)
 	rater2Counts := make(map[string]int)
@@ -35,60 +20,38 @@ func CohensKappaWithCI(ratings [][2]string, confidenceLevel float64) (float64, *
 		rater2Counts[pair[1]]++
 	}
 
-	// Calculate observed agreement (P_o)
-	po := float64(observed) / float64(n)
-
-	// Calculate expected agreement by chance (P_e)
-	pe := 0.0
 	for _, cat := range categories {
-		p1 := float64(rater1Counts[cat]) / float64(n)
-		p2 := float64(rater2Counts[cat]) / float64(n)
-		pe += p1 * p2
+		pe += float64(rater1Counts[cat]) / n * float64(rater2Counts[cat]) / n
+	}
+	return float64(observed) / n, pe
+}
+
+// CohensKappaWithCI calculates Cohen's Kappa with a percentile bootstrap confidence interval.
+// ratings is a slice of [rater1_category, rater2_category] pairs.
+// confidenceLevel is typically 0.95 for 95% CI.
+// The interval is nil with fewer than 2 pairs or when every pair is in one category.
+// See bootstrapKappaCI for the resampling scheme.
+func CohensKappaWithCI(ratings [][2]string, confidenceLevel float64) (float64, *domain.ConfidenceInterval, error) {
+	categories := ExtractCategories(ratings)
+	if len(ratings) < 1 || len(categories) == 0 {
+		return 0, nil, nil
 	}
 
-	// Cohen's Kappa formula: K = (P_o - P_e) / (1 - P_e)
+	po, pe := cohenAgreement(ratings, categories)
+
+	// Every rating is in one category: kappa is 0/0, reported as perfect agreement.
 	if pe == 1 {
-		return 1.0, nil, nil // Perfect agreement by definition
+		return 1.0, nil, nil
 	}
 
-	kappa := (po - pe) / (1 - pe)
-
-	// Calculate confidence interval
-	// Standard error formula (approximate): SE = sqrt((Po * (1 - Po)) / (n * (1 - Pe)^2))
-	// This is a simplified approximation; more complex formulas exist for small samples
-	var ci *domain.ConfidenceInterval
-	if n >= 2 {
-		denominator := float64(n) * (1 - pe) * (1 - pe)
-		if denominator > 0 {
-			se := math.Sqrt((po * (1 - po)) / denominator)
-
-			// Z-score for confidence level (default 95% -> z = 1.96)
-			z := 1.96 // 95% CI
-			switch confidenceLevel {
-			case 0.99:
-				z = 2.576
-			case 0.90:
-				z = 1.645
-			}
-
-			lower := kappa - z*se
-			upper := kappa + z*se
-
-			// Clamp to valid Kappa range [-1, 1]
-			if lower < -1 {
-				lower = -1
-			}
-			if upper > 1 {
-				upper = 1
-			}
-
-			ci = &domain.ConfidenceInterval{
-				Lower: Round(lower, 4),
-				Upper: Round(upper, 4),
-				Level: confidenceLevel,
-			}
+	resample := make([][2]string, len(ratings))
+	ci := bootstrapKappaCI(len(ratings), confidenceLevel, func(idx []uint64) (float64, bool) {
+		for i, j := range idx {
+			resample[i] = ratings[j]
 		}
-	}
+		po, pe := cohenAgreement(resample, categories)
+		return (po - pe) / (1 - pe), pe != 1
+	})
 
-	return kappa, ci, nil
+	return (po - pe) / (1 - pe), ci, nil
 }

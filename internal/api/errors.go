@@ -69,6 +69,8 @@ func HandleError(c *gin.Context, err error, fallbackMsg string) {
 		status, code, message = http.StatusConflict, domain.ErrCodeAlreadyResponded, err.Error()
 	case errors.Is(err, domain.ErrNotStudyMember):
 		status, code, message = http.StatusForbidden, domain.ErrCodeNotStudyMember, err.Error()
+	case errors.Is(err, domain.ErrStorageNotConfigured):
+		status, code, message = http.StatusServiceUnavailable, domain.ErrCodeStorageNotConfigured, err.Error()
 	case errors.Is(err, domain.ErrConflict):
 		status, code, message = http.StatusConflict, CodeConflict, err.Error()
 	case errors.Is(err, domain.ErrQuotaExceeded):
