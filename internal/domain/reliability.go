@@ -35,32 +35,14 @@ const (
 	KappaWeightQuadratic KappaWeightType = "quadratic"
 )
 
-// SystemAgreement contains agreement metrics for a single classification system.
+// SystemAgreement contains agreement metrics for a single classification system in one case.
+// Kappa is not computed here: one case gives one rating per rater, too few to estimate it.
+// Kappa statistics are reported per study (StudyReliabilityMetrics).
 type SystemAgreement struct {
 	System string `json:"system"`
 
-	// Basic agreement
+	// PercentAgreement is the share of responses (0-100) that gave the most common answer.
 	PercentAgreement float64 `json:"percent_agreement"`
-
-	// Kappa statistics (adjusted for chance agreement)
-	// CohensKappa is only meaningful for exactly 2 raters
-	CohensKappa *float64 `json:"cohens_kappa,omitempty"`
-	// CohensKappaCI is the confidence interval for Cohen's Kappa
-	CohensKappaCI *ConfidenceInterval `json:"cohens_kappa_ci,omitempty"`
-	// WeightedKappa is Kappa with weights accounting for ordinal categories
-	// Only calculated for systems with natural ordering (e.g., AO/OTA)
-	WeightedKappa *float64 `json:"weighted_kappa,omitempty"`
-	// WeightedKappaType indicates the weighting scheme used
-	WeightedKappaType *KappaWeightType `json:"weighted_kappa_type,omitempty"`
-	// FleissKappa is used for 3+ raters (requires multiple subjects/cases)
-	FleissKappa *float64 `json:"fleiss_kappa,omitempty"`
-	// FleissKappaNote explains why Fleiss' Kappa may not be available
-	FleissKappaNote *string `json:"fleiss_kappa_note,omitempty"`
-
-	// Confusion matrix: map[expected][observed] = count
-	// For gold standard comparison: expected = gold standard, observed = user response
-	// For inter-rater: shows disagreement patterns
-	ConfusionMatrix map[string]map[string]int64 `json:"confusion_matrix,omitempty"`
 
 	// Distribution of classifications across categories
 	CategoryCounts map[string]int64 `json:"category_counts"`
@@ -104,7 +86,6 @@ type ResponseWithExpertise struct {
 // ============================================================================
 
 // StudyReliabilityMetrics contains reliability statistics across a study.
-// This enables proper Fleiss' Kappa calculation with multiple subjects (cases).
 type StudyReliabilityMetrics struct {
 	StudyID    uuid.UUID `json:"study_id"`
 	StudyTitle string    `json:"study_title"`
@@ -115,11 +96,17 @@ type StudyReliabilityMetrics struct {
 	UniqueRaters   int64 `json:"unique_raters"`
 	CompleteRaters int64 `json:"complete_raters"` // Raters who completed all cases
 
-	// Fleiss' Kappa per classification system (now calculable with multiple subjects!)
+	// Fleiss' Kappa per classification system, over the complete raters (at least 2).
 	DanisWeberFleiss  *FleissKappaResult `json:"danis_weber_fleiss,omitempty"`
 	LaugeHansenFleiss *FleissKappaResult `json:"lauge_hansen_fleiss,omitempty"`
 	AOOTAFleiss       *FleissKappaResult `json:"ao_ota_fleiss,omitempty"`
 	BartonicekFleiss  *FleissKappaResult `json:"bartonicek_fleiss,omitempty"`
+
+	// Cohen's Kappa per classification system, only when there are exactly 2 complete raters.
+	DanisWeberCohen  *CohensKappaResult `json:"danis_weber_cohen,omitempty"`
+	LaugeHansenCohen *CohensKappaResult `json:"lauge_hansen_cohen,omitempty"`
+	AOOTACohen       *CohensKappaResult `json:"ao_ota_cohen,omitempty"`
+	BartonicekCohen  *CohensKappaResult `json:"bartonicek_cohen,omitempty"`
 
 	// Per-case analysis (helps identify "hard cases")
 	PerCaseMetrics []PerCaseMetrics `json:"per_case_metrics"`
@@ -131,15 +118,15 @@ type FleissKappaResult struct {
 	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
 
 	// Matrix dimensions
-	NumSubjects   int `json:"num_subjects"`   // Number of cases
+	NumSubjects   int `json:"num_subjects"`   // Cases used: every complete rater answered them
 	NumRaters     int `json:"num_raters"`     // Number of complete raters
 	NumCategories int `json:"num_categories"` // Number of classification categories
 
-	// Confidence interval (optional)
-	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
+	// NumCasesExcluded counts cases left out because a complete rater gave no answer in this system.
+	NumCasesExcluded int `json:"num_cases_excluded"`
 
-	// Note explaining any limitations or issues
-	Note *string `json:"note,omitempty"`
+	// Percentile bootstrap interval over cases (optional)
+	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
 }
 
 // NewFleissKappaResult creates a FleissKappaResult with interpretation.
@@ -151,6 +138,29 @@ func NewFleissKappaResult(kappa float64, numSubjects, numRaters, numCategories i
 		NumRaters:      numRaters,
 		NumCategories:  numCategories,
 	}
+}
+
+// CohensKappaResult is Cohen's Kappa between two raters across the cases of a study.
+type CohensKappaResult struct {
+	Kappa          float64 `json:"kappa"`
+	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+
+	NumSubjects      int `json:"num_subjects"`       // Cases both raters answered
+	NumCasesExcluded int `json:"num_cases_excluded"` // Cases where either rater gave no answer
+
+	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
+
+	// WeightedKappa is set for AO/OTA only.
+	WeightedKappa *WeightedKappaResult `json:"weighted_kappa,omitempty"`
+}
+
+// WeightedKappaResult is the weighted Cohen's Kappa of AO/OTA codes, compared by group.
+type WeightedKappaResult struct {
+	Kappa float64         `json:"kappa"`
+	Type  KappaWeightType `json:"type"`
+
+	NumPairs         int `json:"num_pairs"`          // Case pairs used
+	NumPairsExcluded int `json:"num_pairs_excluded"` // Pairs with a code outside the AO/OTA ordering
 }
 
 // PerCaseMetrics contains metrics for a single case within a study.

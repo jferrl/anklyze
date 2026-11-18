@@ -2,9 +2,42 @@ package statistics
 
 import (
 	"math"
+	"math/rand/v2"
+	"slices"
 
 	"github.com/jferrl/anklyze/internal/domain"
 )
+
+const (
+	fleissBootstrapResamples = 2000
+	// Fixed so the same data always gives the same interval.
+	fleissBootstrapSeed = 20260101
+)
+
+// fleissAgreement returns the mean observed agreement and the agreement expected by chance.
+// Every row of matrix must sum to numRaters.
+func fleissAgreement(matrix [][]int, numRaters int) (pBar, peBar float64) {
+	n := float64(numRaters)
+	nSubj := float64(len(matrix))
+	totals := make([]float64, len(matrix[0]))
+
+	for _, row := range matrix {
+		sum := 0.0
+		for j := 0; j < len(totals) && j < len(row); j++ {
+			nij := float64(row[j])
+			totals[j] += nij
+			sum += nij * (nij - 1)
+		}
+		pBar += sum / (n * (n - 1))
+	}
+	pBar /= nSubj
+
+	for _, total := range totals {
+		pj := total / (nSubj * n)
+		peBar += pj * pj
+	}
+	return pBar, peBar
+}
 
 // FleissKappa calculates Fleiss' Kappa for multiple raters.
 // matrix[i][j] = number of raters who assigned subject i to category j
@@ -15,125 +48,55 @@ func FleissKappa(matrix [][]int, numRaters int) (float64, error) {
 		return 0, nil
 	}
 
-	numSubjects := len(matrix)
-	numCategories := len(matrix[0])
-	n := float64(numRaters)
-	nSubj := float64(numSubjects)
+	pBar, peBar := fleissAgreement(matrix, numRaters)
 
-	// Calculate P_j (proportion of all assignments to category j)
-	pj := make([]float64, numCategories)
-	totalAssignments := nSubj * n
-	for j := range numCategories {
-		sum := 0
-		for i := range numSubjects {
-			if j < len(matrix[i]) {
-				sum += matrix[i][j]
-			}
-		}
-		pj[j] = float64(sum) / totalAssignments
-	}
-
-	// Calculate P_i (agreement for each subject)
-	pi := make([]float64, numSubjects)
-	for i := 0; i < numSubjects; i++ {
-		sum := 0.0
-		for j := 0; j < numCategories; j++ {
-			if j < len(matrix[i]) {
-				nij := float64(matrix[i][j])
-				sum += nij * (nij - 1)
-			}
-		}
-		if n*(n-1) > 0 {
-			pi[i] = sum / (n * (n - 1))
-		}
-	}
-
-	// Calculate P_bar (mean of P_i values)
-	pBar := 0.0
-	for i := range numSubjects {
-		pBar += pi[i]
-	}
-	pBar /= nSubj
-
-	// Calculate P_e_bar (expected agreement by chance)
-	peBar := 0.0
-	for j := 0; j < numCategories; j++ {
-		peBar += pj[j] * pj[j]
-	}
-
-	// Fleiss' Kappa formula: K = (P_bar - P_e_bar) / (1 - P_e_bar)
+	// Every rating is in one category: kappa is 0/0, reported as perfect agreement.
 	if peBar == 1 {
 		return 1.0, nil
 	}
 
-	kappa := (pBar - peBar) / (1 - peBar)
-	return kappa, nil
+	return (pBar - peBar) / (1 - peBar), nil
 }
 
-// FleissKappaCI calculates confidence interval for Fleiss' Kappa.
-// Uses the approximate variance formula.
-func FleissKappaCI(matrix [][]int, numRaters int, kappa float64, confidenceLevel float64) *domain.ConfidenceInterval {
-	// Simplified approximation for Fleiss' Kappa variance
-	// Based on Fleiss (1971) and later refinements
-	n := float64(len(matrix)) // Number of subjects
-	k := float64(numRaters)   // Number of raters
-
-	if n < 2 || k < 2 {
+// FleissKappaCI returns a percentile bootstrap interval for Fleiss' Kappa.
+// It resamples the subjects (cases) with replacement 2000 times with a fixed seed
+// and takes the middle confidenceLevel of the resampled kappas.
+// Returns nil with fewer than 2 subjects or when no resample has a defined kappa.
+func FleissKappaCI(matrix [][]int, numRaters int, confidenceLevel float64) *domain.ConfidenceInterval {
+	n := len(matrix)
+	if n < 2 || numRaters < 2 {
 		return nil
 	}
 
-	// Calculate P_e (expected agreement)
-	numCategories := len(matrix[0])
-	pj := make([]float64, numCategories)
-	totalAssignments := n * k
+	// PCG's stream is fixed by its spec; reducing with % keeps the draws independent of the
+	// Rand helper methods, whose algorithms may change between Go versions.
+	src := rand.NewPCG(fleissBootstrapSeed, fleissBootstrapSeed)
+	resample := make([][]int, n)
+	kappas := make([]float64, 0, fleissBootstrapResamples)
 
-	for j := 0; j < numCategories; j++ {
-		sum := 0
-		for i := 0; i < int(n); i++ {
-			if j < len(matrix[i]) {
-				sum += matrix[i][j]
-			}
+	for range fleissBootstrapResamples {
+		for i := range resample {
+			resample[i] = matrix[src.Uint64()%uint64(n)]
 		}
-		pj[j] = float64(sum) / totalAssignments
+		pBar, peBar := fleissAgreement(resample, numRaters)
+		// Skip degenerate resamples: with every rating in one category kappa is 0/0, and
+		// counting it as 1 would pull the interval up.
+		if peBar == 1 {
+			continue
+		}
+		kappas = append(kappas, (pBar-peBar)/(1-peBar))
 	}
-
-	pe := 0.0
-	for j := 0; j < numCategories; j++ {
-		pe += pj[j] * pj[j]
-	}
-
-	// Approximate standard error (simplified formula)
-	// SE ≈ sqrt(2 / (n * k * (k-1) * (1-Pe)^2))
-	denominator := n * k * (k - 1) * (1 - pe) * (1 - pe)
-	if denominator <= 0 {
+	if len(kappas) == 0 {
 		return nil
 	}
 
-	se := math.Sqrt(2 / denominator)
-
-	// Z-score for confidence level
-	z := 1.96 // 95% CI
-	switch confidenceLevel {
-	case 0.99:
-		z = 2.576
-	case 0.90:
-		z = 1.645
-	}
-
-	lower := kappa - z*se
-	upper := kappa + z*se
-
-	// Clamp to valid range
-	if lower < -1 {
-		lower = -1
-	}
-	if upper > 1 {
-		upper = 1
-	}
+	slices.Sort(kappas)
+	m := len(kappas)
+	tail := min(int(math.Round((1-confidenceLevel)/2*float64(m))), (m-1)/2)
 
 	return &domain.ConfidenceInterval{
-		Lower: Round(lower, 4),
-		Upper: Round(upper, 4),
+		Lower: Round(max(-1, kappas[tail]), 4),
+		Upper: Round(min(1, kappas[m-1-tail]), 4),
 		Level: confidenceLevel,
 	}
 }

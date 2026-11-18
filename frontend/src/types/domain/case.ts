@@ -159,18 +159,12 @@ export interface ConfidenceInterval {
 export type KappaWeightType = 'linear' | 'quadratic';
 
 /**
- * Agreement metrics for a classification system
+ * Agreement metrics for a classification system in one case.
+ * percent_agreement is the share (0-100) of responses that gave the most common answer.
  */
 export interface SystemAgreement {
   system: string;
   percent_agreement: number;
-  cohens_kappa?: number;
-  cohens_kappa_ci?: ConfidenceInterval;
-  weighted_kappa?: number;
-  weighted_kappa_type?: KappaWeightType;
-  fleiss_kappa?: number;
-  fleiss_kappa_note?: string;
-  confusion_matrix?: Record<string, Record<string, number>>;
   category_counts: Record<string, number>;
 }
 

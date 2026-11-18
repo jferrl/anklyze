@@ -2,6 +2,7 @@ package statistics
 
 import (
 	"math"
+	"strings"
 
 	"github.com/jferrl/anklyze/internal/domain"
 )
@@ -13,15 +14,23 @@ var AOOTAOrdering = []string{
 	"44-C1", "44-C2", "44-C3",
 }
 
+// AOOTAGroup reduces an AO/OTA subgroup code to its group, e.g. "44-B1.2" to "44-B1".
+// A code without a subgroup is returned unchanged.
+func AOOTAGroup(code string) string {
+	group, _, _ := strings.Cut(code, ".")
+	return group
+}
+
 // WeightedKappa calculates weighted Cohen's Kappa for ordinal categories.
 // The ordering parameter defines the order of categories (e.g., ["44-A1", "44-A2", "44-B1"...]).
 // weightType can be "linear" or "quadratic".
 // Linear: w_ij = 1 - |i-j|/(k-1)
 // Quadratic: w_ij = 1 - (i-j)²/(k-1)²
-func WeightedKappa(ratings [][2]string, ordering []string, weightType domain.KappaWeightType) (float64, error) {
+// A pair with a category outside ordering is left out; excluded is how many were.
+func WeightedKappa(ratings [][2]string, ordering []string, weightType domain.KappaWeightType) (kappa float64, excluded int) {
 	n := len(ratings)
 	if n < 1 || len(ordering) < 2 {
-		return 0, nil
+		return 0, 0
 	}
 
 	// Create index map for ordering
@@ -69,8 +78,9 @@ func WeightedKappa(ratings [][2]string, ordering []string, weightType domain.Kap
 		}
 	}
 
+	excluded = n - validPairs
 	if validPairs == 0 {
-		return 0, nil
+		return 0, excluded
 	}
 
 	nFloat := float64(validPairs)
@@ -93,9 +103,8 @@ func WeightedKappa(ratings [][2]string, ordering []string, weightType domain.Kap
 
 	// Weighted Kappa formula: K_w = (P_o - P_e) / (1 - P_e)
 	if pe >= 1 {
-		return 1.0, nil
+		return 1.0, excluded
 	}
 
-	kappa := (po - pe) / (1 - pe)
-	return kappa, nil
+	return (po - pe) / (1 - pe), excluded
 }

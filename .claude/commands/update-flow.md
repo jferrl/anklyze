@@ -42,7 +42,6 @@ The application uses a **frontend-first translation approach**:
 - **Backend**: Returns only codes/keys for all responses:
   - Classification results: `"type": "Weber A"`, `"fracture_type": "unimaleolar_lateral"`
   - Error responses: `"error_code": "invalid_input"`, `"error_code": "classification_error"`
-  - Statistical notes: `"fleiss_kappa_note": "fleiss_kappa_single_case_limitation"` (translation key)
 - **Frontend**: Translates all codes client-side using local i18n files:
   - Classification descriptions: via `frontend/src/utils/classificationTranslations.ts`
   - Error messages: via `errors.*` keys in `frontend/src/i18n/en.json` and `es.json`

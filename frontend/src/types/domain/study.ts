@@ -1,5 +1,5 @@
 import type { Case } from './case';
-import type { ConfidenceInterval } from './case';
+import type { ConfidenceInterval, KappaWeightType } from './case';
 
 /**
  * Study status lifecycle
@@ -37,11 +37,33 @@ export interface StudyWithCases extends Study {
 export interface FleissKappaResult {
   kappa: number;
   interpretation: string;
-  num_subjects: number;   // Number of cases
+  num_subjects: number;   // Cases used: every complete rater answered them
   num_raters: number;     // Number of complete raters
   num_categories: number;
+  num_cases_excluded: number; // Cases left out: a complete rater gave no answer in this system
+  confidence_interval?: ConfidenceInterval; // Percentile bootstrap over cases
+}
+
+/**
+ * Weighted Cohen's Kappa of AO/OTA codes, compared by group (44-B1.2 counts as 44-B1)
+ */
+export interface WeightedKappaResult {
+  kappa: number;
+  type: KappaWeightType;
+  num_pairs: number;          // Case pairs used
+  num_pairs_excluded: number; // Pairs with a code outside the AO/OTA ordering
+}
+
+/**
+ * Cohen's Kappa between two raters across the cases of a study
+ */
+export interface CohensKappaResult {
+  kappa: number;
+  interpretation: string;
+  num_subjects: number;       // Cases both raters answered
+  num_cases_excluded: number; // Cases where either rater gave no answer
   confidence_interval?: ConfidenceInterval;
-  note?: string;
+  weighted_kappa?: WeightedKappaResult; // AO/OTA only
 }
 
 /**
@@ -74,5 +96,10 @@ export interface StudyReliabilityMetrics {
   lauge_hansen_fleiss?: FleissKappaResult;
   ao_ota_fleiss?: FleissKappaResult;
   bartonicek_fleiss?: FleissKappaResult;
+  // Present only when exactly 2 raters completed the study
+  danis_weber_cohen?: CohensKappaResult;
+  lauge_hansen_cohen?: CohensKappaResult;
+  ao_ota_cohen?: CohensKappaResult;
+  bartonicek_cohen?: CohensKappaResult;
   per_case_metrics: CaseMetrics[];
 }

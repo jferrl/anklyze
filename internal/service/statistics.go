@@ -1,6 +1,9 @@
 package service
 
 import (
+	"bytes"
+	"slices"
+
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/statistics"
@@ -45,15 +48,12 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 }
 
 // calculateSystemAgreement calculates agreement metrics for a single classification system.
+// It reports no kappa: one case gives each rater a single rating, so kappa could only be 1 or 0.
 func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResponse, system string) *domain.SystemAgreement {
-	// Single pass: extract classifications and group by user simultaneously
 	var classifications []string
-	uniqueUsers := make(map[string][]string)
 	for _, r := range responses {
-		cat := s.getClassificationForSystem(r, system)
-		if cat != "" {
+		if cat := s.getClassificationForSystem(r, system); cat != "" {
 			classifications = append(classifications, cat)
-			uniqueUsers[r.UserID.String()] = append(uniqueUsers[r.UserID.String()], cat)
 		}
 	}
 
@@ -61,64 +61,11 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 		return nil
 	}
 
-	agreement := &domain.SystemAgreement{
-		System:         system,
-		CategoryCounts: statistics.CategoryCounts(classifications),
+	return &domain.SystemAgreement{
+		System:           system,
+		CategoryCounts:   statistics.CategoryCounts(classifications),
+		PercentAgreement: statistics.PercentAgreement(classifications) * 100,
 	}
-
-	// Calculate percent agreement (mode frequency / total)
-	if len(classifications) > 1 {
-		agreement.PercentAgreement = statistics.PercentAgreement(classifications) * 100
-	} else {
-		agreement.PercentAgreement = 100
-	}
-
-	numRaters := len(uniqueUsers)
-	if numRaters == 2 {
-		// Cohen's Kappa for 2 raters
-		// Use the most recent (latest) response from each user
-		var raters []string
-		for userID := range uniqueUsers {
-			raters = append(raters, userID)
-		}
-		if len(uniqueUsers[raters[0]]) > 0 && len(uniqueUsers[raters[1]]) > 0 {
-			// Use last response (most recent) instead of first
-			lastIdx0 := len(uniqueUsers[raters[0]]) - 1
-			lastIdx1 := len(uniqueUsers[raters[1]]) - 1
-			ratings := [][2]string{
-				{uniqueUsers[raters[0]][lastIdx0], uniqueUsers[raters[1]][lastIdx1]},
-			}
-			kappa, ci, _ := statistics.CohensKappaWithCI(ratings, 0.95)
-			agreement.CohensKappa = &kappa
-			agreement.CohensKappaCI = ci
-
-			// For AO/OTA, also calculate weighted Kappa (ordinal categories)
-			if system == "ao_ota" {
-				weightType := domain.KappaWeightLinear
-				weightedKappa, _ := statistics.WeightedKappa(ratings, statistics.AOOTAOrdering, weightType)
-				agreement.WeightedKappa = &weightedKappa
-				agreement.WeightedKappaType = &weightType
-			}
-		}
-	} else if numRaters > 2 {
-		// Fleiss' Kappa for multiple raters
-		// NOTE: Fleiss' Kappa requires multiple subjects (cases) to be meaningful.
-		// Current case design has a single case, so we cannot properly calculate
-		// inter-rater reliability using Fleiss' Kappa.
-		//
-		// The formula requires a matrix where:
-		// - Each ROW = one subject (case/patient)
-		// - Each COLUMN = one category
-		// - Each cell = count of raters choosing that category for that subject
-		//
-		// With only 1 subject, we can only calculate within-case agreement,
-		// not across-case reliability. Return translation key for frontend to display.
-		noteKey := "fleiss_kappa_single_case_limitation"
-		agreement.FleissKappaNote = &noteKey
-		// FleissKappa remains nil
-	}
-
-	return agreement
 }
 
 // ============================================================================
@@ -126,7 +73,7 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 // ============================================================================
 
 // CalculateStudyReliabilityMetrics calculates reliability metrics across multiple cases in a study.
-// This enables proper Fleiss' Kappa calculation which requires multiple subjects (cases).
+// Fleiss' Kappa needs at least 2 complete raters; Cohen's Kappa is added when there are exactly 2.
 func (s *StatisticsService) CalculateStudyReliabilityMetrics(
 	study *domain.Study,
 	cases []domain.Case,
@@ -158,13 +105,17 @@ func (s *StatisticsService) CalculateStudyReliabilityMetrics(
 		CompleteRaters: int64(len(completeRaters)),
 	}
 
-	// Calculate Fleiss' Kappa for each classification system
-	// Requires at least 2 complete raters
 	if len(completeRaters) >= 2 {
 		metrics.DanisWeberFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "danis_weber")
 		metrics.LaugeHansenFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "lauge_hansen")
 		metrics.AOOTAFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "ao_ota")
 		metrics.BartonicekFleiss = s.calculateFleissForSystem(cases, responsesByCase, completeRaters, "bartonicek")
+	}
+	if len(completeRaters) == 2 {
+		metrics.DanisWeberCohen = s.calculateCohenForSystem(cases, responsesByCase, completeRaters, "danis_weber")
+		metrics.LaugeHansenCohen = s.calculateCohenForSystem(cases, responsesByCase, completeRaters, "lauge_hansen")
+		metrics.AOOTACohen = s.calculateCohenForSystem(cases, responsesByCase, completeRaters, "ao_ota")
+		metrics.BartonicekCohen = s.calculateCohenForSystem(cases, responsesByCase, completeRaters, "bartonicek")
 	}
 
 	// Calculate per-case metrics
@@ -173,7 +124,7 @@ func (s *StatisticsService) CalculateStudyReliabilityMetrics(
 	return metrics, nil
 }
 
-// identifyCompleteRaters finds raters who completed ALL cases in the study.
+// identifyCompleteRaters finds raters who completed ALL cases in the study, in a stable order.
 func (s *StatisticsService) identifyCompleteRaters(
 	cases []domain.Case,
 	responsesByCase map[uuid.UUID][]domain.CaseResponse,
@@ -199,97 +150,138 @@ func (s *StatisticsService) identifyCompleteRaters(
 			completeRaters = append(completeRaters, userID)
 		}
 	}
+	slices.SortFunc(completeRaters, func(a, b uuid.UUID) int { return bytes.Compare(a[:], b[:]) })
 
 	return completeRaters
 }
 
+// completeCaseRatings returns one row per case that every rater answered in system, in the order
+// of raters, and how many cases it dropped. Fleiss' Kappa needs equal ratings per case, and
+// dropping the case rather than the rater keeps each rater's other answers (see
+// docs/RELIABILITY_ANALYSIS.md 4.3). The last response counts if a rater answered a case twice.
+func (s *StatisticsService) completeCaseRatings(
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
+	raters []uuid.UUID,
+	system string,
+) (rows [][]string, excluded int) {
+	for _, c := range cases {
+		latest := make(map[uuid.UUID]string, len(raters))
+		for _, r := range responsesByCase[c.ID] {
+			latest[r.UserID] = s.getClassificationForSystem(r, system)
+		}
+
+		row := make([]string, len(raters))
+		answered := true
+		for i, id := range raters {
+			row[i] = latest[id]
+			answered = answered && row[i] != ""
+		}
+		if answered {
+			rows = append(rows, row)
+		} else {
+			excluded++
+		}
+	}
+	return rows, excluded
+}
+
 // calculateFleissForSystem builds the Fleiss' Kappa matrix and calculates the statistic.
-// Matrix format: matrix[subject][category] = count of raters who assigned that category
+// Matrix format: matrix[subject][category] = count of raters who assigned that category.
+// It returns nil when fewer than 2 cases were answered by every rater.
 func (s *StatisticsService) calculateFleissForSystem(
 	cases []domain.Case,
 	responsesByCase map[uuid.UUID][]domain.CaseResponse,
 	completeRaters []uuid.UUID,
 	system string,
 ) *domain.FleissKappaResult {
-	// Create a set of complete rater IDs for quick lookup
-	completeRaterSet := make(map[uuid.UUID]bool)
-	for _, raterID := range completeRaters {
-		completeRaterSet[raterID] = true
-	}
-
-	// Collect all unique categories across all cases
-	allCategories := make(map[string]bool)
-	for _, c := range cases {
-		responses := responsesByCase[c.ID]
-		for _, r := range responses {
-			if !completeRaterSet[r.UserID] {
-				continue // Only include complete raters
-			}
-			cat := s.getClassificationForSystem(r, system)
-			if cat != "" {
-				allCategories[cat] = true
-			}
-		}
-	}
-
-	if len(allCategories) == 0 {
+	rows, excluded := s.completeCaseRatings(cases, responsesByCase, completeRaters, system)
+	if len(rows) < 2 {
 		return nil
 	}
 
-	// Create ordered category list
+	// Sorted so the matrix, and with it the bootstrap interval, is the same on every run.
 	var categories []string
-	for cat := range allCategories {
-		categories = append(categories, cat)
+	for _, row := range rows {
+		categories = append(categories, row...)
 	}
+	slices.Sort(categories)
+	categories = slices.Compact(categories)
 
-	// Create category index map
-	catIndex := make(map[string]int)
-	for i, cat := range categories {
-		catIndex[cat] = i
-	}
-
-	numSubjects := len(cases)
-	numCategories := len(categories)
-	numRaters := len(completeRaters)
-
-	// Build the matrix: matrix[subject][category] = count
-	matrix := make([][]int, numSubjects)
-	for i := range matrix {
-		matrix[i] = make([]int, numCategories)
-	}
-
-	// Fill the matrix
-	for subjectIdx, c := range cases {
-		responses := responsesByCase[c.ID]
-		for _, r := range responses {
-			if !completeRaterSet[r.UserID] {
-				continue
-			}
-			cat := s.getClassificationForSystem(r, system)
-			if cat != "" {
-				if catIdx, ok := catIndex[cat]; ok {
-					matrix[subjectIdx][catIdx]++
-				}
-			}
+	matrix := make([][]int, len(rows))
+	for i, row := range rows {
+		matrix[i] = make([]int, len(categories))
+		for _, cat := range row {
+			idx, _ := slices.BinarySearch(categories, cat)
+			matrix[i][idx]++
 		}
 	}
 
-	// Calculate Fleiss' Kappa
+	numRaters := len(completeRaters)
 	kappa, err := statistics.FleissKappa(matrix, numRaters)
 	if err != nil {
 		return nil
 	}
 
-	result := domain.NewFleissKappaResult(kappa, numSubjects, numRaters, numCategories)
+	result := domain.NewFleissKappaResult(kappa, len(rows), numRaters, len(categories))
+	result.NumCasesExcluded = excluded
+	result.ConfidenceInterval = statistics.FleissKappaCI(matrix, numRaters, 0.95)
+	return result
+}
 
-	// Add confidence interval if we have enough data
-	// Using the standard error approximation for Fleiss' Kappa
-	if numSubjects >= 2 && numRaters >= 2 {
-		ci := statistics.FleissKappaCI(matrix, numRaters, kappa, 0.95)
-		result.ConfidenceInterval = ci
+// calculateCohenForSystem calculates Cohen's Kappa between the two raters across the cases
+// both answered in system, plus AO/OTA weighted kappa. It returns nil when fewer than
+// 2 cases were answered by both.
+func (s *StatisticsService) calculateCohenForSystem(
+	cases []domain.Case,
+	responsesByCase map[uuid.UUID][]domain.CaseResponse,
+	raters []uuid.UUID,
+	system string,
+) *domain.CohensKappaResult {
+	rows, excluded := s.completeCaseRatings(cases, responsesByCase, raters, system)
+	if len(rows) < 2 {
+		return nil
 	}
 
+	pairs := make([][2]string, len(rows))
+	for i, row := range rows {
+		pairs[i] = [2]string{row[0], row[1]}
+	}
+
+	kappa, ci, _ := statistics.CohensKappaWithCI(pairs, 0.95)
+	result := &domain.CohensKappaResult{
+		Kappa:              kappa,
+		Interpretation:     domain.KappaInterpretation(kappa),
+		NumSubjects:        len(rows),
+		NumCasesExcluded:   excluded,
+		ConfidenceInterval: ci,
+	}
+	if system == "ao_ota" {
+		result.WeightedKappa = weightedAOOTAKappa(pairs)
+	}
 	return result
+}
+
+// weightedAOOTAKappa is the linear weighted kappa of AO/OTA codes compared by group
+// (44-B1.2 counts as 44-B1). Pairs still outside the ordering are excluded and counted;
+// it returns nil with fewer than 2 pairs left.
+func weightedAOOTAKappa(pairs [][2]string) *domain.WeightedKappaResult {
+	grouped := make([][2]string, len(pairs))
+	for i, p := range pairs {
+		grouped[i] = [2]string{statistics.AOOTAGroup(p[0]), statistics.AOOTAGroup(p[1])}
+	}
+
+	weightType := domain.KappaWeightLinear
+	kappa, excluded := statistics.WeightedKappa(grouped, statistics.AOOTAOrdering, weightType)
+	if len(pairs)-excluded < 2 {
+		return nil
+	}
+	return &domain.WeightedKappaResult{
+		Kappa:            kappa,
+		Type:             weightType,
+		NumPairs:         len(pairs) - excluded,
+		NumPairsExcluded: excluded,
+	}
 }
 
 // getClassificationForSystem extracts the classification value for a given system from a response.

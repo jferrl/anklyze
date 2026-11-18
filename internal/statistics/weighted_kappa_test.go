@@ -1,6 +1,7 @@
 package statistics
 
 import (
+	"math"
 	"testing"
 
 	"github.com/jferrl/anklyze/internal/domain"
@@ -18,10 +19,7 @@ func TestWeightedKappa_PerfectAgreement(t *testing.T) {
 		{"D", "D"},
 	}
 
-	kappa, err := WeightedKappa(ratings, ordering, domain.KappaWeightLinear)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	kappa, _ := WeightedKappa(ratings, ordering, domain.KappaWeightLinear)
 
 	if kappa != 1.0 {
 		t.Errorf("expected weighted kappa = 1.0 for perfect agreement, got %v", kappa)
@@ -112,10 +110,7 @@ func TestWeightedKappa_EmptyRatings(t *testing.T) {
 
 	ordering := []string{"A", "B", "C"}
 
-	kappa, err := WeightedKappa([][2]string{}, ordering, domain.KappaWeightLinear)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	kappa, _ := WeightedKappa([][2]string{}, ordering, domain.KappaWeightLinear)
 
 	if kappa != 0 {
 		t.Errorf("expected kappa = 0 for empty ratings, got %v", kappa)
@@ -131,10 +126,7 @@ func TestWeightedKappa_ShortOrdering(t *testing.T) {
 		{"A", "A"},
 	}
 
-	kappa, err := WeightedKappa(ratings, ordering, domain.KappaWeightLinear)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	kappa, _ := WeightedKappa(ratings, ordering, domain.KappaWeightLinear)
 
 	if kappa != 0 {
 		t.Errorf("expected kappa = 0 for single-category ordering, got %v", kappa)
@@ -162,5 +154,81 @@ func TestWeightedKappa_QuadraticVsLinear(t *testing.T) {
 	if kappaQuadratic >= kappaLinear {
 		t.Errorf("quadratic kappa (%v) should be <= linear kappa (%v) when extreme disagreements are present",
 			kappaQuadratic, kappaLinear)
+	}
+}
+
+func TestAOOTAGroup(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct{ code, want string }{
+		{"44-B1.2", "44-B1"},
+		{"44-A1.3", "44-A1"},
+		{"44-C3.1", "44-C3"},
+		{"44-B1", "44-B1"},
+		{"44-A3.2", "44-A3"},
+		{"43-B1", "43-B1"},
+		{"not_classifiable", "not_classifiable"},
+		{"", ""},
+	}
+	for _, tt := range tests {
+		if got := AOOTAGroup(tt.code); got != tt.want {
+			t.Errorf("AOOTAGroup(%q) = %q, want %q", tt.code, got, tt.want)
+		}
+	}
+}
+
+// Hand computed on the AO/OTA ordering (k = 8, linear weight 1 - |i-j|/7):
+// pairs (B1,B1) (B2,B3) (C1,C3) (B1,A1) have weights 1, 6/7, 5/7, 5/7, so Po = 23/28.
+// Marginals: rater 1 B1 .5, B2 .25, C1 .25; rater 2 A1, B1, B3, C3 .25 each, so Pe = 37/56.
+// kappa_w = (23/28 - 37/56) / (1 - 37/56) = 9/19. The pairs (A3,A1) and (43-B1,B1) are outside the ordering.
+func TestWeightedKappa_AOOTAHandComputedWithExclusions(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{
+		{"44-B1", "44-B1"},
+		{"44-B2", "44-B3"},
+		{"44-A3", "44-A1"},
+		{"44-C1", "44-C3"},
+		{"43-B1", "44-B1"},
+		{"44-B1", "44-A1"},
+	}
+
+	kappa, excluded := WeightedKappa(ratings, AOOTAOrdering, domain.KappaWeightLinear)
+
+	if excluded != 2 {
+		t.Errorf("excluded = %d, want 2", excluded)
+	}
+	if want := 9.0 / 19.0; math.Abs(kappa-want) > 1e-12 {
+		t.Errorf("kappa = %v, want %v", kappa, want)
+	}
+}
+
+func TestWeightedKappa_AllPairsExcluded(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{{"44-A3", "44-A3"}, {"not_classifiable", "44-B1"}}
+
+	kappa, excluded := WeightedKappa(ratings, AOOTAOrdering, domain.KappaWeightLinear)
+
+	if kappa != 0 || excluded != 2 {
+		t.Errorf("got kappa %v, excluded %d; want 0, 2", kappa, excluded)
+	}
+}
+
+// Quadratic weights 1 - (i-j)^2/9 on A..D: pairs (A,A) (B,C) (D,D) (A,C) have weights 1, 8/9, 1, 5/9, so Po = 31/36.
+// Marginals: rater 1 A .5, B .25, D .25; rater 2 A .25, C .5, D .25, so Pe = 19/72 + 29/144 + 25/144 = 23/36.
+// kappa_w = (31/36 - 23/36) / (1 - 23/36) = 8/13.
+func TestWeightedKappa_QuadraticHandComputed(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{{"A", "A"}, {"B", "C"}, {"D", "D"}, {"A", "C"}}
+
+	kappa, excluded := WeightedKappa(ratings, []string{"A", "B", "C", "D"}, domain.KappaWeightQuadratic)
+
+	if excluded != 0 {
+		t.Errorf("excluded = %d, want 0", excluded)
+	}
+	if want := 8.0 / 13.0; math.Abs(kappa-want) > 1e-12 {
+		t.Errorf("kappa = %v, want %v", kappa, want)
 	}
 }

@@ -275,3 +275,57 @@ func TestCohensKappaWithCI_DifferentConfidenceLevels(t *testing.T) {
 		t.Errorf("expected CI level 0.99, got %v", ci99.Level)
 	}
 }
+
+// Doc example, 100 cases: Po = 0.88, Pe = 0.452, kappa = 0.428 / 0.548 = 0.7810.
+// SE = sqrt(0.88 * 0.12 / (100 * 0.548^2)) = 0.05930, so the 95% CI is 0.7810 +/- 1.96 * 0.05930 = [0.6648, 0.8972].
+func TestCohensKappaWithCI_HandComputed(t *testing.T) {
+	t.Parallel()
+
+	var ratings [][2]string
+	add := func(n int, a, b string) {
+		for range n {
+			ratings = append(ratings, [2]string{a, b})
+		}
+	}
+	add(20, "A", "A")
+	add(5, "A", "B")
+	add(3, "B", "A")
+	add(55, "B", "B")
+	add(2, "B", "C")
+	add(2, "C", "B")
+	add(13, "C", "C")
+
+	kappa, ci, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if want := 0.428 / 0.548; kappa < want-1e-9 || kappa > want+1e-9 {
+		t.Errorf("kappa = %v, want %v", kappa, want)
+	}
+	if ci == nil {
+		t.Fatal("expected confidence interval, got nil")
+	}
+	if ci.Lower < 0.6647 || ci.Lower > 0.6649 || ci.Upper < 0.8971 || ci.Upper > 0.8973 {
+		t.Errorf("CI = [%v, %v], want about [0.6648, 0.8972]", ci.Lower, ci.Upper)
+	}
+}
+
+// Po = 0.7, Pe = 0.6*0.5 + 0.4*0.5 = 0.5, kappa = 0.4. SE = sqrt(0.7 * 0.3 / (10 * 0.25)) = 0.2898,
+// so the interval is 0.4 +/- 0.5681 = [-0.1681, 0.9681].
+func TestCohensKappaWithCI_NegativeLowerBound(t *testing.T) {
+	t.Parallel()
+
+	ratings := [][2]string{
+		{"A", "A"}, {"A", "A"}, {"A", "A"}, {"A", "A"},
+		{"B", "B"}, {"B", "B"}, {"B", "B"},
+		{"A", "B"}, {"A", "B"},
+		{"B", "A"},
+	}
+
+	kappa, ci, _ := CohensKappaWithCI(ratings, 0.95)
+
+	if kappa < 0.4-1e-9 || kappa > 0.4+1e-9 {
+		t.Errorf("kappa = %v, want 0.4", kappa)
+	}
+	if ci == nil || ci.Lower != -0.1681 || ci.Upper != 0.9681 {
+		t.Errorf("CI = %+v, want [-0.1681, 0.9681]", ci)
+	}
+}

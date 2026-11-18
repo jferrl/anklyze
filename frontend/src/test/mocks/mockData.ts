@@ -186,17 +186,11 @@ export const mockReliabilityMetrics: ReliabilityMetrics = {
   danis_weber_agreement: {
     system: 'Danis-Weber',
     percent_agreement: 0.85,
-    cohens_kappa: 0.78,
-    cohens_kappa_ci: { lower: 0.72, upper: 0.84, level: 0.95 },
-    fleiss_kappa: 0.75,
     category_counts: { 'Weber A': 5, 'Weber B': 40, 'Weber C': 5 },
   },
   lauge_hansen_agreement: {
     system: 'Lauge-Hansen',
     percent_agreement: 0.72,
-    cohens_kappa: 0.65,
-    cohens_kappa_ci: { lower: 0.58, upper: 0.72, level: 0.95 },
-    fleiss_kappa: 0.62,
     category_counts: { 'SA': 3, 'SER': 38, 'PER': 7, 'PA': 2 },
   },
 }

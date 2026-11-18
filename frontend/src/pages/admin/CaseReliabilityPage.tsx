@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { caseApi, downloadDetailedResponsesCSV } from '@/services';
-import { KappaScoresSection } from './components/KappaScoresSection';
+import { CaseAgreementSection } from './components/CaseAgreementSection';
 import { DetailedSystemAnalysis } from './components/DetailedSystemAnalysis';
 import { useRecordTitle } from '@/components/layout/recordTitle';
 
@@ -99,7 +99,7 @@ export function CaseReliabilityPage() {
           <StatCard title={t('admin.reliability.uniqueRaters')} value={metrics.unique_raters} />
         </StatGroup>
 
-        <KappaScoresSection metrics={metrics} />
+        <CaseAgreementSection metrics={metrics} />
 
         <DetailedSystemAnalysis metrics={metrics} />
     </div>
