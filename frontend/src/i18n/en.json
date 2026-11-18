@@ -460,7 +460,7 @@
       "posterior": "Posterior",
       "noWebGL": "This browser cannot show 3D (WebGL 2 is off or unsupported), so the drawing stays.",
       "loadFailed": "The 3D model could not be loaded, so the drawing is shown.",
-      "views": "3D model of a right ankle: distal tibia and fibula, talus and the top of the calcaneus.",
+      "views": "3D model of a right ankle: the distal tibia and fibula and the talus.",
       "empty": "3D model of a right ankle. No malleolus selected yet."
     }
   },

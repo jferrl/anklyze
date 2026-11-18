@@ -14,6 +14,8 @@ interface Band {
 /** AnkleModel is the decoded ankle.bin: bones in millimetres, origin at the plafond, +y up, +z anterior, +x medial. */
 export interface AnkleModel {
   syndesmosis: number;
+  /** The malleolus regions as half-spaces, in mm: each lies below its top; medial is medial of medialX, posterior behind posteriorZ and lateral of medialX. */
+  regions: { lateralTop: number; medialTop: number; medialX: number; posteriorTop: number; posteriorZ: number };
   bands: Record<Exclude<FibulaMark, 'proximal'>, Band>;
   proximal: { x: number; z: number; y: [number, number] };
   parts: { name: string; positions: Float32Array; index: Uint16Array; region: Uint8Array }[];
@@ -33,6 +35,7 @@ export function parseAnkleModel(buffer: ArrayBuffer): AnkleModel {
 
   return {
     syndesmosis: manifest.syndesmosis,
+    regions: manifest.regions,
     bands: manifest.bands,
     proximal: manifest.proximal,
     parts: manifest.parts.map((p) => {

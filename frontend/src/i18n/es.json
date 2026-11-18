@@ -460,7 +460,7 @@
       "posterior": "Posterior",
       "noWebGL": "Este navegador no puede mostrar 3D (WebGL 2 está desactivado o no es compatible); se mantiene el dibujo.",
       "loadFailed": "No se pudo cargar el modelo 3D; se muestra el dibujo.",
-      "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales, astrágalo y parte superior del calcáneo.",
+      "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales y astrágalo.",
       "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo."
     }
   },

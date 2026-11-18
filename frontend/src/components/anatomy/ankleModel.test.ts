@@ -13,8 +13,8 @@ const ys = (name: string, region: number) => {
 };
 
 describe('parseAnkleModel', () => {
-  it('decodes the four bones with in-range indices', () => {
-    expect(model.parts.map((p) => p.name)).toEqual(['tibia', 'fibula', 'talus', 'calcaneus']);
+  it('decodes the three bones with in-range indices', () => {
+    expect(model.parts.map((p) => p.name)).toEqual(['tibia', 'fibula', 'talus']);
     for (const p of model.parts) {
       expect(Math.max(...p.index)).toBeLessThan(p.positions.length / 3);
     }
@@ -26,6 +26,19 @@ describe('parseAnkleModel', () => {
       expect(y.length).toBeGreaterThan(20);
       expect(Math.max(...y)).toBeLessThan(13);
     }
+  });
+
+  it('keeps the region planes in agreement with the vertex tags', () => {
+    const { medialTop, medialX, posteriorTop, posteriorZ } = model.regions;
+    const tibia = part('tibia');
+    tibia.region.forEach((r, i) => {
+      const [x, y, z] = tibia.positions.subarray(i * 3, i * 3 + 3);
+      // Quantisation moves a vertex by at most 0.025 mm, so a vertex on a plane may land either side.
+      if ([x - medialX, y - medialTop, y - posteriorTop, z - posteriorZ].some((d) => Math.abs(d) < 0.05)) return;
+      const medial = y < medialTop && x > medialX;
+      const posterior = y < posteriorTop && z < posteriorZ && x <= medialX;
+      expect(r).toBe(medial ? Region.medial : posterior ? Region.posterior : Region.none);
+    });
   });
 
   it('puts the medial malleolus medial to the fibula, as on a right ankle', () => {

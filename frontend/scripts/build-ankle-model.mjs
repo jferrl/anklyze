@@ -2,7 +2,7 @@
 //
 //   node scripts/build-ankle-model.mjs [objDir]
 //
-// Without objDir it fetches the four OBJ files from the BodyParts3D archive with HTTP range
+// Without objDir it fetches the three OBJ files from the BodyParts3D archive with HTTP range
 // requests (the archive is 547 MB) and checks their SHA-256 before using them.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -18,7 +18,6 @@ const SOURCES = {
   tibia: ['FMA24477', 'd2cfed2382f0d92ee3274cc4726eab66ac833a8dd4d24f7bb06d34eca5e7652c'],
   fibula: ['FMA24480', '0ba91890776c95639cdebbe586b00e0c5415aafbea888ac25fc0d4b3316627e0'],
   talus: ['FMA24482', '5c2d64a1b5fbb17373919b994c2fe1ede1629f9164b499fe4c509a9cd75b1cac'],
-  calcaneus: ['FMA24497', '349c090c09ec501850b257b4aba6949e04dfffdbef2b0491c6a1807c8dbc2482'],
 };
 
 // Region codes stored per vertex; the viewer highlights them from the answers.
@@ -37,31 +36,29 @@ const talus = bounds(raw.talus.pos);
 const dome = [(talus.min[0] + talus.max[0]) / 2, (talus.min[2] + talus.max[2]) / 2];
 const plafond = Math.min(...verts(raw.tibia.pos).filter((v) => Math.hypot(v[0] - dome[0], v[2] - dome[1]) < 8).map((v) => v[1]));
 const cut = plafond + SHAFT_MM;
-const calcTop = bounds(raw.calcaneus.pos).max[1];
 
 const parts = {
   tibia: await prepare(clip(raw.tibia, cut, -1), 0.9),
   fibula: await prepare(clip(raw.fibula, cut, -1), 0.9),
   talus: await prepare(raw.talus, 0.75),
-  // Only the upper calcaneus, for context: the posterior facet and the top of the tuberosity.
-  calcaneus: await prepare(clip(raw.calcaneus, calcTop - 22, 1), 0.6),
 };
 
-// Distal tibia landmarks for the regions, measured on the cut tibia.
+// Distal tibia landmarks for the regions, measured on the cut tibia. The regions are half-spaces,
+// so the viewer can draw their boundaries per pixel; the per-vertex tags place the labels.
 const tib = verts(parts.tibia.pos);
 const low = tib.filter((v) => v[1] < plafond + 12);
 const lowB = bounds(low.flat());
 const medialEdge = talus.max[0] - 4; // medial to the medial talar facet
 const posteriorEdge = lowB.min[2] + (lowB.max[2] - lowB.min[2]) * 0.3;
+const TOP = { lateral: 2, medial: 4, posterior: 12 }; // mm above the plafond
 
 parts.tibia.region = tib.map(([x, y, z]) => {
-  if (y < plafond + 4 && x > medialEdge) return REGION.medial;
-  if (y < plafond + 12 && z < posteriorEdge && x <= medialEdge) return REGION.posterior;
+  if (y < plafond + TOP.medial && x > medialEdge) return REGION.medial;
+  if (y < plafond + TOP.posterior && z < posteriorEdge && x <= medialEdge) return REGION.posterior;
   return REGION.none;
 });
-parts.fibula.region = verts(parts.fibula.pos).map(([, y]) => (y < plafond + 2 ? REGION.lateral : REGION.none));
+parts.fibula.region = verts(parts.fibula.pos).map(([, y]) => (y < plafond + TOP.lateral ? REGION.lateral : REGION.none));
 parts.talus.region = verts(parts.talus.pos).map(() => REGION.none);
-parts.calcaneus.region = verts(parts.calcaneus.pos).map(() => REGION.none);
 
 // Top of the syndesmosis: the lowest level above the plafond where the fibula stands clear of the
 // tibia by more than 4 mm.
@@ -112,6 +109,7 @@ const manifest = {
   quant: { min: min.map(round), step: STEP_MM },
   plafond: 0,
   syndesmosis: round(syndesmosis - plafond),
+  regions: { lateralTop: TOP.lateral, medialTop: TOP.medial, medialX: round(medialEdge - origin[0]), posteriorTop: TOP.posterior, posteriorZ: round(posteriorEdge - origin[2]) },
   bands: Object.fromEntries(Object.entries(bands).map(([k, b]) => [k, { ...b, center: [round(b.center[0] - origin[0]), round(b.center[1] - origin[2])] }])),
   proximal: { ...proximal, x: round(proximal.x - origin[0]), z: round(proximal.z - origin[2]) },
   parts: [],
@@ -188,7 +186,7 @@ async function fetchArchive() {
     checkHash(hit[1][0], buf, hit[1][1]);
     out[hit[0]] = buf.toString('utf8');
   }
-  if (Object.keys(out).length !== 4) throw new Error('archive is missing a bone');
+  if (Object.keys(out).length !== Object.keys(SOURCES).length) throw new Error('archive is missing a bone');
   return out;
 }
 
