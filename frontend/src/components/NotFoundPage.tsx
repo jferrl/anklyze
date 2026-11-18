@@ -20,7 +20,7 @@ export function NotFoundPage() {
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/80">{t('errors.pageNotFoundBody')}</p>
           <Link
             to="/"
-            className="mt-8 inline-flex h-11 items-center rounded-md bg-white px-5 text-sm font-semibold text-[oklch(0.25_0.09_262)] transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="mt-8 inline-flex h-11 items-center rounded-md bg-white px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             {t('auth.backToHome')}
           </Link>
