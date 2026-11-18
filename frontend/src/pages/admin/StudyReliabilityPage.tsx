@@ -140,7 +140,6 @@ export function StudyReliabilityPage() {
           actions={
             <>
               <Button
-                variant="outline"
                 disabled={exporting !== null}
                 onClick={() =>
                   runExport('figures', () =>
@@ -152,6 +151,7 @@ export function StudyReliabilityPage() {
                 {t('admin.studies.reliability.export.figures')}
               </Button>
               <Button
+                variant="outline"
                 disabled={exporting !== null}
                 onClick={() =>
                   runExport('responses', () => studyApi.downloadStudyResponsesCSV(id!, `${slug}_responses_${today}.csv`))
