@@ -436,6 +436,11 @@ func (h *StudyHandler) CloseStudy(c *gin.Context) {
 		return
 	}
 
+	if study.Status != domain.StudyStatusActive {
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only active studies can be closed")
+		return
+	}
+
 	if err := h.studyRepo.Close(c.Request.Context(), id); err != nil {
 		HandleError(c, err, "Failed to close study")
 		return
