@@ -80,6 +80,14 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
+	// A case belongs to at most one study (Case.StudyID); closing it ends responses.
+	if cs.StudyID != nil && h.studyService != nil {
+		if err := h.studyService.ValidateAcceptingResponses(c.Request.Context(), *cs.StudyID); err != nil {
+			HandleError(c, err, "Cannot submit response")
+			return
+		}
+	}
+
 	var req SubmitResponseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})

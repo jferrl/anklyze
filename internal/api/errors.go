@@ -57,6 +57,8 @@ func HandleError(c *gin.Context, err error, fallbackMsg string) {
 		status, code, message = http.StatusForbidden, domain.ErrCodeDeadlinePassed, err.Error()
 	case errors.Is(err, domain.ErrCaseNotAcceptingResponses):
 		status, code, message = http.StatusForbidden, domain.ErrCodeCaseNotAcceptingResponses, err.Error()
+	case errors.Is(err, domain.ErrStudyClosed):
+		status, code, message = http.StatusForbidden, domain.ErrCodeStudyClosed, err.Error()
 	case errors.Is(err, domain.ErrAlreadyResponded):
 		status, code, message = http.StatusConflict, domain.ErrCodeAlreadyResponded, err.Error()
 	case errors.Is(err, domain.ErrNotStudyMember):

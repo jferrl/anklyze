@@ -10,6 +10,7 @@ import {
   submitCaseResponse,
   getMyResponses,
   classifyFracture,
+  ForbiddenError,
 } from '@/services';
 import type { FractureInput, ClassificationResult } from '@/types';
 import type { UserCaseDetail } from '@/types';
@@ -152,7 +153,13 @@ function CaseDetailContent({ id }: { id: string | undefined }) {
       queryClient.invalidateQueries({ queryKey: ['case-navigation'] });
     },
     onError: (err) => {
-      const errorMessage = err instanceof Error ? err.message : t('cases.submitResponseError');
+      // 403 codes (STUDY_CLOSED, DEADLINE_PASSED, ...) have translations under errors.*
+      const errorMessage =
+        err instanceof ForbiddenError && err.code
+          ? t(`errors.${err.code}`, { defaultValue: err.message })
+          : err instanceof Error
+            ? err.message
+            : t('cases.submitResponseError');
       setSubmitState({ status: 'error', error: errorMessage });
       toast.error(t('cases.submitError'), {
         description: errorMessage,

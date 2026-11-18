@@ -22,6 +22,7 @@ type StudyService interface {
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
 	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
 	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
+	ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error
 }
 
 // StatisticsService calculates reliability metrics.
