@@ -5,12 +5,21 @@ import { Button } from './ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { Logo } from './Logo';
+import { AnklePlate, StepBadge } from './AnklePlate';
 
 const REPO_URL = 'https://github.com/jferrl/anklyze';
 // The decision table in the reader's language; Spanish is the draw.io's own.
 const decisionTableUrl = (language: string) =>
   `${REPO_URL}/blob/main/docs/decision_table${language.startsWith('en') ? '.en' : ''}.txt`;
 const METHODOLOGY_URL = `${REPO_URL}/blob/main/docs/RELIABILITY_ANALYSIS.md`;
+const FIGURE_SOURCE_URL = 'https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg';
+const CC_BY_URL = 'https://creativecommons.org/licenses/by/4.0/';
+
+// Hero figure, once on load (ms): each answer lands at its step, the plate marks answers 1 and 2
+// as they land, and the four codes resolve last. Total under 1.6s; see .fig-in in index.css.
+const STEP_AT = [100, 400, 700, 850, 1000];
+const CODES_AT = 1250;
+const at = (ms: number) => ({ '--at': `${ms}ms` }) as React.CSSProperties;
 
 // One real terminal path of the decision tree (docs/decision_table.txt, lateral branch).
 const EXAMPLE_PATH = [
@@ -66,7 +75,7 @@ export function LandingPage() {
       <main>
         <section className="field-navy">
           <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:py-20">
-            <div className="lg:col-span-7 lg:pt-4">
+            <div className="lg:col-span-6 lg:pt-4">
               <h1 className="font-display text-[clamp(2.25rem,4.6vw,4.25rem)]">{t('landing.hero.title')}</h1>
               <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/80">{t('landing.hero.lede')}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -83,36 +92,59 @@ export function LandingPage() {
               </div>
             </div>
 
-            <figure className="lg:col-span-5">
-              <ol className="border border-white/25">
-                {EXAMPLE_PATH.map(([question, answer], i) => (
-                  <li key={question} className="grid grid-cols-[2.5rem_1fr] border-b border-white/25">
-                    <span className="flex items-center justify-center border-r border-white/25 text-sm tabular-nums text-white/60">
-                      {i + 1}
-                    </span>
-                    <div className="px-4 py-3">
-                      <p className="text-sm text-white/65">{t(question)}</p>
-                      <p className="path-answer mt-0.5 font-medium" style={{ '--step': i } as React.CSSProperties}>
-                        {t(answer)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-                <li className="grid grid-cols-2 gap-px bg-sheet-rule text-sheet-ink sm:grid-cols-4 lg:grid-cols-2">
+            <figure data-landing-figure className="lg:col-span-6 lg:self-center">
+              <div className="fig-sheet rounded-md bg-sheet text-sheet-ink">
+                <div className="px-3 sm:px-4">
+                  <AnklePlate lateralAt={STEP_AT[0]} levelAt={STEP_AT[1]} />
+                </div>
+                <ol className="border-t border-sheet-rule">
+                  {EXAMPLE_PATH.map(([question, answer], i) => (
+                    <li key={question} className="grid grid-cols-[2.5rem_1fr] border-b border-sheet-rule">
+                      <span className="flex items-center justify-center border-r border-sheet-rule text-sm tabular-nums text-sheet-muted">
+                        {i < 2 ? <StepBadge n={i + 1} atMs={STEP_AT[i]} /> : i + 1}
+                      </span>
+                      <div className="px-4 py-2">
+                        <p className="text-xs text-sheet-muted">{t(question)}</p>
+                        <p className="fig-in text-sm font-medium" style={at(STEP_AT[i])}>
+                          {t(answer)}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <div className="grid grid-cols-2 gap-px overflow-hidden rounded-b-md bg-sheet-rule sm:grid-cols-4">
                   {SYSTEMS.map((s) => (
-                    <div key={s.key} className="bg-sheet px-4 py-4">
+                    <div key={s.key} className="bg-sheet px-4 py-3">
                       <p className="flex items-center gap-1.5 text-xs text-sheet-muted">
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
-                      <p className="path-result font-display mt-2 text-2xl" data-numeric>
+                      <p className="fig-in font-display mt-1.5 text-2xl" style={at(CODES_AT)} data-numeric>
                         {s.code ?? <span className="text-sheet-muted">N/C</span>}
                       </p>
                     </div>
                   ))}
-                </li>
-              </ol>
-              <figcaption className="mt-3 text-sm text-white/65">{t('landing.example.caption')}</figcaption>
+                </div>
+              </div>
+              <figcaption className="mt-3 text-sm text-white/70">
+                {t('landing.figure.caption')}
+                <details className="mt-1 text-xs text-white/60">
+                  <summary className="w-fit cursor-pointer underline decoration-white/30 underline-offset-4 hover:text-white">
+                    {t('landing.figure.sources')}
+                  </summary>
+                  <p className="mt-1.5 max-w-[60ch]">
+                    {t('landing.figure.creditPrefix')}{' '}
+                    <a href={FIGURE_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-white/40 hover:decoration-white">
+                      ‘Weber Classification – latin.svg’
+                    </a>{' '}
+                    {t('landing.figure.creditBy')}{' '}
+                    <a href={CC_BY_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-white/40 hover:decoration-white">
+                      CC BY 4.0
+                    </a>
+                    . {t('landing.figure.changes')}
+                  </p>
+                </details>
+              </figcaption>
             </figure>
           </div>
         </section>

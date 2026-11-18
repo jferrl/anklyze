@@ -52,8 +52,19 @@
       "lede": "Anklyze es una herramienta de código abierto para clasificar fracturas de tobillo. Sigue un único árbol de decisión: responda lo que ve en la radiografía y obtendrá a la vez las clasificaciones de Lauge-Hansen, Danis-Weber, AO/OTA y Bartonicek.",
       "secondary": "Leer el método"
     },
-    "example": {
-      "caption": "Ejemplo: fractura aislada de maléolo lateral, leída a través del árbol. N/C indica que el sistema no es aplicable."
+    "figure": {
+      "label": "Dibujo lineal de un tobillo derecho en proyección frontal: tibia distal, peroné y astrágalo, con los maléolos medial y lateral señalados. La marca 1 resalta el maléolo lateral; la marca 2 abarca el nivel de la sindesmosis, donde una fractura oblicua del peroné separa el maléolo lateral (Weber B).",
+      "caption": "Fig. Weber B, SER, 44-B1.1: fractura aislada del maléolo lateral a nivel de la sindesmosis, leída a través del árbol. N/C: el sistema no es aplicable.",
+      "sources": "Fuentes",
+      "creditPrefix": "Dibujo adaptado de",
+      "creditBy": "de DrFO.Tn, Wikimedia Commons,",
+      "changes": "Cambios: solo el panel Weber B, redibujado con tinta plana y contorno sin ligamentos, recortado y rotulado.",
+      "tibia": "Tibia",
+      "fibula": "Peroné",
+      "talus": "Astrágalo",
+      "syndesmosis": "Sindesmosis",
+      "lateral": "Maléolo lateral",
+      "medial": "Maléolo medial"
     },
     "method": {
       "title": "Método",

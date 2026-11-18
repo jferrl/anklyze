@@ -260,18 +260,33 @@
     animation: bar-grow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Landing hero, once on load: the example path's answers fill in step by step
-     (--step 0..4), then the four codes resolve together. Explains one set of
-     answers -> four classifications; opacity only, about 1s in all. */
-  .path-answer {
+  /* Landing hero figure, once on load (timeline in LandingPage.tsx): the plate is there from the
+     first frame; answers and their marks fade in at --at, the fracture line draws along its length. */
+  .fig-in {
     animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--step) * 120ms);
+    animation-delay: var(--at);
   }
 
-  .path-result {
-    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 760ms;
+  /* pathLength="1"; the 2-unit gap keeps a round cap from dotting the path end before it draws. */
+  @keyframes fig-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
   }
+
+  .fig-draw {
+    stroke-dasharray: 1 2;
+    animation: fig-draw 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--at);
+  }
+}
+
+/* Plate tones from the sheet tokens, so they hold on white and on the dark theme's warm paper. */
+.fig-sheet {
+  --bone: color-mix(in oklab, var(--field-ink) 6%, var(--sheet));
+  --bone-line: color-mix(in oklab, var(--sheet-muted) 80%, var(--sheet));
+  --cartilage: color-mix(in oklab, var(--sheet-muted) 13%, var(--sheet));
+  --hl: var(--field-ink);
+  --hl-fill: color-mix(in oklab, var(--field-ink) 22%, var(--sheet));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -281,8 +296,8 @@
   }
 
   /* The global rule keeps animation delays, which would hide the hero content. */
-  .path-answer,
-  .path-result {
+  .fig-in,
+  .fig-draw {
     animation: none !important;
   }
 }
@@ -295,15 +310,19 @@
 
 /* The one saturated field of the landing page; it stays navy in both themes. */
 .field-navy {
-  background: oklch(0.27 0.09 262);
+  --field-navy: oklch(0.27 0.09 262);
+  background: var(--field-navy);
   color: oklch(0.985 0.003 255);
 }
 .dark .field-navy {
-  background: oklch(0.22 0.065 262);
+  --field-navy: oklch(0.22 0.065 262);
 }
 
 /* Results and reliability pages get printed for papers and case notes. */
 @media print {
+  .fig-in, .fig-draw {
+    animation: none !important;
+  }
   [data-slot="sidebar"], [data-slot="sidebar-container"], [data-slot="sidebar-gap"], header.sticky, [data-sonner-toaster], button {
     display: none !important;
   }

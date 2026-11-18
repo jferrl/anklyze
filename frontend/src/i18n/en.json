@@ -52,8 +52,19 @@
       "lede": "Anklyze is an open-source tool for classifying ankle fractures. It follows a single decision tree: answer what you see on the radiograph and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartonicek classifications together.",
       "secondary": "Read the method"
     },
-    "example": {
-      "caption": "Example: an isolated lateral malleolus fracture, read through the tree. N/C means the system does not apply."
+    "figure": {
+      "label": "Line drawing of a right ankle in frontal view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. Mark 1 highlights the lateral malleolus; mark 2 brackets the level of the syndesmosis, where an oblique fibular fracture separates the lateral malleolus (Weber B).",
+      "caption": "Fig. Weber B, SER, 44-B1.1: an isolated lateral malleolus fracture at the level of the syndesmosis, read through the tree. N/C: the system does not apply.",
+      "sources": "Sources",
+      "creditPrefix": "Drawing adapted from",
+      "creditBy": "by DrFO.Tn, Wikimedia Commons,",
+      "changes": "Changes: Weber B panel only, redrawn as flat tint and outline without ligaments, cropped and labelled.",
+      "tibia": "Tibia",
+      "fibula": "Fibula",
+      "talus": "Talus",
+      "syndesmosis": "Syndesmosis",
+      "lateral": "Lateral malleolus",
+      "medial": "Medial malleolus"
     },
     "method": {
       "title": "Method",
