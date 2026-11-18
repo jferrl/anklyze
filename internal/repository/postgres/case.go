@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jferrl/anklyze/internal/domain"
 	"gorm.io/gorm"
 )
@@ -364,10 +365,24 @@ func NewCaseResponseRepository(db *gorm.DB) *CaseResponseRepository {
 	return &CaseResponseRepository{db: db}
 }
 
-// Save persists a case response and updates case counters.
+// caseResponseUniqueIndex is created by migration 000011.
+const caseResponseUniqueIndex = "idx_case_responses_case_user_unique"
+
+// mapCaseResponseError turns a unique violation on (case_id, user_id) into
+// domain.ErrAlreadyResponded, so a racing duplicate gets the same 409 as the pre-check.
+func mapCaseResponseError(err error) error {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" && pgErr.ConstraintName == caseResponseUniqueIndex {
+		return domain.ErrAlreadyResponded
+	}
+	return err
+}
+
+// Save persists a case response and updates case counters. It returns
+// domain.ErrAlreadyResponded if the user already has a response for the case.
 func (r *CaseResponseRepository) Save(ctx context.Context, response *domain.CaseResponse) error {
 	if err := r.db.WithContext(ctx).Create(response).Error; err != nil {
-		return fmt.Errorf("save case response: %w", err)
+		return fmt.Errorf("save case response: %w", mapCaseResponseError(err))
 	}
 
 	r.updateCaseCounters(ctx, response.CaseID)

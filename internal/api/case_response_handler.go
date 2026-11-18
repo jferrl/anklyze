@@ -123,8 +123,7 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 	}
 
 	if err := h.responseRepo.Save(c.Request.Context(), response); err != nil {
-		slog.Error("failed to save response", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save response"})
+		HandleError(c, err, "failed to save response")
 		return
 	}
 
