@@ -107,25 +107,23 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		return
 	}
 
-	// The server is the authority: store the engine's result for the submitted
-	// answers and reject a client copy that differs.
-	if len(req.AnswerPath) == 0 {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "answer_path is required"})
+	// The server is the authority: classify the form's final state and store the
+	// engine's result, rejecting a client copy that differs. answer_path is analytics only.
+	if err := validate.Struct(req.Input); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":  "invalid input",
+			"fields": validationFieldErrors(err),
+		})
 		return
 	}
-	input, err := domain.FractureInputFromAnswers(req.AnswerPath, cs.HasTACImages)
+	expected, err := h.classifier.Classify(c.Request.Context(), req.Input)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "invalid answer_path", "details": err.Error()})
+		slog.Error("failed to classify submitted input", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to classify input"})
 		return
 	}
-	expected, err := h.classifier.Classify(c.Request.Context(), input)
-	if err != nil {
-		slog.Error("failed to classify submitted answers", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to classify answers"})
-		return
-	}
-	if expected.FractureType == "none_selected" || !expected.SameClassification(req.Classification) {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "classification does not match the submitted answers"})
+	if !expected.SameClassification(req.Classification) {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "classification does not match the submitted input"})
 		return
 	}
 	req.Classification = *expected

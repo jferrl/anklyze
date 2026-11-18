@@ -45,13 +45,8 @@ func answers(kv ...string) []domain.QuestionAnswer {
 	return out
 }
 
-// engineResult classifies the same answers the server will rebuild.
-func engineResult(t *testing.T, hasCT bool, path []domain.QuestionAnswer) domain.ClassificationResult {
+func engineResult(t *testing.T, in domain.FractureInput) domain.ClassificationResult {
 	t.Helper()
-	in, err := domain.FractureInputFromAnswers(path, hasCT)
-	if err != nil {
-		t.Fatal(err)
-	}
 	res, err := rules.NewEngine().Classify(in)
 	if err != nil {
 		t.Fatal(err)
@@ -86,18 +81,24 @@ func submit(t *testing.T, hasTAC bool, body SubmitResponseRequest) (*httptest.Re
 func TestSubmitResponse_ValidatesClassification(t *testing.T) {
 	t.Parallel()
 
-	infra := answers("involved_malleoli", "lateral_only", "fibular_level", "infrasindesmal")
-	supra := answers("involved_malleoli", "lateral_only", "fibular_level", "suprasindesmal")
-	repeated := append(append([]domain.QuestionAnswer{}, infra...), answers("fibular_level", "suprasindesmal")...)
-	posterior := answers("involved_malleoli", "posterior_only", "articular_involvement", "small_without_extension", "posterior_fracture_type", "posterolateral")
-
-	infraRes := engineResult(t, false, infra)
-	supraRes := engineResult(t, false, supra)
-	if infraRes.SameClassification(supraRes) {
-		t.Fatal("test paths must classify differently")
+	ptr := func(b bool) *bool { return &b }
+	infra := domain.FractureInput{InvolvedMalleoli: domain.InvolvedLateralOnly, FibularLevel: domain.FibularLevelInfrasindesmal}
+	supra := domain.FractureInput{InvolvedMalleoli: domain.InvolvedLateralOnly, FibularLevel: domain.FibularLevelSuprasindesmal}
+	postNoCT := domain.FractureInput{
+		InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
+		ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
+		PosteriorFractureType: domain.PosteriorPosterolateral,
+		HasCTScan:             ptr(false),
 	}
-	postCT := engineResult(t, true, posterior)
-	if postCT.SameClassification(engineResult(t, false, posterior)) {
+	postCT := postNoCT
+	postCT.HasCTScan = ptr(true)
+
+	infraRes, supraRes := engineResult(t, infra), engineResult(t, supra)
+	if infraRes.SameClassification(supraRes) {
+		t.Fatal("test inputs must classify differently")
+	}
+	postNoCTRes, postCTRes := engineResult(t, postNoCT), engineResult(t, postCT)
+	if postNoCTRes.SameClassification(postCTRes) {
 		t.Fatal("CT must change the posterior result")
 	}
 
@@ -105,30 +106,34 @@ func TestSubmitResponse_ValidatesClassification(t *testing.T) {
 	unknownCode.DanisWeber = &domain.DanisWeberClassification{Type: "Weber Z"}
 	withNotes := supraRes
 	withNotes.Notes = []string{"forged"}
+	badEnum := supra
+	badEnum.FibularLevel = "nope"
+
+	// Stale answers: the rater first answered infrasindesmal, then went back.
+	stale := answers("involved_malleoli", "lateral_only", "fibular_level", "infrasindesmal", "bogus", "x")
 
 	tests := []struct {
 		name   string
 		hasTAC bool
-		path   []domain.QuestionAnswer
-		result domain.ClassificationResult
+		req    SubmitResponseRequest
 		want   int
 	}{
-		{"valid is stored", false, supra, supraRes, http.StatusCreated},
-		{"unknown code rejected", false, supra, unknownCode, http.StatusUnprocessableEntity},
-		{"valid codes that do not follow from answers rejected", false, supra, infraRes, http.StatusUnprocessableEntity},
-		{"repeated question uses last answer", false, repeated, supraRes, http.StatusCreated},
-		{"repeated question first answer rejected", false, repeated, infraRes, http.StatusUnprocessableEntity},
-		{"missing answer path rejected", false, nil, supraRes, http.StatusUnprocessableEntity},
-		{"unknown question rejected", false, answers("involved_malleoli", "lateral_only", "bogus", "x"), supraRes, http.StatusUnprocessableEntity},
-		{"unknown involved_malleoli rejected", false, answers("involved_malleoli", "nope"), engineResult(t, false, answers("involved_malleoli", "nope")), http.StatusUnprocessableEntity},
-		{"CT comes from the case images", true, posterior, postCT, http.StatusCreated},
-		{"CT result rejected for a case without TAC", false, posterior, postCT, http.StatusUnprocessableEntity},
-		{"client-only fields are not stored", false, supra, withNotes, http.StatusCreated},
+		{"valid is stored", false, SubmitResponseRequest{Input: supra, Classification: supraRes}, http.StatusCreated},
+		{"unknown code rejected", false, SubmitResponseRequest{Input: supra, Classification: unknownCode}, http.StatusUnprocessableEntity},
+		{"valid codes that do not follow from the input rejected", false, SubmitResponseRequest{Input: supra, Classification: infraRes}, http.StatusUnprocessableEntity},
+		{"unknown enum value rejected", false, SubmitResponseRequest{Input: badEnum, Classification: supraRes}, http.StatusUnprocessableEntity},
+		{"missing input rejected", false, SubmitResponseRequest{Classification: supraRes}, http.StatusUnprocessableEntity},
+		{"stale answer_path does not matter", false, SubmitResponseRequest{Input: supra, Classification: supraRes, AnswerPath: stale}, http.StatusCreated},
+		{"stale answer_path does not rescue a mismatch", false, SubmitResponseRequest{Input: supra, Classification: infraRes, AnswerPath: stale}, http.StatusUnprocessableEntity},
+		{"CT comes from the input, not the case", false, SubmitResponseRequest{Input: postCT, Classification: postCTRes}, http.StatusCreated},
+		{"CT in the input wins over a case with TAC", true, SubmitResponseRequest{Input: postNoCT, Classification: postNoCTRes}, http.StatusCreated},
+		{"CT result for a no-CT input rejected", true, SubmitResponseRequest{Input: postNoCT, Classification: postCTRes}, http.StatusUnprocessableEntity},
+		{"client-only fields are not stored", false, SubmitResponseRequest{Input: supra, Classification: withNotes}, http.StatusCreated},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			w, repo := submit(t, tt.hasTAC, SubmitResponseRequest{Classification: tt.result, AnswerPath: tt.path})
+			w, repo := submit(t, tt.hasTAC, tt.req)
 			if w.Code != tt.want {
 				t.Fatalf("status = %d, want %d: %s", w.Code, tt.want, w.Body)
 			}
@@ -145,7 +150,7 @@ func TestSubmitResponse_ValidatesClassification(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !got.SameClassification(tt.result) || len(got.Notes) != 0 {
+			if !got.SameClassification(tt.req.Classification) || len(got.Notes) != 0 {
 				t.Errorf("stored %+v, want engine result without client notes", got)
 			}
 		})
