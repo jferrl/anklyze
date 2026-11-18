@@ -182,7 +182,7 @@
       },
       "medialMorphologyLM": {
         "vertical": "Vertical",
-        "transverse_oblique": "Transverso/oblicuo/avulsión/abierta la mortaja"
+        "transverse_oblique": "Transverso/oblicuo/avulsión/abierta mortaja"
       },
       "fibularLevel": {
         "infrasindesmal": "Infrasindesmal",
@@ -234,8 +234,8 @@
         "conminuta": "Conminuta/ala de mariposa"
       },
       "infrasindesmalMorphology": {
-        "avulsion": "Avulsión de la punta del maleolo",
-        "malleolus_fracture": "Fractura de maleolo lateral"
+        "avulsion": "Avulsión de la punta del maléolo",
+        "malleolus_fracture": "Fractura de maléolo lateral"
       },
       "infrasindesmalMorphologyLMTri": {
         "avulsion": "Avulsión",
@@ -243,7 +243,7 @@
       },
       "lateralSubtype": {
         "simple": "Fractura simple",
-        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+        "syndesmosis_rupture": "Asocia rotura de sindesmosis anterior (Tillaux/Wagstaffe)"
       },
       "medialSubtype": {
         "open_mortise": "Abierta la mortaja",

@@ -15,7 +15,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("lateral_medial_1/Maleolos_lateral_y_medial_Vertical_S", func(t *testing.T) {
+	t.Run("lateral_medial_1/Mal_olos_lateral_y_medial_Vertical_S", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:               domain.InvolvedLateralMedial,
 			MedialMorphology:               domain.MedialMorphologyVertical,
@@ -61,7 +61,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_2/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
+	t.Run("lateral_medial_2/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -110,7 +110,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_3/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
+	t.Run("lateral_medial_3/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -159,7 +159,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_4/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
+	t.Run("lateral_medial_4/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -208,7 +208,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_5/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
+	t.Run("lateral_medial_5/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -257,7 +257,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_6/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
+	t.Run("lateral_medial_6/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -306,7 +306,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_7/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
+	t.Run("lateral_medial_7/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -355,7 +355,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_8/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
+	t.Run("lateral_medial_8/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -404,7 +404,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_9/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
+	t.Run("lateral_medial_9/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Multifragmentaria_ala_de_mariposa_P", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralMedial,
 			MedialMorphology:   domain.MedialMorphologyTransverse,
@@ -453,7 +453,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_10/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Proximal_1_3_proximal_peron_No", func(t *testing.T) {
+	t.Run("lateral_medial_10/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Proximal_1_3_proximal_peron_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:        domain.InvolvedLateralMedial,
 			MedialMorphology:        domain.MedialMorphologyTransverse,
@@ -501,7 +501,7 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_medial_11/Maleolos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Proximal_1_3_proximal_peron_Si", func(t *testing.T) {
+	t.Run("lateral_medial_11/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Suprasindesmal_Proximal_1_3_proximal_peron_Si", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:        domain.InvolvedLateralMedial,
 			MedialMorphology:        domain.MedialMorphologyTransverse,
@@ -549,23 +549,439 @@ func TestDrawio_LateralMedial(t *testing.T) {
 		}
 	})
 
-	// SKIPPED lateral_medial_12: 'Avulsión'
+	t.Run("lateral_medial_12/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Infrasindesmal_Avulsi_n", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralMedial,
+			MedialMorphology:         domain.MedialMorphologyTransverse,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A2.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA2_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA2_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_13: 'Transversa'
+	t.Run("lateral_medial_13/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Infrasindesmal_Transversa", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralMedial,
+			MedialMorphology:         domain.MedialMorphologyTransverse,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A2.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA2_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA2_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_14: '1'
+	t.Run("lateral_medial_14/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_Oblicua_baja_medial_alta_lateral_o", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_15: '1'
+	t.Run("lateral_medial_15/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_Oblicua_baja_medial_alta_lateral_o", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_16: '1'
+	t.Run("lateral_medial_16/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_Espiroidea_baja_anterior_alta_post", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_17: '1'
+	t.Run("lateral_medial_17/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_Espiroidea_baja_anterior_alta_post", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_18: '>1'
+	t.Run("lateral_medial_18/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_La_direcci_n_del_trazo_principal_e", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologyOblique,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_19: '>1'
+	t.Run("lateral_medial_19/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_La_direcci_n_del_trazo_principal_e", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologySpiral,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_medial_20: '>1'
+	t.Run("lateral_medial_20/Mal_olos_lateral_y_medial_Transverso_oblicuo_avulsi_n_abierta_mortaja_Transindesmal_1_Conminuta_ala_de_mariposa", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralMedial,
+			MedialMorphology:  domain.MedialMorphologyTransverse,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologyConminuta,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_medial" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_medial")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B2.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB2_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB2_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
 	_ = boolTrue
 	_ = boolFalse
@@ -576,7 +992,7 @@ func TestDrawio_LateralOnly(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("lateral_only_1/Maleolo_lateral_Suprasindesmal_Proximal_1_3_proximal_de_peron", func(t *testing.T) {
+	t.Run("lateral_only_1/Mal_olo_lateral_Suprasindesmal_Proximal_1_3_proximal_de_peron", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralOnly,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -622,7 +1038,7 @@ func TestDrawio_LateralOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_only_2/Maleolo_lateral_Suprasindesmal_Diafisaria_Simple_Parasindesmal_de_trazo_oblicuo_largo_espiroideo_a_de_6cm_de_la_superfic", func(t *testing.T) {
+	t.Run("lateral_only_2/Mal_olo_lateral_Suprasindesmal_Diafisaria_Simple_Parasindesmal_de_trazo_oblicuo_largo_espiroideo_a_de_6cm_de_la_superfic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralOnly,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -669,7 +1085,7 @@ func TestDrawio_LateralOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_only_3/Maleolo_lateral_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_oblicuo_corto_t", func(t *testing.T) {
+	t.Run("lateral_only_3/Mal_olo_lateral_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_oblicuo_corto_t", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralOnly,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -716,7 +1132,7 @@ func TestDrawio_LateralOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_only_4/Maleolo_lateral_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo", func(t *testing.T) {
+	t.Run("lateral_only_4/Mal_olo_lateral_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralOnly,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -763,7 +1179,7 @@ func TestDrawio_LateralOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_only_5/Maleolo_lateral_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superficie_articula", func(t *testing.T) {
+	t.Run("lateral_only_5/Mal_olo_lateral_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superficie_articula", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralOnly,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -810,21 +1226,383 @@ func TestDrawio_LateralOnly(t *testing.T) {
 		}
 	})
 
-	// SKIPPED lateral_only_6: Unknown lateral morphology label: Avulsión de la punta del maleolo
+	t.Run("lateral_only_6/Mal_olo_lateral_Infrasindesmal_Avulsi_n_de_la_punta_del_mal_olo", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralOnly,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A1.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA1_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA1_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_7: Unknown lateral morphology label: Fractura de maleolo lateral
+	t.Run("lateral_only_7/Mal_olo_lateral_Infrasindesmal_Fractura_de_mal_olo_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedLateralOnly,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A1.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA1_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA1_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_8: '1'
+	t.Run("lateral_only_8/Mal_olo_lateral_Transindesmal_1_Espiroidea_baja_anterior_alta_posterior_Fractura_simple", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			LateralSubtype:    domain.LateralSubtypeSimple,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_9: '1'
+	t.Run("lateral_only_9/Mal_olo_lateral_Transindesmal_1_Espiroidea_baja_anterior_alta_posterior_Asocia_rotura_de_sindesmosis_anterior_Tillaux_Wa", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			LateralSubtype:    domain.LateralSubtypeSyndesmosisRupture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_10: '1'
+	t.Run("lateral_only_10/Mal_olo_lateral_Transindesmal_1_Oblicua_baja_medial_alta_lateral_o_transversa_Fractura_simple", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			LateralSubtype:    domain.LateralSubtypeSimple,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_11: '1'
+	t.Run("lateral_only_11/Mal_olo_lateral_Transindesmal_1_Oblicua_baja_medial_alta_lateral_o_transversa_Asocia_rotura_de_sindesmosis_anterior_Till", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			LateralSubtype:    domain.LateralSubtypeSyndesmosisRupture,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_12: '>1'
+	t.Run("lateral_only_12/Mal_olo_lateral_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_posterior", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologySpiral,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
-	// SKIPPED lateral_only_13: '>1'
+	t.Run("lateral_only_13/Mal_olo_lateral_Transindesmal_1_Conminuta_varios_fragmentos_sin_direcci_n_clara", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralOnly,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologyConminuta,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "unimaleolar_lateral" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_lateral")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B1.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB1_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB1_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want no_posterior_fracture")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNoPosteriorFracture {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNoPosteriorFracture)
+		}
+	})
 
 	_ = boolTrue
 	_ = boolFalse
@@ -835,23 +1613,385 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	// SKIPPED lateral_posterior_1: Unknown lateral morphology label: La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos
+	t.Run("lateral_posterior_1/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_espiroidea_baja_anterior_alta_posterior_pero_puede_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED lateral_posterior_2: Unknown lateral morphology label: La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos
+	t.Run("lateral_posterior_2/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_espiroidea_baja_anterior_alta_posterior_pero_puede_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED lateral_posterior_3: Unknown lateral morphology label: La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos
+	t.Run("lateral_posterior_3/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_espiroidea_baja_anterior_alta_posterior_pero_puede_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED lateral_posterior_4: Unknown lateral morphology label: La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos
+	t.Run("lateral_posterior_4/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_espiroidea_baja_anterior_alta_posterior_pero_puede_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED lateral_posterior_5: Unknown lateral morphology label: La dirección principal es oblicua (baja medial, alta lateral) o transversa
+	t.Run("lateral_posterior_5/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_oblicua_baja_medial_alta_lateral_o_transversa_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		// AO not asserted: drawio says "AO clasificable" without a code.
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED lateral_posterior_6: Unknown lateral morphology label: La dirección principal es oblicua (baja medial, alta lateral) o transversa
+	t.Run("lateral_posterior_6/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_oblicua_baja_medial_alta_lateral_o_transversa_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED lateral_posterior_7: Unknown lateral morphology label: La dirección principal es oblicua (baja medial, alta lateral) o transversa
+	t.Run("lateral_posterior_7/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_oblicua_baja_medial_alta_lateral_o_transversa_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED lateral_posterior_8: Unknown lateral morphology label: La dirección principal es oblicua (baja medial, alta lateral) o transversa
+	t.Run("lateral_posterior_8/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_oblicua_baja_medial_alta_lateral_o_transversa_S_Gra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	t.Run("lateral_posterior_9/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_9/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -900,7 +2040,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_10/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_10/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -949,7 +2089,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_11/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_11/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -998,7 +2138,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_12/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_12/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1047,7 +2187,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_13/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
+	t.Run("lateral_posterior_13/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1096,7 +2236,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_14/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
+	t.Run("lateral_posterior_14/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1145,7 +2285,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_15/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
+	t.Run("lateral_posterior_15/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1194,7 +2334,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_16/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
+	t.Run("lateral_posterior_16/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1243,7 +2383,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_17/Maleolos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_extraincisural", func(t *testing.T) {
+	t.Run("lateral_posterior_17/Mal_olos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_extraincisural", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1291,7 +2431,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_18/Maleolos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_18/Mal_olos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1339,7 +2479,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_19/Maleolos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_19/Mal_olos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1387,7 +2527,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_20/Maleolos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_20/Mal_olos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1435,9 +2575,54 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	// SKIPPED lateral_posterior_21: Unknown lateral morphology label: La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos
+	t.Run("lateral_posterior_21/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_espiroidea_baja_anterior_alta_posterior_pero_puede_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralPosterior,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	t.Run("lateral_posterior_22/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
+	t.Run("lateral_posterior_22/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_superficie_artic", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralPosterior,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -1485,7 +2670,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_23/Maleolos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_No", func(t *testing.T) {
+	t.Run("lateral_posterior_23/Mal_olos_lateral_y_posterior_Suprasindesmal_Proximal_1_3_proximal_de_peron_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralPosterior,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -1532,7 +2717,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_24/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_24/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralPosterior,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -1580,7 +2765,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_25/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_25/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1629,7 +2814,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_26/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_26/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1678,7 +2863,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_27/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_27/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1727,7 +2912,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_28/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_28/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1776,7 +2961,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_29/Maleolos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
+	t.Run("lateral_posterior_29/Mal_olos_lateral_y_posterior_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular_de_trazo_ob", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralPosterior,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -1824,7 +3009,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_30/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
+	t.Run("lateral_posterior_30/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedLateralPosterior,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -1872,7 +3057,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_31/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
+	t.Run("lateral_posterior_31/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1921,7 +3106,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_32/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
+	t.Run("lateral_posterior_32/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -1970,7 +3155,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_33/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
+	t.Run("lateral_posterior_33/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -2019,7 +3204,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_34/Maleolos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
+	t.Run("lateral_posterior_34/Mal_olos_lateral_y_posterior_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_de_la_superf", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -2068,9 +3253,54 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	// SKIPPED lateral_posterior_35: Unknown lateral morphology label: La dirección principal es oblicua (baja medial, alta lateral) o transversa
+	t.Run("lateral_posterior_35/Mal_olos_lateral_y_posterior_Transindesmal_La_direcci_n_principal_es_oblicua_baja_medial_alta_lateral_o_transversa_No", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedLateralPosterior,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "bimaleolar_lateral_posterior" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "bimaleolar_lateral_posterior")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	t.Run("lateral_posterior_36/Maleolos_lateral_y_posterior_Infrasindesmal_No", func(t *testing.T) {
+	t.Run("lateral_posterior_36/Mal_olos_lateral_y_posterior_Infrasindesmal_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli: domain.InvolvedLateralPosterior,
 			FibularLevel:     domain.FibularLevelInfrasindesmal,
@@ -2116,7 +3346,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_37/Maleolos_lateral_y_posterior_Infrasindesmal_S_Fragmento_extraincisural_posterior", func(t *testing.T) {
+	t.Run("lateral_posterior_37/Mal_olos_lateral_y_posterior_Infrasindesmal_S_Fragmento_extraincisural_posterior", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelInfrasindesmal,
@@ -2163,7 +3393,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_38/Maleolos_lateral_y_posterior_Infrasindesmal_S_Fragmento_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_38/Mal_olos_lateral_y_posterior_Infrasindesmal_S_Fragmento_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelInfrasindesmal,
@@ -2210,7 +3440,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_39/Maleolos_lateral_y_posterior_Infrasindesmal_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_39/Mal_olos_lateral_y_posterior_Infrasindesmal_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelInfrasindesmal,
@@ -2257,7 +3487,7 @@ func TestDrawio_LateralPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("lateral_posterior_40/Maleolos_lateral_y_posterior_Infrasindesmal_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+	t.Run("lateral_posterior_40/Mal_olos_lateral_y_posterior_Infrasindesmal_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedLateralPosterior,
 			FibularLevel:          domain.FibularLevelInfrasindesmal,
@@ -2313,7 +3543,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("medial_only_1/Maleolo_medial_No_Vertical", func(t *testing.T) {
+	t.Run("medial_only_1/Mal_olo_medial_No_Vertical", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:     domain.InvolvedMedialOnly,
 			ArticularInvolvement: domain.ArticularSmallWithoutExtension,
@@ -2330,7 +3560,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
+			t.Fatal("DanisWeber is nil, want not_classifiable")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
@@ -2359,7 +3589,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_only_2/Maleolo_medial_No_Transverso_oblicuo", func(t *testing.T) {
+	t.Run("medial_only_2/Mal_olo_medial_No_Transverso_oblicuo", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:     domain.InvolvedMedialOnly,
 			ArticularInvolvement: domain.ArticularSmallWithoutExtension,
@@ -2376,14 +3606,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "unimaleolar_medial")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
+			t.Fatal("DanisWeber is nil, want not_classifiable")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2405,7 +3635,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_only_3/Maleolo_medial_S_S", func(t *testing.T) {
+	t.Run("medial_only_3/Mal_olo_medial_S_S", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedMedialOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -2422,14 +3652,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
+			t.Fatal("DanisWeber is nil, want not_classifiable")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2451,7 +3681,7 @@ func TestDrawio_MedialOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_only_4/Maleolo_medial_S_No", func(t *testing.T) {
+	t.Run("medial_only_4/Mal_olo_medial_S_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedMedialOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -2468,14 +3698,14 @@ func TestDrawio_MedialOnly(t *testing.T) {
 			t.Errorf("FractureType = %q, want %q", result.FractureType, "distal_tibia")
 		}
 		if result.DanisWeber == nil {
-			t.Fatal("DanisWeber is nil, want no_posterior_fracture")
+			t.Fatal("DanisWeber is nil, want not_classifiable")
 			return
 		}
 		if result.DanisWeber.Type != domain.DanisWeberNotClassifiable {
 			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberNotClassifiable)
 		}
 		if result.LaugeHansen == nil {
-			t.Fatal("LaugeHansen is nil, want no_posterior_fracture")
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
 			return
 		}
 		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
@@ -2506,7 +3736,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("medial_posterior_1/Maleolos_medial_y_posterior_No", func(t *testing.T) {
+	t.Run("medial_posterior_1/Mal_olos_medial_y_posterior_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli: domain.InvolvedMedialPosterior,
 			HasCTScan:        &boolFalse,
@@ -2551,7 +3781,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_posterior_2/Maleolos_medial_y_posterior_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+	t.Run("medial_posterior_2/Mal_olos_medial_y_posterior_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			PosteriorFractureType: domain.PosteriorLargePosterolateral,
@@ -2597,7 +3827,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_posterior_3/Maleolos_medial_y_posterior_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+	t.Run("medial_posterior_3/Mal_olos_medial_y_posterior_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
@@ -2643,7 +3873,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_posterior_4/Maleolos_medial_y_posterior_S_Fragmento_posterolateral", func(t *testing.T) {
+	t.Run("medial_posterior_4/Mal_olos_medial_y_posterior_S_Fragmento_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			PosteriorFractureType: domain.PosteriorPosterolateral,
@@ -2689,7 +3919,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_posterior_5/Maleolos_medial_y_posterior_S_Fragmento_extraincisural_posterior", func(t *testing.T) {
+	t.Run("medial_posterior_5/Mal_olos_medial_y_posterior_S_Fragmento_extraincisural_posterior", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			PosteriorFractureType: domain.PosteriorExtraincisural,
@@ -2735,7 +3965,7 @@ func TestDrawio_MedialPosterior(t *testing.T) {
 		}
 	})
 
-	t.Run("medial_posterior_6/Maleolos_medial_y_posterior_S_Fragmento_extraincisural_posteromedial", func(t *testing.T) {
+	t.Run("medial_posterior_6/Mal_olos_medial_y_posterior_S_Fragmento_extraincisural_posteromedial", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedMedialPosterior,
 			PosteriorFractureType: domain.PosteriorExtraincisuralPosteromedial,
@@ -2790,7 +4020,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("posterior_only_1/Maleolo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_extraincisural", func(t *testing.T) {
+	t.Run("posterior_only_1/Mal_olo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_extraincisural", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
@@ -2837,7 +4067,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_2/Maleolo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_posterolateral", func(t *testing.T) {
+	t.Run("posterior_only_2/Mal_olo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
@@ -2884,7 +4114,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_3/Maleolo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+	t.Run("posterior_only_3/Mal_olo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
@@ -2931,7 +4161,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_4/Maleolo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+	t.Run("posterior_only_4/Mal_olo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:  domain.ArticularSmallWithoutExtension,
@@ -2978,7 +4208,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_5/Maleolo_posterior_1_3_de_superficie_articular_con_extensi_n_metafisaria_No", func(t *testing.T) {
+	t.Run("posterior_only_5/Mal_olo_posterior_1_3_de_superficie_articular_con_extensi_n_metafisaria_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -3024,7 +4254,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_6/Maleolo_posterior_1_3_de_superficie_articular_con_extensi_n_metafisaria_S", func(t *testing.T) {
+	t.Run("posterior_only_6/Mal_olo_posterior_1_3_de_superficie_articular_con_extensi_n_metafisaria_S", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:       domain.InvolvedPosteriorOnly,
 			ArticularInvolvement:   domain.ArticularLargeWithExtension,
@@ -3070,7 +4300,7 @@ func TestDrawio_PosteriorOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("posterior_only_7/Maleolo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_No", func(t *testing.T) {
+	t.Run("posterior_only_7/Mal_olo_posterior_1_3_de_superficie_articular_sin_extensi_n_metafisaria_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:     domain.InvolvedPosteriorOnly,
 			ArticularInvolvement: domain.ArticularSmallWithoutExtension,
@@ -3125,7 +4355,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 	boolTrue := true
 	boolFalse := false
 
-	t.Run("trimaleolar_1/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_1/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3174,7 +4404,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_2/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_2/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3223,7 +4453,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_3/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_3/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3272,7 +4502,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_4/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_4/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3321,7 +4551,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_5/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
+	t.Run("trimaleolar_5/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3370,7 +4600,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_6/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
+	t.Run("trimaleolar_6/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3419,7 +4649,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_7/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
+	t.Run("trimaleolar_7/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3468,7 +4698,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_8/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
+	t.Run("trimaleolar_8/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3517,7 +4747,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_9/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_extraincisural", func(t *testing.T) {
+	t.Run("trimaleolar_9/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_extraincisural", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3565,7 +4795,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_10/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posterolateral", func(t *testing.T) {
+	t.Run("trimaleolar_10/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posterolateral", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3613,7 +4843,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_11/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posteromedial_y_poste", func(t *testing.T) {
+	t.Run("trimaleolar_11/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Fragmento_posteromedial_y_poste", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3661,7 +4891,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_12/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Gran_fragmento_triangular_poste", func(t *testing.T) {
+	t.Run("trimaleolar_12/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_S_Gran_fragmento_triangular_poste", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3709,7 +4939,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_13/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_13/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedTrimaleolar,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -3757,7 +4987,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_14/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
+	t.Run("trimaleolar_14/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_a_6cm_de_la_supe", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedTrimaleolar,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -3805,7 +5035,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_15/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_No", func(t *testing.T) {
+	t.Run("trimaleolar_15/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Proximal_1_3_proximal_de_peron_No", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedTrimaleolar,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -3852,7 +5082,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_16/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_16/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedTrimaleolar,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -3900,7 +5130,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_17/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_17/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3949,7 +5179,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_18/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_18/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -3998,7 +5228,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_19/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_19/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4047,7 +5277,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_20/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
+	t.Run("trimaleolar_20/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Diafisaria_Simple_Parasindesmal_a_6cm_de_la_superficie_articular", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4096,7 +5326,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_21/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
+	t.Run("trimaleolar_21/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:   domain.InvolvedTrimaleolar,
 			FibularLevel:       domain.FibularLevelSuprasindesmal,
@@ -4144,7 +5374,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_22/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
+	t.Run("trimaleolar_22/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4193,7 +5423,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_23/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
+	t.Run("trimaleolar_23/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4242,7 +5472,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_24/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
+	t.Run("trimaleolar_24/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4291,7 +5521,7 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	t.Run("trimaleolar_25/Maleolos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
+	t.Run("trimaleolar_25/Mal_olos_medial_lateral_y_posterior_Alta_Suprasindesmal_Multifragmentaria_ala_de_mariposa_Parasindesmal_conminuta_a_6cm_", func(t *testing.T) {
 		result, err := engine.Classify(domain.FractureInput{
 			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
 			FibularLevel:          domain.FibularLevelSuprasindesmal,
@@ -4340,105 +5570,2475 @@ func TestDrawio_Trimaleolar(t *testing.T) {
 		}
 	})
 
-	// SKIPPED trimaleolar_26: '1'
+	t.Run("trimaleolar_26/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Abierta_la_mortaja_No", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyTransverse,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_27: '1'
+	t.Run("trimaleolar_27/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Fractura_del_mal_olo_avu", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologyTransverse,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_28: '1'
+	t.Run("trimaleolar_28/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Abierta_la_mortaja_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_29: '1'
+	t.Run("trimaleolar_29/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Abierta_la_mortaja_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_30: '1'
+	t.Run("trimaleolar_30/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Abierta_la_mortaja_S_Fra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_31: '1'
+	t.Run("trimaleolar_31/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Abierta_la_mortaja_S_Gra", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_32: '1'
+	t.Run("trimaleolar_32/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Fractura_del_mal_olo_avu", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_33: '1'
+	t.Run("trimaleolar_33/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Fractura_del_mal_olo_avu", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_34: '1'
+	t.Run("trimaleolar_34/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Fractura_del_mal_olo_avu", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_35: '1'
+	t.Run("trimaleolar_35/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Transversa_Oblicua_Baja_medial_alta_lateral_Fractura_del_mal_olo_avu", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologyTransverse,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_36: '1'
+	t.Run("trimaleolar_36/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Abierta_la_mortaja_No", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_37: '1'
+	t.Run("trimaleolar_37/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Abierta_la_mortaja_S_Fragmen", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_38: '1'
+	t.Run("trimaleolar_38/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Abierta_la_mortaja_S_Fragmen", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_39: '1'
+	t.Run("trimaleolar_39/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Abierta_la_mortaja_S_Gran_fr", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_40: '1'
+	t.Run("trimaleolar_40/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Fractura_del_mal_olo_avulsi_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountSingle,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_41: '1'
+	t.Run("trimaleolar_41/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Fractura_del_mal_olo_avulsi_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_42: '1'
+	t.Run("trimaleolar_42/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Fractura_del_mal_olo_avulsi_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_43: '1'
+	t.Run("trimaleolar_43/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Fractura_del_mal_olo_avulsi_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_44: '1'
+	t.Run("trimaleolar_44/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Fractura_del_mal_olo_avulsi_", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_45: '1'
+	t.Run("trimaleolar_45/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_Espiroidea_Baja_anterior_alta_posterior_Abierta_la_mortaja_S_Fragmen", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountSingle,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.1")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_1 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_1)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_46: 'Avulsión'
+	t.Run("trimaleolar_46/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Avulsi_n_No", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+			HasCTScan:                &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_47: 'Avulsión'
+	t.Run("trimaleolar_47/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Avulsi_n_S_Fragmento_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+			PosteriorFractureType:    domain.PosteriorPosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_48: 'Avulsión'
+	t.Run("trimaleolar_48/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Avulsi_n_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+			PosteriorFractureType:    domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_49: 'Avulsión'
+	t.Run("trimaleolar_49/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Avulsi_n_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+			PosteriorFractureType:    domain.PosteriorLargePosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_50: 'Avulsión'
+	t.Run("trimaleolar_50/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Avulsi_n_S_Fragmento_extraincisural", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeAvulsion,
+			PosteriorFractureType:    domain.PosteriorExtraincisural,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.2")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_2 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_2)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_51: 'Transversa'
+	t.Run("trimaleolar_51/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Transversa_No", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+			HasCTScan:                &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_52: 'Transversa'
+	t.Run("trimaleolar_52/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Transversa_S_Fragmento_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+			PosteriorFractureType:    domain.PosteriorPosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_53: 'Transversa'
+	t.Run("trimaleolar_53/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Transversa_S_Fragmento_posteromedial_y_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+			PosteriorFractureType:    domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_54: 'Transversa'
+	t.Run("trimaleolar_54/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Transversa_S_Gran_fragmento_triangular_posterolateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+			PosteriorFractureType:    domain.PosteriorLargePosterolateral,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_55: 'Transversa'
+	t.Run("trimaleolar_55/Mal_olos_medial_lateral_y_posterior_Infrasindesmal_Transversa_S_Fragmento_extraincisural", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:         domain.InvolvedTrimaleolar,
+			FibularLevel:             domain.FibularLevelInfrasindesmal,
+			InfrasindesmalMorphology: domain.LateralSubtypeMalleolusFracture,
+			PosteriorFractureType:    domain.PosteriorExtraincisural,
+			HasCTScan:                &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want A")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberA {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberA)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want not_classifiable")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenNotClassifiable {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenNotClassifiable)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-A3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAA3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAA3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_56: '>1'
+	t.Run("trimaleolar_56/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_57: '>1'
+	t.Run("trimaleolar_57/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologyOblique,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_58: '>1'
+	t.Run("trimaleolar_58/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_59: '>1'
+	t.Run("trimaleolar_59/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_60: '>1'
+	t.Run("trimaleolar_60/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_61: '>1'
+	t.Run("trimaleolar_61/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_62: '>1'
+	t.Run("trimaleolar_62/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_63: '>1'
+	t.Run("trimaleolar_63/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_64: '>1'
+	t.Run("trimaleolar_64/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_65: '>1'
+	t.Run("trimaleolar_65/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_oblicua_baja_medial_alta_lateral", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologyOblique,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want PA")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenPA {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenPA)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_66: '>1'
+	t.Run("trimaleolar_66/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeOpenMortise,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_67: '>1'
+	t.Run("trimaleolar_67/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_68: '>1'
+	t.Run("trimaleolar_68/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_69: '>1'
+	t.Run("trimaleolar_69/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_70: '>1'
+	t.Run("trimaleolar_70/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:  domain.InvolvedTrimaleolar,
+			FibularLevel:      domain.FibularLevelTransindesmal,
+			FibulaTraceCount:  domain.FibulaTraceCountMultiple,
+			LateralMorphology: domain.LateralMorphologySpiral,
+			MedialSubtype:     domain.MedialSubtypeMalleolusFracture,
+			HasCTScan:         &boolFalse,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want not_classifiable")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekNotClassifiable {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekNotClassifiable)
+		}
+	})
 
-	// SKIPPED trimaleolar_71: '>1'
+	t.Run("trimaleolar_71/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 2")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType2 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType2)
+		}
+	})
 
-	// SKIPPED trimaleolar_72: '>1'
+	t.Run("trimaleolar_72/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorPosteromedialPosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 3")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType3 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType3)
+		}
+	})
 
-	// SKIPPED trimaleolar_73: '>1'
+	t.Run("trimaleolar_73/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorLargePosterolateral,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 4")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType4 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType4)
+		}
+	})
 
-	// SKIPPED trimaleolar_74: '>1'
+	t.Run("trimaleolar_74/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeMalleolusFracture,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want 44-B3.3")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTAB3_3 {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTAB3_3)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
-	// SKIPPED trimaleolar_75: '>1'
+	t.Run("trimaleolar_75/Mal_olos_medial_lateral_y_posterior_Transindesmal_1_La_direcci_n_del_trazo_principal_es_espiroidea_baja_anterior_alta_po", func(t *testing.T) {
+		result, err := engine.Classify(domain.FractureInput{
+			InvolvedMalleoli:      domain.InvolvedTrimaleolar,
+			FibularLevel:          domain.FibularLevelTransindesmal,
+			FibulaTraceCount:      domain.FibulaTraceCountMultiple,
+			LateralMorphology:     domain.LateralMorphologySpiral,
+			MedialSubtype:         domain.MedialSubtypeOpenMortise,
+			PosteriorFractureType: domain.PosteriorExtraincisural,
+			HasCTScan:             &boolTrue,
+		})
+		if err != nil {
+			t.Fatalf("Classify() error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("Classify() returned nil")
+			return
+		}
+		if result.FractureType != "trimaleolar" {
+			t.Errorf("FractureType = %q, want %q", result.FractureType, "trimaleolar")
+		}
+		if result.DanisWeber == nil {
+			t.Fatal("DanisWeber is nil, want B")
+			return
+		}
+		if result.DanisWeber.Type != domain.DanisWeberB {
+			t.Errorf("DanisWeber = %q, want %q", result.DanisWeber.Type, domain.DanisWeberB)
+		}
+		if result.LaugeHansen == nil {
+			t.Fatal("LaugeHansen is nil, want SER")
+			return
+		}
+		if result.LaugeHansen.Type != domain.LaugeHansenSER {
+			t.Errorf("LaugeHansen = %q, want %q", result.LaugeHansen.Type, domain.LaugeHansenSER)
+		}
+		if result.AOOTA == nil {
+			t.Fatal("AOOTA is nil, want no clasificable")
+			return
+		}
+		if result.AOOTA.Code != domain.AOOTANotClassifiable {
+			t.Errorf("AOOTA = %q, want %q", result.AOOTA.Code, domain.AOOTANotClassifiable)
+		}
+		if result.Bartonicek == nil {
+			t.Fatal("Bartonicek is nil, want 1")
+			return
+		}
+		if result.Bartonicek.Type != domain.BartonicekType1 {
+			t.Errorf("Bartonicek = %q, want %q", result.Bartonicek.Type, domain.BartonicekType1)
+		}
+	})
 
 	_ = boolTrue
 	_ = boolFalse

@@ -78,7 +78,7 @@ def parse_drawio(path):
     # Find root decision node
     root_id = None
     for cid, c in cells.items():
-        if c['type'] == 'decision' and 'maleolos' in c['text'].lower():
+        if c['type'] == 'decision' and 'maléolos' in c['text'].lower():
             pts = [cells.get(p, {}).get('type') for p in parents.get(cid, [])]
             if all(t in ('label', 'unknown', None) for t in pts):
                 root_id = cid
@@ -173,7 +173,7 @@ def render_tree(cells, children, root_id, out):
             code_str = ' '.join(parts)
             # Short fracture type
             ft = codes['fracture_type']
-            ft_short = ft.replace('Fractura ', '').replace('maleolo ', '').replace('maleolos ', '')
+            ft_short = ft.replace('Fractura ', '').replace('maléolo ', '').replace('maléolos ', '')
             out.write(f'{prefix}╰── [{code_str}] {ft_short}\n')
             terminal_count[0] += 1
         else:

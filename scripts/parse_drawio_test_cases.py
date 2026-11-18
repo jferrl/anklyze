@@ -20,89 +20,31 @@ DRAWIO_PATH = sys.argv[1] if len(sys.argv) > 1 else "docs/Danis-Weber AO_OTA Flo
 OUTPUT_PATH = sys.argv[2] if len(sys.argv) > 2 else "/tmp/classification_test_cases.json"
 
 # --- Form labels from i18n/es.json (source of truth for E2E click targets) ---
-# These MUST match the actual form UI labels exactly.
-FORM_LABELS = {
-    'involved_malleoli': {
-        'posterior_only': 'Maléolo posterior',
-        'medial_only': 'Maléolo medial',
-        'lateral_only': 'Maléolo lateral',
-        'medial_posterior': 'Maléolos medial y posterior',
-        'lateral_posterior': 'Maléolos lateral y posterior',
-        'lateral_medial': 'Maléolos lateral y medial',
-        'trimaleolar': 'Maléolos medial, lateral y posterior',
-    },
-    'fibular_level': {
-        'infrasindesmal': 'Infrasindesmal',
-        'transindesmal': 'Transindesmal',
-        'suprasindesmal': 'Suprasindesmal',
-    },
-    'lateral_morphology': {
-        'oblique': 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta',
-        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
-    },
-    'fibula_morphology_lm': {
-        'transverse': 'Transversa/Oblicua (Baja medial, alta lateral)',
-        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
-        'conminuta': 'Conminuta/ala de mariposa',
-    },
-    'fibula_morphology_tri': {
-        'transverse': 'Transversa/Oblicua (Baja medial, alta lateral)',
-        'oblique': 'Conminuta/ala de mariposa',
-        'spiral': 'Espiroidea (Baja anterior, alta posterior)',
-    },
-    'infrasindesmal_morphology': {
-        'avulsion': 'Avulsión de la punta del maleolo',
-        'malleolus_fracture': 'Fractura de maleolo lateral',
-    },
-    'infrasindesmal_morphology_lm_tri': {
-        'avulsion': 'Avulsión',
-        'malleolus_fracture': 'Transversa',
-    },
-    'lateral_subtype': {
-        'simple': 'Fractura simple',
-        'syndesmosis_rupture': 'Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)',
-        'butterfly': 'Fractura en ala de maliposa/multifragmentaria',
-    },
-    'medial_subtype': {
-        'open_mortise': 'Abierta mortaja',
-        'malleolus_fracture': 'Fractura del maléolo',
-    },
-    'suprasindesmal_type': {
-        'simple_diaphyseal': 'Diafisaria Simple',
-        'multifragmentary': 'Multifragmentaria',
-        'proximal': 'Proximal',
-    },
-    'fibula_trace_pattern': {
-        'parasindesmotic_short': 'Parasindesmal de trazo oblicuo corto/transverso/conminuto',
-        'parasindesmotic_long': 'Parasindesmal de trazo oblicuo largo/espiroideo',
-        'suprasindesmotic_far': 'Suprasindesmal (>6cm de superficie articular)',
-    },
-    'articular_involvement': {
-        'large_with_extension': '>1/3 de superficie articular con extensión metafisaria',
-        'small_without_extension': '<1/3 de superficie articular sin extensión metafisaria',
-    },
-    'medial_morphology': {
-        'vertical': 'Vertical',
-        'transverse_oblique': 'Transverso/oblicuo',
-    },
-    'posterior_fracture_type': {
-        'extraincisural': 'Fragmento extraincisural',
-        'posterolateral': 'Fragmento posterolateral',
-        'posteromedial_posterolateral': 'Fragmento posteromedial y posterolateral',
-        'large_posterolateral': 'Gran fragmento triangular posterolateral',
-        'extraincisural_posteromedial': 'Fragmento extraincisural postero-medial',
-    },
-    'yes_no': {
-        'true': 'Sí',
-        'false': 'No',
-    },
-}
+I18N_PATH = "frontend/src/i18n/es.json"
+with open(I18N_PATH, encoding='utf-8') as f:
+    _form = json.load(f)['form']
+FORM_OPTIONS = _form['options']
 
-# Collect all valid form labels for validation
-ALL_VALID_LABELS = set()
-for group in FORM_LABELS.values():
-    for label in group.values():
-        ALL_VALID_LABELS.add(label)
+ALL_VALID_LABELS = {label for group in FORM_OPTIONS.values() for label in group.values()}
+ALL_VALID_LABELS |= {_form['labels']['yes'], _form['labels']['no']}
+
+
+def canon(label):
+    """Key that ignores spacing and case, the only differences the form may add to a drawio label."""
+    return re.sub(r'\s+', '', label).lower()
+
+
+FORM_LABEL_BY_CANON = {canon(label): label for label in ALL_VALID_LABELS}
+assert len(FORM_LABEL_BY_CANON) == len(ALL_VALID_LABELS), "two form labels differ only by spacing/case"
+
+# Drawio answers worded differently from the single form label they share with other branches.
+DRAWIO_ALIASES = {
+    'Si': 'Sí',
+    'Alta (Suprasindesmal)': 'Suprasindesmal',
+    'Proximal (1/3 proximal peroné)': 'Proximal (1/3 proximal de peroné)',
+    'Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)':
+        'Parasindesmal (a < 6 cm de la superficie articular) de trazo oblicuo largo/espiroideo',
+}
 
 tree = ET.parse(DRAWIO_PATH)
 root = tree.getroot()
@@ -162,7 +104,7 @@ for edge in edges:
 # Find root decision node (first question about malleoli)
 root_decision = None
 for cell_id, cell in cells.items():
-    if cell['type'] == 'decision' and 'maleolos' in cell['text'].lower():
+    if cell['type'] == 'decision' and 'maléolos' in cell['text'].lower():
         parent_types = [cells.get(p, {}).get('type') for p in parents.get(cell_id, [])]
         if all(t in ('label', 'unknown', None) for t in parent_types):
             root_decision = cell_id
@@ -317,143 +259,20 @@ def trace_path_to_root(terminal_id):
     return path
 
 
-def normalize_labels(branch, clicks):
-    """Post-process click sequences to map drawio labels to form labels.
+def normalize_labels(clicks):
+    """Map drawio answer text to the form label the user clicks (es.json).
 
-    The drawio has raw labels that don't always match the form's UI labels.
-    This function normalizes them so test cases match what the form displays.
-
-    IMPORTANT: The drawio has 3 morphology options for LM/tri transindesmal:
-      1. "Transversa/Oblicua (Baja medial, alta lateral)" -> combined transverse+oblique
-      2. "Conminuta/ala de mariposa" -> conminuta/butterfly
-      3. "Espiroidea (Baja anterior, alta posterior)" -> spiral
-
-    The form has 4 options: Transversa, Oblicua/Conminuta, Espiroidea, Conminuta.
-
-    Mapping differs by branch:
-    - lateral_medial: drawio "Conminuta/ala de mariposa" -> form "Conminuta"
-      (B2.3 direct, no medial subtype)
-    - trimaleolar: drawio "Conminuta/ala de mariposa" -> form "Oblicua/Conminuta"
-      (has medial subtype, gives B3.3/nil — matches engine's oblique path)
+    Labels are matched ignoring spacing and case; the few drawio wordings that
+    differ by more are listed in DRAWIO_ALIASES. Unmatched labels pass through
+    and are reported as label validation warnings.
     """
     result = []
     for click in clicks:
-        q = click['question']
         label = click['label']
-        if label is None:
-            result.append(click)
-            continue
-
-        # --- Involved malleoli accent normalization ---
-        # Drawio uses "Maleolo"/"Maleolos"/"maleolos" without accent;
-        # form uses "Maléolo"/"Maléolos" with accent.
-        if q == '¿Qué maleolos tiene fracturados?':
-            label = label.replace('Maleolo ', 'Maléolo ')
-            label = label.replace('Maleolos ', 'Maléolos ')
-            label = label.replace('maleolos ', 'Maléolos ')
-            # Capitalize first letter after replacement
-            if label and label[0].islower():
-                label = label[0].upper() + label[1:]
-
-        # --- Yes/No accent normalization ---
-        # Drawio uses "Si" without accent; form uses "Sí"
-        if label == 'Si':
-            label = 'Sí'
-
-        # --- Fibular level mapping for lateral_medial and trimaleolar ---
-        # These branches now use 3-option (Infrasindesmal/Transindesmal/Suprasindesmal)
-        if branch in ('lateral_medial', 'trimaleolar'):
-            if q == '¿A qué nivel está la fractura de peroné?':
-                if label == 'Alta (Suprasindesmal)':
-                    label = 'Suprasindesmal'
-
-        # --- Suprasindesmal type mapping ---
-        if q == '¿De qué tipo?':
-            if label == 'Multifragmentaria/ala de mariposa':
-                label = 'Multifragmentaria'
-            elif label == 'Fractura en ala de maliposa/multifragmentaria':
-                label = 'Multifragmentaria'
-            elif label in ('Proximal (1/ proximal de peroné)',
-                           'Proximal (1/3 proximal de peroné)',
-                           'Proximal (1/3 proximal peroné)'):
-                label = 'Proximal'
-
-        # --- Fibula trace pattern mapping ---
-        if q == '¿Cómo es el trazo principal de la fractura del peroné?':
-            if label.startswith('Parasindesmal conminuta'):
-                label = 'Parasindesmal de trazo oblicuo corto/transverso/conminuto'
-
-        # --- Lateral morphology mapping for lateral_medial ---
-        # Drawio has 3 options; form has 3 matching options.
-        # Labels match directly after the form split.
-        if branch == 'lateral_medial':
-            if q == '¿De qué morfología es la fractura del peroné?':
-                if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
-                    label = 'Transversa/Oblicua (Baja medial, alta lateral)'
-                elif label == 'Conminuta/ala de mariposa':
-                    label = 'Conminuta/ala de mariposa'
-
-        # --- Lateral morphology mapping for trimaleolar ---
-        # Drawio has 3 options; form has 3 matching options.
-        if branch == 'trimaleolar':
-            if q == '¿De qué morfología es la fractura del peroné?':
-                if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
-                    label = 'Transversa/Oblicua (Baja medial, alta lateral)'
-                elif label == 'Conminuta/ala de mariposa':
-                    label = 'Conminuta/ala de mariposa'
-
-        # --- Lateral morphology mapping for lateral_only, lateral_posterior ---
-        # These branches use question text: "¿De qué morfología es la fractura de peroné?"
-        # and also "¿De qué morfología es la fractura del peroné?"
-        if branch in ('lateral_only', 'lateral_posterior'):
-            if q in ('¿De qué morfología es la fractura de peroné?',
-                     '¿De qué morfología es la fractura del peroné?'):
-                if label == 'Transversa/Oblicua (Baja medial, alta lateral)':
-                    label = 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta'
-                elif label == 'Transversa/Oblicua (Baja medial, alta lateral)/Conminuta':
-                    pass  # Already correct
-
-        # --- Fibula trace pattern mapping (all variants) ---
-        # Drawio uses long descriptions; form uses shorter standard labels
-        if 'trazo' in q.lower() or 'peroné' in q.lower():
-            if 'Parasindesmal' in label and ('corto' in label or 'conminuta' in label.lower()):
-                label = 'Parasindesmal de trazo oblicuo corto/transverso/conminuto'
-            elif 'Parasindesmal' in label and ('largo' in label or 'espiroideo' in label):
-                label = 'Parasindesmal de trazo oblicuo largo/espiroideo'
-            elif 'Suprasindesmal' in label and '>6cm' in label:
-                label = 'Suprasindesmal (>6cm de superficie articular)'
-
-        # --- Lateral subtype: form now matches drawio labels directly ---
-        # No normalization needed for: Fractura simple, Asocia rotura de sindesmosis...,
-        # Fractura en ala de maliposa/multifragmentaria
-
-        # --- Infrasindesmal morphology mapping for lm/tri ---
-        # Drawio uses "Avulsión" / "Transversa", form now matches directly
-        # No normalization needed
-
-        # --- Medial subtype mapping ---
-        # Drawio uses "Abierta la mortaja" / "Fractura del maleolo/avulsión"
-        # Form uses "Abierta mortaja" / "Fractura del maléolo"
-        if q in ('¿Cómo es el maleolo medial?', '¿Cómo es el maléolo medial?'):
-            if label == 'Abierta la mortaja':
-                label = 'Abierta mortaja'
-            elif label in ('Fractura del maleolo/avulsión', 'Fractura del maléolo/avulsión'):
-                label = 'Fractura del maléolo'
-
-        # --- Medial morphology LM normalization ---
-        # Drawio uses "Transverso/oblicuo/avulsión/abierta mortaja" but form uses "Transverso/oblicuo"
-        if q in ('¿De qué morfología es la fractura del maleolo medial?',
-                 '¿De qué morfología es la fractura del maléolo medial?'):
-            if label.startswith('Transverso/oblicuo'):
-                label = 'Transverso/oblicuo'
-
-        # --- Posterior fracture type label normalization ---
-        if label == 'Fragmento extraincisural posteromedial':
-            label = 'Fragmento extraincisural postero-medial'
-        elif label == 'Fragmento extraincisural posterior':
-            label = 'Fragmento extraincisural'
-
-        result.append({'question': q, 'label': label})
+        if label is not None:
+            label = DRAWIO_ALIASES.get(label, label)
+            label = FORM_LABEL_BY_CANON.get(canon(label), label)
+        result.append({'question': click['question'], 'label': label})
     return result
 
 
@@ -546,7 +365,7 @@ for terminal in terminals:
 
     clicks = [{'question': step['question'], 'label': step['answer']} for step in path]
     clicks.append({'question': 'Clasificar Fractura', 'label': None})
-    clicks = normalize_labels(branch, clicks)
+    clicks = normalize_labels(clicks)
 
     # Filter shortcut paths that skip required form questions
     if is_shortcut_path(branch, clicks):
@@ -625,18 +444,21 @@ for branch, cases in all_test_cases.items():
         for click in case['clicks']:
             q = click.get('question', '')
             label = click.get('label', '')
-            if label and 'morfología' in q.lower() and 'fractura' in q.lower():
-                # Only lateral/fibula morphology questions, not medial morphology
-                if 'medial' not in q.lower():
-                    morph_labels.add(label)
+            # Only fibula morphology questions, not medial or infrasindesmal morphology
+            if label and 'morfología' in q.lower() and 'peroné' in q.lower():
+                morph_labels.add(label)
     if morph_labels:
         drawio_morphology_options[branch] = morph_labels
 
+FORM_MORPHOLOGY_GROUPS = {
+    'lateral_only': ('lateralMorphology', 'lateralMorphologyMulti'),
+    'lateral_posterior': ('lateralMorphologyLP',),
+    'lateral_medial': ('fibulaMorphologyLM', 'fibulaMorphologyLMMulti'),
+    'trimaleolar': ('fibulaMorphologyTri', 'fibulaMorphologyTriMulti'),
+}
 form_morphology_options = {
-    'lateral_only': set(FORM_LABELS['lateral_morphology'].values()),
-    'lateral_posterior': set(FORM_LABELS['lateral_morphology'].values()),
-    'lateral_medial': set(FORM_LABELS['fibula_morphology_lm'].values()),
-    'trimaleolar': set(FORM_LABELS['fibula_morphology_tri'].values()),
+    branch: {label for g in groups for label in FORM_OPTIONS[g].values()}
+    for branch, groups in FORM_MORPHOLOGY_GROUPS.items()
 }
 
 for branch in sorted(set(drawio_morphology_options) | set(form_morphology_options)):
