@@ -106,7 +106,7 @@ export function AdminDashboardPage() {
         <StatCard
           title={t('admin.dashboard.totalCases')}
           value={n(s.total_cases)}
-          subtitle={`${t('admin.dashboard.draftsCount', { count: s.draft_cases })}, ${t('admin.dashboard.activeCount', { count: s.published_cases })}, ${t('admin.dashboard.closedCount', { count: s.closed_cases })}`}
+          subtitle={`${t('admin.dashboard.draftsCount', { count: s.draft_cases })}, ${t('admin.dashboard.publishedCount', { count: s.published_cases })}, ${t('admin.dashboard.closedCount', { count: s.closed_cases })}`}
         />
         <StatCard
           title={t('admin.dashboard.totalResponses')}
