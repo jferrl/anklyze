@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/auth"
@@ -275,6 +276,11 @@ func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
 		return
 	}
 
+	if field := invalidGoldStandardField(req); field != "" {
+		badRequest(c, "invalid value for "+field)
+		return
+	}
+
 	// Build ClassificationResult from request
 	result := buildGoldStandardResult(req)
 
@@ -316,6 +322,22 @@ func (h *CaseAdminHandler) DeleteGoldStandard(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// invalidGoldStandardField returns the JSON name of the first field holding a
+// value outside its system's domain constants, or "" when all are valid.
+func invalidGoldStandardField(req SetGoldStandardRequest) string {
+	switch {
+	case req.DanisWeber != nil && !slices.Contains(domain.ValidDanisWeberTypes(), domain.DanisWeberType(*req.DanisWeber)):
+		return "danis_weber"
+	case req.LaugeHansen != nil && !slices.Contains(domain.ValidLaugeHansenTypes(), domain.LaugeHansenType(*req.LaugeHansen)):
+		return "lauge_hansen"
+	case req.AOOTA != nil && !slices.Contains(domain.ValidAOOTACodes(), domain.AOOTACode(*req.AOOTA)):
+		return "ao_ota"
+	case req.Bartonicek != nil && !slices.Contains(domain.ValidBartonicekTypes(), domain.BartonicekType(*req.Bartonicek)):
+		return "bartonicek"
+	}
+	return ""
 }
 
 // buildGoldStandardResult converts a SetGoldStandardRequest to a ClassificationResult.
