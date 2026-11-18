@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -228,8 +229,7 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 	if !ok {
 		return
 	}
-	if study.Status != domain.StudyStatusDraft {
-		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be modified")
+	if !requireDraft(c, study) {
 		return
 	}
 
@@ -289,7 +289,8 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 		return
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
 		return
 	}
 
@@ -347,7 +348,8 @@ func (h *StudyHandler) RemoveCase(c *gin.Context) {
 		return
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
 		return
 	}
 
@@ -383,7 +385,18 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 		caseIDs[i] = id
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
+		return
+	}
+
+	inStudy, err := h.studyRepo.GetCases(c.Request.Context(), studyID)
+	if err != nil {
+		HandleError(c, err, "Failed to get study cases")
+		return
+	}
+	if msg := reorderProblem(caseIDs, inStudy); msg != "" {
+		badRequest(c, msg)
 		return
 	}
 
@@ -393,6 +406,43 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// requireDraft answers 400 unless the study is a draft: its case list is frozen
+// once it is activated.
+func requireDraft(c *gin.Context, study *domain.Study) bool {
+	if study.Status != domain.StudyStatusDraft {
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be modified")
+		return false
+	}
+	return true
+}
+
+// reorderProblem describes why ids cannot reorder the study's cases: duplicates
+// or ids outside the study. It returns "" when the request is valid.
+func reorderProblem(ids []uuid.UUID, inStudy []domain.Case) string {
+	members := make(map[uuid.UUID]bool, len(inStudy))
+	for _, cs := range inStudy {
+		members[cs.ID] = true
+	}
+	seen := make(map[uuid.UUID]bool, len(ids))
+	var unknown, dupes []string
+	for _, id := range ids {
+		switch {
+		case seen[id]:
+			dupes = append(dupes, id.String())
+		case !members[id]:
+			unknown = append(unknown, id.String())
+		}
+		seen[id] = true
+	}
+	switch {
+	case len(unknown) > 0:
+		return "Case IDs not in this study: " + strings.Join(unknown, ", ")
+	case len(dupes) > 0:
+		return "Duplicate case IDs: " + strings.Join(dupes, ", ")
+	}
+	return ""
 }
 
 // --- Status Transitions ---
@@ -433,6 +483,11 @@ func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 func (h *StudyHandler) CloseStudy(c *gin.Context) {
 	id, study, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
+		return
+	}
+
+	if study.Status != domain.StudyStatusActive {
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only active studies can be closed")
 		return
 	}
 

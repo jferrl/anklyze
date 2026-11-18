@@ -165,3 +165,32 @@ func (r ClassificationResult) codes() [4]string {
 	}
 	return c
 }
+
+// ValidDanisWeberTypes returns every accepted Danis-Weber value.
+func ValidDanisWeberTypes() []DanisWeberType {
+	return []DanisWeberType{DanisWeberA, DanisWeberB, DanisWeberC, DanisWeberNotClassifiable}
+}
+
+// ValidLaugeHansenTypes returns every accepted Lauge-Hansen value.
+func ValidLaugeHansenTypes() []LaugeHansenType {
+	return []LaugeHansenType{LaugeHansenSA, LaugeHansenSER, LaugeHansenPER, LaugeHansenPA, LaugeHansenNotClassifiable}
+}
+
+// ValidAOOTACodes returns every accepted AO/OTA code, subgroups included.
+func ValidAOOTACodes() []AOOTACode {
+	return []AOOTACode{
+		AOOTAA1, AOOTAA2, AOOTAA3, AOOTAB, AOOTAB1, AOOTAB2, AOOTAB3, AOOTAC1, AOOTAC2, AOOTAC3,
+		AOOTAA1_2, AOOTAA1_3, AOOTAA2_2, AOOTAA2_3, AOOTAA3_2, AOOTAA3_3,
+		AOOTAB1_1, AOOTAB1_2, AOOTAB1_3, AOOTAB2_1, AOOTAB2_2, AOOTAB2_3, AOOTAB3_1, AOOTAB3_2, AOOTAB3_3,
+		AOOTAC1_1, AOOTAC1_2, AOOTAC1_3, AOOTAC2_1, AOOTAC2_2, AOOTAC2_3, AOOTAC3_1, AOOTAC3_2, AOOTAC3_3,
+		AOOTA43B1, AOOTA43B2, AOOTANotClassifiable,
+	}
+}
+
+// ValidBartonicekTypes returns every accepted Bartonicek value.
+func ValidBartonicekTypes() []BartonicekType {
+	return []BartonicekType{
+		BartonicekType1, BartonicekType2, BartonicekType3, BartonicekType4,
+		BartonicekNotClassifiable, BartonicekNoPosteriorFracture,
+	}
+}

@@ -28,8 +28,6 @@ type UserService interface {
 	// SyncOnLogin creates or updates a user from authentication claims.
 	// Also syncs the role to external services (e.g., Supabase app_metadata).
 	SyncOnLogin(ctx context.Context, userID uuid.UUID, email, provider string) (*domain.User, error)
-	// GetByEmail retrieves a user by their email.
-	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 	// SyncRoleToSupabase syncs the user's role to Supabase app_metadata.
 	SyncRoleToSupabase(ctx context.Context, userID uuid.UUID, role domain.UserRole)
 }

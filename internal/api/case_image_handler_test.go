@@ -35,6 +35,9 @@ func (r *imageRepo) GetImageByID(context.Context, uuid.UUID) (*domain.CaseImage,
 	return r.img, nil
 }
 func (r *imageRepo) GetImages(context.Context, uuid.UUID) ([]domain.CaseImage, error) {
+	if r.img == nil {
+		return nil, nil
+	}
 	return []domain.CaseImage{*r.img}, nil
 }
 

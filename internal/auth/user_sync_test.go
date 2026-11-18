@@ -33,8 +33,6 @@ func (s *roleSyncSvc) SyncOnLogin(context.Context, uuid.UUID, string, string) (*
 	return nil, nil
 }
 
-func (s *roleSyncSvc) GetByEmail(context.Context, string) (*domain.User, error) { return nil, nil }
-
 func (s *roleSyncSvc) SyncRoleToSupabase(_ context.Context, _ uuid.UUID, role domain.UserRole) {
 	s.pushed <- role
 }

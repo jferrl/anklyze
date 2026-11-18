@@ -577,6 +577,7 @@
       "dragOrClick": "Drag and drop images here, or click to select files",
       "dropHere": "Drop files here…",
       "maxFileSize": "Maximum file size: 10 MB",
+      "imageLimit": "{{used}} of {{max}} images used.",
       "noImages": "No images uploaded",
       "pending": "Pending",
       "deleteConfirm": {
