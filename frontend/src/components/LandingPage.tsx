@@ -22,7 +22,7 @@ const EXAMPLE_PATH = [
 const SYSTEMS = [
   { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER', example: 'SA · SER · PA · PER' },
   { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B', example: 'A · B · C' },
-  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-B1.1' },
+  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-A1 … 44-C3' },
   { key: 'bartonicek', name: 'Bartonicek', swatch: 'bg-sys-bt', code: null, example: '1 – 4' },
 ] as const;
 
