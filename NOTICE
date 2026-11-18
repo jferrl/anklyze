@@ -40,9 +40,11 @@ Third-party content
     fibula cut 100 mm above the joint, holes and cuts closed, meshes refined by one
     Loop subdivision step, ambient occlusion baked, malleolus regions tagged),
     rendered once as still images in anterolateral view (yaw 35 degrees, pitch
-    8 degrees), with the lateral malleolus tinted in the second image, cropped to
-    the joint and the distal 34 mm of the tibia and fibula. The labels, the syndesmosis bracket and the fracture line are
-    drawn over the images by AnklePlate.tsx.
+    8 degrees), cropped to the joint and the distal 44 mm of the tibia and
+    fibula, with a faint rule round the silhouette; the second image tints the
+    distal fibular fragment up to a drawn Weber B fracture line. The labels, the
+    syndesmosis bracket and the fracture line are drawn over the images by
+    AnklePlate.tsx.
     The images are licensed under CC BY-SA 4.0,
     https://creativecommons.org/licenses/by-sa/4.0/ ; this does not extend to the
     Anklyze code.

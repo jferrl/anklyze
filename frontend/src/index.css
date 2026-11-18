@@ -318,13 +318,8 @@
   --field-navy: oklch(0.22 0.065 262);
 }
 
-/* Landing hero plate: a paper halo under the marks that cross the rendered bone. */
-.landing-plate {
-  --plate-halo: var(--sheet);
-}
-
-/* The hero figure's entrance waits for the font and the plate image (LandingPage.tsx), so it
-   never plays against a fallback face or an empty plate. */
+/* The plate's marks wait for the font and the plate image (LandingPage.tsx), so they never land
+   on a fallback face or an empty plate. */
 [data-landing-figure]:not([data-ready]) :is(.fig-in, .fig-draw) {
   animation-play-state: paused;
 }
