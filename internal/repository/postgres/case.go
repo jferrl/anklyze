@@ -44,10 +44,13 @@ func (r *CaseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Cas
 	return &cs, nil
 }
 
-// Update updates a case.
+// Update writes the editable fields only; response counters are maintained by
+// the response repository and a full-row Save from a stale copy would overwrite them.
 func (r *CaseRepository) Update(ctx context.Context, cs *domain.Case) error {
 	cs.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Save(cs).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(cs).
+		Select("title", "description", "deadline", "gold_standard", "updated_at").
+		Updates(cs).Error; err != nil {
 		return fmt.Errorf("update: %w", err)
 	}
 	return nil
