@@ -686,43 +686,27 @@ func (h *StudyHandler) ExportStudyResponses(c *gin.Context) {
 		return
 	}
 
-	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"study_%s_responses.csv\"", studyID.String()[:8]))
+	w := newCSVWriter(c, fmt.Sprintf("study_%s_responses.csv", studyID.String()[:8]))
+	defer w.Flush()
 
-	if _, err := c.Writer.WriteString("case_id,case_title,response_id,user_id,created_at,time_taken_ms,danis_weber,lauge_hansen,ao_ota,bartonicek\n"); err != nil {
+	if err := w.Write([]string{"case_id", "case_title", "response_id", "user_id", "created_at", "time_taken_ms", "danis_weber", "lauge_hansen", "ao_ota", "bartonicek"}); err != nil {
 		return
 	}
 
 	for _, cs := range cases {
-		responses := responsesByCase[cs.ID]
-		for _, r := range responses {
-			dw := ""
-			if r.DanisWeberType != nil {
-				dw = *r.DanisWeberType
-			}
-			lh := ""
-			if r.LaugeHansenType != nil {
-				lh = *r.LaugeHansenType
-			}
-			ao := ""
-			if r.AOOTACode != nil {
-				ao = *r.AOOTACode
-			}
-			bt := ""
-			if r.BartonicekType != nil {
-				bt = *r.BartonicekType
-			}
-
-			line := fmt.Sprintf("%s,%s,%s,%s,%s,%d,%s,%s,%s,%s\n",
+		for _, r := range responsesByCase[cs.ID] {
+			if err := w.Write([]string{
 				cs.ID.String(),
-				cs.Title,
+				csvText(cs.Title),
 				r.ID.String(),
 				r.UserID.String(),
 				r.CreatedAt.Format(time.RFC3339),
-				r.TimeTakenMS,
-				dw, lh, ao, bt,
-			)
-			if _, err := c.Writer.WriteString(line); err != nil {
+				strconv.FormatInt(r.TimeTakenMS, 10),
+				csvTextPtr(r.DanisWeberType),
+				csvTextPtr(r.LaugeHansenType),
+				csvTextPtr(r.AOOTACode),
+				csvTextPtr(r.BartonicekType),
+			}); err != nil {
 				return
 			}
 		}
