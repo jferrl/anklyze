@@ -6,16 +6,42 @@ on:
     paths:
       - "cmd/**"
       - "internal/**"
+      - "migrations/**"
       - "go.mod"
       - "go.sum"
       - ".github/workflows/backend.yml"
-  # No path filter on pull requests: both checks are required to merge.
+  # No path filter on pull requests: the check is required, so the job always reports.
+  # The changes job skips the build (a skipped job counts as passing) when nothing relevant changed.
   pull_request:
     branches: [main]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      relevant: ${{ steps.filter.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            relevant:
+              - 'cmd/**'
+              - 'internal/**'
+              - 'migrations/**'
+              - 'go.mod'
+              - 'go.sum'
+              - '.golangci.yml'
+              - '.github/workflows/backend.yml'
+
   build:
     name: Build and Test
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
 
     steps:
