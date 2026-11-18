@@ -120,6 +120,8 @@ export function StudyReliabilityPage() {
   const today = new Date().toISOString().slice(0, 10);
   const slug = fileSlug(study.title);
   const lowAgreementCases = reliability.per_case_metrics.filter((c) => c.is_low_agreement).length;
+  // With no responses there is nothing to compute or export.
+  const noResponses = reliability.total_responses === 0;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 sm:px-6">
@@ -140,7 +142,7 @@ export function StudyReliabilityPage() {
           actions={
             <>
               <Button
-                disabled={exporting !== null}
+                disabled={exporting !== null || noResponses}
                 onClick={() =>
                   runExport('figures', () =>
                     downloadText(buildReliabilityFiguresCsv(reliability, goldQuery.data), `${slug}_figures_${today}.csv`)
@@ -152,7 +154,7 @@ export function StudyReliabilityPage() {
               </Button>
               <Button
                 variant="outline"
-                disabled={exporting !== null}
+                disabled={exporting !== null || noResponses}
                 onClick={() =>
                   runExport('responses', () => studyApi.downloadStudyResponsesCSV(id!, `${slug}_responses_${today}.csv`))
                 }
@@ -165,47 +167,58 @@ export function StudyReliabilityPage() {
         />
       </div>
 
-      <StatGroup>
-        <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
-        <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
-        <StatCard
-          title={t('admin.studies.reliability.completeRaters')}
-          value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
-          subtitle={t('admin.studies.reliability.completeRatersNote')}
-        />
-        <StatCard
-          title={t('admin.studies.reliability.lowAgreementCasesTitle')}
-          value={lowAgreementCases}
-          subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
-        />
-      </StatGroup>
-
-      <StudyKappaAnalysis reliability={reliability} />
-
-      <div className="space-y-6 border-t pt-6">
-        <SystemTabs systems={SYSTEMS} active={system} onChange={setSystem} panelId={PANEL_ID} />
-
-        <div id={PANEL_ID} role="tabpanel" aria-labelledby={`${PANEL_ID}-tab-${system}`} className="space-y-8">
-          <section aria-labelledby="system-detail-heading" className="space-y-3">
-            <h2 id="system-detail-heading" className="text-base font-semibold text-foreground">
-              {t('admin.reliability.systemDetail', { system: SYSTEM_LABEL[system] })}
-            </h2>
-            <div key={system} className="animate-fade-in">
-              <KappaSystemDetail reliability={reliability} system={system} />
-            </div>
-          </section>
-
-          <PerCaseAgreementSection perCaseMetrics={reliability.per_case_metrics} activeSystem={system} />
-
-          <StudyGoldStandardSection
-            studyId={id!}
-            metrics={goldQuery.data}
-            isError={goldQuery.isError}
-            onRetry={() => void goldQuery.refetch()}
-            activeSystem={system}
-          />
+      {noResponses ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-4 py-6">
+          <p className="text-sm text-foreground" role="status">{t('admin.studies.reliability.noResponses')}</p>
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/admin/studies/${id}/edit`}>{t('admin.studies.reliability.openStudy')}</Link>
+          </Button>
         </div>
-      </div>
+      ) : (
+        <>
+          <StatGroup>
+            <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
+            <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
+            <StatCard
+              title={t('admin.studies.reliability.completeRaters')}
+              value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
+              subtitle={t('admin.studies.reliability.completeRatersNote')}
+            />
+            <StatCard
+              title={t('admin.studies.reliability.lowAgreementCasesTitle')}
+              value={lowAgreementCases}
+              subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
+            />
+          </StatGroup>
+
+          <StudyKappaAnalysis reliability={reliability} />
+
+          <div className="space-y-6 border-t pt-6">
+            <SystemTabs systems={SYSTEMS} active={system} onChange={setSystem} panelId={PANEL_ID} />
+
+            <div id={PANEL_ID} role="tabpanel" aria-labelledby={`${PANEL_ID}-tab-${system}`} className="space-y-8">
+              <section aria-labelledby="system-detail-heading" className="space-y-3">
+                <h2 id="system-detail-heading" className="text-base font-semibold text-foreground">
+                  {t('admin.reliability.systemDetail', { system: SYSTEM_LABEL[system] })}
+                </h2>
+                <div key={system} className="animate-fade-in">
+                  <KappaSystemDetail reliability={reliability} system={system} />
+                </div>
+              </section>
+
+              <PerCaseAgreementSection perCaseMetrics={reliability.per_case_metrics} activeSystem={system} />
+
+              <StudyGoldStandardSection
+                studyId={id!}
+                metrics={goldQuery.data}
+                isError={goldQuery.isError}
+                onRetry={() => void goldQuery.refetch()}
+                activeSystem={system}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

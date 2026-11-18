@@ -705,6 +705,8 @@
         "notEnoughData": "Not enough data",
         "perCaseAgreement": "Agreement with the most common answer, per case",
         "noCaseMetrics": "No case metrics available",
+        "noResponses": "No responses yet. Figures appear once raters complete cases.",
+        "openStudy": "Open the study editor",
         "agreementNote": "Each figure is the share of responses that gave the most common answer for that case, not agreement between pairs of raters. A dash means fewer than two responses have a classification in that system, so there is no agreement to report. Cases below {{threshold}}% in any system are shaded and marked with an icon.",
         "lowAgreement": "Low agreement",
         "retry": "Try again",

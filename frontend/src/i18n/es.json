@@ -705,6 +705,8 @@
         "notEnoughData": "No hay suficientes datos",
         "perCaseAgreement": "Acuerdo con la respuesta más frecuente, por caso",
         "noCaseMetrics": "No hay métricas de casos disponibles",
+        "noResponses": "Todavía no hay respuestas. Las cifras aparecerán cuando los evaluadores completen casos.",
+        "openStudy": "Abrir el editor del estudio",
         "agreementNote": "Cada cifra es la proporción de respuestas que dieron la respuesta más frecuente de ese caso, no el acuerdo entre pares de evaluadores. Un guion indica que menos de dos respuestas tienen clasificación en ese sistema, por lo que no hay acuerdo que informar. Los casos por debajo del {{threshold}}% en algún sistema aparecen sombreados y marcados con un icono.",
         "lowAgreement": "Acuerdo bajo",
         "retry": "Reintentar",
