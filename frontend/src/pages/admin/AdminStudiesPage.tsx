@@ -37,6 +37,7 @@ import { studyApi } from '@/services';
 import type { Study, StudyStatus } from '@/types';
 import { formatDate as formatDateIn } from '@/lib/format';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { DataTable } from './components/DataTable';
@@ -47,6 +48,7 @@ import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminStudiesPage() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t('breadcrumbs.studies'));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<StudyStatus | 'all'>('all');

@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { caseApi, studyApi } from '@/services';
 import { formatNumber } from '@/lib/format';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { RecentActivityCard } from './components/RecentActivityCard';
 import { NeedsAttentionCard } from './components/NeedsAttentionCard';
 import { StudiesInProgressCard } from './components/StudiesInProgressCard';
@@ -18,6 +19,7 @@ export function AdminDashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [now] = useState(Date.now);
+  useDocumentTitle(t('breadcrumbs.dashboard'));
 
   const dashboard = useQuery({
     queryKey: ['admin-dashboard'],

@@ -15,8 +15,9 @@ import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
 import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
 import { SystemTabs } from './components/SystemTabs';
 import { LOW_AGREEMENT_PCT, SYSTEMS, useSystemParam } from './components/systems';
-import { buildReliabilityFiguresCsv, downloadText, fileSlug } from './components/reliabilityCsv';
+import { buildReliabilityFiguresCsv, downloadText, fileDate, fileSlug } from './components/reliabilityCsv';
 import { useRecordTitle } from '@/components/layout/recordTitle';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { formatNumber } from '@/lib/format';
 
 const PANEL_ID = 'study-system-panel';
@@ -45,6 +46,7 @@ export function StudyReliabilityPage() {
   });
   const study = studyQuery.data;
   useRecordTitle(study?.title);
+  useDocumentTitle(study?.title, t('breadcrumbs.reliability'));
 
   const reliabilityQuery = useQuery({
     queryKey: ['study-reliability', id],
@@ -109,7 +111,7 @@ export function StudyReliabilityPage() {
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = fileDate();
   const slug = fileSlug(study.title);
   const lowAgreementCases = reliability.per_case_metrics.filter((c) => c.is_low_agreement).length;
   // With no responses there is nothing to compute or export.

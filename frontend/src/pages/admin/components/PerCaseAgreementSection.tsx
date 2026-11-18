@@ -67,7 +67,7 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
                           {caseMetrics.is_low_agreement && (
                             <AlertCircle
                               role="img"
-                              aria-label={t('admin.studies.reliability.lowAgreement')}
+                              aria-label={t('admin.reliability.lowAgreement', { threshold: formatPercent(LOW_AGREEMENT_PCT) })}
                               className="size-4 shrink-0 text-warning"
                             />
                           )}
