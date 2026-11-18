@@ -1,7 +1,11 @@
 // Package timeutil provides time-related utility functions.
 package timeutil
 
-import "time"
+import (
+	"errors"
+	"fmt"
+	"time"
+)
 
 // DateFormat is the standard date format used for parsing date strings.
 const DateFormat = "2006-01-02"
@@ -15,29 +19,39 @@ type DateRange struct {
 	To   time.Time
 }
 
-// ParseDateRange parses from/to date strings and returns a DateRange.
-// Empty strings use defaults: from = 30 days ago, to = now (end of day).
-func ParseDateRange(fromStr, toStr string) DateRange {
-	now := time.Now()
-	dr := DateRange{
-		From: now.AddDate(0, 0, -DefaultRangeDays),
-		To:   now,
-	}
+// MaxRangeDays is the longest date range a query may span.
+const MaxRangeDays = 366
 
-	if fromStr != "" {
-		if parsed, err := time.Parse(DateFormat, fromStr); err == nil {
-			dr.From = parsed
-		}
-	}
-
+// ParseDateRange parses from/to date strings (YYYY-MM-DD) into a DateRange.
+// A missing "to" defaults to now and a missing "from" to DefaultRangeDays before "to".
+// It rejects malformed dates, from after to, and ranges longer than MaxRangeDays.
+func ParseDateRange(fromStr, toStr string) (DateRange, error) {
+	to := time.Now()
 	if toStr != "" {
-		if parsed, err := time.Parse(DateFormat, toStr); err == nil {
-			// Set to end of day
-			dr.To = endOfDay(parsed)
+		t, err := time.Parse(DateFormat, toStr)
+		if err != nil {
+			return DateRange{}, fmt.Errorf("invalid 'to' date %q: expected YYYY-MM-DD", toStr)
 		}
+		to = endOfDay(t)
 	}
 
-	return dr
+	from := to.AddDate(0, 0, -DefaultRangeDays)
+	if fromStr != "" {
+		t, err := time.Parse(DateFormat, fromStr)
+		if err != nil {
+			return DateRange{}, fmt.Errorf("invalid 'from' date %q: expected YYYY-MM-DD", fromStr)
+		}
+		from = t
+	}
+
+	if from.After(to) {
+		return DateRange{}, errors.New("'from' must not be after 'to'")
+	}
+	if to.Sub(from) > MaxRangeDays*24*time.Hour {
+		return DateRange{}, fmt.Errorf("date range must not exceed %d days", MaxRangeDays)
+	}
+
+	return DateRange{From: from, To: to}, nil
 }
 
 // endOfDay returns the time at 23:59:59 of the given day.

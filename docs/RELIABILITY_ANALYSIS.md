@@ -255,7 +255,7 @@ A "complete rater" is a rater who responded to every case in the study. Kappa st
 | Fleiss' kappa, per system | Over the complete raters; needs at least 2. For each system, a case is used only if every complete rater gave an answer in that system. A case where any of them gave none is left out of that system and counted in `num_cases_excluded`. A system needs at least 2 usable cases, otherwise no result. | `fleiss_kappa.go`, `internal/service/statistics.go` |
 | 95% CI for Fleiss' kappa | Percentile bootstrap over cases. The usable cases are resampled with replacement 2000 times with a fixed seed, Fleiss' kappa is computed on each resample, and the interval is the 2.5th and 97.5th percentile of those kappas. Resamples with every rating in one category have no kappa and are skipped. With m usable resamples, the bounds are the sorted values at positions `round(0.025·m)` and `m−1−round(0.025·m)`, counting from 0. Bounds clamped to [-1, 1]. No interval if no resample is usable. | `fleiss_kappa.go` |
 | Cohen's kappa, per system | Only when exactly 2 complete raters. Computed across the cases both raters answered in that system, one pair of ratings per case; needs at least 2 such cases. | `cohens_kappa.go`, `internal/service/statistics.go` |
-| 95% CI for Cohen's kappa | Normal approximation, `kappa ± 1.96 · SE`, `SE = sqrt(Po · (1 - Po) / (n * (1 - Pe)^2))`, n pairs. Bounds clamped to [-1, 1]. The interval has zero width when Po is 0 or 1. | `cohens_kappa.go` |
+| 95% CI for Cohen's kappa | Same percentile bootstrap as Fleiss' kappa, over the case pairs: resampled with replacement 2000 times with a fixed seed, Cohen's kappa computed on each resample, interval from the 2.5th and 97.5th percentile with the same position rule. Resamples with every rating in one category have no kappa and are skipped. Bounds clamped to [-1, 1]. No interval with fewer than 2 pairs or when every rating is in one category. | `cohens_kappa.go`, `bootstrap.go` |
 | AO/OTA weighted kappa | Only when exactly 2 complete raters. Linear weights over the AO/OTA ordering below, on the same case pairs. A subgroup code is first replaced by its group (`44-B1.2` becomes `44-B1`). A pair with a code still outside the ordering is excluded and counted in `num_pairs_excluded`. Needs at least 2 pairs left. No interval. | `weighted_kappa.go`, `internal/service/statistics.go` |
 | Interpretation label | Landis & Koch scale from section 3.2 | `internal/domain/reliability.go` |
 | Per-case agreement, per system | Share of responses that gave the most common answer for that case | `percent_agreement.go` |
@@ -294,8 +294,8 @@ Example `CohensKappaResult` for AO/OTA, from a study with two complete raters:
   "num_subjects": 8,
   "num_cases_excluded": 2,
   "confidence_interval": {
-    "lower": -0.17,
-    "upper": 0.97,
+    "lower": -0.2,
+    "upper": 1,
     "level": 0.95
   },
   "weighted_kappa": {
@@ -355,8 +355,8 @@ Read these before citing a number the app produced.
 - **Cohen's kappa appears only with exactly two complete raters.** With three or more, Fleiss' kappa is the only kappa. With exactly two, both are shown. They differ a little because Fleiss' kappa pools the two raters' category frequencies and Cohen's kappa keeps each rater's own.
 - **Cases without an answer are dropped per system.** Fleiss' kappa needs the same number of ratings for every case. When a complete rater gave no answer in a system (for example no Bartonicek type), that case is left out of that system and the other raters keep all their data. Dropping the rater instead would discard that rater's answers on every other case, and would leave no raters at all when a case has no answer from anyone. The cost is that a system's kappa describes only the cases every complete rater answered, which may be easier cases. Compare `num_subjects` with the study's total cases and report `num_cases_excluded` with the figure. Before this change the empty answer was counted as a missing rating for that case, which distorted kappa.
 - **Weighted kappa compares AO/OTA groups.** `44-B1.2` counts as `44-B1`. Codes outside the ordering are excluded and counted: `44-B` (subtype not classifiable), `43-B1`, `43-B2` and "not classifiable". The count is `num_pairs_excluded`. Report it with the figure.
-- **The Fleiss CI is a bootstrap, the Cohen CI is not.** The Cohen interval uses the normal approximation in section 4.1, which has zero width when raters agree on every case or on none. Read a Cohen interval of [1, 1] as "no information on uncertainty", not as certainty.
-- **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The code reports 1, and Cohen's kappa then has no interval.
+- **Both kappa intervals are bootstrap intervals over cases.** Earlier versions used a normal approximation for Cohen's kappa, which had zero width when raters agreed on every case or on none; Cohen intervals from those versions are not comparable. When raters agree on every case the bootstrap interval is still [1, 1], because every usable resample is perfect. With few cases the interval is coarse, so read it together with `num_subjects`.
+- **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The code reports 1 and no interval, for Fleiss and Cohen alike.
 - **At least 2 usable cases are needed.** With fewer, no Fleiss or Cohen result is returned for that system.
 - **Duplicate responses.** The app accepts one response per rater and case. If the database holds more, study kappas use the latest, while per-case percent agreement counts every response.
 - **Sensitivity, specificity, PPV, NPV and F1 are not computed**, and neither is a confusion matrix. Section 3 explains the concepts; the app does not produce them. The CSV export is the source for computing them outside the app.

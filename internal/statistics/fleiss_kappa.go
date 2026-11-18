@@ -1,17 +1,7 @@
 package statistics
 
 import (
-	"math"
-	"math/rand/v2"
-	"slices"
-
 	"github.com/jferrl/anklyze/internal/domain"
-)
-
-const (
-	fleissBootstrapResamples = 2000
-	// Fixed so the same data always gives the same interval.
-	fleissBootstrapSeed = 20260101
 )
 
 // fleissAgreement returns the mean observed agreement and the agreement expected by chance.
@@ -59,44 +49,19 @@ func FleissKappa(matrix [][]int, numRaters int) (float64, error) {
 }
 
 // FleissKappaCI returns a percentile bootstrap interval for Fleiss' Kappa.
-// It resamples the subjects (cases) with replacement 2000 times with a fixed seed
-// and takes the middle confidenceLevel of the resampled kappas.
 // Returns nil with fewer than 2 subjects or when no resample has a defined kappa.
+// See bootstrapKappaCI for the resampling scheme.
 func FleissKappaCI(matrix [][]int, numRaters int, confidenceLevel float64) *domain.ConfidenceInterval {
-	n := len(matrix)
-	if n < 2 || numRaters < 2 {
+	if numRaters < 2 {
 		return nil
 	}
 
-	// PCG's stream is fixed by its spec; reducing with % keeps the draws independent of the
-	// Rand helper methods, whose algorithms may change between Go versions.
-	src := rand.NewPCG(fleissBootstrapSeed, fleissBootstrapSeed)
-	resample := make([][]int, n)
-	kappas := make([]float64, 0, fleissBootstrapResamples)
-
-	for range fleissBootstrapResamples {
-		for i := range resample {
-			resample[i] = matrix[src.Uint64()%uint64(n)]
+	resample := make([][]int, len(matrix))
+	return bootstrapKappaCI(len(matrix), confidenceLevel, func(idx []uint64) (float64, bool) {
+		for i, j := range idx {
+			resample[i] = matrix[j]
 		}
 		pBar, peBar := fleissAgreement(resample, numRaters)
-		// Skip degenerate resamples: with every rating in one category kappa is 0/0, and
-		// counting it as 1 would pull the interval up.
-		if peBar == 1 {
-			continue
-		}
-		kappas = append(kappas, (pBar-peBar)/(1-peBar))
-	}
-	if len(kappas) == 0 {
-		return nil
-	}
-
-	slices.Sort(kappas)
-	m := len(kappas)
-	tail := min(int(math.Round((1-confidenceLevel)/2*float64(m))), (m-1)/2)
-
-	return &domain.ConfidenceInterval{
-		Lower: Round(max(-1, kappas[tail]), 4),
-		Upper: Round(min(1, kappas[m-1-tail]), 4),
-		Level: confidenceLevel,
-	}
+		return (pBar - peBar) / (1 - peBar), peBar != 1
+	})
 }
