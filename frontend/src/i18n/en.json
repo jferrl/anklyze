@@ -49,16 +49,16 @@
     },
     "hero": {
       "title": "Four ankle fracture classifications from one set of answers.",
-      "lede": "Anklyze is an open-source tool for classifying ankle fractures. It follows a single decision tree: answer what you see on the radiograph and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartonicek classifications together.",
+      "lede": "Anklyze is an open-source tool for classifying ankle fractures. A single decision tree drives it: answer questions about what you see on the radiographs, and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartoníček classifications together.",
       "secondary": "Read the method"
     },
     "figure": {
-      "label": "Line drawing of a right ankle in frontal view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. Mark 1 highlights the lateral malleolus; mark 2 brackets the level of the syndesmosis, where an oblique fibular fracture separates the lateral malleolus (Weber B).",
-      "caption": "Fig. Weber B, SER, 44-B1.1: an isolated lateral malleolus fracture at the level of the syndesmosis, read through the tree. N/C: the system does not apply.",
+      "label": "Rendered model of a right ankle in anterolateral view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. Mark 1 highlights the lateral malleolus; mark 2 brackets the level of the syndesmosis, where a spiral fibular fracture runs from low anterior to high posterior (Weber B).",
+      "caption": "Fig. Weber B, SER, 44-B1.1: an isolated lateral malleolar fracture at the level of the syndesmosis, traced through the decision tree. N/C: not classifiable; the system does not apply.",
       "sources": "Sources",
-      "creditPrefix": "Drawing adapted from",
-      "creditBy": "by DrFO.Tn, Wikimedia Commons,",
-      "changes": "Changes: Weber B panel only, redrawn as flat tint and outline without ligaments, cropped and labelled.",
+      "creditPrefix": "Rendered from the",
+      "creditBy": "3D model (© The Database Center for Life Science), as adapted for Anklyze. Figure licensed under",
+      "changes": "Changes: distal tibia, fibula and talus only, cut and refined; rendered in anterolateral view; the lateral malleolus is tinted and the labels and fracture line are drawn over the render.",
       "tibia": "Tibia",
       "fibula": "Fibula",
       "talus": "Talus",
@@ -75,11 +75,11 @@
       },
       "tested": {
         "term": "Tested against the diagram",
-        "body": "The classification engine's tests are generated from the same diagram as the tree. They cover all 165 paths. On one path the AO/OTA code is not checked, because the diagram is being corrected there."
+        "body": "The classification engine's tests are generated from the same diagram. They cover all 165 paths; on one path the AO/OTA code is not yet checked, pending a correction to the diagram."
       },
       "notClassifiable": {
         "term": "Not classifiable is a result",
-        "body": "When a system does not apply to the fracture, the result says so (N/C) instead of forcing a code."
+        "body": "When a system does not apply to the fracture, the result reports it as not classifiable (N/C) rather than forcing a code."
       },
       "judgement": {
         "term": "It does not replace clinical judgement",
@@ -94,29 +94,29 @@
       "colExample": "Written as",
       "laugeHansen": "Mechanism of injury: the position of the foot and the direction of the deforming force.",
       "danisWeber": "Level of the fibular fracture relative to the syndesmosis.",
-      "aoota": "Alphanumeric code for bone, segment, type, group and subgroup, for example 44-⁠B1.1.",
-      "bartonicek": "Morphology of the posterior malleolus fragment."
+      "aoota": "AO/OTA Fracture and Dislocation Classification Compendium (2018): an alphanumeric code for bone, segment, type, group and subgroup, for example 44-⁠B1.1.",
+      "bartonicek": "Morphology of the posterior malleolar fragment, assessed on CT."
     },
     "studies": {
       "title": "Research use",
-      "lede": "The same classifier is used to run inter-rater reliability studies: researchers publish cases with their imaging, raters classify them independently, and the application reports how far they agree.",
+      "lede": "The same classifier runs inter-rater reliability studies: researchers publish cases with their imaging, raters classify them independently, and the application reports their agreement.",
       "cases": {
         "term": "Cases",
-        "body": "Radiographs and CT for one fracture, classified by each rater without seeing the others."
+        "body": "Radiographs and CT of one fracture, classified by each rater blind to the other raters' answers."
       },
       "agreement": {
         "term": "Agreement",
-        "body": "Kappa for each classification system, with its Landis and Koch interpretation."
+        "body": "Cohen's kappa for two raters and Fleiss' kappa for more, per classification system, interpreted on the Landis and Koch scale."
       },
       "gold": {
         "term": "Gold standard",
-        "body": "Each rater's accuracy against the reference classification set by the study."
+        "body": "Each rater's accuracy against the reference classification set for the study."
       },
       "methodologyLink": "Read the statistical methodology"
     },
     "footer": {
       "disclaimer": "For medical purposes only. Always correlate with clinical findings.",
-      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0"
+      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0. Hero figure: CC BY-SA 4.0."
     },
     "source": {
       "title": "Open source",
@@ -165,7 +165,7 @@
       "lateralSubtype": "What type?",
       "medialSubtype": "What is the medial malleolus like?",
       "hasFibulaHeadShortening": "Shortening at the fibula head level?",
-      "fibulaTraceCount": "How many fracture traces does the fibula have?"
+      "fibulaTraceCount": "How many fracture lines does the fibula have?"
     },
     "options": {
       "involvedMalleoli": {
