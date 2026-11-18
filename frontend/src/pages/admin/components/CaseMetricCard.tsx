@@ -14,7 +14,7 @@ interface CaseMetricCardProps {
 
 export function CaseMetricCard({ metrics, activeSystem }: CaseMetricCardProps) {
   const { t } = useTranslation();
-  const agreement = metrics.response_count > 0 ? metrics[`${activeSystem}_agreement`] : null;
+  const agreement = metrics[`${activeSystem}_agreement`];
 
   return (
     <div className={cn('px-4 py-3', metrics.is_low_agreement && 'bg-warning/10')}>

@@ -50,13 +50,7 @@ func (s *StatisticsService) CalculateReliabilityMetrics(
 // calculateSystemAgreement calculates agreement metrics for a single classification system.
 // It reports no kappa: one case gives each rater a single rating, so kappa could only be 1 or 0.
 func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResponse, system string) *domain.SystemAgreement {
-	var classifications []string
-	for _, r := range responses {
-		if cat := s.getClassificationForSystem(r, system); cat != "" {
-			classifications = append(classifications, cat)
-		}
-	}
-
+	classifications := s.classifications(responses, system)
 	if len(classifications) == 0 {
 		return nil
 	}
@@ -64,8 +58,29 @@ func (s *StatisticsService) calculateSystemAgreement(responses []domain.CaseResp
 	return &domain.SystemAgreement{
 		System:           system,
 		CategoryCounts:   statistics.CategoryCounts(classifications),
-		PercentAgreement: statistics.PercentAgreement(classifications) * 100,
+		PercentAgreement: percentAgreement(classifications),
 	}
+}
+
+// classifications returns the non-empty answers in system, one per response.
+func (s *StatisticsService) classifications(responses []domain.CaseResponse, system string) []string {
+	var out []string
+	for _, r := range responses {
+		if cat := s.getClassificationForSystem(r, system); cat != "" {
+			out = append(out, cat)
+		}
+	}
+	return out
+}
+
+// percentAgreement is statistics.PercentAgreement as a percentage, nil with fewer than 2 classifications.
+func percentAgreement(classifications []string) *float64 {
+	p, ok := statistics.PercentAgreement(classifications)
+	if !ok {
+		return nil
+	}
+	p *= 100
+	return &p
 }
 
 // ============================================================================
@@ -320,40 +335,16 @@ func (s *StatisticsService) calculatePerCaseMetrics(
 			ResponseCount: len(responses),
 		}
 
-		// Calculate agreement for each system
-		cm.DanisWeberAgreement = s.calculateCaseAgreement(responses, "danis_weber")
-		cm.LaugeHansenAgreement = s.calculateCaseAgreement(responses, "lauge_hansen")
-		cm.AOOTAAgreement = s.calculateCaseAgreement(responses, "ao_ota")
+		cm.DanisWeberAgreement = percentAgreement(s.classifications(responses, "danis_weber"))
+		cm.LaugeHansenAgreement = percentAgreement(s.classifications(responses, "lauge_hansen"))
+		cm.AOOTAAgreement = percentAgreement(s.classifications(responses, "ao_ota"))
+		cm.BartonicekAgreement = percentAgreement(s.classifications(responses, "bartonicek"))
 
-		btAgreement := s.calculateCaseAgreement(responses, "bartonicek")
-		if btAgreement > 0 {
-			cm.BartonicekAgreement = &btAgreement
-		}
-
-		// Flag low agreement cases
-		cm.IsLowAgreement = cm.DanisWeberAgreement < 60 ||
-			cm.LaugeHansenAgreement < 60 ||
-			cm.AOOTAAgreement < 60
+		low := func(p *float64) bool { return p != nil && *p < 60 }
+		cm.IsLowAgreement = low(cm.DanisWeberAgreement) || low(cm.LaugeHansenAgreement) || low(cm.AOOTAAgreement)
 
 		result = append(result, cm)
 	}
 
 	return result
-}
-
-// calculateCaseAgreement calculates percent agreement for a single case and system.
-func (s *StatisticsService) calculateCaseAgreement(responses []domain.CaseResponse, system string) float64 {
-	var classifications []string
-	for _, r := range responses {
-		cat := s.getClassificationForSystem(r, system)
-		if cat != "" {
-			classifications = append(classifications, cat)
-		}
-	}
-
-	if len(classifications) < 2 {
-		return 100.0 // Single response = 100% agreement with itself
-	}
-
-	return statistics.PercentAgreement(classifications) * 100
 }

@@ -74,10 +74,11 @@ export interface CaseMetrics {
   case_id: string;
   case_title: string;
   response_count: number;
-  danis_weber_agreement: number;
-  lauge_hansen_agreement: number;
-  ao_ota_agreement: number;
-  bartonicek_agreement?: number;
+  // Percent agreement per system; null when fewer than two responses have a classification in it.
+  danis_weber_agreement: number | null;
+  lauge_hansen_agreement: number | null;
+  ao_ota_agreement: number | null;
+  bartonicek_agreement: number | null;
   is_low_agreement: boolean;
 }
 

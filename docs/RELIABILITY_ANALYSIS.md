@@ -330,7 +330,7 @@ Endpoints: `GET /api/admin/cases/:id/reliability` and `GET /api/admin/cases/:id/
 
 | Metric | How it is computed | Code |
 |--------|--------------------|------|
-| Percent agreement | Share of responses that gave the most common answer, per system. A single response counts as 100%. | `percent_agreement.go` |
+| Percent agreement | Share of responses that gave the most common answer, per system. It needs at least 2 classified responses; with fewer, `percent_agreement` is null (one rating has nothing to agree with). | `percent_agreement.go` |
 | Category counts | Responses per category | `category_metrics.go` |
 | Gold standard accuracy | Percentage of responses equal to the gold standard, plus the most common answer and the response distribution | `gold_standard.go` |
 

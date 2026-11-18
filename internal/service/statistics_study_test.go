@@ -281,3 +281,45 @@ func TestStudyReliability_WeightedKappaNilWhenTooFewPairsRemain(t *testing.T) {
 		t.Errorf("expected no weighted kappa with one usable pair, got %+v", got.WeightedKappa)
 	}
 }
+
+// Per-case agreement needs 2 classified responses in a system. Fewer used to read 100%,
+// so a system nobody answered looked like perfect agreement; it must be nil and must not
+// raise the low-agreement flag.
+func TestStudyReliability_PerCaseAgreementNilBelowTwoRatings(t *testing.T) {
+	t.Parallel()
+
+	f := newStudyFixture("danis_weber", [][]string{
+		{"Weber A", "Weber A", "", "Weber A"},
+		{"Weber B", "Weber A", "", ""},
+		{"Weber C", "Weber A", "", ""},
+	})
+
+	tests := []struct {
+		name    string
+		want    float64 // -1: nil
+		wantLow bool
+	}{
+		{"three answers, all differ", 100.0 / 3.0, true},
+		{"three answers, all agree", 100, false},
+		{"no answer", -1, false},
+		{"one answer", -1, false},
+	}
+
+	perCase := f.metrics(t).PerCaseMetrics
+	for i, tt := range tests {
+		cm := perCase[i]
+		switch p := cm.DanisWeberAgreement; {
+		case tt.want < 0 && p != nil:
+			t.Errorf("%s: danis_weber agreement = %v, want nil", tt.name, *p)
+		case tt.want >= 0 && (p == nil || !approx(*p, tt.want, 1e-9)):
+			t.Errorf("%s: danis_weber agreement = %v, want %v", tt.name, p, tt.want)
+		}
+		// The fixture answers no other system, so no other system has agreement.
+		if cm.LaugeHansenAgreement != nil || cm.AOOTAAgreement != nil || cm.BartonicekAgreement != nil {
+			t.Errorf("%s: unanswered systems report agreement %v %v %v", tt.name, cm.LaugeHansenAgreement, cm.AOOTAAgreement, cm.BartonicekAgreement)
+		}
+		if cm.IsLowAgreement != tt.wantLow {
+			t.Errorf("%s: is_low_agreement = %v, want %v", tt.name, cm.IsLowAgreement, tt.wantLow)
+		}
+	}
+}

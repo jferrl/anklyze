@@ -160,11 +160,12 @@ export type KappaWeightType = 'linear' | 'quadratic';
 
 /**
  * Agreement metrics for a classification system in one case.
- * percent_agreement is the share (0-100) of responses that gave the most common answer.
+ * percent_agreement is the share (0-100) of responses that gave the most common answer,
+ * null when only one response has a classification in the system.
  */
 export interface SystemAgreement {
   system: string;
-  percent_agreement: number;
+  percent_agreement: number | null;
   category_counts: Record<string, number>;
 }
 

@@ -41,8 +41,9 @@ const (
 type SystemAgreement struct {
 	System string `json:"system"`
 
-	// PercentAgreement is the share of responses (0-100) that gave the most common answer.
-	PercentAgreement float64 `json:"percent_agreement"`
+	// PercentAgreement is the share of responses (0-100) that gave the most common answer,
+	// null when fewer than 2 responses have a classification in the system.
+	PercentAgreement *float64 `json:"percent_agreement"`
 
 	// Distribution of classifications across categories
 	CategoryCounts map[string]int64 `json:"category_counts"`
@@ -170,12 +171,13 @@ type PerCaseMetrics struct {
 	CaseTitle     string    `json:"case_title"`
 	ResponseCount int       `json:"response_count"`
 
-	// Per-system agreement (percentage)
-	DanisWeberAgreement  float64  `json:"danis_weber_agreement"`
-	LaugeHansenAgreement float64  `json:"lauge_hansen_agreement"`
-	AOOTAAgreement       float64  `json:"ao_ota_agreement"`
-	BartonicekAgreement  *float64 `json:"bartonicek_agreement,omitempty"` // Optional, requires CT
+	// Per-system percent agreement (0-100), null when fewer than 2 responses have a
+	// classification in the system.
+	DanisWeberAgreement  *float64 `json:"danis_weber_agreement"`
+	LaugeHansenAgreement *float64 `json:"lauge_hansen_agreement"`
+	AOOTAAgreement       *float64 `json:"ao_ota_agreement"`
+	BartonicekAgreement  *float64 `json:"bartonicek_agreement"`
 
-	// Identifies cases with low agreement (potential "hard cases")
-	IsLowAgreement bool `json:"is_low_agreement"` // True if any system < 60%
+	// IsLowAgreement is true if Lauge-Hansen, Danis-Weber or AO/OTA agreement is below 60%.
+	IsLowAgreement bool `json:"is_low_agreement"`
 }

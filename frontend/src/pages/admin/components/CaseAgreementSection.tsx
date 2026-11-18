@@ -28,7 +28,8 @@ export function CaseAgreementSection({ metrics }: CaseAgreementSectionProps) {
 
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4">
         {SYSTEM_KEYS.map((key) => {
-          const percent = metrics[`${key}_agreement`]?.percent_agreement;
+          const agreement = metrics[`${key}_agreement`];
+          const percent = agreement?.percent_agreement;
           return (
             <div key={key} className="min-w-0 bg-card p-4">
               <p className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -46,6 +47,11 @@ export function CaseAgreementSection({ metrics }: CaseAgreementSectionProps) {
                     />
                   )}
                 </p>
+              ) : agreement ? (
+                <>
+                  <p className="mt-2 font-display text-3xl tabular-nums text-muted-foreground">—</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{t('admin.reliability.singleClassification')}</p>
+                </>
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">{t('admin.reliability.noSystemData')}</p>
               )}
