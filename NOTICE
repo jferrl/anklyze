@@ -53,3 +53,17 @@ Third-party content
     surface with the posterior lip, the talar dome and the posterior talus,
     hidden under ligaments and the fibula in the original, were completed as
     simple curves; the drawing is cropped.
+
+  3D ankle model (frontend/public/models/ankle/ankle.bin, shown by the
+  classifier's "Explore in 3D" view):
+    BodyParts3D, © The Database Center for Life Science, https://lifesciencedb.jp/bp3d/
+    Source files (BodyParts3D 3.0): FMA24477.obj, FMA24480.obj, FMA24482.obj and
+    FMA24497.obj (right tibia, fibula, talus and calcaneus), licensed under
+    CC BY-SA 2.1 Japan in the files; the database licence page now grants
+    CC BY 4.0, https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+    Changes: tibia and fibula cut 100 mm above the joint and the calcaneus near
+    its top, cuts closed, meshes simplified, malleolus regions tagged, positions
+    quantised (frontend/scripts/build-ankle-model.mjs).
+    The adapted model is licensed under CC BY-SA 4.0
+    (frontend/public/models/ankle/LICENSE); this does not extend to the
+    Anklyze code.
