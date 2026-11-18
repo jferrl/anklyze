@@ -50,6 +50,16 @@ describe('parseAnkleModel', () => {
     expect(x('tibia', Region.medial)).toBeGreaterThan(x('fibula', Region.lateral));
   });
 
+  it('bakes occlusion darker in the joint than up the shaft', () => {
+    const mean = (name: string, keep: (y: number) => boolean) => {
+      const p = part(name);
+      const o = Array.from(p.occlusion).filter((_, i) => keep(p.positions[i * 3 + 1]));
+      return o.reduce((a, b) => a + b, 0) / o.length;
+    };
+    // The tibial plafond faces the talar dome across the joint space; the shaft is open bone.
+    expect(mean('tibia', (y) => Math.abs(y) < 2)).toBeGreaterThan(2 * mean('tibia', (y) => y > 50 && y < 90));
+  });
+
   it('stacks the fibular level bands from the joint upwards', () => {
     const { infra, trans, supra, supra_far } = model.bands;
     expect(infra.y[1]).toBeLessThanOrEqual(0);
