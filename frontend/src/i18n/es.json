@@ -94,7 +94,7 @@
       "colExample": "Se escribe",
       "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
       "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
-      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-\u2060B1.1.",
+      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-⁠B1.1.",
       "bartonicek": "Morfología del fragmento del maléolo posterior."
     },
     "studies": {
@@ -443,11 +443,13 @@
       "has_fibula_head_shortening": "Acortamiento en la cabeza del peroné",
       "posterior_fracture_type": "Fragmento posterior"
     },
-    "schematic": "Esquema sin escala: indica el nivel, no la forma de la fractura.",
-    "creditFront": "Vista frontal adaptada de",
-    "creditFrontBy": "de DrFO.Tn,",
-    "creditSide": "; vista lateral adaptada de",
-    "creditSideLicense": ", dominio público.",
+    "note": "Las marcas indican el nivel, no la forma de la fractura.",
+    "sources": {
+      "title": "Fuentes",
+      "front": "Vista frontal adaptada de <work>‘Weber Classification – latin.svg’</work> de DrFO.Tn, <license>CC BY 4.0</license>.",
+      "side": "Vista lateral adaptada de <work>‘Ankle.svg’</work>, dibujo del gobierno de EE. UU., dominio público.",
+      "model": "Modelo 3D: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y simplificado para Anklyze; <license>CC BY-SA 4.0</license>."
+    },
     "model3d": {
       "open": "Explorar en 3D",
       "close": "Volver al dibujo",
@@ -459,9 +461,7 @@
       "noWebGL": "Este navegador no puede mostrar 3D (WebGL 2 está desactivado o no es compatible); se mantiene el dibujo.",
       "loadFailed": "No se pudo cargar el modelo 3D; se muestra el dibujo.",
       "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales, astrágalo y parte superior del calcáneo.",
-      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo.",
-      "caption": "Huesos de un adulto, a escala; las marcas indican el nivel, no la forma de la fractura. Tobillo derecho de",
-      "credit": ", © The Database Center for Life Science, recortado y simplificado para Anklyze;"
+      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo."
     }
   },
   "language": {

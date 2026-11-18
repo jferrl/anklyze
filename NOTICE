@@ -52,7 +52,8 @@ Third-party content
     tendon, foot bones and labels were removed; the distal tibial articular
     surface with the posterior lip, the talar dome and the posterior talus,
     hidden under ligaments and the fibula in the original, were completed as
-    simple curves; the drawing is cropped.
+    simple curves, the dome parallel to the plafond; the lateral malleolus tip
+    was joined into one contour; the drawing is cropped.
 
   3D ankle model (frontend/public/models/ankle/ankle.bin, shown by the
   classifier's "Explore in 3D" view):

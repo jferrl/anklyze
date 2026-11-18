@@ -94,7 +94,7 @@
       "colExample": "Written as",
       "laugeHansen": "Mechanism of injury: the position of the foot and the direction of the deforming force.",
       "danisWeber": "Level of the fibular fracture relative to the syndesmosis.",
-      "aoota": "Alphanumeric code for bone, segment, type, group and subgroup, for example 44-\u2060B1.1.",
+      "aoota": "Alphanumeric code for bone, segment, type, group and subgroup, for example 44-⁠B1.1.",
       "bartonicek": "Morphology of the posterior malleolus fragment."
     },
     "studies": {
@@ -443,11 +443,13 @@
       "has_fibula_head_shortening": "Fibular head shortening",
       "posterior_fracture_type": "Posterior fragment"
     },
-    "schematic": "Schematic, not to scale; it shows the level, not the shape of the fracture.",
-    "creditFront": "Front view adapted from",
-    "creditFrontBy": "by DrFO.Tn,",
-    "creditSide": "; side view adapted from",
-    "creditSideLicense": ", public domain.",
+    "note": "Marks show the level, not the fracture shape.",
+    "sources": {
+      "title": "Sources",
+      "front": "Front view adapted from <work>‘Weber Classification – latin.svg’</work> by DrFO.Tn, <license>CC BY 4.0</license>.",
+      "side": "Side view adapted from <work>‘Ankle.svg’</work>, U.S. government drawing, public domain.",
+      "model": "3D model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and simplified for Anklyze; <license>CC BY-SA 4.0</license>."
+    },
     "model3d": {
       "open": "Explore in 3D",
       "close": "Back to the drawing",
@@ -459,9 +461,7 @@
       "noWebGL": "This browser cannot show 3D (WebGL 2 is off or unsupported), so the drawing stays.",
       "loadFailed": "The 3D model could not be loaded, so the drawing is shown.",
       "views": "3D model of a right ankle: distal tibia and fibula, talus and the top of the calcaneus.",
-      "empty": "3D model of a right ankle. No malleolus selected yet.",
-      "caption": "One adult's bones, to scale; the marks show the level, not the shape of the fracture. Right ankle from",
-      "credit": ", © The Database Center for Life Science, cut and simplified for Anklyze;"
+      "empty": "3D model of a right ankle. No malleolus selected yet."
     }
   },
   "language": {

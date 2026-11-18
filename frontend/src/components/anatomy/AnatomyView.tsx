@@ -1,6 +1,6 @@
-import { lazy, Suspense, useId, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Rotate3d } from 'lucide-react';
+import { lazy, Suspense, useId, useMemo, useState, type ReactNode } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { ChevronDown, Rotate3d } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
@@ -8,7 +8,7 @@ import { getQuestionSteps } from '@/features/fracture-classification/utils/quest
 import type { FractureInput } from '@/types';
 import { getAnatomyState, type AnatomyState, type FibulaMark } from './anatomyState';
 import { CALCANEUS, FIBULA_INTACT, TALUS, TIBIA } from './frontBones';
-import { LAT_FIBULA, LAT_POSTERIOR_LIP, LAT_TALUS, LAT_TIBIA } from './lateralBones';
+import { LAT_FIBULA, LAT_TALUS, LAT_TIBIA } from './lateralBones';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
@@ -62,6 +62,18 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
     setView3d(!view3d);
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
+  const reading = showReading
+    ? getQuestionSteps(formData, options, hasTACImages)
+        .filter((step) => step.value !== undefined && step.id !== 'has_ct_scan')
+        .map((step) => ({
+          id: step.id,
+          field: t(`anatomy.fields.${step.id}`),
+          answer: step.options.find((opt) => opt.value === step.value)?.label ?? String(step.value),
+        }))
+    : [];
+
   const fibulaCaption = (
     <p aria-hidden="true" className="text-xs">
       <span className={cn(on(state.lateral || !!state.fibula), 'block', state.fibula ? 'font-medium text-primary' : 'text-muted-foreground')}>
@@ -83,18 +95,6 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
     </p>
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
-  const reading = showReading
-    ? getQuestionSteps(formData, options, hasTACImages)
-        .filter((step) => step.value !== undefined && step.id !== 'has_ct_scan')
-        .map((step) => ({
-          id: step.id,
-          field: t(`anatomy.fields.${step.id}`),
-          answer: step.options.find((opt) => opt.value === step.value)?.label ?? String(step.value),
-        }))
-    : [];
-
   return (
     <figure className={cn('space-y-3', className)}>
       {view3d ? (
@@ -114,17 +114,14 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
           </div>
         </div>
       ) : (
-        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-4">
-          <div className="space-y-1">
-            <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
-            <FrontView state={state} />
-            {fibulaCaption}
-          </div>
-          <div className="space-y-1">
-            <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
-            <SideView state={state} />
-            {posteriorCaption}
-          </div>
+        // Headings, drawings and captions are rows of one grid, so both views share a baseline.
+        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-x-4 gap-y-1">
+          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
+          <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
+          <FrontView state={state} />
+          <SideView state={state} />
+          <div className="pt-2">{fibulaCaption}</div>
+          <div className="pt-2">{posteriorCaption}</div>
         </div>
       )}
 
@@ -153,36 +150,10 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
         </dl>
       )}
 
-      {view3d ? (
-        <figcaption className="text-xs text-muted-foreground">
-          {t('anatomy.model3d.caption')}{' '}
-          <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener noreferrer" className="underline">
-            BodyParts3D
-          </a>
-          {t('anatomy.model3d.credit')}{' '}
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
-            CC BY-SA 4.0
-          </a>
-          .
-        </figcaption>
-      ) : (
-      <figcaption className="text-xs text-muted-foreground">
-        {t('anatomy.schematic')}{' '}
-        {t('anatomy.creditFront')}{' '}
-        <a href="https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg" target="_blank" rel="noopener noreferrer" className="underline">
-          ‘Weber Classification – latin.svg’
-        </a>{' '}
-        {t('anatomy.creditFrontBy')}{' '}
-        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
-          CC BY 4.0
-        </a>
-        {t('anatomy.creditSide')}{' '}
-        <a href="https://commons.wikimedia.org/wiki/File:Ankle.svg" target="_blank" rel="noopener noreferrer" className="underline">
-          ‘Ankle.svg’
-        </a>
-        {t('anatomy.creditSideLicense')}
+      <figcaption className="space-y-1 text-xs text-muted-foreground">
+        <p>{t('anatomy.note')}</p>
+        <Sources />
       </figcaption>
-      )}
     </figure>
   );
 }
@@ -207,89 +178,187 @@ function useSummary(state: AnatomyState, model3d: boolean): string {
   return sentences.join(' ');
 }
 
+// Both drawings share one language: 1.25px outlines and 2.25px highlights at any size, highlights
+// as a tint plus a bolder outline that fade out at their ends, and HTML labels on leader lines.
+const LINE = { strokeWidth: 1.25, vectorEffect: 'non-scaling-stroke' } as const;
+const BOLD = { strokeWidth: 2.25, vectorEffect: 'non-scaling-stroke' } as const;
+const TINT = 0.14;
+
+type ViewBox = [number, number, number, number];
+const FRONT_BOX: ViewBox = [200, 100, 210, 212];
+const SIDE_BOX: ViewBox = [94, 66, 150, 196];
+
+/**
+ * Spot limits a highlight to a disc round its structure: the tint ends on a clean arc (`${id}`),
+ * and the bold outline tapers out across it (`${id}-line`) instead of stopping square.
+ */
+function Spot({ id, cx, cy, r }: { id: string; cx: number; cy: number; r: number }) {
+  const disc = (suffix: string, radius: number, fade: number) => (
+    <>
+      <radialGradient id={`${id}${suffix}-g`} cx={cx} cy={cy} r={radius} gradientUnits="userSpaceOnUse">
+        <stop offset={1 - fade / radius} stopColor="white" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
+      </radialGradient>
+      <mask id={`${id}${suffix}`} maskUnits="userSpaceOnUse" x={cx - radius} y={cy - radius} width={2 * radius} height={2 * radius}>
+        <circle cx={cx} cy={cy} r={radius} fill={`url(#${id}${suffix}-g)`} />
+      </mask>
+    </>
+  );
+  return (
+    <>
+      {disc('', r, 1)}
+      {disc('-line', r + 4, 10)}
+    </>
+  );
+}
+
+/** Label sets a structure's name in the page type over a drawing, hanging below a point of its viewBox. */
+function Label({ box, x, y, on, children }: { box: ViewBox; x: number; y: number; on: boolean; children: ReactNode }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{ left: `${((x - box[0]) / box[2]) * 100}%`, top: `${((y - box[1]) / box[3]) * 100}%` }}
+      className={cn(ink, 'absolute -translate-x-1/2 whitespace-nowrap text-xs leading-4', on ? 'font-medium text-primary' : 'text-muted-foreground')}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** Leader joins a structure (the dot) to the label below it. */
+function Leader({ x, y, to, on }: { x: number; y: number; to: number; on: boolean }) {
+  return (
+    <g className={cn(ink, on ? 'fill-primary stroke-primary' : 'fill-muted-foreground/60 stroke-muted-foreground/60')}>
+      <path d={`M${x},${y} V${to}`} vectorEffect="non-scaling-stroke" strokeWidth="1" />
+      <circle cx={x} cy={y} r="1.8" stroke="none" />
+    </g>
+  );
+}
+
+function useSvgId() {
+  // useId's punctuation is not safe inside url(#...).
+  return 'anatomy' + useId().replace(/[^\w-]/g, '');
+}
+
 function FrontView({ state }: { state: AnatomyState }) {
   const { t } = useTranslation();
-  // useId's punctuation is not safe inside url(#...).
-  const id = 'anatomy' + useId().replace(/[^\w-]/g, '');
-  const stroke = 'stroke-primary';
+  const id = useSvgId();
 
   return (
-    <svg
-      viewBox="200 100 210 212"
-      aria-hidden="true"
-      className="w-full text-[11.5px]"
-      fill="var(--card)"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <defs>
-        <clipPath id={`${id}-lateral`}>
-          <rect x="200" y="214" width="90" height="70" />
-        </clipPath>
-        <clipPath id={`${id}-medial`}>
-          <rect x="341" y="220" width="60" height="50" />
-        </clipPath>
-      </defs>
+    <div className="relative self-end">
+      <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="var(--card)" strokeLinecap="round" strokeLinejoin="round">
+        <defs>
+          <Spot id={`${id}-lateral`} cx={244} cy={330} r={124} />
+          <Spot id={`${id}-medial`} cx={395} cy={262} r={52} />
+          <clipPath id={`${id}-fibula`}>
+            <path d={FIBULA_INTACT} />
+          </clipPath>
+        </defs>
 
-      {/* Back to front; each fill hides what lies behind it. */}
-      <g className="stroke-muted-foreground" strokeWidth="1">
-        <path d={CALCANEUS} />
-        <path d={TALUS} />
-        <path d={TIBIA} />
-        <path d={FIBULA_INTACT} />
-      </g>
+        {/* Back to front; each fill hides what lies behind it. */}
+        <g className="stroke-muted-foreground" {...LINE}>
+          <path d={CALCANEUS} />
+          <path d={TALUS} />
+          <path d={TIBIA} />
+          <path d={FIBULA_INTACT} />
+        </g>
 
-      <path d={FIBULA_INTACT} fill="none" strokeWidth="2.2" clipPath={`url(#${id}-lateral)`} className={cn(stroke, on(state.lateral))} />
-      <path d={TIBIA} fill="none" strokeWidth="2.2" clipPath={`url(#${id}-medial)`} className={cn(stroke, on(state.medial))} />
+        <g className={cn('fill-primary stroke-primary', on(state.lateral))}>
+          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral)`} fillOpacity={TINT} stroke="none" />
+          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral-line)`} fill="none" {...BOLD} />
+        </g>
+        <g className={cn('fill-primary stroke-primary', on(state.medial))}>
+          <path d={TIBIA} mask={`url(#${id}-medial)`} fillOpacity={TINT} stroke="none" />
+          <path d={TIBIA} mask={`url(#${id}-medial-line)`} fill="none" {...BOLD} />
+        </g>
 
-      {(Object.keys(BANDS) as (keyof typeof BANDS)[]).map((mark) => {
-        const [top, bottom] = BANDS[mark];
-        return (
-          <g key={mark} className={on(state.fibula === mark)}>
-            <rect x="222" y={top} width="56" height={bottom - top} className="fill-primary" fillOpacity="0.12" stroke="none" />
-            <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" strokeWidth="1" className={stroke} />
-          </g>
-        );
-      })}
+        {/* The fibular level: the fibula tinted between two rings, with a bracket beside it. */}
+        {(Object.keys(BANDS) as (keyof typeof BANDS)[]).map((mark) => {
+          const [top, bottom] = BANDS[mark];
+          return (
+            <g key={mark} className={cn('fill-primary stroke-primary', on(state.fibula === mark))}>
+              <g clipPath={`url(#${id}-fibula)`}>
+                <rect x="220" y={top} width="60" height={bottom - top} fillOpacity={TINT} stroke="none" />
+                <path d={`M220,${top} h60 M220,${bottom} h60`} fill="none" {...LINE} />
+              </g>
+              <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" {...LINE} />
+            </g>
+          );
+        })}
 
-      {/* Proximal fibula: outside the drawing, so only an arrow up the shaft. */}
-      <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" strokeWidth="1.6" className={cn(stroke, on(state.fibula === 'proximal'))} />
+        {/* Proximal fibula: outside the drawing, so only an arrow up the shaft. */}
+        <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" {...BOLD} className={cn('stroke-primary', on(state.fibula === 'proximal'))} />
 
-      <g stroke="none">
-        <text x="236" y="292" textAnchor="middle" className={cn(ink, state.lateral ? 'fill-primary font-medium' : 'fill-muted-foreground')}>
-          {t('anatomy.lateral')}
-        </text>
-        <text x="384" y="270" textAnchor="middle" className={cn(ink, state.medial ? 'fill-primary font-medium' : 'fill-muted-foreground')}>
-          {t('anatomy.medial')}
-        </text>
-      </g>
-    </svg>
+        <Leader x={232.5} y={270.5} to={282} on={state.lateral} />
+        <Leader x={374} y={252} to={265} on={state.medial} />
+      </svg>
+      <Label box={FRONT_BOX} x={232.5} y={284} on={state.lateral}>
+        {t('anatomy.lateral')}
+      </Label>
+      <Label box={FRONT_BOX} x={374} y={267} on={state.medial}>
+        {t('anatomy.medial')}
+      </Label>
+    </div>
   );
 }
 
 function SideView({ state }: { state: AnatomyState }) {
   const { t } = useTranslation();
+  const id = useSvgId();
 
   return (
-    <svg
-      viewBox="94 66 150 216"
-      aria-hidden="true"
-      className="w-full max-w-56 text-[12px]"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <g className="stroke-muted-foreground" strokeWidth="1">
-        <path d={LAT_TALUS} />
-        <path d={LAT_TIBIA} />
-        <path d={LAT_FIBULA} strokeOpacity="0.45" />
-      </g>
-      <path d={LAT_POSTERIOR_LIP} strokeWidth="2.2" className={cn('stroke-primary', on(state.posterior))} />
+    <div className="w-full max-w-56 self-end">
+      <svg viewBox={SIDE_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <defs>
+          <Spot id={`${id}-posterior`} cx={118} cy={205} r={48.5} />
+        </defs>
+        <g className="stroke-muted-foreground" {...LINE}>
+          <path d={LAT_TALUS} />
+          <path d={LAT_TIBIA} />
+          <path d={LAT_FIBULA} strokeOpacity="0.45" />
+        </g>
+        {/* The posterior lip of the tibia; its extent is schematic, not a fragment. */}
+        <g className={cn('fill-primary stroke-primary', on(state.posterior))}>
+          <path d={`${LAT_TIBIA} Z`} mask={`url(#${id}-posterior)`} fillOpacity={TINT} stroke="none" />
+          <path d={LAT_TIBIA} mask={`url(#${id}-posterior-line)`} fill="none" {...BOLD} />
+        </g>
+      </svg>
+      <p aria-hidden="true" className="flex justify-between gap-2 text-xs leading-4 text-muted-foreground">
+        <span>{t('anatomy.back')}</span>
+        <span>{t('anatomy.frontSide')}</span>
+      </p>
+    </div>
+  );
+}
 
-      <g stroke="none">
-        <text x="96" y="278" className="fill-muted-foreground">{t('anatomy.back')}</text>
-        <text x="242" y="278" textAnchor="end" className="fill-muted-foreground">{t('anatomy.frontSide')}</text>
-      </g>
-    </svg>
+// The full credits stay in the page, one click away; NOTICE has the complete text.
+function Sources() {
+  const { t } = useTranslation();
+  const link = (href: string) => <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground" />;
+
+  return (
+    <details className="group">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-0.5 rounded-sm outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        {t('anatomy.sources.title')}
+        <ChevronDown aria-hidden="true" className="size-3.5 transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] group-open:rotate-180 motion-reduce:transition-none" />
+      </summary>
+      <ul className="mt-1 space-y-1">
+        <li>
+          <Trans
+            i18nKey="anatomy.sources.front"
+            components={{ work: link('https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg'), license: link('https://creativecommons.org/licenses/by/4.0/') }}
+          />
+        </li>
+        <li>
+          <Trans i18nKey="anatomy.sources.side" components={{ work: link('https://commons.wikimedia.org/wiki/File:Ankle.svg') }} />
+        </li>
+        <li>
+          <Trans
+            i18nKey="anatomy.sources.model"
+            components={{ work: link('https://lifesciencedb.jp/bp3d/'), license: link('https://creativecommons.org/licenses/by-sa/4.0/') }}
+          />
+        </li>
+      </ul>
+    </details>
   );
 }
