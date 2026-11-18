@@ -31,7 +31,7 @@ func TestMapCaseResponseError(t *testing.T) {
 
 			got := mapCaseResponseError(tt.err)
 			if tt.want == nil {
-				if got != tt.err {
+				if !errors.Is(got, tt.err) {
 					t.Errorf("mapCaseResponseError() = %v, want input unchanged", got)
 				}
 				return
