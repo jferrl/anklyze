@@ -111,7 +111,7 @@ func SetupCaseRoutes(
 	statsService *service.StatisticsService,
 ) {
 	// Create specialized handlers for different concerns
-	adminHandler := NewCaseAdminHandler(caseRepo, storage, statsService)
+	adminHandler := NewCaseAdminHandler(caseRepo, storage, statsService, studyService)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
 	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo)
 	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)

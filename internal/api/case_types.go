@@ -21,7 +21,8 @@ type StudyService interface {
 	IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (bool, *uuid.UUID, error)
 	GetReliabilityMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyReliabilityMetrics, error)
 	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
-	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
+	RefreshStudy(ctx context.Context, studyID uuid.UUID)
+	InvalidateStats(studyID uuid.UUID)
 	ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error
 }
 
