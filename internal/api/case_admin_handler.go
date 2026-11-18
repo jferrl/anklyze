@@ -18,6 +18,7 @@ type CaseAdminHandler struct {
 	caseRepo     repository.CaseRepository
 	storage      storage.Storage
 	statsService StatisticsService
+	studyService StudyService
 }
 
 // NewCaseAdminHandler creates a new case admin handler.
@@ -25,11 +26,13 @@ func NewCaseAdminHandler(
 	caseRepo repository.CaseRepository,
 	storage storage.Storage,
 	statsService StatisticsService,
+	studyService StudyService,
 ) *CaseAdminHandler {
 	return &CaseAdminHandler{
 		caseRepo:     caseRepo,
 		storage:      storage,
 		statsService: statsService,
+		studyService: studyService,
 	}
 }
 
@@ -234,6 +237,11 @@ func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
 		slog.Error("failed to delete case", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete case"})
 		return
+	}
+
+	// The case's responses went with it; recount and drop cached stats for its study.
+	if cs.StudyID != nil {
+		h.studyService.RefreshStudy(c.Request.Context(), *cs.StudyID)
 	}
 
 	c.Status(http.StatusNoContent)

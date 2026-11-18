@@ -35,8 +35,12 @@ type StudyService interface {
 	// Gold standard accuracy metrics (orchestrates data fetching + GoldStandardCalculator call)
 	GetGoldStandardMetrics(ctx context.Context, studyID uuid.UUID) (*domain.StudyGoldStandardMetrics, error)
 
-	// Background updates after response submission
-	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
+	// RefreshStudy drops cached stats and recomputes counters after anything that
+	// changes a study's cases or responses.
+	RefreshStudy(ctx context.Context, studyID uuid.UUID)
+
+	// InvalidateStats drops cached stats only (for edits and deletes that need no recount).
+	InvalidateStats(studyID uuid.UUID)
 
 	// ValidateAcceptingResponses returns domain.ErrStudyClosed if the study is closed.
 	ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error
@@ -78,14 +82,7 @@ func (s *studyService) AddCase(ctx context.Context, studyID, caseID uuid.UUID, c
 	if err := s.studyRepo.AddCase(ctx, studyID, caseID, caseOrder); err != nil {
 		return err
 	}
-	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
-		slog.Error("failed to update study counters after AddCase",
-			"error", err,
-			"study_id", studyID,
-			"case_id", caseID,
-		)
-		// Counter update failure is non-fatal — the case was added successfully.
-	}
+	s.RefreshStudy(ctx, studyID)
 	return nil
 }
 
@@ -94,12 +91,7 @@ func (s *studyService) AddCases(ctx context.Context, studyID uuid.UUID, assignme
 	if err := s.studyRepo.AddCases(ctx, studyID, assignments); err != nil {
 		return err
 	}
-	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
-		slog.Error("failed to update study counters after AddCases",
-			"error", err,
-			"study_id", studyID,
-		)
-	}
+	s.RefreshStudy(ctx, studyID)
 	return nil
 }
 
@@ -108,13 +100,7 @@ func (s *studyService) RemoveCase(ctx context.Context, studyID, caseID uuid.UUID
 	if err := s.studyRepo.RemoveCase(ctx, studyID, caseID); err != nil {
 		return err
 	}
-	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
-		slog.Error("failed to update study counters after RemoveCase",
-			"error", err,
-			"study_id", studyID,
-			"case_id", caseID,
-		)
-	}
+	s.RefreshStudy(ctx, studyID)
 	return nil
 }
 
@@ -205,15 +191,20 @@ func (s *studyService) GetGoldStandardMetrics(ctx context.Context, studyID uuid.
 	return s.goldStandardCalc.CalculateStudyGoldStandardMetrics(study, cases, responsesByCase)
 }
 
-// UpdateAfterResponse invalidates the stats cache and updates study counters
-// after a response is submitted. Intended to be called in a background goroutine.
-func (s *studyService) UpdateAfterResponse(ctx context.Context, studyID uuid.UUID) {
+// RefreshStudy invalidates the stats cache and recounts the study counters.
+// Counter failures are logged, not returned: the triggering write already succeeded.
+func (s *studyService) RefreshStudy(ctx context.Context, studyID uuid.UUID) {
 	s.statsCache.Invalidate(studyID)
 
 	if err := s.studyRepo.UpdateCounters(ctx, studyID); err != nil {
-		slog.Error("failed to update study counters after response",
+		slog.Error("failed to update study counters",
 			"error", err,
 			"study_id", studyID,
 		)
 	}
+}
+
+// InvalidateStats drops the cached reliability metrics for a study.
+func (s *studyService) InvalidateStats(studyID uuid.UUID) {
+	s.statsCache.Invalidate(studyID)
 }
