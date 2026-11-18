@@ -4,8 +4,8 @@ Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Decision tree: Copyright 2026 Laura Paniagua Andrés.
 Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0,
-see LICENSE-CC-BY-4.0). This covers docs/*.drawio, docs/decision_tree.txt and
-docs/decision_table.txt. Reuse must credit Laura Paniagua Andrés, link to the
+see LICENSE-CC-BY-4.0). This covers docs/*.drawio and its renderings docs/decision_tree*.txt and
+docs/decision_table*.txt (Spanish and English). Reuse must credit Laura Paniagua Andrés, link to the
 licence and state any changes.
 
 Authors
@@ -29,8 +29,18 @@ Classification systems
     Arch Orthop Trauma Surg. 2015;135(4):505-516.
 
 Third-party content
+  Landing page ankle drawing (frontend/src/components/AnklePlate.tsx):
+    Adapted from "Weber Classification - latin.svg" by DrFO.Tn, Wikimedia Commons,
+    https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg
+    Licensed under CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+    Changes: only the Weber B panel is used; colour fills, gradients, ligaments,
+    texture marks, the lower calcaneus, the arrow and the label were removed;
+    bones and cartilage were redrawn as flat tint and outline; two outline details
+    hidden under ligaments in the original were smoothed; the drawing is cropped,
+    labelled and marked to illustrate the landing page's example answers.
+
   Frontal ankle drawing (frontend/src/components/anatomy/frontBones.ts, used by
-  the landing page AnklePlate.tsx and the classifier's AnatomyView.tsx):
+  the classifier's AnatomyView.tsx):
     Adapted from "Weber Classification - latin.svg" by DrFO.Tn, Wikimedia Commons,
     https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg
     Licensed under CC BY 4.0, https://creativecommons.org/licenses/by/4.0/

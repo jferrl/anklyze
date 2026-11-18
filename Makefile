@@ -185,13 +185,9 @@ lint-go:
 	@golangci-lint run ./...
 	@echo "All Go lint checks passed."
 
-# Export draw.io diagram to SVG (requires: brew install --cask drawio)
+# Build the es/en flow diagram SVGs from the draw.io (requires: brew install --cask drawio)
 export-diagram:
-	@echo "Exporting classification flow diagram to SVG..."
-	@drawio --export --format svg --embed-svg-fonts false \
-		--output frontend/public/classification-flow.svg \
-		"docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
-	@echo "Done: frontend/public/classification-flow.svg"
+	@python3 -I scripts/build_flow_diagram.py
 
 # === Classification Validation Pipeline ===
 
@@ -217,8 +213,8 @@ classify-validate:
 # Just render the decision tree (for quick reference)
 classify-tree:
 	@python3 scripts/render_decision_tree.py --both
-	@echo "Tree: docs/decision_tree.txt"
-	@echo "Table: docs/decision_table.txt"
+	@echo "Tree: docs/decision_tree.txt, docs/decision_tree.en.txt"
+	@echo "Table: docs/decision_table.txt, docs/decision_table.en.txt"
 
 # Just regenerate and run the engine tests
 classify-test:

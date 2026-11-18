@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { StudyGoldStandardResponse, StudyReliabilityResponse } from '@/types';
-import { buildReliabilityFiguresCsv, csvField, fileSlug } from './reliabilityCsv';
+import { buildReliabilityFiguresCsv, csvField, fileDate, fileSlug } from './reliabilityCsv';
 
 const reliability: StudyReliabilityResponse = {
   calculated_at: '2026-01-01T00:00:00Z',
@@ -68,5 +68,14 @@ describe('fileSlug', () => {
   it('strips accents and punctuation', () => {
     expect(fileSlug('Estudio piloto: tobillo — 2026 ')).toBe('estudio-piloto-tobillo-2026');
     expect(fileSlug('***')).toBe('study');
+    expect(fileSlug('A/B case', 'case')).toBe('a-b-case');
+    expect(fileSlug('/', 'case')).toBe('case');
+  });
+});
+
+describe('fileDate', () => {
+  it('uses the local date, not UTC', () => {
+    expect(fileDate(new Date(2026, 0, 2, 23, 59))).toBe('2026-01-02');
+    expect(fileDate(new Date(2026, 10, 18, 0, 1))).toBe('2026-11-18');
   });
 });

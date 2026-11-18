@@ -13,6 +13,7 @@ export class LandingPage {
   readonly themeSwitcher: Locator;
   readonly languageSwitcher: Locator;
   readonly githubLink: Locator;
+  readonly heroFigure: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -27,6 +28,7 @@ export class LandingPage {
     this.themeSwitcher = page.locator('#theme-switch');
     this.languageSwitcher = page.locator('nav button').filter({ has: page.locator('svg.lucide-globe') });
     this.githubLink = page.getByRole('link', { name: 'GitHub', exact: true });
+    this.heroFigure = page.locator('[data-landing-figure]');
   }
 
   async goto() {
@@ -75,6 +77,13 @@ export class LandingPage {
   async expectVisible() {
     await expect(this.heroTitle).toBeVisible();
     await expect(this.startClassifyingButton).toBeVisible();
+  }
+
+  async expectHeroFigureVisible() {
+    await expect(this.heroFigure.getByRole('img', { name: /weber b/i })).toBeVisible();
+    await expect(this.heroFigure.locator('ol > li')).toHaveCount(5);
+    await expect(this.heroFigure.getByText('44-B1.1', { exact: true })).toBeVisible();
+    await expect(this.heroFigure.getByText(/^Fig\. Weber B/)).toBeVisible();
   }
 
   async expectSystemsVisible() {
