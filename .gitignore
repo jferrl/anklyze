@@ -45,7 +45,7 @@ coverage/
 .playwright-mcp/
 bin/
 .planning/
-anklyze-apiserver
+/anklyze-apiserver
 cases_data/
 # Impeccable: local screenshots, decision sketches and editor cache. Surface briefs are committed.
 .impeccable/review/
