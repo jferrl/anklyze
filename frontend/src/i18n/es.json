@@ -94,7 +94,7 @@
       "colExample": "Se escribe",
       "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
       "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
-      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-\u2060B1.1.",
+      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-⁠B1.1.",
       "bartonicek": "Morfología del fragmento del maléolo posterior."
     },
     "studies": {
@@ -443,11 +443,12 @@
       "has_fibula_head_shortening": "Acortamiento en la cabeza del peroné",
       "posterior_fracture_type": "Fragmento posterior"
     },
-    "schematic": "Esquema sin escala: indica el nivel, no la forma de la fractura.",
-    "creditFront": "Vista frontal adaptada de",
-    "creditFrontBy": "de DrFO.Tn,",
-    "creditSide": "; vista lateral adaptada de",
-    "creditSideLicense": ", dominio público."
+    "note": "Las marcas indican el nivel, no la forma de la fractura.",
+    "sources": {
+      "title": "Fuentes",
+      "front": "Vista frontal adaptada de <work>‘Weber Classification – latin.svg’</work> de DrFO.Tn, <license>CC BY 4.0</license>.",
+      "side": "Vista lateral adaptada de <work>‘Ankle.svg’</work>, dibujo del gobierno de EE. UU., dominio público."
+    }
   },
   "language": {
     "toggle": "Cambiar idioma"

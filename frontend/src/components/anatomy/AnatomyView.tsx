@@ -1,5 +1,6 @@
 import { useId, useMemo, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
@@ -99,21 +100,9 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
         </dl>
       )}
 
-      <figcaption className="text-xs text-muted-foreground">
-        {t('anatomy.schematic')}{' '}
-        {t('anatomy.creditFront')}{' '}
-        <a href="https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg" target="_blank" rel="noopener noreferrer" className="underline">
-          ‘Weber Classification – latin.svg’
-        </a>{' '}
-        {t('anatomy.creditFrontBy')}{' '}
-        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
-          CC BY 4.0
-        </a>
-        {t('anatomy.creditSide')}{' '}
-        <a href="https://commons.wikimedia.org/wiki/File:Ankle.svg" target="_blank" rel="noopener noreferrer" className="underline">
-          ‘Ankle.svg’
-        </a>
-        {t('anatomy.creditSideLicense')}
+      <figcaption className="space-y-1 text-xs text-muted-foreground">
+        <p>{t('anatomy.note')}</p>
+        <Sources />
       </figcaption>
     </figure>
   );
@@ -289,5 +278,31 @@ function SideView({ state }: { state: AnatomyState }) {
         <span>{t('anatomy.frontSide')}</span>
       </p>
     </div>
+  );
+}
+
+// The full credits stay in the page, one click away; NOTICE has the complete text.
+function Sources() {
+  const { t } = useTranslation();
+  const link = (href: string) => <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground" />;
+
+  return (
+    <details className="group">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-0.5 rounded-sm outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        {t('anatomy.sources.title')}
+        <ChevronDown aria-hidden="true" className="size-3.5 transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] group-open:rotate-180 motion-reduce:transition-none" />
+      </summary>
+      <ul className="mt-1 space-y-1">
+        <li>
+          <Trans
+            i18nKey="anatomy.sources.front"
+            components={{ work: link('https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg'), license: link('https://creativecommons.org/licenses/by/4.0/') }}
+          />
+        </li>
+        <li>
+          <Trans i18nKey="anatomy.sources.side" components={{ work: link('https://commons.wikimedia.org/wiki/File:Ankle.svg') }} />
+        </li>
+      </ul>
+    </details>
   );
 }
