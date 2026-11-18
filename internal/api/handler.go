@@ -32,7 +32,6 @@ type Handler struct {
 	classificationService service.ClassificationService
 	auditRepo             AuditRepository
 	analyticsRepo         AnalyticsRepository
-	dbHealthy             bool         // Whether database connection succeeded at startup
 	jwksReady             *atomic.Bool // Whether JWKS endpoint is reachable; nil means not tracked (defaults to ready)
 }
 
@@ -41,14 +40,12 @@ func NewHandler(
 	classificationService service.ClassificationService,
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
-	dbHealthy bool,
 	jwksReady *atomic.Bool,
 ) *Handler {
 	return &Handler{
 		classificationService: classificationService,
 		auditRepo:             auditRepo,
 		analyticsRepo:         analyticsRepo,
-		dbHealthy:             dbHealthy,
 		jwksReady:             jwksReady,
 	}
 }
@@ -99,15 +96,11 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 
 // HealthCheck handles GET /health
 func (h *Handler) HealthCheck(c *gin.Context) {
-	dbStatus := "healthy"
-	if !h.dbHealthy {
-		dbStatus = "degraded"
-	}
 	jwksStatus := "ready"
 	if h.jwksReady != nil && !h.jwksReady.Load() {
 		jwksStatus = "pending"
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "db": dbStatus, "jwks": jwksStatus})
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "jwks": jwksStatus})
 }
 
 // parseDateRange parses from/to query parameters with defaults.

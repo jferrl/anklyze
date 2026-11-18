@@ -2,41 +2,64 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
-	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
 )
 
 // newTestClassificationSvc creates a ClassificationService backed by the real engine for API tests.
 func newTestClassificationSvc() service.ClassificationService {
-	return service.NewClassificationService(rules.NewEngine(), repository.NewNoOpCaseResponseRepository())
+	return service.NewClassificationService(rules.NewEngine(), nil)
 }
 
-// setupTestHandlerWithDB creates a handler with the specified dbHealthy flag.
-func setupTestHandlerWithDB(dbHealthy bool) *Handler {
-	classificationService := newTestClassificationSvc()
-	auditRepo := repository.NewNoOpAuditRepository()
-	analyticsRepo := repository.NewNoOpAnalyticsRepository()
-	return NewHandler(classificationService, auditRepo, analyticsRepo, dbHealthy, nil)
+// stubAudit discards audit entries.
+type stubAudit struct{}
+
+func (stubAudit) Save(context.Context, *domain.AuditEntry) error { return nil }
+func (stubAudit) Close() error                                   { return nil }
+
+// stubAnalytics returns empty but well-formed analytics.
+type stubAnalytics struct{}
+
+func (stubAnalytics) GetSummary(from, to time.Time) (*domain.AnalyticsSummary, error) {
+	return &domain.AnalyticsSummary{
+		Period:                  domain.TimePeriod{From: from, To: to},
+		LanguageDistribution:    make(map[string]int64),
+		DanisWeberDistribution:  make(map[string]int64),
+		LaugeHansenDistribution: make(map[string]int64),
+		AOOTADistribution:       make(map[string]int64),
+	}, nil
 }
 
-// setupTestHandler creates a handler with real implementations for integration testing.
-// dbHealthy defaults to true — tests not specifically checking health degraded mode
-// should assume a healthy database state.
+func (stubAnalytics) GetTrends(from, to time.Time, granularity domain.Granularity) (*domain.TrendData, error) {
+	return &domain.TrendData{
+		Period:      domain.TimePeriod{From: from, To: to},
+		Granularity: string(granularity),
+		DataPoints:  []domain.TrendDataPoint{},
+	}, nil
+}
+
+func (stubAnalytics) GetDistribution(system string, from, to time.Time) (*domain.ClassificationDistribution, error) {
+	return &domain.ClassificationDistribution{
+		System:       system,
+		Period:       domain.TimePeriod{From: from, To: to},
+		Distribution: []domain.DistributionItem{},
+	}, nil
+}
+
+// setupTestHandler creates a handler with stub audit and analytics repositories.
+// jwksReady is nil: not tracked, reported as "ready" by the health check.
 func setupTestHandler() *Handler {
-	classificationService := newTestClassificationSvc()
-	auditRepo := repository.NewNoOpAuditRepository()
-	analyticsRepo := repository.NewNoOpAnalyticsRepository()
-	// jwksReady is nil for tests - nil means not tracked, defaults to "ready" in health check
-	return NewHandler(classificationService, auditRepo, analyticsRepo, true, nil)
+	return NewHandler(newTestClassificationSvc(), stubAudit{}, stubAnalytics{}, nil)
 }
 
 // setupTestRouter creates a gin router in test mode with the handler configured.
@@ -56,52 +79,19 @@ func setupTestRouter(h *Handler) *gin.Engine {
 func TestHandler_HealthCheck(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name      string
-		dbHealthy bool
-		wantDB    string
-	}{
-		{
-			name:      "healthy database returns db healthy",
-			dbHealthy: true,
-			wantDB:    "healthy",
-		},
-		{
-			name:      "degraded database returns db degraded",
-			dbHealthy: false,
-			wantDB:    "degraded",
-		},
+	router := setupTestRouter(setupTestHandler())
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/health", nil))
+
+	if w.Code != http.StatusOK {
+		t.Errorf("HealthCheck() status = %d, want %d", w.Code, http.StatusOK)
 	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			h := setupTestHandlerWithDB(tt.dbHealthy)
-			router := setupTestRouter(h)
-
-			req := httptest.NewRequest(http.MethodGet, "/health", nil)
-			w := httptest.NewRecorder()
-
-			router.ServeHTTP(w, req)
-
-			if w.Code != http.StatusOK {
-				t.Errorf("HealthCheck() status = %d, want %d", w.Code, http.StatusOK)
-			}
-
-			var response map[string]string
-			if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-				t.Fatalf("failed to unmarshal response: %v", err)
-			}
-
-			if response["status"] != "ok" {
-				t.Errorf("HealthCheck() status = %q, want %q", response["status"], "ok")
-			}
-
-			if response["db"] != tt.wantDB {
-				t.Errorf("HealthCheck() db = %q, want %q", response["db"], tt.wantDB)
-			}
-		})
+	var response map[string]string
+	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+	if response["status"] != "ok" {
+		t.Errorf("HealthCheck() status = %q, want %q", response["status"], "ok")
 	}
 }
 
@@ -691,7 +681,7 @@ func TestHandler_GetAnalyticsSummary(t *testing.T) {
 				t.Fatalf("failed to unmarshal response: %v", err)
 			}
 
-			// NoOp repository returns empty but valid structure
+			// Stub repository returns empty but valid structure
 			if result.LanguageDistribution == nil {
 				t.Error("LanguageDistribution should not be nil")
 			}

@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
+	"log/slog"
+	"net/url"
 	"os"
 	"time"
 
@@ -69,6 +71,45 @@ func Connect(databaseURL string, pool PoolConfig) (*gorm.DB, error) {
 	sqlDB.SetConnMaxIdleTime(DefaultConnMaxIdleTime)
 
 	return db, nil
+}
+
+// ConnectWithRetry calls Connect up to attempts times with exponential backoff
+// (base, doubling, capped at maxDelay), so a database that comes up slightly
+// after the server does not fail startup. It returns the last error.
+func ConnectWithRetry(databaseURL string, pool PoolConfig, attempts int, base, maxDelay time.Duration) (*gorm.DB, error) {
+	return retry(attempts, base, maxDelay, time.Sleep, func() (*gorm.DB, error) {
+		return Connect(withConnectTimeout(databaseURL), pool)
+	})
+}
+
+func retry(attempts int, base, maxDelay time.Duration, sleep func(time.Duration), connect func() (*gorm.DB, error)) (*gorm.DB, error) {
+	delay := base
+	for i := 1; ; i++ {
+		db, err := connect()
+		if err == nil {
+			return db, nil
+		}
+		if i >= attempts {
+			return nil, fmt.Errorf("database unavailable after %d attempts: %w", attempts, err)
+		}
+		slog.Warn("database connection failed, retrying", "attempt", i, "retry_in", delay, "error", err)
+		sleep(delay)
+		delay = min(delay*2, maxDelay)
+	}
+}
+
+// withConnectTimeout bounds each attempt so an unroutable host cannot stall until the OS TCP timeout.
+func withConnectTimeout(databaseURL string) string {
+	u, err := url.Parse(databaseURL)
+	if err != nil || u.Scheme == "" {
+		return databaseURL
+	}
+	q := u.Query()
+	if !q.Has("connect_timeout") {
+		q.Set("connect_timeout", "5")
+		u.RawQuery = q.Encode()
+	}
+	return u.String()
 }
 
 // closeGormDB safely closes a gorm.DB connection.

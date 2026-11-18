@@ -59,8 +59,7 @@ On first start the database container loads the schema and the fixtures in `fixt
 Other ways to start:
 
 ```bash
-make run-no-db                    # no Docker; nothing is persisted
-go run ./cmd/anklyze-apiserver    # backend without air
+go run ./cmd/anklyze-apiserver    # backend without air; needs DATABASE_URL
 make run-frontend                 # frontend only
 ```
 
@@ -70,7 +69,7 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 
 | Variable | Default | Effect |
 | -------- | ------- | ------ |
-| `DATABASE_URL` | unset | PostgreSQL connection. Unset: the server runs with no-op repositories. |
+| `DATABASE_URL` | unset | PostgreSQL connection. Required: the server retries for about 25 seconds, then exits non-zero. |
 | `SUPABASE_URL` | unset | Enables JWT auth. Unset: every route is public and `/api/me` returns a mock admin. |
 | `SUPABASE_SERVICE_ROLE_KEY` | unset | Lets the server sync user roles to Supabase. |
 | `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | unset | Case image storage. Unset: image storage is disabled. |
