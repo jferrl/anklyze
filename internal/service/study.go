@@ -37,6 +37,9 @@ type StudyService interface {
 
 	// Background updates after response submission
 	UpdateAfterResponse(ctx context.Context, studyID uuid.UUID)
+
+	// ValidateAcceptingResponses returns domain.ErrStudyClosed if the study is closed.
+	ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error
 }
 
 type studyService struct {
@@ -126,6 +129,18 @@ func (s *studyService) IsCaseInStudy(ctx context.Context, caseID uuid.UUID) (boo
 		return false, nil, nil
 	}
 	return true, &study.ID, nil
+}
+
+// ValidateAcceptingResponses rejects responses once the study is closed.
+func (s *studyService) ValidateAcceptingResponses(ctx context.Context, studyID uuid.UUID) error {
+	study, err := s.studyRepo.GetByID(ctx, studyID)
+	if err != nil {
+		return err
+	}
+	if study != nil && study.IsClosed() {
+		return domain.ErrStudyClosed
+	}
+	return nil
 }
 
 // GetReliabilityMetrics orchestrates data fetching and calculates study-level

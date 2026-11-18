@@ -291,6 +291,31 @@ func TestIsCaseInStudy(t *testing.T) {
 	}
 }
 
+func TestValidateAcceptingResponses(t *testing.T) {
+	dbErr := errors.New("db error")
+	tests := []struct {
+		name    string
+		study   *domain.Study
+		repoErr error
+		wantErr error
+	}{
+		{"active study accepts", &domain.Study{Status: domain.StudyStatusActive}, nil, nil},
+		{"closed study rejects", &domain.Study{Status: domain.StudyStatusClosed}, nil, domain.ErrStudyClosed},
+		{"repo error propagates", nil, dbErr, dbErr},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			studyRepo := &mockStudyRepository{study: tt.study, studyErr: tt.repoErr}
+			svc := newStudyService(studyRepo, &mockStudyResponseRepository{}, &mockCaseRepositoryForStudy{}, &mockCaseResponseRepository{}, &mockReliabilityCalculator{})
+
+			err := svc.ValidateAcceptingResponses(context.Background(), uuid.New())
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("got %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 // --- Tests for AddCase ---
 
 func TestAddCase(t *testing.T) {

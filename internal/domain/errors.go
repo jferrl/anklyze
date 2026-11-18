@@ -16,6 +16,7 @@ var (
 	ErrMissingImages             = errors.New("case must have at least one image before publishing")
 	ErrDeadlinePassed            = errors.New("case deadline has passed")
 	ErrCaseNotAcceptingResponses = errors.New("case is not accepting responses")
+	ErrStudyClosed               = errors.New("study is closed and no longer accepting responses")
 	ErrAlreadyResponded          = errors.New("already submitted a response to this case")
 	ErrNotStudyMember            = errors.New("you are not assigned to this study")
 )
@@ -43,6 +44,7 @@ const (
 	ErrCodeMissingImages             = "MISSING_IMAGES"
 	ErrCodeDeadlinePassed            = "DEADLINE_PASSED"
 	ErrCodeCaseNotAcceptingResponses = "CASE_NOT_ACCEPTING_RESPONSES"
+	ErrCodeStudyClosed               = "STUDY_CLOSED"
 	ErrCodeAlreadyResponded          = "ALREADY_RESPONDED"
 	ErrCodeNotStudyMember            = "NOT_STUDY_MEMBER"
 

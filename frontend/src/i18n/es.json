@@ -730,7 +730,7 @@
       "closeStudy": "Cerrar estudio",
       "casesLocked": "Los casos no se pueden modificar una vez que el estudio está activo o cerrado.",
       "closeConfirmTitle": "¿Cerrar «{{title}}»?",
-      "closeConfirmDescription": "El estudio quedará marcado como cerrado y no podrá reabrirse ni editarse desde aquí. Los resultados seguirán disponibles. Cerrar el estudio no cierra sus casos: los evaluadores podrán seguir enviando respuestas hasta que cada caso se cierre o venza su fecha límite.",
+      "closeConfirmDescription": "El estudio quedará marcado como cerrado y no podrá reabrirse ni editarse desde aquí. Los resultados seguirán disponibles. Los evaluadores ya no podrán enviar respuestas a sus casos. Cerrar el estudio no cierra los casos en sí.",
       "removeCaseNamed": "Quitar «{{title}}» del estudio"
     },
     "analytics": {
@@ -1022,6 +1022,7 @@
     "MISSING_IMAGES": "Añada al menos una imagen antes de publicar.",
     "DEADLINE_PASSED": "El plazo del caso ha expirado",
     "CASE_NOT_ACCEPTING_RESPONSES": "Este caso no está aceptando respuestas actualmente",
+    "STUDY_CLOSED": "Este estudio está cerrado y ya no acepta respuestas",
     "ALREADY_RESPONDED": "Ya ha enviado una respuesta a este caso",
     "invalidStateTransition": "Esta acción no está permitida en el estado actual del caso. Recargue la página e inténtelo de nuevo.",
     "publishFailed": "No se pudo publicar el caso. Inténtelo de nuevo.",

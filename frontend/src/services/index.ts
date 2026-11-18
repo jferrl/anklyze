@@ -12,6 +12,7 @@ export * from './study';
 // Core - Error Handling
 // ================================
 export {
+  ForbiddenError,
   InputValidationError,
   handleApiError,
 } from './core/errorHandling';
