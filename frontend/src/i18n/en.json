@@ -49,16 +49,16 @@
     },
     "hero": {
       "title": "Four ankle fracture classifications from one set of answers.",
-      "lede": "Anklyze is an open-source tool for classifying ankle fractures. A single decision tree drives it: answer questions about what you see on the radiographs, and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartoníček classifications together.",
+      "lede": "Anklyze is an open-source tool for classifying ankle fractures. It follows a single decision tree: answer a short series of questions about the radiographs and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartoníček classifications together.",
       "secondary": "Read the method"
     },
     "figure": {
-      "label": "Rendered model of a right ankle in anterolateral view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. Mark 1 highlights the lateral malleolus; mark 2 brackets the level of the syndesmosis, where a spiral fibular fracture runs from low anterior to high posterior (Weber B).",
-      "caption": "Fig. Weber B, SER, 44-B1.1: an isolated lateral malleolar fracture at the level of the syndesmosis, traced through the decision tree. N/C: not classifiable; the system does not apply.",
+      "label": "Rendered model of a right ankle in anterolateral view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. Mark 1 highlights the lateral malleolus; mark 2 brackets the level of the syndesmosis, where a spiral fibular fracture runs from anteroinferior to posterosuperior (Weber B).",
+      "caption": "Figure 1. Weber B, SER, 44-B1.1: an isolated lateral malleolar fracture at the level of the syndesmosis, traced through the decision tree. N/C, not classifiable: there is no posterior malleolar fragment for Bartoníček to classify.",
       "sources": "Sources",
       "creditPrefix": "Rendered from the",
       "creditBy": "3D model (© The Database Center for Life Science), as adapted for Anklyze. Figure licensed under",
-      "changes": "Changes: distal tibia, fibula and talus only, cut and refined; rendered in anterolateral view; the lateral malleolus is tinted and the labels and fracture line are drawn over the render.",
+      "changes": "Changes: distal tibia, fibula and talus only, cut and refined; rendered in anterolateral view; the distal fibular fragment is tinted, and the labels and fracture line are drawn over the render.",
       "tibia": "Tibia",
       "fibula": "Fibula",
       "talus": "Talus",
@@ -68,17 +68,18 @@
     },
     "method": {
       "title": "Method",
+      "lede": "Results are rule-based and reproducible: one decision tree drives every answer, and the engine is tested against the same diagram.",
       "tableLink": "See every path of the decision tree",
       "tree": {
         "term": "One decision tree",
-        "body": "Every question belongs to a single tree with 165 terminal paths. Each answer decides the next question, and each path ends in a classification in all four systems. The tree is published in the repository as a diagram and as a table."
+        "body": "Every question belongs to a single tree with 165 terminal paths. Each answer determines the next question, and each path ends in a classification in all four systems. The tree is published in the repository as a diagram and as a table."
       },
       "tested": {
         "term": "Tested against the diagram",
         "body": "The classification engine's tests are generated from the same diagram. They cover all 165 paths; on one path the AO/OTA code is not yet checked, pending a correction to the diagram."
       },
       "notClassifiable": {
-        "term": "Not classifiable is a result",
+        "term": "‘Not classifiable’ is a valid result",
         "body": "When a system does not apply to the fracture, the result reports it as not classifiable (N/C) rather than forcing a code."
       },
       "judgement": {
@@ -90,19 +91,25 @@
       "title": "The four systems",
       "lede": "Each system describes the same fracture from a different angle. Anklyze reports them side by side, so none has to be worked out separately.",
       "colSystem": "System",
-      "colBasis": "Classifies by",
-      "colExample": "Written as",
+      "colBasis": "Basis",
+      "colExample": "Notation",
       "laugeHansen": "Mechanism of injury: the position of the foot and the direction of the deforming force.",
       "danisWeber": "Level of the fibular fracture relative to the syndesmosis.",
-      "aoota": "AO/OTA Fracture and Dislocation Classification Compendium (2018): an alphanumeric code for bone, segment, type, group and subgroup, for example 44-⁠B1.1.",
-      "bartonicek": "Morphology of the posterior malleolar fragment, assessed on CT."
+      "aoota": "Bone, segment, type, group and subgroup, written as an alphanumeric code (2018 compendium), for example 44-⁠B1.1.",
+      "bartonicek": "Morphology of the posterior malleolar fragment, assessed on CT.",
+      "notation": {
+        "laugeHansen": "SA · SER · PA · PER",
+        "danisWeber": "A · B · C",
+        "aoota": "44-⁠A1 to 44-⁠C3",
+        "bartonicek": "1 to 4"
+      }
     },
     "studies": {
       "title": "Research use",
       "lede": "The same classifier runs inter-rater reliability studies: researchers publish cases with their imaging, raters classify them independently, and the application reports their agreement.",
       "cases": {
         "term": "Cases",
-        "body": "Radiographs and CT of one fracture, classified by each rater blind to the other raters' answers."
+        "body": "Radiographs and CT of one fracture, classified by each rater blinded to the other raters' responses."
       },
       "agreement": {
         "term": "Agreement",
@@ -116,7 +123,7 @@
     },
     "footer": {
       "disclaimer": "For medical purposes only. Always correlate with clinical findings.",
-      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0. Hero figure: CC BY-SA 4.0."
+      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0. Ankle figure: CC BY-SA 4.0."
     },
     "source": {
       "title": "Open source",
@@ -165,7 +172,7 @@
       "lateralSubtype": "What type?",
       "medialSubtype": "What is the medial malleolus like?",
       "hasFibulaHeadShortening": "Shortening at the fibula head level?",
-      "fibulaTraceCount": "How many fracture lines does the fibula have?"
+      "fibulaTraceCount": "How many fracture traces does the fibula have?"
     },
     "options": {
       "involvedMalleoli": {

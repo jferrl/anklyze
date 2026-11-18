@@ -49,16 +49,16 @@
     },
     "hero": {
       "title": "Cuatro clasificaciones de fractura de tobillo con un solo conjunto de respuestas.",
-      "lede": "Anklyze es una herramienta de código abierto para clasificar fracturas de tobillo. Sigue un único árbol de decisión: responda a las preguntas sobre lo que ve en las radiografías y obtendrá a la vez las clasificaciones de Lauge-Hansen, Danis-Weber, AO/OTA y Bartoníček.",
+      "lede": "Anklyze es una herramienta de código abierto para clasificar fracturas de tobillo. Sigue un único árbol de decisión: responda a una breve serie de preguntas sobre las radiografías y obtendrá a la vez las clasificaciones de Lauge-Hansen, Danis-Weber, AO/OTA y Bartoníček.",
       "secondary": "Leer el método"
     },
     "figure": {
-      "label": "Modelo renderizado de un tobillo derecho en proyección anterolateral: tibia distal, peroné y astrágalo, con los maléolos medial y lateral señalados. La marca 1 resalta el maléolo lateral; la marca 2 abarca el nivel de la sindesmosis, donde una fractura espiroidea del peroné va de baja anterior a alta posterior (Weber B).",
-      "caption": "Fig. Weber B, SER, 44-B1.1: fractura aislada del maléolo lateral a nivel de la sindesmosis, recorrida a través del árbol de decisión. N/C: no clasificable; el sistema no es aplicable.",
+      "label": "Modelo renderizado de un tobillo derecho en vista anterolateral: tibia distal, peroné y astrágalo, con los maléolos medial y lateral señalados. La marca 1 resalta el maléolo lateral; la marca 2 abarca el nivel de la sindesmosis, donde una fractura espiroidea del peroné va de anteroinferior a posterosuperior (Weber B).",
+      "caption": "Figura 1. Weber B, SER, 44-B1.1: fractura aislada del maléolo lateral a nivel de la sindesmosis, recorrida a través del árbol de decisión. N/C, no clasificable: no hay fragmento del maléolo posterior que Bartoníček pueda clasificar.",
       "sources": "Fuentes",
       "creditPrefix": "Renderizado a partir del modelo 3D",
       "creditBy": "(© The Database Center for Life Science), adaptado para Anklyze. Figura con licencia",
-      "changes": "Cambios: solo tibia distal, peroné y astrágalo, recortados y refinados; renderizado en proyección anterolateral; el maléolo lateral aparece teñido y los rótulos y el trazo de fractura se dibujan sobre el render.",
+      "changes": "Cambios: solo tibia distal, peroné y astrágalo, recortados y refinados; renderizado en vista anterolateral; el fragmento distal del peroné aparece teñido y los rótulos y el trazo de fractura se dibujan sobre el render.",
       "tibia": "Tibia",
       "fibula": "Peroné",
       "talus": "Astrágalo",
@@ -68,6 +68,7 @@
     },
     "method": {
       "title": "Método",
+      "lede": "Los resultados se basan en reglas y son reproducibles: un único árbol de decisión determina cada respuesta y el motor se comprueba contra el mismo diagrama.",
       "tableLink": "Ver todos los caminos del árbol de decisión",
       "tree": {
         "term": "Un único árbol de decisión",
@@ -78,7 +79,7 @@
         "body": "Las pruebas del motor de clasificación se generan a partir del mismo diagrama. Cubren los 165 caminos; en uno de ellos el código AO/OTA aún no se comprueba, a la espera de una corrección del diagrama."
       },
       "notClassifiable": {
-        "term": "No clasificable es un resultado",
+        "term": "«No clasificable» es un resultado válido",
         "body": "Cuando un sistema no es aplicable a la fractura, el resultado lo indica (N/C) en lugar de forzar un código."
       },
       "judgement": {
@@ -90,16 +91,22 @@
       "title": "Los cuatro sistemas",
       "lede": "Cada sistema describe la misma fractura desde un ángulo distinto. Anklyze los presenta juntos, sin tener que deducir cada uno por separado.",
       "colSystem": "Sistema",
-      "colBasis": "Clasifica según",
-      "colExample": "Se escribe",
+      "colBasis": "Criterio",
+      "colExample": "Notación",
       "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
       "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
-      "aoota": "Compendio de clasificación de fracturas y luxaciones AO/OTA (2018): un código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-⁠B1.1.",
-      "bartonicek": "Morfología del fragmento del maléolo posterior, valorada en TC."
+      "aoota": "Hueso, segmento, tipo, grupo y subgrupo, escritos como un código alfanumérico (compendio de 2018), por ejemplo 44-⁠B1.1.",
+      "bartonicek": "Morfología del fragmento del maléolo posterior, valorada en TC.",
+      "notation": {
+        "laugeHansen": "SA · SER · PA · PER",
+        "danisWeber": "A · B · C",
+        "aoota": "44-⁠A1 a 44-⁠C3",
+        "bartonicek": "1 a 4"
+      }
     },
     "studies": {
       "title": "Uso en investigación",
-      "lede": "El mismo clasificador se utiliza para realizar estudios de fiabilidad inter-evaluador: los investigadores publican casos con sus imágenes, los evaluadores los clasifican de forma independiente y la aplicación calcula su grado de acuerdo.",
+      "lede": "El mismo clasificador se utiliza para realizar estudios de fiabilidad interevaluador: los investigadores publican casos con sus imágenes, los evaluadores los clasifican de forma independiente y la aplicación calcula su grado de acuerdo.",
       "cases": {
         "term": "Casos",
         "body": "Radiografías y TC de una fractura, clasificadas por cada evaluador sin conocer las respuestas de los demás."
@@ -110,13 +117,13 @@
       },
       "gold": {
         "term": "Patrón de referencia",
-        "body": "La precisión de cada evaluador frente a la clasificación de referencia fijada por el estudio."
+        "body": "La exactitud de cada evaluador frente a la clasificación de referencia fijada por el estudio."
       },
       "methodologyLink": "Leer la metodología estadística"
     },
     "footer": {
       "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos.",
-      "license": "Código: Apache 2.0. Árbol de decisión: CC BY 4.0. Figura principal: CC BY-SA 4.0."
+      "license": "Código: Apache 2.0. Árbol de decisión: CC BY 4.0. Figura del tobillo: CC BY-SA 4.0."
     },
     "source": {
       "title": "Código abierto",

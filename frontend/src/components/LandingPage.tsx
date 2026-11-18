@@ -16,11 +16,9 @@ const METHODOLOGY_URL = `${REPO_URL}/blob/main/docs/RELIABILITY_ANALYSIS.md`;
 const FIGURE_SOURCE_URL = 'https://lifesciencedb.jp/bp3d/';
 const CC_BY_SA_URL = 'https://creativecommons.org/licenses/by-sa/4.0/';
 
-// Hero figure, once on load (ms): each answer lands at its step, the plate marks answers 1 and 2
-// as they land, and the four codes resolve last. Total under 1.6s; see .fig-in in index.css.
-const STEP_AT = [100, 400, 700, 850, 1000];
-const CODES_AT = 1250;
-const at = (ms: number) => ({ '--at': `${ms}ms` }) as React.CSSProperties;
+// Hero figure, once on load (ms): the answers and codes are there from the first frame; only the
+// plate's marks for answers 1 and 2 land, then the fracture draws. See .fig-in in index.css.
+const MARK_AT = [100, 400];
 
 // One real terminal path of the decision tree (docs/decision_table.txt, lateral branch).
 const EXAMPLE_PATH = [
@@ -32,10 +30,10 @@ const EXAMPLE_PATH = [
 ] as const;
 
 const SYSTEMS = [
-  { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER', example: 'SA · SER · PA · PER' },
-  { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B', example: 'A · B · C' },
-  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-A1 … 44-C3' },
-  { key: 'bartonicek', name: 'Bartoníček', swatch: 'bg-sys-bt', code: null, example: '1 – 4' },
+  { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER' },
+  { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B' },
+  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1' },
+  { key: 'bartonicek', name: 'Bartoníček', swatch: 'bg-sys-bt', code: null },
 ] as const;
 
 export function LandingPage() {
@@ -43,13 +41,15 @@ export function LandingPage() {
   const methodFacts = ['tree', 'tested', 'notClassifiable', 'judgement'] as const;
   const studyFacts = ['cases', 'agreement', 'gold'] as const;
   const figureRef = useRef<HTMLElement>(null);
+  // The Spanish headline is a third longer; a step smaller keeps it to four lines.
+  const es = i18n.language.startsWith('es');
 
-  // Start the figure's entrance once the font and the plate are ready; never hold it back long.
+  // Start the plate's marks once the font and the plate are ready, waiting at most 400ms.
   useEffect(() => {
     const figure = figureRef.current!;
     const plate = figure.querySelector<HTMLImageElement>('[data-plate-image]');
     const ready = () => figure.setAttribute('data-ready', '');
-    const timer = setTimeout(ready, 1200);
+    const timer = setTimeout(ready, 400);
     Promise.all([document.fonts.ready, plate?.decode().catch(() => {})]).then(ready);
     return () => clearTimeout(timer);
   }, []);
@@ -88,7 +88,7 @@ export function LandingPage() {
         <section className="field-navy">
           <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:py-12 xl:py-16">
             <div className="lg:col-span-6 lg:self-center">
-              <h1 className="font-display text-[clamp(2.25rem,4.6vw,4.25rem)]">{t('landing.hero.title')}</h1>
+              <h1 className={`font-display ${es ? 'text-[clamp(2.25rem,4.1vw,3.75rem)]' : 'text-[clamp(2.25rem,4.6vw,4.25rem)]'}`}>{t('landing.hero.title')}</h1>
               <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/80">{t('landing.hero.lede')}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link
@@ -107,19 +107,17 @@ export function LandingPage() {
             <figure ref={figureRef} data-landing-figure className="lg:col-span-6 lg:self-center">
               <div className="fig-sheet rounded-md bg-sheet text-sheet-ink">
                 <div className="px-3 pb-3 sm:px-4 sm:pb-4">
-                  <AnklePlate lateralAt={STEP_AT[0]} levelAt={STEP_AT[1]} />
+                  <AnklePlate lateralAt={MARK_AT[0]} levelAt={MARK_AT[1]} />
                 </div>
                 <ol className="border-t border-sheet-rule">
                   {EXAMPLE_PATH.map(([question, answer], i) => (
                     <li key={question} className="grid grid-cols-[2.5rem_1fr] border-b border-sheet-rule">
                       <span className="flex items-center justify-center border-r border-sheet-rule text-xs font-semibold tabular-nums text-sheet-muted">
-                        {i < 2 ? <StepBadge n={i + 1} atMs={STEP_AT[i]} /> : i + 1}
+                        {i < 2 ? <StepBadge n={i + 1} atMs={MARK_AT[i]} /> : i + 1}
                       </span>
                       <div className="px-4 py-2 lg:py-1.5">
                         <p className="text-[0.8125rem] leading-snug text-sheet-muted">{t(question)}</p>
-                        <p className="fig-in text-[0.9375rem] font-medium leading-snug" style={at(STEP_AT[i])}>
-                          {t(answer)}
-                        </p>
+                        <p className="text-[0.9375rem] font-medium leading-snug">{t(answer)}</p>
                       </div>
                     </li>
                   ))}
@@ -131,7 +129,7 @@ export function LandingPage() {
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
-                      <p className="fig-in font-display mt-2 text-[1.75rem]" style={at(CODES_AT)} data-numeric>
+                      <p className="font-display mt-2 text-[1.75rem]" data-numeric>
                         {s.code ?? <span className="text-sheet-muted">N/C</span>}
                       </p>
                     </div>
@@ -163,20 +161,21 @@ export function LandingPage() {
 
         <section id="method" className="scroll-mt-8 border-b">
           <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:py-24">
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-5">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.method.title')}</h2>
+              <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.method.lede')}</p>
               <a
                 href={decisionTableUrl(i18n.language)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-block text-sm font-medium text-primary underline underline-offset-4"
+                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
               >
                 {t('landing.method.tableLink')}
               </a>
             </div>
-            <dl className="divide-y border-y lg:col-span-8">
+            <dl className="divide-y border-y lg:col-span-7">
               {methodFacts.map((fact) => (
-                <div key={fact} className="grid gap-1 py-6 sm:grid-cols-[13rem_1fr] sm:gap-6">
+                <div key={fact} className="grid gap-1 py-6 sm:grid-cols-[12rem_1fr] sm:gap-6">
                   <dt className="font-semibold">{t(`landing.method.${fact}.term`)}</dt>
                   <dd className="max-w-[65ch] leading-relaxed text-muted-foreground">{t(`landing.method.${fact}.body`)}</dd>
                 </div>
@@ -191,11 +190,11 @@ export function LandingPage() {
             <p className="mt-4 max-w-[65ch] leading-relaxed text-muted-foreground">{t('landing.systems.lede')}</p>
             <div className="mt-10">
               <table className="w-full border-y text-left">
-                <thead>
+                <thead className="max-sm:hidden">
                   <tr className="border-b text-sm text-muted-foreground">
                     <th className="py-3 pr-6 font-medium">{t('landing.systems.colSystem')}</th>
-                    <th className="py-3 pr-6 font-medium max-sm:hidden">{t('landing.systems.colBasis')}</th>
-                    <th className="py-3 text-right font-medium max-sm:hidden">{t('landing.systems.colExample')}</th>
+                    <th className="py-3 pr-6 font-medium">{t('landing.systems.colBasis')}</th>
+                    <th className="py-3 text-right font-medium">{t('landing.systems.colExample')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -207,10 +206,10 @@ export function LandingPage() {
                         <span className="mt-1.5 block text-sm font-normal text-muted-foreground sm:hidden">
                           {t(`landing.systems.${s.key}`)}
                         </span>
-                        <span className="font-display mt-3 block text-lg sm:hidden">{s.example}</span>
+                        <span className="font-display mt-3 block text-lg sm:hidden">{t(`landing.systems.notation.${s.key}`)}</span>
                       </th>
                       <td className="py-5 pr-6 text-muted-foreground max-sm:hidden">{t(`landing.systems.${s.key}`)}</td>
-                      <td className="font-display py-5 text-right align-top text-xl whitespace-nowrap max-sm:hidden">{s.example}</td>
+                      <td className="font-display py-5 text-right align-top text-xl whitespace-nowrap max-sm:hidden">{t(`landing.systems.notation.${s.key}`)}</td>
                     </tr>
                   ))}
                 </tbody>
