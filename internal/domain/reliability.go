@@ -113,10 +113,16 @@ type StudyReliabilityMetrics struct {
 	PerCaseMetrics []PerCaseMetrics `json:"per_case_metrics"`
 }
 
+// KappaNoVariation is the KappaUnavailableReason when every rating falls in one category:
+// chance agreement is 1, so kappa is 0/0. A system with too few cases or raters has no result at all.
+const KappaNoVariation = "no_variation"
+
 // FleissKappaResult contains Fleiss' Kappa with metadata.
+// Kappa is nil when it is undefined, and KappaUnavailableReason says why.
 type FleissKappaResult struct {
-	Kappa          float64 `json:"kappa"`
-	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+	Kappa                  *float64 `json:"kappa"`
+	Interpretation         string   `json:"interpretation,omitempty"` // Uses KappaInterpretation()
+	KappaUnavailableReason string   `json:"kappa_unavailable_reason,omitempty"`
 
 	// Matrix dimensions
 	NumSubjects   int `json:"num_subjects"`   // Cases used: every complete rater answered them
@@ -130,21 +136,12 @@ type FleissKappaResult struct {
 	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
 }
 
-// NewFleissKappaResult creates a FleissKappaResult with interpretation.
-func NewFleissKappaResult(kappa float64, numSubjects, numRaters, numCategories int) *FleissKappaResult {
-	return &FleissKappaResult{
-		Kappa:          kappa,
-		Interpretation: KappaInterpretation(kappa),
-		NumSubjects:    numSubjects,
-		NumRaters:      numRaters,
-		NumCategories:  numCategories,
-	}
-}
-
 // CohensKappaResult is Cohen's Kappa between two raters across the cases of a study.
+// Kappa is nil when it is undefined, and KappaUnavailableReason says why.
 type CohensKappaResult struct {
-	Kappa          float64 `json:"kappa"`
-	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+	Kappa                  *float64 `json:"kappa"`
+	Interpretation         string   `json:"interpretation,omitempty"` // Uses KappaInterpretation()
+	KappaUnavailableReason string   `json:"kappa_unavailable_reason,omitempty"`
 
 	NumSubjects      int `json:"num_subjects"`       // Cases both raters answered
 	NumCasesExcluded int `json:"num_cases_excluded"` // Cases where either rater gave no answer

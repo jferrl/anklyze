@@ -60,6 +60,22 @@ describe('StudyKappaAnalysis', () => {
     expect(screen.queryByText(/weighted kappa/)).not.toBeInTheDocument();
   });
 
+  it('says why a kappa is undefined, and keeps "Not enough data" for a missing result', () => {
+    const undefinedKappa: FleissKappaResult = {
+      ...fleiss,
+      kappa: null,
+      interpretation: undefined,
+      kappa_unavailable_reason: 'no_variation',
+      num_categories: 1,
+      confidence_interval: undefined,
+    };
+    render(<StudyKappaAnalysis reliability={{ ...base, lauge_hansen_fleiss: undefinedKappa }} />);
+
+    expect(screen.getByText('Undefined: every rater gave the same answer on every case')).toBeInTheDocument();
+    expect(screen.getAllByText('Not enough data')).toHaveLength(2);
+    expect(screen.getAllByText('0.55')).toHaveLength(1);
+  });
+
   it('cautions under a kappa from fewer than ten cases, with two decimals', () => {
     render(<StudyKappaAnalysis reliability={base} />);
 

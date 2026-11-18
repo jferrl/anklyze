@@ -64,6 +64,53 @@ func (f studyFixture) metrics(t *testing.T) *domain.StudyReliabilityMetrics {
 
 func approx(a, b, tol float64) bool { return math.Abs(a-b) <= tol }
 
+// val reads an optional figure; NaN stands for nil, so approx fails on it.
+func val(p *float64) float64 {
+	if p == nil {
+		return math.NaN()
+	}
+	return *p
+}
+
+// When every rater gives the same answer on every case, chance agreement is 1 and kappa
+// is 0/0. It used to be reported as 1; it is undefined, with the reason.
+func TestStudyReliability_KappaUndefinedWithoutVariation(t *testing.T) {
+	t.Parallel()
+
+	f := newStudyFixture("ao_ota", [][]string{
+		{"44-B1", "44-B1", "44-B1"},
+		{"44-B1", "44-B1", "44-B1"},
+	})
+	m := f.metrics(t)
+
+	fl := m.AOOTAFleiss
+	if fl == nil || fl.Kappa != nil || fl.KappaUnavailableReason != domain.KappaNoVariation || fl.Interpretation != "" || fl.ConfidenceInterval != nil {
+		t.Fatalf("fleiss = %+v, want undefined kappa with reason %q", fl, domain.KappaNoVariation)
+	}
+	if fl.NumSubjects != 3 || fl.NumRaters != 2 || fl.NumCategories != 1 {
+		t.Errorf("subjects %d, raters %d, categories %d; want 3, 2, 1", fl.NumSubjects, fl.NumRaters, fl.NumCategories)
+	}
+	co := m.AOOTACohen
+	if co == nil || co.Kappa != nil || co.KappaUnavailableReason != domain.KappaNoVariation || co.WeightedKappa != nil {
+		t.Fatalf("cohen = %+v, want undefined kappa and no weighted kappa", co)
+	}
+}
+
+// Perfect agreement with variation across cases is a real kappa of 1, not undefined.
+func TestStudyReliability_PerfectAgreementWithVariationIsOne(t *testing.T) {
+	t.Parallel()
+
+	f := newStudyFixture("danis_weber", [][]string{
+		{"Weber A", "Weber B", "Weber B"},
+		{"Weber A", "Weber B", "Weber B"},
+	})
+
+	got := f.metrics(t).DanisWeberFleiss
+	if got == nil || !approx(val(got.Kappa), 1, 1e-12) || got.KappaUnavailableReason != "" {
+		t.Fatalf("fleiss = %+v, want kappa 1", got)
+	}
+}
+
 // F5: a complete rater left Bartonicek empty on one case. Everyone who answered agrees,
 // so kappa must be 1; counting the empty answer as a missing rater pulled it down to 0.7624.
 // The case is dropped for that system, and the result says so.
@@ -80,8 +127,8 @@ func TestStudyReliability_FleissDropsCaseWithUnansweredSystem(t *testing.T) {
 	if got == nil {
 		t.Fatal("expected a Bartonicek Fleiss result")
 	}
-	if !approx(got.Kappa, 1, 1e-12) {
-		t.Errorf("kappa = %v, want 1", got.Kappa)
+	if !approx(val(got.Kappa), 1, 1e-12) {
+		t.Errorf("kappa = %v, want 1", val(got.Kappa))
 	}
 	if got.NumSubjects != 3 || got.NumCasesExcluded != 1 || got.NumRaters != 3 {
 		t.Errorf("subjects %d, excluded %d, raters %d; want 3, 1, 3", got.NumSubjects, got.NumCasesExcluded, got.NumRaters)
@@ -137,8 +184,8 @@ func TestStudyReliability_FleissHandComputed(t *testing.T) {
 	if got == nil {
 		t.Fatal("expected a Fleiss result")
 	}
-	if !approx(got.Kappa, 0.55, 1e-12) {
-		t.Errorf("kappa = %v, want 0.55", got.Kappa)
+	if !approx(val(got.Kappa), 0.55, 1e-12) {
+		t.Errorf("kappa = %v, want 0.55", val(got.Kappa))
 	}
 	if got.NumSubjects != 3 || got.NumRaters != 3 || got.NumCategories != 2 || got.NumCasesExcluded != 0 {
 		t.Errorf("unexpected counts: %+v", got)
@@ -187,8 +234,8 @@ func TestStudyReliability_CohenTwoRaters(t *testing.T) {
 	if got == nil {
 		t.Fatal("expected a Cohen result")
 	}
-	if !approx(got.Kappa, 0.4, 1e-12) {
-		t.Errorf("kappa = %v, want 0.4", got.Kappa)
+	if !approx(val(got.Kappa), 0.4, 1e-12) {
+		t.Errorf("kappa = %v, want 0.4", val(got.Kappa))
 	}
 	if got.ConfidenceInterval == nil || got.ConfidenceInterval.Lower != -0.2 || got.ConfidenceInterval.Upper != 1 {
 		t.Errorf("CI = %+v, want [-0.2, 1]", got.ConfidenceInterval)
@@ -250,8 +297,8 @@ func TestStudyReliability_CohenAOOTAWeightedMapsSubgroupsAndExcludes(t *testing.
 	if got == nil {
 		t.Fatal("expected a Cohen result")
 	}
-	if !approx(got.Kappa, -1.0/17.0, 1e-12) {
-		t.Errorf("kappa = %v, want %v", got.Kappa, -1.0/17.0)
+	if !approx(val(got.Kappa), -1.0/17.0, 1e-12) {
+		t.Errorf("kappa = %v, want %v", val(got.Kappa), -1.0/17.0)
 	}
 	w := got.WeightedKappa
 	if w == nil {

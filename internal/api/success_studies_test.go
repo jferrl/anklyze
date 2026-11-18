@@ -188,10 +188,10 @@ func TestStudyReliability(t *testing.T) {
 		if tt.cohen == nil || tt.fleiss == nil {
 			t.Fatalf("%s: missing kappa: cohen=%v fleiss=%v", tt.system, tt.cohen, tt.fleiss)
 		}
-		if math.Abs(tt.cohen.Kappa-wantCohen) > 1e-9 || tt.cohen.NumSubjects != 4 {
+		if tt.cohen.Kappa == nil || math.Abs(*tt.cohen.Kappa-wantCohen) > 1e-9 || tt.cohen.NumSubjects != 4 {
 			t.Errorf("%s: cohen = %+v, want kappa %v over 4 cases", tt.system, tt.cohen, wantCohen)
 		}
-		if math.Abs(tt.fleiss.Kappa-wantFleiss) > 1e-9 || tt.fleiss.NumSubjects != 4 || tt.fleiss.NumRaters != 2 || tt.fleiss.NumCategories != 2 || tt.fleiss.ConfidenceInterval == nil {
+		if tt.fleiss.Kappa == nil || math.Abs(*tt.fleiss.Kappa-wantFleiss) > 1e-9 || tt.fleiss.NumSubjects != 4 || tt.fleiss.NumRaters != 2 || tt.fleiss.NumCategories != 2 || tt.fleiss.ConfidenceInterval == nil {
 			t.Errorf("%s: fleiss = %+v, want kappa %v over 4 cases, 2 raters, 2 categories", tt.system, tt.fleiss, wantFleiss)
 		}
 	}

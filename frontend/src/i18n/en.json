@@ -842,6 +842,7 @@
         "labels": "Interpretation labels follow Landis and Koch (1977).",
         "percentAgreement": "Each figure is the share of responses that match the most common classification for this case, computed for each system over the responses that have a classification in that system. Agreement needs at least two classified responses; with fewer, the system shows a dash. Responses: {{responses}}. Raters: {{raters}}.",
         "fleissCases": "For each system, only the cases that all of those raters answered in that system are used. A case where a rater gave no answer in a system is left out of that system and counted as excluded. A system needs at least two usable cases.",
+        "noVariation": "When every rater gave the same answer on every case, the agreement expected by chance is 1 and kappa is 0/0, so it is shown as undefined rather than as 1. Perfect agreement on cases with different answers is a real kappa of 1.",
         "cohen": "When exactly two raters answered every case, Cohen's kappa is shown too, computed across the cases both answered in that system. Its {{level}}% interval is a percentile bootstrap, built the same way as the Fleiss interval: the cases are resampled with replacement 2000 times with a fixed seed, and resamples in which every rating falls in one category are skipped. The interval is limited to the range −1 to 1.",
         "weighted": "AO/OTA weighted kappa uses linear weights over the order 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Subgroup codes are compared by their group (44-B1.2 counts as 44-B1). A pair with a code outside that order, such as 43-B1 or not classifiable, is left out and counted.",
         "noKappaPerCase": "Kappa is not computed for a single case: one case gives each rater one rating, so kappa could only be 1 or 0. Kappa is reported per study.",
@@ -850,6 +851,7 @@
         "less": "Hide full method"
       },
       "noSystemData": "No response has a classification in this system.",
+      "kappaNoVariation": "Undefined: every rater gave the same answer on every case",
       "singleClassification": "Only one response has a classification in this system; agreement needs at least two.",
       "casesExcluded_one": "{{count}} case excluded",
       "casesExcluded_other": "{{count}} cases excluded",

@@ -842,6 +842,7 @@
         "labels": "Las etiquetas de interpretación siguen a Landis y Koch (1977).",
         "percentAgreement": "Cada cifra es la proporción de respuestas que coinciden con la clasificación más frecuente de este caso, calculada para cada sistema con las respuestas que tienen clasificación en ese sistema. El acuerdo necesita al menos dos respuestas clasificadas; con menos, el sistema muestra un guion. Respuestas: {{responses}}. Evaluadores: {{raters}}.",
         "fleissCases": "Para cada sistema solo se usan los casos que todos esos evaluadores respondieron en ese sistema. Un caso en el que algún evaluador no dio respuesta en un sistema se omite de ese sistema y se cuenta como excluido. Cada sistema necesita al menos dos casos utilizables.",
+        "noVariation": "Cuando todos los evaluadores dieron la misma respuesta en todos los casos, el acuerdo esperado por azar es 1 y el kappa es 0/0, por lo que se muestra como indefinido y no como 1. El acuerdo perfecto en casos con respuestas distintas es un kappa real de 1.",
         "cohen": "Cuando exactamente dos evaluadores respondieron todos los casos, también se muestra el kappa de Cohen, calculado con los casos que ambos respondieron en ese sistema. Su intervalo del {{level}}% es un bootstrap por percentiles, construido igual que el de Fleiss: los casos se remuestrean con reemplazo 2000 veces con una semilla fija, y se omiten los remuestreos en los que todas las valoraciones caen en una sola categoría. El intervalo se limita al rango de −1 a 1.",
         "weighted": "El kappa ponderado de AO/OTA usa pesos lineales sobre el orden 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Los códigos de subgrupo se comparan por su grupo (44-B1.2 cuenta como 44-B1). Un par con un código fuera de ese orden, como 43-B1 o no clasificable, se omite y se cuenta.",
         "noKappaPerCase": "El kappa no se calcula para un caso individual: un caso da a cada evaluador una sola valoración, por lo que el kappa solo podría valer 1 o 0. El kappa se informa por estudio.",
@@ -850,6 +851,7 @@
         "less": "Ocultar el método completo"
       },
       "noSystemData": "Ninguna respuesta tiene clasificación en este sistema.",
+      "kappaNoVariation": "Indefinido: todos los evaluadores dieron la misma respuesta en todos los casos",
       "singleClassification": "Solo una respuesta tiene clasificación en este sistema; el acuerdo necesita al menos dos.",
       "casesExcluded_one": "{{count}} caso excluido",
       "casesExcluded_other": "{{count}} casos excluidos",

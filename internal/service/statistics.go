@@ -223,6 +223,19 @@ func (s *StatisticsService) calculateFleissForSystem(
 	slices.Sort(categories)
 	categories = slices.Compact(categories)
 
+	numRaters := len(completeRaters)
+	result := &domain.FleissKappaResult{
+		NumSubjects:      len(rows),
+		NumRaters:        numRaters,
+		NumCategories:    len(categories),
+		NumCasesExcluded: excluded,
+	}
+	// One category makes chance agreement 1 and kappa 0/0: undefined, not perfect.
+	if len(categories) == 1 {
+		result.KappaUnavailableReason = domain.KappaNoVariation
+		return result
+	}
+
 	matrix := make([][]int, len(rows))
 	for i, row := range rows {
 		matrix[i] = make([]int, len(categories))
@@ -232,14 +245,13 @@ func (s *StatisticsService) calculateFleissForSystem(
 		}
 	}
 
-	numRaters := len(completeRaters)
 	kappa, err := statistics.FleissKappa(matrix, numRaters)
 	if err != nil {
 		return nil
 	}
 
-	result := domain.NewFleissKappaResult(kappa, len(rows), numRaters, len(categories))
-	result.NumCasesExcluded = excluded
+	result.Kappa = &kappa
+	result.Interpretation = domain.KappaInterpretation(kappa)
 	result.ConfidenceInterval = statistics.FleissKappaCI(matrix, numRaters, 0.95)
 	return result
 }
@@ -263,14 +275,17 @@ func (s *StatisticsService) calculateCohenForSystem(
 		pairs[i] = [2]string{row[0], row[1]}
 	}
 
-	kappa, ci, _ := statistics.CohensKappaWithCI(pairs, 0.95)
-	result := &domain.CohensKappaResult{
-		Kappa:              kappa,
-		Interpretation:     domain.KappaInterpretation(kappa),
-		NumSubjects:        len(rows),
-		NumCasesExcluded:   excluded,
-		ConfidenceInterval: ci,
+	result := &domain.CohensKappaResult{NumSubjects: len(rows), NumCasesExcluded: excluded}
+	// As in calculateFleissForSystem: one category leaves kappa undefined, and the weighted kappa too.
+	if len(statistics.ExtractCategories(pairs)) == 1 {
+		result.KappaUnavailableReason = domain.KappaNoVariation
+		return result
 	}
+
+	kappa, ci, _ := statistics.CohensKappaWithCI(pairs, 0.95)
+	result.Kappa = &kappa
+	result.Interpretation = domain.KappaInterpretation(kappa)
+	result.ConfidenceInterval = ci
 	if system == "ao_ota" {
 		result.WeightedKappa = weightedAOOTAKappa(pairs)
 	}

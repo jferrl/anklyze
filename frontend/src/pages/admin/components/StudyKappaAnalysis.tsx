@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { KappaGauge, KappaLegend } from '@/components/analytics';
-import type { ConfidenceInterval, StudyReliabilityResponse } from '@/types';
+import type { FleissKappaResult, StudyReliabilityResponse } from '@/types';
 import { MethodNote } from './MethodNote';
 import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin, type SystemKey } from './systems';
 
@@ -12,10 +12,15 @@ interface StudyKappaAnalysisProps {
 /** RULED_GRID splits one ruled box into gauge cells (DESIGN.md, The Ruled Box Rule). */
 const RULED_GRID = 'grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-4';
 
-// A small sample or an interval with no width makes the kappa unstable; say so under the gauge.
-function caution(t: TFunction, cases: number, ci?: ConfidenceInterval) {
-  return cases < SMALL_SAMPLE_CASES || (ci && ci.lower === ci.upper)
-    ? t('admin.reliability.smallSample', { count: cases })
+type KappaFacts = Pick<FleissKappaResult, 'num_subjects' | 'confidence_interval' | 'kappa_unavailable_reason'>;
+
+// Under the gauge: why a kappa is undefined, or that a small sample or an interval with no width makes it unstable.
+function caution(t: TFunction, result?: KappaFacts) {
+  if (!result) return undefined;
+  if (result.kappa_unavailable_reason === 'no_variation') return t('admin.reliability.kappaNoVariation');
+  const ci = result.confidence_interval;
+  return result.num_subjects < SMALL_SAMPLE_CASES || (ci && ci.lower === ci.upper)
+    ? t('admin.reliability.smallSample', { count: result.num_subjects })
     : undefined;
 }
 
@@ -54,7 +59,7 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
                       fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
                     ].filter(Boolean).join(', ')
                   : t('admin.studies.reliability.notEnoughData')}
-                caution={fleiss && caution(t, fleiss.num_subjects, fleiss.confidence_interval)}
+                caution={caution(t, fleiss)}
               />
             </div>
           ))}
@@ -81,7 +86,7 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
                         cohen.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: cohen.num_cases_excluded }),
                       ].filter(Boolean).join(', ')
                     : t('admin.studies.reliability.notEnoughData')}
-                  caution={cohen && caution(t, cohen.num_subjects, cohen.confidence_interval)}
+                  caution={caution(t, cohen)}
                 />
               </div>
             ))}
@@ -126,6 +131,7 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
           })}
         </p>
         <p>{t('admin.reliability.method.fleissCases')}</p>
+        <p>{t('admin.reliability.method.noVariation')}</p>
         <p>{t('admin.reliability.method.interval', { level })}</p>
         {hasCohen && <p>{t('admin.reliability.method.cohen', { level })}</p>}
         {weighted && <p>{t('admin.reliability.method.weighted')}</p>}
