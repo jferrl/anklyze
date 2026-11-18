@@ -107,6 +107,7 @@ func SetupCaseRoutes(
 	responseRepo repository.CaseResponseRepository,
 	analyticsRepo repository.CaseAnalyticsRepository,
 	studyService service.StudyService,
+	classifier service.ClassificationService,
 	storage storage.Storage,
 	statsService *service.StatisticsService,
 ) {
@@ -114,7 +115,7 @@ func SetupCaseRoutes(
 	adminHandler := NewCaseAdminHandler(caseRepo, storage, statsService)
 	imageHandler := NewCaseImageHandler(caseRepo, storage, defaultSignedURLDuration)
 	accessHandler := NewCaseAccessHandler(caseRepo, responseRepo)
-	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, storage, defaultSignedURLDuration)
+	responseHandler := NewCaseResponseHandler(caseRepo, responseRepo, studyService, classifier, storage, defaultSignedURLDuration)
 
 	// Create analytics handler with statistics service
 	analyticsHandler := NewCaseAnalyticsHandler(caseRepo, responseRepo, analyticsRepo, statsService)

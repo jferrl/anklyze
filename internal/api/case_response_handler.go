@@ -10,6 +10,7 @@ import (
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
+	"github.com/jferrl/anklyze/internal/service"
 	"github.com/jferrl/anklyze/internal/storage"
 )
 
@@ -18,6 +19,7 @@ type CaseResponseHandler struct {
 	caseRepo          repository.CaseRepository
 	responseRepo      repository.CaseResponseRepository
 	studyService      StudyService
+	classifier        service.ClassificationService
 	storage           storage.Storage
 	signedURLDuration time.Duration
 }
@@ -27,6 +29,7 @@ func NewCaseResponseHandler(
 	caseRepo repository.CaseRepository,
 	responseRepo repository.CaseResponseRepository,
 	studyService StudyService,
+	classifier service.ClassificationService,
 	storage storage.Storage,
 	signedURLDuration time.Duration,
 ) *CaseResponseHandler {
@@ -34,6 +37,7 @@ func NewCaseResponseHandler(
 		caseRepo:          caseRepo,
 		responseRepo:      responseRepo,
 		studyService:      studyService,
+		classifier:        classifier,
 		storage:           storage,
 		signedURLDuration: signedURLDuration,
 	}
@@ -102,6 +106,29 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 		})
 		return
 	}
+
+	// The server is the authority: store the engine's result for the submitted
+	// answers and reject a client copy that differs.
+	if len(req.AnswerPath) == 0 {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "answer_path is required"})
+		return
+	}
+	input, err := domain.FractureInputFromAnswers(req.AnswerPath, cs.HasTACImages)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "invalid answer_path", "details": err.Error()})
+		return
+	}
+	expected, err := h.classifier.Classify(c.Request.Context(), input)
+	if err != nil {
+		slog.Error("failed to classify submitted answers", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to classify answers"})
+		return
+	}
+	if expected.FractureType == "none_selected" || !expected.SameClassification(req.Classification) {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "classification does not match the submitted answers"})
+		return
+	}
+	req.Classification = *expected
 
 	// Build answer tracking if provided
 	var tracking *domain.AnswerTracking

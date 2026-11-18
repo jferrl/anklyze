@@ -1,5 +1,52 @@
 package domain
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
+// boolQuestions lists the FractureInput fields the form sends as "true"/"false".
+var boolQuestions = map[string]bool{
+	"fibula_infrasindesmal_transverse": true,
+	"has_ct_scan":                      true,
+	"has_articular_depression":         true,
+	"is_posterior_posteromedial":       true,
+	"has_fibula_head_shortening":       true,
+}
+
+// FractureInputFromAnswers rebuilds the form state from an answer path.
+// A question answered twice keeps its last answer. has_ct_scan comes from the
+// case's images, as in the form, never from the path.
+func FractureInputFromAnswers(path []QuestionAnswer, hasCTScan bool) (FractureInput, error) {
+	fields := make(map[string]any, len(path)+1)
+	for _, a := range path {
+		if !boolQuestions[a.Question] {
+			fields[a.Question] = a.Answer
+			continue
+		}
+		b, err := strconv.ParseBool(a.Answer)
+		if err != nil {
+			return FractureInput{}, fmt.Errorf("answer to %q is not a boolean: %w", a.Question, err)
+		}
+		fields[a.Question] = b
+	}
+	fields["has_ct_scan"] = hasCTScan
+
+	raw, err := json.Marshal(fields)
+	if err != nil {
+		return FractureInput{}, err
+	}
+	var in FractureInput
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&in); err != nil {
+		return FractureInput{}, fmt.Errorf("invalid answer path: %w", err)
+	}
+	return in, nil
+}
+
 // InvolvedMalleoli represents which malleoli are fractured (first question).
 type InvolvedMalleoli string
 

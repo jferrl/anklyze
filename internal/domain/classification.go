@@ -139,3 +139,29 @@ type ClassificationResult struct {
 	Impossible    bool                       `json:"impossible,omitempty"`
 	ImpossibleKey string                     `json:"impossible_key,omitempty"` // Key for frontend translation
 }
+
+// SameClassification reports whether two results agree on the fracture type,
+// the impossible flag and all four classification codes.
+func (r ClassificationResult) SameClassification(o ClassificationResult) bool {
+	return r.FractureType == o.FractureType &&
+		r.Impossible == o.Impossible &&
+		r.codes() == o.codes()
+}
+
+// codes returns the four system codes; "" marks a system that is absent.
+func (r ClassificationResult) codes() [4]string {
+	var c [4]string
+	if r.DanisWeber != nil {
+		c[0] = string(r.DanisWeber.Type)
+	}
+	if r.LaugeHansen != nil {
+		c[1] = string(r.LaugeHansen.Type)
+	}
+	if r.AOOTA != nil {
+		c[2] = string(r.AOOTA.Code)
+	}
+	if r.Bartonicek != nil {
+		c[3] = string(r.Bartonicek.Type)
+	}
+	return c
+}
