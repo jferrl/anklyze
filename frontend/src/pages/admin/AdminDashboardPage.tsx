@@ -74,8 +74,22 @@ export function AdminDashboardPage() {
             </div>
           ))}
         </div>
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-80 w-full" />
+        {/* Studies and recent activity; Needs attention often renders nothing, so it gets no placeholder. */}
+        {[3, 5].map((rows) => (
+          <div key={rows} className="overflow-hidden rounded-lg border bg-card">
+            <div className="space-y-2 border-b px-4 py-3">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-72 max-w-full" />
+            </div>
+            <div className="divide-y">
+              {Array.from({ length: rows }, (_, i) => (
+                <div key={i} className="px-4 py-3">
+                  <Skeleton className="h-5 w-full max-w-md" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

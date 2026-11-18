@@ -256,6 +256,7 @@ function ReliabilitySkeleton({ label }: { label: string }) {
           <div key={i} className="space-y-2 bg-card p-4">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-3 w-32 max-w-full" />
           </div>
         ))}
       </div>

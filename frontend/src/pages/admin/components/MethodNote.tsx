@@ -33,7 +33,7 @@ export function MethodNote({ children, lead, className }: MethodNoteProps) {
             className="-mx-1 inline-flex items-center gap-1 rounded-sm px-1 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-[3px] focus-visible:ring-ring print:hidden"
           >
             {open ? t('admin.reliability.method.less') : t('admin.reliability.method.more')}
-            <ChevronDown aria-hidden className={cn('size-4 transition-transform duration-150', open && 'rotate-180')} />
+            <ChevronDown aria-hidden className={cn('size-4 transition-transform duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]', open && 'rotate-180')} />
           </button>
         </>
       ) : (

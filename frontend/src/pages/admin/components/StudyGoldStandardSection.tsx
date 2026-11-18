@@ -129,7 +129,7 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
         <div className="overflow-hidden rounded-lg border bg-card">
           <div className="md:hidden">
             <SystemListHead label={t('admin.studies.goldStandard.case')} system={activeSystem} />
-            <div key={activeSystem} className="animate-fade-in divide-y">
+            <div className="divide-y">
               {sortedCases.map((pca) => (
                 <div key={pca.case_id} className={cn('flex items-center justify-between gap-3 px-4 py-3', pca.is_hard_case && 'bg-warning/10')}>
                   <div className="flex min-w-0 items-center gap-2">
@@ -224,7 +224,7 @@ function PerRaterAccuracyTable({ raters, activeSystem }: { raters: PerRaterAccur
       <div className="overflow-hidden rounded-lg border bg-card">
         <div className="md:hidden">
           <SystemListHead label={t('admin.studies.goldStandard.rater')} system={activeSystem} />
-          <div key={activeSystem} className="animate-fade-in divide-y">
+          <div className="divide-y">
             {sorted.map((rater, i) => (
               <div key={rater.user_id} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div className="min-w-0">

@@ -48,7 +48,7 @@ export function ClassificationChart({
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>('bar');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  // Bars grow once, on first mount; later system or view swaps only fade.
+  // Bars grow once, on first mount. A system swap (keyboard, frequent) changes in place; a view swap fades.
   const [growBars, setGrowBars] = useState(true);
 
   const chartData = useMemo(() => {
@@ -93,7 +93,7 @@ export function ClassificationChart({
   return (
     <div className="chart-card">
       <div className="mb-6 flex items-start justify-between gap-4">
-        <div key={systemLabel} className="animate-fade-in">
+        <div>
           <h3 className="text-base font-semibold text-foreground">
             {title || systemLabel}
           </h3>
@@ -124,7 +124,7 @@ export function ClassificationChart({
       </div>
 
       <div
-        key={`${systemLabel}-${viewMode}`}
+        key={viewMode}
         className="animate-fade-in"
         onAnimationEnd={(e) => e.animationName === 'bar-grow' && setGrowBars(false)}
       >

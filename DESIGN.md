@@ -197,7 +197,7 @@ App pages sit beside the sidebar in a `max-w-7xl` (80rem) column; public pages u
 
 Every app page opens with a PageHeader closed by a bottom rule, then content. Case screens put images first. Lists are ruled tables or `divide-y` stacks inside one bordered box. Prose is capped at 65 to 90ch. Dates are formatted with `Intl.DateTimeFormat` in the interface language (day, short month, year).
 
-Motion is state change only: content swaps fade in over 180ms on `cubic-bezier(0.16, 1, 0.3, 1)`, bars grow from the left over 400ms, colour transitions take 150ms. Reduced motion cuts all of it.
+Motion is state change only: content swaps fade in over 180ms on `cubic-bezier(0.16, 1, 0.3, 1)`, except content swapped by the system tabs, which changes in place because tab switching is frequent and keyboard-driven; bars grow from the left over 250ms, once on first mount; colour transitions take 150ms. Reduced motion cuts all of it.
 
 ## Elevation & Depth
 

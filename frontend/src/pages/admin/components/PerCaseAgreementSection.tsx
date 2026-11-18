@@ -35,7 +35,7 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
           <div className="overflow-hidden rounded-lg border bg-card">
             <div className="md:hidden">
               <SystemListHead label={t('admin.studies.goldStandard.case')} system={activeSystem} />
-              <div key={activeSystem} className="animate-fade-in divide-y">
+              <div className="divide-y">
                 {sortedMetrics.map((caseMetrics) => (
                   <CaseMetricCard key={caseMetrics.case_id} metrics={caseMetrics} activeSystem={activeSystem} />
                 ))}
