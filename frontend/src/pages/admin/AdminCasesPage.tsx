@@ -40,6 +40,7 @@ import type { Case, CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import { formatDate as formatDateIn } from '@/lib/format';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { DataTable } from './components/DataTable';
@@ -50,6 +51,7 @@ import { SectionErrorBoundary } from '@/components/ui/error-boundary';
 
 export function AdminCasesPage() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t('breadcrumbs.cases'));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');

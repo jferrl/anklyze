@@ -15,10 +15,12 @@ For medical purposes only. Always correlate with clinical findings.
 
 The questionnaire starts with which malleoli are fractured (lateral, medial, posterior, or a combination) and then asks only the questions that branch of the tree needs. There is no model and no scoring: the same answers always give the same result.
 
-The tree is maintained as a draw.io diagram, [`docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio`](docs/Danis-Weber%20AO_OTA%20Flow-2026-02-28-ES.drawio), and implemented in `internal/rules/engine.go`. Two text renderings are generated from the diagram:
+The tree is maintained as a draw.io diagram, [`docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio`](docs/Danis-Weber%20AO_OTA%20Flow-2026-02-28-ES.drawio), and implemented in `internal/rules/engine.go`. Two text renderings are generated from the diagram, in Spanish (the diagram's language) and English:
 
-- [`docs/decision_tree.txt`](docs/decision_tree.txt): the tree, indented.
-- [`docs/decision_table.txt`](docs/decision_table.txt): one row per terminal path, 165 paths across 7 malleoli combinations.
+- [`docs/decision_tree.txt`](docs/decision_tree.txt) / [`docs/decision_tree.en.txt`](docs/decision_tree.en.txt): the tree, indented.
+- [`docs/decision_table.txt`](docs/decision_table.txt) / [`docs/decision_table.en.txt`](docs/decision_table.en.txt): one row per terminal path, 165 paths across 7 malleoli combinations.
+
+The English versions use the same translations as the English flow diagram (`scripts/build_flow_diagram.py`); the codes in each row are identical in both languages.
 
 `make classify-validate` parses the diagram, regenerates those files and `internal/rules/engine_drawio_test.go`, and runs the engine tests. The generated tests cover all 165 paths. On one path the diagram reads "AO clasificable" with no code, so that path's AO/OTA result is not checked until the diagram is corrected. The Playwright suite drives the form through the same 165 paths (`e2e/fixtures/classification-cases.json`, generated from the diagram).
 
@@ -143,6 +145,6 @@ docs/                    decision tree and reliability documentation
 
 ## Licence and authors
 
-The code is under the Apache License 2.0 ([LICENSE](LICENSE)). The decision tree (the drawio diagram, `docs/decision_tree.txt` and `docs/decision_table.txt`) is under Creative Commons Attribution 4.0 ([LICENSE-CC-BY-4.0](LICENSE-CC-BY-4.0)): it can be reused and adapted with credit to its author.
+The code is under the Apache License 2.0 ([LICENSE](LICENSE)). The decision tree (the drawio diagram and its text renderings `docs/decision_tree*.txt` and `docs/decision_table*.txt`) is under Creative Commons Attribution 4.0 ([LICENSE-CC-BY-4.0](LICENSE-CC-BY-4.0)): it can be reused and adapted with credit to its author.
 
 The clinical content and decision tree are by Laura Paniagua Andrés (orthopaedic and trauma surgeon, Hospital de León). The software is by Jorge Ferrero Linacero. The four classification systems belong to their original authors; references are in [NOTICE](NOTICE). Anklyze is not affiliated with or endorsed by the AO Foundation or the Orthopaedic Trauma Association.

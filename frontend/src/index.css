@@ -257,7 +257,7 @@
 
   .bar-grow {
     transform-origin: left;
-    animation: bar-grow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: bar-grow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* Landing hero figure, once on load (timeline in LandingPage.tsx): the plate is there from the

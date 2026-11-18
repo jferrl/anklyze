@@ -27,11 +27,22 @@ const TICKS = [0, 0.2, 0.4, 0.6, 0.8];
 
 /** KappaLegend is the one Landis & Koch interpretation line printed under any set of kappas. */
 export function KappaLegend({ className }: { className?: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const band = (kappa: number) =>
+    t(kappaInterpretationKey(getKappaInterpretation(kappa).label)).toLocaleLowerCase(i18n.language);
+  // "< 0 poor · 0–0.20 slight · 0.21–0.40 fair …": bands from TICKS, so es prints "0,20".
+  const legend = [
+    `< 0 ${band(-1)}`,
+    ...TICKS.map((lower, i) => {
+      const upper = TICKS[i + 1] ?? 1;
+      const from = i === 0 ? '0' : formatKappa(lower + 0.01);
+      return `${from}–${formatKappa(upper)} ${band(upper)}`;
+    }),
+  ].join(' · ');
   return (
     <p className={cn('text-xs tabular-nums text-muted-foreground', className)}>
       <span className="font-medium text-foreground">{t('admin.reliability.kappaInterpretation')}</span>{' '}
-      {t('admin.reliability.kappaLegend')} (Landis & Koch, 1977)
+      {legend} (Landis & Koch, 1977)
     </p>
   );
 }
@@ -87,7 +98,7 @@ export function KappaGauge({ value, label, description, caution, swatch, size = 
           )}
         </div>
         <div className="relative mt-1 flex justify-between text-xs tabular-nums text-muted-foreground">
-          <span>{min}</span>
+          <span>{min < 0 ? '−1' : '0'}</span>
           {min < 0 && (
             <span className="absolute -translate-x-1/2" style={{ left: `${pos(0)}%` }}>0</span>
           )}

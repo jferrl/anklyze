@@ -5,7 +5,8 @@ describe('number formatting', () => {
   it('prints kappa with two decimals in the interface language', () => {
     expect(formatKappa(0.384, 'en')).toBe('0.38');
     expect(formatKappa(0.384, 'es')).toBe('0,38');
-    expect(formatKappa(-0.1, 'en')).toBe('-0.10');
+    expect(formatKappa(-0.1, 'en')).toBe('−0.10');
+    expect(formatKappa(-0.1, 'es')).toBe('−0,10');
   });
 
   it('prints percentages with one decimal and the locale sign', () => {

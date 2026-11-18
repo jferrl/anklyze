@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { caseApi, studyApi } from '@/services';
 import { formatNumber } from '@/lib/format';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { RecentActivityCard } from './components/RecentActivityCard';
 import { NeedsAttentionCard } from './components/NeedsAttentionCard';
 import { StudiesInProgressCard } from './components/StudiesInProgressCard';
@@ -18,6 +19,7 @@ export function AdminDashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [now] = useState(Date.now);
+  useDocumentTitle(t('breadcrumbs.dashboard'));
 
   const dashboard = useQuery({
     queryKey: ['admin-dashboard'],
@@ -74,8 +76,22 @@ export function AdminDashboardPage() {
             </div>
           ))}
         </div>
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-80 w-full" />
+        {/* Studies and recent activity; Needs attention often renders nothing, so it gets no placeholder. */}
+        {[3, 5].map((rows) => (
+          <div key={rows} className="overflow-hidden rounded-lg border bg-card">
+            <div className="space-y-2 border-b px-4 py-3">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-72 max-w-full" />
+            </div>
+            <div className="divide-y">
+              {Array.from({ length: rows }, (_, i) => (
+                <div key={i} className="px-4 py-3">
+                  <Skeleton className="h-5 w-full max-w-md" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -106,7 +122,7 @@ export function AdminDashboardPage() {
         <StatCard
           title={t('admin.dashboard.totalCases')}
           value={n(s.total_cases)}
-          subtitle={`${t('admin.dashboard.draftsCount', { count: s.draft_cases })}, ${t('admin.dashboard.activeCount', { count: s.published_cases })}, ${t('admin.dashboard.closedCount', { count: s.closed_cases })}`}
+          subtitle={`${t('admin.dashboard.draftsCount', { count: s.draft_cases })}, ${t('admin.dashboard.publishedCount', { count: s.published_cases })}, ${t('admin.dashboard.closedCount', { count: s.closed_cases })}`}
         />
         <StatCard
           title={t('admin.dashboard.totalResponses')}

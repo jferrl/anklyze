@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Button, buttonVariants } from '../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { Alert, AlertDescription } from '../../components/ui/alert';
@@ -64,6 +65,7 @@ export function StudyEditorPage() {
     enabled: isEditing,
   });
   useRecordTitle(study?.title);
+  useDocumentTitle(isEditing ? study?.title : t('breadcrumbs.newStudy'));
 
   // Form state - use study data as defaults, allow local overrides
   const [formState, setFormState] = useState<{ dirty: boolean; title: string; description: string }>({

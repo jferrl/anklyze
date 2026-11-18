@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { buildCaseUpdatePayload } from './casePayload';
@@ -57,6 +58,7 @@ export function CaseEditorPage() {
     enabled: isEditing,
   });
   useRecordTitle(existingCase?.title);
+  useDocumentTitle(isEditing ? existingCase?.title : t('breadcrumbs.newCase'));
 
   const { form, updateForm } = useCaseEditorForm(existingCase);
   const { title, description, deadline } = form;

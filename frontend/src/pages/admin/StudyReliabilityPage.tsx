@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ArrowLeft, Download, Loader2 } from 'lucide-react';
@@ -14,9 +14,11 @@ import { PerCaseAgreementSection } from './components/PerCaseAgreementSection';
 import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
 import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
 import { SystemTabs } from './components/SystemTabs';
-import { LOW_AGREEMENT_PCT, SYSTEMS, SYSTEM_KEYS, type SystemKey } from './components/systems';
-import { buildReliabilityFiguresCsv, downloadText, fileSlug } from './components/reliabilityCsv';
+import { LOW_AGREEMENT_PCT, SYSTEMS, useSystemParam } from './components/systems';
+import { buildReliabilityFiguresCsv, downloadText, fileDate, fileSlug } from './components/reliabilityCsv';
 import { useRecordTitle } from '@/components/layout/recordTitle';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { formatNumber } from '@/lib/format';
 
 const PANEL_ID = 'study-system-panel';
 const BACK_LINK =
@@ -30,17 +32,8 @@ const isNotFound = (error: unknown) => {
 export function StudyReliabilityPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [system, setSystem] = useSystemParam();
   const [exporting, setExporting] = useState<'figures' | 'responses' | null>(null);
-
-  const requested = searchParams.get('system');
-  const system: SystemKey = SYSTEM_KEYS.find((key) => key === requested) ?? 'lauge_hansen';
-  const setSystem = (key: string) =>
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('system', key);
-      return next;
-    }, { replace: true });
 
   // A missing study is final; only other failures are worth a retry.
   const retry = (count: number, error: unknown) => !isNotFound(error) && count < 1;
@@ -53,6 +46,7 @@ export function StudyReliabilityPage() {
   });
   const study = studyQuery.data;
   useRecordTitle(study?.title);
+  useDocumentTitle(study?.title, t('breadcrumbs.reliability'));
 
   const reliabilityQuery = useQuery({
     queryKey: ['study-reliability', id],
@@ -117,7 +111,7 @@ export function StudyReliabilityPage() {
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = fileDate();
   const slug = fileSlug(study.title);
   const lowAgreementCases = reliability.per_case_metrics.filter((c) => c.is_low_agreement).length;
   // With no responses there is nothing to compute or export.
@@ -180,8 +174,8 @@ export function StudyReliabilityPage() {
 
           {/* The counts follow the headline kappas and lead into the per-case tables below. */}
           <StatGroup>
-            <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
-            <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
+            <StatCard title={t('admin.studies.reliability.totalCases')} value={formatNumber(reliability.total_cases, 0)} />
+            <StatCard title={t('admin.reliability.totalResponses')} value={formatNumber(reliability.total_responses, 0)} />
             <StatCard
               title={t('admin.studies.reliability.completeRaters')}
               value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
@@ -189,7 +183,7 @@ export function StudyReliabilityPage() {
             />
             <StatCard
               title={t('admin.studies.reliability.lowAgreementCasesTitle')}
-              value={lowAgreementCases}
+              value={formatNumber(lowAgreementCases, 0)}
               subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
             />
           </StatGroup>
@@ -264,6 +258,7 @@ function ReliabilitySkeleton({ label }: { label: string }) {
           <div key={i} className="space-y-2 bg-card p-4">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-3 w-32 max-w-full" />
           </div>
         ))}
       </div>
