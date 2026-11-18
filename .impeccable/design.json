@@ -1,0 +1,548 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-18T00:00:00Z",
+  "title": "Design System: Anklyze",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Chart Navy",
+        "canonical": "oklch(0.31 0.095 262)",
+        "dark": "oklch(0.8 0.09 258)",
+        "tonalRamp": [
+          "oklch(0.15 0.019 262)",
+          "oklch(0.27 0.042 262)",
+          "oklch(0.39 0.065 262)",
+          "oklch(0.51 0.087 262)",
+          "oklch(0.63 0.080 262)",
+          "oklch(0.75 0.057 262)",
+          "oklch(0.86 0.036 262)",
+          "oklch(0.95 0.019 262)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "Reverse Paper",
+        "canonical": "oklch(0.985 0.003 255)",
+        "dark": "oklch(0.18 0.04 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 255)",
+          "oklch(0.27 0.001 255)",
+          "oklch(0.39 0.002 255)",
+          "oklch(0.51 0.003 255)",
+          "oklch(0.63 0.003 255)",
+          "oklch(0.75 0.002 255)",
+          "oklch(0.86 0.001 255)",
+          "oklch(0.95 0.001 255)"
+        ]
+      },
+      "field-navy": {
+        "role": "primary",
+        "displayName": "Field Navy",
+        "canonical": "oklch(0.27 0.09 262)",
+        "dark": "oklch(0.22 0.065 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.018 262)",
+          "oklch(0.27 0.040 262)",
+          "oklch(0.39 0.061 262)",
+          "oklch(0.51 0.083 262)",
+          "oklch(0.63 0.076 262)",
+          "oklch(0.75 0.054 262)",
+          "oklch(0.86 0.034 262)",
+          "oklch(0.95 0.018 262)"
+        ]
+      },
+      "ring": {
+        "role": "primary",
+        "displayName": "Focus Blue",
+        "canonical": "oklch(0.55 0.16 262)",
+        "dark": "oklch(0.7 0.13 260)",
+        "tonalRamp": [
+          "oklch(0.15 0.032 262)",
+          "oklch(0.27 0.070 262)",
+          "oklch(0.39 0.109 262)",
+          "oklch(0.51 0.147 262)",
+          "oklch(0.63 0.134 262)",
+          "oklch(0.75 0.096 262)",
+          "oklch(0.86 0.061 262)",
+          "oklch(0.95 0.032 262)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(0.985 0.003 255)",
+        "dark": "oklch(0.165 0.018 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 255)",
+          "oklch(0.27 0.001 255)",
+          "oklch(0.39 0.002 255)",
+          "oklch(0.51 0.003 255)",
+          "oklch(0.63 0.003 255)",
+          "oklch(0.75 0.002 255)",
+          "oklch(0.86 0.001 255)",
+          "oklch(0.95 0.001 255)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.22 0.045 262)",
+        "dark": "oklch(0.95 0.008 258)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 262)",
+          "oklch(0.27 0.020 262)",
+          "oklch(0.39 0.031 262)",
+          "oklch(0.51 0.041 262)",
+          "oklch(0.63 0.038 262)",
+          "oklch(0.75 0.027 262)",
+          "oklch(0.86 0.017 262)",
+          "oklch(0.95 0.009 262)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Sheet",
+        "canonical": "oklch(1 0 0)",
+        "dark": "oklch(0.205 0.022 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.000 0)",
+          "oklch(0.27 0.000 0)",
+          "oklch(0.39 0.000 0)",
+          "oklch(0.51 0.000 0)",
+          "oklch(0.63 0.000 0)",
+          "oklch(0.75 0.000 0)",
+          "oklch(0.86 0.000 0)",
+          "oklch(0.95 0.000 0)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Wash",
+        "canonical": "oklch(0.955 0.008 258)",
+        "dark": "oklch(0.255 0.024 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.002 258)",
+          "oklch(0.27 0.004 258)",
+          "oklch(0.39 0.005 258)",
+          "oklch(0.51 0.007 258)",
+          "oklch(0.63 0.007 258)",
+          "oklch(0.75 0.005 258)",
+          "oklch(0.86 0.003 258)",
+          "oklch(0.95 0.002 258)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Wash",
+        "canonical": "oklch(0.962 0.006 258)",
+        "dark": "oklch(0.245 0.022 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 258)",
+          "oklch(0.27 0.003 258)",
+          "oklch(0.39 0.004 258)",
+          "oklch(0.51 0.006 258)",
+          "oklch(0.63 0.005 258)",
+          "oklch(0.75 0.004 258)",
+          "oklch(0.86 0.002 258)",
+          "oklch(0.95 0.001 258)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Pencil",
+        "canonical": "oklch(0.47 0.03 262)",
+        "dark": "oklch(0.73 0.025 260)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 262)",
+          "oklch(0.27 0.013 262)",
+          "oklch(0.39 0.020 262)",
+          "oklch(0.51 0.028 262)",
+          "oklch(0.63 0.025 262)",
+          "oklch(0.75 0.018 262)",
+          "oklch(0.86 0.011 262)",
+          "oklch(0.95 0.006 262)"
+        ]
+      },
+      "accent": {
+        "role": "neutral",
+        "displayName": "Selected Wash",
+        "canonical": "oklch(0.94 0.018 262)",
+        "dark": "oklch(0.29 0.04 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 262)",
+          "oklch(0.27 0.008 262)",
+          "oklch(0.39 0.012 262)",
+          "oklch(0.51 0.017 262)",
+          "oklch(0.63 0.015 262)",
+          "oklch(0.75 0.011 262)",
+          "oklch(0.86 0.007 262)",
+          "oklch(0.95 0.004 262)"
+        ]
+      },
+      "accent-foreground": {
+        "role": "neutral",
+        "displayName": "Selected Ink",
+        "canonical": "oklch(0.25 0.07 262)",
+        "dark": "oklch(0.95 0.008 258)",
+        "tonalRamp": [
+          "oklch(0.15 0.014 262)",
+          "oklch(0.27 0.031 262)",
+          "oklch(0.39 0.048 262)",
+          "oklch(0.51 0.064 262)",
+          "oklch(0.63 0.059 262)",
+          "oklch(0.75 0.042 262)",
+          "oklch(0.86 0.027 262)",
+          "oklch(0.95 0.014 262)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "oklch(0.89 0.012 262)",
+        "dark": "oklch(0.31 0.025 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.002 262)",
+          "oklch(0.27 0.005 262)",
+          "oklch(0.39 0.008 262)",
+          "oklch(0.51 0.011 262)",
+          "oklch(0.63 0.010 262)",
+          "oklch(0.75 0.007 262)",
+          "oklch(0.86 0.005 262)",
+          "oklch(0.95 0.002 262)"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Field Rule",
+        "canonical": "oklch(0.82 0.018 262)",
+        "dark": "oklch(0.38 0.03 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 262)",
+          "oklch(0.27 0.008 262)",
+          "oklch(0.39 0.012 262)",
+          "oklch(0.51 0.017 262)",
+          "oklch(0.63 0.015 262)",
+          "oklch(0.75 0.011 262)",
+          "oklch(0.86 0.007 262)",
+          "oklch(0.95 0.004 262)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sidebar Wash",
+        "canonical": "oklch(0.968 0.007 258)",
+        "dark": "oklch(0.14 0.016 262)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 258)",
+          "oklch(0.27 0.003 258)",
+          "oklch(0.39 0.005 258)",
+          "oklch(0.51 0.006 258)",
+          "oklch(0.63 0.006 258)",
+          "oklch(0.75 0.004 258)",
+          "oklch(0.86 0.003 258)",
+          "oklch(0.95 0.001 258)"
+        ]
+      },
+      "success": {
+        "role": "status",
+        "displayName": "Success Green",
+        "canonical": "oklch(0.5 0.12 155)",
+        "dark": "oklch(0.76 0.13 155)",
+        "tonalRamp": [
+          "oklch(0.15 0.024 155)",
+          "oklch(0.27 0.053 155)",
+          "oklch(0.39 0.082 155)",
+          "oklch(0.51 0.110 155)",
+          "oklch(0.63 0.101 155)",
+          "oklch(0.75 0.072 155)",
+          "oklch(0.86 0.046 155)",
+          "oklch(0.95 0.024 155)"
+        ]
+      },
+      "warning": {
+        "role": "status",
+        "displayName": "Warning Rust",
+        "canonical": "oklch(0.52 0.15 45)",
+        "dark": "oklch(0.78 0.13 50)",
+        "tonalRamp": [
+          "oklch(0.15 0.030 45)",
+          "oklch(0.27 0.066 45)",
+          "oklch(0.39 0.102 45)",
+          "oklch(0.51 0.138 45)",
+          "oklch(0.63 0.126 45)",
+          "oklch(0.75 0.090 45)",
+          "oklch(0.86 0.057 45)",
+          "oklch(0.95 0.030 45)"
+        ]
+      },
+      "destructive": {
+        "role": "status",
+        "displayName": "Destructive Red",
+        "canonical": "oklch(0.53 0.2 27)",
+        "dark": "oklch(0.7 0.17 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.040 27)",
+          "oklch(0.27 0.088 27)",
+          "oklch(0.39 0.136 27)",
+          "oklch(0.51 0.184 27)",
+          "oklch(0.63 0.168 27)",
+          "oklch(0.75 0.120 27)",
+          "oklch(0.86 0.076 27)",
+          "oklch(0.95 0.040 27)"
+        ]
+      },
+      "sys-lh": {
+        "role": "tertiary",
+        "displayName": "Lauge-Hansen Ochre",
+        "canonical": "oklch(0.62 0.13 75)",
+        "dark": "oklch(0.8 0.13 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.026 75)",
+          "oklch(0.27 0.057 75)",
+          "oklch(0.39 0.088 75)",
+          "oklch(0.51 0.120 75)",
+          "oklch(0.63 0.109 75)",
+          "oklch(0.75 0.078 75)",
+          "oklch(0.86 0.049 75)",
+          "oklch(0.95 0.026 75)"
+        ]
+      },
+      "sys-dw": {
+        "role": "tertiary",
+        "displayName": "Danis-Weber Teal",
+        "canonical": "oklch(0.55 0.1 185)",
+        "dark": "oklch(0.76 0.1 185)",
+        "tonalRamp": [
+          "oklch(0.15 0.020 185)",
+          "oklch(0.27 0.044 185)",
+          "oklch(0.39 0.068 185)",
+          "oklch(0.51 0.092 185)",
+          "oklch(0.63 0.084 185)",
+          "oklch(0.75 0.060 185)",
+          "oklch(0.86 0.038 185)",
+          "oklch(0.95 0.020 185)"
+        ]
+      },
+      "sys-ao": {
+        "role": "tertiary",
+        "displayName": "AO/OTA Blue",
+        "canonical": "oklch(0.5 0.17 262)",
+        "dark": "oklch(0.72 0.14 258)",
+        "tonalRamp": [
+          "oklch(0.15 0.034 262)",
+          "oklch(0.27 0.075 262)",
+          "oklch(0.39 0.116 262)",
+          "oklch(0.51 0.156 262)",
+          "oklch(0.63 0.143 262)",
+          "oklch(0.75 0.102 262)",
+          "oklch(0.86 0.065 262)",
+          "oklch(0.95 0.034 262)"
+        ]
+      },
+      "sys-bt": {
+        "role": "tertiary",
+        "displayName": "Bartonicek Magenta",
+        "canonical": "oklch(0.52 0.17 345)",
+        "dark": "oklch(0.74 0.15 345)",
+        "tonalRamp": [
+          "oklch(0.15 0.034 345)",
+          "oklch(0.27 0.075 345)",
+          "oklch(0.39 0.116 345)",
+          "oklch(0.51 0.156 345)",
+          "oklch(0.63 0.143 345)",
+          "oklch(0.75 0.102 345)",
+          "oklch(0.86 0.065 345)",
+          "oklch(0.95 0.034 345)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline on landing, login and not-found pages."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Landing section headings, display voice."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Classification codes and published figures, display voice, tabular figures."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "PageHeader h1 on every app page."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Working text size of the app."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Stat labels, table heads, badges; sentence case."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating",
+        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "purpose": "Floating layers only (chart tooltip, popovers); resting surfaces are flat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Fade-in of swapped content (180ms) and bar growth (400ms)."
+      },
+      {
+        "name": "colour-change",
+        "value": "150ms",
+        "purpose": "Hover and selection colour transitions."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action of a view.",
+      "html": "<button class=\"ds-btn-primary\">Start classifying</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;height:36px;padding:8px 16px;border:0;border-radius:2px;background:var(--primary);color:var(--primary-foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-primary:hover{background:color-mix(in oklch,var(--primary) 90%,transparent)}.ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary and navigation actions such as Previous or Clear search.",
+      "html": "<button class=\"ds-btn-outline\">Previous</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;height:36px;padding:8px 16px;border:1px solid var(--input);border-radius:2px;background:var(--background);color:var(--foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-outline:hover{background:var(--accent);color:var(--accent-foreground)}.ds-btn-outline:focus-visible{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text field on forms and list search.",
+      "html": "<input class=\"ds-input\" placeholder=\"Search cases\">",
+      "css": ".ds-input{height:36px;width:240px;padding:4px 12px;border:1px solid var(--input);border-radius:2px;background:var(--card);color:var(--foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;outline:none;transition:box-shadow .15s}.ds-input::placeholder{color:var(--muted-foreground)}.ds-input:focus-visible{border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-status",
+      "description": "Case or study lifecycle status, in tables and titles.",
+      "html": "<span class=\"ds-badge\"><span class=\"ds-dot\"></span>Published</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 6px;border:1px solid var(--border);border-radius:0;color:var(--foreground);font:400 12px/16px Archivo,ui-sans-serif,system-ui,sans-serif}.ds-dot{width:6px;height:6px;border-radius:9999px;background:var(--success)}"
+    },
+    {
+      "name": "System Tabs",
+      "kind": "nav",
+      "description": "Switch a view between the four classification systems.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-on\"><i style=\"background:var(--sys-lh)\"></i>Lauge-Hansen</button><button class=\"ds-tab\"><i style=\"background:var(--sys-dw)\"></i>Danis-Weber</button><button class=\"ds-tab\"><i style=\"background:var(--sys-ao)\"></i>AO/OTA</button><button class=\"ds-tab\"><i style=\"background:var(--sys-bt)\"></i>Bartonicek</button></div>",
+      "css": ".ds-tabs{display:flex;width:fit-content;gap:2px;padding:2px;border:1px solid var(--border);border-radius:2px;background:var(--card)}.ds-tab{display:flex;align-items:center;gap:8px;padding:6px 12px;border:0;border-radius:0;background:none;color:var(--muted-foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;transition:color .15s}.ds-tab i{width:8px;height:8px}.ds-tab:hover{color:var(--foreground)}.ds-tab.ds-on{background:var(--accent);color:var(--foreground);font-weight:500}.ds-tab:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+    },
+    {
+      "name": "Stat Group",
+      "kind": "card",
+      "refersTo": "stat-cell",
+      "description": "Summary figures at the top of dashboards and reports.",
+      "html": "<section class=\"ds-stats\"><div><p>Cases</p><b>24</b><small>12 published</small></div><div><p>Raters</p><b>6</b><small>All invited</small></div><div><p>Responses</p><b>132</b><small>91.7% complete</small></div><div><p>Fleiss kappa</p><b>0.61</b><small>Lauge-Hansen</small></div></section>",
+      "css": ".ds-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;overflow:hidden;border:1px solid var(--border);border-radius:4px;background:var(--border);font-family:Archivo,ui-sans-serif,system-ui,sans-serif}.ds-stats div{background:var(--card);padding:16px}.ds-stats p{margin:0;font-size:14px;color:var(--muted-foreground)}.ds-stats b{display:block;margin-top:4px;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--foreground)}.ds-stats small{display:block;margin-top:4px;font-size:12px;color:var(--muted-foreground)}"
+    },
+    {
+      "name": "Result Grid",
+      "kind": "custom",
+      "description": "The four system results of a classification, codes in the display voice.",
+      "html": "<dl class=\"ds-result\"><div><dt><i style=\"background:var(--sys-lh)\"></i>Lauge-Hansen</dt><dd>SER</dd></div><div><dt><i style=\"background:var(--sys-dw)\"></i>Danis-Weber</dt><dd>B</dd></div><div><dt><i style=\"background:var(--sys-ao)\"></i>AO/OTA</dt><dd>44-B1.1</dd></div><div><dt><i style=\"background:var(--sys-bt)\"></i>Bartonicek</dt><dd class=\"ds-nc\">Not classifiable</dd></div></dl>",
+      "css": ".ds-result{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:0;overflow:hidden;border:1px solid var(--border);border-radius:4px;background:var(--border);font-family:Archivo,ui-sans-serif,system-ui,sans-serif}.ds-result div{background:var(--card);padding:16px}.ds-result dt{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted-foreground)}.ds-result i{width:10px;height:10px}.ds-result dd{margin:12px 0 0;font-size:30px;font-weight:750;font-stretch:80%;letter-spacing:-.02em;line-height:1;color:var(--foreground)}.ds-result dd.ds-nc{font-size:24px;color:var(--muted-foreground)}"
+    },
+    {
+      "name": "Selection Rows",
+      "kind": "custom",
+      "refersTo": "selection-row",
+      "description": "Answer options in the classifier, stacked in one ruled box.",
+      "html": "<div class=\"ds-sel\" role=\"radiogroup\"><button role=\"radio\" aria-checked=\"true\" class=\"ds-on\"><span class=\"ds-r\"><span></span></span>Lateral only<kbd>1</kbd></button><button role=\"radio\" aria-checked=\"false\"><span class=\"ds-r\"></span>Bimalleolar<kbd>2</kbd></button></div>",
+      "css": ".ds-sel{width:360px;overflow:hidden;border:1px solid var(--border);border-radius:4px;background:var(--card)}.ds-sel button{display:flex;width:100%;align-items:center;gap:12px;padding:12px 16px;border:0;border-top:1px solid var(--border);background:none;color:var(--foreground);font:500 14px Archivo,ui-sans-serif,system-ui,sans-serif;text-align:left;transition:background-color .15s}.ds-sel button:first-child{border-top:0}.ds-sel button:hover{background:var(--muted)}.ds-sel button.ds-on{background:var(--accent);color:var(--accent-foreground)}.ds-sel button:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--ring)}.ds-r{display:flex;width:16px;height:16px;align-items:center;justify-content:center;border:1px solid var(--input);border-radius:9999px}.ds-on .ds-r{border-color:var(--primary)}.ds-r span{width:8px;height:8px;border-radius:9999px;background:var(--primary)}.ds-sel kbd{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border:1px solid var(--border);background:var(--muted);color:var(--muted-foreground);font:500 11px/20px Archivo,ui-sans-serif,system-ui,sans-serif;text-align:center}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Classification Chart",
+    "overview": "Anklyze looks like a printed clinical reference chart: navy ink on white paper, every group of facts held in a box drawn with a 1px rule, and the classification codes set large and heavy where the eye lands first. Depth comes from rules and tonal fills, never from shadows, gradients, glow or glass. The interface is dense and quiet so the radiograph and the result carry the page.\n\nThere is one typeface, Archivo, self-hosted as a variable font. Its narrow, heavy cut is the display voice for headlines and classification codes; its normal width carries everything else. Copy is sentence case throughout. Colour is reserved: navy is the only accent, and four identity hues mark the four classification systems and nothing else.\n\nResults and reliability figures are printed for papers and case notes, so print is a supported medium: chrome drops out and the page prints black on white.",
+    "keyCharacteristics": [
+      "Navy ink on near-white; a solid navy field is the only saturated surface.",
+      "1px rules group content; ruled grids instead of floating cards.",
+      "Flat at rest; state shows as a tonal fill or a 2px rule, not a lift.",
+      "One typeface in two voices: narrow heavy display, normal-width body.",
+      "Small radii (0 to 4px); square swatches and badges.",
+      "Exact numbers in tabular figures, with their method stated beside them."
+    ],
+    "rules": [
+      {
+        "name": "The Identity Colour Rule",
+        "body": "The four system hues identify a classification system and are used for nothing else: no status, no decoration, no emphasis.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Field Rule",
+        "body": "Field Navy is the only saturated surface, used as one full-bleed band on a public page. App pages stay on Paper.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flag, Not Paint Rule",
+        "body": "Status colour marks an exception (a low value, a missing CT) or a lifecycle dot. Ordinary values are never coloured.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Display voice is for headlines and codes only; everything else is normal-width Archivo. Monospace is limited to text meant to be copied verbatim.",
+        "section": "typography"
+      },
+      {
+        "name": "The Exact Figure Rule",
+        "body": "Tables and anything marked `data-numeric` use tabular figures. Percentages print with one decimal.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ruled Box Rule",
+        "body": "Group facts in a box drawn with a 1px rule; split it into cells with `gap-px` over a Rule-coloured background or with `divide-y`, not with separate floating cards.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do open every app page with PageHeader and group content in boxes drawn with a 1px rule.",
+      "Do mark a classification system with its identity swatch and its proper name (Lauge-Hansen, Danis-Weber, AO/OTA, Bartonicek), which is never translated, in that display order.",
+      "Do set classification codes and published figures in the display voice with tabular figures, and place a MethodNote beside reliability figures.",
+      "Do show \"not classifiable\" as a muted result, never as an error.",
+      "Do write sentence case, keep all strings in `frontend/src/i18n/{en,es}.json`, and address the reader as usted in Spanish (\"Seleccione\", \"Introduzca\", \"Inicie sesión\").",
+      "Do ship every screen in both themes and keep print legible."
+    ],
+    "donts": [
+      "Don't use shadows, gradients, glows or glass on resting surfaces.",
+      "Don't use a system identity hue for status, emphasis or decoration.",
+      "Don't colour a normal value; status colour flags exceptions only.",
+      "Don't add a second display or text typeface, or use the display voice for body copy.",
+      "Don't use uppercase eyebrows or letter-spaced labels.",
+      "Don't animate entrances with slides or scales; content swaps fade."
+    ]
+  }
+}
