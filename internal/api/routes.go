@@ -27,10 +27,9 @@ func SetupRoutes(
 	auditRepo AuditRepository,
 	analyticsRepo AnalyticsRepository,
 	classificationService service.ClassificationService,
-	dbHealthy bool,
 	jwksReady *atomic.Bool,
 ) {
-	handler := NewHandler(classificationService, auditRepo, analyticsRepo, dbHealthy, jwksReady)
+	handler := NewHandler(classificationService, auditRepo, analyticsRepo, jwksReady)
 
 	// Prometheus metrics middleware — must be registered before CORS so that
 	// every request, including preflight OPTIONS, is counted.

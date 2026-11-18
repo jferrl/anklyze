@@ -18,7 +18,6 @@ import (
 	"github.com/jferrl/anklyze/internal/config"
 	"github.com/jferrl/anklyze/internal/database"
 	"github.com/jferrl/anklyze/internal/logger"
-	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/repository/postgres"
 	"github.com/jferrl/anklyze/internal/rules"
 	"github.com/jferrl/anklyze/internal/service"
@@ -26,7 +25,6 @@ import (
 	"github.com/jferrl/anklyze/internal/supabase"
 	"github.com/jferrl/anklyze/migrations"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
 
 func main() {
@@ -53,22 +51,6 @@ func main() {
 		Format: cfg.LogFormat,
 	})
 
-	var auditRepo api.AuditRepository
-	var analyticsRepo api.AnalyticsRepository
-	var userRepo repository.UserRepository
-	var caseRepo repository.CaseRepository
-	var caseResponseRepo repository.CaseResponseRepository
-	var caseAnalyticsRepo repository.CaseAnalyticsRepository
-	var studyRepo repository.StudyRepository
-	var studyResponseRepo repository.StudyResponseRepository
-
-	// Database connection (captured for shutdown)
-	var db *gorm.DB
-
-	// dbHealthy tracks whether the database connection succeeded at startup.
-	// Used to report degraded mode in the /health endpoint.
-	var dbHealthy bool
-
 	// Initialize Supabase Auth Admin for syncing roles to app_metadata
 	var authAdmin *supabase.AuthAdmin
 	if cfg.HasSupabase() && cfg.SupabaseServiceRoleKey != "" {
@@ -76,37 +58,34 @@ func main() {
 		slog.Info("Supabase auth admin enabled for role syncing")
 	}
 
-	if cfg.HasDatabase() {
-		var err error
-		db, err = database.Connect(cfg.DatabaseURL, database.PoolConfig{
-			MaxOpenConns: cfg.DBMaxOpenConns,
-			MaxIdleConns: cfg.DBMaxIdleConns,
-		})
-		if err != nil {
-			slog.Warn("database connection failed, running in degraded mode (NoOp repositories)", "error", err)
-			dbHealthy = false
-			auditRepo, analyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
-		} else {
-			if err := database.RunMigrations(migrations.FS, cfg.DatabaseURL); err != nil {
-				slog.Error("database migration failed", "error", err)
-				os.Exit(1)
-			}
-			dbHealthy = true
-			slog.Info("database connected, audit trail and analytics enabled")
-			auditRepo = postgres.NewAuditRepository(db, cfg.AuditBufferSize)
-			analyticsRepo = postgres.NewAnalyticsRepository(db)
-			userRepo = postgres.NewUserRepository(db)
-			caseRepo = postgres.NewCaseRepository(db)
-			caseResponseRepo = postgres.NewCaseResponseRepository(db)
-			caseAnalyticsRepo = postgres.NewCaseAnalyticsRepository(db)
-			studyRepo = postgres.NewStudyRepository(db)
-			studyResponseRepo = postgres.NewStudyResponseRepository(db)
-		}
-	} else {
-		slog.Info("no DATABASE_URL configured, running in degraded mode (NoOp repositories)")
-		dbHealthy = false
-		auditRepo, analyticsRepo, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyRepo, studyResponseRepo = initNoOpRepositories()
+	// The server never runs without a database: a no-op fallback would accept
+	// writes and silently drop them.
+	if !cfg.HasDatabase() {
+		slog.Error("DATABASE_URL is not set — refusing to start")
+		os.Exit(1)
 	}
+	// ~25s of backoff covers Postgres starting slightly after the server.
+	db, err := database.ConnectWithRetry(cfg.DatabaseURL, database.PoolConfig{
+		MaxOpenConns: cfg.DBMaxOpenConns,
+		MaxIdleConns: cfg.DBMaxIdleConns,
+	}, 6, time.Second, 10*time.Second)
+	if err != nil {
+		slog.Error("database connection failed — refusing to start", "error", err)
+		os.Exit(1)
+	}
+	if err := database.RunMigrations(migrations.FS, cfg.DatabaseURL); err != nil {
+		slog.Error("database migration failed", "error", err)
+		os.Exit(1)
+	}
+	slog.Info("database connected")
+	auditRepo := postgres.NewAuditRepository(db, cfg.AuditBufferSize)
+	analyticsRepo := postgres.NewAnalyticsRepository(db)
+	userRepo := postgres.NewUserRepository(db)
+	caseRepo := postgres.NewCaseRepository(db)
+	caseResponseRepo := postgres.NewCaseResponseRepository(db)
+	caseAnalyticsRepo := postgres.NewCaseAnalyticsRepository(db)
+	studyRepo := postgres.NewStudyRepository(db)
+	studyResponseRepo := postgres.NewStudyResponseRepository(db)
 
 	// Create user service that orchestrates DB and Supabase operations
 	userService := service.NewUserService(userRepo, authAdmin)
@@ -179,15 +158,10 @@ func main() {
 	// reliability metrics, and divergence analysis.
 	studyService := service.NewStudyService(studyRepo, studyResponseRepo, caseRepo, caseResponseRepo, statsService, statsService, statsCache)
 
-	dbStatus := "connected"
-	if !dbHealthy {
-		dbStatus = "degraded (NoOp)"
-	}
-
-	slog.Info("server starting", "port", cfg.Port, "db_status", dbStatus)
+	slog.Info("server starting", "port", cfg.Port)
 
 	router := gin.Default()
-	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, dbHealthy, jwksReady)
+	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, jwksReady)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, caseRepo, studyService)
 
@@ -254,36 +228,12 @@ func main() {
 	}
 
 	// Close database connection pool
-	if db != nil {
-		slog.Info("closing database connection")
-		sqlDB, err := db.DB()
-		if err != nil {
-			slog.Error("failed to get sql.DB for closing", "error", err)
-		} else if err := sqlDB.Close(); err != nil {
-			slog.Error("failed to close database", "error", err)
-		}
+	slog.Info("closing database connection")
+	if sqlDB, err := db.DB(); err != nil {
+		slog.Error("failed to get sql.DB for closing", "error", err)
+	} else if err := sqlDB.Close(); err != nil {
+		slog.Error("failed to close database", "error", err)
 	}
 
 	slog.Info("server exited")
-}
-
-// initNoOpRepositories creates all NoOp repository implementations for degraded mode.
-func initNoOpRepositories() (
-	api.AuditRepository,
-	api.AnalyticsRepository,
-	repository.UserRepository,
-	repository.CaseRepository,
-	repository.CaseResponseRepository,
-	repository.CaseAnalyticsRepository,
-	repository.StudyRepository,
-	repository.StudyResponseRepository,
-) {
-	return repository.NewNoOpAuditRepository(),
-		repository.NewNoOpAnalyticsRepository(),
-		repository.NewNoOpUserRepository(),
-		repository.NewNoOpCaseRepository(),
-		repository.NewNoOpCaseResponseRepository(),
-		repository.NewNoOpCaseAnalyticsRepository(),
-		repository.NewNoOpStudyRepository(),
-		repository.NewNoOpStudyResponseRepository()
 }

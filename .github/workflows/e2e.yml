@@ -9,6 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: anklyze
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d anklyze"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -44,6 +58,8 @@ jobs:
         run: cd frontend && npm run build
 
       - name: Start backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/anklyze?sslmode=disable
         run: go run ./cmd/anklyze-apiserver &
 
       - name: Wait for backend

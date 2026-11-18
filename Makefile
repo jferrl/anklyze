@@ -1,4 +1,4 @@
-.PHONY: all run run-no-db run-backend run-frontend build build-backend build-frontend clean install \
+.PHONY: all run run-backend run-frontend build build-backend build-frontend clean install \
 	e2e e2e-install e2e-ui e2e-headed e2e-debug e2e-report e2e-codegen e2e-chromium e2e-firefox e2e-webkit \
 	e2e-classification deps tidy db-start db-stop db-reset db-make-admin db-shell db-audit db-gold-standard db-gold-standard-cleanup lint-go \
 	export-diagram classify-validate classify-tree classify-test
@@ -24,11 +24,6 @@ run:
 		S3_BUCKET="$(LOCAL_S3_BUCKET)" \
 		S3_USE_SSL="false" \
 		$(MAKE) -j2 run-backend run-frontend
-
-# Run without database (degraded mode, NoOp repositories)
-run-no-db:
-	@echo "Starting backend and frontend (no database)..."
-	@$(MAKE) -j2 run-backend run-frontend
 
 # Run backend only (with hot reload using air)
 run-backend:
