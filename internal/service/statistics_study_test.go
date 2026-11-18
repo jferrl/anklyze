@@ -172,8 +172,8 @@ func TestStudyReliability_FleissIntervalReproducible(t *testing.T) {
 }
 
 // Ten cases, two raters: 4 x (A,A), 3 x (B,B), 2 x (A,B), 1 x (B,A).
-// Po = 0.7, Pe = 0.6*0.5 + 0.4*0.5 = 0.5, kappa = 0.4; SE = sqrt(0.7*0.3 / (10*0.25)) = 0.2898,
-// so the 95% interval is [-0.1681, 0.9681].
+// Po = 0.7, Pe = 0.6*0.5 + 0.4*0.5 = 0.5, kappa = 0.4. The interval is the seeded bootstrap,
+// a regression value that is not hand computed.
 func TestStudyReliability_CohenTwoRaters(t *testing.T) {
 	t.Parallel()
 
@@ -190,8 +190,8 @@ func TestStudyReliability_CohenTwoRaters(t *testing.T) {
 	if !approx(got.Kappa, 0.4, 1e-12) {
 		t.Errorf("kappa = %v, want 0.4", got.Kappa)
 	}
-	if got.ConfidenceInterval == nil || got.ConfidenceInterval.Lower != -0.1681 || got.ConfidenceInterval.Upper != 0.9681 {
-		t.Errorf("CI = %+v, want [-0.1681, 0.9681]", got.ConfidenceInterval)
+	if got.ConfidenceInterval == nil || got.ConfidenceInterval.Lower != -0.2 || got.ConfidenceInterval.Upper != 1 {
+		t.Errorf("CI = %+v, want [-0.2, 1]", got.ConfidenceInterval)
 	}
 	if got.NumSubjects != 10 || got.NumCasesExcluded != 0 {
 		t.Errorf("subjects %d, excluded %d; want 10, 0", got.NumSubjects, got.NumCasesExcluded)
