@@ -74,7 +74,7 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 		for _, f := range validationFieldErrors(err) {
 			msgs = append(msgs, f["field"]+" "+f["error"])
 		}
-		invalidInput(c, "invalid fracture input: "+strings.Join(msgs, "; "))
+		badRequest(c, "invalid fracture input: "+strings.Join(msgs, "; "))
 		return
 	}
 
@@ -119,17 +119,12 @@ func (h *Handler) HealthCheck(c *gin.Context) {
 // analyticsSystems are the classification systems GET /api/analytics/distribution accepts.
 var analyticsSystems = map[string]bool{"danis-weber": true, "lauge-hansen": true, "ao-ota": true}
 
-// invalidInput writes a 400 in the shared error shape.
-func invalidInput(c *gin.Context, msg string) {
-	c.JSON(http.StatusBadRequest, ErrorResponse{Code: CodeInvalidInput, Message: msg})
-}
-
 // parseDateRange parses and validates the from/to query parameters. On failure it
 // writes a 400 and returns false.
 func parseDateRange(c *gin.Context) (from, to time.Time, ok bool) {
 	dr, err := timeutil.ParseDateRange(c.Query("from"), c.Query("to"))
 	if err != nil {
-		invalidInput(c, err.Error())
+		badRequest(c, err.Error())
 		return time.Time{}, time.Time{}, false
 	}
 	return dr.From, dr.To, true
@@ -144,7 +139,7 @@ func (h *Handler) GetAnalyticsSummary(c *gin.Context) {
 
 	summary, err := h.analyticsRepo.GetSummary(from, to)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics summary"})
+		HandleError(c, err, "failed to get analytics summary")
 		return
 	}
 
@@ -162,13 +157,13 @@ func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
 	raw := c.Query("granularity")
 	granularity := domain.ParseGranularity(raw)
 	if raw != "" && string(granularity) != raw {
-		invalidInput(c, "granularity must be one of: day, week, month")
+		badRequest(c, "granularity must be one of: day, week, month")
 		return
 	}
 
 	trends, err := h.analyticsRepo.GetTrends(from, to, granularity)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics trends"})
+		HandleError(c, err, "failed to get analytics trends")
 		return
 	}
 
@@ -179,7 +174,7 @@ func (h *Handler) GetAnalyticsTrends(c *gin.Context) {
 func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 	system := c.Param("system")
 	if !analyticsSystems[system] {
-		invalidInput(c, "system must be one of: danis-weber, lauge-hansen, ao-ota")
+		badRequest(c, "system must be one of: danis-weber, lauge-hansen, ao-ota")
 		return
 	}
 	from, to, ok := parseDateRange(c)
@@ -189,7 +184,7 @@ func (h *Handler) GetAnalyticsDistribution(c *gin.Context) {
 
 	distribution, err := h.analyticsRepo.GetDistribution(system, from, to)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get distribution"})
+		HandleError(c, err, "failed to get distribution")
 		return
 	}
 

@@ -73,32 +73,25 @@ func sanitizeFilename(name string) string {
 
 // UploadImage handles POST /api/admin/cases/:id/images
 func (h *CaseImageHandler) UploadImage(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	if !cs.CanBeEdited() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot add images to non-draft case"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "cannot add images to non-draft case")
 		return
 	}
 
 	// Get category from form
 	category := domain.ImageCategory(c.PostForm("category"))
 	if category != domain.ImageCategoryXRay && category != domain.ImageCategoryTAC {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category, must be 'xray' or 'tac'"})
+		badRequest(c, "invalid category, must be 'xray' or 'tac'")
 		return
 	}
 
@@ -120,7 +113,7 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 	// Get the file
 	file, header, err := c.Request.FormFile("file")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+		badRequest(c, "file is required")
 		return
 	}
 	defer func() { _ = file.Close() }()
@@ -136,18 +129,17 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 	head := make([]byte, 512)
 	n, err := io.ReadFull(file, head)
 	if err != nil && !errors.Is(err, io.EOF) && !errors.Is(err, io.ErrUnexpectedEOF) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "could not read file"})
+		badRequest(c, "could not read file")
 		return
 	}
 	contentType := http.DetectContentType(head[:n])
 	ext, ok := imageExtensions[contentType]
 	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid file type, must be an image (JPEG, PNG, GIF, WebP)"})
+		badRequest(c, "invalid file type, must be an image (JPEG, PNG, GIF, WebP)")
 		return
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		slog.Error("failed to rewind upload", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file"})
+		HandleError(c, fmt.Errorf("rewind upload: %w", err), "failed to read file")
 		return
 	}
 
@@ -175,10 +167,9 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 	image.ID = imageID // Use the same ID we used for the path
 
 	if err := h.caseRepo.AddImage(c.Request.Context(), image); err != nil {
-		slog.Error("failed to save image record", "error", err)
 		// Try to clean up the uploaded file
 		_ = h.storage.Delete(c.Request.Context(), storagePath)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save image"})
+		HandleError(c, err, "failed to save image")
 		return
 	}
 
@@ -192,42 +183,33 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 
 // DeleteImage handles DELETE /api/admin/cases/:id/images/:imageId
 func (h *CaseImageHandler) DeleteImage(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	imageID, err := uuid.Parse(c.Param("imageId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
+	imageID, ok := parseID(c, "imageId", "invalid image id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	if !cs.CanBeEdited() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot remove images from non-draft case"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "cannot remove images from non-draft case")
 		return
 	}
 
 	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
 	if err != nil {
-		slog.Error("failed to get image", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get image"})
+		HandleError(c, err, "failed to get image")
 		return
 	}
 	if image == nil || image.CaseID != caseID {
-		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
+		notFound(c, "image not found")
 		return
 	}
 
@@ -238,8 +220,7 @@ func (h *CaseImageHandler) DeleteImage(c *gin.Context) {
 
 	// Delete from database
 	if err := h.caseRepo.DeleteImage(c.Request.Context(), imageID); err != nil {
-		slog.Error("failed to delete image record", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete image"})
+		HandleError(c, err, "failed to delete image")
 		return
 	}
 
@@ -253,48 +234,39 @@ func (h *CaseImageHandler) DeleteImage(c *gin.Context) {
 
 // UpdateImage handles PATCH /api/admin/cases/:id/images/:imageId
 func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	imageID, err := uuid.Parse(c.Param("imageId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
+	imageID, ok := parseID(c, "imageId", "invalid image id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	if !cs.CanBeEdited() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot update images of non-draft case"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "cannot update images of non-draft case")
 		return
 	}
 
 	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
 	if err != nil {
-		slog.Error("failed to get image", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get image"})
+		HandleError(c, err, "failed to get image")
 		return
 	}
 	if image == nil || image.CaseID != caseID {
-		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
+		notFound(c, "image not found")
 		return
 	}
 
 	var req UpdateImageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
@@ -304,8 +276,7 @@ func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
 	}
 
 	if err := h.caseRepo.UpdateImage(c.Request.Context(), image); err != nil {
-		slog.Error("failed to update image", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update image"})
+		HandleError(c, err, "failed to update image")
 		return
 	}
 
@@ -315,16 +286,18 @@ func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
 // GetAdminCaseImages handles GET /api/admin/cases/:id/images
 // Returns images with signed URLs for admin preview.
 func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return
+	}
+
+	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
 	images, err := h.caseRepo.GetImages(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get images", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
+		HandleError(c, err, "failed to get images")
 		return
 	}
 
@@ -355,20 +328,18 @@ func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
 
 // ReorderImages handles PUT /api/admin/cases/:id/images/reorder
 func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	if !cs.CanBeEdited() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot reorder images for non-draft case"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "cannot reorder images for non-draft case")
 		return
 	}
 
@@ -380,7 +351,7 @@ func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		badBody(c, "invalid request", err)
 		return
 	}
 
@@ -390,8 +361,7 @@ func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
 		orders[item.ID] = item.DisplayOrder
 	}
 	if err := h.caseRepo.ReorderImages(c.Request.Context(), caseID, orders); err != nil {
-		slog.Error("failed to reorder images", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reorder images"})
+		HandleError(c, err, "failed to reorder images")
 		return
 	}
 
@@ -401,29 +371,30 @@ func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
 // GetAdminImageSignedURL handles GET /api/admin/cases/:id/images/:imageId/url
 // Admin version that works for any case status (draft, published, closed)
 func (h *CaseImageHandler) GetAdminImageSignedURL(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	imageID, err := uuid.Parse(c.Param("imageId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
+	imageID, ok := parseID(c, "imageId", "invalid image id")
+	if !ok {
 		return
 	}
 
 	// Verify case exists (any status is fine for admin)
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	_, ok = loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	// Get image
 	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil || image == nil || image.CaseID != caseID {
-		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
+	if err != nil {
+		HandleError(c, err, "failed to get image")
+		return
+	}
+	if image == nil || image.CaseID != caseID {
+		notFound(c, "image not found")
 		return
 	}
 

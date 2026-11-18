@@ -34,15 +34,14 @@ func NewCaseAccessHandler(
 func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 	uid, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		unauthorized(c)
 		return
 	}
 
 	// Load all published cases (no pagination — dataset is small enough)
 	cases, total, err := h.caseRepo.ListPublished(c.Request.Context(), 0, 0)
 	if err != nil {
-		slog.Error("failed to list cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list cases"})
+		HandleError(c, err, "failed to list cases")
 		return
 	}
 
@@ -108,27 +107,23 @@ func (h *CaseAccessHandler) ListPublishedCases(c *gin.Context) {
 // GetPublishedCase handles GET /api/cases/:id
 // Any authenticated user can view a published case.
 func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	// Get user ID
 	uid, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		unauthorized(c)
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
-	if cs == nil || cs.Status != domain.CaseStatusPublished {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	if cs.Status != domain.CaseStatusPublished {
+		notFound(c, "case not found")
 		return
 	}
 

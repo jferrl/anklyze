@@ -2,13 +2,11 @@ package api
 
 import (
 	"fmt"
-	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/repository"
 )
 
@@ -37,16 +35,17 @@ func NewCaseAnalyticsHandler(
 
 // GetCaseAnalytics handles GET /api/admin/cases/:id/analytics
 func (h *CaseAnalyticsHandler) GetCaseAnalytics(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return
+	}
+	if _, ok := loadCase(c, h.caseRepo, id); !ok {
 		return
 	}
 
 	summary, err := h.analyticsRepo.GetSummary(c.Request.Context(), id)
 	if err != nil {
-		slog.Error("failed to get case analytics", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get analytics"})
+		HandleError(c, err, "failed to get analytics")
 		return
 	}
 
@@ -55,17 +54,19 @@ func (h *CaseAnalyticsHandler) GetCaseAnalytics(c *gin.Context) {
 
 // GetReliabilityMetrics handles GET /api/admin/cases/:id/reliability
 func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return
+	}
+
+	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
 	// Get all responses for calculation
 	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get responses"})
+		HandleError(c, err, "failed to get responses")
 		return
 	}
 
@@ -80,14 +81,13 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 
 	// Calculate metrics using statistics service
 	if h.statsService == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "statistics service not available"})
+		respond(c, http.StatusInternalServerError, CodeInternalError, "statistics service not available")
 		return
 	}
 
 	metrics, err := h.statsService.CalculateReliabilityMetrics(caseID, responses)
 	if err != nil {
-		slog.Error("failed to calculate reliability metrics", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate metrics"})
+		HandleError(c, err, "failed to calculate metrics")
 		return
 	}
 
@@ -99,39 +99,30 @@ func (h *CaseAnalyticsHandler) GetReliabilityMetrics(c *gin.Context) {
 
 // GetGoldStandardAccuracy handles GET /api/admin/cases/:id/accuracy
 func (h *CaseAnalyticsHandler) GetGoldStandardAccuracy(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get responses"})
+		HandleError(c, err, "failed to get responses")
 		return
 	}
 
 	if h.statsService == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "statistics service not available"})
+		respond(c, http.StatusInternalServerError, CodeInternalError, "statistics service not available")
 		return
 	}
 
 	accuracy, err := h.statsService.CalculateGoldStandardAccuracy(cs, responses)
 	if err != nil {
-		slog.Error("failed to calculate gold standard accuracy", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to calculate accuracy"})
+		HandleError(c, err, "failed to calculate accuracy")
 		return
 	}
 
@@ -140,23 +131,19 @@ func (h *CaseAnalyticsHandler) GetGoldStandardAccuracy(c *gin.Context) {
 
 // ExportResponses handles GET /api/admin/cases/:id/export
 func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
 	// Get all responses without artificial limit
 	responses, err := h.responseRepo.GetAllByCase(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get responses for export", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to export responses"})
+		HandleError(c, err, "failed to export responses")
 		return
 	}
 
@@ -186,23 +173,19 @@ func (h *CaseAnalyticsHandler) ExportResponses(c *gin.Context) {
 // ExportDetailedResponses handles GET /api/admin/cases/:id/export/detailed
 // Exports responses with user expertise data.
 func (h *CaseAnalyticsHandler) ExportDetailedResponses(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
 	// Get responses with user expertise
 	responses, err := h.responseRepo.GetResponsesWithUserExpertise(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get responses for export", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to export responses"})
+		HandleError(c, err, "failed to export responses")
 		return
 	}
 

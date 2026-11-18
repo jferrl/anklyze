@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
@@ -42,22 +41,19 @@ func (h *CaseAdminHandler) GetDashboard(c *gin.Context) {
 
 	stats, err := h.caseRepo.GetDashboardStats(ctx)
 	if err != nil {
-		slog.Error("failed to get dashboard stats", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get dashboard stats"})
+		HandleError(c, err, "failed to get dashboard stats")
 		return
 	}
 
 	recentCases, err := h.caseRepo.GetRecentActiveCases(ctx, 5)
 	if err != nil {
-		slog.Error("failed to get recent active cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get recent cases"})
+		HandleError(c, err, "failed to get recent cases")
 		return
 	}
 
 	attentionCases, err := h.caseRepo.GetCasesNeedingAttention(ctx, 5)
 	if err != nil {
-		slog.Error("failed to get cases needing attention", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get attention cases"})
+		HandleError(c, err, "failed to get attention cases")
 		return
 	}
 
@@ -72,22 +68,21 @@ func (h *CaseAdminHandler) GetDashboard(c *gin.Context) {
 func (h *CaseAdminHandler) CreateCase(c *gin.Context) {
 	var req CreateCaseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
 	// Get user ID from context (set by auth middleware)
 	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		unauthorized(c)
 		return
 	}
 
 	cs := domain.NewCase(userID, req.Title, req.Description, req.Deadline)
 
 	if err := h.caseRepo.Create(c.Request.Context(), cs); err != nil {
-		slog.Error("failed to create case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create case"})
+		HandleError(c, err, "failed to create case")
 		return
 	}
 
@@ -106,8 +101,7 @@ func (h *CaseAdminHandler) ListCases(c *gin.Context) {
 
 	cases, total, err := h.caseRepo.List(c.Request.Context(), status, limit, offset)
 	if err != nil {
-		slog.Error("failed to list cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list cases"})
+		HandleError(c, err, "failed to list cases")
 		return
 	}
 
@@ -121,20 +115,13 @@ func (h *CaseAdminHandler) ListCases(c *gin.Context) {
 
 // GetCase handles GET /api/admin/cases/:id
 func (h *CaseAdminHandler) GetCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
@@ -155,26 +142,19 @@ func (h *CaseAdminHandler) GetCase(c *gin.Context) {
 // Closed: nothing. A field the status does not allow is rejected, not ignored,
 // so raters never see a silently different case. A null deadline clears it.
 func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
 	var req UpdateCaseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
@@ -198,8 +178,7 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 	}
 
 	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
-		slog.Error("failed to update case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update case"})
+		HandleError(c, err, "failed to update case")
 		return
 	}
 
@@ -208,20 +187,13 @@ func (h *CaseAdminHandler) UpdateCase(c *gin.Context) {
 
 // DeleteCase handles DELETE /api/admin/cases/:id
 func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
@@ -234,8 +206,7 @@ func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
 	}
 
 	if err := h.caseRepo.Delete(c.Request.Context(), id); err != nil {
-		slog.Error("failed to delete case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete case"})
+		HandleError(c, err, "failed to delete case")
 		return
 	}
 
@@ -249,20 +220,13 @@ func (h *CaseAdminHandler) DeleteCase(c *gin.Context) {
 
 // PublishCase handles PUT /api/admin/cases/:id/publish
 func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
@@ -274,16 +238,13 @@ func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
 	}
 
 	if err := h.caseRepo.Publish(c.Request.Context(), id); err != nil {
-		slog.Error("failed to publish case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to publish case"})
+		HandleError(c, err, "failed to publish case")
 		return
 	}
 
 	// Refresh case data
-	cs, err = h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to refresh case after publish", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "case published but failed to refresh"})
+	cs, ok = loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 	c.JSON(http.StatusOK, cs)
@@ -291,20 +252,13 @@ func (h *CaseAdminHandler) PublishCase(c *gin.Context) {
 
 // CloseCase handles PUT /api/admin/cases/:id/close
 func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
@@ -314,16 +268,13 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 	}
 
 	if err := h.caseRepo.Close(c.Request.Context(), id); err != nil {
-		slog.Error("failed to close case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to close case"})
+		HandleError(c, err, "failed to close case")
 		return
 	}
 
 	// Refresh case data
-	cs, err = h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to refresh case after close", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "case closed but failed to refresh"})
+	cs, ok = loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 	c.JSON(http.StatusOK, cs)
@@ -333,31 +284,24 @@ func (h *CaseAdminHandler) CloseCase(c *gin.Context) {
 // Sets or clears the gold standard classification for a case.
 // Only allowed on draft or published cases.
 func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
 	if cs.Status == domain.CaseStatusClosed {
-		c.JSON(http.StatusConflict, gin.H{"error": "cannot set gold standard on a closed case"})
+		respond(c, http.StatusConflict, CodeConflict, "cannot set gold standard on a closed case")
 		return
 	}
 
 	var req SetGoldStandardRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
@@ -365,14 +309,12 @@ func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
 	result := buildGoldStandardResult(req)
 
 	if err := cs.SetGoldStandard(result); err != nil {
-		slog.Error("failed to set gold standard", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to set gold standard"})
+		HandleError(c, err, "failed to set gold standard")
 		return
 	}
 
 	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
-		slog.Error("failed to update case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update case"})
+		HandleError(c, err, "failed to update case")
 		return
 	}
 
@@ -383,37 +325,28 @@ func (h *CaseAdminHandler) SetGoldStandard(c *gin.Context) {
 // Clears the gold standard classification for a case.
 // Only allowed on draft or published cases.
 func (h *CaseAdminHandler) DeleteGoldStandard(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, id)
+	if !ok {
 		return
 	}
 
 	if cs.Status == domain.CaseStatusClosed {
-		c.JSON(http.StatusConflict, gin.H{"error": "cannot modify gold standard on a closed case"})
+		respond(c, http.StatusConflict, CodeConflict, "cannot modify gold standard on a closed case")
 		return
 	}
 
 	if err := cs.SetGoldStandard(nil); err != nil {
-		slog.Error("failed to clear gold standard", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to clear gold standard"})
+		HandleError(c, err, "failed to clear gold standard")
 		return
 	}
 
 	if err := h.caseRepo.Update(c.Request.Context(), cs); err != nil {
-		slog.Error("failed to update case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update case"})
+		HandleError(c, err, "failed to update case")
 		return
 	}
 
