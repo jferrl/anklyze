@@ -14,10 +14,11 @@ func TestCalculateReliabilityMetrics_PercentAgreement(t *testing.T) {
 	tests := []struct {
 		name    string
 		answers []*string
-		want    float64
+		want    float64 // -1: no agreement reported
 		counts  map[string]int64
 	}{
-		{"one response counts as full agreement", []*string{&a}, 100, map[string]int64{a: 1}},
+		{"one response has no agreement", []*string{&a}, -1, map[string]int64{a: 1}},
+		{"one classified response among unanswered has no agreement", []*string{&a, nil, nil}, -1, map[string]int64{a: 1}},
 		{"two raters agree", []*string{&a, &a}, 100, map[string]int64{a: 2}},
 		{"two raters disagree", []*string{&a, &b}, 50, map[string]int64{a: 1, b: 1}},
 		// 2 of 3 gave the most common answer: 2/3 * 100.
@@ -43,8 +44,11 @@ func TestCalculateReliabilityMetrics_PercentAgreement(t *testing.T) {
 			if got == nil {
 				t.Fatal("expected DanisWeberAgreement, got nil")
 			}
-			if !approx(got.PercentAgreement, tt.want, 1e-9) {
-				t.Errorf("PercentAgreement = %v, want %v", got.PercentAgreement, tt.want)
+			switch p := got.PercentAgreement; {
+			case tt.want < 0 && p != nil:
+				t.Errorf("PercentAgreement = %v, want nil", *p)
+			case tt.want >= 0 && (p == nil || !approx(*p, tt.want, 1e-9)):
+				t.Errorf("PercentAgreement = %v, want %v", p, tt.want)
 			}
 			if len(got.CategoryCounts) != len(tt.counts) {
 				t.Fatalf("CategoryCounts = %v, want %v", got.CategoryCounts, tt.counts)

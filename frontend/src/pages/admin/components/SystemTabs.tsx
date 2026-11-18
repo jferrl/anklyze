@@ -1,7 +1,7 @@
 import { useRef, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, type SystemKey } from './systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, activeColumn, type SystemKey } from './systems';
 
 interface SystemTabsProps {
   systems: { key: string; label: string }[];
@@ -12,10 +12,13 @@ interface SystemTabsProps {
   panelId?: string;
 }
 
-/** SystemColumnHeads renders one right-aligned table header per system, in display order. */
-export function SystemColumnHeads() {
+/** SystemColumnHeads renders one right-aligned table header per system, in display order; active is highlighted. */
+export function SystemColumnHeads({ active }: { active?: SystemKey }) {
   return SYSTEM_KEYS.map((key) => (
-    <th key={key} className="py-3 px-4 text-right font-medium text-muted-foreground">
+    <th
+      key={key}
+      className={cn('py-3 px-4 text-right font-medium', key === active ? 'text-foreground' : 'text-muted-foreground', activeColumn(key, active))}
+    >
       <span className="inline-flex items-center gap-1.5">
         <span className="size-2" style={{ backgroundColor: SYSTEM_COLOR[key] }} />
         {SYSTEM_LABEL[key]}
@@ -71,7 +74,7 @@ export function SystemTabs({ systems, active, onChange, className, panelId }: Sy
           onClick={() => onChange(key)}
           onKeyDown={(e) => onKeyDown(e, i)}
           className={cn(
-            'flex items-center gap-2 rounded-sm px-3 py-1.5 text-sm outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
+            'flex items-center gap-2 rounded-sm px-3 py-1.5 text-sm outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring',
             active === key
               ? 'bg-accent font-medium text-foreground'
               : 'text-muted-foreground hover:text-foreground'

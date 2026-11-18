@@ -39,7 +39,7 @@ export function AppShell({ children, breadcrumbs, title }: AppShellProps) {
     <SidebarProvider>
       <a
         href="#content"
-        className="sr-only rounded-sm border bg-background text-sm font-medium text-foreground outline-none focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-50 focus-visible:px-3 focus-visible:py-2 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        className="sr-only rounded-sm border bg-background text-sm font-medium text-foreground outline-none focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-50 focus-visible:px-3 focus-visible:py-2 focus-visible:ring-[3px] focus-visible:ring-ring"
       >
         {t('common.skipToContent')}
       </a>

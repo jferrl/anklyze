@@ -29,7 +29,8 @@ const mean = (values: (number | null | undefined)[]) => {
 
 /**
  * buildReliabilityFiguresCsv writes one row per system with the figures at full precision.
- * It carries no rater names or emails. Mean agreement is the plain mean of the per-case figures of answered cases.
+ * It carries no rater names or emails. Mean agreement is the plain mean of the per-case figures that exist;
+ * a system with no per-case figure, or no kappa, leaves its cell blank.
  */
 export function buildReliabilityFiguresCsv(
   reliability: StudyReliabilityResponse,
@@ -47,7 +48,7 @@ export function buildReliabilityFiguresCsv(
       fleiss?.num_raters,
       fleiss?.num_subjects,
       fleiss?.num_cases_excluded,
-      mean(reliability.per_case_metrics.filter((c) => c.response_count > 0).map((c) => c[`${key}_agreement`])),
+      mean(reliability.per_case_metrics.map((c) => c[`${key}_agreement`])),
       goldStandard?.[`${key}_accuracy`]?.mean_accuracy,
     ];
   });

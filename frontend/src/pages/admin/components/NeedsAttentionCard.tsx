@@ -9,7 +9,7 @@ const SHOWN = 5;
 
 // Full-width link row: tonal hover and press, no scale.
 const ROW =
-  'flex w-full items-center justify-between gap-4 px-4 py-3 text-left outline-none transition-colors duration-150 hover:bg-muted active:bg-accent focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/50';
+  'flex w-full items-center justify-between gap-4 px-4 py-3 text-left outline-none transition-colors duration-150 hover:bg-muted active:bg-accent focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring';
 
 const isPastDeadline = (deadline: string | undefined, now: number) =>
   !!deadline && new Date(deadline).getTime() < now;
@@ -59,7 +59,7 @@ export function NeedsAttentionCard({ published, now }: { published: Case[]; now:
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="w-full border-t px-4 py-3 text-left text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/50"
+          className="w-full border-t px-4 py-3 text-left text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring"
         >
           {t('admin.dashboard.moreCount', { count: hidden })}
         </button>

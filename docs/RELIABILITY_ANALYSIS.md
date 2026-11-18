@@ -330,7 +330,7 @@ Endpoints: `GET /api/admin/cases/:id/reliability` and `GET /api/admin/cases/:id/
 
 | Metric | How it is computed | Code |
 |--------|--------------------|------|
-| Percent agreement | Share of responses that gave the most common answer, per system. A single response counts as 100%. | `percent_agreement.go` |
+| Percent agreement | Share of responses that gave the most common answer, per system. It needs at least 2 classified responses; with fewer, `percent_agreement` is null (one rating has nothing to agree with). | `percent_agreement.go` |
 | Category counts | Responses per category | `category_metrics.go` |
 | Gold standard accuracy | Percentage of responses equal to the gold standard, plus the most common answer and the response distribution | `gold_standard.go` |
 
@@ -356,7 +356,7 @@ Read these before citing a number the app produced.
 - **Cases without an answer are dropped per system.** Fleiss' kappa needs the same number of ratings for every case. When a complete rater gave no answer in a system (for example no Bartonicek type), that case is left out of that system and the other raters keep all their data. Dropping the rater instead would discard that rater's answers on every other case, and would leave no raters at all when a case has no answer from anyone. The cost is that a system's kappa describes only the cases every complete rater answered, which may be easier cases. Compare `num_subjects` with the study's total cases and report `num_cases_excluded` with the figure. Before this change the empty answer was counted as a missing rating for that case, which distorted kappa.
 - **Weighted kappa compares AO/OTA groups.** `44-B1.2` counts as `44-B1`. Codes outside the ordering are excluded and counted: `44-B` (subtype not classifiable), `43-B1`, `43-B2` and "not classifiable". The count is `num_pairs_excluded`. Report it with the figure.
 - **Both kappa intervals are bootstrap intervals over cases.** Earlier versions used a normal approximation for Cohen's kappa, which had zero width when raters agreed on every case or on none; Cohen intervals from those versions are not comparable. When raters agree on every case the bootstrap interval is still [1, 1], because every usable resample is perfect. With few cases the interval is coarse, so read it together with `num_subjects`.
-- **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The code reports 1 and no interval, for Fleiss and Cohen alike.
+- **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The result is returned with a null `kappa`, no interval and `kappa_unavailable_reason: "no_variation"`, for Fleiss and Cohen alike (and no AO/OTA weighted kappa). Earlier versions reported 1. Perfect agreement on cases that differ is a real kappa of 1.
 - **At least 2 usable cases are needed.** With fewer, no Fleiss or Cohen result is returned for that system.
 - **Duplicate responses.** The app accepts one response per rater and case. If the database holds more, study kappas use the latest, while per-case percent agreement counts every response.
 - **Sensitivity, specificity, PPV, NPV and F1 are not computed**, and neither is a confusion matrix. Section 3 explains the concepts; the app does not produce them. The CSV export is the source for computing them outside the app.

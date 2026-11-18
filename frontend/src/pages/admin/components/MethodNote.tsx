@@ -30,7 +30,7 @@ export function MethodNote({ children, lead, className }: MethodNoteProps) {
             aria-expanded={open}
             aria-controls={id}
             onClick={() => setOpen((o) => !o)}
-            className="-mx-1 inline-flex items-center gap-1 rounded-sm px-1 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 print:hidden"
+            className="-mx-1 inline-flex items-center gap-1 rounded-sm px-1 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-[3px] focus-visible:ring-ring print:hidden"
           >
             {open ? t('admin.reliability.method.less') : t('admin.reliability.method.more')}
             <ChevronDown aria-hidden className={cn('size-4 transition-transform duration-150', open && 'rotate-180')} />

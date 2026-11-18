@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { KappaGauge, KappaLegend } from '@/components/analytics';
-import type { ConfidenceInterval, StudyReliabilityResponse } from '@/types';
+import type { FleissKappaResult, StudyReliabilityResponse } from '@/types';
 import { MethodNote } from './MethodNote';
-import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin, type SystemKey } from './systems';
+import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, SMALL_SAMPLE_CASES, kappaAxisMin } from './systems';
 
 interface StudyKappaAnalysisProps {
   reliability: StudyReliabilityResponse;
@@ -12,10 +12,15 @@ interface StudyKappaAnalysisProps {
 /** RULED_GRID splits one ruled box into gauge cells (DESIGN.md, The Ruled Box Rule). */
 const RULED_GRID = 'grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-4';
 
-// A small sample or an interval with no width makes the kappa unstable; say so under the gauge.
-function caution(t: TFunction, cases: number, ci?: ConfidenceInterval) {
-  return cases < SMALL_SAMPLE_CASES || (ci && ci.lower === ci.upper)
-    ? t('admin.reliability.smallSample', { count: cases })
+type KappaFacts = Pick<FleissKappaResult, 'num_subjects' | 'confidence_interval' | 'kappa_unavailable_reason'>;
+
+// Under the gauge: why a kappa is undefined, or that a small sample or an interval with no width makes it unstable.
+function caution(t: TFunction, result?: KappaFacts) {
+  if (!result) return undefined;
+  if (result.kappa_unavailable_reason === 'no_variation') return t('admin.reliability.kappaNoVariation');
+  const ci = result.confidence_interval;
+  return result.num_subjects < SMALL_SAMPLE_CASES || (ci && ci.lower === ci.upper)
+    ? t('admin.reliability.smallSample', { count: result.num_subjects })
     : undefined;
 }
 
@@ -51,10 +56,11 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
                   ? [
                       t('admin.reliability.ratersCount', { count: fleiss.num_raters }),
                       t('admin.reliability.casesCount', { count: fleiss.num_subjects }),
+                      t('admin.reliability.categoriesCount', { count: fleiss.num_categories }),
                       fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
                     ].filter(Boolean).join(', ')
                   : t('admin.studies.reliability.notEnoughData')}
-                caution={fleiss && caution(t, fleiss.num_subjects, fleiss.confidence_interval)}
+                caution={caution(t, fleiss)}
               />
             </div>
           ))}
@@ -81,7 +87,7 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
                         cohen.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: cohen.num_cases_excluded }),
                       ].filter(Boolean).join(', ')
                     : t('admin.studies.reliability.notEnoughData')}
-                  caution={cohen && caution(t, cohen.num_subjects, cohen.confidence_interval)}
+                  caution={caution(t, cohen)}
                 />
               </div>
             ))}
@@ -126,51 +132,11 @@ export function StudyKappaAnalysis({ reliability }: StudyKappaAnalysisProps) {
           })}
         </p>
         <p>{t('admin.reliability.method.fleissCases')}</p>
+        <p>{t('admin.reliability.method.noVariation')}</p>
         <p>{t('admin.reliability.method.interval', { level })}</p>
         {hasCohen && <p>{t('admin.reliability.method.cohen', { level })}</p>}
         {weighted && <p>{t('admin.reliability.method.weighted')}</p>}
       </MethodNote>
     </div>
-  );
-}
-
-interface KappaSystemDetailProps {
-  reliability: StudyReliabilityResponse;
-  system: SystemKey;
-}
-
-/** KappaSystemDetail lists the counts behind one system's kappa; the kappa itself is in the gauge above. */
-export function KappaSystemDetail({ reliability, system }: KappaSystemDetailProps) {
-  const { t } = useTranslation();
-  const fleiss = reliability[`${system}_fleiss`];
-
-  if (!fleiss) {
-    return (
-      <p className="rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground">
-        {t('admin.studies.reliability.notEnoughData')}
-      </p>
-    );
-  }
-
-  const cells = [
-    {
-      label: t('admin.reliability.subjects'),
-      value: fleiss.num_subjects,
-      note: fleiss.num_cases_excluded > 0 && t('admin.reliability.casesExcluded', { count: fleiss.num_cases_excluded }),
-    },
-    { label: t('admin.studies.raters.title'), value: fleiss.num_raters },
-    { label: t('admin.reliability.categories'), value: fleiss.num_categories },
-  ];
-
-  return (
-    <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border bg-border">
-      {cells.map(({ label, value, note }) => (
-        <div key={label} className="min-w-0 bg-card p-4">
-          <dt className="text-sm text-muted-foreground">{label}</dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums">{value}</dd>
-          {note && <dd className="mt-1 text-xs text-muted-foreground">{note}</dd>}
-        </div>
-      ))}
-    </dl>
   );
 }

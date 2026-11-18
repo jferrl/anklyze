@@ -428,7 +428,7 @@
       "refersTo": "button-primary",
       "description": "Main action of a view.",
       "html": "<button class=\"ds-btn-primary\">Start classifying</button>",
-      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;height:36px;padding:8px 16px;border:0;border-radius:2px;background:var(--primary);color:var(--primary-foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-primary:hover{background:color-mix(in oklch,var(--primary) 90%,transparent)}.ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;height:36px;padding:8px 16px;border:0;border-radius:2px;background:var(--primary);color:var(--primary-foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-primary:hover{background:color-mix(in oklch,var(--primary) 90%,transparent)}.ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}"
     },
     {
       "name": "Outline Button",
@@ -436,7 +436,7 @@
       "refersTo": "button-outline",
       "description": "Secondary and navigation actions such as Previous or Clear search.",
       "html": "<button class=\"ds-btn-outline\">Previous</button>",
-      "css": ".ds-btn-outline{display:inline-flex;align-items:center;height:36px;padding:8px 16px;border:1px solid var(--input);border-radius:2px;background:var(--background);color:var(--foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-outline:hover{background:var(--accent);color:var(--accent-foreground)}.ds-btn-outline:focus-visible{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;height:36px;padding:8px 16px;border:1px solid var(--input);border-radius:2px;background:var(--background);color:var(--foreground);font:500 14px/1 Archivo,ui-sans-serif,system-ui,sans-serif;transition:background-color .15s}.ds-btn-outline:hover{background:var(--accent);color:var(--accent-foreground)}.ds-btn-outline:focus-visible{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px var(--ring)}"
     },
     {
       "name": "Input",
@@ -444,7 +444,7 @@
       "refersTo": "input",
       "description": "Text field on forms and list search.",
       "html": "<input class=\"ds-input\" placeholder=\"Search cases\">",
-      "css": ".ds-input{height:36px;width:240px;padding:4px 12px;border:1px solid var(--input);border-radius:2px;background:var(--card);color:var(--foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;outline:none;transition:box-shadow .15s}.ds-input::placeholder{color:var(--muted-foreground)}.ds-input:focus-visible{border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+      "css": ".ds-input{height:36px;width:240px;padding:4px 12px;border:1px solid var(--input);border-radius:2px;background:var(--card);color:var(--foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;outline:none;transition:box-shadow .15s}.ds-input::placeholder{color:var(--muted-foreground)}.ds-input:focus-visible{border-color:var(--ring);box-shadow:0 0 0 3px var(--ring)}"
     },
     {
       "name": "Status Badge",
@@ -459,7 +459,7 @@
       "kind": "nav",
       "description": "Switch a view between the four classification systems.",
       "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-on\"><i style=\"background:var(--sys-lh)\"></i>Lauge-Hansen</button><button class=\"ds-tab\"><i style=\"background:var(--sys-dw)\"></i>Danis-Weber</button><button class=\"ds-tab\"><i style=\"background:var(--sys-ao)\"></i>AO/OTA</button><button class=\"ds-tab\"><i style=\"background:var(--sys-bt)\"></i>Bartonicek</button></div>",
-      "css": ".ds-tabs{display:flex;width:fit-content;gap:2px;padding:2px;border:1px solid var(--border);border-radius:2px;background:var(--card)}.ds-tab{display:flex;align-items:center;gap:8px;padding:6px 12px;border:0;border-radius:0;background:none;color:var(--muted-foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;transition:color .15s}.ds-tab i{width:8px;height:8px}.ds-tab:hover{color:var(--foreground)}.ds-tab.ds-on{background:var(--accent);color:var(--foreground);font-weight:500}.ds-tab:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in oklch,var(--ring) 50%,transparent)}"
+      "css": ".ds-tabs{display:flex;width:fit-content;gap:2px;padding:2px;border:1px solid var(--border);border-radius:2px;background:var(--card)}.ds-tab{display:flex;align-items:center;gap:8px;padding:6px 12px;border:0;border-radius:0;background:none;color:var(--muted-foreground);font:400 14px Archivo,ui-sans-serif,system-ui,sans-serif;transition:color .15s}.ds-tab i{width:8px;height:8px}.ds-tab:hover{color:var(--foreground)}.ds-tab.ds-on{background:var(--accent);color:var(--foreground);font-weight:500}.ds-tab:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}"
     },
     {
       "name": "Stat Group",
