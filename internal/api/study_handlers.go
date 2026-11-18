@@ -229,8 +229,7 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 	if !ok {
 		return
 	}
-	if study.Status != domain.StudyStatusDraft {
-		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be modified")
+	if !requireDraft(c, study) {
 		return
 	}
 
@@ -290,7 +289,8 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 		return
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
 		return
 	}
 
@@ -348,7 +348,8 @@ func (h *StudyHandler) RemoveCase(c *gin.Context) {
 		return
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
 		return
 	}
 
@@ -384,7 +385,8 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 		caseIDs[i] = id
 	}
 
-	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok || !requireDraft(c, study) {
 		return
 	}
 
@@ -404,6 +406,16 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// requireDraft answers 400 unless the study is a draft: its case list is frozen
+// once it is activated.
+func requireDraft(c *gin.Context, study *domain.Study) bool {
+	if study.Status != domain.StudyStatusDraft {
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be modified")
+		return false
+	}
+	return true
 }
 
 // reorderProblem describes why ids cannot reorder the study's cases: duplicates
