@@ -105,11 +105,11 @@
     },
     "footer": {
       "disclaimer": "For medical purposes only. Always correlate with clinical findings.",
-      "license": "Apache 2.0"
+      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0"
     },
     "source": {
       "title": "Open source",
-      "body": "Anklyze is free software under the Apache 2.0 licence. The code, the decision tree and the statistical methodology are public.",
+      "body": "The code, the decision tree and the statistical methodology are public. The code is free software under the Apache 2.0 licence; the decision tree is under CC BY 4.0 and can be reused with credit to its author.",
       "authors": "Clinical content and decision tree by Laura Paniagua Andres (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association.",
       "repoLink": "Source code on GitHub",
       "citeTitle": "How to cite",

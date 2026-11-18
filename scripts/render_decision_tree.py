@@ -22,7 +22,7 @@ import argparse
 
 ATTRIBUTION = (
     "# Decision tree by Laura Paniagua Andres (Hospital de León).\n"
-    "# Copyright 2026 the Anklyze authors. Apache License 2.0; see LICENSE and NOTICE.\n"
+    "# Copyright 2026 Laura Paniagua Andres. CC BY 4.0; see LICENSE-CC-BY-4.0 and NOTICE.\n"
 )
 
 
