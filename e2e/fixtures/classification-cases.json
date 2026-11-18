@@ -1,0 +1,5675 @@
+[
+  {
+    "id": "lateral_medial_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-112",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Vertical"
+      },
+      {
+        "question": "¿La fractura del peroné es infrasindesmal?",
+        "answer": "Sí"
+      }
+    ],
+    "expected": {
+      "ao": "44-A2",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 A2 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_2",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-91",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C1 subtipo 44 C1.1 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_3",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-93",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C1 subtipo 44 C1.2 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_4",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-100",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.1",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C1 subtipo 44 C1.1 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_5",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-102",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.2",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C1 subtipo 44 C1.2 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_6",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-109",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C2 subtipo 44 C2.1 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_7",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-111",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C2 subtipo 44 C2.2 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_8",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-121",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.1",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C2 subtipo 44 C2.1 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_9",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-123",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.2",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C2 subtipo 44 C2.2 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_10",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-139",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Acortamiento a nivel de cabeza de peroné?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.1",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C3 subtipo 44 C3.1 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_11",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-141",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Acortamiento a nivel de cabeza de peroné?",
+        "answer": "Si"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.2",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 C3 subtipo 44 C3.2 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_12",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-152",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es el maleolo lateral?",
+        "answer": "Avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-A2.2",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 A2 subtipo 44 A2.2 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_13",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-154",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es el maleolo lateral?",
+        "answer": "Transversa"
+      }
+    ],
+    "expected": {
+      "ao": "44-A2.3",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 A2 subtipo 44 A2.3 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_14",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-162",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.1 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_15",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-164",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.2 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_16",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-185",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.1 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_17",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-187",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.2 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_18",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-32",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_19",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-43",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.3 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_medial_20",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-47",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y medial"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del maleolo medial?",
+        "answer": "Transverso/oblicuo/avulsión/abierta la mortaja"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Conminuta/ala de mariposa"
+      }
+    ],
+    "expected": {
+      "ao": "44-B2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Medial) | AO tipo 44 B2 subtipo 44 B2.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-42",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C3 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-246",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a < 6 cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-247",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C1 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-251",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_5",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-252",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 C2 subtipo no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_6",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-18",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura?",
+        "answer": "Avulsión de la punta del maleolo"
+      }
+    ],
+    "expected": {
+      "ao": "44-A1.2",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 A1 subtipo | 44 A1.2 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_7",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-19",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura?",
+        "answer": "Fractura de maleolo lateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A1.3",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 A1 subtipo 44 A1.3 | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_8",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-22",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Fractura simple"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_9",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-23",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_10",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-38",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Fractura simple"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.1 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_11",
+    "terminal_id": "ln2etF4hYXnpLN-lJU8S-39",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Asocia rotura de sindesmosis anterior (Tillaux/Wasgstaffe)"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.2 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_12",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-118",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_only_13",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-131",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo lateral"
+      },
+      {
+        "question": "¿A qué nivel está la fractura?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cuántos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Conminuta (varios fragmentos sin dirección clara)"
+      }
+    ],
+    "expected": {
+      "ao": "44-B1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo lateral | AO tipo 44 B1 subtipo 44 B1.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-61",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-62",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-63",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-64",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_5",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-70",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO clasificable | Lauge-Hansen PA | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_6",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-71",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_7",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-72",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_8",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-73",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_9",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-81",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_10",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-82",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_11",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-83",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_12",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-84",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_13",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-90",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_14",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-91",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_15",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-92",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_16",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-93",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_17",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-99",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_18",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-100",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_19",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-101",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_20",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-102",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_21",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-204",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es espiroidea (baja anterior,alta posterior) pero puede tener varios fragmentos"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_22",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-213",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_23",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-216",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO  no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_24",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-242",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_25",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-258",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_26",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-259",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_27",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-260",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_28",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-261",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_29",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-265",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_30",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-275",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_31",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-281",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_32",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-282",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_33",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-283",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_34",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-284",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "lateral_posterior_35",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-295",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿De qué morfología es la fractura de peroné?",
+        "answer": "La dirección principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": null
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber B"
+  },
+  {
+    "id": "lateral_posterior_36",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-350",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SA | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "lateral_posterior_37",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-358",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "answer": "Fragmento extraincisural posterior"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SA | Weber A | Bartonicek 1"
+  },
+  {
+    "id": "lateral_posterior_38",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-359",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SA | Weber A | Bartonicek 2"
+  },
+  {
+    "id": "lateral_posterior_39",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-360",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SA | Weber A | Bartonicek 3"
+  },
+  {
+    "id": "lateral_posterior_40",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-361",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Cuál es la morfología del maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Lateral + Posterior) | AO no clasificable | Lauge-Hansen SA | Weber A | Bartonicek 4"
+  },
+  {
+    "id": "medial_only_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-24",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo medial"
+      },
+      {
+        "question": "¿Tiene importante afectación articular con extensión metafisaria?",
+        "answer": "No"
+      },
+      {
+        "question": "¿Qué morfología tiene?",
+        "answer": "Vertical"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo medial | AO no clasificable | Lauge-Hansen SA | Weber no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "medial_only_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-25",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo medial"
+      },
+      {
+        "question": "¿Tiene importante afectación articular con extensión metafisaria?",
+        "answer": "No"
+      },
+      {
+        "question": "¿Qué morfología tiene?",
+        "answer": "Transverso/oblicuo"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo medial | AO no clasificable | Lauge-Hansen no clasificable | Weber no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "medial_only_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-341",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo medial"
+      },
+      {
+        "question": "¿Tiene importante afectación articular con extensión metafisaria?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Tiene depresión articular?",
+        "answer": "Sí"
+      }
+    ],
+    "expected": {
+      "ao": "43-B2",
+      "lauge_hansen": null,
+      "danis_weber": null,
+      "bartonicek": null
+    },
+    "terminal": "Fractura tibia distal | AO 43 B2"
+  },
+  {
+    "id": "medial_only_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-342",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo medial"
+      },
+      {
+        "question": "¿Tiene importante afectación articular con extensión metafisaria?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Tiene depresión articular?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "43-B1",
+      "lauge_hansen": null,
+      "danis_weber": null,
+      "bartonicek": null
+    },
+    "terminal": "Fractura tibia distal | AO 43 B1"
+  },
+  {
+    "id": "medial_posterior_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-241",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "medial_posterior_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-343",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Bartonicek 4 | Weber no clasificable"
+  },
+  {
+    "id": "medial_posterior_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-344",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Bartonicek 3 | Weber no clasificable"
+  },
+  {
+    "id": "medial_posterior_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-345",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Bartonicek 2 | Weber no clasificable"
+  },
+  {
+    "id": "medial_posterior_5",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-346",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural posterior"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Bartonicek 1 | Weber no clasificable"
+  },
+  {
+    "id": "medial_posterior_6",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-347",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial y posterior"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural posteromedial"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura bimaleolar (Medial + Posterior) | AO no clasificable | Lauge-Hansen PA | Weber no clasificable | Bartonicek 1"
+  },
+  {
+    "id": "posterior_only_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-16",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": "<1/3 de superficie articular sin extensión metafisaria"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 1"
+  },
+  {
+    "id": "posterior_only_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-17",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": "<1/3 de superficie articular sin extensión metafisaria"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 2"
+  },
+  {
+    "id": "posterior_only_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-18",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": "<1/3 de superficie articular sin extensión metafisaria"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 3"
+  },
+  {
+    "id": "posterior_only_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-19",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": "<1/3 de superficie articular sin extensión metafisaria"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Weber no clasificable | Lauge-Hansen PA | Bartonicek 4"
+  },
+  {
+    "id": "posterior_only_5",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-333",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": ">1/3 de superficie articular con extensión metafisaria"
+      },
+      {
+        "question": "¿Presenta depresión articular?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "43-B1",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura tibia distal | AO 43 B1 | Weber no clasificable | Lauge-Hansen no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "posterior_only_6",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-334",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": ">1/3 de superficie articular con extensión metafisaria"
+      },
+      {
+        "question": "¿Presenta depresión articular?",
+        "answer": "Sí"
+      }
+    ],
+    "expected": {
+      "ao": "43-B2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura tibia distal | AO 43 B2 | Weber no clasificable | Lauge-Hansen no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "posterior_only_7",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-335",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolo posterior"
+      },
+      {
+        "question": "¿Cuál es la afectación?",
+        "answer": "<1/3 de superficie articular sin extensión metafisaria"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "No clasificable",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura unimaleolar maleolo posterior | AO no clasificable | Lauge-Hansen PA | Weber no clasificable | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_1",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-159",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_2",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-160",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_3",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-161",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_4",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-162",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_5",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-168",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_6",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-169",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_7",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-170",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_8",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-171",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_9",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-177",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C3 subtipo C3.3 | Lauge-Hansen PER | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_10",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-178",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C3 subtipo C3.3 | Lauge-Hansen PER | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_11",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-179",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C3 subtipo C3.3 | Lauge-Hansen PER | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_12",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-180",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C3 subtipo C3.3 | Lauge-Hansen PER | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_13",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-220",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_14",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-224",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo largo/espiroideo/ala de mariposa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_15",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-227",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Proximal (1/3 proximal de peroné)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C3.3",
+      "lauge_hansen": "PER",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C3 subtipo C3.3 | Lauge-Hansen PER | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_16",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-303",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_17",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-308",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PA | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_18",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-309",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PA | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_19",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-310",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PA | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_20",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-311",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Diafisaria Simple"
+      },
+      {
+        "question": "¿Cómo es el trazo del peroné?",
+        "answer": "Parasindesmal (a <6cm de la superficie articular) de trazo oblicuo corto/transverso"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C1.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C1 subtipo C1.3 | Lauge-Hansen PA | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_21",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-318",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PA | Weber C | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_22",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-324",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PA | Weber C | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_23",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-325",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PA | Weber C | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_24",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-326",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PA | Weber C | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_25",
+    "terminal_id": "0S3fIhuK620pGgQrKJa_-327",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Suprasindesmal"
+      },
+      {
+        "question": "¿De qué tipo?",
+        "answer": "Multifragmentaria/ala de mariposa"
+      },
+      {
+        "question": "¿Cómo es el trazo principal del peroné?",
+        "answer": "Parasindesmal conminuta (a <6cm de la superficie articular)"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-C2.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber C",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 C2 subtipo C2.3 | Lauge-Hansen PA | Weber C | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_26",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-150",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_27",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-167",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_28",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-179",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen PA | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_29",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-180",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen PA | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_30",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-181",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen PA | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_31",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-182",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen PA | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_32",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-187",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen PA | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_33",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-188",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen PA | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_34",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-189",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen PA | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_35",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-190",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Transversa/Oblicua (Baja medial, alta lateral)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen PA | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_36",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-236",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_37",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-245",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen SER | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_38",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-246",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen SER | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_39",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-247",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen SER | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_40",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-262",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_41",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-271",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen SER | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_42",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-272",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen SER | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_43",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-273",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen SER | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_44",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-278",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.2",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.2 | Lauge-Hansen SER | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_45",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-292",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": "1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "Espiroidea (Baja anterior, alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.1",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.1 | Lauge-Hansen SER | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_46",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-330",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.2 | Lauge-Hansen no clasificable | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_47",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-339",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.2 | Lauge-Hansen no clasificable | Weber A | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_48",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-340",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.2 | Lauge-Hansen no clasificable | Weber A | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_49",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-341",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.2 | Lauge-Hansen no clasificable | Weber A | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_50",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-346",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.2",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.2 | Lauge-Hansen no clasificable | Weber A | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_51",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-356",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.3",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.3 | Lauge-Hansen no clasificable | Weber A | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_52",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-365",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.3",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.3 | Lauge-Hansen no clasificable | Weber A | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_53",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-366",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.3",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.3 | Lauge-Hansen no clasificable | Weber A | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_54",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-367",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.3",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.3 | Lauge-Hansen no clasificable | Weber A | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_55",
+    "terminal_id": "_oBYOCIyM_onSBWCery6-372",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Infrasindesmal"
+      },
+      {
+        "question": "¿Cómo es la fractura del maleolo lateral?",
+        "answer": "Transversa"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-A3.3",
+      "lauge_hansen": "No clasificable",
+      "danis_weber": "Weber A",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 A3 subtipo 44 A3.3 | Lauge-Hansen no clasificable | Weber A | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_56",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-208",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_57",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-225",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen PA | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_58",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-234",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_59",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-235",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_60",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-236",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_61",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-241",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen PA | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_62",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-242",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen PA | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_63",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-243",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen PA | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_64",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-244",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen PA | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_65",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-354",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es oblicua (baja medial, alta lateral) o transversa"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "PA",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen PA | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_66",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-387",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_67",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-396",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_68",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-397",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_69",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-398",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_70",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-410",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "No"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "No clasificable"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen SER | Weber B | Bartonicek no clasificable"
+  },
+  {
+    "id": "trimaleolar_71",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-419",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 2"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen SER | Weber B | Bartonicek 2"
+  },
+  {
+    "id": "trimaleolar_72",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-420",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento posteromedial y posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 3"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen SER | Weber B | Bartonicek 3"
+  },
+  {
+    "id": "trimaleolar_73",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-421",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Gran fragmento triangular posterolateral"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 4"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen SER | Weber B | Bartonicek 4"
+  },
+  {
+    "id": "trimaleolar_74",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-426",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Fractura del maleolo/avulsión"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "44-B3.3",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO tipo 44 B3 subtipo 44 B3.3 | Lauge-Hansen SER | Weber B | Bartonicek 1"
+  },
+  {
+    "id": "trimaleolar_75",
+    "terminal_id": "uS1iniuiHOxa1fF-oP1x-429",
+    "path": [
+      {
+        "question": "¿Qué maleolos tiene fracturados?",
+        "answer": "Maleolos medial, lateral y posterior"
+      },
+      {
+        "question": "¿A qué nivel está la fractura de peroné?",
+        "answer": "Transindesmal"
+      },
+      {
+        "question": "¿Cúantos trazos tiene la fractura de peroné?",
+        "answer": ">1"
+      },
+      {
+        "question": "¿De qué morfología es la fractura del peroné?",
+        "answer": "La dirección del trazo principal es espiroidea (baja anterior,alta posterior)"
+      },
+      {
+        "question": "¿Cómo es el maleolo medial?",
+        "answer": "Abierta la mortaja"
+      },
+      {
+        "question": "¿Tiene TAC?",
+        "answer": "Sí"
+      },
+      {
+        "question": "¿Qué tipo de fractura es el maleolo posterior?",
+        "answer": "Fragmento extraincisural"
+      }
+    ],
+    "expected": {
+      "ao": "No clasificable",
+      "lauge_hansen": "SER",
+      "danis_weber": "Weber B",
+      "bartonicek": "Bartonicek 1"
+    },
+    "terminal": "Fractura trimaleolar | AO no clasificable | Lauge-Hansen SER | Weber B | Bartonicek 1"
+  }
+]
