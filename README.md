@@ -33,7 +33,7 @@ Every system can also return "not classifiable".
 
 ## Reliability studies
 
-A case is one patient's X-rays (draft, published, closed). A study is a set of cases that the same raters all classify (draft, active, closed). For a study the app computes Fleiss' kappa per classification system, percent agreement per case, and accuracy against each case's gold standard. Responses export as CSV.
+A case is one patient's X-rays (draft, published, closed). A study is a set of cases that the same raters all classify (draft, active, closed). For a study the app computes Fleiss' kappa per classification system (plus Cohen's kappa when exactly two raters completed it), percent agreement per case, and accuracy against each case's gold standard. Responses export as CSV.
 
 [`docs/RELIABILITY_ANALYSIS.md`](docs/RELIABILITY_ANALYSIS.md) explains the statistics and how to design a study.
 

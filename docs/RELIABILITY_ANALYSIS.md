@@ -248,10 +248,15 @@ The calculations are in `internal/statistics/`. `internal/service/statistics.go`
 
 A study is a set of cases that the same raters classify. Endpoints: `GET /api/admin/studies/:id/reliability` and `GET /api/admin/studies/:id/accuracy`.
 
+A "complete rater" is a rater who responded to every case in the study. Kappa statistics use complete raters only.
+
 | Metric | How it is computed | Code |
 |--------|--------------------|------|
-| Fleiss' kappa, per system | Over raters who responded to every case in the study ("complete raters"). Needs at least 2. | `fleiss_kappa.go` |
-| 95% CI for Fleiss' kappa | `SE = sqrt(2 / (n * k * (k-1) * (1 - Pe)^2))`, n cases, k raters. Bounds clamped to [-1, 1]. | `fleiss_kappa.go` |
+| Fleiss' kappa, per system | Over the complete raters; needs at least 2. For each system, a case is used only if every complete rater gave an answer in that system. A case where any of them gave none is left out of that system and counted in `num_cases_excluded`. A system needs at least 2 usable cases, otherwise no result. | `fleiss_kappa.go`, `internal/service/statistics.go` |
+| 95% CI for Fleiss' kappa | Percentile bootstrap over cases. The usable cases are resampled with replacement 2000 times with a fixed seed, Fleiss' kappa is computed on each resample, and the interval is the 2.5th and 97.5th percentile of those kappas. Resamples with every rating in one category have no kappa and are skipped. With m usable resamples, the bounds are the sorted values at positions `round(0.025·m)` and `m−1−round(0.025·m)`, counting from 0. Bounds clamped to [-1, 1]. No interval if no resample is usable. | `fleiss_kappa.go` |
+| Cohen's kappa, per system | Only when exactly 2 complete raters. Computed across the cases both raters answered in that system, one pair of ratings per case; needs at least 2 such cases. | `cohens_kappa.go`, `internal/service/statistics.go` |
+| 95% CI for Cohen's kappa | Normal approximation, `kappa ± 1.96 · SE`, `SE = sqrt(Po · (1 - Po) / (n * (1 - Pe)^2))`, n pairs. Bounds clamped to [-1, 1]. The interval has zero width when Po is 0 or 1. | `cohens_kappa.go` |
+| AO/OTA weighted kappa | Only when exactly 2 complete raters. Linear weights over the AO/OTA ordering below, on the same case pairs. A subgroup code is first replaced by its group (`44-B1.2` becomes `44-B1`). A pair with a code still outside the ordering is excluded and counted in `num_pairs_excluded`. Needs at least 2 pairs left. No interval. | `weighted_kappa.go`, `internal/service/statistics.go` |
 | Interpretation label | Landis & Koch scale from section 3.2 | `internal/domain/reliability.go` |
 | Per-case agreement, per system | Share of responses that gave the most common answer for that case | `percent_agreement.go` |
 | Low-agreement flag | Per-case agreement below 60% in Danis-Weber, Lauge-Hansen or AO/OTA | `internal/service/statistics.go` |
@@ -271,6 +276,7 @@ Example `FleissKappaResult`:
   "num_raters": 5,
   "num_subjects": 10,
   "num_categories": 3,
+  "num_cases_excluded": 0,
   "confidence_interval": {
     "lower": 0.58,
     "upper": 0.86,
@@ -279,26 +285,36 @@ Example `FleissKappaResult`:
 }
 ```
 
-### 4.2 Per case
+Example `CohensKappaResult` for AO/OTA, from a study with two complete raters:
 
-Endpoints: `GET /api/admin/cases/:id/reliability` and `GET /api/admin/cases/:id/accuracy`.
+```json
+{
+  "kappa": 0.4,
+  "interpretation": "fair",
+  "num_subjects": 8,
+  "num_cases_excluded": 2,
+  "confidence_interval": {
+    "lower": -0.17,
+    "upper": 0.97,
+    "level": 0.95
+  },
+  "weighted_kappa": {
+    "kappa": 0.47,
+    "type": "linear",
+    "num_pairs": 6,
+    "num_pairs_excluded": 2
+  }
+}
+```
 
-| Metric | How it is computed | Code |
-|--------|--------------------|------|
-| Percent agreement | Share of responses that gave the most common answer | `percent_agreement.go` |
-| Category counts | Responses per category | `category_metrics.go` |
-| Cohen's kappa | Only when the case has exactly 2 raters | `cohens_kappa.go` |
-| CI for Cohen's kappa | `SE = sqrt((Po * (1 - Po)) / (n * (1 - Pe)^2))`. Supports 90%, 95% and 99% levels; the service asks for 95%. Bounds clamped to [-1, 1]. | `cohens_kappa.go` |
-| Weighted kappa | AO/OTA only, 2 raters, linear weights | `weighted_kappa.go` |
-| Fleiss' kappa | Not computed for one case. With 3 or more raters the response carries `fleiss_kappa_note` instead of a value. | `internal/service/statistics.go` |
-| Gold standard accuracy | Percentage of responses equal to the gold standard, plus the most common answer and the response distribution | `gold_standard.go` |
+The fields are `danis_weber_cohen`, `lauge_hansen_cohen`, `ao_ota_cohen` and `bartonicek_cohen`, next to the matching `*_fleiss` fields. They are absent unless exactly two raters completed the study. `weighted_kappa` appears on `ao_ota_cohen` only.
 
 Weighted kappa weights:
 
 - Linear: `w_ij = 1 - |i-j|/(k-1)`
 - Quadratic: `w_ij = 1 - (i-j)²/(k-1)²`
 
-These are agreement weights (1 on the diagonal), the complement of the penalty table in section 3.5. The AO/OTA ordering is:
+These are agreement weights (1 on the diagonal), the complement of the penalty table in section 3.5. The service uses linear weights. The AO/OTA ordering is:
 
 ```go
 var AOOTAOrdering = []string{
@@ -308,18 +324,25 @@ var AOOTAOrdering = []string{
 }
 ```
 
+### 4.2 Per case
+
+Endpoints: `GET /api/admin/cases/:id/reliability` and `GET /api/admin/cases/:id/accuracy`.
+
+| Metric | How it is computed | Code |
+|--------|--------------------|------|
+| Percent agreement | Share of responses that gave the most common answer, per system. A single response counts as 100%. | `percent_agreement.go` |
+| Category counts | Responses per category | `category_metrics.go` |
+| Gold standard accuracy | Percentage of responses equal to the gold standard, plus the most common answer and the response distribution | `gold_standard.go` |
+
+No kappa is computed for a single case. One case gives each rater one rating, so Cohen's kappa could only be 1 (they agree) or 0 (they do not), and Fleiss' kappa needs several cases. Kappa is reported per study, section 4.1.
+
 Example fields on a per-system result:
 
 ```json
 {
-  "cohens_kappa": 0.72,
-  "cohens_kappa_ci": {
-    "lower": 0.58,
-    "upper": 0.86,
-    "level": 0.95
-  },
-  "weighted_kappa": 0.78,
-  "weighted_kappa_type": "linear"
+  "system": "ao_ota",
+  "percent_agreement": 66.7,
+  "category_counts": { "44-B1": 2, "44-B2": 1 }
 }
 ```
 
@@ -327,12 +350,16 @@ Example fields on a per-system result:
 
 Read these before citing a number the app produced.
 
-- **Percent agreement** is the share of responses matching the most common answer for one case. It is not the pairwise match rate across cases shown in section 3.1.
-- **Per-case Cohen's kappa is computed from a single pair of ratings**, one from each of the two raters. With one pair the result is 1 when they agree and 0 when they do not, and no confidence interval is returned (the CI needs at least 2 pairs). The same single pair feeds weighted kappa. Nothing in the service computes Cohen's kappa for two raters across the cases of a study.
-- **Weighted kappa ignores codes outside the ordering.** Pairs containing a subgroup code such as `44-B1.2`, `44-A3`, `43-B1` or "not classifiable" are dropped, and the result is 0 when no pair is left.
-- **The Fleiss CI uses a simplified standard error**, described in the code as an approximation.
-- **Sensitivity, specificity, PPV, NPV and F1 are not computed.** The frontend has labels for them, but no backend code produces the values.
-- **No confusion matrix is computed.** The frontend can render one, but no backend code fills the field.
+- **Percent agreement** is the share of responses matching the most common answer for one case. It is not the pairwise match rate across cases shown in section 3.1. The interface labels it "Agreement with the most common answer".
+- **Kappa is per study, never per case.** The per-case page shows percent agreement and category counts only.
+- **Cohen's kappa appears only with exactly two complete raters.** With three or more, Fleiss' kappa is the only kappa. With exactly two, both are shown. They differ a little because Fleiss' kappa pools the two raters' category frequencies and Cohen's kappa keeps each rater's own.
+- **Cases without an answer are dropped per system.** Fleiss' kappa needs the same number of ratings for every case. When a complete rater gave no answer in a system (for example no Bartonicek type), that case is left out of that system and the other raters keep all their data. Dropping the rater instead would discard that rater's answers on every other case, and would leave no raters at all when a case has no answer from anyone. The cost is that a system's kappa describes only the cases every complete rater answered, which may be easier cases. Compare `num_subjects` with the study's total cases and report `num_cases_excluded` with the figure. Before this change the empty answer was counted as a missing rating for that case, which distorted kappa.
+- **Weighted kappa compares AO/OTA groups.** `44-B1.2` counts as `44-B1`. Codes outside the ordering are excluded and counted: `44-A3` and its subgroups (the ordering has no A3), `44-B` (subtype not classifiable), `43-B1`, `43-B2` and "not classifiable". The count is `num_pairs_excluded`. Report it with the figure.
+- **The Fleiss CI is a bootstrap, the Cohen CI is not.** The Cohen interval uses the normal approximation in section 4.1, which has zero width when raters agree on every case or on none. Read a Cohen interval of [1, 1] as "no information on uncertainty", not as certainty.
+- **Kappa with a single category.** If every rating in a system falls in one category, kappa is 0/0. The code reports 1, and Cohen's kappa then has no interval.
+- **At least 2 usable cases are needed.** With fewer, no Fleiss or Cohen result is returned for that system.
+- **Duplicate responses.** The app accepts one response per rater and case. If the database holds more, study kappas use the latest, while per-case percent agreement counts every response.
+- **Sensitivity, specificity, PPV, NPV and F1 are not computed**, and neither is a confusion matrix. Section 3 explains the concepts; the app does not produce them. The CSV export is the source for computing them outside the app.
 
 ## 5. Open issues
 
@@ -475,11 +502,12 @@ Result patterns:
 
 From the app:
 
-- Fleiss' Kappa with 95% confidence intervals, per system
+- Fleiss' Kappa with 95% confidence intervals, per system, with the number of cases excluded
+- With exactly two complete raters: Cohen's Kappa with its interval, and AO/OTA weighted kappa with the number of excluded pairs
 - Percent agreement per case and per system
 - Gold standard accuracy per system, per case and per rater
 
-From the CSV export, with external tools: sensitivity and specificity per category, PPV, NPV, F1 and confusion matrices. See section 4.3.
+From the CSV export, with external tools: sensitivity and specificity per category, PPV, NPV, F1 and confusion matrices. The app does not compute them; see section 4.3.
 
 ### 6.6 Checklist
 

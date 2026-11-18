@@ -7,146 +7,79 @@ import (
 	"github.com/jferrl/anklyze/internal/domain"
 )
 
-func TestCalculateReliabilityMetrics_TwoRaters(t *testing.T) {
+func TestCalculateReliabilityMetrics_PercentAgreement(t *testing.T) {
 	t.Parallel()
 
-	svc := NewStatisticsService()
-
-	user1 := uuid.New()
-	user2 := uuid.New()
-	caseID := uuid.New()
-
-	dw1 := "Weber A"
-	dw2 := "Weber A"
-
-	responses := []domain.CaseResponse{
-		{
-			UserID:         user1,
-			DanisWeberType: &dw1,
-		},
-		{
-			UserID:         user2,
-			DanisWeberType: &dw2,
-		},
+	a, b := "Weber A", "Weber B"
+	tests := []struct {
+		name    string
+		answers []*string
+		want    float64
+		counts  map[string]int64
+	}{
+		{"one response counts as full agreement", []*string{&a}, 100, map[string]int64{a: 1}},
+		{"two raters agree", []*string{&a, &a}, 100, map[string]int64{a: 2}},
+		{"two raters disagree", []*string{&a, &b}, 50, map[string]int64{a: 1, b: 1}},
+		// 2 of 3 gave the most common answer: 2/3 * 100.
+		{"three raters, one dissenter", []*string{&a, &a, &b}, 200.0 / 3.0, map[string]int64{a: 2, b: 1}},
+		{"unanswered responses are not counted", []*string{&a, nil, &a}, 100, map[string]int64{a: 2}},
 	}
 
-	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var responses []domain.CaseResponse
+			for _, ans := range tt.answers {
+				responses = append(responses, domain.CaseResponse{UserID: uuid.New(), DanisWeberType: ans})
+			}
+
+			metrics, err := NewStatisticsService().CalculateReliabilityMetrics(uuid.New(), responses)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			got := metrics.DanisWeberAgreement
+			if got == nil {
+				t.Fatal("expected DanisWeberAgreement, got nil")
+			}
+			if !approx(got.PercentAgreement, tt.want, 1e-9) {
+				t.Errorf("PercentAgreement = %v, want %v", got.PercentAgreement, tt.want)
+			}
+			if len(got.CategoryCounts) != len(tt.counts) {
+				t.Fatalf("CategoryCounts = %v, want %v", got.CategoryCounts, tt.counts)
+			}
+			for cat, n := range tt.counts {
+				if got.CategoryCounts[cat] != n {
+					t.Errorf("CategoryCounts[%q] = %d, want %d", cat, got.CategoryCounts[cat], n)
+				}
+			}
+		})
+	}
+}
+
+func TestCalculateReliabilityMetrics_Totals(t *testing.T) {
+	t.Parallel()
+
+	user1, user2 := uuid.New(), uuid.New()
+	dw := "Weber A"
+
+	metrics, err := NewStatisticsService().CalculateReliabilityMetrics(uuid.New(), []domain.CaseResponse{
+		{UserID: user1, DanisWeberType: &dw},
+		{UserID: user2, DanisWeberType: &dw},
+	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if metrics == nil {
-		t.Fatal("expected metrics, got nil")
-		return
 	}
 
 	if metrics.TotalResponses != 2 {
 		t.Errorf("expected 2 responses, got %v", metrics.TotalResponses)
 	}
-
 	if metrics.UniqueRaters != 2 {
 		t.Errorf("expected 2 raters, got %v", metrics.UniqueRaters)
 	}
-
-	if metrics.DanisWeberAgreement == nil {
-		t.Fatal("expected DanisWeberAgreement, got nil")
-	}
-
-	// Perfect agreement between 2 raters
-	if metrics.DanisWeberAgreement.CohensKappa == nil {
-		t.Fatal("expected CohensKappa for 2 raters, got nil")
-	}
-
-	if *metrics.DanisWeberAgreement.CohensKappa != 1.0 {
-		t.Errorf("expected Cohen's Kappa = 1.0 for perfect agreement, got %v",
-			*metrics.DanisWeberAgreement.CohensKappa)
-	}
-}
-
-func TestCalculateReliabilityMetrics_MultipleRaters_FleissNote(t *testing.T) {
-	t.Parallel()
-
-	svc := NewStatisticsService()
-
-	user1 := uuid.New()
-	user2 := uuid.New()
-	user3 := uuid.New()
-	caseID := uuid.New()
-
-	dw := "Weber A"
-
-	responses := []domain.CaseResponse{
-		{UserID: user1, DanisWeberType: &dw},
-		{UserID: user2, DanisWeberType: &dw},
-		{UserID: user3, DanisWeberType: &dw},
-	}
-
-	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if metrics.DanisWeberAgreement == nil {
-		t.Fatal("expected DanisWeberAgreement, got nil")
-	}
-
-	// With 3+ raters, Cohen's Kappa should be nil
-	if metrics.DanisWeberAgreement.CohensKappa != nil {
-		t.Error("expected CohensKappa = nil for 3+ raters")
-	}
-
-	// Fleiss' Kappa should be nil (single-case limitation)
-	if metrics.DanisWeberAgreement.FleissKappa != nil {
-		t.Error("expected FleissKappa = nil for single-case study")
-	}
-
-	// Should have explanatory note
-	if metrics.DanisWeberAgreement.FleissKappaNote == nil {
-		t.Error("expected FleissKappaNote explaining single-case limitation")
-	}
-}
-
-func TestCalculateReliabilityMetrics_MultipleResponsesPerUser(t *testing.T) {
-	t.Parallel()
-
-	svc := NewStatisticsService()
-
-	user1 := uuid.New()
-	user2 := uuid.New()
-	caseID := uuid.New()
-
-	// User 1: first response "Weber A", second response "Weber B"
-	dw1a := "Weber A"
-	dw1b := "Weber B"
-	// User 2: first response "Weber A", second response "Weber B"
-	dw2a := "Weber A"
-	dw2b := "Weber B"
-
-	responses := []domain.CaseResponse{
-		{UserID: user1, DanisWeberType: &dw1a}, // First response user1
-		{UserID: user2, DanisWeberType: &dw2a}, // First response user2
-		{UserID: user1, DanisWeberType: &dw1b}, // Second response user1 (latest)
-		{UserID: user2, DanisWeberType: &dw2b}, // Second response user2 (latest)
-	}
-
-	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if metrics.DanisWeberAgreement == nil {
-		t.Fatal("expected DanisWeberAgreement, got nil")
-	}
-
-	// Should use latest responses (both "Weber B"), so perfect agreement
-	if metrics.DanisWeberAgreement.CohensKappa == nil {
-		t.Fatal("expected CohensKappa, got nil")
-	}
-
-	// Both users' latest response is "Weber B" -> perfect agreement
-	if *metrics.DanisWeberAgreement.CohensKappa != 1.0 {
-		t.Errorf("expected Cohen's Kappa = 1.0 using latest responses, got %v",
-			*metrics.DanisWeberAgreement.CohensKappa)
+	if metrics.LaugeHansenAgreement != nil {
+		t.Error("expected no agreement for a system nobody answered")
 	}
 }
 
@@ -194,83 +127,5 @@ func TestKappaInterpretation(t *testing.T) {
 			t.Errorf("KappaInterpretation(%v) = %v, expected %v",
 				tt.kappa, result, tt.expected)
 		}
-	}
-}
-
-func TestCalculateReliabilityMetrics_AOOTAIncludesWeightedKappa(t *testing.T) {
-	t.Parallel()
-
-	svc := NewStatisticsService()
-
-	user1 := uuid.New()
-	user2 := uuid.New()
-	caseID := uuid.New()
-
-	ao1 := "44-B1"
-	ao2 := "44-B2" // Adjacent code
-
-	responses := []domain.CaseResponse{
-		{UserID: user1, AOOTACode: &ao1},
-		{UserID: user2, AOOTACode: &ao2},
-	}
-
-	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if metrics.AOOTAAgreement == nil {
-		t.Fatal("expected AOOTAAgreement, got nil")
-	}
-
-	// AO/OTA should have weighted kappa
-	if metrics.AOOTAAgreement.WeightedKappa == nil {
-		t.Error("expected WeightedKappa for AO/OTA system")
-	}
-
-	if metrics.AOOTAAgreement.WeightedKappaType == nil {
-		t.Error("expected WeightedKappaType for AO/OTA system")
-	} else if *metrics.AOOTAAgreement.WeightedKappaType != domain.KappaWeightLinear {
-		t.Errorf("expected KappaWeightLinear, got %v", *metrics.AOOTAAgreement.WeightedKappaType)
-	}
-}
-
-func TestCalculateReliabilityMetrics_WithSingleCase_NoCI(t *testing.T) {
-	t.Parallel()
-
-	svc := NewStatisticsService()
-
-	user1 := uuid.New()
-	user2 := uuid.New()
-	caseID := uuid.New()
-
-	dw1 := "Weber A"
-	dw2 := "Weber A"
-
-	// With single-case study design, we only have 1 rating pair
-	// CI requires at least 2 rating pairs to be meaningful
-	responses := []domain.CaseResponse{
-		{UserID: user1, DanisWeberType: &dw1},
-		{UserID: user2, DanisWeberType: &dw2},
-	}
-
-	metrics, err := svc.CalculateReliabilityMetrics(caseID, responses)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if metrics.DanisWeberAgreement == nil {
-		t.Fatal("expected DanisWeberAgreement, got nil")
-	}
-
-	// With only 1 rating pair (single case), CI cannot be meaningfully calculated
-	// This is expected behavior - CI requires multiple cases (rating pairs)
-	if metrics.DanisWeberAgreement.CohensKappaCI != nil {
-		t.Log("Note: CI was calculated with single case, this is valid but may have wide bounds")
-	}
-
-	// Kappa should still be calculated
-	if metrics.DanisWeberAgreement.CohensKappa == nil {
-		t.Error("expected CohensKappa to be calculated")
 	}
 }

@@ -100,7 +100,7 @@ anklyze/
         │   ├── layout/          # AppShell, AppSidebar
         │   ├── auth/            # LoginPage, ProtectedRoute
         │   ├── studies/         # StudyClassificationForm, ImageGrid, ImageLightbox
-        │   ├── analytics/       # StatCard, KappaGauge, ClassificationChart, ConfusionMatrix
+        │   ├── analytics/       # StatCard, KappaGauge, ClassificationChart
         │   ├── admin/           # CaseUsersManager, StudyUsersManager
         │   ├── profile/         # UserProfileForm
         │   └── ui/              # shadcn/ui components
@@ -196,7 +196,7 @@ anklyze/
 - `GET /api/admin/studies/:id/progress` - Rater progress
 - `PUT /api/admin/studies/:id/activate` - Activate study
 - `PUT /api/admin/studies/:id/close` - Close study
-- `GET /api/admin/studies/:id/reliability` - Study reliability (Fleiss' Kappa)
+- `GET /api/admin/studies/:id/reliability` - Study reliability (Fleiss' Kappa; Cohen's Kappa with 2 raters)
 
 **Analytics (admin role):**
 
@@ -219,14 +219,12 @@ The statistics service (`internal/service/statistics.go`) calculates:
 
 | Metric | Description |
 |--------|-------------|
-| Cohen's Kappa | Agreement between 2 raters (with 95% CI) |
-| Fleiss' Kappa | Agreement among 3+ raters across multiple cases |
-| Weighted Kappa | For ordinal data (AO/OTA) with linear weights |
-| Percent Agreement | Simple agreement percentage |
-| Sensitivity/Specificity | Per-category diagnostic metrics |
-| PPV/NPV/F1 | Positive/Negative Predictive Value, F1 score |
+| Fleiss' Kappa | Agreement among the raters who completed ALL cases of a study (at least 2), with a bootstrap 95% CI |
+| Cohen's Kappa | Study level, only with exactly 2 complete raters (with 95% CI) |
+| Weighted Kappa | Study level, same 2 raters, AO/OTA only, linear weights; subgroup codes map to their group |
+| Percent Agreement | Per case: share of responses that gave the most common answer |
 
-Fleiss' Kappa requires multiple cases in a study and 3+ raters who completed ALL cases.
+Kappa is never computed for a single case. See `docs/RELIABILITY_ANALYSIS.md` section 4 for exact behaviour.
 
 ## Rule Engine
 
