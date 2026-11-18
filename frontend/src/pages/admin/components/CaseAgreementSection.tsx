@@ -1,45 +1,60 @@
 import { useTranslation } from 'react-i18next';
+import { AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { ReliabilityMetrics } from '@/types';
 import { MethodNote } from './MethodNote';
-import { SYSTEM_COLOR, SYSTEM_KEYS, SYSTEM_LABEL, formatPercent } from './systems';
+import {
+  LOW_AGREEMENT_PCT,
+  SYSTEM_COLOR,
+  SYSTEM_KEYS,
+  SYSTEM_LABEL,
+  agreementColorClass,
+  formatPercent,
+} from './systems';
 
 interface CaseAgreementSectionProps {
   metrics: ReliabilityMetrics;
 }
 
+/** CaseAgreementSection prints each system's rater agreement in one ruled box, with its method beside it. */
 export function CaseAgreementSection({ metrics }: CaseAgreementSectionProps) {
   const { t } = useTranslation();
 
   return (
-    <section className="chart-card">
-      <h2 className="text-base font-semibold text-foreground mb-4">
+    <section className="space-y-4">
+      <h2 className="text-base font-semibold text-foreground">
         {t('admin.reliability.percentAgreement')}
       </h2>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4">
         {SYSTEM_KEYS.map((key) => {
-          const agreement = metrics[`${key}_agreement`];
+          const percent = metrics[`${key}_agreement`]?.percent_agreement;
           return (
-            <div key={key} className="min-w-0">
+            <div key={key} className="min-w-0 bg-card p-4">
               <p className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <span className="size-2 shrink-0" style={{ backgroundColor: SYSTEM_COLOR[key] }} />
                 {SYSTEM_LABEL[key]}
               </p>
-              {agreement ? (
-                <p className="mt-2 font-display text-4xl tabular-nums">
-                  {formatPercent(agreement.percent_agreement)}
+              {percent != null ? (
+                <p className={cn('mt-2 flex items-center gap-2 font-display text-3xl tabular-nums', agreementColorClass(percent))}>
+                  {formatPercent(percent)}
+                  {agreementColorClass(percent) && (
+                    <AlertTriangle
+                      role="img"
+                      aria-label={t('admin.reliability.lowAgreement', { threshold: formatPercent(LOW_AGREEMENT_PCT) })}
+                      className="size-4 shrink-0"
+                    />
+                  )}
                 </p>
               ) : (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {t('common.noData')}. {t('admin.reliability.noSystemData')}
-                </p>
+                <p className="mt-2 text-sm text-muted-foreground">{t('admin.reliability.noSystemData')}</p>
               )}
             </div>
           );
         })}
       </div>
 
-      <MethodNote className="mt-6">
+      <MethodNote>
         <p className="tabular-nums">
           {t('admin.reliability.method.percentAgreement', {
             responses: metrics.total_responses,

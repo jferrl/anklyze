@@ -24,14 +24,14 @@
     "editCase": "Editar caso",
     "newStudy": "Nuevo estudio",
     "editStudy": "Editar estudio",
-    "analytics": "Analíticas",
     "reliability": "Fiabilidad",
     "divergence": "Divergencia",
     "cohorts": "Estudios",
     "newCohort": "Nuevo estudio",
     "editCohort": "Editar estudio",
     "cohortDetail": "Detalle del estudio",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "report": "Informe"
   },
   "app": {
     "title": "Clasificación de fracturas de tobillo",
@@ -430,11 +430,12 @@
     "select": "Seleccionar…",
     "total": "Total",
     "notAvailable": "N/D",
-    "noData": "No hay datos disponibles",
     "previousPage": "Página anterior",
     "nextPage": "Página siguiente",
     "notSet": "Sin definir",
-    "moreActions": "Más acciones"
+    "moreActions": "Más acciones",
+    "retry": "Reintentar",
+    "skipToContent": "Saltar al contenido"
   },
   "cases": {
     "title": "Título",
@@ -561,11 +562,9 @@
       "allStatuses": "Todos los estados",
       "noCases": "No se encontraron casos",
       "noCasesDesc": "Cree su primer caso para comenzar.",
-      "analytics": "Analíticas",
       "divergence": "Análisis de divergencia",
       "publish": "Publicar",
       "close": "Cerrar caso",
-      "exportCSV": "Exportar CSV",
       "backToList": "Volver a casos",
       "notFound": "Caso no encontrado",
       "notFoundDescription": "El caso que busca no existe o ha sido eliminado.",
@@ -615,13 +614,13 @@
       "showReferenceAfterSubmit": "Mostrar referencia después de enviar",
       "showReferenceAfterSubmitDescription": "Muestra la clasificación correcta después de que los participantes envíen su respuesta",
       "decisionPathConfigured": "Ruta de decisión configurada para análisis de divergencia",
-      "backToCases": "Volver a casos",
       "pendingUpload": "Carga pendiente",
       "impossibleClassification": "No clasificable (imposible)",
       "noDeadline": "Sin fecha límite",
       "referenceAfterSave": "El patrón de referencia podrá definirse una vez guardado el caso.",
       "deleteImage": "Eliminar imagen",
-      "removeUpload": "Quitar imagen de la subida"
+      "removeUpload": "Quitar imagen de la subida",
+      "report": "Informe"
     },
     "studies": {
       "title": "Gestión de estudios",
@@ -686,7 +685,8 @@
         "raters": "Evaluadores",
         "responses": "Respuestas",
         "created": "Creado",
-        "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios"
+        "showing": "Mostrando {{from}}-{{to}} de {{total}} estudios",
+        "completeRaters": "Evaluadores completos"
       },
       "configureGoldStandardInput": "Configurar patrón de referencia",
       "configureGoldStandardInputDesc": "Complete el cuestionario de clasificación para establecer el patrón de referencia. Esto captura tanto el resultado de la clasificación como la ruta de decisión para el análisis de divergencia.",
@@ -698,33 +698,54 @@
       "reliability": {
         "totalCases": "Casos totales",
         "completeRaters": "Evaluadores completos",
-        "lowAgreementCases": "casos con bajo acuerdo",
         "casesWithReference": "casos con referencia",
         "totalComparisons": "comparaciones totales",
         "fleissKappa": "Kappa de Fleiss (fiabilidad inter-evaluador)",
         "notEnoughData": "No hay suficientes datos",
         "perCaseAgreement": "Acuerdo con la respuesta más frecuente, por caso",
         "noCaseMetrics": "No hay métricas de casos disponibles",
-        "agreementNote": "Cada cifra es la proporción de respuestas que dieron la respuesta más frecuente de ese caso, no el acuerdo entre pares de evaluadores. Los casos por debajo del 60% aparecen resaltados."
+        "agreementNote": "Cada cifra es la proporción de respuestas que dieron la respuesta más frecuente de ese caso, no el acuerdo entre pares de evaluadores. Los casos por debajo del {{threshold}}% en algún sistema aparecen sombreados y marcados con un icono.",
+        "lowAgreement": "Acuerdo bajo",
+        "retry": "Reintentar",
+        "loadFailed": "No se pudieron cargar las cifras de fiabilidad",
+        "loadFailedDescription": "Compruebe su conexión e inténtelo de nuevo. Si el error persiste, es posible que el servidor no esté disponible.",
+        "export": {
+          "figures": "Exportar cifras (CSV)",
+          "responses": "Exportar respuestas (CSV)",
+          "figuresDone": "Cifras exportadas",
+          "responsesDone": "Respuestas exportadas",
+          "figuresFailed": "No se pudieron exportar las cifras. Inténtelo de nuevo.",
+          "responsesFailed": "No se pudieron exportar las respuestas. Inténtelo de nuevo."
+        },
+        "nOfM": "{{n}} de {{m}}",
+        "completeRatersNote": "Respondieron todos los casos",
+        "lowAgreementCasesTitle": "Casos con acuerdo bajo",
+        "lowAgreementNote": "Por debajo del {{threshold}}% en al menos un sistema"
       },
       "goldStandard": {
         "title": "Precisión frente al patrón de referencia",
-        "description": "Mide con qué frecuencia los evaluadores coinciden con la clasificación de referencia experta. Mayor precisión significa mayor concordancia con el patrón de referencia.",
-        "noCasesWithGold": "Ningún caso de este estudio tiene un patrón de referencia configurado. Establezca el patrón de referencia en cada caso para ver las métricas de precisión.",
+        "noCasesWithGold": "Ningún caso de este estudio tiene aún patrón de referencia.",
         "casesWithGold": "{{count}} de {{total}} casos tienen patrón de referencia",
         "casesEvaluated": "{{count}} casos",
-        "consensusRate": "Consenso: {{rate}}%",
-        "casesCorrect": "correctos",
-        "hardCasesWarning": "{{count}} caso(s) difícil(es) detectado(s) (precisión < 50% en al menos un sistema)",
         "perCaseAccuracy": "Precisión por caso frente al patrón de referencia",
         "case": "Caso",
         "noGoldStandard": "Sin patrón de referencia",
-        "accuracyNote": "La precisión muestra el porcentaje de evaluadores que coincidieron con el patrón de referencia. Los casos con < 50% de precisión en cualquier sistema se marcan como casos difíciles.",
         "perRaterAccuracy": "Precisión por evaluador frente al patrón de referencia",
         "rater": "Evaluador",
         "casesCompleted": "Casos",
-        "cases": "casos",
-        "raterNote": "Muestra la precisión de cada evaluador en todos los casos con patrón de referencia de este estudio. Solo se incluyen los casos con patrón de referencia configurado."
+        "loadFailed": "No se pudo cargar la precisión frente al patrón de referencia.",
+        "setGoldStandards": "Establecer patrones de referencia",
+        "consensus": "Consenso correcto en {{correct}} de {{total}} ({{rate}})",
+        "hardCases_one": "{{count}} caso difícil: precisión por debajo del {{threshold}}% en al menos un sistema",
+        "hardCases_other": "{{count}} casos difíciles: precisión por debajo del {{threshold}}% en al menos un sistema",
+        "method": {
+          "lead": "La precisión es la proporción de evaluadores cuya respuesta coincide con el patrón de referencia en un caso, promediada sobre los casos que lo tienen.",
+          "consensus": "El consenso cuenta los casos en los que la respuesta más frecuente coincide con el patrón de referencia.",
+          "hardCase": "Un caso es difícil cuando su precisión es inferior al {{threshold}}% en al menos un sistema. Las precisiones por debajo del {{threshold}}% se señalan.",
+          "perRater": "La precisión por evaluador es la proporción de respuestas correctas de cada evaluador en los casos con patrón de referencia que respondió."
+        },
+        "anonymise": "Anonimizar evaluadores",
+        "raterN": "Evaluador {{n}}"
       },
       "closeStudy": "Cerrar estudio",
       "casesLocked": "Los casos no se pueden modificar una vez que el estudio está activo o cerrado.",
@@ -733,14 +754,9 @@
       "removeCaseNamed": "Quitar «{{title}}» del estudio"
     },
     "analytics": {
-      "totalResponses": "Total de respuestas",
-      "uniqueRespondents": "Participantes únicos",
-      "avgResponseTime": "Tiempo promedio",
-      "responsesPerUser": "Respuestas por usuario",
       "classificationDistribution": "Distribución de clasificaciones",
       "distributionDescription": "Cómo clasificaron los participantes este caso en los diferentes sistemas",
       "distributionTitle": "Distribución {{system}}",
-      "reliabilityMetrics": "Métricas de fiabilidad",
       "noData": "No hay datos de respuestas disponibles",
       "unspecified": "No especificado",
       "viewBar": "Gráfico de barras",
@@ -750,12 +766,12 @@
       "responsesCount_one": "{{count}} respuesta",
       "responsesCount_other": "{{count}} respuestas",
       "noDataSubtitle": "Aún no hay clasificaciones registradas",
-      "totalClassifications": "clasificaciones en total"
+      "totalClassifications": "clasificaciones en total",
+      "meanResponseTime": "Tiempo medio por respuesta"
     },
     "reliability": {
       "title": "Fiabilidad inter-evaluador",
       "hasGoldStandard": "Patrón de referencia establecido",
-      "exportDetailed": "Exportar CSV detallado",
       "viewDivergence": "Análisis de divergencia",
       "totalResponses": "Total de respuestas",
       "uniqueRaters": "Evaluadores únicos",
@@ -770,15 +786,9 @@
       "kappaModerate": "Moderado",
       "kappaSubstantial": "Sustancial",
       "kappaAlmostPerfect": "Casi perfecto",
-      "detailedAnalysis": "Análisis detallado por sistema",
-      "detailedDescription": "Distribución de categorías por sistema de clasificación",
       "percentAgreement": "Acuerdo con la respuesta más frecuente",
       "cohensKappa": "Kappa de Cohen",
-      "fleissKappa": "Kappa de Fleiss",
       "weightedKappa": "Kappa ponderado",
-      "confidenceInterval": "Intervalo de confianza del {{level}}%",
-      "categoryCounts": "Distribución por categoría",
-      "noDataForSystem": "No hay datos disponibles para este sistema de clasificación",
       "noGoldStandard": "No se ha establecido el patrón de referencia para este caso",
       "setGoldStandard": "Establecer patrón de referencia",
       "clearGoldStandard": "Borrar patrón de referencia",
@@ -823,7 +833,6 @@
         "distalTibia": "Tibia distal",
         "other": "Otros"
       },
-      "systemMetrics": "Métricas de {{system}}",
       "systemDetail": "Análisis detallado de {{system}}",
       "method": {
         "title": "Método",
@@ -834,7 +843,10 @@
         "fleissCases": "Para cada sistema solo se usan los casos que todos esos evaluadores respondieron en ese sistema. Un caso en el que algún evaluador no dio respuesta en un sistema se omite de ese sistema y se cuenta como excluido. Cada sistema necesita al menos dos casos utilizables.",
         "cohen": "Cuando exactamente dos evaluadores respondieron todos los casos, también se muestra el kappa de Cohen, calculado con los casos que ambos respondieron en ese sistema. Su intervalo del {{level}}% es una aproximación normal, kappa ± z·EE con EE = √(Po·(1−Po) / (N·(1−Pe)²)), limitada al rango de −1 a 1. No tiene amplitud cuando Po vale 0 o 1.",
         "weighted": "El kappa ponderado de AO/OTA usa pesos lineales sobre el orden 44-A1, A2, A3, B1, B2, B3, C1, C2, C3. Los códigos de subgrupo se comparan por su grupo (44-B1.2 cuenta como 44-B1). Un par con un código fuera de ese orden, como 43-B1 o no clasificable, se omite y se cuenta.",
-        "noKappaPerCase": "El kappa no se calcula para un caso individual: un caso da a cada evaluador una sola valoración, por lo que el kappa solo podría valer 1 o 0. El kappa se informa por estudio."
+        "noKappaPerCase": "El kappa no se calcula para un caso individual: un caso da a cada evaluador una sola valoración, por lo que el kappa solo podría valer 1 o 0. El kappa se informa por estudio.",
+        "fleissLead": "Kappa de Fleiss calculado con los {{raters}} de {{totalRaters}} evaluadores que respondieron todos los casos, con un intervalo de confianza bootstrap del {{level}}%.",
+        "more": "Mostrar el método completo",
+        "less": "Ocultar el método completo"
       },
       "noSystemData": "Ninguna respuesta tiene clasificación en este sistema.",
       "casesExcluded_one": "{{count}} caso excluido",
@@ -847,18 +859,22 @@
       "weightType": {
         "linear": "lineal",
         "quadratic": "cuadrático"
-      }
+      },
+      "lowAgreement": "Concordancia baja: inferior al {{threshold}}",
+      "classificationSystem": "Sistema de clasificación",
+      "smallSample_one": "Basado en {{count}} caso; interprételo con cautela",
+      "smallSample_other": "Basado en {{count}} casos; interprételo con cautela"
     },
     "dashboard": {
       "title": "Panel de administración",
-      "subtitle": "Estudios en curso, actividad reciente de los casos y casos que requieren atención",
+      "subtitle": "Casos que requieren atención, estudios actuales y actividad reciente de los casos",
       "totalCases": "Total de casos",
       "totalResponses": "Total de respuestas",
       "uniqueParticipants": "Participantes únicos",
       "completedCases": "Casos completados",
       "drafts": "borradores",
       "active": "activos",
-      "avgPerCase": "~{{count}} promedio por caso",
+      "avgPerCase": "{{value}} por caso de media",
       "acrossAllCases": "en todos los casos",
       "stillActive": "aún activos",
       "recentActivity": "Actividad reciente",
@@ -866,9 +882,7 @@
       "noRecentActivity": "Sin actividad reciente",
       "responses": "respuestas",
       "needsAttention": "Requiere atención",
-      "needsAttentionDesc": "Casos que pueden necesitar su atención",
-      "allGood": "Ningún caso requiere atención.",
-      "pastDeadline": "Fecha límite pasada",
+      "needsAttentionDesc": "Casos publicados sin respuestas o con la fecha límite vencida",
       "noResponses": "Sin respuestas aún",
       "statusBreakdown": "Casos por estado",
       "statusBreakdownDesc": "Número de casos en cada estado",
@@ -879,13 +893,17 @@
       "activeCount_other": "{{count}} activos",
       "stillActiveCount_one": "{{count}} aún activo",
       "stillActiveCount_other": "{{count}} aún activos",
-      "studiesInProgress": "Estudios en curso",
-      "studiesInProgressDesc": "Primero los estudios activos, después los borradores",
       "allStudies": "Todos los estudios",
-      "noStudiesInProgress": "No hay estudios en curso.",
       "activeStudies": "Estudios activos",
       "closedCount_one": "{{count}} cerrado",
-      "closedCount_other": "{{count}} cerrados"
+      "closedCount_other": "{{count}} cerrados",
+      "pastDeadlineOn": "Fecha límite vencida el {{date}}",
+      "moreCount_one": "Mostrar {{count}} más",
+      "moreCount_other": "Mostrar {{count}} más",
+      "loadFailed": "No se pudo cargar el panel",
+      "currentStudies": "Estudios actuales",
+      "currentStudiesDesc": "Primero los estudios activos, después los borradores y los cerrados en los últimos 30 días",
+      "noCurrentStudies": "No hay estudios activos, en borrador ni cerrados recientemente."
     },
     "divergence": {
       "title": "Análisis de divergencia",
@@ -960,6 +978,16 @@
       "noMatchStatus": "Sin resultados con el estado «{{status}}».",
       "noMatchBoth": "Sin resultados para «{{query}}» con el estado «{{status}}».",
       "clearSearch": "Borrar búsqueda"
+    },
+    "report": {
+      "backToCase": "Volver al caso",
+      "deadline": "Fecha límite: {{date}}",
+      "noResponses": "Todavía no hay respuestas. La concordancia entre evaluadores y la distribución de clasificaciones aparecerán cuando los evaluadores clasifiquen este caso.",
+      "exported": "CSV descargado",
+      "loadFailed": "No se pudo cargar el informe del caso",
+      "agreementNeedsTwo": "La concordancia entre evaluadores necesita al menos dos respuestas.",
+      "exportResponses": "Exportar respuestas (CSV)",
+      "exportDetailed": "Exportar con datos de evaluadores (CSV)"
     }
   },
   "profile": {

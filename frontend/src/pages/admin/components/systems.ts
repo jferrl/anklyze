@@ -22,14 +22,25 @@ export const SYSTEM_COLOR: Record<string, string> = {
   bartonicek: 'var(--sys-bt)',
 };
 
-/** formatPercent prints a percentage result with one decimal, e.g. "66.7%". */
-export function formatPercent(value: number): string {
-  return `${value.toFixed(1)}%`;
+export { formatPercent } from '@/lib/format';
+
+/** LOW_AGREEMENT_PCT flags rater agreement below it, as the backend's is_low_agreement does. */
+export const LOW_AGREEMENT_PCT = 60;
+
+/** HARD_CASE_ACCURACY_PCT flags gold-standard accuracy below it, as the backend's hard-case rule does. */
+export const HARD_CASE_ACCURACY_PCT = 50;
+
+/** accuracyColorClass flags gold-standard accuracy under HARD_CASE_ACCURACY_PCT. */
+export function accuracyColorClass(value: number | null | undefined): string {
+  return value != null && value < HARD_CASE_ACCURACY_PCT ? 'text-warning' : '';
 }
 
-/** agreementColorClass flags only values under 60%; a normal value stays foreground ink. */
+/** SMALL_SAMPLE_CASES is the case count below which a kappa carries a caution line. */
+export const SMALL_SAMPLE_CASES = 10;
+
+/** agreementColorClass flags only values under LOW_AGREEMENT_PCT; a normal value stays foreground ink. */
 export function agreementColorClass(value: number | null | undefined): string {
-  return value != null && value < 60 ? 'text-warning' : '';
+  return value != null && value < LOW_AGREEMENT_PCT ? 'text-warning' : '';
 }
 
 /** kappaAxisMin gives gauges shown together one axis: -1 if any value or CI bound is negative, else 0. */
