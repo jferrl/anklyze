@@ -90,7 +90,9 @@ export function LandingPage() {
                     </span>
                     <div className="px-4 py-3">
                       <p className="text-sm text-white/65">{t(question)}</p>
-                      <p className="mt-0.5 font-medium">{t(answer)}</p>
+                      <p className="path-answer mt-0.5 font-medium" style={{ '--step': i } as React.CSSProperties}>
+                        {t(answer)}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -101,7 +103,7 @@ export function LandingPage() {
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
-                      <p className="font-display mt-2 text-2xl" data-numeric>
+                      <p className="path-result font-display mt-2 text-2xl" data-numeric>
                         {s.code ?? <span className="text-sheet-muted">N/C</span>}
                       </p>
                     </div>
