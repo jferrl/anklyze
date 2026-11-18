@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Loader2, Workflow } from 'lucide-react';
+import { ChevronDown, ChevronLeft, Loader2, Workflow } from 'lucide-react';
 import type { FractureInput, ClassificationResult } from '@/types';
 import { isFormComplete, calculateProgress } from '@/features/fracture-classification/utils/formValidation';
 import { ClassificationFormQuestions } from '@/features/fracture-classification/components/ClassificationFormQuestions';
@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { AnatomyView } from '@/components/anatomy/AnatomyView';
 
-// Per viewer; off by default so the radiograph, not a schematic, shapes the first reading.
+// Per viewer, for the phone disclosure only; closed by default so the radiograph, not the model,
+// shapes the first reading. From lg the figure is always shown.
 const ANATOMY_KEY = 'anklyze-case-anatomy';
 
 function readAnatomyPref(): boolean {
@@ -208,15 +208,33 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
           <Badge variant="outline">{t('cases.images.ct')}</Badge>
           {hasTACImages ? t('cases.ctScanAutoDetected') : t('cases.ctScanAutoNo')}
         </p>
-        <Label className="font-normal text-muted-foreground">
-          <Switch checked={showAnatomy} onCheckedChange={toggleAnatomy} />
-          {t('anatomy.show')}
-        </Label>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-expanded={showAnatomy}
+          aria-controls="case-anatomy"
+          onClick={() => toggleAnatomy(!showAnatomy)}
+          className="-mr-2 gap-1.5 lg:hidden"
+        >
+          {showAnatomy ? t('anatomy.hide') : t('anatomy.show')}
+          <ChevronDown className={cn('h-4 w-4', showAnatomy && 'rotate-180')} />
+        </Button>
       </div>
 
-      {showAnatomy && (
-        <AnatomyView formData={formData} hasTACImages={hasTACImages} className="border-y py-4" />
-      )}
+      {/* One figure, mounted for the whole case so the model and camera survive every answer; on
+          the phone the disclosure only hides it. From lg it stays pinned above the questions as
+          they grow, beside the X-ray column. */}
+      <div
+        id="case-anatomy"
+        className={cn(
+          showAnatomy ? 'block' : 'hidden',
+          // Pinned only where the screen is tall enough to leave room for the questions under it.
+          '-mx-4 border-y bg-card px-4 py-3 lg:block [@media(min-width:1024px)_and_(min-height:760px)]:sticky [@media(min-width:1024px)_and_(min-height:760px)]:top-14 [@media(min-width:1024px)_and_(min-height:760px)]:z-10',
+        )}
+      >
+        <AnatomyView formData={formData} hasTACImages={hasTACImages} showReading={false} compact />
+      </div>
 
       {/* Back button */}
       {canGoBack && (

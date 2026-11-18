@@ -175,7 +175,7 @@ export function FractureForm() {
                 showStepCounter={false}
               />
               <BreadcrumbTrail formData={formData} options={options} className="lg:hidden" />
-              {/* Below lg the drawing would push the questions down, so it waits behind a disclosure. */}
+              {/* Below lg the figure would push the questions down, so it waits behind a disclosure. */}
               <div className="lg:hidden">
                 <Button
                   type="button"
@@ -189,11 +189,10 @@ export function FractureForm() {
                   {showAnatomy ? t('anatomy.hide') : t('anatomy.show')}
                   <ChevronDown className={showAnatomy ? 'h-4 w-4 rotate-180' : 'h-4 w-4'} />
                 </Button>
-                {showAnatomy && (
-                  <div id="anatomy-mobile" className="mt-2 rounded-lg border bg-card p-4">
-                    <AnatomyView formData={formData} showReading={false} />
-                  </div>
-                )}
+                {/* Hidden, not unmounted, when closed: the model and its camera survive every answer. */}
+                <div id="anatomy-mobile" className={showAnatomy ? 'mt-2 rounded-lg border bg-card p-4' : 'hidden'}>
+                  <AnatomyView formData={formData} showReading={false} />
+                </div>
               </div>
             </div>
           )}
