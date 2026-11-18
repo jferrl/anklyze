@@ -158,12 +158,7 @@ func (h *StudyHandler) ListStudies(c *gin.Context) {
 
 // GetStudy retrieves a study by ID with its cases.
 func (h *StudyHandler) GetStudy(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	study, ok := loadStudy(c, h.studyRepo, id)
+	id, study, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -220,12 +215,8 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 
 // DeleteStudy deletes a study.
 func (h *StudyHandler) DeleteStudy(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
+	id, _, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadStudy(c, h.studyRepo, id); !ok {
 		return
 	}
 
@@ -242,13 +233,7 @@ func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 
 // AddAllPublishedCases adds all published cases (not already in any study) to a study.
 func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
-	studyID, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	// Verify study exists and is draft
-	study, ok := loadStudy(c, h.studyRepo, studyID)
+	studyID, study, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -423,12 +408,7 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 
 // ActivateStudy activates a study (draft -> active).
 func (h *StudyHandler) ActivateStudy(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	study, ok := loadStudy(c, h.studyRepo, id)
+	id, study, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -460,12 +440,7 @@ func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 
 // CloseStudy closes a study.
 func (h *StudyHandler) CloseStudy(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	study, ok := loadStudy(c, h.studyRepo, id)
+	id, study, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -483,13 +458,7 @@ func (h *StudyHandler) CloseStudy(c *gin.Context) {
 
 // GetStudyReliabilityMetrics calculates and returns reliability metrics for a study.
 func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	// Verify study exists first for proper 404 handling
-	_, ok = loadStudy(c, h.studyRepo, id)
+	id, _, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -509,13 +478,7 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 
 // GetStudyGoldStandardAccuracy calculates and returns gold standard accuracy for a study.
 func (h *StudyHandler) GetStudyGoldStandardAccuracy(c *gin.Context) {
-	id, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	// Verify study exists first for proper 404 handling
-	_, ok = loadStudy(c, h.studyRepo, id)
+	id, _, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}
@@ -565,12 +528,7 @@ func (h *StudyHandler) enrichRaterNames(ctx context.Context, metrics *domain.Stu
 
 // ExportStudyResponses exports all responses for a study as CSV.
 func (h *StudyHandler) ExportStudyResponses(c *gin.Context) {
-	studyID, ok := parseID(c, "id", "Invalid study ID")
-	if !ok {
-		return
-	}
-
-	_, ok = loadStudy(c, h.studyRepo, studyID)
+	studyID, _, ok := studyFromPath(c, h.studyRepo)
 	if !ok {
 		return
 	}

@@ -152,6 +152,26 @@ func loadCase(c *gin.Context, repo repository.CaseRepository, id uuid.UUID) (*do
 	return cs, true
 }
 
+// caseFromPath is parseID on ":id" followed by loadCase.
+func caseFromPath(c *gin.Context, repo repository.CaseRepository) (uuid.UUID, *domain.Case, bool) {
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return uuid.Nil, nil, false
+	}
+	cs, ok := loadCase(c, repo, id)
+	return id, cs, ok
+}
+
+// studyFromPath is caseFromPath for studies.
+func studyFromPath(c *gin.Context, repo repository.StudyRepository) (uuid.UUID, *domain.Study, bool) {
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
+		return uuid.Nil, nil, false
+	}
+	study, ok := loadStudy(c, repo, id)
+	return id, study, ok
+}
+
 // loadStudy is loadCase for studies.
 func loadStudy(c *gin.Context, repo repository.StudyRepository, id uuid.UUID) (*domain.Study, bool) {
 	study, err := repo.GetByID(c.Request.Context(), id)

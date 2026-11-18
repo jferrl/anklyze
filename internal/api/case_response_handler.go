@@ -171,11 +171,8 @@ func (h *CaseResponseHandler) GetMyResponses(c *gin.Context) {
 
 // ListCaseResponses handles GET /api/admin/cases/:id/responses
 func (h *CaseResponseHandler) ListCaseResponses(c *gin.Context) {
-	id, ok := parseID(c, "id", "invalid case id")
+	id, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-	if _, ok := loadCase(c, h.caseRepo, id); !ok {
 		return
 	}
 

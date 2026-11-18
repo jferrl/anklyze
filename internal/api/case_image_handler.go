@@ -73,12 +73,7 @@ func sanitizeFilename(name string) string {
 
 // UploadImage handles POST /api/admin/cases/:id/images
 func (h *CaseImageHandler) UploadImage(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	caseID, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
@@ -286,12 +281,8 @@ func (h *CaseImageHandler) UpdateImage(c *gin.Context) {
 // GetAdminCaseImages handles GET /api/admin/cases/:id/images
 // Returns images with signed URLs for admin preview.
 func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
+	caseID, _, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
-		return
-	}
-
-	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
@@ -328,12 +319,7 @@ func (h *CaseImageHandler) GetAdminCaseImages(c *gin.Context) {
 
 // ReorderImages handles PUT /api/admin/cases/:id/images/reorder
 func (h *CaseImageHandler) ReorderImages(c *gin.Context) {
-	caseID, ok := parseID(c, "id", "invalid case id")
-	if !ok {
-		return
-	}
-
-	cs, ok := loadCase(c, h.caseRepo, caseID)
+	caseID, cs, ok := caseFromPath(c, h.caseRepo)
 	if !ok {
 		return
 	}
