@@ -174,7 +174,7 @@ export function getQuestionSteps(
   const steps: (QuestionStepData | false | undefined | '')[] = [
     {
       id: 'involved_malleoli',
-      title: options.questions.involved_malleoli?.title || 'Which malleoli are fractured?',
+      title: options.questions.involved_malleoli?.title,
       options: options.involved_malleoli || [],
       value: formData.involved_malleoli,
       toPatch: (value) => ({ involved_malleoli: value as InvolvedMalleoli }),
@@ -182,7 +182,7 @@ export function getQuestionSteps(
 
     showArticularInvolvementSelect && {
       id: 'articular_involvement',
-      title: options.questions.articular_involvement?.title || 'Articular surface involvement?',
+      title: options.questions.articular_involvement?.title,
       options: options.articular_involvement_options || [],
       value: formData.articular_involvement,
       toPatch: (value) => ({ articular_involvement: value as ArticularInvolvement }),
@@ -190,7 +190,7 @@ export function getQuestionSteps(
 
     showArticularInvolvementYesNo && {
       id: 'articular_involvement',
-      title: options.questions.articular_involvement_medial?.title || 'Is there significant articular involvement with metaphyseal extension?',
+      title: options.questions.articular_involvement_medial?.title,
       options: yesNoOptions,
       value: formData.articular_involvement === 'large_with_extension' ? 'true' : formData.articular_involvement === 'small_without_extension' ? 'false' : undefined,
       toPatch: (value) => ({ articular_involvement: (value === 'true' ? 'large_with_extension' : 'small_without_extension') as ArticularInvolvement }),
@@ -200,7 +200,7 @@ export function getQuestionSteps(
       id: 'has_articular_depression',
       title: (formData.involved_malleoli === 'medial_only'
         ? options.questions.has_articular_depression_medial?.title
-        : options.questions.has_articular_depression?.title) || 'Is articular depression present?',
+        : options.questions.has_articular_depression?.title),
       options: yesNoOptions,
       value: formData.has_articular_depression?.toString(),
       toPatch: (value) => ({ has_articular_depression: value === 'true' }),
@@ -210,7 +210,7 @@ export function getQuestionSteps(
       id: 'medial_morphology',
       title: (formData.involved_malleoli === 'lateral_medial'
         ? options.questions.medial_morphology_lm?.title
-        : options.questions.medial_morphology?.title) || 'Medial fracture morphology?',
+        : options.questions.medial_morphology?.title),
       options: formData.involved_malleoli === 'lateral_medial'
         ? (options.medial_morphology_lm || [])
         : (options.medial_morphology || []),
@@ -220,7 +220,7 @@ export function getQuestionSteps(
 
     showBimaleolarInfraQuestion && {
       id: 'fibula_infrasindesmal_transverse',
-      title: options.questions.fibula_infrasindesmal_transverse?.title || 'Is fibula fracture infrasindesmal AND transverse?',
+      title: options.questions.fibula_infrasindesmal_transverse?.title,
       options: yesNoOptions,
       value: formData.fibula_infrasindesmal_transverse?.toString(),
       toPatch: (value) => ({ fibula_infrasindesmal_transverse: value === 'true' }),
@@ -232,7 +232,7 @@ export function getQuestionSteps(
         ['lateral_medial', 'lateral_posterior', 'trimaleolar'].includes(formData.involved_malleoli || '')
           ? options.questions.fibular_level_lm?.title
           : options.questions.fibular_level?.title
-      ) || 'Fibular fracture level?',
+      ),
       options: isLmOrTri
         ? (options.fibular_levels_tri || options.fibular_levels || [])
         : (options.fibular_levels || []),
@@ -242,7 +242,7 @@ export function getQuestionSteps(
 
     showFibulaTraceCount && {
       id: 'fibula_trace_count',
-      title: options.questions.fibulaTraceCount?.title || 'How many fracture traces does the fibula have?',
+      title: options.questions.fibulaTraceCount?.title,
       options: options.fibula_trace_count || [],
       value: formData.fibula_trace_count,
       toPatch: (value) => ({ fibula_trace_count: value as FibulaTraceCount }),
@@ -252,7 +252,7 @@ export function getQuestionSteps(
       id: 'lateral_morphology',
       title: (isLmOrTri
         ? options.questions.lateral_morphology_lm_tri?.title
-        : options.questions.lateral_morphology?.title) || 'Lateral fracture morphology?',
+        : options.questions.lateral_morphology?.title),
       options: getMorphologyOptions(),
       value: formData.lateral_morphology,
       toPatch: (value) => ({ lateral_morphology: value as LateralMorphology }),
@@ -262,7 +262,7 @@ export function getQuestionSteps(
       id: 'infrasindesmal_morphology',
       title: (isLmOrTri
         ? options.questions.infrasindesmal_morphology_lm_tri?.title
-        : options.questions.infrasindesmal_morphology?.title) || 'Infrasyndesmal fracture morphology?',
+        : options.questions.infrasindesmal_morphology?.title),
       options: isLmOrTri
         ? (options.infrasindesmal_morphology_lm_tri || [])
         : (options.infrasindesmal_morphology || []),
@@ -272,7 +272,7 @@ export function getQuestionSteps(
 
     showLateralSubtype && {
       id: 'lateral_subtype',
-      title: options.questions.lateral_subtype?.title || 'Lateral fracture type?',
+      title: options.questions.lateral_subtype?.title,
       options: options.lateral_subtype || [],
       value: formData.lateral_subtype,
       toPatch: (value) => ({ lateral_subtype: value as LateralSubtype }),
@@ -280,7 +280,7 @@ export function getQuestionSteps(
 
     showSuprasindesmalType && {
       id: 'suprasindesmal_type',
-      title: options.questions.suprasindesmal_type?.title || 'Suprasindesmotic fracture type?',
+      title: options.questions.suprasindesmal_type?.title,
       options: formData.involved_malleoli === 'lateral_posterior'
         ? (options.suprasindesmal_types_lp || options.suprasindesmal_types || [])
         : (options.suprasindesmal_types || []),
@@ -294,7 +294,7 @@ export function getQuestionSteps(
         ? options.questions.fibula_trace_pattern_multi?.title
         : formData.involved_malleoli === 'lateral_posterior'
           ? options.questions.fibula_trace_pattern_lp?.title
-          : options.questions.fibula_trace_pattern?.title) || 'Fibula trace pattern?',
+          : options.questions.fibula_trace_pattern?.title),
       options: formData.suprasindesmal_type === 'multifragmentary'
         ? (options.fibula_trace_patterns_multi_lp || options.fibula_trace_patterns || [])
         : formData.involved_malleoli === 'lateral_posterior'
@@ -306,7 +306,7 @@ export function getQuestionSteps(
 
     showMedialSubtype && {
       id: 'medial_subtype',
-      title: options.questions.medial_subtype?.title || 'Medial malleolus type?',
+      title: options.questions.medial_subtype?.title,
       options: options.medial_subtype || [],
       value: formData.medial_subtype,
       toPatch: (value) => ({ medial_subtype: value as MedialSubtype }),
@@ -314,7 +314,7 @@ export function getQuestionSteps(
 
     showFibulaHeadShortening && {
       id: 'has_fibula_head_shortening',
-      title: options.questions.has_fibula_head_shortening?.title || 'Is there fibula head shortening?',
+      title: options.questions.has_fibula_head_shortening?.title,
       options: yesNoOptions,
       value: formData.has_fibula_head_shortening?.toString(),
       toPatch: (value) => ({ has_fibula_head_shortening: value === 'true' }),
@@ -322,7 +322,7 @@ export function getQuestionSteps(
 
     showCTScan && {
       id: 'has_ct_scan',
-      title: options.questions.has_ct_scan?.title || 'Do you have a CT scan?',
+      title: options.questions.has_ct_scan?.title,
       options: yesNoOptions,
       value: formData.has_ct_scan?.toString(),
       toPatch: (value) => ({ has_ct_scan: value === 'true' }),
@@ -340,7 +340,7 @@ export function getQuestionSteps(
               : formData.involved_malleoli === 'lateral_posterior'
                 ? options.questions.posterior_fracture_type_med_post?.title
                 : options.questions.posterior_fracture_type_posterior?.title
-      ) || 'Posterior fracture type (Bartoníček)?',
+      ),
       options: formData.involved_malleoli === 'medial_posterior'
         ? (options.posterior_fracture_types_medial_posterior || [])
         : formData.involved_malleoli === 'lateral_posterior' && formData.fibular_level === 'infrasindesmal'
