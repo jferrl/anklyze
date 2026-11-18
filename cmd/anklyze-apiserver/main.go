@@ -136,7 +136,7 @@ func main() {
 		slog.Info("S3 storage enabled", "endpoint", cfg.S3Endpoint, "bucket", cfg.StudyBucketName)
 	} else {
 		caseStorage = storage.NewNoOpStorage()
-		slog.Info("no storage configured, case image storage disabled")
+		slog.Warn("no storage configured: image uploads and image URLs will answer 503")
 	}
 
 	// Initialize statistics service for reliability metrics
