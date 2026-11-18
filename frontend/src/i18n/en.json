@@ -83,7 +83,7 @@
       "colExample": "Written as",
       "laugeHansen": "Mechanism of injury: the position of the foot and the direction of the deforming force.",
       "danisWeber": "Level of the fibular fracture relative to the syndesmosis.",
-      "aoota": "Alphanumeric code for bone, segment, type and group.",
+      "aoota": "Alphanumeric code for bone, segment, type, group and subgroup, for example 44-\u2060B1.1.",
       "bartonicek": "Morphology of the posterior malleolus fragment."
     },
     "studies": {

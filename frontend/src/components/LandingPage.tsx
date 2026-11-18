@@ -22,7 +22,7 @@ const EXAMPLE_PATH = [
 const SYSTEMS = [
   { key: 'laugeHansen', name: 'Lauge-Hansen', swatch: 'bg-sys-lh', code: 'SER', example: 'SA · SER · PA · PER' },
   { key: 'danisWeber', name: 'Danis-Weber', swatch: 'bg-sys-dw', code: 'B', example: 'A · B · C' },
-  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-B1.1' },
+  { key: 'aoota', name: 'AO/OTA', swatch: 'bg-sys-ao', code: '44-B1.1', example: '44-A1 … 44-C3' },
   { key: 'bartonicek', name: 'Bartonicek', swatch: 'bg-sys-bt', code: null, example: '1 – 4' },
 ] as const;
 
@@ -35,7 +35,7 @@ export function LandingPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 text-primary">
+          <Link to="/" className="flex items-center gap-2 text-primary-fill">
             <Logo />
             <span className="text-lg font-semibold tracking-tight text-foreground">Anklyze</span>
           </Link>
@@ -70,7 +70,7 @@ export function LandingPage() {
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Link
                   to="/classify"
-                  className="inline-flex h-11 items-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="inline-flex h-11 items-center gap-2 rounded-md bg-sheet px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-sheet/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {t('landing.startClassifying')}
                   <ArrowRight className="size-4" />
@@ -90,18 +90,20 @@ export function LandingPage() {
                     </span>
                     <div className="px-4 py-3">
                       <p className="text-sm text-white/65">{t(question)}</p>
-                      <p className="mt-0.5 font-medium">{t(answer)}</p>
+                      <p className="path-answer mt-0.5 font-medium" style={{ '--step': i } as React.CSSProperties}>
+                        {t(answer)}
+                      </p>
                     </div>
                   </li>
                 ))}
                 <li className="grid grid-cols-2 gap-px bg-sheet-rule text-sheet-ink sm:grid-cols-4 lg:grid-cols-2">
                   {SYSTEMS.map((s) => (
-                    <div key={s.key} className="bg-white px-4 py-4">
+                    <div key={s.key} className="bg-sheet px-4 py-4">
                       <p className="flex items-center gap-1.5 text-xs text-sheet-muted">
                         <span className={`size-2 ${s.swatch}`} />
                         {s.name}
                       </p>
-                      <p className="font-display mt-2 text-2xl" data-numeric>
+                      <p className="path-result font-display mt-2 text-2xl" data-numeric>
                         {s.code ?? <span className="text-sheet-muted">N/C</span>}
                       </p>
                     </div>

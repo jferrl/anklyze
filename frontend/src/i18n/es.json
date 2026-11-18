@@ -83,7 +83,7 @@
       "colExample": "Se escribe",
       "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
       "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
-      "aoota": "Código alfanumérico de hueso, segmento, tipo y grupo.",
+      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-\u2060B1.1.",
       "bartonicek": "Morfología del fragmento del maléolo posterior."
     },
     "studies": {

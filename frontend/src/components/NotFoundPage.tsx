@@ -8,7 +8,7 @@ export function NotFoundPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <header className="border-b">
         <nav className="mx-auto flex h-14 max-w-6xl items-center px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 text-primary">
+          <Link to="/" className="flex items-center gap-2 text-primary-fill">
             <Logo />
             <span className="text-lg font-semibold tracking-tight text-foreground">Anklyze</span>
           </Link>
@@ -20,7 +20,7 @@ export function NotFoundPage() {
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/80">{t('errors.pageNotFoundBody')}</p>
           <Link
             to="/"
-            className="mt-8 inline-flex h-11 items-center rounded-md bg-white px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="mt-8 inline-flex h-11 items-center rounded-md bg-sheet px-5 text-sm font-semibold text-field-ink transition-colors duration-150 hover:bg-sheet/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             {t('auth.backToHome')}
           </Link>
