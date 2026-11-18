@@ -110,10 +110,10 @@
     "source": {
       "title": "Open source",
       "body": "The code, the decision tree and the statistical methodology are public. The code is free software under the Apache 2.0 licence; the decision tree is under CC BY 4.0 and can be reused with credit to its author.",
-      "authors": "Clinical content and decision tree by Laura Paniagua Andres (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association.",
+      "authors": "Clinical content and decision tree by Laura Paniagua Andrés (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association.",
       "repoLink": "Source code on GitHub",
       "citeTitle": "How to cite",
-      "citation": "Paniagua Andres L, Ferrero Linacero J. Anklyze: ankle fracture classification [software]. 2026. Available from: {{url}}. Apache License 2.0."
+      "citation": "Paniagua Andrés L, Ferrero Linacero J. Anklyze: ankle fracture classification [software]. 2026. Available from: {{url}}. Apache License 2.0."
     }
   },
   "form": {
