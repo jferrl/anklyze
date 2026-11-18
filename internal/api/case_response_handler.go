@@ -155,7 +155,7 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 
 	// Update study user progress if case belongs to a study
 	if cs.StudyID != nil && h.studyService != nil {
-		h.studyService.UpdateAfterResponse(c.Request.Context(), *cs.StudyID)
+		h.studyService.RefreshStudy(c.Request.Context(), *cs.StudyID)
 	}
 
 	c.JSON(http.StatusCreated, SubmitResponseResult{Response: response})

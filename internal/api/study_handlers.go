@@ -238,6 +238,7 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update study"})
 		return
 	}
+	h.studyService.InvalidateStats(id) // cached metrics embed the study title
 
 	c.JSON(http.StatusOK, study)
 }
@@ -266,6 +267,7 @@ func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete study"})
 		return
 	}
+	h.studyService.InvalidateStats(id)
 
 	c.Status(http.StatusNoContent)
 }

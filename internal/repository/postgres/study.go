@@ -43,10 +43,13 @@ func (r *StudyRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.St
 	return &study, nil
 }
 
-// Update updates a study.
+// Update writes the editable fields only; counters are owned by UpdateCounters
+// and a full-row Save from a stale copy would overwrite them.
 func (r *StudyRepository) Update(ctx context.Context, study *domain.Study) error {
 	study.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Save(study).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(study).
+		Select("title", "description", "updated_at").
+		Updates(study).Error; err != nil {
 		return fmt.Errorf("update: %w", err)
 	}
 	return nil

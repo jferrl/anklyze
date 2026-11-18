@@ -36,7 +36,8 @@ export interface CreateCaseRequest {
 export interface UpdateCaseRequest {
   title?: string;
   description?: string;
-  deadline?: string;
+  /** ISO date; null clears the deadline, omitted leaves it unchanged. */
+  deadline?: string | null;
 }
 
 /**
