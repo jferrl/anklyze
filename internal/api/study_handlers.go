@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -387,12 +388,49 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 		return
 	}
 
+	inStudy, err := h.studyRepo.GetCases(c.Request.Context(), studyID)
+	if err != nil {
+		HandleError(c, err, "Failed to get study cases")
+		return
+	}
+	if msg := reorderProblem(caseIDs, inStudy); msg != "" {
+		badRequest(c, msg)
+		return
+	}
+
 	if err := h.studyRepo.ReorderCases(c.Request.Context(), studyID, caseIDs); err != nil {
 		HandleError(c, err, "Failed to reorder cases")
 		return
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// reorderProblem describes why ids cannot reorder the study's cases: duplicates
+// or ids outside the study. It returns "" when the request is valid.
+func reorderProblem(ids []uuid.UUID, inStudy []domain.Case) string {
+	members := make(map[uuid.UUID]bool, len(inStudy))
+	for _, cs := range inStudy {
+		members[cs.ID] = true
+	}
+	seen := make(map[uuid.UUID]bool, len(ids))
+	var unknown, dupes []string
+	for _, id := range ids {
+		switch {
+		case seen[id]:
+			dupes = append(dupes, id.String())
+		case !members[id]:
+			unknown = append(unknown, id.String())
+		}
+		seen[id] = true
+	}
+	switch {
+	case len(unknown) > 0:
+		return "Case IDs not in this study: " + strings.Join(unknown, ", ")
+	case len(dupes) > 0:
+		return "Duplicate case IDs: " + strings.Join(dupes, ", ")
+	}
+	return ""
 }
 
 // --- Status Transitions ---
