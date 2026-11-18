@@ -74,7 +74,7 @@ export function SystemTabs({ systems, active, onChange, className, panelId }: Sy
           onClick={() => onChange(key)}
           onKeyDown={(e) => onKeyDown(e, i)}
           className={cn(
-            'flex items-center gap-2 rounded-sm px-3 py-1.5 text-sm outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
+            'flex items-center gap-2 rounded-sm px-3 py-1.5 text-sm outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring',
             active === key
               ? 'bg-accent font-medium text-foreground'
               : 'text-muted-foreground hover:text-foreground'

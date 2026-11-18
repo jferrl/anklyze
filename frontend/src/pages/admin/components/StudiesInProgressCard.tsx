@@ -6,7 +6,7 @@ import type { Study } from '@/types';
 import { StatusBadge } from './StatusBadge';
 
 const LINK =
-  'rounded-sm font-medium text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50';
+  'rounded-sm font-medium text-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring';
 
 const RECENTLY_CLOSED_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -30,7 +30,7 @@ export function StudiesInProgressCard({ studies, now }: { studies: Study[]; now:
           <h2 className="text-base font-semibold text-foreground">{t('admin.dashboard.currentStudies')}</h2>
           <p className="text-sm text-muted-foreground">{t('admin.dashboard.currentStudiesDesc')}</p>
         </div>
-        <Link to="/admin/studies" className="shrink-0 rounded-sm text-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50">
+        <Link to="/admin/studies" className="shrink-0 rounded-sm text-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring">
           {t('admin.dashboard.allStudies')}
         </Link>
       </div>

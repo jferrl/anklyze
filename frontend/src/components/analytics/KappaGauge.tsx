@@ -75,13 +75,13 @@ export function KappaGauge({ value, label, description, caution, swatch, size = 
           ))}
           {hasValue && ci && (
             <span
-              className="absolute inset-y-0 bg-primary/30"
+              className="absolute inset-y-0 bg-primary/60"
               style={{ left: `${pos(ci.lower)}%`, width: `${pos(ci.upper) - pos(ci.lower)}%` }}
             />
           )}
           {hasValue && (
             <span
-              className="absolute -inset-y-1 w-0.5 -translate-x-1/2 bg-primary"
+              className="absolute -inset-y-1 w-0.5 -translate-x-1/2 bg-primary ring-1 ring-card"
               style={{ left: `${pos(value)}%` }}
             />
           )}

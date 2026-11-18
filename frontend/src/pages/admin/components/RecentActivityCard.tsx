@@ -14,7 +14,7 @@ interface RecentActivityCase {
 
 // Full-width link row: tonal hover and press, no scale.
 const ROW =
-  'flex w-full items-center justify-between gap-4 px-4 py-3 text-left outline-none transition-colors duration-150 hover:bg-muted active:bg-accent focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/50';
+  'flex w-full items-center justify-between gap-4 px-4 py-3 text-left outline-none transition-colors duration-150 hover:bg-muted active:bg-accent focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring';
 
 /** RecentActivityCard lists the cases with the latest responses, each linking to its report. */
 export function RecentActivityCard({ cases }: { cases: RecentActivityCase[] }) {

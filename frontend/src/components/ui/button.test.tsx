@@ -270,7 +270,7 @@ describe('Button', () => {
       render(<Button>Focus Me</Button>)
 
       const button = screen.getByRole('button')
-      expect(button).toHaveClass('focus-visible:ring-ring/50')
+      expect(button).toHaveClass('focus-visible:ring-ring')
     })
   })
 

@@ -146,7 +146,7 @@ A cool navy monochrome with four reserved identity hues and three status colours
 ### Primary
 - **Chart Navy** (primary): primary buttons, the current-step rule, the selected radio dot, text selection and caret, the logo fill.
 - **Field Navy** (field-navy): the solid full-bleed band of the landing hero, the login aside and the not-found page. It stays navy in dark mode (darkened, not inverted).
-- **Focus Blue** (ring): focus rings only, at 50% opacity and 3px.
+- **Focus Blue** (ring): focus rings only, solid and 3px wide, so the ring keeps 3:1 against Paper and Sheet in both themes.
 
 ### Tertiary: system identity
 - **Lauge-Hansen Ochre** (sys-lh), **Danis-Weber Teal** (sys-dw), **AO/OTA Blue** (sys-ao), **Bartonicek Magenta** (sys-bt): one per classification system, shown as a small square swatch (8 to 10px) beside the system name, and as chart series 1 to 4.
@@ -219,7 +219,7 @@ Corners are nearly square. The base radius is 4px: boxes and cards use it, butto
 - **Ghost:** for header actions such as Sign in.
 - **Text link:** Chart Navy, weight 500, underlined with a 4px offset; used for links to documents and the repository.
 - **Destructive outline:** red text and a 40% red stroke, for delete in place.
-- **Focus:** 3px Focus Blue ring at 50%.
+- **Focus:** solid 3px Focus Blue ring.
 - **On Field Navy:** a white button with navy text, 44px tall; the only inverse button.
 
 ### Badges
@@ -234,7 +234,7 @@ Corners are nearly square. The base radius is 4px: boxes and cards use it, butto
 
 ### Inputs / Fields
 - **Style:** Sheet fill, Field Rule stroke, 2px corners, 36px tall.
-- **Focus:** stroke turns Focus Blue with a 3px ring at 50%.
+- **Focus:** stroke turns Focus Blue with a solid 3px ring.
 - **Error / Disabled:** red stroke and ring; disabled at 50% opacity.
 
 ### Navigation

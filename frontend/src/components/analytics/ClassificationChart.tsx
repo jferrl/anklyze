@@ -108,7 +108,7 @@ export function ClassificationChart({
               key={mode}
               onClick={() => setViewMode(mode)}
               className={cn(
-                'rounded-sm p-1.5 outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                'rounded-sm p-1.5 outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring',
                 viewMode === mode
                   ? 'bg-accent text-foreground'
                   : 'text-muted-foreground hover:text-foreground'

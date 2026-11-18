@@ -20,7 +20,7 @@ import { useRecordTitle } from '@/components/layout/recordTitle';
 
 const PANEL_ID = 'study-system-panel';
 const BACK_LINK =
-  'inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
+  'inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring';
 
 const isNotFound = (error: unknown) => {
   const e = error as { code?: string; status?: number } | null;
