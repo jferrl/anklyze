@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanelRightOpen, PanelRightClose, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -12,13 +12,13 @@ export function FlowDiagramSidebar() {
 
   return (
     <>
-      {/* Toggle Button - Always visible on right edge */}
+      {/* Below lg an edge tab would cover the form, so the toggle sits in the empty right of the app header. */}
       <Button
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-1/2 -translate-y-1/2 z-50 h-auto py-4 px-2 rounded-r-none border-r-0"
+        className="fixed top-1.5 right-4 z-50 size-9 p-0 lg:top-1/2 lg:right-(--flow-right) lg:size-auto lg:-translate-y-1/2 lg:py-4 lg:px-2 lg:rounded-r-none lg:border-r-0"
         aria-label={isOpen ? t('classify.flowDiagram.hide') : t('classify.flowDiagram.show')}
-        style={{ right: isOpen ? 'min(90vw, 1200px)' : '0' }}
+        style={{ '--flow-right': isOpen ? 'min(90vw, 1200px)' : '0px' } as CSSProperties}
       >
         <span className="flex flex-col items-center gap-3">
           {isOpen ? (
@@ -26,7 +26,7 @@ export function FlowDiagramSidebar() {
           ) : (
             <PanelRightOpen className="h-4 w-4" />
           )}
-          <span className="text-sm font-medium writing-mode-vertical">
+          <span className="hidden text-sm font-medium writing-mode-vertical lg:inline">
             {t('classify.flowDiagram.title')}
           </span>
         </span>

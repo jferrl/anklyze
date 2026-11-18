@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Workflow, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Loader2, Workflow, ArrowLeft, RotateCcw, ChevronDown } from 'lucide-react';
 import { Button, FormSkeleton } from '@/components/ui';
 import { ComparisonView } from '@/components/ComparisonView';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { AnatomyView } from '@/components/anatomy/AnatomyView';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { useClassification } from '@/hooks/useClassification';
 import type { FractureInput } from '@/types';
@@ -31,6 +32,7 @@ export function FractureForm() {
 
   const { formData, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
   const [lastInput, setLastInput] = useState<FractureInput | null>(null);
+  const [showAnatomy, setShowAnatomy] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -173,6 +175,26 @@ export function FractureForm() {
                 showStepCounter={false}
               />
               <BreadcrumbTrail formData={formData} options={options} className="lg:hidden" />
+              {/* Below lg the drawing would push the questions down, so it waits behind a disclosure. */}
+              <div className="lg:hidden">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-expanded={showAnatomy}
+                  aria-controls="anatomy-mobile"
+                  onClick={() => setShowAnatomy((open) => !open)}
+                  className="-ml-2 gap-1.5"
+                >
+                  {showAnatomy ? t('anatomy.hide') : t('anatomy.show')}
+                  <ChevronDown className={showAnatomy ? 'h-4 w-4 rotate-180' : 'h-4 w-4'} />
+                </Button>
+                {showAnatomy && (
+                  <div id="anatomy-mobile" className="mt-2 rounded-lg border bg-card p-4">
+                    <AnatomyView formData={formData} showReading={false} />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -212,13 +234,22 @@ export function FractureForm() {
           </div>
         </div>
 
-        <aside className="hidden space-y-3 lg:sticky lg:top-16 lg:block lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
-          <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
-          {formData.involved_malleoli ? (
-            <BreadcrumbTrail variant="list" formData={formData} options={options} />
-          ) : (
-            <p className="text-sm text-muted-foreground">{t('classify.pathEmpty')}</p>
-          )}
+        <aside className="hidden space-y-6 lg:sticky lg:top-16 lg:block lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+          <section className="space-y-3">
+            <h2 className="text-base font-semibold">{t('anatomy.title')}</h2>
+            <div className="rounded-lg border bg-card p-4">
+              {/* The path list below is the reading, so the drawing does not repeat it. */}
+              <AnatomyView formData={formData} showReading={false} />
+            </div>
+          </section>
+          <section className="space-y-3">
+            <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
+            {formData.involved_malleoli ? (
+              <BreadcrumbTrail variant="list" formData={formData} options={options} />
+            ) : (
+              <p className="text-sm text-muted-foreground">{t('classify.pathEmpty')}</p>
+            )}
+          </section>
         </aside>
       </div>
     </form>

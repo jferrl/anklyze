@@ -94,7 +94,7 @@
       "colExample": "Se escribe",
       "laugeHansen": "Mecanismo de lesión: la posición del pie y la dirección de la fuerza deformante.",
       "danisWeber": "Nivel de la fractura de peroné respecto a la sindesmosis.",
-      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-\u2060B1.1.",
+      "aoota": "Código alfanumérico de hueso, segmento, tipo, grupo y subgrupo, por ejemplo 44-⁠B1.1.",
       "bartonicek": "Morfología del fragmento del maléolo posterior."
     },
     "studies": {
@@ -388,6 +388,67 @@
     "ctAnswer": "TAC: {{answer}}",
     "pathTitle": "Recorrido",
     "pathEmpty": "Sus respuestas se mostrarán aquí a medida que avance."
+  },
+  "anatomy": {
+    "title": "Anatomía",
+    "show": "Mostrar anatomía",
+    "hide": "Ocultar anatomía",
+    "front": "Frontal (AP)",
+    "side": "Lateral",
+    "lateral": "Lateral",
+    "medial": "Medial",
+    "posteriorMalleolus": "Maléolo posterior",
+    "back": "Posterior",
+    "frontSide": "Anterior",
+    "fibularLevel": "Nivel de la fractura de peroné",
+    "level": {
+      "infra": "Infrasindesmal",
+      "trans": "Transindesmal",
+      "supra": "Suprasindesmal",
+      "supra_far": "Suprasindesmal, a > 6 cm de la articulación",
+      "proximal": "Peroné proximal, por encima del dibujo"
+    },
+    "structures": {
+      "lateral": "maléolo lateral",
+      "medial": "maléolo medial",
+      "posterior": "maléolo posterior"
+    },
+    "summary": {
+      "empty": "Esquema del tobillo, proyecciones frontal y lateral. Aún no ha seleccionado ningún maléolo.",
+      "views": "Esquema del tobillo, proyecciones frontal y lateral.",
+      "highlighted": "Resaltado: {{list}}.",
+      "fibula": {
+        "infra": "Fractura de peroné por debajo de la sindesmosis (infrasindesmal).",
+        "trans": "Fractura de peroné a nivel de la sindesmosis (transindesmal).",
+        "supra": "Fractura de peroné por encima de la sindesmosis (suprasindesmal).",
+        "supra_far": "Fractura de peroné por encima de la sindesmosis, a más de 6 cm de la articulación.",
+        "proximal": "Fractura de peroné proximal, por encima del dibujo."
+      },
+      "posteriorType": "Maléolo posterior: {{type}}."
+    },
+    "fields": {
+      "involved_malleoli": "Maléolos",
+      "articular_involvement": "Superficie articular",
+      "has_articular_depression": "Depresión articular",
+      "medial_morphology": "Morfología medial",
+      "fibula_infrasindesmal_transverse": "Peroné infrasindesmal",
+      "fibular_level": "Nivel del peroné",
+      "fibula_trace_count": "Trazos del peroné",
+      "lateral_morphology": "Morfología del peroné",
+      "infrasindesmal_morphology": "Morfología del peroné",
+      "lateral_subtype": "Subtipo lateral",
+      "suprasindesmal_type": "Tipo suprasindesmal",
+      "fibula_trace_pattern": "Patrón del trazo",
+      "medial_subtype": "Subtipo medial",
+      "has_fibula_head_shortening": "Acortamiento en la cabeza del peroné",
+      "posterior_fracture_type": "Fragmento posterior"
+    },
+    "note": "Las marcas indican el nivel, no la forma de la fractura.",
+    "sources": {
+      "title": "Fuentes",
+      "front": "Vista frontal adaptada de <work>‘Weber Classification – latin.svg’</work> de DrFO.Tn, <license>CC BY 4.0</license>.",
+      "side": "Vista lateral adaptada de <work>‘Ankle.svg’</work>, dibujo del gobierno de EE. UU., dominio público."
+    }
   },
   "language": {
     "toggle": "Cambiar idioma"

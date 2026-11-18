@@ -38,3 +38,29 @@ Third-party content
     bones and cartilage were redrawn as flat tint and outline; two outline details
     hidden under ligaments in the original were smoothed; the drawing is cropped,
     labelled and marked to illustrate the landing page's example answers.
+
+  Frontal ankle drawing (frontend/src/components/anatomy/frontBones.ts, used by
+  the classifier's AnatomyView.tsx):
+    Adapted from "Weber Classification - latin.svg" by DrFO.Tn, Wikimedia Commons,
+    https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg
+    Licensed under CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+    Changes: only the Weber B panel is used; colour fills, gradients, cartilage,
+    ligaments, texture marks, the lower calcaneus, the arrow and the label were
+    removed; bone outlines were redrawn as line art; two outline details hidden
+    under ligaments in the original were smoothed; the drawing is cropped.
+    For the classifier, the two fibular pieces are joined into one intact fibula
+    outline with the fracture edges left out.
+
+  Lateral ankle drawing (frontend/src/components/anatomy/lateralBones.ts, used by
+  the classifier's AnatomyView.tsx):
+    Adapted from "Ankle.svg", Wikimedia Commons,
+    https://commons.wikimedia.org/wiki/File:Ankle.svg
+    An SVG version by Jak of a drawing by the U.S. federal government
+    (pueblo.gsa.gov); public domain in the United States (PD-USGov). No
+    attribution is required; it is credited as a courtesy.
+    Changes: only the tibia, fibula and talus outlines are used; ligaments,
+    tendon, foot bones and labels were removed; the distal tibial articular
+    surface with the posterior lip, the talar dome and the posterior talus,
+    hidden under ligaments and the fibula in the original, were completed as
+    simple curves, the dome parallel to the plafond; the lateral malleolus tip
+    was joined into one contour; the drawing is cropped.
