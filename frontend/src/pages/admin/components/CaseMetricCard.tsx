@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CaseMetrics } from '@/types';
+import { formatNumber } from '@/lib/format';
 
 import { CASE_LINK, caseReportPath } from './caseLink';
 import { LOW_AGREEMENT_PCT, agreementColorClass, formatPercent, type SystemKey } from './systems';
@@ -20,7 +21,7 @@ export function CaseMetricCard({ metrics, activeSystem }: CaseMetricCardProps) {
     <div className={cn('px-4 py-3', metrics.is_low_agreement && 'bg-warning/10')}>
       <div className="mb-1 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="text-xs tabular-nums text-muted-foreground">{metrics.case_order}</span>
+          <span className="text-xs tabular-nums text-muted-foreground">{formatNumber(metrics.case_order, 0)}</span>
           <Link to={caseReportPath(metrics.case_id)} className={cn('truncate', CASE_LINK)}>
             {metrics.case_title}
           </Link>

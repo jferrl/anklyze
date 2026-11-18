@@ -82,4 +82,16 @@ describe('StudyKappaAnalysis', () => {
     expect(screen.getAllByText('Based on 8 cases; interpret with caution')).toHaveLength(2);
     expect(screen.getAllByText('0.55')).toHaveLength(2);
   });
+
+  it('prints the kappa guide and counts in the interface language', async () => {
+    await i18n.changeLanguage('es');
+    try {
+      render(<StudyKappaAnalysis reliability={{ ...base, lauge_hansen_fleiss: { ...fleiss, num_subjects: 12345 } }} />);
+      expect(screen.getByText(/0–0,20 ligero · 0,21–0,40 aceptable/)).toBeInTheDocument();
+      expect(screen.getByText(/0,81–1,00 casi perfecto/)).toBeInTheDocument();
+      expect(screen.getByText(/12\.345 casos/)).toBeInTheDocument();
+    } finally {
+      await i18n.changeLanguage('en');
+    }
+  });
 });
