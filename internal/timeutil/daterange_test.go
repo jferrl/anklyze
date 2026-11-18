@@ -1,6 +1,7 @@
 package timeutil
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -37,7 +38,7 @@ func TestParseDateRange(t *testing.T) {
 		{
 			name:    "valid from date",
 			fromStr: "2024-01-15",
-			toStr:   "",
+			toStr:   "2024-02-15",
 			check: func(t *testing.T, dr DateRange) {
 				expected := time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC)
 				if !dr.From.Equal(expected) {
@@ -75,47 +76,65 @@ func TestParseDateRange(t *testing.T) {
 				}
 			},
 		},
-		{
-			name:    "invalid from date uses default",
-			fromStr: "not-a-date",
-			toStr:   "",
-			check: func(t *testing.T, dr DateRange) {
-				fromDiff := now.Sub(dr.From)
-				if fromDiff < 29*24*time.Hour || fromDiff > 31*24*time.Hour {
-					t.Errorf("Invalid from should fall back to default, got diff: %v", fromDiff)
-				}
-			},
-		},
-		{
-			name:    "invalid to date uses default",
-			fromStr: "",
-			toStr:   "invalid",
-			check: func(t *testing.T, dr DateRange) {
-				toDiff := now.Sub(dr.To)
-				if toDiff < -time.Minute || toDiff > time.Minute {
-					t.Errorf("Invalid to should fall back to default, got diff: %v", toDiff)
-				}
-			},
-		},
-		{
-			name:    "wrong format uses default",
-			fromStr: "15/01/2024",
-			toStr:   "30/06/2024",
-			check: func(t *testing.T, dr DateRange) {
-				fromDiff := now.Sub(dr.From)
-				if fromDiff < 29*24*time.Hour || fromDiff > 31*24*time.Hour {
-					t.Errorf("Wrong format from should fall back to default")
-				}
-			},
-		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			dr := ParseDateRange(tt.fromStr, tt.toStr)
+			dr, err := ParseDateRange(tt.fromStr, tt.toStr)
+			if err != nil {
+				t.Fatalf("ParseDateRange(%q, %q) error = %v", tt.fromStr, tt.toStr, err)
+			}
 			tt.check(t, dr)
 		})
+	}
+}
+
+func TestParseDateRange_Errors(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		fromStr string
+		toStr   string
+		wantErr string
+	}{
+		{"malformed from", "not-a-date", "", "invalid 'from' date"},
+		{"malformed to", "", "invalid", "invalid 'to' date"},
+		{"wrong format", "15/01/2024", "30/06/2024", "invalid 'to' date"},
+		{"impossible calendar date", "2024-02-30", "", "invalid 'from' date"},
+		{"from after to", "2024-12-31", "2024-01-01", "must not be after"},
+		{"from in the future", "2999-01-01", "", "must not be after"},
+		{"range just over the maximum", "2023-01-01", "2024-01-02", "must not exceed"},
+		{"huge range", "0001-01-01", "", "must not exceed"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			_, err := ParseDateRange(tt.fromStr, tt.toStr)
+			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
+				t.Errorf("ParseDateRange(%q, %q) error = %v, want containing %q", tt.fromStr, tt.toStr, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestParseDateRange_Limits(t *testing.T) {
+	t.Parallel()
+
+	// 365 days plus the end-of-day offset is within MaxRangeDays.
+	if _, err := ParseDateRange("2023-01-01", "2023-12-31"); err != nil {
+		t.Errorf("range within MaxRangeDays rejected: %v", err)
+	}
+
+	// With only "to" given, from defaults relative to it, so a past "to" is valid.
+	dr, err := ParseDateRange("", "2020-06-30")
+	if err != nil {
+		t.Fatalf("past to-only range rejected: %v", err)
+	}
+	if want := time.Date(2020, 6, 30, 23, 59, 59, 0, time.UTC).AddDate(0, 0, -DefaultRangeDays); !dr.From.Equal(want) {
+		t.Errorf("From = %v, want %v", dr.From, want)
 	}
 }
 
