@@ -13,6 +13,12 @@ const KEY_YAW = 15 * DEG;
 const KEY_PITCH = 10 * DEG;
 const DECAY_MS = 160; // release glide time constant
 
+// Highlight changes fade or recolour in 150ms on the house curve, as in the drawing.
+const fade = 'transition-[color,fill,stroke,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]';
+
+// A structure facing away keeps its label only while highlighted, faded and on a dashed leader.
+const behind = (on: boolean) => (on ? 'data-[back=true]:opacity-70' : 'data-[back=true]:opacity-0');
+
 const LABELS = [
   ['lateral', 'anatomy.lateral'],
   ['medial', 'anatomy.medial'],
@@ -30,6 +36,7 @@ export default function Anatomy3D({ state, onFail }: Anatomy3DProps) {
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelsRef = useRef<Partial<Record<keyof Anchors, HTMLSpanElement | null>>>({});
+  const leadersRef = useRef<Partial<Record<keyof Anchors, SVGGElement | null>>>({});
   const sceneRef = useRef<AnkleScene | null>(null);
   const drag = useRef<{ id: number; x: number; y: number; t: number; vx: number; vy: number } | null>(null);
   const glide = useRef(0);
@@ -45,7 +52,7 @@ export default function Anatomy3D({ state, onFail }: Anatomy3DProps) {
       .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`ankle.bin ${r.status}`))))
       .then((buffer) => {
         if (cancelled) return;
-        scene = createAnkleScene(canvas, parseAnkleModel(buffer), (anchors) => placeLabels(labelsRef.current, anchors));
+        scene = createAnkleScene(canvas, parseAnkleModel(buffer), (anchors) => placeLabels(labelsRef.current, leadersRef.current, anchors));
         sceneRef.current = scene;
         scene.setInk(readInk(canvas));
         const resize = new ResizeObserver(([entry]) => scene!.resize(entry.contentRect.width));
@@ -141,19 +148,35 @@ export default function Anatomy3D({ state, onFail }: Anatomy3DProps) {
             ready ? 'opacity-100' : 'opacity-0',
           )}
         />
-        {/* Labels follow the structures: the scene places each wrapper, the inner span sets it beside the point. */}
+        {/* Labels follow the structures: the scene places each label beside the model and its leader to the structure. */}
         <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0 overflow-hidden', !ready && 'hidden')}>
+          <svg className="absolute inset-0 size-full">
+            {LABELS.map(([key]) => (
+              <g
+                key={key}
+                ref={(el) => {
+                  leadersRef.current[key] = el;
+                }}
+                className={cn(fade, behind(state[key]), state[key] ? 'stroke-primary' : 'stroke-muted-foreground/50')}
+              >
+                <line strokeWidth="1" />
+                <circle r="2" className={cn(fade, state[key] ? 'fill-primary' : 'fill-muted-foreground/50')} stroke="none" />
+              </g>
+            ))}
+          </svg>
           {LABELS.map(([key, text]) => (
             <span
               key={key}
               ref={(el) => {
                 labelsRef.current[key] = el;
               }}
-              className="group absolute left-0 top-0 transition-opacity duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] data-[back=true]:opacity-0"
+              className={cn('group absolute left-0 top-0', fade, behind(state[key]))}
             >
               <span
                 className={cn(
-                  'block -translate-y-1/2 whitespace-nowrap text-xs transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-[side=left]:-translate-x-full group-data-[side=left]:pr-2.5 group-data-[side=right]:pl-2.5',
+                  'block -translate-y-1/2 whitespace-nowrap px-1 text-xs',
+                  fade,
+                  'group-data-[side=left]:-translate-x-full',
                   state[key] ? 'font-medium text-primary' : 'text-muted-foreground',
                 )}
               >
@@ -187,13 +210,31 @@ export default function Anatomy3D({ state, onFail }: Anatomy3DProps) {
 }
 
 // Labels move with every rendered frame, so they are placed directly rather than through React state.
-function placeLabels(labels: Partial<Record<keyof Anchors, HTMLSpanElement | null>>, anchors: Anchors) {
+function placeLabels(
+  labels: Partial<Record<keyof Anchors, HTMLSpanElement | null>>,
+  leaders: Partial<Record<keyof Anchors, SVGGElement | null>>,
+  anchors: Anchors,
+) {
   for (const key of Object.keys(anchors) as (keyof Anchors)[]) {
-    const el = labels[key];
-    if (!el) continue;
-    el.style.transform = `translate(${anchors[key].x}px, ${anchors[key].y}px)`;
-    el.dataset.back = String(anchors[key].back);
-    el.dataset.side = anchors[key].side;
+    const a = anchors[key];
+    const label = labels[key];
+    const leader = leaders[key];
+    if (label) {
+      label.style.transform = `translate(${a.labelX}px, ${a.labelY}px)`;
+      label.dataset.back = String(a.back);
+      label.dataset.side = a.side;
+    }
+    if (leader) {
+      leader.dataset.back = String(a.back);
+      const [line, dot] = leader.children;
+      line.setAttribute('x1', String(a.x));
+      line.setAttribute('y1', String(a.y));
+      line.setAttribute('x2', String(a.labelX));
+      line.setAttribute('y2', String(a.labelY));
+      line.setAttribute('stroke-dasharray', a.back ? '2 3' : 'none');
+      dot.setAttribute('cx', String(a.x));
+      dot.setAttribute('cy', String(a.y));
+    }
   }
 }
 
