@@ -9,7 +9,7 @@ Anklyze classifies ankle fractures from a guided questionnaire. The answers walk
 
 The hosted version is at <https://www.anklyze.es>.
 
-For educational purposes only. Always correlate with clinical findings.
+For medical purposes only. Always correlate with clinical findings.
 
 ## How classification works
 
@@ -20,7 +20,7 @@ The tree is maintained as a draw.io diagram, [`docs/Danis-Weber AO_OTA Flow-2026
 - [`docs/decision_tree.txt`](docs/decision_tree.txt): the tree, indented.
 - [`docs/decision_table.txt`](docs/decision_table.txt): one row per terminal path, 165 paths across 7 malleoli combinations.
 
-`make classify-validate` parses the diagram, regenerates those files and `internal/rules/engine_drawio_test.go`, and runs the engine tests. The generated test file currently holds 88 subtests. The generator could not map the other 77 paths to engine input, and records each as a `// SKIPPED` comment in that file.
+`make classify-validate` parses the diagram, regenerates those files and `internal/rules/engine_drawio_test.go`, and runs the engine tests. The generated tests cover all 165 paths. On one path the diagram reads "AO clasificable" with no code, so that path's AO/OTA result is not checked until the diagram is corrected. The Playwright suite drives the form through the same 165 paths (`e2e/fixtures/classification-cases.json`, generated from the diagram).
 
 | System | What the engine returns |
 | ------ | ----------------------- |
@@ -33,7 +33,16 @@ Every system can also return "not classifiable".
 
 ## Reliability studies
 
-A case is one patient's X-rays (draft, published, closed). A study is a set of cases that the same raters all classify (draft, active, closed). For a study the app computes Fleiss' kappa per classification system (plus Cohen's kappa when exactly two raters completed it), percent agreement per case, and accuracy against each case's gold standard. Responses export as CSV.
+A case is one patient's X-rays (draft, published, closed). A study is a set of cases that the same raters all classify (draft, active, closed). Closing a study stops it accepting responses.
+
+For a study the app computes, per classification system:
+
+- Fleiss' kappa across the raters who answered every case, with a 95% bootstrap confidence interval. A case where a rater left that system unanswered is left out, and the count is shown.
+- Cohen's kappa, and AO/OTA linear weighted kappa, when exactly two raters completed the study.
+- Per case, agreement with the most common answer.
+- Accuracy against each case's gold standard.
+
+Responses export as CSV.
 
 [`docs/RELIABILITY_ANALYSIS.md`](docs/RELIABILITY_ANALYSIS.md) explains the statistics and how to design a study.
 
@@ -70,9 +79,9 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 | Variable | Default | Effect |
 | -------- | ------- | ------ |
 | `DATABASE_URL` | unset | PostgreSQL connection. Required: the server retries for about 25 seconds, then exits non-zero. |
-| `SUPABASE_URL` | unset | Enables JWT auth. Unset: every route is public and `/api/me` returns a mock admin. |
+| `SUPABASE_URL` | unset | Enables JWT auth. Unset: every route is public and `/api/me` returns a mock admin (local development only). Set but malformed: the server refuses to start. |
 | `SUPABASE_SERVICE_ROLE_KEY` | unset | Lets the server sync user roles to Supabase. |
-| `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | unset | Case image storage. Unset: image storage is disabled. |
+| `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | unset | Case image storage. Unset: uploads are accepted but not stored, so set these wherever images matter. |
 | `STUDY_BUCKET_NAME` | `studies` | Bucket for case images. |
 | `S3_USE_SSL` | `true` | |
 | `PORT` | `8080` | |
