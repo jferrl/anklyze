@@ -4,6 +4,22 @@ import { ClassifyPage } from '../pages/classify.page';
 test.describe('Form State Management', () => {
   let classifyPage: ClassifyPage;
 
+  /** Shortest complete path: posterior only, small fragment, CT, extraincisural. */
+  async function completePosteriorOnly() {
+    await classifyPage.answer('involved_malleoli', 'posterior_only');
+    await classifyPage.answer('articular_involvement', 'small_without_extension');
+    await classifyPage.answer('has_ct_scan', 'true');
+    await classifyPage.answer('posterior_fracture_type', 'extraincisural');
+  }
+
+  async function completeLateralOnlyTransindesmal() {
+    await classifyPage.answer('involved_malleoli', 'lateral_only');
+    await classifyPage.answer('fibular_level', 'transindesmal');
+    await classifyPage.answer('fibula_trace_count', 'single');
+    await classifyPage.answer('lateral_morphology', 'spiral');
+    await classifyPage.answer('lateral_subtype', 'simple');
+  }
+
   test.beforeEach(async ({ page }) => {
     classifyPage = new ClassifyPage(page);
     await classifyPage.goto();
@@ -26,128 +42,112 @@ test.describe('Form State Management', () => {
 
   test.describe('Form Completion Validation', () => {
     test('should enable button only when form is complete - posterior only path', async () => {
-      // Select malleoli - should still be disabled
-      await classifyPage.selectPosteriorOnly();
+      await classifyPage.answer('involved_malleoli', 'posterior_only');
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select CT scan Yes - should still be disabled (need posterior type)
-      await classifyPage.selectPosteriorCTScanYes();
+      await classifyPage.answer('articular_involvement', 'small_without_extension');
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select posterior type - should be enabled
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      // CT yes still needs the posterior type
+      await classifyPage.answer('has_ct_scan', 'true');
+      await classifyPage.expectClassifyButtonDisabled();
+
+      await classifyPage.answer('posterior_fracture_type', 'extraincisural');
       await classifyPage.expectClassifyButtonEnabled();
     });
 
     test('should enable button only when form is complete - lateral only path', async () => {
-      // Select malleoli
-      await classifyPage.selectLateralOnly();
+      await classifyPage.answer('involved_malleoli', 'lateral_only');
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select fibular level (transindesmal requires morphology selection)
-      await classifyPage.selectLateralLevelTransindesmal();
+      await classifyPage.answer('fibular_level', 'transindesmal');
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select morphology - should be enabled
-      await classifyPage.selectLateralMorphologyTransSpiral();
+      await classifyPage.answer('fibula_trace_count', 'single');
+      await classifyPage.expectClassifyButtonDisabled();
+
+      await classifyPage.answer('lateral_morphology', 'spiral');
+      await classifyPage.expectClassifyButtonDisabled();
+
+      await classifyPage.answer('lateral_subtype', 'simple');
       await classifyPage.expectClassifyButtonEnabled();
     });
 
     test('should enable button when CT scan is No for medial_posterior path', async () => {
-      await classifyPage.selectMedialPosterior();
+      await classifyPage.answer('involved_malleoli', 'medial_posterior');
       await classifyPage.expectClassifyButtonDisabled();
 
-      // Select CT scan No - should enable button (no Bartonicek needed)
-      await classifyPage.selectMPCTScanNo();
+      // No CT means no Bartonicek question
+      await classifyPage.answer('has_ct_scan', 'false');
       await classifyPage.expectClassifyButtonEnabled();
     });
   });
 
   test.describe('Field Reset on Parent Change', () => {
     test('should reset all fields when changing malleoli selection', async ({ page }) => {
-      // Complete a path (use transindesmal which requires morphology)
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelTransindesmal();
-      await classifyPage.selectLateralMorphologyTransSpiral();
+      await completeLateralOnlyTransindesmal();
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change malleoli selection
-      await classifyPage.selectMedialOnly();
+      await classifyPage.answer('involved_malleoli', 'medial_only');
 
-      // Verify the lateral morphology card is no longer visible
-      const lateralMorphCard = page.locator('#lat-morph-trans-spiral');
-      await expect(lateralMorphCard).not.toBeVisible();
-
-      // Button should be disabled again
+      await expect(page.locator('#lateral_morphology-spiral')).not.toBeVisible();
       await classifyPage.expectClassifyButtonDisabled();
     });
 
     test('should reset dependent fields when changing fibular level in lateral only', async ({ page }) => {
-      // Use transindesmal which requires morphology selection
-      await classifyPage.selectLateralOnly();
-      await classifyPage.selectLateralLevelTransindesmal();
-      await classifyPage.selectLateralMorphologyTransSpiral();
+      await completeLateralOnlyTransindesmal();
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change fibular level
-      await classifyPage.selectLateralLevelSuprasindesmal();
+      await classifyPage.answer('fibular_level', 'suprasindesmal');
 
-      // Morphology should be cleared, suprasindesmal type card should be visible
-      const supraTypeCard = page.locator('#supra-type-simple_diaphyseal');
-      await expect(supraTypeCard).toBeVisible();
-
+      await expect(page.locator('#suprasindesmal_type-simple_diaphyseal')).toBeVisible();
+      await expect(page.locator('#lateral_morphology-spiral')).not.toBeVisible();
       await classifyPage.expectClassifyButtonDisabled();
     });
 
-    test('should reset dependent fields when changing fibular level in lateral posterior', async ({ page }) => {
-      // Use transindesmal which requires morphology, CT scan, and posterior type
-      await classifyPage.selectLateralPosterior();
-      await classifyPage.selectLPLevelTransindesmal();
-      await classifyPage.selectLPMorphologyTransSpiral();
-      await classifyPage.selectLPTransCTScanYes();
-      await classifyPage.selectLPPosteriorTypeTrans('posterolateral');
+    test('should reset dependent fields when changing fibular level in lateral posterior', async () => {
+      await classifyPage.answer('involved_malleoli', 'lateral_posterior');
+      await classifyPage.answer('fibular_level', 'transindesmal');
+      await classifyPage.answer('lateral_morphology', 'spiral');
+      await classifyPage.answer('has_ct_scan', 'true');
+      await classifyPage.answer('posterior_fracture_type', 'posterolateral');
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change fibular level
-      await classifyPage.selectLPLevelSuprasindesmal();
+      await classifyPage.answer('fibular_level', 'suprasindesmal');
 
-      // Previous selections should be cleared
       await classifyPage.expectClassifyButtonDisabled();
     });
 
     test('should reset dependent fields when changing medial morphology in lateral medial', async () => {
-      await classifyPage.selectLateralMedial();
-      await classifyPage.selectLMMedialVertical();
-      await classifyPage.selectLMInfraTransverseYes();
+      await classifyPage.answer('involved_malleoli', 'lateral_medial');
+      await classifyPage.answer('medial_morphology', 'vertical');
+      await classifyPage.answer('fibula_infrasindesmal_transverse', 'true');
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change medial morphology
-      await classifyPage.selectLMMedialTransverseOblique();
+      await classifyPage.answer('medial_morphology', 'transverse_oblique');
 
-      // Button should be disabled
       await classifyPage.expectClassifyButtonDisabled();
     });
 
-    test('should reset morphology when changing fibular level in trimaleolar', async () => {
-      await classifyPage.selectTrimaleolar();
-      await classifyPage.selectTrimaleolarLevelLow();
-      await classifyPage.selectTrimaleolarMorphology('spiral');
-      await classifyPage.selectTriLowCTScanNo();
+    test('should reset morphology when changing fibular level in trimaleolar', async ({ page }) => {
+      await classifyPage.answer('involved_malleoli', 'trimaleolar');
+      await classifyPage.answer('fibular_level', 'transindesmal');
+      await classifyPage.answer('fibula_trace_count', 'single');
+      await classifyPage.answer('lateral_morphology', 'spiral');
+      await classifyPage.answer('medial_subtype', 'open_mortise');
+      await classifyPage.answer('has_ct_scan', 'false');
       await classifyPage.expectClassifyButtonEnabled();
 
-      // Change fibular level
-      await classifyPage.selectTrimaleolarLevelHigh();
+      await classifyPage.answer('fibular_level', 'suprasindesmal');
 
-      // Morphology should be cleared
+      await expect(page.locator('#lateral_morphology-spiral')).not.toBeVisible();
       await classifyPage.expectClassifyButtonDisabled();
     });
   });
 
   test.describe('Result State', () => {
     test('should show results after successful classification', async () => {
-      await classifyPage.selectPosteriorOnly();
-      await classifyPage.selectPosteriorCTScanYes();
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      await completePosteriorOnly();
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
@@ -155,9 +155,7 @@ test.describe('Form State Management', () => {
     });
 
     test('should show classify another button after classification', async () => {
-      await classifyPage.selectPosteriorOnly();
-      await classifyPage.selectPosteriorCTScanYes();
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      await completePosteriorOnly();
       await classifyPage.submitClassification();
 
       await expect(classifyPage.classifyAnotherButton).toBeVisible();
@@ -166,31 +164,26 @@ test.describe('Form State Management', () => {
 
   test.describe('Form Reset', () => {
     test('should completely reset form when clicking Classify Another', async () => {
-      await classifyPage.selectPosteriorOnly();
-      await classifyPage.selectPosteriorCTScanYes();
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      await completePosteriorOnly();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();
 
       await classifyPage.resetForm();
 
-      // Should be back to initial state
       await classifyPage.expectFormReset();
     });
 
     test('should allow starting a new classification after reset', async () => {
-      // First classification
-      await classifyPage.selectPosteriorOnly();
-      await classifyPage.selectPosteriorCTScanYes();
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      await completePosteriorOnly();
       await classifyPage.submitClassification();
       await classifyPage.expectResultsVisible();
 
       await classifyPage.resetForm();
 
-      // Second classification with different path
-      await classifyPage.selectMedialOnly();
-      await classifyPage.selectMedialMorphologyVertical();
+      // Second classification with a different path
+      await classifyPage.answer('involved_malleoli', 'medial_only');
+      await classifyPage.answer('articular_involvement', 'false');
+      await classifyPage.answer('medial_morphology', 'vertical');
       await classifyPage.submitClassification();
 
       await classifyPage.expectResultsVisible();
@@ -202,22 +195,6 @@ test.describe('Form State Management', () => {
     // Skipped: Race condition - classification completes too fast to reliably catch disabled state
     test.skip('should disable button during classification', async () => {
       // The button is disabled during API call, but the call completes too fast to test reliably
-    });
-
-    test.skip('original test', async ({ page }) => {
-      await classifyPage.selectPosteriorOnly();
-      await classifyPage.selectPosteriorTypeExtraincisural();
-
-      // Start classification but don't wait
-      const classifyPromise = classifyPage.classifyButton.click();
-
-      // Button should be disabled during loading
-      await expect(classifyPage.classifyButton).toBeDisabled();
-
-      // Wait for classification to complete
-      await page.waitForResponse(
-        (resp) => resp.url().includes('/api/classify') && resp.status() === 200
-      );
     });
   });
 });

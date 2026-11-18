@@ -140,13 +140,14 @@ test.describe('Theme Switching', () => {
       await expect(html).toHaveClass(/dark/);
 
       // Complete a classification
-      await classifyPage.selectPosteriorOnly();
+      await classifyPage.answer('involved_malleoli', 'posterior_only');
       await expect(html).toHaveClass(/dark/);
 
-      await classifyPage.selectPosteriorCTScanYes();
+      await classifyPage.answer('articular_involvement', 'small_without_extension');
+      await classifyPage.answer('has_ct_scan', 'true');
       await expect(html).toHaveClass(/dark/);
 
-      await classifyPage.selectPosteriorTypeExtraincisural();
+      await classifyPage.answer('posterior_fracture_type', 'extraincisural');
       await expect(html).toHaveClass(/dark/);
 
       await classifyPage.submitClassification();

@@ -26,8 +26,6 @@ OUTPUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
 ALIASES = {
     'Alta (Suprasindesmal)': 'Suprasindesmal',
     'Proximal (1/3 proximal peroné)': 'Proximal (1/3 proximal de peroné)',
-    'Transverso/oblicuo/avulsión/abierta mortaja':
-        'Transverso/oblicuo/avulsión/abierta la mortaja',
     'Parasindesmal de trazo oblicuo largo/espiroideo (a < de 6cm de la superficie articular)':
         'Parasindesmal (a < 6 cm de la superficie articular) de trazo oblicuo largo/espiroideo',
 }
