@@ -41,8 +41,9 @@ const (
 type SystemAgreement struct {
 	System string `json:"system"`
 
-	// PercentAgreement is the share of responses (0-100) that gave the most common answer.
-	PercentAgreement float64 `json:"percent_agreement"`
+	// PercentAgreement is the share of responses (0-100) that gave the most common answer,
+	// null when fewer than 2 responses have a classification in the system.
+	PercentAgreement *float64 `json:"percent_agreement"`
 
 	// Distribution of classifications across categories
 	CategoryCounts map[string]int64 `json:"category_counts"`
@@ -112,10 +113,16 @@ type StudyReliabilityMetrics struct {
 	PerCaseMetrics []PerCaseMetrics `json:"per_case_metrics"`
 }
 
+// KappaNoVariation is the KappaUnavailableReason when every rating falls in one category:
+// chance agreement is 1, so kappa is 0/0. A system with too few cases or raters has no result at all.
+const KappaNoVariation = "no_variation"
+
 // FleissKappaResult contains Fleiss' Kappa with metadata.
+// Kappa is nil when it is undefined, and KappaUnavailableReason says why.
 type FleissKappaResult struct {
-	Kappa          float64 `json:"kappa"`
-	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+	Kappa                  *float64 `json:"kappa"`
+	Interpretation         string   `json:"interpretation,omitempty"` // Uses KappaInterpretation()
+	KappaUnavailableReason string   `json:"kappa_unavailable_reason,omitempty"`
 
 	// Matrix dimensions
 	NumSubjects   int `json:"num_subjects"`   // Cases used: every complete rater answered them
@@ -129,21 +136,12 @@ type FleissKappaResult struct {
 	ConfidenceInterval *ConfidenceInterval `json:"confidence_interval,omitempty"`
 }
 
-// NewFleissKappaResult creates a FleissKappaResult with interpretation.
-func NewFleissKappaResult(kappa float64, numSubjects, numRaters, numCategories int) *FleissKappaResult {
-	return &FleissKappaResult{
-		Kappa:          kappa,
-		Interpretation: KappaInterpretation(kappa),
-		NumSubjects:    numSubjects,
-		NumRaters:      numRaters,
-		NumCategories:  numCategories,
-	}
-}
-
 // CohensKappaResult is Cohen's Kappa between two raters across the cases of a study.
+// Kappa is nil when it is undefined, and KappaUnavailableReason says why.
 type CohensKappaResult struct {
-	Kappa          float64 `json:"kappa"`
-	Interpretation string  `json:"interpretation"` // Uses KappaInterpretation()
+	Kappa                  *float64 `json:"kappa"`
+	Interpretation         string   `json:"interpretation,omitempty"` // Uses KappaInterpretation()
+	KappaUnavailableReason string   `json:"kappa_unavailable_reason,omitempty"`
 
 	NumSubjects      int `json:"num_subjects"`       // Cases both raters answered
 	NumCasesExcluded int `json:"num_cases_excluded"` // Cases where either rater gave no answer
@@ -170,12 +168,13 @@ type PerCaseMetrics struct {
 	CaseTitle     string    `json:"case_title"`
 	ResponseCount int       `json:"response_count"`
 
-	// Per-system agreement (percentage)
-	DanisWeberAgreement  float64  `json:"danis_weber_agreement"`
-	LaugeHansenAgreement float64  `json:"lauge_hansen_agreement"`
-	AOOTAAgreement       float64  `json:"ao_ota_agreement"`
-	BartonicekAgreement  *float64 `json:"bartonicek_agreement,omitempty"` // Optional, requires CT
+	// Per-system percent agreement (0-100), null when fewer than 2 responses have a
+	// classification in the system.
+	DanisWeberAgreement  *float64 `json:"danis_weber_agreement"`
+	LaugeHansenAgreement *float64 `json:"lauge_hansen_agreement"`
+	AOOTAAgreement       *float64 `json:"ao_ota_agreement"`
+	BartonicekAgreement  *float64 `json:"bartonicek_agreement"`
 
-	// Identifies cases with low agreement (potential "hard cases")
-	IsLowAgreement bool `json:"is_low_agreement"` // True if any system < 60%
+	// IsLowAgreement is true if Lauge-Hansen, Danis-Weber or AO/OTA agreement is below 60%.
+	IsLowAgreement bool `json:"is_low_agreement"`
 }

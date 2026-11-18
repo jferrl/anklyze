@@ -308,7 +308,7 @@ func TestAdminCaseResponsesAndExports(t *testing.T) {
 			t.Fatalf("reliability = %+v", got)
 		}
 		dw := got.DanisWeberAgreement
-		if dw == nil || dw.PercentAgreement != 50 || dw.CategoryCounts["Weber A"] != 1 || dw.CategoryCounts["Weber B"] != 1 {
+		if dw == nil || dw.PercentAgreement == nil || *dw.PercentAgreement != 50 || dw.CategoryCounts["Weber A"] != 1 || dw.CategoryCounts["Weber B"] != 1 {
 			t.Fatalf("danis_weber agreement = %+v, want 50%% over Weber A and Weber B", dw)
 		}
 	})

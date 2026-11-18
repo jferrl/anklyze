@@ -11,16 +11,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
 import { studyApi } from '@/services';
 import { PerCaseAgreementSection } from './components/PerCaseAgreementSection';
-import { KappaSystemDetail, StudyKappaAnalysis } from './components/StudyKappaAnalysis';
+import { StudyKappaAnalysis } from './components/StudyKappaAnalysis';
 import { StudyGoldStandardSection } from './components/StudyGoldStandardSection';
 import { SystemTabs } from './components/SystemTabs';
-import { LOW_AGREEMENT_PCT, SYSTEMS, SYSTEM_KEYS, SYSTEM_LABEL, type SystemKey } from './components/systems';
+import { LOW_AGREEMENT_PCT, SYSTEMS, SYSTEM_KEYS, type SystemKey } from './components/systems';
 import { buildReliabilityFiguresCsv, downloadText, fileSlug } from './components/reliabilityCsv';
 import { useRecordTitle } from '@/components/layout/recordTitle';
 
 const PANEL_ID = 'study-system-panel';
 const BACK_LINK =
-  'inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
+  'inline-flex items-center gap-2 rounded-sm text-sm text-muted-foreground outline-none transition-colors duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring';
 
 const isNotFound = (error: unknown) => {
   const e = error as { code?: string; status?: number } | null;
@@ -120,6 +120,8 @@ export function StudyReliabilityPage() {
   const today = new Date().toISOString().slice(0, 10);
   const slug = fileSlug(study.title);
   const lowAgreementCases = reliability.per_case_metrics.filter((c) => c.is_low_agreement).length;
+  // With no responses there is nothing to compute or export.
+  const noResponses = reliability.total_responses === 0;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 sm:px-6">
@@ -140,7 +142,7 @@ export function StudyReliabilityPage() {
           actions={
             <>
               <Button
-                disabled={exporting !== null}
+                disabled={exporting !== null || noResponses}
                 onClick={() =>
                   runExport('figures', () =>
                     downloadText(buildReliabilityFiguresCsv(reliability, goldQuery.data), `${slug}_figures_${today}.csv`)
@@ -152,7 +154,7 @@ export function StudyReliabilityPage() {
               </Button>
               <Button
                 variant="outline"
-                disabled={exporting !== null}
+                disabled={exporting !== null || noResponses}
                 onClick={() =>
                   runExport('responses', () => studyApi.downloadStudyResponsesCSV(id!, `${slug}_responses_${today}.csv`))
                 }
@@ -165,47 +167,50 @@ export function StudyReliabilityPage() {
         />
       </div>
 
-      <StatGroup>
-        <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
-        <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
-        <StatCard
-          title={t('admin.studies.reliability.completeRaters')}
-          value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
-          subtitle={t('admin.studies.reliability.completeRatersNote')}
-        />
-        <StatCard
-          title={t('admin.studies.reliability.lowAgreementCasesTitle')}
-          value={lowAgreementCases}
-          subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
-        />
-      </StatGroup>
-
-      <StudyKappaAnalysis reliability={reliability} />
-
-      <div className="space-y-6 border-t pt-6">
-        <SystemTabs systems={SYSTEMS} active={system} onChange={setSystem} panelId={PANEL_ID} />
-
-        <div id={PANEL_ID} role="tabpanel" aria-labelledby={`${PANEL_ID}-tab-${system}`} className="space-y-8">
-          <section aria-labelledby="system-detail-heading" className="space-y-3">
-            <h2 id="system-detail-heading" className="text-base font-semibold text-foreground">
-              {t('admin.reliability.systemDetail', { system: SYSTEM_LABEL[system] })}
-            </h2>
-            <div key={system} className="animate-fade-in">
-              <KappaSystemDetail reliability={reliability} system={system} />
-            </div>
-          </section>
-
-          <PerCaseAgreementSection perCaseMetrics={reliability.per_case_metrics} activeSystem={system} />
-
-          <StudyGoldStandardSection
-            studyId={id!}
-            metrics={goldQuery.data}
-            isError={goldQuery.isError}
-            onRetry={() => void goldQuery.refetch()}
-            activeSystem={system}
-          />
+      {noResponses ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-4 py-6">
+          <p className="text-sm text-foreground" role="status">{t('admin.studies.reliability.noResponses')}</p>
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/admin/studies/${id}/edit`}>{t('admin.studies.reliability.openStudy')}</Link>
+          </Button>
         </div>
-      </div>
+      ) : (
+        <>
+          <StudyKappaAnalysis reliability={reliability} />
+
+          {/* The counts follow the headline kappas and lead into the per-case tables below. */}
+          <StatGroup>
+            <StatCard title={t('admin.studies.reliability.totalCases')} value={reliability.total_cases} />
+            <StatCard title={t('admin.reliability.totalResponses')} value={reliability.total_responses} />
+            <StatCard
+              title={t('admin.studies.reliability.completeRaters')}
+              value={t('admin.studies.reliability.nOfM', { n: reliability.complete_raters, m: reliability.unique_raters })}
+              subtitle={t('admin.studies.reliability.completeRatersNote')}
+            />
+            <StatCard
+              title={t('admin.studies.reliability.lowAgreementCasesTitle')}
+              value={lowAgreementCases}
+              subtitle={t('admin.studies.reliability.lowAgreementNote', { threshold: LOW_AGREEMENT_PCT })}
+            />
+          </StatGroup>
+
+          <div className="space-y-6 border-t pt-6">
+            <SystemTabs systems={SYSTEMS} active={system} onChange={setSystem} panelId={PANEL_ID} />
+
+            <div id={PANEL_ID} role="tabpanel" aria-labelledby={`${PANEL_ID}-tab-${system}`} className="space-y-8">
+              <PerCaseAgreementSection perCaseMetrics={reliability.per_case_metrics} activeSystem={system} />
+
+              <StudyGoldStandardSection
+                studyId={id!}
+                metrics={goldQuery.data}
+                isError={goldQuery.isError}
+                onRetry={() => void goldQuery.refetch()}
+                activeSystem={system}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -238,14 +243,6 @@ function ReliabilitySkeleton({ label }: { label: string }) {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="space-y-2 bg-card p-4">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-16" />
-          </div>
-        ))}
-      </div>
       <div className="space-y-3">
         <Skeleton className="h-5 w-56" />
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-2 lg:grid-cols-4">
@@ -261,6 +258,14 @@ function ReliabilitySkeleton({ label }: { label: string }) {
         </div>
         <Skeleton className="h-4 w-full max-w-2xl" />
         <Skeleton className="h-20 w-full max-w-[70ch]" />
+      </div>
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="space-y-2 bg-card p-4">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+        ))}
       </div>
     </div>
   );

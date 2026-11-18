@@ -6,11 +6,11 @@ import type { CaseMetrics } from '@/types';
 import { CaseMetricCard } from './CaseMetricCard';
 import { CASE_LINK, caseReportPath } from './caseLink';
 import { SystemColumnHeads, SystemListHead } from './SystemTabs';
-import { LOW_AGREEMENT_PCT, SYSTEM_KEYS, agreementColorClass, formatPercent, type SystemKey } from './systems';
+import { LOW_AGREEMENT_PCT, SYSTEM_KEYS, activeColumn, agreementColorClass, formatPercent, type SystemKey } from './systems';
 
 interface PerCaseAgreementSectionProps {
   perCaseMetrics: CaseMetrics[];
-  /** System shown on narrow screens, where only one fits; wide screens show all four. */
+  /** System shown on narrow screens, where only one fits; wide screens show all four and highlight it. */
   activeSystem: SystemKey;
 }
 
@@ -48,7 +48,7 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
                     <th className="w-12 px-4 py-3 text-left font-medium text-muted-foreground">#</th>
                     <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t('admin.studies.goldStandard.case')}</th>
                     <th className="px-4 py-3 text-right font-medium text-muted-foreground">{t('admin.studies.table.responses')}</th>
-                    <SystemColumnHeads />
+                    <SystemColumnHeads active={activeSystem} />
                   </tr>
                 </thead>
                 <tbody>
@@ -74,10 +74,9 @@ export function PerCaseAgreementSection({ perCaseMetrics, activeSystem }: PerCas
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{caseMetrics.response_count}</td>
                       {SYSTEM_KEYS.map((key) => {
-                        // The backend reports 100% for a case nobody answered; it has no agreement to show.
-                        const value = caseMetrics.response_count > 0 ? caseMetrics[`${key}_agreement`] : null;
+                        const value = caseMetrics[`${key}_agreement`];
                         return (
-                          <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', agreementColorClass(value))}>
+                          <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', agreementColorClass(value), activeColumn(key, activeSystem))}>
                             {value != null ? formatPercent(value) : '—'}
                           </td>
                         );

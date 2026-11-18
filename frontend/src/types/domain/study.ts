@@ -32,11 +32,18 @@ export interface StudyWithCases extends Study {
 }
 
 /**
+ * Why a kappa is null: no_variation means every rating fell in one category, so kappa is 0/0.
+ * Too few cases or raters gives no result at all.
+ */
+export type KappaUnavailableReason = 'no_variation';
+
+/**
  * Fleiss' Kappa result for multi-rater agreement
  */
 export interface FleissKappaResult {
-  kappa: number;
-  interpretation: string;
+  kappa: number | null;
+  interpretation?: string;
+  kappa_unavailable_reason?: KappaUnavailableReason;
   num_subjects: number;   // Cases used: every complete rater answered them
   num_raters: number;     // Number of complete raters
   num_categories: number;
@@ -58,8 +65,9 @@ export interface WeightedKappaResult {
  * Cohen's Kappa between two raters across the cases of a study
  */
 export interface CohensKappaResult {
-  kappa: number;
-  interpretation: string;
+  kappa: number | null;
+  interpretation?: string;
+  kappa_unavailable_reason?: KappaUnavailableReason;
   num_subjects: number;       // Cases both raters answered
   num_cases_excluded: number; // Cases where either rater gave no answer
   confidence_interval?: ConfidenceInterval;
@@ -74,10 +82,11 @@ export interface CaseMetrics {
   case_id: string;
   case_title: string;
   response_count: number;
-  danis_weber_agreement: number;
-  lauge_hansen_agreement: number;
-  ao_ota_agreement: number;
-  bartonicek_agreement?: number;
+  // Percent agreement per system; null when fewer than two responses have a classification in it.
+  danis_weber_agreement: number | null;
+  lauge_hansen_agreement: number | null;
+  ao_ota_agreement: number | null;
+  bartonicek_agreement: number | null;
   is_low_agreement: boolean;
 }
 

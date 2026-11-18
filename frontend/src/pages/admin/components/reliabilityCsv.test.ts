@@ -20,10 +20,10 @@ const reliability: StudyReliabilityResponse = {
     confidence_interval: { lower: -0.0512345, upper: 0.4, level: 0.95 },
   },
   per_case_metrics: [
-    { case_order: 1, case_id: 'a', case_title: 'A', response_count: 3, lauge_hansen_agreement: 100, danis_weber_agreement: 50, ao_ota_agreement: 0, is_low_agreement: false },
-    { case_order: 2, case_id: 'b', case_title: 'B', response_count: 3, lauge_hansen_agreement: 33.333333, danis_weber_agreement: 50, ao_ota_agreement: 0, is_low_agreement: true },
-    // Unanswered: the backend's 100% must not pull the mean up.
-    { case_order: 3, case_id: 'c', case_title: 'C', response_count: 0, lauge_hansen_agreement: 100, danis_weber_agreement: 100, ao_ota_agreement: 100, is_low_agreement: false },
+    { case_order: 1, case_id: 'a', case_title: 'A', response_count: 3, lauge_hansen_agreement: 100, danis_weber_agreement: 50, ao_ota_agreement: 0, bartonicek_agreement: null, is_low_agreement: false },
+    { case_order: 2, case_id: 'b', case_title: 'B', response_count: 3, lauge_hansen_agreement: 33.333333, danis_weber_agreement: 50, ao_ota_agreement: 0, bartonicek_agreement: null, is_low_agreement: true },
+    // Fewer than two classified responses: no agreement, so it neither enters the mean nor reads 100%.
+    { case_order: 3, case_id: 'c', case_title: 'C', response_count: 1, lauge_hansen_agreement: null, danis_weber_agreement: null, ao_ota_agreement: null, bartonicek_agreement: null, is_low_agreement: false },
   ],
 };
 
@@ -40,6 +40,8 @@ describe('buildReliabilityFiguresCsv', () => {
     );
     expect(lines[1]).toBe('Lauge-Hansen,0.123456789,-0.0512345,0.4,0.95,3,3,1,66.6666665,66.6666667');
     expect(lines[2]).toBe('Danis-Weber,,,,,,,,50,');
+    expect(lines[3]).toBe('AO/OTA,,,,,,,,0,');
+    // No case has a Bartonicek agreement: the cell is blank, not 100.
     expect(lines[4]).toBe('Bartonicek,,,,,,,,,');
     expect(lines).toHaveLength(6);
     expect(lines[5]).toBe('');

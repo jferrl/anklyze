@@ -15,6 +15,7 @@ import {
   SYSTEM_KEYS,
   SYSTEM_LABEL,
   accuracyColorClass,
+  activeColumn,
   formatPercent,
   type SystemKey,
 } from './systems';
@@ -155,7 +156,7 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
                 <tr className="border-b">
                   <th className={cn(TH, 'w-12 text-left')}>#</th>
                   <th className={cn(TH, 'text-left')}>{t('admin.studies.goldStandard.case')}</th>
-                  <SystemColumnHeads />
+                  <SystemColumnHeads active={activeSystem} />
                 </tr>
               </thead>
               <tbody>
@@ -172,7 +173,7 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
                     </td>
                     {pca.has_gold_standard ? (
                       SYSTEM_KEYS.map((key) => (
-                        <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', accuracyColorClass(pca[`${key}_accuracy`]))}>
+                        <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', accuracyColorClass(pca[`${key}_accuracy`]), activeColumn(key, activeSystem))}>
                           {percentOrDash(pca[`${key}_accuracy`])}
                         </td>
                       ))
@@ -245,7 +246,7 @@ function PerRaterAccuracyTable({ raters, activeSystem }: { raters: PerRaterAccur
               <tr className="border-b">
                 <th className={cn(TH, 'text-left')}>{t('admin.studies.goldStandard.rater')}</th>
                 <th className={cn(TH, 'text-right')}>{t('admin.studies.goldStandard.casesCompleted')}</th>
-                <SystemColumnHeads />
+                <SystemColumnHeads active={activeSystem} />
               </tr>
             </thead>
             <tbody>
@@ -257,7 +258,7 @@ function PerRaterAccuracyTable({ raters, activeSystem }: { raters: PerRaterAccur
                   </td>
                   <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">{rater.cases_completed}</td>
                   {SYSTEM_KEYS.map((key) => (
-                    <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', accuracyColorClass(rater[`${key}_accuracy`]))}>
+                    <td key={key} className={cn('px-4 py-3 text-right font-medium tabular-nums', accuracyColorClass(rater[`${key}_accuracy`]), activeColumn(key, activeSystem))}>
                       {percentOrDash(rater[`${key}_accuracy`])}
                     </td>
                   ))}

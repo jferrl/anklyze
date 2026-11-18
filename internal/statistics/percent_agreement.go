@@ -1,10 +1,11 @@
 package statistics
 
-// PercentAgreement calculates simple percentage agreement among all raters.
-// ratings is a slice of categories assigned by different raters to the same subject.
-func PercentAgreement(ratings []string) float64 {
+// PercentAgreement returns the share (0-1) of ratings that gave the most common category.
+// ratings holds the categories different raters assigned to the same subject. ok is false
+// with fewer than 2 ratings: a single rating has nothing to agree with.
+func PercentAgreement(ratings []string) (agreement float64, ok bool) {
 	if len(ratings) < 2 {
-		return 1.0
+		return 0, false
 	}
 
 	// Find most common rating
@@ -20,5 +21,5 @@ func PercentAgreement(ratings []string) float64 {
 		}
 	}
 
-	return float64(maxCount) / float64(len(ratings))
+	return float64(maxCount) / float64(len(ratings)), true
 }

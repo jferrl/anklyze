@@ -43,6 +43,14 @@ export function agreementColorClass(value: number | null | undefined): string {
   return value != null && value < LOW_AGREEMENT_PCT ? 'text-warning' : '';
 }
 
+/**
+ * activeColumn fills the table cells of the system selected in the tabs with Selected Wash, so on wide
+ * screens, where every system has a column, the tabs still point the eye at one.
+ */
+export function activeColumn(key: SystemKey, active?: SystemKey): string {
+  return key === active ? 'bg-accent' : '';
+}
+
 /** kappaAxisMin gives gauges shown together one axis: -1 if any value or CI bound is negative, else 0. */
 export function kappaAxisMin(values: (number | null | undefined)[]): -1 | 0 {
   return values.some((v) => v != null && v < 0) ? -1 : 0;
