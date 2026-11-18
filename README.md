@@ -81,13 +81,13 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 | `DATABASE_URL` | unset | PostgreSQL connection. Required: the server retries for about 25 seconds, then exits non-zero. |
 | `SUPABASE_URL` | unset | Enables JWT auth. Unset: every route is public and `/api/me` returns a mock admin (local development only). Set but malformed: the server refuses to start. |
 | `SUPABASE_SERVICE_ROLE_KEY` | unset | Lets the server sync user roles to Supabase. |
-| `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | unset | Case image storage. Unset: uploads are accepted but not stored, so set these wherever images matter. |
+| `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | unset | Case image storage. Unset: image uploads and image URLs answer 503, and `APP_ENV=production` refuses to start. |
 | `STUDY_BUCKET_NAME` | `studies` | Bucket for case images. |
 | `S3_USE_SSL` | `true` | |
 | `PORT` | `8080` | |
 | `CORS_ALLOW_ORIGIN` | `*` | |
 | `LOG_LEVEL`, `LOG_FORMAT` | `info`, `text` | |
-| `APP_ENV` | unset | `production` makes the server refuse to start without `SUPABASE_URL`. |
+| `APP_ENV` | unset | `production` makes the server refuse to start without `SUPABASE_URL` or the S3 variables. |
 
 `make run` sets `DATABASE_URL` and the S3 variables for the Docker services. It does not set `SUPABASE_URL`, so auth stays off unless your `.env` provides it.
 

@@ -10,8 +10,44 @@ on:
     - cron: "0 0 * * 1"
 
 jobs:
+  # Pull requests analyse only the languages they touch; pushes and the weekly run analyse both.
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      languages: ${{ steps.pick.outputs.languages }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            go:
+              - 'cmd/**'
+              - 'internal/**'
+              - 'go.mod'
+              - 'go.sum'
+              - '.github/workflows/codeql.yml'
+            javascript-typescript:
+              - 'frontend/**'
+              - 'e2e/**'
+              - '.github/workflows/codeql.yml'
+      - id: pick
+        env:
+          CHANGED: ${{ steps.filter.outputs.changes }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "languages=$CHANGED" >> "$GITHUB_OUTPUT"
+          else
+            echo 'languages=["go","javascript-typescript"]' >> "$GITHUB_OUTPUT"
+          fi
+
   analyze:
     name: Analyze (${{ matrix.language }})
+    needs: changes
+    if: needs.changes.outputs.languages != '[]'
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -22,11 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - language: go
-            build-mode: autobuild
-          - language: javascript-typescript
-            build-mode: none
+        language: ${{ fromJSON(needs.changes.outputs.languages) }}
 
     steps:
       - name: Checkout repository
@@ -36,7 +68,7 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+          build-mode: ${{ matrix.language == 'go' && 'autobuild' || 'none' }}
           # For more queries, see: https://docs.github.com/en/code-security/code-scanning/using-codeql-code-scanning-with-your-existing-ci-system/configuring-codeql-cli-in-your-ci-system#using-queries-in-codeql-packs
           queries: security-extended
 

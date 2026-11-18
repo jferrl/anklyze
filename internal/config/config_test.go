@@ -390,6 +390,7 @@ func TestLoadWithInvalidConfig(t *testing.T) {
 func TestValidateProduction(t *testing.T) {
 	const validURL = "https://abc.supabase.co"
 	const validKey = "service-role-key"
+	const ep, ak, sk = "s3.example.com", "access", "secret"
 
 	tests := []struct {
 		name    string
@@ -402,6 +403,7 @@ func TestValidateProduction(t *testing.T) {
 			config: &Config{
 				SupabaseURL:            validURL,
 				SupabaseServiceRoleKey: validKey,
+				S3Endpoint:             ep, S3AccessKey: ak, S3SecretKey: sk,
 			},
 			wantErr: false,
 		},
@@ -410,6 +412,7 @@ func TestValidateProduction(t *testing.T) {
 			config: &Config{
 				SupabaseURL:            "",
 				SupabaseServiceRoleKey: validKey,
+				S3Endpoint:             ep, S3AccessKey: ak, S3SecretKey: sk,
 			},
 			wantErr: true,
 			errMsgs: []string{"SUPABASE_URL"},
@@ -419,6 +422,7 @@ func TestValidateProduction(t *testing.T) {
 			config: &Config{
 				SupabaseURL:            validURL,
 				SupabaseServiceRoleKey: "",
+				S3Endpoint:             ep, S3AccessKey: ak, S3SecretKey: sk,
 			},
 			wantErr: false,
 		},
@@ -427,9 +431,28 @@ func TestValidateProduction(t *testing.T) {
 			config: &Config{
 				SupabaseURL:            "",
 				SupabaseServiceRoleKey: "",
+				S3Endpoint:             ep, S3AccessKey: ak, S3SecretKey: sk,
 			},
 			wantErr: true,
 			errMsgs: []string{"SUPABASE_URL"},
+		},
+		{
+			name: "missing S3 storage",
+			config: &Config{
+				SupabaseURL: validURL,
+			},
+			wantErr: true,
+			errMsgs: []string{"S3_ENDPOINT"},
+		},
+		{
+			name: "partial S3 storage",
+			config: &Config{
+				SupabaseURL: validURL,
+				S3Endpoint:  ep,
+				S3AccessKey: ak,
+			},
+			wantErr: true,
+			errMsgs: []string{"S3_SECRET_KEY"},
 		},
 	}
 
