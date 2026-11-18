@@ -7,7 +7,8 @@ export function ClassifyPage() {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
+      {/* lg:pr-14 clears the flow diagram's edge tab. */}
+      <div className={`mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 ${isAdmin ? 'lg:pr-14' : ''}`}>
         <FractureForm />
       </div>
 
