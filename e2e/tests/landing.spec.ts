@@ -24,7 +24,7 @@ test.describe('Landing Page', () => {
       await landingPage.expectSystemsVisible();
     });
 
-    test('should display how it works section with 3 steps', async () => {
+    test('should display the method section', async () => {
       await landingPage.expectHowItWorksVisible();
     });
 
@@ -34,12 +34,12 @@ test.describe('Landing Page', () => {
   });
 
   test.describe('Navigation', () => {
-    test('should navigate to classification page when clicking Start Classifying', async () => {
+    test('should navigate to classification page from the hero', async () => {
       await landingPage.clickStartClassifying();
       await expect(landingPage.page).toHaveURL('/classify');
     });
 
-    test('should scroll to how it works section when clicking the secondary hero link', async () => {
+    test('should scroll to the method section from the hero', async () => {
       await landingPage.clickLearnMore();
       await expect(landingPage.howItWorksSection).toBeInViewport();
     });
@@ -52,16 +52,12 @@ test.describe('Landing Page', () => {
     });
   });
 
-  test.describe('CTA Section', () => {
-    test('should display call to action section', async ({ page }) => {
-      const ctaTitle = page.locator('section').filter({ hasText: /first question|primera pregunta/i }).locator('h2');
-      await expect(ctaTitle).toBeVisible();
-    });
-
-    test('should navigate to classification from CTA button', async ({ page }) => {
-      const ctaButton = page.locator('section').filter({ hasText: /first question|primera pregunta/i }).getByRole('link');
-      await ctaButton.click();
-      await expect(page).toHaveURL('/classify');
+  test.describe('Open source section', () => {
+    test('should show the licence and how to cite', async ({ page }) => {
+      const source = page.locator('#source');
+      await expect(source).toBeVisible();
+      await expect(source).toContainText(/apache/i);
+      await expect(source.getByText('https://github.com/jferrl/anklyze')).toBeVisible();
     });
   });
 });

@@ -18,15 +18,15 @@ export class LandingPage {
     this.page = page;
     this.logo = page.locator('nav').getByText('Anklyze');
     this.heroTitle = page.locator('h1');
-    this.startClassifyingButton = page.locator('nav').getByRole('link', { name: /start classifying|comenzar/i });
-    this.learnMoreButton = page.getByRole('link', { name: /see how a result|ver cómo se llega/i });
+    this.startClassifyingButton = page.locator('main').getByRole('link', { name: /start classifying|comenzar a clasificar/i });
+    this.learnMoreButton = page.getByRole('link', { name: /read the method|leer el método/i });
     this.systemsSection = page.locator('#systems');
-    this.howItWorksSection = page.locator('#how-it-works');
-    this.ctaSection = page.locator('section').filter({ hasText: /first question|primera pregunta/i });
+    this.howItWorksSection = page.locator('#method');
+    this.ctaSection = page.locator('#source');
     this.footer = page.locator('footer');
     this.themeSwitcher = page.locator('#theme-switch');
     this.languageSwitcher = page.locator('nav button').filter({ has: page.locator('svg.lucide-globe') });
-    this.githubLink = page.getByRole('link', { name: 'GitHub' });
+    this.githubLink = page.getByRole('link', { name: 'GitHub', exact: true });
   }
 
   async goto() {
@@ -84,9 +84,7 @@ export class LandingPage {
 
   async expectHowItWorksVisible() {
     await expect(this.howItWorksSection).toBeVisible();
-    // Check all 3 steps
-    const steps = this.howItWorksSection.locator('h3');
-    await expect(steps).toHaveCount(3);
+    await expect(this.howItWorksSection.locator('dt')).toHaveCount(4);
   }
 
   async expectFooterVisible() {

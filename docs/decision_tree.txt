@@ -1,5 +1,7 @@
 # Ankle Fracture Classification Decision Tree
 # Source: drawio diagram (source of truth)
+# Decision tree by Laura Paniagua Andrés (Hospital de León).
+# Copyright 2026 Laura Paniagua Andrés. CC BY 4.0; see LICENSE-CC-BY-4.0 and NOTICE.
 # Legend: Q=Question, ├──=Answer option, ╰──=Terminal [AO LH Weber Bartonicek]
 # N/C = no clasificable
 #

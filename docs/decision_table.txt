@@ -1,6 +1,8 @@
 # Ankle Fracture Classification — All Terminal Paths
 # Total: 165 paths across 7 branches
 # Source: drawio diagram (source of truth)
+# Decision tree by Laura Paniagua Andrés (Hospital de León).
+# Copyright 2026 Laura Paniagua Andrés. CC BY 4.0; see LICENSE-CC-BY-4.0 and NOTICE.
 #
 # Branch       AO           LH    W   B   Path (answers in order)
 # ------------ ------------ ----- --- --- --------------------------------------------------

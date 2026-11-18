@@ -1,0 +1,29 @@
+Anklyze
+Software: Copyright 2026 the Anklyze authors.
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Decision tree: Copyright 2026 Laura Paniagua Andrés.
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0,
+see LICENSE-CC-BY-4.0). This covers docs/*.drawio, docs/decision_tree.txt and
+docs/decision_table.txt. Reuse must credit Laura Paniagua Andrés, link to the
+licence and state any changes.
+
+Authors
+  Laura Paniagua Andrés, orthopaedic and trauma surgeon, Hospital de León: clinical content and decision tree
+  Jorge Ferrero Linacero: software
+
+Classification systems
+  Anklyze maps answers to four published classifications. They belong to their
+  authors; Anklyze is not affiliated with or endorsed by them.
+
+  Lauge-Hansen N. Fractures of the ankle. II. Combined experimental-surgical and
+    experimental-roentgenologic investigations. Arch Surg. 1950;60(5):957-985.
+  Danis R. Les fractures malléolaires. In: Théorie et pratique de
+    l'ostéosynthèse. Paris: Masson; 1949.
+  Weber BG. Die Verletzungen des oberen Sprunggelenkes. Bern: Huber; 1966.
+  Meinberg EG, Agel J, Roberts CS, Karam MD, Kellam JF. Fracture and Dislocation
+    Classification Compendium-2018. J Orthop Trauma. 2018;32 Suppl 1:S1-S170.
+    (AO/OTA classification, AO Foundation and Orthopaedic Trauma Association.)
+  Bartoníček J, Rammelt S, Kostlivý K, Vaněček V, Klika D, Trešl I. Anatomy and
+    classification of the posterior tibial fragment in ankle fractures.
+    Arch Orthop Trauma Surg. 2015;135(4):505-516.

@@ -41,32 +41,38 @@
   "landing": {
     "startClassifying": "Start classifying",
     "nav": {
-      "method": "How it works",
+      "method": "Method",
       "systems": "Systems",
-      "studies": "Studies",
-      "signIn": "Sign in"
+      "studies": "Research use",
+      "signIn": "Sign in",
+      "source": "Source code"
     },
     "hero": {
       "title": "Four ankle fracture classifications from one set of answers.",
-      "lede": "Anklyze follows a single decision tree drawn by orthopedic surgeons. Answer what you see on the radiograph and it returns Lauge-Hansen, Danis-Weber, AO/OTA and Bartonicek together.",
-      "secondary": "See how a result is reached"
+      "lede": "Anklyze is an open-source tool for classifying ankle fractures. It follows a single decision tree: answer what you see on the radiograph and it returns the Lauge-Hansen, Danis-Weber, AO/OTA and Bartonicek classifications together.",
+      "secondary": "Read the method"
     },
     "example": {
       "caption": "Example: an isolated lateral malleolus fracture, read through the tree. N/C means the system does not apply."
     },
     "method": {
-      "title": "How it works",
-      "answer": {
-        "title": "Answer what you see",
-        "body": "The questions follow the fracture: which malleoli are involved, the level of the fibular fracture, the pattern of the trace. Number keys answer, and nothing is asked that the tree does not need."
+      "title": "Method",
+      "tableLink": "See every path of the decision tree",
+      "tree": {
+        "term": "One decision tree",
+        "body": "Every question belongs to a single tree with 165 terminal paths. Each answer decides the next question, and each path ends in a classification in all four systems. The tree is published in the repository as a diagram and as a table."
       },
-      "narrow": {
-        "title": "The tree narrows",
-        "body": "Each answer selects the next question. The path you took stays on screen, so a colleague can check how the result was reached."
+      "tested": {
+        "term": "Partly tested against the diagram",
+        "body": "The classification engine's tests are generated from the same diagram as the tree. They currently cover 88 of the 165 paths; the rest are not yet tested automatically."
       },
-      "result": {
-        "title": "One result in four systems",
-        "body": "The end of the path carries the classification in all four systems. When a system does not apply to the fracture, the result says so instead of forcing a code."
+      "notClassifiable": {
+        "term": "Not classifiable is a result",
+        "body": "When a system does not apply to the fracture, the result says so (N/C) instead of forcing a code."
+      },
+      "judgement": {
+        "term": "It does not replace clinical judgement",
+        "body": "Anklyze makes the reasoning explicit and keeps the path that led to each result. The decision remains the surgeon's; always correlate with the clinical findings."
       }
     },
     "systems": {
@@ -81,9 +87,8 @@
       "bartonicek": "Morphology of the posterior malleolus fragment."
     },
     "studies": {
-      "title": "Built for reliability studies",
-      "lede": "Researchers publish cases with their imaging, invite raters to classify them independently, and read how far the raters agree.",
-      "cta": "Sign in to a study",
+      "title": "Research use",
+      "lede": "The same classifier is used to run inter-rater reliability studies: researchers publish cases with their imaging, raters classify them independently, and the application reports how far they agree.",
       "cases": {
         "term": "Cases",
         "body": "Radiographs and CT for one fracture, classified by each rater without seeing the others."
@@ -95,13 +100,20 @@
       "gold": {
         "term": "Gold standard",
         "body": "Each rater's accuracy against the reference classification set by the study."
-      }
-    },
-    "cta": {
-      "title": "Start with the first question."
+      },
+      "methodologyLink": "Read the statistical methodology"
     },
     "footer": {
-      "disclaimer": "For medical purposes only. Always correlate with clinical findings."
+      "disclaimer": "For medical purposes only. Always correlate with clinical findings.",
+      "license": "Code: Apache 2.0. Decision tree: CC BY 4.0"
+    },
+    "source": {
+      "title": "Open source",
+      "body": "The code, the decision tree and the statistical methodology are public. The code is free software under the Apache 2.0 licence; the decision tree is under CC BY 4.0 and can be reused with credit to its author.",
+      "authors": "Clinical content and decision tree by Laura Paniagua Andrés (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association.",
+      "repoLink": "Source code on GitHub",
+      "citeTitle": "How to cite",
+      "citation": "Paniagua Andrés L, Ferrero Linacero J. Anklyze: ankle fracture classification [software]. 2026. Available from: {{url}}. Apache License 2.0."
     }
   },
   "form": {
