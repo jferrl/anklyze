@@ -260,19 +260,36 @@
     animation: bar-grow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Landing hero, once on load: the example path's answers fill in step by step
-     (--step 0..4), then the four codes resolve together. Explains one set of
-     answers -> four classifications; opacity only, about 1s in all.
-     .plate-mark reuses the same --step timing for the anatomy plate. */
-  .path-answer,
-  .plate-mark {
+  /* Landing hero, once on load, one timeline: the anatomy plate draws its bones
+     (0-1200ms, mostly drawn by 600ms), then the example path's answers fill in step by step from 600ms
+     (--step 0..4) while the plate marks answers 1 and 2, then the four codes
+     resolve together at 1360ms. Explains one set of answers -> four classifications. */
+  .path-answer {
     animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--step) * 120ms);
+    animation-delay: calc(600ms + var(--step) * 120ms);
   }
 
   .path-result {
     animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 760ms;
+    animation-delay: 1360ms;
+  }
+
+  /* pathLength="1" normalises every stroke so all draw at the same rate; the 2-unit
+     gap keeps a round cap from dotting the path end before it draws. */
+  @keyframes plate-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  .plate-draw {
+    stroke-dasharray: 1 2;
+    animation: plate-draw 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--at);
+  }
+
+  .plate-fade {
+    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--at);
   }
 }
 
@@ -285,7 +302,8 @@
   /* The global rule keeps animation delays, which would hide the hero content. */
   .path-answer,
   .path-result,
-  .plate-mark {
+  .plate-draw,
+  .plate-fade {
     animation: none !important;
   }
 }
@@ -308,6 +326,9 @@
 
 /* Results and reliability pages get printed for papers and case notes. */
 @media print {
+  .path-answer, .path-result, .plate-draw, .plate-fade {
+    animation: none !important;
+  }
   [data-slot="sidebar"], [data-slot="sidebar-container"], [data-slot="sidebar-gap"], header.sticky, [data-sonner-toaster], button {
     display: none !important;
   }

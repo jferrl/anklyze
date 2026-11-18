@@ -25,6 +25,8 @@ const MALLEOLUS =
 const FRACTURE =
   'M238.4,203 L241.7,209.6 L246.8,212.1 L247.6,222.5 L254.6,226.6 L254.6,237.6 L266.7,243.7 M241.8,187.5 L243,194.8 L247.7,196.2 L247.1,204.1 L251.6,206.6 L257.1,223.2 L271.1,239.8';
 
+const at = (ms: number) => ({ '--at': `${ms}ms` }) as React.CSSProperties;
+
 export function AnklePlate() {
   const { t } = useTranslation();
 
@@ -41,29 +43,29 @@ export function AnklePlate() {
         strokeLinejoin="round"
       >
         {/* Back to front; the navy fill hides what lies behind, as in the original. */}
+        {/* Drawn once on load, pen order: tibia, fibula and its malleolus, talus, calcaneus (--at). */}
         <g stroke="currentColor" strokeWidth="1.1" className="text-white/70">
-          <path d={CALCANEUS} />
-          <path d={TALUS} />
-          <path d={TIBIA} />
-          <path d={FIBULA} />
-          <path d={MALLEOLUS} />
+          <path d={CALCANEUS} pathLength={1} className="plate-draw" style={at(400)} />
+          <path d={TALUS} pathLength={1} className="plate-draw" style={at(300)} />
+          <path d={TIBIA} pathLength={1} className="plate-draw" style={at(0)} />
+          <path d={FIBULA} pathLength={1} className="plate-draw" style={at(100)} />
+          <path d={MALLEOLUS} pathLength={1} className="plate-draw" style={at(200)} />
         </g>
 
-        {/* Answers 1 and 2 of the example path: the lateral malleolus, then the transsyndesmotic fracture. */}
-        <path d={MALLEOLUS} fill="none" stroke="white" strokeWidth="1.4" className="plate-mark" style={{ '--step': 0 } as React.CSSProperties} />
-        <g className="plate-mark" style={{ '--step': 1 } as React.CSSProperties}>
-          <path d={MALLEOLUS} fill="white" fillOpacity="0.14" />
-          <path d={FRACTURE} fill="none" stroke="white" strokeWidth="1.4" />
-        </g>
+        {/* Answers 1 and 2 of the example path, in step with .path-answer: the lateral malleolus,
+            then the transsyndesmotic fracture and its fragment. */}
+        <path d={MALLEOLUS} fill="white" fillOpacity="0.14" className="plate-fade" style={at(840)} />
+        <path d={MALLEOLUS} fill="none" stroke="white" strokeWidth="1.4" pathLength={1} className="plate-draw" style={at(600)} />
+        <path d={FRACTURE} fill="none" stroke="white" strokeWidth="1.4" pathLength={1} className="plate-draw" style={at(720)} />
 
-        <g fill="none" stroke="currentColor" strokeWidth="0.7" className="text-white/50">
+        <g fill="none" stroke="currentColor" strokeWidth="0.7" className="plate-fade text-white/50" style={at(960)}>
           <path d="M222,165 H243" />
           <path d="M214,247 H226" />
           <path d="M388,242 H381" />
           <path d="M388,290 H350" />
         </g>
 
-        <g fill="currentColor">
+        <g fill="currentColor" className="plate-fade" style={at(960)}>
           <text x="218" y="169" textAnchor="end" className="text-white/60">{t('landing.plate.fibula')}</text>
           <text x="312" y="190" textAnchor="middle" className="text-white/60">{t('landing.plate.tibia')}</text>
           <text x="392" y="294" className="text-white/60">{t('landing.plate.talus')}</text>
