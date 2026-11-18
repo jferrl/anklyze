@@ -297,9 +297,12 @@
   --hl: var(--primary);
   --hl-tint: oklch(0.45 0.14 262);
   --hl-halo: var(--card);
+  /* The AP and Lateral pair sit on a slightly deeper plate, like films on a viewer. */
+  --fig-plate: color-mix(in oklab, var(--muted-foreground) 16%, var(--card));
 }
 .dark .fig-card {
   --fig-backdrop: color-mix(in oklab, black 30%, var(--card));
+  --fig-plate: color-mix(in oklab, black 50%, var(--card));
   --hl-tint: var(--primary-fill);
 }
 

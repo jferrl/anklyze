@@ -393,13 +393,9 @@
     "title": "Anatomía",
     "show": "Mostrar anatomía",
     "hide": "Ocultar anatomía",
-    "front": "Frontal (AP)",
-    "side": "Lateral",
     "lateral": "Lateral",
     "medial": "Medial",
     "posteriorMalleolus": "Maléolo posterior",
-    "back": "Posterior",
-    "frontSide": "Anterior",
     "fibularLevel": "Nivel de la fractura de peroné",
     "notAnswered": "Aún no ha respondido",
     "level": {
@@ -415,8 +411,6 @@
       "posterior": "maléolo posterior"
     },
     "summary": {
-      "empty": "Modelo de un tobillo derecho, vistas frontal y lateral. Aún no ha seleccionado ningún maléolo.",
-      "views": "Modelo de un tobillo derecho, vistas frontal y lateral.",
       "highlighted": "Resaltado: {{list}}.",
       "fibula": {
         "infra": "Fractura de peroné por debajo de la sindesmosis (infrasindesmal).",
@@ -447,11 +441,10 @@
     "note": "Las marcas indican el nivel, no la forma de la fractura.",
     "sources": {
       "title": "Fuentes",
-      "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>."
+      "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>.",
+      "syndesmosis": "La banda tenue sobre el peroné marca el nivel de la sindesmosis, desde el pilón tibial hasta el borde superior del contacto tibioperoneo. Es esquemática: el modelo no incluye ligamentos."
     },
     "model3d": {
-      "open": "Explorar en 3D",
-      "close": "Volver a las vistas frontal y lateral",
       "loading": "Cargando el modelo 3D…",
       "reset": "Restablecer vista",
       "hintShort": "Arrastre para girar",
@@ -461,7 +454,11 @@
       "noWebGL": "Este navegador no puede mostrar el modelo del tobillo (WebGL 2 está desactivado o no es compatible); se describe en texto.",
       "loadFailed": "No se pudo cargar el modelo del tobillo; se describe en texto.",
       "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales y astrágalo.",
-      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo."
+      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo.",
+      "ap": "AP",
+      "lateralView": "Lateral",
+      "showAp": "Girar el modelo a la proyección AP",
+      "showLateral": "Girar el modelo a la proyección lateral"
     }
   },
   "language": {

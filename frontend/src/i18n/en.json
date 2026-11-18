@@ -393,13 +393,9 @@
     "title": "Anatomy",
     "show": "Show anatomy",
     "hide": "Hide anatomy",
-    "front": "Front (AP)",
-    "side": "Side (lateral)",
     "lateral": "Lateral",
     "medial": "Medial",
     "posteriorMalleolus": "Posterior malleolus",
-    "back": "Back",
-    "frontSide": "Front",
     "fibularLevel": "Fibular fracture level",
     "notAnswered": "Not answered yet",
     "level": {
@@ -415,8 +411,6 @@
       "posterior": "posterior malleolus"
     },
     "summary": {
-      "empty": "Model of a right ankle, front and side views. No malleolus selected yet.",
-      "views": "Model of a right ankle, front and side views.",
       "highlighted": "Highlighted: {{list}}.",
       "fibula": {
         "infra": "Fibular fracture below the syndesmosis (infrasyndesmotic).",
@@ -447,11 +441,10 @@
     "note": "Marks show the level, not the fracture shape.",
     "sources": {
       "title": "Sources",
-      "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>."
+      "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>.",
+      "syndesmosis": "The faint band on the fibula marks the syndesmosis level, from the tibial plafond to the top of the tibiofibular contact. It is schematic: the model has no ligaments."
     },
     "model3d": {
-      "open": "Explore in 3D",
-      "close": "Back to front and side views",
       "loading": "Loading the 3D model…",
       "reset": "Reset view",
       "hintShort": "Drag to rotate",
@@ -461,7 +454,11 @@
       "noWebGL": "This browser cannot show the ankle model (WebGL 2 is off or unsupported), so it is described in text.",
       "loadFailed": "The ankle model could not be loaded, so it is described in text.",
       "views": "3D model of a right ankle: the distal tibia and fibula and the talus.",
-      "empty": "3D model of a right ankle. No malleolus selected yet."
+      "empty": "3D model of a right ankle. No malleolus selected yet.",
+      "ap": "AP",
+      "lateralView": "Lateral",
+      "showAp": "Turn the model to the AP view",
+      "showLateral": "Turn the model to the lateral view"
     }
   },
   "language": {

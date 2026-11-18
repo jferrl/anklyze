@@ -5,6 +5,7 @@ import {
   BufferGeometry,
   Color,
   CylinderGeometry,
+  DoubleSide,
   DirectionalLight,
   Group,
   Mesh,
@@ -12,17 +13,19 @@ import {
   MeshPhysicalMaterial,
   NeutralToneMapping,
   OrthographicCamera,
+  PlaneGeometry,
   PMREMGenerator,
   Scene,
   ShaderMaterial,
   Vector2,
   Vector3,
   Vector4,
-  PCFSoftShadowMap,
+  PCFShadowMap,
   WebGLRenderer,
   type Material,
 } from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { PRESETS } from './anatomyCamera';
 import type { AnatomyState, FibulaMark } from './anatomyState';
 import { Region, type AnkleModel } from './ankleModel';
 
@@ -35,25 +38,16 @@ export interface Ink {
   tint: string;
 }
 
-type Structure = 'lateral' | 'medial' | 'posterior';
+/** Structure is a malleolus the figure labels. */
+export type Structure = 'lateral' | 'medial' | 'posterior';
 
 /** Anchors place the malleolus labels in canvas pixels: the point on the structure, and its label. */
-export type Anchors = Partial<Record<Structure, { x: number; y: number; labelX: number; labelY: number; side: 'left' | 'right' | 'below'; back: boolean }>>;
-
-/** View fixes the model at one turn (radians) and frames it tightly, as the 2D figure does. */
-export interface View {
-  yaw: number;
-  pitch: number;
-  /** Structures labelled below the model, under their lowest point. */
-  labels: Structure[];
-  /** A bone drawn see-through, so the bone behind it shows, as on a radiograph. */
-  ghost?: string;
-}
+export type Anchors = Partial<Record<Structure, { x: number; y: number; labelX: number; labelY: number; side: 'left' | 'right'; back: boolean }>>;
 
 const DEG = Math.PI / 180;
-// Anterolateral start: turned 35 degrees so the lateral malleolus comes forward while the medial
-// one still holds the far contour, seen a little from above, so both malleoli and the joint read.
-const START = { yaw: 35 * DEG, pitch: 8 * DEG };
+// Anterolateral start: the lateral malleolus comes forward while the medial one still holds the far
+// contour, seen a little from above, so both malleoli and the joint read.
+const START = PRESETS.anterolateral;
 const PITCH_LIMIT = 60 * DEG;
 // The way each structure faces out of the ankle, in model axes.
 const FACING = { lateral: new Vector3(-1, 0, 0), medial: new Vector3(1, 0, 0), posterior: new Vector3(0, 0, -1) };
@@ -64,10 +58,11 @@ const FADE_MS = 200;
 const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
 const LABEL_STEP = 18; // px between two labels on one side
-/** ASPECT is the free view's canvas width over its height. */
+/** ASPECT is the canvas width over its height. */
 export const ASPECT = 4 / 5;
 // Bone in a studio: ivory, slightly waxy, the same in both themes.
-const IVORY = 0xe8e2d4;
+const IVORY = 0xe6dfd0;
+const SNAPSHOT_TOP_MM = 55; // the AP and Lateral views show the bones up to this far above the plafond
 
 // Each region is the bone below a plane, cut by up to two side planes. The field is a signed
 // distance in mm (negative inside) whose corners are rounded, so a boundary is drawn per pixel as
@@ -106,6 +101,9 @@ const overlayUniforms = () => ({
   uLine: { value: 1.5 },
   uTint: { value: new Vector3() },
   uMark: { value: new Vector3() },
+  uNear: { value: 0 },
+  uDepth: { value: 1 },
+  uSyndesmosis: { value: 0 },
 });
 
 // Physical bone with the baked occlusion, a faint mottle in tone and roughness, and the clinical
@@ -153,6 +151,9 @@ function boneMaterial(overlay = overlayUniforms()) {
         uniform float uLine;
         uniform vec3 uTint;
         uniform vec3 uMark;
+        uniform float uNear;
+        uniform float uDepth;
+        uniform float uSyndesmosis;
         float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
         float noise(vec3 p) {
           vec3 i = floor(p), f = fract(p);
@@ -172,15 +173,40 @@ function boneMaterial(overlay = overlayUniforms()) {
       .replace(
         '#include <roughnessmap_fragment>',
         `#include <roughnessmap_fragment>
-        roughnessFactor = clamp(roughnessFactor + 0.16 * (mottle - 0.5), 0.0, 1.0);`,
+        // Articular surfaces face another bone across the joint, which is where the baked occlusion
+        // is high: there the bone reads as cartilage, smoother, glossier and a touch cooler.
+        float articular = smoothstep(0.4, 0.75, vOcc) * (1.0 - step(2.5, vBone));
+        roughnessFactor = clamp(roughnessFactor + 0.16 * (mottle - 0.5) - 0.28 * articular, 0.05, 1.0);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.87, 0.85), 0.35 * articular);`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+        // Cortical micro-relief: a fine height field, faintly streaked along the shaft, bumps the
+        // normal in screen space (the standard derivative method), so no texture is downloaded.
+        float relief = 0.7 * noise(vec3(vPos.x * 0.9, vPos.y * 0.25, vPos.z * 0.9)) + 0.3 * noise(vPos * 1.8);
+        vec3 dpx = dFdx(-vViewPosition);
+        vec3 dpy = dFdy(-vViewPosition);
+        vec3 r1 = cross(dpy, normal);
+        vec3 r2 = cross(normal, dpx);
+        float det = dot(dpx, r1);
+        vec3 grad = sign(det) * (dFdx(relief) * r1 + dFdy(relief) * r2);
+        normal = normalize(abs(det) * normal - 0.05 * (1.0 - articular) * grad);`,
       )
       .replace(
         '#include <aomap_fragment>',
         `#include <aomap_fragment>
-        float ao = 1.0 - 0.8 * smoothstep(0.0, 0.9, vOcc);
+        float ao = 1.0 - 0.92 * smoothstep(0.0, 0.75, vOcc);
         reflectedLight.indirectDiffuse *= ao;
         reflectedLight.indirectSpecular *= ao;
-        reflectedLight.directDiffuse *= mix(1.0, ao, 0.85);`,
+        reflectedLight.directDiffuse *= ao;
+        reflectedLight.directSpecular *= ao;
+        // Light scattered in thin bone warms the edges a little, as in a lit specimen.
+        float edge = pow(1.0 - clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0), 2.5);
+        reflectedLight.indirectDiffuse += vec3(0.16, 0.07, 0.03) * edge * ao;
+        // A gentle depth cue: the far side of the model steps back a little.
+        float far = clamp((-vViewPosition.z - uNear) / uDepth, 0.0, 1.0);
+        reflectedLight.directDiffuse *= 1.0 - 0.18 * far;`,
       )
       .replace(
         '#include <dithering_fragment>',
@@ -193,6 +219,12 @@ function boneMaterial(overlay = overlayUniforms()) {
         if (vBone > 1.5) {
           float y = vPos.y;
           float px = max(fwidth(y), 1e-4);
+          // The syndesmosis level, schematic and always shown faintly, so an answered Weber band
+          // reads below, at or above it: a light shade from the plafond to the top of the
+          // tibiofibular contact, closed by hairlines.
+          float synd = clamp(0.5 + min(y, uSyndesmosis - y) / px, 0.0, 1.0);
+          float syndEdge = clamp(1.0 - min(abs(y), abs(y - uSyndesmosis)) / px, 0.0, 1.0);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, 0.1 * synd + 0.35 * syndEdge);
           vec4 inside = clamp(0.5 + min(y - uLevelY0, uLevelY1 - y) / px, 0.0, 1.0);
           vec4 edge = min(abs(y - uLevelY0), abs(y - uLevelY1)) / px;
           on = max(on, dot(inside, uLevelOn));
@@ -246,32 +278,60 @@ const outlineMaterial = () =>
     transparent: true,
   });
 
+// A soft elliptical shadow the bones stand in, so they rest on something rather than float.
+const contactMaterial = () =>
+  new ShaderMaterial({
+    uniforms: { uOpacity: { value: 0.3 } },
+    vertexShader: /* glsl */ `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform float uOpacity;
+      varying vec2 vUv;
+      void main() {
+        float r = length((vUv - 0.5) * 2.0);
+        gl_FragColor = vec4(0.0, 0.0, 0.0, uOpacity * pow(1.0 - smoothstep(0.0, 1.0, r), 1.6));
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+
 /** createAnkleScene draws the model on canvas and renders only when asked to. */
-export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, onAnchors: (a: Anchors) => void, view?: View) {
+export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, onAnchors: (a: Anchors) => void) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = NeutralToneMapping;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.shadowMap.type = PCFShadowMap;
 
   const scene = new Scene();
   const pmrem = new PMREMGenerator(renderer);
   const environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   pmrem.dispose();
   scene.environment = environment;
-  scene.environmentIntensity = 0.16;
+  scene.environmentIntensity = 0.1;
 
-  // Lights stay with the camera while the bones turn: a warm key from the upper left front that
-  // casts soft shadows, and a cool rim from behind on the right that separates the silhouette.
-  const key = new DirectionalLight(0xfff3e6, 2.9);
-  key.position.set(-110, 75, 60);
+  // Lights stay with the camera while the bones turn: a warm key raking from the upper left that
+  // casts soft shadows and lets the shaft fall off into shade, a faint cool fill so the shade keeps
+  // some form, and a rim from behind on the right that separates the silhouette.
+  const key = new DirectionalLight(0xfff1e2, 3.6);
+  key.position.set(-120, 90, 35);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
+  key.shadow.radius = 4;
   key.shadow.bias = -0.0005;
   key.shadow.normalBias = 0.4;
-  const rim = new DirectionalLight(0xdfe8ff, 1.4);
+  const fillLight = new DirectionalLight(0xe4ecff, 0.35);
+  fillLight.position.set(90, -20, 70);
+  const rim = new DirectionalLight(0xdfe8ff, 1.6);
   rim.position.set(70, 30, -80);
-  scene.add(key, rim);
+  scene.add(key, fillLight, rim);
 
   const bones = new Group();
   const pivot = new Group();
@@ -279,20 +339,24 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   scene.add(pivot);
 
   const { material: fill, overlay } = boneMaterial();
+  // From the lateral side the fibula overlies the posterior tibia, so it turns see-through there,
+  // as on a lateral radiograph; this material shares the overlay.
   const ghost = boneMaterial(overlay).material;
-  Object.assign(ghost, { transparent: true, opacity: 0.32, depthWrite: false });
+  Object.assign(ghost, { transparent: true, depthWrite: false });
   const outline = outlineMaterial();
   const { lateralTop, medialTop, medialX, posteriorTop, posteriorZ } = model.regions;
   for (const u of [overlay, outline.uniforms]) {
     u.uRegion.value.set(lateralTop, medialTop, medialX, posteriorTop);
     u.uPosteriorZ.value = posteriorZ;
   }
+  overlay.uSyndesmosis.value = model.syndesmosis;
   overlay.uLevelY0.value.fromArray(LEVELS.map((l) => model.bands[l].y[0]));
   overlay.uLevelY1.value.fromArray(LEVELS.map((l) => model.bands[l].y[1]));
 
   const regions: Record<Structure, Vector3[]> = { lateral: [], medial: [], posterior: [] };
   const names = { [Region.lateral]: 'lateral', [Region.medial]: 'medial', [Region.posterior]: 'posterior' } as const;
   const points: Vector3[] = [];
+  let fibula: { mesh: Mesh; hull: Mesh } | undefined;
 
   for (const part of model.parts) {
     const g = new BufferGeometry();
@@ -301,13 +365,11 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
     g.setAttribute('occlusion', new BufferAttribute(part.occlusion, 1, true));
     g.setIndex(new BufferAttribute(part.index, 1));
     g.computeVertexNormals();
-    const seeThrough = part.name === view?.ghost;
-    const mesh = new Mesh(g, seeThrough ? ghost : fill);
-    mesh.castShadow = !seeThrough;
-    mesh.receiveShadow = true;
-    bones.add(mesh);
-    // A see-through bone writes no depth, so its hull would show whole; it keeps the tint and lines.
-    if (!seeThrough) bones.add(new Mesh(g, outline));
+    const mesh = new Mesh(g, fill);
+    mesh.castShadow = mesh.receiveShadow = true;
+    const hull = new Mesh(g, outline);
+    bones.add(mesh, hull);
+    if (part.name === 'fibula') fibula = { mesh, hull };
     part.region.forEach((r, i) => {
       const p = new Vector3().fromArray(part.positions, i * 3);
       points.push(p);
@@ -335,25 +397,14 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   const sample = points.filter((_, i) => i % 4 === 0);
   const rel = sample.map((p) => p.clone().sub(center));
 
-  let yaw = view?.yaw ?? START.yaw;
-  let pitch = view?.pitch ?? START.pitch;
+  let yaw = START.yaw;
+  let pitch = START.pitch;
 
-  // A fixed view frames the model as it stands; the free view fits the tallest the model gets at
-  // any allowed turn, so turning never changes the scale or crops a part. The model is tall and
-  // narrow, so a portrait frame holds it tighter than a square and leaves the sides for labels.
-  let frame: { w: number; h: number; cx: number; cy: number };
-  if (view) {
-    pivot.rotation.set(pitch, yaw, 0);
-    pivot.updateMatrixWorld();
-    // Every point, not the sample, so no malleolus tip falls outside; 7% margin on each side clears
-    // the tips and the highlight outline drawn round them.
-    const box = new Box3().setFromPoints(points.map((p) => p.clone().sub(center).applyQuaternion(pivot.quaternion)));
-    const [w, h] = [box.max.x - box.min.x, box.max.y - box.min.y].map((v) => v * 1.14);
-    frame = { w, h, cx: (box.max.x + box.min.x) / 2, cy: (box.max.y + box.min.y) / 2 };
-  } else {
-    const h = 2.04 * fitHeight(rel);
-    frame = { w: h * ASPECT, h, cx: 0, cy: 0 };
-  }
+  // The frame fits the tallest the model gets at any allowed turn, so turning never changes the
+  // scale or crops a part, plus room below for the contact shadow. The model is tall and narrow,
+  // so a portrait frame holds it tighter than a square and leaves the sides for labels.
+  const h = 2.04 * fitHeight(rel) + 8;
+  const frame = { w: h * ASPECT, h, cx: 0, cy: -4 };
   const camera = new OrthographicCamera(
     frame.cx - frame.w / 2,
     frame.cx + frame.w / 2,
@@ -363,6 +414,9 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
     radius * 4,
   );
   camera.position.z = radius * 2;
+  overlay.uNear.value = radius;
+  overlay.uDepth.value = 2 * radius;
+  const snapCam = camera.clone();
   key.shadow.camera.left = key.shadow.camera.bottom = -radius;
   key.shadow.camera.right = key.shadow.camera.top = radius;
   key.shadow.camera.near = 1;
@@ -370,6 +424,40 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   // 2 mm of depth: the near-to-far range of 8 radii maps to 2 units of clip depth.
   outline.uniforms.uDepthBias.value = (2 * 2) / (8 * radius);
   const silhouette = points.filter((_, i) => i % 8 === 0);
+
+  const contact = new Mesh(new PlaneGeometry(1, 1), contactMaterial());
+  contact.renderOrder = -1;
+  scene.add(contact);
+  const turned = new Vector3();
+  // The shadow sits under the lowest part of the bones as they stand, spread as wide as their base.
+  function placeContact() {
+    const ys: number[] = [];
+    const xs: number[] = [];
+    for (const p of silhouette) {
+      turned.copy(p).sub(center).applyQuaternion(pivot.quaternion);
+      ys.push(turned.y);
+      xs.push(turned.x);
+    }
+    const low = Math.min(...ys);
+    const base = xs.filter((_, i) => ys[i] < low + 12);
+    const [x0, x1] = [Math.min(...base), Math.max(...base)];
+    contact.position.set((x0 + x1) / 2, low + 1, -radius * 1.5);
+    contact.scale.set((x1 - x0) * 1.35 + 10, 9, 1);
+  }
+
+  // How see-through the fibula is: opaque until the lateral side nearly faces the camera.
+  function placeFibula() {
+    if (!fibula) return;
+    const facing = FACING.lateral.clone().applyQuaternion(pivot.quaternion).z;
+    const t = Math.min(1, Math.max(0, (facing - 0.82) / 0.15));
+    const opacity = 1 - 0.68 * t * t * (3 - 2 * t);
+    const clear = opacity < 0.995;
+    fibula.mesh.material = clear ? ghost : fill;
+    fibula.mesh.castShadow = !clear;
+    // A see-through bone writes no depth, so its hull would show whole; it keeps the tint and lines.
+    fibula.hull.visible = !clear;
+    ghost.opacity = opacity;
+  }
 
   const sides: Partial<Record<Structure, 'left' | 'right'>> = {};
 
@@ -386,8 +474,10 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
 
   function render() {
     pivot.rotation.set(pitch, yaw, 0);
-    renderer.render(scene, camera);
     pivot.updateMatrixWorld();
+    placeContact();
+    placeFibula();
+    renderer.render(scene, camera);
     const size = renderer.getSize(new Vector2());
     const toPx = (p: Vector3) => {
       const v = p.clone().applyMatrix4(bones.matrixWorld).project(camera);
@@ -395,15 +485,6 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
     };
     const anchors: Anchors = {};
     const back = (key: Structure) => FACING[key].clone().applyQuaternion(pivot.quaternion).z < -0.4;
-
-    if (view) {
-      // Each label hangs below the canvas, under the lowest point of its structure.
-      for (const key of view.labels) {
-        const tip = regions[key].map(toPx).reduce((a, b) => (b.y > a.y ? b : a));
-        anchors[key] = { x: tip.x, y: tip.y, labelX: tip.x, labelY: size.y + 4, side: 'below', back: back(key) };
-      }
-      return onAnchors(anchors);
-    }
 
     const xs = silhouette.map((p) => toPx(p).x);
     const gutter = { left: Math.min(...xs) - LABEL_GAP, right: Math.max(...xs) + LABEL_GAP };
@@ -449,8 +530,6 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   }
 
   return {
-    /** aspect is the canvas width over its height for this view. */
-    aspect: frame.w / frame.h,
     render,
     /** rotate turns the model by the given angles in radians; pitch stops at the limits. */
     rotate(dYaw: number, dPitch: number) {
@@ -458,13 +537,57 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch + dPitch));
       render();
     },
-    reset() {
-      yaw = START.yaw;
-      pitch = START.pitch;
+    /** view is the current turn, in radians. */
+    view: () => ({ yaw, pitch }),
+    /** setView turns the model to the given yaw and pitch, in radians. */
+    setView(next: { yaw: number; pitch: number }) {
+      yaw = next.yaw;
+      pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, next.pitch));
+      render();
+    },
+    /**
+     * snapshot draws the model at a fixed turn into a 2D canvas, framed tightly with an even
+     * margin, with the answered marks at full strength. It borrows this renderer for one frame and
+     * puts the live view back in the same task, so the page never shows the borrowed frame and no
+     * second WebGL context is made.
+     */
+    snapshot(at: { yaw: number; pitch: number }, out: HTMLCanvasElement) {
+      const live = { yaw, pitch, size: renderer.getSize(new Vector2()), ratio: renderer.getPixelRatio(), shown: [...shown] };
+      yaw = at.yaw;
+      pitch = at.pitch;
+      shown.splice(0, 8, ...target);
+      applyShown();
+      pivot.rotation.set(pitch, yaw, 0);
+      pivot.updateMatrixWorld();
+      placeContact();
+      placeFibula();
+      // Framed on the joint, as a radiograph is: the shafts run off the top edge.
+      const joint = silhouette.filter((p) => p.y < SNAPSHOT_TOP_MM);
+      const box = new Box3().setFromPoints(joint.map((p) => p.clone().sub(center).applyQuaternion(pivot.quaternion)));
+      const aspect = out.width / out.height;
+      const [bw, bh] = [box.max.x - box.min.x, box.max.y - box.min.y + 6];
+      const half = { h: (Math.max(bh, bw / aspect) * 1.12) / 2 };
+      const [cx, cy] = [(box.max.x + box.min.x) / 2, (box.max.y + box.min.y - 6) / 2];
+      Object.assign(snapCam, { left: cx - half.h * aspect, right: cx + half.h * aspect, top: cy + half.h, bottom: cy - half.h });
+      snapCam.updateProjectionMatrix();
+      renderer.setPixelRatio(1);
+      renderer.setSize(out.width, out.height, false);
+      outline.uniforms.uViewport.value.set(out.width, out.height);
+      renderer.render(scene, snapCam);
+      const ctx = out.getContext('2d')!;
+      ctx.clearRect(0, 0, out.width, out.height);
+      ctx.drawImage(canvas, 0, 0);
+      yaw = live.yaw;
+      pitch = live.pitch;
+      shown.splice(0, 8, ...live.shown);
+      applyShown();
+      renderer.setPixelRatio(live.ratio);
+      renderer.setSize(live.size.x, live.size.y, false);
+      outline.uniforms.uViewport.value.set(live.size.x * live.ratio, live.size.y * live.ratio);
       render();
     },
     resize(width: number) {
-      const height = width / (frame.w / frame.h);
+      const height = width / ASPECT;
       renderer.setSize(width, height, false);
       const ratio = renderer.getPixelRatio();
       outline.uniforms.uViewport.value.set(width * ratio, height * ratio);
@@ -480,8 +603,11 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       overlay.uMark.value.copy(srgb(mark));
       outline.uniforms.uMark.value.copy(srgb(mark));
       arrowInk.color.copy(mark);
-      // Ivory glares on a dark page; a stop down keeps it bone rather than paper.
-      renderer.toneMappingExposure = paper.getHSL({ h: 0, s: 0, l: 0 }).l < 0.5 ? 0.92 : 1;
+      // Ivory glares on a dark page; a stop down keeps it bone rather than paper, and the contact
+      // shadow deepens to still read on the near-black backdrop.
+      const dark = paper.getHSL({ h: 0, s: 0, l: 0 }).l < 0.5;
+      renderer.toneMappingExposure = dark ? 0.82 : 1;
+      (contact.material as ShaderMaterial).uniforms.uOpacity.value = dark ? 0.6 : 0.28;
       render();
     },
     setState(state: AnatomyState) {
@@ -493,7 +619,7 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       scene.traverse((o) => {
         if (o instanceof Mesh) o.geometry.dispose();
       });
-      for (const m of [fill, ghost, outline, arrowInk] as Material[]) m.dispose();
+      for (const m of [fill, ghost, outline, arrowInk, contact.material] as Material[]) m.dispose();
       environment.dispose();
       renderer.dispose();
       renderer.forceContextLoss();

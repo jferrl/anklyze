@@ -1,7 +1,6 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { ChevronDown, Rotate3d } from 'lucide-react';
-import { Button } from '@/components/ui';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
@@ -14,12 +13,13 @@ interface AnatomyViewProps {
   hasTACImages?: boolean;
   /** Lists the answers under the figure; off where the answer path is already shown beside it. */
   showReading?: boolean;
+  /** From lg, lays the 3D view and the AP and Lateral pair side by side, for a pinned figure over a form. */
+  compact?: boolean;
   className?: string;
 }
 
-// three.js and the model load after the page, once per page, for the views and the 3D model alike.
+// three.js and the model load after the page, once per page.
 const Anatomy3D = lazy(() => import('./Anatomy3D'));
-const AnkleView = lazy(() => import('./Anatomy3D').then((m) => ({ default: m.AnkleView })));
 
 function hasWebGL2(): boolean {
   try {
@@ -34,21 +34,18 @@ const ink = 'transition-[color,fill,stroke,opacity] duration-200 ease-[cubic-bez
 const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
 
 /**
- * AnatomyView renders a model of the ankle from the front and the side, or free to turn in 3D, and
+ * AnatomyView renders a model of the ankle to turn in 3D, with an AP and Lateral pair under it, and
  * highlights what the answers describe: the fractured malleoli and the level of the fibular
  * fracture. Everything shown is also stated in text.
  */
-export function AnatomyView({ formData, hasTACImages, showReading = true, className }: AnatomyViewProps) {
+export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
-  const state = getAnatomyState(formData);
-  const [view3d, setView3d] = useState(false);
+  // A new state object only when what is shown changes, so the model is not redrawn on every render.
+  const stateKey = JSON.stringify(getAnatomyState(formData));
+  const state = useMemo<AnatomyState>(() => JSON.parse(stateKey), [stateKey]);
   // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
   const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
-  const summary = useSummary(state, view3d);
-  const failed = () => {
-    setView3d(false);
-    setNotice('loadFailed');
-  };
+  const summary = useSummary(state);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -80,45 +77,21 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
   return (
     <figure className={cn('fig-card space-y-3', className)}>
       {notice ? (
-        <p className="rounded-sm bg-(--fig-backdrop) p-3 text-sm">{summary}</p>
-      ) : view3d ? (
-        <Suspense fallback={<p className="grid aspect-[4/5] place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}>
-          <Anatomy3D state={state} onFail={failed} />
-        </Suspense>
+        <>
+          <p className="rounded-sm bg-(--fig-backdrop) p-3 text-sm">{summary}</p>
+          <p role="status" className="text-xs text-muted-foreground">
+            {t(`anatomy.model3d.${notice}`)}
+          </p>
+        </>
       ) : (
-        <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,4fr)] items-end gap-x-3 gap-y-1">
-          <p aria-hidden="true" className="self-start text-xs text-muted-foreground">{t('anatomy.front')}</p>
-          <p aria-hidden="true" className="self-start text-xs text-muted-foreground">{t('anatomy.side')}</p>
-          <Suspense fallback={<div className="aspect-[3/4] rounded-sm bg-(--fig-backdrop)" />}>
-            <AnkleView state={state} view="front" onFail={failed} />
-          </Suspense>
-          <div className="self-start">
-            <Suspense fallback={<div className="aspect-square rounded-sm bg-(--fig-backdrop)" />}>
-              <AnkleView state={state} view="side" onFail={failed} />
-            </Suspense>
-            <p aria-hidden="true" className="mt-1 flex justify-between gap-2 text-xs leading-4 text-muted-foreground">
-              <span>{t('anatomy.back')}</span>
-              <span>{t('anatomy.frontSide')}</span>
-            </p>
-          </div>
-        </div>
+        <Suspense fallback={<FigurePlaceholder compact={compact} />}>
+          <Anatomy3D state={state} compact={compact} onFail={() => setNotice('loadFailed')} />
+        </Suspense>
       )}
-      {/* One caption row for both views, in the figure's columns, so switching keeps it in place. */}
-      <div className="grid grid-cols-[minmax(0,5fr)_minmax(0,4fr)] gap-x-3">
+      <div className="grid grid-cols-2 gap-x-3">
         {fibulaCaption}
         {posteriorCaption}
       </div>
-
-      {notice ? (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t(`anatomy.model3d.${notice}`)}
-        </p>
-      ) : (
-        <Button type="button" variant="outline" size="sm" aria-pressed={view3d} onClick={() => setView3d(!view3d)}>
-          <Rotate3d />
-          {view3d ? t('anatomy.model3d.close') : t('anatomy.model3d.open')}
-        </Button>
-      )}
 
       <p className="sr-only" aria-live="polite">{summary}</p>
 
@@ -141,6 +114,27 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
   );
 }
 
+/** FigurePlaceholder holds the figure's size while three.js loads, so nothing shifts when it lands. */
+function FigurePlaceholder({ compact }: { compact: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <div aria-hidden="true" className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
+      <div>
+        <p className="grid aspect-[4/5] place-items-center rounded-sm bg-(--fig-backdrop) text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>
+        <p className="mt-2 h-4" />
+      </div>
+      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1')}>
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-sm border bg-(--fig-plate) p-1">
+            <div className={cn('aspect-[4/5]', compact && 'lg:aspect-[5/4]')} />
+            <div className="h-5" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Caption names a structure the answers involve and its answer, or says the answer is pending. */
 function Caption({ title, shown, value }: { title: string; shown: boolean; value?: string }) {
   const { t } = useTranslation();
@@ -155,16 +149,16 @@ function Caption({ title, shown, value }: { title: string; shown: boolean; value
   );
 }
 
-function useSummary(state: AnatomyState, model3d: boolean): string {
+function useSummary(state: AnatomyState): string {
   const { t, i18n } = useTranslation();
   const parts = [
     state.lateral && t('anatomy.structures.lateral'),
     state.medial && t('anatomy.structures.medial'),
     state.posterior && t('anatomy.structures.posterior'),
   ].filter((part): part is string => !!part);
-  if (parts.length === 0 && !state.fibula) return t(model3d ? 'anatomy.model3d.empty' : 'anatomy.summary.empty');
+  if (parts.length === 0 && !state.fibula) return t('anatomy.model3d.empty');
 
-  const sentences = [t(model3d ? 'anatomy.model3d.views' : 'anatomy.summary.views')];
+  const sentences = [t('anatomy.model3d.views')];
   if (parts.length > 0) {
     sentences.push(t('anatomy.summary.highlighted', { list: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(parts) }));
   }
@@ -193,6 +187,7 @@ function Sources() {
             components={{ work: link('https://lifesciencedb.jp/bp3d/'), license: link('https://creativecommons.org/licenses/by-sa/4.0/') }}
           />
         </li>
+        <li>{t('anatomy.sources.syndesmosis')}</li>
       </ul>
     </details>
   );
