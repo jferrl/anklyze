@@ -1,287 +1,91 @@
 # AGENTS.md - Anklyze
 
-## Project Overview
+Guidance for coding agents. Product context is in `PRODUCT.md`, the design system in `DESIGN.md`, build commands in `CLAUDE.md` and `README.md`.
 
-Ankle fracture classification web application using Go backend + React frontend. Classifies fractures according to four international systems: Danis-Weber, Lauge-Hansen, AO/OTA, and Bartonicek.
+## What it is
 
-## Architecture
+Anklyze classifies ankle fractures from a guided questionnaire into four systems at once (Lauge-Hansen, Danis-Weber, AO/OTA, Bartonicek) and runs inter-rater reliability studies. Go backend (Gin, GORM, PostgreSQL), React frontend (Vite, Tailwind v4, shadcn/ui), Supabase auth, S3-compatible image storage, English and Spanish.
 
-Follows the [Go server project layout](https://go.dev/doc/modules/layout#server-project).
+## Rules that are easy to break
+
+- **Do not change classification behaviour.** The decision tree is the draw.io file in `docs/` (clinical content by Laura Paniagua Andrés, CC BY 4.0). `internal/rules/engine.go` implements it; `internal/rules/engine_drawio_test.go` is generated from it and covers all 165 paths. A change to a classification result needs the clinician, not a code fix.
+- **The repo's draw.io is the source of truth**, not copies elsewhere.
+- **Statistics are published figures.** Changes to `internal/statistics` or how they are shown must state which numbers change.
+- **Every user-facing string** lives in `frontend/src/i18n/{en,es}.json` with identical key sets (a test checks). Spanish addresses the reader as usted.
+- **UI follows `DESIGN.md`**: ruled boxes, no shadows on resting surfaces, system colours only for system identity, sentence case.
+- **Errors** use `HandleError` and the helpers in `internal/api/errors.go`, which answer `{code, message}` with the right status. Domain errors live in `internal/domain/errors.go`.
+- Commits and PRs: conventional messages, no emoji, no AI attribution lines.
+
+## Layout
 
 ```text
-anklyze/
-├── go.mod                       # Go module (root): github.com/jferrl/anklyze
-├── go.sum
-│
-├── cmd/
-│   └── anklyze-apiserver/       # HTTP API entry point
-│
-├── internal/                    # Go server logic (Gin framework)
-│   ├── api/                     # HTTP handlers and routes
-│   │   ├── routes.go            # Route registration (SetupRoutes, SetupCaseRoutes, SetupStudyRoutes)
-│   │   ├── handler.go           # Classification + chat + analytics handlers
-│   │   ├── case_admin_handler.go    # Case CRUD (admin)
-│   │   ├── case_image_handler.go    # Case image upload/management
-│   │   ├── case_access_handler.go   # Case listing + user access control
-│   │   ├── case_response_handler.go # Case response submission
-│   │   ├── case_analytics_handler.go# Case analytics + reliability + divergence
-│   │   ├── study_handlers.go        # Study CRUD, rater management, reliability
-│   │   ├── chat_handlers.go         # Chat session management
-│   │   ├── user_handlers.go         # User profile endpoints
-│   │   ├── case_types.go            # Case-related request/response types
-│   │   ├── errors.go                # Error response helpers
-│   │   ├── validation.go            # Request validation
-│   │   ├── input_validation.go      # Input sanitization
-│   │   └── ratelimit.go             # IP-based rate limiting
-│   ├── auth/                    # JWT authentication (Supabase)
-│   │   ├── auth.go              # JWT validator using JWKS (ES256)
-│   │   └── middleware.go        # AuthMiddleware, UserSyncMiddleware, RequireRole
-│   ├── config/                  # Configuration from environment variables
-│   ├── database/                # GORM PostgreSQL connection
-│   ├── domain/                  # Domain models
-│   │   ├── case.go              # Case, CaseImage, CaseResponse, CaseStatus
-│   │   ├── case_user.go         # CaseUser (access control)
-│   │   ├── study.go             # Study, StudyRater, StudyStatus
-│   │   ├── fracture.go          # FractureInput and classification enums
-│   │   ├── classification.go    # ClassificationResult output types
-│   │   ├── reliability.go       # ReliabilityMetrics, FleissKappaResult
-│   │   ├── user.go              # User model with roles
-│   │   ├── audit.go             # AuditEntry for classification logging
-│   │   ├── analytics.go         # AnalyticsSummary, TrendData
-│   │   ├── chat_audit.go        # Chat session audit models
-│   │   ├── chat_analytics.go    # Chat analytics models
-│   │   └── errors.go            # Domain error types
-│   ├── i18n/                    # Internationalization (en.go, es.go)
-│   ├── llm/                     # LLM integration (Gemini API)
-│   │   ├── client.go            # Gemini API client
-│   │   └── prompts.go           # Structured prompts for fracture extraction
-│   ├── logger/                  # Structured logging
-│   ├── repository/              # Data access interfaces
-│   │   ├── case.go              # CaseRepository, CaseResponseRepository, CaseAnalyticsRepository
-│   │   ├── study.go             # StudyRepository, StudyResponseRepository
-│   │   ├── user.go              # UserRepository
-│   │   ├── audit.go             # AuditRepository, AnalyticsRepository
-│   │   ├── chat_audit.go        # ChatAuditRepository
-│   │   └── postgres/            # PostgreSQL implementations
-│   │       ├── case.go
-│   │       ├── study.go
-│   │       ├── user.go
-│   │       ├── audit.go
-│   │       ├── analytics.go
-│   │       ├── chat_audit.go
-│   │       └── chat_analytics.go
-│   ├── rules/                   # Classification decision tree engine
-│   │   └── engine.go
-│   ├── service/                 # Business logic
-│   │   ├── classifier.go        # ClassifierService (wraps rules engine)
-│   │   ├── statistics.go        # Kappa calculations, reliability metrics
-│   │   ├── divergence.go        # Inter-rater divergence analysis
-│   │   ├── chat.go              # Chat service (LLM orchestration)
-│   │   └── user.go              # User profile service
-│   ├── storage/                 # File storage (Supabase Storage)
-│   ├── supabase/                # Supabase auth client
-│   └── timeutil/                # Date range utilities
-│
-├── docs/                        # Swagger/OpenAPI + project documentation
-│   ├── docs.go, swagger.json, swagger.yaml
-│   ├── RELIABILITY_ANALYSIS.md
-│   └── *.mmd                    # Mermaid classification flow diagrams (EN/ES)
-│
-├── fixtures/                    # SQL test fixtures
-│   ├── study_test_data.sql
-│   ├── study_test_data_auto.sql
-│   └── cleanup_study_test_data.sql
-│
-├── e2e/                         # Playwright E2E tests
-│
-└── frontend/                    # React + TypeScript + shadcn/ui
-    └── src/
-        ├── components/
-        │   ├── layout/          # AppShell, AppSidebar
-        │   ├── auth/            # LoginPage, ProtectedRoute
-        │   ├── studies/         # StudyClassificationForm, ImageGrid, ImageLightbox
-        │   ├── analytics/       # StatCard, KappaGauge, ClassificationChart
-        │   ├── admin/           # CaseUsersManager, StudyUsersManager
-        │   ├── profile/         # UserProfileForm
-        │   └── ui/              # shadcn/ui components
-        ├── pages/
-        │   ├── ClassifyPage.tsx
-        │   ├── CasesPage.tsx
-        │   ├── CaseDetailPage.tsx
-        │   ├── ProfilePage.tsx
-        │   └── admin/
-        │       ├── AdminDashboardPage.tsx
-        │       ├── AdminCasesPage.tsx
-        │       ├── CaseEditorPage.tsx
-        │       ├── CaseReliabilityPage.tsx
-        │       ├── CaseAnalyticsPage.tsx
-        │       ├── CaseDivergencePage.tsx
-        │       ├── AdminStudiesPage.tsx
-        │       ├── StudyEditorPage.tsx
-        │       └── StudyReliabilityPage.tsx
-        ├── hooks/               # Custom React hooks
-        ├── services/            # API client
-        ├── types/               # TypeScript types
-        └── i18n/                # Translations (en.json, es.json)
+cmd/anklyze-apiserver/   entry point: config, DB (retried, required), auth, storage, routes, graceful shutdown
+internal/api/            HTTP handlers and routes (routes.go), error helpers (errors.go), CSV export (csv.go)
+internal/auth/           JWKS validation, auth middleware, role sync, dev-mode user (dev.go)
+internal/rules/          classification engine
+internal/statistics/     kappa (Fleiss, Cohen, weighted), bootstrap CI, agreement, gold-standard accuracy
+internal/service/        business logic: classification, statistics + cache, gold standard, studies, users
+internal/repository/     repository interfaces; postgres/ holds the GORM implementations
+internal/domain/         models, enums, domain errors
+internal/storage/        S3 storage; NoOpStorage answers ErrStorageNotConfigured
+internal/config/         environment configuration and production checks
+internal/metrics/        Prometheus middleware and /metrics
+migrations/              SQL migrations, embedded and applied at startup
+scripts/                 draw.io parsing, rendering, engine and e2e test generation (Python, stdlib only)
+fixtures/                local seed data
+frontend/                React app (pages/, pages/admin/, components/, services/, i18n/)
+e2e/                     Playwright; classification specs generated from the draw.io
+docs/                    decision tree, decision table, reliability methodology
 ```
 
-## Domain Concepts
+## Domain
 
-### Case vs Study
+- **Case**: one patient's imaging. `draft` -> `published` -> `closed`. Has images (X-ray, CT), responses and an optional gold standard. A case belongs to at most one study (`Case.StudyID`).
+- **Study**: a set of cases rated by the same raters. `draft` -> `active` -> `closed`. Closing a study stops its cases accepting responses.
+- **Response**: one per rater per case (unique index). The server re-classifies the submitted `input` with the engine and rejects a mismatching classification (422).
+- "Study" is the term; "cohort" is deprecated. "Not classifiable" is a valid result, not an error.
 
-- **Case**: An individual patient X-ray case created by an admin. Users view published cases and submit classification responses.
-  - Status flow: `draft` -> `published` -> `closed`
-  - Has images (X-ray, CT/TAC), responses, gold standard classification
-- **Study**: Groups multiple cases for multi-case inter-rater reliability analysis (Fleiss' Kappa).
-  - Status flow: `draft` -> `active` -> `closed`
-  - Assigns specific raters, tracks progress across all cases
+## Statistics
 
-### Classification Systems
+Per study and per system (`internal/service/statistics.go`, method in `docs/RELIABILITY_ANALYSIS.md` section 4):
 
-- **Danis-Weber**: Type A/B/C based on fibular fracture location relative to syndesmosis
-- **Lauge-Hansen**: SA/SER/PER/PA based on injury mechanism
-- **AO/OTA**: 44-A1/A2/A3, 44-B1/B2/B3, 44-C1/C2/C3 based on structures involved
-- **Bartonicek**: Type 1-4 for posterior malleolus fractures
+- Fleiss' kappa over the raters who answered every case, with a seeded percentile bootstrap CI. A case where a rater left the system unanswered is excluded and counted.
+- Cohen's kappa (same bootstrap) and AO/OTA linear weighted kappa when exactly two raters completed the study. Subgroups map to their group; 44-A3 is in the ordering.
+- Per case: agreement with the most common answer. Kappa is never computed for a single case.
+- Accuracy against the gold standard; a hard case is accuracy below 50 %, low agreement is below 60 %.
 
-## API Endpoints
+## API
 
-**Classification (auth required):**
+Routes are registered in `internal/api/routes.go`.
 
-- `POST /api/classify` - Classify fracture from structured input
-- `POST /api/chat` - Chat-based classification (rate limited)
-- `POST /api/chat/session` - Create chat session
-- `PUT /api/chat/session/:id/complete` - Complete session
-- `PUT /api/chat/session/:id/abandon` - Abandon session
-- `POST /api/chat/session/:id/feedback` - Submit feedback
-- `GET /api/chat/session/:id/feedback` - Get feedback
+| Area | Routes | Access |
+|---|---|---|
+| System | `GET /health`, `GET /metrics` | public |
+| Classify | `POST /api/classify`, `GET /api/me` | signed in |
+| Cases | `GET /api/cases`, `/api/cases/:id`, image URLs, `POST /api/cases/:id/responses`, `GET /api/cases/:id/my-responses` | signed in |
+| Profile | `GET`/`PUT /api/me/profile` | signed in |
+| Admin cases | CRUD, publish, close, images, gold standard, analytics, reliability, accuracy, responses, CSV exports, dashboard | admin |
+| Admin studies | CRUD, add/remove/reorder cases, activate, close, reliability, accuracy, CSV export | admin |
+| Analytics | `/api/analytics/summary`, `/trends`, `/distribution/:system` | admin |
 
-**Cases (auth required):**
+With `SUPABASE_URL` empty the server runs in dev mode: no auth, and every route acts as one mock admin. Production (`APP_ENV=production`) refuses to start without `SUPABASE_URL` and the S3 variables.
 
-- `GET /api/cases` - List published cases
-- `GET /api/cases/:id` - Get published case
-- `GET /api/cases/:id/images/:imageId/url` - Get signed image URL
-- `POST /api/cases/:id/responses` - Submit classification response
-- `GET /api/cases/:id/my-responses` - Get user's responses
+## Environment
 
-**User profile (auth required):**
+`DATABASE_URL` (required), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_USE_SSL`, `STUDY_BUCKET_NAME`, `PORT`, `CORS_ALLOW_ORIGIN`, `LOG_LEVEL`, `LOG_FORMAT`, `APP_ENV`. Defaults and effects are in the README.
 
-- `GET /api/me` - Get current user
-- `GET /api/me/profile` - Get user profile
-- `PUT /api/me/profile` - Update user profile
+## Checks
 
-**Admin Cases (admin role):**
-
-- `POST/GET /api/admin/cases` - CRUD
-- `GET/PUT/DELETE /api/admin/cases/:id` - Single case
-- `PUT /api/admin/cases/:id/publish` - Publish case
-- `PUT /api/admin/cases/:id/close` - Close case
-- `POST /api/admin/cases/:id/images` - Upload image
-- `GET/PATCH/DELETE /api/admin/cases/:id/images/:imageId` - Manage images
-- `PUT /api/admin/cases/:id/images/reorder` - Reorder images
-- `GET /api/admin/cases/:id/analytics` - Case analytics
-- `GET /api/admin/cases/:id/reliability` - Reliability metrics
-- `GET /api/admin/cases/:id/divergence` - Divergence analysis
-- `GET /api/admin/cases/:id/responses` - List responses
-- `GET /api/admin/cases/:id/export` - Export responses (CSV)
-- `GET /api/admin/cases/:id/export/detailed` - Detailed export
-- `GET/POST/DELETE /api/admin/cases/:id/users` - User access
-
-**Admin Studies (admin role):**
-
-- `POST/GET /api/admin/studies` - CRUD
-- `GET/PUT/DELETE /api/admin/studies/:id` - Single study
-- `POST/DELETE /api/admin/studies/:id/cases` - Add/remove cases
-- `PUT /api/admin/studies/:id/cases/reorder` - Reorder cases
-- `GET/POST/DELETE /api/admin/studies/:id/raters` - Rater management
-- `GET /api/admin/studies/:id/progress` - Rater progress
-- `PUT /api/admin/studies/:id/activate` - Activate study
-- `PUT /api/admin/studies/:id/close` - Close study
-- `GET /api/admin/studies/:id/reliability` - Study reliability (Fleiss' Kappa; Cohen's Kappa with 2 raters)
-
-**Analytics (admin role):**
-
-- `GET /api/analytics/summary` - Classification statistics
-- `GET /api/analytics/trends` - Time-series data
-- `GET /api/analytics/distribution/:system` - Per-system distribution
-- `GET /api/analytics/chat/summary` - Chat analytics
-- `GET /api/analytics/chat/feedback` - Chat feedback summary
-- `GET /api/analytics/chat/confidence` - Confidence distribution
-- `GET /api/analytics/chat/trends` - Chat trends
-
-**System:**
-
-- `GET /health` - Health check
-- `GET /swagger/*` - Swagger UI
-
-## Reliability Metrics
-
-The statistics service (`internal/service/statistics.go`) calculates:
-
-| Metric | Description |
-|--------|-------------|
-| Fleiss' Kappa | Agreement among the raters who completed ALL cases of a study (at least 2), with a bootstrap 95% CI |
-| Cohen's Kappa | Study level, only with exactly 2 complete raters (with 95% CI) |
-| Weighted Kappa | Study level, same 2 raters, AO/OTA only, linear weights; subgroup codes map to their group |
-| Percent Agreement | Per case: share of responses that gave the most common answer |
-
-Kappa is never computed for a single case. See `docs/RELIABILITY_ANALYSIS.md` section 4 for exact behaviour.
-
-## Rule Engine
-
-The classification decision tree is in `internal/rules/engine.go`. Input flow:
-
-1. **Which malleoli are fractured?** (medial, lateral, posterior)
-2. Based on selection, follows one of:
-   - Posterior Only -> Bartonicek type
-   - Medial Only -> Complete (AO-44-A1, LH PER/PA)
-   - Lateral Only -> Level -> (if supra) type
-   - Complex (Medial + Lateral) -> Medial morphology -> Fibular analysis
-
-## Authentication
-
-Supabase Auth with JWT validation (JWKS, ES256). Roles: `user`, `admin`.
-
-| Endpoint | Public | User | Admin |
-|----------|--------|------|-------|
-| `/health`, `/swagger/*` | yes | yes | yes |
-| `/api/classify`, `/api/chat/*` | no | yes | yes |
-| `/api/cases/*` | no | yes | yes |
-| `/api/analytics/*` | no | no | yes |
-| `/api/admin/*` | no | no | yes |
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `8080` |
-| `DATABASE_URL` | PostgreSQL connection string (required; startup fails without it) | (none) |
-| `SUPABASE_URL` | Supabase project URL | (none - auth disabled) |
-| `SUPABASE_JWT_SECRET` | JWT secret (optional, uses JWKS if not set) | (none) |
-
-## Development
+Run what CI runs before committing:
 
 ```bash
-make run              # Run backend + frontend concurrently
-make run-backend      # Backend only (air hot reload)
-make run-with-db      # Backend with local PostgreSQL
-make test             # Run all tests
-make swagger          # Regenerate OpenAPI docs
-make db-start         # Start local PostgreSQL (Docker)
-make db-stop          # Stop local PostgreSQL
+go test -race ./...
+gofmt -l . && go vet ./...
+golangci-lint run ./...
+go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
+go run golang.org/x/tools/cmd/deadcode@v0.49.0 ./...   # must print nothing
+cd frontend && npm run lint && npx tsc --noEmit && npm run test:run && npm run build
+make classify-validate                                  # after touching the draw.io or its scripts
 ```
 
-## CI/CD
-
-### Backend CI (`backend.yml`)
-
-Triggers on push/PR to `main` when `cmd/**`, `internal/**`, or `go.mod`/`go.sum` changes:
-`go vet ./...` -> `go test -v -race ./...` -> `go build`
-
-### Frontend CI (`frontend.yml`)
-
-Triggers on push/PR to `main` when `frontend/**` changes:
-`npm ci` -> `npm run lint` -> `npx tsc --noEmit` -> `npm run build`
-
-## Language
-
-UI supports English and Spanish (i18n). Backend clinical notes are localized.
+CI (`.github/workflows/`): `Build and Test` (backend) and `Build and Lint` (frontend) are required checks and run only when their side changed; CodeQL analyses the languages a PR touches; PRs must be up to date with `main` before merging; every push to `main` deploys. The Playwright suite (`e2e.yml`) runs only on manual dispatch.
