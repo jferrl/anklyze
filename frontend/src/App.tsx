@@ -1,4 +1,5 @@
 import './i18n/config';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './components/ThemeProvider';
@@ -20,18 +21,20 @@ import { ClassifyPage } from './pages/ClassifyPage';
 import { CasesPage } from './pages/CasesPage';
 import { CaseDetailPage } from './pages/CaseDetailPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
-import { AdminCasesPage } from './pages/admin/AdminCasesPage';
-import { CaseEditorPage } from './pages/admin/CaseEditorPage';
-import { CaseAnalyticsPage } from './pages/admin/CaseAnalyticsPage';
-import { CaseReliabilityPage } from './pages/admin/CaseReliabilityPage';
-import { AdminStudiesPage } from './pages/admin/AdminStudiesPage';
-import { StudyEditorPage } from './pages/admin/StudyEditorPage';
-import { StudyReliabilityPage } from './pages/admin/StudyReliabilityPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppShell } from './components/layout';
 import { CommandPalette } from './components/CommandPalette';
+
+// Admin pages load on demand so raters never download the charting code.
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })));
+const AdminCasesPage = lazy(() => import('./pages/admin/AdminCasesPage').then((m) => ({ default: m.AdminCasesPage })));
+const CaseEditorPage = lazy(() => import('./pages/admin/CaseEditorPage').then((m) => ({ default: m.CaseEditorPage })));
+const CaseAnalyticsPage = lazy(() => import('./pages/admin/CaseAnalyticsPage').then((m) => ({ default: m.CaseAnalyticsPage })));
+const CaseReliabilityPage = lazy(() => import('./pages/admin/CaseReliabilityPage').then((m) => ({ default: m.CaseReliabilityPage })));
+const AdminStudiesPage = lazy(() => import('./pages/admin/AdminStudiesPage').then((m) => ({ default: m.AdminStudiesPage })));
+const StudyEditorPage = lazy(() => import('./pages/admin/StudyEditorPage').then((m) => ({ default: m.StudyEditorPage })));
+const StudyReliabilityPage = lazy(() => import('./pages/admin/StudyReliabilityPage').then((m) => ({ default: m.StudyReliabilityPage })));
 
 function App() {
   return (
@@ -39,6 +42,7 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter>
+            <Suspense fallback={null}>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<HomeRedirect />} />
@@ -193,6 +197,7 @@ function App() {
               />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
+            </Suspense>
             <CommandPalette />
           </BrowserRouter>
           <Toaster position="bottom-right" closeButton />

@@ -46,9 +46,7 @@ export default defineConfig({
               id.includes('node_modules/react-i18next') ||
               id.includes('node_modules/lucide-react') ||
               id.includes('node_modules/sonner') ||
-              id.includes('node_modules/@radix-ui') ||
-              id.includes('node_modules/recharts') ||
-              id.includes('node_modules/d3-')) {
+              id.includes('node_modules/@radix-ui')) {
             return 'vendor-react'
           }
 
