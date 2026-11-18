@@ -71,6 +71,9 @@ export function useCaseEditorMutations({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case', caseId] });
     },
+    onError: (err: Error) => {
+      onError(err.message);
+    },
   });
 
   // Delete image mutation

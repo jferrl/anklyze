@@ -577,6 +577,7 @@
       "dragOrClick": "Arrastre y suelte imágenes aquí, o haga clic para seleccionar archivos",
       "dropHere": "Suelte los archivos aquí…",
       "maxFileSize": "Tamaño máximo de archivo: 10 MB",
+      "imageLimit": "{{used}} de {{max}} imágenes utilizadas.",
       "noImages": "No hay imágenes subidas",
       "pending": "Pendiente",
       "deleteConfirm": {

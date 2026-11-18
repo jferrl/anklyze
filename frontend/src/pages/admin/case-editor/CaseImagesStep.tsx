@@ -13,6 +13,9 @@ import { cn } from '@/lib/utils';
 import type { CaseImage, ImageCategory } from '@/types';
 import { ImageGrid } from '../components/CaseImageGrid';
 
+// Mirrors MaxImagesPerCase in internal/api/validation.go; the server enforces it.
+const MAX_IMAGES_PER_CASE = 20;
+
 interface PendingUpload {
   id: string;
   file: File;
@@ -49,6 +52,9 @@ export function CaseImagesStep({
   const pendingXray = pendingUploads.filter((u) => u.category === 'xray');
   const pendingTac = pendingUploads.filter((u) => u.category === 'tac');
 
+  const totalImages = existingImages.length + pendingUploads.length;
+  const atImageLimit = totalImages >= MAX_IMAGES_PER_CASE;
+
   const dropzoneConfig = {
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
@@ -71,7 +77,11 @@ export function CaseImagesStep({
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t('admin.cases.images')}</CardTitle>
-          <CardDescription>{t('admin.cases.imagesDescription')}</CardDescription>
+          <CardDescription>
+            {t('admin.cases.imagesDescription')}
+            {' '}
+            {t('admin.cases.imageLimit', { used: totalImages, max: MAX_IMAGES_PER_CASE })}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           {error && (
@@ -89,7 +99,7 @@ export function CaseImagesStep({
             </div>
 
             {/* X-ray Dropzone */}
-            {canEdit && (
+            {canEdit && !atImageLimit && (
               <div
                 {...xrayDropzone.getRootProps({ id: 'case-images-dropzone' })}
                 className={cn(
@@ -138,7 +148,7 @@ export function CaseImagesStep({
             </div>
 
             {/* CT Scan Dropzone */}
-            {canEdit && (
+            {canEdit && !atImageLimit && (
               <div
                 {...tacDropzone.getRootProps()}
                 className={cn(

@@ -83,6 +83,16 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
+	existing, err := h.caseRepo.GetImages(c.Request.Context(), caseID)
+	if err != nil {
+		HandleError(c, err, "failed to count images")
+		return
+	}
+	if len(existing) >= MaxImagesPerCase {
+		badRequest(c, fmt.Sprintf("a case can have at most %d images", MaxImagesPerCase))
+		return
+	}
+
 	// Get category from form
 	category := domain.ImageCategory(c.PostForm("category"))
 	if category != domain.ImageCategoryXRay && category != domain.ImageCategoryTAC {
