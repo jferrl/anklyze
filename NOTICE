@@ -27,3 +27,13 @@ Classification systems
   Bartoníček J, Rammelt S, Kostlivý K, Vaněček V, Klika D, Trešl I. Anatomy and
     classification of the posterior tibial fragment in ankle fractures.
     Arch Orthop Trauma Surg. 2015;135(4):505-516.
+
+Third-party content
+  Landing page ankle drawing (frontend/src/components/AnklePlate.tsx):
+    Adapted from "Weber Classification - latin.svg" by DrFO.Tn, Wikimedia Commons,
+    https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg
+    Licensed under CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+    Changes: only the Weber B panel is used; colour fills, gradients, cartilage,
+    ligaments, texture marks, the lower calcaneus, the arrow and the label were
+    removed; bone outlines were redrawn as line art; two outline details hidden
+    under ligaments in the original were smoothed; the drawing is cropped.

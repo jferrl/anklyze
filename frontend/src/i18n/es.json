@@ -55,6 +55,17 @@
     "example": {
       "caption": "Ejemplo: fractura aislada de maléolo lateral, leída a través del árbol. N/C indica que el sistema no es aplicable."
     },
+    "plate": {
+      "label": "Dibujo lineal de un tobillo en proyección frontal: tibia distal, peroné y astrágalo, con los maléolos medial y lateral señalados. El maléolo lateral aparece resaltado por debajo de una fractura de peroné a nivel de la sindesmosis (Weber B).",
+      "caption": "Fractura Weber B, proyección frontal: el maléolo lateral está fracturado a nivel de la sindesmosis. El maléolo posterior queda detrás de la tibia y no se muestra.",
+      "creditPrefix": "Adaptado de",
+      "creditBy": "de DrFO.Tn,",
+      "tibia": "Tibia",
+      "fibula": "Peroné",
+      "talus": "Astrágalo",
+      "lateral": "Maléolo lateral",
+      "medial": "Maléolo medial"
+    },
     "method": {
       "title": "Método",
       "tableLink": "Ver todos los caminos del árbol de decisión",

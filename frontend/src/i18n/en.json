@@ -55,6 +55,17 @@
     "example": {
       "caption": "Example: an isolated lateral malleolus fracture, read through the tree. N/C means the system does not apply."
     },
+    "plate": {
+      "label": "Line drawing of an ankle in frontal view: the distal tibia, the fibula and the talus, with the medial and lateral malleoli labelled. The lateral malleolus is highlighted below a fibular fracture at the level of the syndesmosis (Weber B).",
+      "caption": "Weber B fracture, frontal view: the lateral malleolus is broken at the level of the syndesmosis. The posterior malleolus lies behind the tibia and is not shown.",
+      "creditPrefix": "Adapted from",
+      "creditBy": "by DrFO.Tn,",
+      "tibia": "Tibia",
+      "fibula": "Fibula",
+      "talus": "Talus",
+      "lateral": "Lateral malleolus",
+      "medial": "Medial malleolus"
+    },
     "method": {
       "title": "Method",
       "tableLink": "See every path of the decision tree",

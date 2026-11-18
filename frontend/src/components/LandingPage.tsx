@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { Logo } from './Logo';
+import { AnklePlate } from './AnklePlate';
 
 const REPO_URL = 'https://github.com/jferrl/anklyze';
 const DECISION_TABLE_URL = `${REPO_URL}/blob/main/docs/decision_table.txt`;
@@ -81,7 +82,7 @@ export function LandingPage() {
               </div>
             </div>
 
-            <figure className="lg:col-span-5">
+            <figure className="lg:col-span-5 lg:row-span-2 lg:self-center">
               <ol className="border border-white/25">
                 {EXAMPLE_PATH.map(([question, answer], i) => (
                   <li key={question} className="grid grid-cols-[2.5rem_1fr] border-b border-white/25">
@@ -112,6 +113,10 @@ export function LandingPage() {
               </ol>
               <figcaption className="mt-3 text-sm text-white/65">{t('landing.example.caption')}</figcaption>
             </figure>
+
+            <div className="lg:col-span-7">
+              <AnklePlate />
+            </div>
           </div>
         </section>
 
