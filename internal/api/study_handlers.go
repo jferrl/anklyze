@@ -51,7 +51,7 @@ type CreateStudyRequest struct {
 
 // UpdateStudyRequest is the request body for updating a study.
 type UpdateStudyRequest struct {
-	Title       *string `json:"title,omitempty"`
+	Title       *string `json:"title,omitempty" binding:"omitempty,min=1,max=255"`
 	Description *string `json:"description,omitempty"`
 }
 
@@ -102,28 +102,20 @@ type StudyGoldStandardResponse struct {
 func (h *StudyHandler) CreateStudy(c *gin.Context) {
 	var req CreateStudyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		badBody(c, "Invalid request body", err)
 		return
 	}
 
-	// Get current user from context
-	userIDStr, exists := c.Get(auth.ContextKeyUserID)
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-		return
-	}
-
-	userID, err := uuid.Parse(userIDStr.(string))
+	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		unauthorized(c)
 		return
 	}
 
 	study := domain.NewStudy(userID, req.Title, req.Description)
 
 	if err := h.studyRepo.Create(c.Request.Context(), study); err != nil {
-		slog.Error("failed to create study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create study"})
+		HandleError(c, err, "Failed to create study")
 		return
 	}
 
@@ -152,8 +144,7 @@ func (h *StudyHandler) ListStudies(c *gin.Context) {
 
 	studies, total, err := h.studyRepo.List(c.Request.Context(), status, limit, offset)
 	if err != nil {
-		slog.Error("failed to list studies", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list studies"})
+		HandleError(c, err, "Failed to list studies")
 		return
 	}
 
@@ -167,28 +158,20 @@ func (h *StudyHandler) ListStudies(c *gin.Context) {
 
 // GetStudy retrieves a study by ID with its cases.
 func (h *StudyHandler) GetStudy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	study, ok := loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
 	// Get cases
 	cases, err := h.studyRepo.GetCases(c.Request.Context(), id)
 	if err != nil {
-		slog.Error("failed to get study cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study cases"})
+		HandleError(c, err, "Failed to get study cases")
 		return
 	}
 
@@ -202,26 +185,19 @@ func (h *StudyHandler) GetStudy(c *gin.Context) {
 
 // UpdateStudy updates a study.
 func (h *StudyHandler) UpdateStudy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	var req UpdateStudyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		badBody(c, "Invalid request body", err)
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	study, ok := loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
@@ -234,8 +210,7 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 	}
 
 	if err := h.studyRepo.Update(c.Request.Context(), study); err != nil {
-		slog.Error("failed to update study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update study"})
+		HandleError(c, err, "Failed to update study")
 		return
 	}
 	h.studyService.InvalidateStats(id) // cached metrics embed the study title
@@ -245,26 +220,17 @@ func (h *StudyHandler) UpdateStudy(c *gin.Context) {
 
 // DeleteStudy deletes a study.
 func (h *StudyHandler) DeleteStudy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	if _, ok := loadStudy(c, h.studyRepo, id); !ok {
 		return
 	}
 
 	if err := h.studyRepo.Delete(c.Request.Context(), id); err != nil {
-		slog.Error("failed to delete study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete study"})
+		HandleError(c, err, "Failed to delete study")
 		return
 	}
 	h.studyService.InvalidateStats(id)
@@ -276,41 +242,32 @@ func (h *StudyHandler) DeleteStudy(c *gin.Context) {
 
 // AddAllPublishedCases adds all published cases (not already in any study) to a study.
 func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	studyID, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	// Verify study exists and is draft
-	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	study, ok := loadStudy(c, h.studyRepo, studyID)
+	if !ok {
 		return
 	}
 	if study.Status != domain.StudyStatusDraft {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only draft studies can be modified"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be modified")
 		return
 	}
 
 	// Get all published cases not in any study
 	published, _, err := h.caseRepo.List(c.Request.Context(), statusPtr(domain.CaseStatusPublished), 1000, 0)
 	if err != nil {
-		slog.Error("failed to list published cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list published cases"})
+		HandleError(c, err, "Failed to list published cases")
 		return
 	}
 
 	// Get next case order
 	nextOrder, err := h.studyRepo.GetNextCaseOrder(c.Request.Context(), studyID)
 	if err != nil {
-		slog.Error("failed to get next case order", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to determine case order"})
+		HandleError(c, err, "Failed to determine case order")
 		return
 	}
 
@@ -329,8 +286,7 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 
 	if len(assignments) > 0 {
 		if err := h.studyService.AddCases(c.Request.Context(), studyID, assignments); err != nil {
-			slog.Error("failed to batch add cases", "error", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add cases to study"})
+			HandleError(c, err, "Failed to add cases to study")
 			return
 		}
 	}
@@ -340,57 +296,41 @@ func (h *StudyHandler) AddAllPublishedCases(c *gin.Context) {
 
 // AddCase adds a case to a study.
 func (h *StudyHandler) AddCase(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	studyID, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	var req AddCaseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		badBody(c, "Invalid request body", err)
 		return
 	}
 
 	caseID, err := uuid.Parse(req.CaseID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid case ID"})
+		badRequest(c, "Invalid case ID")
 		return
 	}
 
-	// Verify study exists
-	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
 		return
 	}
 
 	// Verify case exists
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
 	// Check if case is already in a study via StudyService
 	inStudy, _, err := h.studyService.IsCaseInStudy(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to check study membership", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case study membership"})
+		HandleError(c, err, "Failed to check case study membership")
 		return
 	}
 	if inStudy {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Case is already assigned to a study"})
+		respond(c, http.StatusConflict, CodeConflict, "Case is already assigned to a study")
 		return
 	}
 
@@ -402,8 +342,7 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 		// Auto-assign next order
 		nextOrder, err := h.studyRepo.GetNextCaseOrder(c.Request.Context(), studyID)
 		if err != nil {
-			slog.Error("failed to get next case order", "error", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to determine case order"})
+			HandleError(c, err, "Failed to determine case order")
 			return
 		}
 		caseOrder = nextOrder
@@ -411,8 +350,7 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 
 	// Delegate AddCase + UpdateCounters to StudyService
 	if err := h.studyService.AddCase(c.Request.Context(), studyID, caseID, caseOrder); err != nil {
-		slog.Error("failed to add case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add case to study"})
+		HandleError(c, err, "Failed to add case to study")
 		return
 	}
 
@@ -423,21 +361,22 @@ func (h *StudyHandler) AddCase(c *gin.Context) {
 
 // RemoveCase removes a case from a study.
 func (h *StudyHandler) RemoveCase(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	studyID, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	caseID, err := uuid.Parse(c.Param("caseId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid case ID"})
+	caseID, ok := parseID(c, "caseId", "Invalid case ID")
+	if !ok {
+		return
+	}
+
+	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
 		return
 	}
 
 	if err := h.studyService.RemoveCase(c.Request.Context(), studyID, caseID); err != nil {
-		slog.Error("failed to remove case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove case from study"})
+		HandleError(c, err, "Failed to remove case from study")
 		return
 	}
 
@@ -446,15 +385,14 @@ func (h *StudyHandler) RemoveCase(c *gin.Context) {
 
 // ReorderCases reorders cases in a study.
 func (h *StudyHandler) ReorderCases(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	studyID, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	var req ReorderCasesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		badBody(c, "Invalid request body", err)
 		return
 	}
 
@@ -463,15 +401,18 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 	for i, idStr := range req.CaseIDs {
 		id, err := uuid.Parse(idStr)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid case ID: " + idStr})
+			badRequest(c, "Invalid case ID: "+idStr)
 			return
 		}
 		caseIDs[i] = id
 	}
 
+	if _, ok := loadStudy(c, h.studyRepo, studyID); !ok {
+		return
+	}
+
 	if err := h.studyRepo.ReorderCases(c.Request.Context(), studyID, caseIDs); err != nil {
-		slog.Error("failed to reorder cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to reorder cases"})
+		HandleError(c, err, "Failed to reorder cases")
 		return
 	}
 
@@ -482,43 +423,34 @@ func (h *StudyHandler) ReorderCases(c *gin.Context) {
 
 // ActivateStudy activates a study (draft -> active).
 func (h *StudyHandler) ActivateStudy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	study, ok := loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
 	if study.Status != domain.StudyStatusDraft {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only draft studies can be activated"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Only draft studies can be activated")
 		return
 	}
 
 	// Validate study has at least one case and one user
 	cases, err := h.studyRepo.GetCases(c.Request.Context(), id)
 	if err != nil {
-		slog.Error("failed to get cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to validate study"})
+		HandleError(c, err, "Failed to validate study")
 		return
 	}
 	if len(cases) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Study must have at least one case"})
+		respond(c, http.StatusBadRequest, domain.ErrCodeInvalidStateTransition, "Study must have at least one case")
 		return
 	}
 
 	if err := h.studyRepo.Activate(c.Request.Context(), id); err != nil {
-		slog.Error("failed to activate study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to activate study"})
+		HandleError(c, err, "Failed to activate study")
 		return
 	}
 
@@ -528,26 +460,18 @@ func (h *StudyHandler) ActivateStudy(c *gin.Context) {
 
 // CloseStudy closes a study.
 func (h *StudyHandler) CloseStudy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	study, ok := loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
 	if err := h.studyRepo.Close(c.Request.Context(), id); err != nil {
-		slog.Error("failed to close study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to close study"})
+		HandleError(c, err, "Failed to close study")
 		return
 	}
 
@@ -559,29 +483,21 @@ func (h *StudyHandler) CloseStudy(c *gin.Context) {
 
 // GetStudyReliabilityMetrics calculates and returns reliability metrics for a study.
 func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	// Verify study exists first for proper 404 handling
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	_, ok = loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
 	// Delegate data fetching + metric calculation to StudyService
 	metrics, err := h.studyService.GetReliabilityMetrics(c.Request.Context(), id)
 	if err != nil {
-		slog.Error("failed to calculate metrics", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate reliability metrics"})
+		HandleError(c, err, "Failed to calculate reliability metrics")
 		return
 	}
 
@@ -593,28 +509,20 @@ func (h *StudyHandler) GetStudyReliabilityMetrics(c *gin.Context) {
 
 // GetStudyGoldStandardAccuracy calculates and returns gold standard accuracy for a study.
 func (h *StudyHandler) GetStudyGoldStandardAccuracy(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	id, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
 	// Verify study exists first for proper 404 handling
-	study, err := h.studyRepo.GetByID(c.Request.Context(), id)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	_, ok = loadStudy(c, h.studyRepo, id)
+	if !ok {
 		return
 	}
 
 	metrics, err := h.studyService.GetGoldStandardMetrics(c.Request.Context(), id)
 	if err != nil {
-		slog.Error("failed to calculate gold standard metrics", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate gold standard accuracy"})
+		HandleError(c, err, "Failed to calculate gold standard accuracy")
 		return
 	}
 
@@ -657,34 +565,25 @@ func (h *StudyHandler) enrichRaterNames(ctx context.Context, metrics *domain.Stu
 
 // ExportStudyResponses exports all responses for a study as CSV.
 func (h *StudyHandler) ExportStudyResponses(c *gin.Context) {
-	studyID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid study ID"})
+	studyID, ok := parseID(c, "id", "Invalid study ID")
+	if !ok {
 		return
 	}
 
-	study, err := h.studyRepo.GetByID(c.Request.Context(), studyID)
-	if err != nil {
-		slog.Error("failed to get study", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study"})
-		return
-	}
-	if study == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Study not found"})
+	_, ok = loadStudy(c, h.studyRepo, studyID)
+	if !ok {
 		return
 	}
 
 	cases, err := h.studyRepo.GetCases(c.Request.Context(), studyID)
 	if err != nil {
-		slog.Error("failed to get study cases", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get study cases"})
+		HandleError(c, err, "Failed to get study cases")
 		return
 	}
 
 	responsesByCase, err := h.studyResponseRepo.GetAllByStudy(c.Request.Context(), studyID)
 	if err != nil {
-		slog.Error("failed to get study responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to export study responses"})
+		HandleError(c, err, "Failed to export study responses")
 		return
 	}
 

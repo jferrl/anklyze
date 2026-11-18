@@ -58,7 +58,7 @@ func SetupRoutes(
 		setupProtectedRoutes(api, authValidator, userRepo, handler)
 	} else {
 		// Auth is disabled - all routes are public (development/backwards compatibility)
-		setupPublicRoutes(api, handler)
+		setupPublicRoutes(api, handler, userRepo)
 	}
 }
 
@@ -85,18 +85,14 @@ func setupProtectedRoutes(
 }
 
 // setupPublicRoutes configures routes without authentication (development mode).
+// Every route runs as the mock dev admin (auth.DevMiddleware).
 func setupPublicRoutes(
 	api *gin.RouterGroup,
 	handler *Handler,
+	userRepo auth.UserService,
 ) {
-	// In development mode, /me returns a mock admin user
-	api.GET("/me", func(c *gin.Context) {
-		c.JSON(http.StatusOK, UserProfileResponse{
-			ID:    "dev-user",
-			Email: "dev@localhost",
-			Role:  "admin",
-		})
-	})
+	api.Use(auth.DevMiddleware(userRepo))
+	api.GET("/me", GetCurrentUser)
 	api.POST("/classify", handler.ClassifyFracture)
 
 	registerAnalyticsRoutes(api.Group("/analytics"), handler)
@@ -134,7 +130,7 @@ func SetupCaseRoutes(
 	if authValidator != nil {
 		setupProtectedCaseRoutes(api, authValidator, userRepo, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	} else {
-		setupPublicCaseRoutes(api, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
+		setupPublicCaseRoutes(api, userRepo, adminHandler, imageHandler, accessHandler, responseHandler, analyticsHandler, userHandler)
 	}
 
 }
@@ -174,6 +170,7 @@ func setupProtectedCaseRoutes(
 // setupPublicCaseRoutes configures case routes without authentication (development mode).
 func setupPublicCaseRoutes(
 	api *gin.RouterGroup,
+	userRepo auth.UserService,
 	adminHandler *CaseAdminHandler,
 	imageHandler *CaseImageHandler,
 	accessHandler *CaseAccessHandler,
@@ -181,6 +178,7 @@ func setupPublicCaseRoutes(
 	analyticsHandler *CaseAnalyticsHandler,
 	userHandler *UserHandler,
 ) {
+	api.Use(auth.DevMiddleware(userRepo))
 	registerUserCaseRoutes(api.Group("/cases"), accessHandler, responseHandler)
 	registerProfileRoutes(api.Group("/me"), userHandler)
 	registerAdminCaseRoutes(api.Group("/admin/cases"), adminHandler, imageHandler, responseHandler, analyticsHandler)
@@ -205,7 +203,7 @@ func SetupStudyRoutes(
 	if authValidator != nil {
 		setupProtectedStudyRoutes(api, authValidator, userRepo, studyHandler)
 	} else {
-		setupPublicStudyRoutes(api, studyHandler)
+		setupPublicStudyRoutes(api, userRepo, studyHandler)
 	}
 }
 
@@ -226,8 +224,10 @@ func setupProtectedStudyRoutes(
 // setupPublicStudyRoutes configures study routes without authentication (development mode).
 func setupPublicStudyRoutes(
 	api *gin.RouterGroup,
+	userRepo auth.UserService,
 	studyHandler *StudyHandler,
 ) {
+	api.Use(auth.DevMiddleware(userRepo))
 	registerAdminStudyRoutes(api.Group("/admin/studies"), studyHandler)
 }
 

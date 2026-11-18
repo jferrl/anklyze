@@ -261,7 +261,7 @@ export async function uploadCaseImage(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to upload image');
+    throw new Error(error.message || error.error || 'Failed to upload image');
   }
 
   return response.json();

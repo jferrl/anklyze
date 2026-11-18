@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/auth"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/repository"
@@ -48,35 +47,25 @@ func NewCaseResponseHandler(
 // SubmitResponse handles POST /api/cases/:id/responses
 // Requires user to have access to the case.
 func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
 	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		unauthorized(c)
 		return
 	}
 
-	// Verify case can accept responses
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil {
-		slog.Error("failed to get case", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get case"})
-		return
-	}
-	if cs == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
 		return
 	}
 
-	// Check if user has already responded
 	hasResponded, err := h.responseRepo.HasUserResponded(c.Request.Context(), userID, caseID)
 	if err != nil {
-		slog.Error("failed to check existing response", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to check response status"})
+		HandleError(c, err, "failed to check response status")
 		return
 	}
 
@@ -96,36 +85,29 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 
 	var req SubmitResponseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request", "details": err.Error()})
+		badBody(c, "invalid request", err)
 		return
 	}
 
 	// Validate JSONB classification field
 	if err := validate.Struct(req.Classification); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":  "invalid classification data",
-			"fields": validationFieldErrors(err),
-		})
+		unprocessable(c, "invalid classification data", validationFieldErrors(err))
 		return
 	}
 
 	// The server is the authority: classify the form's final state and store the
 	// engine's result, rejecting a client copy that differs. answer_path is analytics only.
 	if err := validate.Struct(req.Input); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":  "invalid input",
-			"fields": validationFieldErrors(err),
-		})
+		unprocessable(c, "invalid input", validationFieldErrors(err))
 		return
 	}
 	expected, err := h.classifier.Classify(c.Request.Context(), req.Input)
 	if err != nil {
-		slog.Error("failed to classify submitted input", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to classify input"})
+		HandleError(c, err, "failed to classify input")
 		return
 	}
 	if !expected.SameClassification(req.Classification) {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "classification does not match the submitted input"})
+		unprocessable(c, "classification does not match the submitted input", nil)
 		return
 	}
 	req.Classification = *expected
@@ -144,8 +126,7 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 	// Create response with tracking
 	response, err := domain.NewCaseResponseWithTracking(caseID, userID, req.Classification, req.TimeTakenMS, tracking)
 	if err != nil {
-		slog.Error("failed to create response", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create response"})
+		HandleError(c, err, "failed to create response")
 		return
 	}
 
@@ -165,22 +146,23 @@ func (h *CaseResponseHandler) SubmitResponse(c *gin.Context) {
 // GetMyResponses handles GET /api/cases/:id/my-responses
 // Requires user to have access to the case.
 func (h *CaseResponseHandler) GetMyResponses(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
 	userID, err := auth.ParseUserID(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		unauthorized(c)
+		return
+	}
+	if _, ok := loadCase(c, h.caseRepo, caseID); !ok {
 		return
 	}
 
 	responses, err := h.responseRepo.GetByUserAndCase(c.Request.Context(), userID, caseID)
 	if err != nil {
-		slog.Error("failed to get responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get responses"})
+		HandleError(c, err, "failed to get responses")
 		return
 	}
 
@@ -189,9 +171,11 @@ func (h *CaseResponseHandler) GetMyResponses(c *gin.Context) {
 
 // ListCaseResponses handles GET /api/admin/cases/:id/responses
 func (h *CaseResponseHandler) ListCaseResponses(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	id, ok := parseID(c, "id", "invalid case id")
+	if !ok {
+		return
+	}
+	if _, ok := loadCase(c, h.caseRepo, id); !ok {
 		return
 	}
 
@@ -199,8 +183,7 @@ func (h *CaseResponseHandler) ListCaseResponses(c *gin.Context) {
 
 	responses, total, err := h.responseRepo.GetByCase(c.Request.Context(), id, limit, offset)
 	if err != nil {
-		slog.Error("failed to list responses", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to list responses"})
+		HandleError(c, err, "failed to list responses")
 		return
 	}
 
@@ -215,24 +198,25 @@ func (h *CaseResponseHandler) ListCaseResponses(c *gin.Context) {
 // GetBatchImageSignedURLs handles GET /api/cases/:id/images/urls
 // Returns signed URLs for all images of a published case in a single request.
 func (h *CaseResponseHandler) GetBatchImageSignedURLs(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
 	// Verify case is published
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil || !cs.IsPublished() {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
+		return
+	}
+	if !cs.IsPublished() {
+		notFound(c, "case not found")
 		return
 	}
 
 	// Get all images for the case
 	images, err := h.caseRepo.GetImages(c.Request.Context(), caseID)
 	if err != nil {
-		slog.Error("failed to get images", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
+		HandleError(c, err, "failed to get images")
 		return
 	}
 
@@ -260,29 +244,34 @@ func (h *CaseResponseHandler) GetBatchImageSignedURLs(c *gin.Context) {
 // GetImageSignedURL handles GET /api/cases/:id/images/:imageId/url
 // Requires user to have access to the case, or be an admin.
 func (h *CaseResponseHandler) GetImageSignedURL(c *gin.Context) {
-	caseID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid case id"})
+	caseID, ok := parseID(c, "id", "invalid case id")
+	if !ok {
 		return
 	}
 
-	imageID, err := uuid.Parse(c.Param("imageId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})
+	imageID, ok := parseID(c, "imageId", "invalid image id")
+	if !ok {
 		return
 	}
 
 	// Verify case is published
-	cs, err := h.caseRepo.GetByID(c.Request.Context(), caseID)
-	if err != nil || cs == nil || !cs.IsPublished() {
-		c.JSON(http.StatusNotFound, gin.H{"error": "case not found"})
+	cs, ok := loadCase(c, h.caseRepo, caseID)
+	if !ok {
+		return
+	}
+	if !cs.IsPublished() {
+		notFound(c, "case not found")
 		return
 	}
 
 	// Get image
 	image, err := h.caseRepo.GetImageByID(c.Request.Context(), imageID)
-	if err != nil || image == nil || image.CaseID != caseID {
-		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
+	if err != nil {
+		HandleError(c, err, "failed to get image")
+		return
+	}
+	if image == nil || image.CaseID != caseID {
+		notFound(c, "image not found")
 		return
 	}
 
