@@ -246,12 +246,31 @@
     transform-origin: left;
     animation: bar-grow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  /* Landing hero, once on load: the example path's answers fill in step by step
+     (--step 0..4), then the four codes resolve together. Explains one set of
+     answers -> four classifications; opacity only, about 1s in all. */
+  .path-answer {
+    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--step) * 120ms);
+  }
+
+  .path-result {
+    animation: fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 760ms;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The global rule keeps animation delays, which would hide the hero content. */
+  .path-answer,
+  .path-result {
+    animation: none !important;
   }
 }
 
