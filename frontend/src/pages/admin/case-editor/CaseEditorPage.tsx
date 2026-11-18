@@ -9,6 +9,7 @@ import { Button } from '../../../components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { buildCaseUpdatePayload } from './casePayload';
 import { StatusBadge } from '../components/StatusBadge';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -99,6 +100,9 @@ export function CaseEditorPage() {
     });
   };
 
+  const canEdit = !isEditing || existingCase?.status === 'draft';
+  const canEditAlways = !isEditing || existingCase?.status !== 'closed';
+
   // Returns false when validation stops the save, so publishing does not go ahead.
   const handleSave = async (): Promise<boolean> => {
     setPageState(p => ({ ...p, error: null, imagesError: null }));
@@ -107,18 +111,19 @@ export function CaseEditorPage() {
       revealField('case-details', 'title');
       return false;
     }
-    const data = {
-      title: title.trim(), description: description.trim() || undefined,
-      deadline: deadline ? new Date(deadline).toISOString() : undefined,
-    };
     if (isEditing) {
-      await updateMutation.mutateAsync({ caseId: id!, data });
+      await updateMutation.mutateAsync({
+        caseId: id!, data: buildCaseUpdatePayload({ title, description, deadline, canEdit, canEditAlways }),
+      });
       const uploads = [...pendingUploads];
       uploads.forEach(u => URL.revokeObjectURL(u.preview));
       setPendingUploads([]);
       for (const u of uploads) await uploadImageMutation.mutateAsync({ caseId: id!, file: u.file, category: u.category });
     } else {
-      await createMutation.mutateAsync(data);
+      await createMutation.mutateAsync({
+        title: title.trim(), description: description.trim() || undefined,
+        deadline: deadline ? new Date(deadline).toISOString() : undefined,
+      });
     }
     return true;
   };
@@ -139,8 +144,6 @@ export function CaseEditorPage() {
 
   const existingImages = existingCase?.images ?? [];
   const canPublish = isEditing && existingCase?.status === 'draft';
-  const canEdit = !isEditing || existingCase?.status === 'draft';
-  const canEditAlways = !isEditing || existingCase?.status !== 'closed';
 
   const actions = (
     <>

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 	"time"
 
@@ -42,9 +43,32 @@ type CreateCaseRequest struct {
 
 // UpdateCaseRequest is the request body for updating a case.
 type UpdateCaseRequest struct {
-	Title       *string    `json:"title,omitempty" binding:"omitempty,max=255"`
-	Description *string    `json:"description,omitempty" binding:"omitempty,max=10000"`
-	Deadline    *time.Time `json:"deadline,omitempty"`
+	Title       *string      `json:"title,omitempty" binding:"omitempty,max=255"`
+	Description *string      `json:"description,omitempty" binding:"omitempty,max=10000"`
+	Deadline    NullableTime `json:"deadline"`
+}
+
+// NullableTime distinguishes an absent JSON field (Set false, leave unchanged)
+// from an explicit null (Set true, Value nil, clear the value).
+type NullableTime struct {
+	Set   bool
+	Value *time.Time
+}
+
+// UnmarshalJSON implements json.Unmarshaler. It runs for explicit null too,
+// which is what makes null distinguishable from an absent field.
+func (n *NullableTime) UnmarshalJSON(b []byte) error {
+	n.Set = true
+	if string(b) == "null" {
+		n.Value = nil
+		return nil
+	}
+	var t time.Time
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	n.Value = &t
+	return nil
 }
 
 // SubmitResponseRequest is the request body for submitting a classification response.
