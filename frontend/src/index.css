@@ -318,6 +318,22 @@
   --field-navy: oklch(0.22 0.065 262);
 }
 
+/* The plate's marks wait for the font and the plate image (LandingPage.tsx), so they never land
+   on a fallback face or an empty plate. */
+[data-landing-figure]:not([data-ready]) :is(.fig-in, .fig-draw) {
+  animation-play-state: paused;
+}
+
+/* Landing text links and disclosures get the solid focus ring buttons have; white on the field. */
+.landing :is(a, summary):focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.landing .field-navy :is(a, summary):focus-visible {
+  outline-color: white;
+}
+
 /* Results and reliability pages get printed for papers and case notes. */
 @media print {
   .fig-in, .fig-draw {

@@ -81,9 +81,11 @@ export class LandingPage {
 
   async expectHeroFigureVisible() {
     await expect(this.heroFigure.getByRole('img', { name: /weber b/i })).toBeVisible();
+    // The plate is a raster render; it must have loaded, not just be in the DOM.
+    await expect(this.heroFigure.locator('img[data-plate-image]')).not.toHaveJSProperty('naturalWidth', 0);
     await expect(this.heroFigure.locator('ol > li')).toHaveCount(5);
     await expect(this.heroFigure.getByText('44-B1.1', { exact: true })).toBeVisible();
-    await expect(this.heroFigure.getByText(/^Fig\. Weber B/)).toBeVisible();
+    await expect(this.heroFigure.getByText(/^Figure 1\. Weber B/)).toBeVisible();
   }
 
   async expectSystemsVisible() {
