@@ -111,7 +111,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       loadModel()
         .then((m) => {
           if (cancelled) return;
-          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors));
+          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors), (key) => overlay.labels[key as Labelled]?.offsetHeight ?? 20);
           sceneRef.current = scene;
           scene.setInk(readInk(canvas));
           scene.resize(canvas.getBoundingClientRect().width);
@@ -322,7 +322,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
               >
                 <span
                   className={cn(
-                    'block -translate-y-1/2 whitespace-nowrap rounded-sm bg-(--fig-backdrop)/85 px-1 text-xs leading-4 group-data-[side=left]:-translate-x-full',
+                    'block w-max -translate-y-1/2 rounded-sm bg-(--fig-backdrop)/85 px-1 text-xs leading-4 group-data-[side=left]:-translate-x-full',
                     !compact && 'lg:text-sm lg:leading-5',
                     // Facing away, the name becomes a chip in the gutter that says so.
                     'group-data-[back=true]:rounded-sm group-data-[back=true]:border group-data-[back=true]:bg-(--fig-backdrop) group-data-[back=true]:font-normal group-data-[back=true]:text-muted-foreground',
@@ -401,9 +401,7 @@ function placeLabels({ labels, leaders }: Overlay, anchors: Anchors) {
     const label = labels[key];
     const leader = leaders[key];
     if (label) {
-      // Keep the whole label inside the view: a narrow figure has narrow gutters.
-      const [w, room] = [label.offsetWidth, label.parentElement?.clientWidth ?? Infinity];
-      a.labelX = a.side === 'left' ? Math.max(a.labelX, w + 2) : Math.min(a.labelX, room - w - 2);
+      (label.firstElementChild as HTMLElement).style.maxWidth = `${a.maxWidth ?? 9999}px`;
       label.style.transform = `translate(${a.labelX}px, ${a.labelY}px)`;
       label.dataset.back = String(a.back);
       label.dataset.side = a.side;

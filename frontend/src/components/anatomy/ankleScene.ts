@@ -53,6 +53,8 @@ export interface Anchor {
   back: boolean;
   /** For the syndesmosis bracket: the lower end, in pixels. */
   y2?: number;
+  /** The widest the label may be and still sit whole in its gutter; a longer name wraps. */
+  maxWidth?: number;
 }
 
 /** Anchors place the malleolus labels and the syndesmosis bracket. */
@@ -73,7 +75,8 @@ const FADE_MS = 200;
 // cubic-bezier(0.16, 1, 0.3, 1), the house curve, is an exponential ease-out.
 const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
-const LABEL_STEP = 24; // px between two labels on one side, room for a text-sm label and its backdrop
+const LABEL_STEP = 30; // px between two labels on one side, room for a text-sm label, its backdrop and a gap
+const LEADER_MIN = 24; // px: every leader is at least this long, so it reads as a leader
 /** ASPECT is the canvas width over its height: square, so the long structure names have gutters. */
 export const ASPECT = 1;
 // Bone in a studio: ivory, slightly waxy, the same in both themes.
@@ -249,13 +252,12 @@ function boneMaterial(overlay = overlayUniforms(), ghost = false) {
         if (vBone > 1.5) {
           float y = vPos.y;
           float px = max(fwidth(y), 1e-4);
-          // The syndesmosis level, schematic and always shown faintly, so an answered Weber band
-          // reads below, at or above it: a light shade from the plafond to the top of the
-          // tibiofibular contact, closed by hairlines.
+          // The syndesmosis level, schematic: two hairlines at the plafond and the top of the
+          // tibiofibular contact, bracketed in the gutter, so an answered Weber band reads below, at
+          // or above it. No fill, so it stays an annotation and never reads as a mark on the bone.
           #ifndef GHOST
-          float synd = clamp(0.5 + min(y, uSyndesmosis - y) / px, 0.0, 1.0);
           float syndEdge = clamp(1.0 - min(abs(y), abs(y - uSyndesmosis)) / px, 0.0, 1.0);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, uShowSyndesmosis * (0.2 * synd + 0.4 * syndEdge));
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, uShowSyndesmosis * 0.5 * syndEdge);
           #endif
           vec4 inside = clamp(0.5 + min(y - uLevelY0, uLevelY1 - y) / px, 0.0, 1.0);
           vec4 edge = min(abs(y - uLevelY0), abs(y - uLevelY1)) / px;
@@ -340,7 +342,13 @@ const contactMaterial = () =>
   });
 
 /** createAnkleScene draws the model on canvas and renders only when asked to. */
-export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, onAnchors: (a: Anchors) => void) {
+export function createAnkleScene(
+  canvas: HTMLCanvasElement,
+  model: AnkleModel,
+  onAnchors: (a: Anchors) => void,
+  /** A label's height as last drawn, in pixels, so stacked labels keep clear of each other. */
+  labelHeight: (key: string) => number = () => 20,
+) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = NeutralToneMapping;
@@ -551,29 +559,43 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       const tip = px.reduce((a, b) => ((side === 'right' ? b.x > a.x : b.x < a.x) ? b : a));
       anchors[key] = { x: tip.x, y: tip.y, labelX: gutter[side], labelY: tip.y, side, back: back(key) };
     }
+    // Every label sits whole in the gutter beyond a leader of at least LEADER_MIN, so its backdrop
+    // never covers a mark; a name too long for a narrow gutter wraps instead. Moving a label to the
+    // other gutter would send its leader across the bone, so labels keep their side.
+    const place = (a: Anchor) => {
+      a.labelX = a.side === 'left' ? Math.min(gutter.left, a.x - LEADER_MIN) : Math.max(gutter.right, a.x + LEADER_MIN);
+      a.maxWidth = Math.max(48, a.side === 'left' ? a.labelX - 4 : size.x - 4 - a.labelX);
+    };
+    for (const key of Object.keys(regions) as Structure[]) place(anchors[key]!);
     // The syndesmosis bracket sits on the lateral side, beside the fibula from the plafond to the top
     // of the contact.
     const sp = syndesmosisPoints.map(toPx);
-    const sideS = anchors.lateral!.side;
+    // The fibula's own side, even when the malleolus label moved across to fit.
+    const sideS = sides.lateral!;
     const edge = sideS === 'left' ? Math.min(...sp.map((p) => p.x)) : Math.max(...sp.map((p) => p.x));
     const [sy0, sy1] = [Math.min(...sp.map((p) => p.y)), Math.max(...sp.map((p) => p.y))];
     anchors.syndesmosis = {
       x: edge + (sideS === 'left' ? -4 : 4),
       y: sy0,
       y2: sy1,
-      labelX: gutter[sideS],
+      labelX: 0,
       labelY: (sy0 + sy1) / 2,
       side: sideS,
       back: FACING.lateral.clone().applyQuaternion(pivot.quaternion).z < -0.8,
     };
+    place(anchors.syndesmosis);
     // Labels on one side keep their order but never overlap.
     for (const side of ['left', 'right'] as const) {
       const column = (Object.entries(anchors) as [string, Anchor][])
         .filter(([key, a]) => a.side === side && shownLabel(key))
-        .map(([, a]) => a)
-        .sort((a, b) => a.labelY - b.labelY);
-      for (let i = 1; i < column.length; i++) column[i].labelY = Math.max(column[i].labelY, column[i - 1].labelY + LABEL_STEP);
-      for (const a of column) a.labelX = Math.max(8, Math.min(size.x - 8, a.labelX));
+        .sort(([, a], [, b]) => a.labelY - b.labelY);
+      const gap = (i: number) => Math.max(LABEL_STEP, (labelHeight(column[i - 1][0]) + labelHeight(column[i][0])) / 2 + 10);
+      for (let i = 1; i < column.length; i++) column[i][1].labelY = Math.max(column[i][1].labelY, column[i - 1][1].labelY + gap(i));
+      // Centre the stack on its anchors, so the leaders fan out rather than all running downwards.
+      if (column.length > 1) {
+        const shift = column.reduce((s, [, a]) => s + a.y - a.labelY, 0) / column.length;
+        for (const [, a] of column) a.labelY = Math.max(12, Math.min(size.y - 12, a.labelY + shift));
+      }
     }
     onAnchors(anchors);
   }
