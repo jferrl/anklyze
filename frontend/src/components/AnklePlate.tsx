@@ -7,7 +7,7 @@ import lateral640 from '@/assets/landing/ankle-lateral-640.webp';
 // Pre-rendered stills of the BodyParts3D right ankle the classifier draws (credited in the
 // figure's sources and in NOTICE): anterolateral view, yaw 35°, pitch 8°. The second still tints
 // the distal fibular fragment up to FRACTURE. Marks below are in the stills' pixel space.
-const IMG = { w: 1460, h: 1593 };
+const IMG = { w: 1460, h: 1673 };
 const SIZES = '(min-width: 640px) 18rem, 45vw';
 const srcSet = (a: string, b: string) => `${a} 320w, ${b} 640w`;
 
@@ -21,7 +21,7 @@ const FRACTURE =
 
 // Leader targets: [x, y] on the still.
 const LEFT = { fibula: [275, 203], syndesmosis: [SYND.x, 654], lateral: [220, 1203] } as const;
-const RIGHT = { tibia: [910, 263], medial: [1330, 953], talus: [1080, 1323] } as const;
+const RIGHT = { tibia: [910, 263], medial: [1330, 953], talus: [1160, 1190] } as const;
 
 const at = (ms: number) => ({ '--at': `${ms}ms` }) as React.CSSProperties;
 const top = (y: number) => ({ top: `${(y / IMG.h) * 100}%` });
