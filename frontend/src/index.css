@@ -289,6 +289,24 @@
   --hl-fill: color-mix(in oklab, var(--field-ink) 22%, var(--sheet));
 }
 
+/* The rendered ankle in the classifier (AnatomyView): ivory bone on a neutral backdrop, overlaid
+   with the accent as a translucent tint (--hl-tint) and crisp lines (--hl), as the landing plate is. */
+.fig-card {
+  --fig-backdrop: color-mix(in oklab, var(--muted-foreground) 9%, var(--card));
+  --bone-line: color-mix(in oklab, var(--muted-foreground) 85%, var(--card));
+  --hl: var(--primary);
+  --hl-tint: oklch(0.45 0.14 262);
+  --hl-halo: var(--card);
+  /* The AP and Lateral pair sit on a slightly deeper plate, like films on a viewer. */
+  --fig-plate: color-mix(in oklab, var(--muted-foreground) 16%, var(--card));
+}
+.dark .fig-card {
+  --fig-backdrop: color-mix(in oklab, black 30%, var(--card));
+  --fig-plate: color-mix(in oklab, black 50%, var(--card));
+  /* Brighter than the dark theme's fill navy, so the tint still separates from lit bone. */
+  --hl-tint: oklch(0.6 0.16 262);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

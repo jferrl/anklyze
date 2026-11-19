@@ -1,51 +1,64 @@
-import { useId, useMemo, type ReactNode } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
 import type { FractureInput } from '@/types';
-import { getAnatomyState, type AnatomyState, type FibulaMark } from './anatomyState';
-import { CALCANEUS, FIBULA_INTACT, TALUS, TIBIA } from './frontBones';
-import { LAT_FIBULA, LAT_TALUS, LAT_TIBIA } from './lateralBones';
+import { getAnatomyState, type AnatomyState } from './anatomyState';
+import type { Preset } from './anatomyCamera';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
   /** Case context: CT availability comes from the case images, as in the form. */
   hasTACImages?: boolean;
-  /** Lists the answers under the drawing; off where the answer path is already shown beside it. */
+  /** Lists the answers under the figure; off where the answer path is already shown beside it. */
   showReading?: boolean;
+  /** From lg, lays the 3D view and the AP and Lateral pair side by side, for a pinned figure over a form. */
+  compact?: boolean;
+  /** Opens the 3D model on this view rather than following the answers. */
+  view?: Preset;
   className?: string;
 }
 
-// Vertical extent of each fibular level in frontBones units. The plafond is at y≈246, the top of
-// the tibiofibular contact (syndesmosis) at y≈196, and 6 cm above the joint at y≈145 (the distal
-// tibia, about 5 cm wide, spans ~88 units).
-const BANDS: Record<Exclude<FibulaMark, 'proximal'>, [number, number]> = {
-  infra: [249, 268],
-  trans: [199, 244],
-  supra: [149, 194],
-  supra_far: [104, 143],
-};
+// three.js and the model load after the page, once per page.
+const Anatomy3D = lazy(() => import('./Anatomy3D'));
 
-// State changes fade or recolour in 150ms on the house curve; nothing moves.
-const ink = 'transition-[color,fill,stroke,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]';
+function hasWebGL2(): boolean {
+  try {
+    return !!document.createElement('canvas').getContext('webgl2');
+  } catch {
+    return false;
+  }
+}
+
+// State changes fade or recolour in 200ms on the house curve; nothing moves.
+const ink = 'transition-[color,fill,stroke,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]';
 const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
 
 /**
- * AnatomyView draws the ankle from the front and the side and highlights what the answers
- * describe: the fractured malleoli and the level of the fibular fracture. Everything drawn is
- * also stated in text.
+ * AnatomyView renders a model of the ankle to turn in 3D, with an AP and Lateral pair under it, and
+ * highlights what the answers describe: the fractured malleoli and the level of the fibular
+ * fracture. Everything shown is also stated in text.
  */
-export function AnatomyView({ formData, hasTACImages, showReading = true, className }: AnatomyViewProps) {
+export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, view, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
-  const state = getAnatomyState(formData);
+  // A new state object only when what is shown changes, so the model is not redrawn on every render.
+  const stateKey = JSON.stringify(getAnatomyState(formData));
+  const state = useMemo<AnatomyState>(() => JSON.parse(stateKey), [stateKey]);
+  // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
+  const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
   const summary = useSummary(state);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
+  const steps = getQuestionSteps(formData, options, hasTACImages);
+  // The question being asked is the first unanswered one; when it is the posterior fragment, the
+  // model turns to show the posterior malleolus.
+  const posteriorAsked = steps.find((step) => step.value === undefined)?.id === 'posterior_fracture_type';
+  const answered = state.lateral || state.medial || state.posterior || !!state.fibula;
   const reading = showReading
-    ? getQuestionSteps(formData, options, hasTACImages)
+    ? steps
         .filter((step) => step.value !== undefined && step.id !== 'has_ct_scan')
         .map((step) => ({
           id: step.id,
@@ -55,37 +68,41 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
     : [];
 
   const fibulaCaption = (
-    <p aria-hidden="true" className="text-xs">
-      <span className={cn(on(state.lateral || !!state.fibula), 'block', state.fibula ? 'font-medium text-primary' : 'text-muted-foreground')}>
-        {t('anatomy.fibularLevel')}
-      </span>
-      <span className={cn('block min-h-4 text-primary', on(!!state.fibula))}>
-        {state.fibula && t(`anatomy.level.${state.fibula}`)}
-      </span>
-    </p>
+    <Caption
+      title={t('anatomy.fibularLevel')}
+      shown={state.lateral || !!state.fibula}
+      value={state.fibula && t(`anatomy.level.${state.fibula}`)}
+    />
   );
   const posteriorCaption = (
-    <p aria-hidden="true" className="text-xs">
-      <span className={cn(ink, 'block', state.posterior ? 'font-medium text-primary' : 'text-muted-foreground')}>
-        {t('anatomy.posteriorMalleolus')}
-      </span>
-      <span className={cn('block min-h-4 text-primary', on(!!state.posteriorType))}>
-        {state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
-      </span>
-    </p>
+    <Caption
+      title={t('anatomy.posteriorMalleolus')}
+      shown={state.posterior}
+      value={state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
+    />
   );
 
   return (
-    <figure className={cn('space-y-3', className)}>
-      {/* Headings, drawings and captions are rows of one grid, so both views share a baseline. */}
-      <div role="img" aria-label={summary} className="grid grid-cols-[minmax(0,5fr)_minmax(0,3fr)] gap-x-4 gap-y-1">
-        <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.front')}</p>
-        <p aria-hidden="true" className="text-xs text-muted-foreground">{t('anatomy.side')}</p>
-        <FrontView state={state} />
-        <SideView state={state} />
-        <div className="pt-2">{fibulaCaption}</div>
-        <div className="pt-2">{posteriorCaption}</div>
-      </div>
+    <figure className={cn('fig-card space-y-3', className)}>
+      {notice ? (
+        <>
+          <p className="rounded-sm bg-(--fig-backdrop) p-3 text-sm">{summary}</p>
+          <p role="status" className="text-xs text-muted-foreground">
+            {t(`anatomy.model3d.${notice}`)}
+          </p>
+        </>
+      ) : (
+        <Suspense fallback={<FigurePlaceholder compact={compact} />}>
+          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} onFail={() => setNotice('loadFailed')} />
+        </Suspense>
+      )}
+      {/* Before the first answer there is nothing to caption, so no space is held for it. */}
+      {answered && (
+        <div className="grid grid-cols-2 gap-x-3">
+          {fibulaCaption}
+          {posteriorCaption}
+        </div>
+      )}
 
       <p className="sr-only" aria-live="polite">{summary}</p>
 
@@ -101,10 +118,45 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, classN
       )}
 
       <figcaption className="space-y-1 text-xs text-muted-foreground">
-        <p>{t('anatomy.note')}</p>
+        {answered && <p>{t('anatomy.note')}</p>}
         <Sources />
       </figcaption>
     </figure>
+  );
+}
+
+/** FigurePlaceholder holds the figure's size while three.js loads, so nothing shifts when it lands. */
+function FigurePlaceholder({ compact }: { compact: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <div aria-hidden="true" className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
+      <div>
+        <p className="grid aspect-square place-items-center rounded-sm bg-(--fig-backdrop) text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>
+        <p className="mt-2 h-4" />
+      </div>
+      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1')}>
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-sm border bg-(--fig-plate) p-1">
+            <div className="aspect-square sm:aspect-[5/4]" />
+            <div className="h-5" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Caption names a structure the answers involve and its answer, or says the answer is pending. */
+function Caption({ title, shown, value }: { title: string; shown: boolean; value?: string }) {
+  const { t } = useTranslation();
+  return (
+    <p aria-hidden="true" className={cn(on(shown), 'text-xs')}>
+      <span className="block font-medium">{title}</span>
+      {/* The key restarts the fade when the answer changes. */}
+      <span key={value ?? ''} className={cn('block min-h-4 animate-fade-in', value ? 'text-primary' : 'text-muted-foreground')}>
+        {value ?? t('anatomy.notAnswered')}
+      </span>
+    </p>
   );
 }
 
@@ -115,9 +167,9 @@ function useSummary(state: AnatomyState): string {
     state.medial && t('anatomy.structures.medial'),
     state.posterior && t('anatomy.structures.posterior'),
   ].filter((part): part is string => !!part);
-  if (parts.length === 0 && !state.fibula) return t('anatomy.summary.empty');
+  if (parts.length === 0 && !state.fibula) return t('anatomy.model3d.empty');
 
-  const sentences = [t('anatomy.summary.views')];
+  const sentences = [t('anatomy.model3d.views')];
   if (parts.length > 0) {
     sentences.push(t('anatomy.summary.highlighted', { list: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(parts) }));
   }
@@ -126,160 +178,6 @@ function useSummary(state: AnatomyState): string {
     sentences.push(t('anatomy.summary.posteriorType', { type: t(`form.options.posteriorType.${state.posteriorType}`) }));
   }
   return sentences.join(' ');
-}
-
-// Both drawings share one language: 1.25px outlines and 2.25px highlights at any size, highlights
-// as a tint plus a bolder outline that fade out at their ends, and HTML labels on leader lines.
-const LINE = { strokeWidth: 1.25, vectorEffect: 'non-scaling-stroke' } as const;
-const BOLD = { strokeWidth: 2.25, vectorEffect: 'non-scaling-stroke' } as const;
-const TINT = 0.14;
-
-type ViewBox = [number, number, number, number];
-const FRONT_BOX: ViewBox = [200, 100, 210, 212];
-const SIDE_BOX: ViewBox = [94, 66, 150, 196];
-
-/**
- * Spot limits a highlight to a disc round its structure: the tint ends on a clean arc (`${id}`),
- * and the bold outline tapers out across it (`${id}-line`) instead of stopping square.
- */
-function Spot({ id, cx, cy, r }: { id: string; cx: number; cy: number; r: number }) {
-  const disc = (suffix: string, radius: number, fade: number) => (
-    <>
-      <radialGradient id={`${id}${suffix}-g`} cx={cx} cy={cy} r={radius} gradientUnits="userSpaceOnUse">
-        <stop offset={1 - fade / radius} stopColor="white" />
-        <stop offset="1" stopColor="white" stopOpacity="0" />
-      </radialGradient>
-      <mask id={`${id}${suffix}`} maskUnits="userSpaceOnUse" x={cx - radius} y={cy - radius} width={2 * radius} height={2 * radius}>
-        <circle cx={cx} cy={cy} r={radius} fill={`url(#${id}${suffix}-g)`} />
-      </mask>
-    </>
-  );
-  return (
-    <>
-      {disc('', r, 1)}
-      {disc('-line', r + 4, 10)}
-    </>
-  );
-}
-
-/** Label sets a structure's name in the page type over a drawing, hanging below a point of its viewBox. */
-function Label({ box, x, y, on, children }: { box: ViewBox; x: number; y: number; on: boolean; children: ReactNode }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{ left: `${((x - box[0]) / box[2]) * 100}%`, top: `${((y - box[1]) / box[3]) * 100}%` }}
-      className={cn(ink, 'absolute -translate-x-1/2 whitespace-nowrap text-xs leading-4', on ? 'font-medium text-primary' : 'text-muted-foreground')}
-    >
-      {children}
-    </span>
-  );
-}
-
-/** Leader joins a structure (the dot) to the label below it. */
-function Leader({ x, y, to, on }: { x: number; y: number; to: number; on: boolean }) {
-  return (
-    <g className={cn(ink, on ? 'fill-primary stroke-primary' : 'fill-muted-foreground/60 stroke-muted-foreground/60')}>
-      <path d={`M${x},${y} V${to}`} vectorEffect="non-scaling-stroke" strokeWidth="1" />
-      <circle cx={x} cy={y} r="1.8" stroke="none" />
-    </g>
-  );
-}
-
-function useSvgId() {
-  // useId's punctuation is not safe inside url(#...).
-  return 'anatomy' + useId().replace(/[^\w-]/g, '');
-}
-
-function FrontView({ state }: { state: AnatomyState }) {
-  const { t } = useTranslation();
-  const id = useSvgId();
-
-  return (
-    <div className="relative self-end">
-      <svg viewBox={FRONT_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="var(--card)" strokeLinecap="round" strokeLinejoin="round">
-        <defs>
-          {/* The lateral malleolus is the fibula below the plafond (y≈244), so it meets the transsyndesmotic band without overlapping it. */}
-          <Spot id={`${id}-lateral`} cx={244} cy={368} r={124} />
-          <Spot id={`${id}-medial`} cx={395} cy={262} r={52} />
-          <clipPath id={`${id}-fibula`}>
-            <path d={FIBULA_INTACT} />
-          </clipPath>
-        </defs>
-
-        {/* Back to front; each fill hides what lies behind it. */}
-        <g className="stroke-muted-foreground" {...LINE}>
-          <path d={CALCANEUS} />
-          <path d={TALUS} />
-          <path d={TIBIA} />
-          <path d={FIBULA_INTACT} />
-        </g>
-
-        <g className={cn('fill-primary stroke-primary', on(state.lateral))}>
-          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral)`} fillOpacity={TINT} stroke="none" />
-          <path d={FIBULA_INTACT} mask={`url(#${id}-lateral-line)`} fill="none" {...BOLD} />
-        </g>
-        <g className={cn('fill-primary stroke-primary', on(state.medial))}>
-          <path d={TIBIA} mask={`url(#${id}-medial)`} fillOpacity={TINT} stroke="none" />
-          <path d={TIBIA} mask={`url(#${id}-medial-line)`} fill="none" {...BOLD} />
-        </g>
-
-        {/* The fibular level: the fibula tinted between two rings, with a bracket beside it. */}
-        {(Object.keys(BANDS) as (keyof typeof BANDS)[]).map((mark) => {
-          const [top, bottom] = BANDS[mark];
-          return (
-            <g key={mark} className={cn('fill-primary stroke-primary', on(state.fibula === mark))}>
-              <g clipPath={`url(#${id}-fibula)`}>
-                <rect x="220" y={top} width="60" height={bottom - top} fillOpacity={TINT} stroke="none" />
-                <path d={`M220,${top} h60 M220,${bottom} h60`} fill="none" {...LINE} />
-              </g>
-              <path d={`M219,${top} h-4 V${bottom} h4`} fill="none" {...LINE} />
-            </g>
-          );
-        })}
-
-        {/* Proximal fibula: outside the drawing, so only an arrow up the shaft. */}
-        <path d="M255,142 V106 M249,113 L255,105 L261,113" fill="none" {...BOLD} className={cn('stroke-primary', on(state.fibula === 'proximal'))} />
-
-        <Leader x={232.5} y={270.5} to={282} on={state.lateral} />
-        <Leader x={374} y={252} to={265} on={state.medial} />
-      </svg>
-      <Label box={FRONT_BOX} x={232.5} y={284} on={state.lateral}>
-        {t('anatomy.lateral')}
-      </Label>
-      <Label box={FRONT_BOX} x={374} y={267} on={state.medial}>
-        {t('anatomy.medial')}
-      </Label>
-    </div>
-  );
-}
-
-function SideView({ state }: { state: AnatomyState }) {
-  const { t } = useTranslation();
-  const id = useSvgId();
-
-  return (
-    <div className="w-full max-w-56 self-end">
-      <svg viewBox={SIDE_BOX.join(' ')} aria-hidden="true" className="block w-full" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <defs>
-          <Spot id={`${id}-posterior`} cx={118} cy={205} r={48.5} />
-        </defs>
-        <g className="stroke-muted-foreground" {...LINE}>
-          <path d={LAT_TALUS} />
-          <path d={LAT_TIBIA} />
-          <path d={LAT_FIBULA} strokeOpacity="0.45" />
-        </g>
-        {/* The posterior lip of the tibia; its extent is schematic, not a fragment. */}
-        <g className={cn('fill-primary stroke-primary', on(state.posterior))}>
-          <path d={`${LAT_TIBIA} Z`} mask={`url(#${id}-posterior)`} fillOpacity={TINT} stroke="none" />
-          <path d={LAT_TIBIA} mask={`url(#${id}-posterior-line)`} fill="none" {...BOLD} />
-        </g>
-      </svg>
-      <p aria-hidden="true" className="flex justify-between gap-2 text-xs leading-4 text-muted-foreground">
-        <span>{t('anatomy.back')}</span>
-        <span>{t('anatomy.frontSide')}</span>
-      </p>
-    </div>
-  );
 }
 
 // The full credits stay in the page, one click away; NOTICE has the complete text.
@@ -296,13 +194,11 @@ function Sources() {
       <ul className="mt-1 space-y-1">
         <li>
           <Trans
-            i18nKey="anatomy.sources.front"
-            components={{ work: link('https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg'), license: link('https://creativecommons.org/licenses/by/4.0/') }}
+            i18nKey="anatomy.sources.model"
+            components={{ work: link('https://lifesciencedb.jp/bp3d/'), license: link('https://creativecommons.org/licenses/by-sa/4.0/') }}
           />
         </li>
-        <li>
-          <Trans i18nKey="anatomy.sources.side" components={{ work: link('https://commons.wikimedia.org/wiki/File:Ankle.svg') }} />
-        </li>
+        <li>{t('anatomy.sources.syndesmosis')}</li>
       </ul>
     </details>
   );

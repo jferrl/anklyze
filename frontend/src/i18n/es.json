@@ -400,20 +400,15 @@
     "title": "Anatomía",
     "show": "Mostrar anatomía",
     "hide": "Ocultar anatomía",
-    "front": "Frontal (AP)",
-    "side": "Lateral",
-    "lateral": "Lateral",
-    "medial": "Medial",
     "posteriorMalleolus": "Maléolo posterior",
-    "back": "Posterior",
-    "frontSide": "Anterior",
     "fibularLevel": "Nivel de la fractura de peroné",
+    "notAnswered": "Aún no ha respondido",
     "level": {
       "infra": "Infrasindesmal",
       "trans": "Transindesmal",
       "supra": "Suprasindesmal",
-      "supra_far": "Suprasindesmal, a > 6 cm de la articulación",
-      "proximal": "Peroné proximal, por encima del dibujo"
+      "supra_far": "Suprasindesmal, a más de 6 cm por encima de la interlínea articular",
+      "proximal": "Peroné proximal, fuera del modelo"
     },
     "structures": {
       "lateral": "maléolo lateral",
@@ -421,15 +416,13 @@
       "posterior": "maléolo posterior"
     },
     "summary": {
-      "empty": "Esquema del tobillo, proyecciones frontal y lateral. Aún no ha seleccionado ningún maléolo.",
-      "views": "Esquema del tobillo, proyecciones frontal y lateral.",
       "highlighted": "Resaltado: {{list}}.",
       "fibula": {
         "infra": "Fractura de peroné por debajo de la sindesmosis (infrasindesmal).",
         "trans": "Fractura de peroné a nivel de la sindesmosis (transindesmal).",
         "supra": "Fractura de peroné por encima de la sindesmosis (suprasindesmal).",
         "supra_far": "Fractura de peroné por encima de la sindesmosis, a más de 6 cm de la articulación.",
-        "proximal": "Fractura de peroné proximal, por encima del dibujo."
+        "proximal": "Fractura de peroné proximal, fuera del modelo."
       },
       "posteriorType": "Maléolo posterior: {{type}}."
     },
@@ -450,12 +443,38 @@
       "has_fibula_head_shortening": "Acortamiento en la cabeza del peroné",
       "posterior_fracture_type": "Fragmento posterior"
     },
-    "note": "Las marcas indican el nivel, no la forma de la fractura.",
+    "note": "El sombreado indica la región y el nivel afectados, no el patrón de la fractura.",
     "sources": {
       "title": "Fuentes",
-      "front": "Vista frontal adaptada de <work>‘Weber Classification – latin.svg’</work> de DrFO.Tn, <license>CC BY 4.0</license>.",
-      "side": "Vista lateral adaptada de <work>‘Ankle.svg’</work>, dibujo del gobierno de EE. UU., dominio público."
-    }
+      "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>.",
+      "syndesmosis": "La banda tenue sobre el peroné marca el nivel de la sindesmosis, desde el pilón tibial hasta el borde superior del contacto tibioperoneo. Es esquemática; el modelo no incluye ligamentos."
+    },
+    "model3d": {
+      "loading": "Cargando el modelo 3D…",
+      "reset": "Restablecer vista",
+      "hintShort": "Arrastre para girar · Ctrl + rueda o pellizque para ampliar",
+      "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista. Amplíe con Ctrl o Cmd y la rueda, pellizcando, con las teclas + y − o con los botones de zoom; Mayús + arrastrar desplaza la vista ampliada.",
+      "canvas": "Modelo 3D de un tobillo derecho",
+      "noWebGL": "Este navegador no puede mostrar el modelo del tobillo (WebGL 2 está desactivado o no es compatible); se describe en texto.",
+      "loadFailed": "No se pudo cargar el modelo del tobillo; se describe en texto.",
+      "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales y astrágalo.",
+      "empty": "Modelo 3D de un tobillo derecho. Aún no se ha seleccionado ningún maléolo.",
+      "ap": "AP",
+      "lateralView": "Lateral",
+      "showAp": "Girar el modelo a la proyección AP",
+      "showLateral": "Girar el modelo a la proyección lateral",
+      "zoomIn": "Ampliar",
+      "zoomOut": "Reducir",
+      "enlarge": "Abrir la vista {{view}} en el modelo 3D",
+      "enlargeTitle": "Modelo del tobillo"
+    },
+    "structureNames": {
+      "lateral": "Maléolo lateral",
+      "medial": "Maléolo medial",
+      "posterior": "Maléolo posterior"
+    },
+    "syndesmosis": "Sindesmosis",
+    "behind": "(detrás)"
   },
   "language": {
     "toggle": "Cambiar idioma"
