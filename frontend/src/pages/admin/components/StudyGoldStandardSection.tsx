@@ -127,7 +127,7 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
       <div className="space-y-3 pt-2">
         <h3 className="text-sm font-semibold text-foreground">{t('admin.studies.goldStandard.perCaseAccuracy')}</h3>
         <div className="overflow-hidden rounded-lg border bg-card">
-          <div className="md:hidden">
+          <div className="max-h-[38rem] overflow-y-auto md:hidden">
             <SystemListHead label={t('admin.studies.goldStandard.case')} system={activeSystem} />
             <div className="divide-y">
               {sortedCases.map((pca) => (
@@ -151,9 +151,10 @@ export function StudyGoldStandardSection({ studyId, metrics, isError, onRetry, a
             </div>
           </div>
 
-          <div className="hidden overflow-x-auto md:block">
+          {/* 120 cases would make the page very long, so the table scrolls within a box with its head kept in view. */}
+          <div className="hidden max-h-[38rem] overflow-auto md:block">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-card shadow-[inset_0_-1px_0_var(--border)]">
                 <tr className="border-b">
                   <th className={cn(TH, 'w-12 text-left')}>#</th>
                   <th className={cn(TH, 'text-left')}>{t('admin.studies.goldStandard.case')}</th>
