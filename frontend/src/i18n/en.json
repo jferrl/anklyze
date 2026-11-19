@@ -445,8 +445,8 @@
     "model3d": {
       "loading": "Loading the 3D model…",
       "reset": "Reset view",
-      "hintShort": "Drag to rotate",
-      "hint": "Drag to turn the model, or select it and use the arrow keys; Home resets the view.",
+      "hintShort": "Drag to rotate · Ctrl + scroll or pinch to zoom",
+      "hint": "Drag to turn the model, or select it and use the arrow keys; Home resets the view. Zoom with Ctrl or Cmd and the scroll wheel, a pinch, the + and − keys or the zoom buttons; Shift-drag moves a zoomed view.",
       "canvas": "3D model of a right ankle",
       "noWebGL": "This browser cannot show the ankle model (WebGL 2 is off or unsupported), so it is described in text.",
       "loadFailed": "The ankle model could not be loaded, so it is described in text.",
@@ -455,7 +455,11 @@
       "ap": "AP",
       "lateralView": "Lateral",
       "showAp": "Turn the model to the AP view",
-      "showLateral": "Turn the model to the lateral view"
+      "showLateral": "Turn the model to the lateral view",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "enlarge": "Open the {{view}} view in the 3D model",
+      "enlargeTitle": "Ankle model"
     },
     "structureNames": {
       "lateral": "Lateral malleolus",

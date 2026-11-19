@@ -151,7 +151,7 @@ export function FractureForm() {
             onReset={handleReset}
             onCompare={handleStartComparison}
           />
-          <AnatomySnapshotPair />
+          <AnatomySnapshotPair formData={lastInput} />
         </div>
       </div>
     );

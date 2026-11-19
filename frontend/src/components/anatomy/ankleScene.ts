@@ -77,6 +77,8 @@ const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
 const LABEL_STEP = 30; // px between two labels on one side, room for a text-sm label, its backdrop and a gap
 const LEADER_MIN = 24; // px: every leader is at least this long, so it reads as a leader
+/** ZOOM_MAX is the closest the view zooms in; the model is redrawn at every zoom, so it stays sharp. */
+export const ZOOM_MAX = 4;
 /** ASPECT is the canvas width over its height: square, so the long structure names have gutters. */
 export const ASPECT = 1;
 // Bone in a studio: ivory, slightly waxy, the same in both themes.
@@ -351,7 +353,7 @@ export function createAnkleScene(
   labelHeight: (key: string) => number = () => 20,
 ) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3));
   renderer.toneMapping = NeutralToneMapping;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFShadowMap;
@@ -447,6 +449,8 @@ export function createAnkleScene(
 
   let yaw = START.yaw;
   let pitch = START.pitch;
+  // Zoom and pan move the camera only; the frame, lights and labels follow from the projection.
+  let zoom = 1;
 
   // The frame fits the tallest the model gets at any allowed turn, so turning never changes the
   // scale or crops a part, plus room below for the contact shadow. The model is tall and narrow,
@@ -601,6 +605,15 @@ export function createAnkleScene(
     onAnchors(anchors);
   }
 
+  function pan(dx: number, dy: number) {
+    const size = renderer.getSize(new Vector2());
+    const [mx, my] = [(frame.w / 2) * (1 - 1 / zoom), (frame.h / 2) * (1 - 1 / zoom)];
+    camera.position.x = Math.max(-mx, Math.min(mx, camera.position.x - (dx / size.x) * (frame.w / zoom)));
+    camera.position.y = Math.max(-my, Math.min(my, camera.position.y + (dy / size.y) * (frame.h / zoom)));
+    camera.updateProjectionMatrix();
+    render();
+  }
+
   function setTarget(next: number[]) {
     target = next;
     cancelAnimationFrame(fade);
@@ -629,6 +642,23 @@ export function createAnkleScene(
       pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch + dPitch));
       render();
     },
+    /** zoom is the current zoom: 1 frames the whole model, up to ZOOM_MAX. */
+    zoom: () => zoom,
+    /**
+     * zoomAt sets the zoom, keeping the point at canvas pixel (px, py) still; the centre when
+     * omitted. The view never pans past the model's frame.
+     */
+    zoomAt(next: number, px?: number, py?: number) {
+      const size = renderer.getSize(new Vector2());
+      const [u, v] = [(px ?? size.x / 2) / size.x - 0.5, 0.5 - (py ?? size.y / 2) / size.y];
+      const z = Math.max(1, Math.min(ZOOM_MAX, next));
+      camera.position.x += u * frame.w * (1 / zoom - 1 / z);
+      camera.position.y += v * frame.h * (1 / zoom - 1 / z);
+      zoom = camera.zoom = z;
+      pan(0, 0);
+    },
+    /** pan moves the zoomed view by canvas pixels, as if dragging the model. */
+    pan,
     /** view is the current turn, in radians. */
     view: () => ({ yaw, pitch }),
     /** setView turns the model to the given yaw and pitch, in radians. */

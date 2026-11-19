@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
@@ -8,7 +8,7 @@ import { marksFor } from './anatomyMarks';
 import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import { parseAnkleModel, type AnkleModel } from './ankleModel';
-import { createAnkleScene, type Anchors, type AnkleScene, type Ink } from './ankleScene';
+import { createAnkleScene, ZOOM_MAX, type Anchors, type AnkleScene, type Ink } from './ankleScene';
 
 const DEG = Math.PI / 180;
 const DRAG = 0.6 * DEG; // per pixel
@@ -16,6 +16,8 @@ const KEY_YAW = 15 * DEG;
 const KEY_PITCH = 10 * DEG;
 const DECAY_MS = 160; // release glide time constant
 const TURN_MS = 600;
+const ZOOM_STEP = 1.5; // per button press or key
+const WHEEL_ZOOM = 0.01; // per wheel pixel, as a power of e
 const HANDS_OFF_MS = 2000; // after a drag or a key, answers do not turn the model for this long
 // First open only, with no answer yet: the model swings in from a quarter turn to show that it turns.
 const INTRO = { turn: -50 * DEG, ms: 1400 };
@@ -69,13 +71,15 @@ interface Anatomy3DProps {
   compact?: boolean;
   /** Called when the model cannot be shown, so the figure falls back to text. */
   onFail: () => void;
+  /** Opens on this view instead of following the answers there. */
+  view?: Preset;
 }
 
 /**
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view }: Anatomy3DProps) {
   const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -85,8 +89,11 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   const sceneRef = useRef<AnkleScene | null>(null);
   const [ready, setReady] = useState(false);
   const [theme, setTheme] = useState(0);
-  const [at, setAt] = useState<Preset | undefined>('anterolateral');
-  const drag = useRef<{ id: number; x: number; y: number; t: number; vx: number; vy: number } | null>(null);
+  const [at, setAt] = useState<Preset | undefined>(view ?? 'anterolateral');
+  const [zoom, setZoom] = useState(1);
+  const drag = useRef<{ id: number; x: number; y: number; t: number; vx: number; vy: number; pan: boolean } | null>(null);
+  // Touch points on the canvas, for a two-finger pinch and pan.
+  const touches = useRef(new Map<number, { x: number; y: number }>());
   const glide = useRef(0);
   const touched = useRef(-Infinity);
   const seen = useRef<Focus>(NONE);
@@ -115,6 +122,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
           sceneRef.current = scene;
           scene.setInk(readInk(canvas));
           scene.resize(canvas.getBoundingClientRect().width);
+          if (view) scene.setView(PRESETS[view]);
           // The theme toggles a class on <html>; redraw in the new ink.
           themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
           setReady(true);
@@ -122,7 +130,17 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
         .catch(() => !cancelled && onFail());
     });
     resize.observe(canvas);
+    // Ctrl or Cmd with the wheel, and a trackpad pinch, zoom; a plain wheel still scrolls the page.
+    const onWheel = (e: WheelEvent) => {
+      if (!scene || !(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault();
+      handled();
+      const box = canvas.getBoundingClientRect();
+      zoomTo(scene.zoom() * Math.exp(-e.deltaY * WHEEL_ZOOM), e.clientX - box.left, e.clientY - box.top);
+    };
+    canvas.addEventListener('wheel', onWheel, { passive: false });
     return () => {
+      canvas.removeEventListener('wheel', onWheel);
       cancelled = true;
       cancelAnimationFrame(glide.current);
       resize.disconnect();
@@ -133,6 +151,14 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function zoomTo(next: number, px?: number, py?: number) {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    scene.zoomAt(next, px, py);
+    setZoom(scene.zoom());
+  }
+
+  // A turn to a view also zooms back out, so the whole of what it shows is in frame.
   function turnTo(preset: Preset) {
     const scene = sceneRef.current;
     if (!scene) return;
@@ -140,12 +166,17 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     setAt(preset);
     const to = PRESETS[preset];
     const from = scene.view();
+    const z0 = scene.zoom();
     // The short way round.
     const dYaw = Math.atan2(Math.sin(to.yaw - from.yaw), Math.cos(to.yaw - from.yaw));
-    if (reducedMotion()) return scene.setView({ ...to, yaw: from.yaw + dYaw });
+    if (reducedMotion()) {
+      zoomTo(1);
+      return scene.setView({ ...to, yaw: from.yaw + dYaw });
+    }
     const start = performance.now();
     const step = (now: number) => {
       const k = easeInOut(Math.min((now - start) / TURN_MS, 1));
+      if (z0 !== 1) zoomTo(z0 + (1 - z0) * k);
       scene.setView({ yaw: from.yaw + dYaw * k, pitch: from.pitch + (to.pitch - from.pitch) * k });
       if (k < 1) glide.current = requestAnimationFrame(step);
     };
@@ -160,8 +191,9 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     if (!ready || !scene) return;
     scene.setState(state);
     const focus = { state, posteriorAsked };
-    const preset = presetFor(seen.current, focus);
-    const first = seen.current === NONE;
+    // A figure opened on a set view stays on it for the answers it opened with.
+    const preset = view && seen.current === NONE ? undefined : presetFor(seen.current, focus);
+    const first = seen.current === NONE && !view;
     seen.current = focus;
     if (preset) {
       if (!drag.current && performance.now() - touched.current > HANDS_OFF_MS) turnTo(preset);
@@ -178,6 +210,8 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       };
       glide.current = requestAnimationFrame(step);
     }
+    // view only sets where a figure opens, and turnTo reads refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, posteriorAsked, ready]);
 
   // The AP and Lateral pair redraws only when the answers, the theme or its size change.
@@ -187,7 +221,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       for (const [preset] of PAIR) {
         const out = pairRef.current[preset];
         if (!out || !out.clientWidth) continue;
-        const ratio = Math.min(window.devicePixelRatio, 2);
+        const ratio = Math.min(window.devicePixelRatio, 3);
         out.width = Math.round(out.clientWidth * ratio);
         out.height = Math.round(out.clientHeight * ratio);
         sceneRef.current?.snapshot(PRESETS[preset], out);
@@ -214,16 +248,41 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   }
 
   function onPointerDown(e: PointerEvent<HTMLCanvasElement>) {
-    if (drag.current) return; // a second finger does not take over the drag
+    if (e.pointerType === 'touch') touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    // A second finger turns the drag into a pinch; a third is ignored.
+    if (touches.current.size === 2) drag.current = null;
+    if (drag.current || touches.current.size > 2) return;
     handled();
     e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, t: e.timeStamp, vx: 0, vy: 0 };
+    // Shift-drag, or a right or middle drag, pans a zoomed view instead of turning it.
+    const pan = e.shiftKey || e.button === 1 || e.button === 2;
+    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, t: e.timeStamp, vx: 0, vy: 0, pan };
+  }
+
+  function onPinch(e: PointerEvent<HTMLCanvasElement>) {
+    const [a, b] = [...touches.current.values()];
+    const before = { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const [c, d] = [...touches.current.values()];
+    const after = { d: Math.hypot(c.x - d.x, c.y - d.y), x: (c.x + d.x) / 2, y: (c.y + d.y) / 2 };
+    const scene = sceneRef.current;
+    if (!scene || !before.d) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    zoomTo((scene.zoom() * after.d) / before.d, after.x - box.left, after.y - box.top);
+    scene.pan(after.x - before.x, after.y - before.y);
+    touched.current = performance.now();
   }
 
   function onPointerMove(e: PointerEvent<HTMLCanvasElement>) {
+    if (touches.current.size === 2 && touches.current.has(e.pointerId)) return onPinch(e);
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
     const [dx, dy, dt] = [e.clientX - d.x, e.clientY - d.y, Math.max(e.timeStamp - d.t, 1)];
+    if (d.pan) {
+      sceneRef.current?.pan(dx, dy);
+      Object.assign(d, { x: e.clientX, y: e.clientY, t: e.timeStamp });
+      return;
+    }
     sceneRef.current?.rotate(dx * DRAG, dy * DRAG);
     // Smoothed velocity in radians per millisecond, for the glide after release.
     d.vx = 0.8 * ((dx * DRAG) / dt) + 0.2 * d.vx;
@@ -232,12 +291,13 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   }
 
   function onPointerUp(e: PointerEvent<HTMLCanvasElement>) {
+    touches.current.delete(e.pointerId);
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
     drag.current = null;
     touched.current = performance.now();
     // A paused pointer has no momentum; reduced motion gets no glide at all.
-    if (e.timeStamp - d.t > 80 || reducedMotion()) return;
+    if (d.pan || e.timeStamp - d.t > 80 || reducedMotion()) return;
     let { vx, vy } = d;
     let last = performance.now();
     const step = (now: number) => {
@@ -263,6 +323,12 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       e.preventDefault();
       return turnTo('anterolateral');
     }
+    const zoomKey: Record<string, number> = { '+': ZOOM_STEP, '=': ZOOM_STEP, '-': 1 / ZOOM_STEP, '0': 0 };
+    if (e.key in zoomKey && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      handled();
+      return zoomTo(zoomKey[e.key] ? (sceneRef.current?.zoom() ?? 1) * zoomKey[e.key] : 1);
+    }
     if (!turn[e.key]) return;
     handled();
     sceneRef.current?.rotate(...turn[e.key]);
@@ -282,15 +348,19 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
+            onContextMenu={(e) => e.preventDefault()}
             onKeyDown={onKeyDown}
-            // pan-y keeps the page scrollable on touch; a horizontal drag turns the model.
+            // pan-y keeps the page scrollable on touch while a horizontal drag turns the model; zoomed
+            // in, every drag belongs to the model.
             className={cn(
-              'block aspect-square w-full cursor-grab touch-pan-y rounded-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring active:cursor-grabbing',
+              zoom > 1 ? 'touch-none' : 'touch-pan-y',
+              'block aspect-square w-full cursor-grab rounded-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring active:cursor-grabbing',
               fade,
               ready ? 'opacity-100' : 'opacity-0',
             )}
           />
-          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', !ready && 'hidden')}>
+          {/* Labels are drawn for the whole model; zoomed in they would crowd the edges, so they fade out. */}
+          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', fade, zoom > 1 ? 'opacity-0' : 'opacity-100', !ready && 'hidden')}>
             <svg className="absolute inset-0 size-full overflow-visible">
               {LABELS.map(([key]) => (
                 <g
@@ -336,21 +406,50 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             ))}
           </div>
           {!ready && <p className="absolute inset-0 grid place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            onClick={() => {
-              touched.current = -Infinity;
-              turnTo('anterolateral');
-            }}
-            aria-label={t('anatomy.model3d.reset')}
-            title={t('anatomy.model3d.reset')}
-            className="absolute right-2 top-2"
-            disabled={!ready}
-          >
-            <RotateCcw />
-          </Button>
+          <div className="absolute right-2 top-2 flex flex-col gap-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              onClick={() => {
+                touched.current = -Infinity;
+                turnTo('anterolateral');
+              }}
+              aria-label={t('anatomy.model3d.reset')}
+              title={t('anatomy.model3d.reset')}
+              disabled={!ready}
+            >
+              <RotateCcw />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              onClick={() => {
+                handled();
+                zoomTo(zoom * ZOOM_STEP);
+              }}
+              aria-label={t('anatomy.model3d.zoomIn')}
+              title={t('anatomy.model3d.zoomIn')}
+              disabled={!ready || zoom >= ZOOM_MAX}
+            >
+              <ZoomIn />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              onClick={() => {
+                handled();
+                zoomTo(zoom / ZOOM_STEP);
+              }}
+              aria-label={t('anatomy.model3d.zoomOut')}
+              title={t('anatomy.model3d.zoomOut')}
+              disabled={!ready || zoom <= 1}
+            >
+              <ZoomOut />
+            </Button>
+          </div>
         </div>
         <p aria-hidden="true" className="text-xs leading-4 text-muted-foreground">
           {t('anatomy.model3d.hintShort')}
@@ -361,7 +460,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       </div>
 
       {/* The radiographic pair: each view shows every mark, and turns the model to itself. */}
-      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1')}>
+      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1 lg:content-start')}>
         {PAIR.map(([preset, caption, action]) => (
           <button
             key={preset}

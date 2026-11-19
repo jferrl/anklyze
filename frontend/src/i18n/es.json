@@ -445,8 +445,8 @@
     "model3d": {
       "loading": "Cargando el modelo 3D…",
       "reset": "Restablecer vista",
-      "hintShort": "Arrastre para girar",
-      "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista.",
+      "hintShort": "Arrastre para girar · Ctrl + rueda o pellizque para ampliar",
+      "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista. Amplíe con Ctrl o Cmd y la rueda, pellizcando, con las teclas + y − o con los botones de zoom; Mayús + arrastrar desplaza la vista ampliada.",
       "canvas": "Modelo 3D de un tobillo derecho",
       "noWebGL": "Este navegador no puede mostrar el modelo del tobillo (WebGL 2 está desactivado o no es compatible); se describe en texto.",
       "loadFailed": "No se pudo cargar el modelo del tobillo; se describe en texto.",
@@ -455,7 +455,11 @@
       "ap": "AP",
       "lateralView": "Lateral",
       "showAp": "Girar el modelo a la proyección AP",
-      "showLateral": "Girar el modelo a la proyección lateral"
+      "showLateral": "Girar el modelo a la proyección lateral",
+      "zoomIn": "Ampliar",
+      "zoomOut": "Reducir",
+      "enlarge": "Abrir la vista {{view}} en el modelo 3D",
+      "enlargeTitle": "Modelo del tobillo"
     },
     "structureNames": {
       "lateral": "Maléolo lateral",
