@@ -26,7 +26,8 @@ import {
 } from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { PRESETS } from './anatomyCamera';
-import type { AnatomyState, FibulaMark } from './anatomyState';
+import { marksFor, type Marks } from './anatomyMarks';
+import type { AnatomyState } from './anatomyState';
 import { Region, type AnkleModel } from './ankleModel';
 
 /** Ink holds the figure tokens the overlay draws with (see .fig-card in index.css), as CSS colours. */
@@ -41,16 +42,31 @@ export interface Ink {
 /** Structure is a malleolus the figure labels. */
 export type Structure = 'lateral' | 'medial' | 'posterior';
 
-/** Anchors place the malleolus labels in canvas pixels: the point on the structure, and its label. */
-export type Anchors = Partial<Record<Structure, { x: number; y: number; labelX: number; labelY: number; side: 'left' | 'right'; back: boolean }>>;
+/** Anchor places a label in canvas pixels: the point on the structure, and the label beside the model. */
+export interface Anchor {
+  x: number;
+  y: number;
+  labelX: number;
+  labelY: number;
+  side: 'left' | 'right';
+  /** The structure faces away: its label shows as a chip, with no leader onto the bone in front. */
+  back: boolean;
+  /** For the syndesmosis bracket: the lower end, in pixels. */
+  y2?: number;
+}
+
+/** Anchors place the malleolus labels and the syndesmosis bracket. */
+export type Anchors = Partial<Record<Structure | 'syndesmosis', Anchor>>;
 
 const DEG = Math.PI / 180;
 // Anterolateral start: the lateral malleolus comes forward while the medial one still holds the far
 // contour, seen a little from above, so both malleoli and the joint read.
 const START = PRESETS.anterolateral;
 const PITCH_LIMIT = 60 * DEG;
-// The way each structure faces out of the ankle, in model axes.
+// The way each structure faces out of the ankle, in model axes, and how far it may turn away
+// before it counts as hidden: the medial malleolus still shows over the talus well past side-on.
 const FACING = { lateral: new Vector3(-1, 0, 0), medial: new Vector3(1, 0, 0), posterior: new Vector3(0, 0, -1) };
+const HIDDEN = { lateral: -0.4, medial: -0.8, posterior: -0.4 };
 const LEVELS = ['infra', 'trans', 'supra', 'supra_far'] as const;
 const BONE: Record<string, number> = { tibia: 1, fibula: 2 };
 const FADE_MS = 200;
@@ -58,11 +74,11 @@ const FADE_MS = 200;
 const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
 const LABEL_STEP = 18; // px between two labels on one side
-/** ASPECT is the canvas width over its height. */
-export const ASPECT = 4 / 5;
+/** ASPECT is the canvas width over its height: square, so the long structure names have gutters. */
+export const ASPECT = 1;
 // Bone in a studio: ivory, slightly waxy, the same in both themes.
 const IVORY = 0xe6dfd0;
-const SNAPSHOT_TOP_MM = 55; // the AP and Lateral views show the bones up to this far above the plafond
+const SNAPSHOT_TOP_MM = 55; // the AP and Lateral views show the bones at least this far above the plafond
 
 // Each region is the bone below a plane, cut by up to two side planes. The field is a signed
 // distance in mm (negative inside) whose corners are rounded, so a boundary is drawn per pixel as
@@ -104,13 +120,18 @@ const overlayUniforms = () => ({
   uNear: { value: 0 },
   uDepth: { value: 1 },
   uSyndesmosis: { value: 0 },
+  uShowSyndesmosis: { value: 0 },
+  // How see-through the fibula is now, 0 to 1, so the bones beside it lose the shade it cast.
+  uGhost: { value: 0 },
 });
 
 // Physical bone with the baked occlusion, a faint mottle in tone and roughness, and the clinical
 // overlay on top: a translucent accent tint over each answered region with a crisp accent line where
 // it ends, and the fibular level as a tinted band between two rings. The overlay is mixed after
 // tone mapping, in sRGB, so it shows the page's accent exactly. Materials passed one overlay share it.
-function boneMaterial(overlay = overlayUniforms()) {
+// The ghost variant is the see-through fibula of the lateral view: its marks stay at full strength
+// as a tint and the region's silhouette, without the hairlines that would cross the bone behind.
+function boneMaterial(overlay = overlayUniforms(), ghost = false) {
   const material = new MeshPhysicalMaterial({
     color: IVORY,
     roughness: 0.58,
@@ -120,8 +141,10 @@ function boneMaterial(overlay = overlayUniforms()) {
     clearcoat: 0.06,
     clearcoatRoughness: 0.6,
   });
+  material.customProgramCacheKey = () => (ghost ? 'bone-ghost' : 'bone');
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, overlay);
+    if (ghost) shader.fragmentShader = '#define GHOST\n' + shader.fragmentShader;
     shader.vertexShader = shader.vertexShader
       .replace(
         '#include <common>',
@@ -154,6 +177,8 @@ function boneMaterial(overlay = overlayUniforms()) {
         uniform float uNear;
         uniform float uDepth;
         uniform float uSyndesmosis;
+        uniform float uShowSyndesmosis;
+        uniform float uGhost;
         float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
         float noise(vec3 p) {
           vec3 i = floor(p), f = fract(p);
@@ -175,7 +200,9 @@ function boneMaterial(overlay = overlayUniforms()) {
         `#include <roughnessmap_fragment>
         // Articular surfaces face another bone across the joint, which is where the baked occlusion
         // is high: there the bone reads as cartilage, smoother, glossier and a touch cooler.
-        float articular = smoothstep(0.4, 0.75, vOcc) * (1.0 - step(2.5, vBone));
+        // Beside a see-through fibula the shade it casts goes too, or the talus shows a stain.
+        float uncovered = 1.0 - uGhost * smoothstep(-6.0, -16.0, vPos.x) * (1.0 - step(1.5, vBone));
+        float articular = smoothstep(0.4, 0.75, vOcc) * (1.0 - step(2.5, vBone)) * uncovered;
         roughnessFactor = clamp(roughnessFactor + 0.16 * (mottle - 0.5) - 0.28 * articular, 0.05, 1.0);
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.87, 0.85), 0.35 * articular);`,
       )
@@ -196,7 +223,7 @@ function boneMaterial(overlay = overlayUniforms()) {
       .replace(
         '#include <aomap_fragment>',
         `#include <aomap_fragment>
-        float ao = 1.0 - 0.92 * smoothstep(0.0, 0.75, vOcc);
+        float ao = 1.0 - 0.92 * smoothstep(0.0, 0.75, vOcc) * uncovered;
         reflectedLight.indirectDiffuse *= ao;
         reflectedLight.indirectSpecular *= ao;
         reflectedLight.directDiffuse *= ao;
@@ -216,21 +243,31 @@ function boneMaterial(overlay = overlayUniforms()) {
         float on = dot(clamp(0.5 - d / w, 0.0, 1.0), uOn);
         // The region's edge on the bone, a line uLine pixels wide.
         float line = dot(clamp(0.5 * uLine + 0.5 - abs(d) / w, 0.0, 1.0), uOn);
+        #ifdef GHOST
+        line = clamp(on, 0.0, 1.0) * (1.0 - smoothstep(0.12, 0.3, abs(dot(normal, normalize(vViewPosition)))));
+        #endif
         if (vBone > 1.5) {
           float y = vPos.y;
           float px = max(fwidth(y), 1e-4);
           // The syndesmosis level, schematic and always shown faintly, so an answered Weber band
           // reads below, at or above it: a light shade from the plafond to the top of the
           // tibiofibular contact, closed by hairlines.
+          #ifndef GHOST
           float synd = clamp(0.5 + min(y, uSyndesmosis - y) / px, 0.0, 1.0);
           float syndEdge = clamp(1.0 - min(abs(y), abs(y - uSyndesmosis)) / px, 0.0, 1.0);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, 0.1 * synd + 0.35 * syndEdge);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, uShowSyndesmosis * (0.2 * synd + 0.4 * syndEdge));
+          #endif
           vec4 inside = clamp(0.5 + min(y - uLevelY0, uLevelY1 - y) / px, 0.0, 1.0);
           vec4 edge = min(abs(y - uLevelY0), abs(y - uLevelY1)) / px;
           on = max(on, dot(inside, uLevelOn));
           line = max(line, dot(clamp(0.5 * uLine + 0.5 - edge, 0.0, 1.0), uLevelOn));
         }
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, uTint, 0.4 * clamp(on, 0.0, 1.0));
+        float tint = 0.4;
+        #ifdef GHOST
+        tint = 0.75;
+        gl_FragColor.a = max(gl_FragColor.a, max(line, 0.45 * clamp(on, 0.0, 1.0)));
+        #endif
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, uTint, tint * clamp(on, 0.0, 1.0));
         gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, clamp(line, 0.0, 1.0));`,
       );
   };
@@ -324,10 +361,12 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   key.position.set(-120, 90, 35);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
-  key.shadow.radius = 4;
+  key.shadow.radius = 10;
+  // A softer, lighter cast shadow: the fibula's edge on the tibial shaft reads as shade, not a line.
+  key.shadow.intensity = 0.7;
   key.shadow.bias = -0.0005;
   key.shadow.normalBias = 0.4;
-  const fillLight = new DirectionalLight(0xe4ecff, 0.35);
+  const fillLight = new DirectionalLight(0xe4ecff, 0.6);
   fillLight.position.set(90, -20, 70);
   const rim = new DirectionalLight(0xdfe8ff, 1.6);
   rim.position.set(70, 30, -80);
@@ -341,7 +380,7 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
   const { material: fill, overlay } = boneMaterial();
   // From the lateral side the fibula overlies the posterior tibia, so it turns see-through there,
   // as on a lateral radiograph; this material shares the overlay.
-  const ghost = boneMaterial(overlay).material;
+  const ghost = boneMaterial(overlay, true).material;
   Object.assign(ghost, { transparent: true, depthWrite: false });
   const outline = outlineMaterial();
   const { lateralTop, medialTop, medialX, posteriorTop, posteriorZ } = model.regions;
@@ -457,20 +496,32 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
     // A see-through bone writes no depth, so its hull would show whole; it keeps the tint and lines.
     fibula.hull.visible = !clear;
     ghost.opacity = opacity;
+    overlay.uGhost.value = clear ? (1 - opacity) / 0.68 : 0;
   }
 
   const sides: Partial<Record<Structure, 'left' | 'right'>> = {};
 
-  // Highlights fade like the drawing's: lateral, medial, posterior, the four levels, proximal.
-  const shown: number[] = Array(8).fill(0);
+  // Highlights fade: lateral, medial, posterior, the four levels, proximal, syndesmosis.
+  const shown: number[] = Array(9).fill(0);
+  let marks: Marks = marksFor({ lateral: false, medial: false, posterior: false });
+  const fibulaPoints = model.parts.find((p) => p.name === 'fibula')!;
+  const syndesmosisPoints: Vector3[] = [];
+  for (let i = 0; i < fibulaPoints.positions.length; i += 9) {
+    const p = new Vector3().fromArray(fibulaPoints.positions, i);
+    if (p.y >= 0 && p.y <= model.syndesmosis) syndesmosisPoints.push(p);
+  }
   let target = shown;
   let fade = 0;
   function applyShown() {
     for (const u of [overlay, outline.uniforms]) u.uOn.value.set(shown[0], shown[1], shown[2]);
     overlay.uLevelOn.value.set(shown[3], shown[4], shown[5], shown[6]);
+    overlay.uShowSyndesmosis.value = shown[8];
     arrowInk.opacity = shown[7];
     arrow.visible = shown[7] > 0.001;
   }
+
+  // Only answered structures are labelled, so only they claim a place in a label column.
+  const shownLabel = (key: string) => (key === 'syndesmosis' ? marks.syndesmosis : marks[key as Structure]);
 
   function render() {
     pivot.rotation.set(pitch, yaw, 0);
@@ -484,7 +535,7 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       return { x: ((v.x + 1) / 2) * size.x, y: ((1 - v.y) / 2) * size.y };
     };
     const anchors: Anchors = {};
-    const back = (key: Structure) => FACING[key].clone().applyQuaternion(pivot.quaternion).z < -0.4;
+    const back = (key: Structure) => FACING[key].clone().applyQuaternion(pivot.quaternion).z < HIDDEN[key];
 
     const xs = silhouette.map((p) => toPx(p).x);
     const gutter = { left: Math.min(...xs) - LABEL_GAP, right: Math.max(...xs) + LABEL_GAP };
@@ -500,9 +551,27 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       const tip = px.reduce((a, b) => ((side === 'right' ? b.x > a.x : b.x < a.x) ? b : a));
       anchors[key] = { x: tip.x, y: tip.y, labelX: gutter[side], labelY: tip.y, side, back: back(key) };
     }
+    // The syndesmosis bracket sits on the lateral side, beside the fibula from the plafond to the top
+    // of the contact.
+    const sp = syndesmosisPoints.map(toPx);
+    const sideS = anchors.lateral!.side;
+    const edge = sideS === 'left' ? Math.min(...sp.map((p) => p.x)) : Math.max(...sp.map((p) => p.x));
+    const [sy0, sy1] = [Math.min(...sp.map((p) => p.y)), Math.max(...sp.map((p) => p.y))];
+    anchors.syndesmosis = {
+      x: edge + (sideS === 'left' ? -4 : 4),
+      y: sy0,
+      y2: sy1,
+      labelX: gutter[sideS],
+      labelY: (sy0 + sy1) / 2,
+      side: sideS,
+      back: FACING.lateral.clone().applyQuaternion(pivot.quaternion).z < -0.8,
+    };
     // Labels on one side keep their order but never overlap.
     for (const side of ['left', 'right'] as const) {
-      const column = Object.values(anchors).filter((a) => a.side === side).sort((a, b) => a.labelY - b.labelY);
+      const column = (Object.entries(anchors) as [string, Anchor][])
+        .filter(([key, a]) => a.side === side && shownLabel(key))
+        .map(([, a]) => a)
+        .sort((a, b) => a.labelY - b.labelY);
       for (let i = 1; i < column.length; i++) column[i].labelY = Math.max(column[i].labelY, column[i - 1].labelY + LABEL_STEP);
       for (const a of column) a.labelX = Math.max(8, Math.min(size.x - 8, a.labelX));
     }
@@ -513,7 +582,7 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
     target = next;
     cancelAnimationFrame(fade);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      shown.splice(0, 8, ...target);
+      shown.splice(0, 9, ...target);
       applyShown();
       return render();
     }
@@ -555,14 +624,16 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       const live = { yaw, pitch, size: renderer.getSize(new Vector2()), ratio: renderer.getPixelRatio(), shown: [...shown] };
       yaw = at.yaw;
       pitch = at.pitch;
-      shown.splice(0, 8, ...target);
+      shown.splice(0, 9, ...target);
       applyShown();
       pivot.rotation.set(pitch, yaw, 0);
       pivot.updateMatrixWorld();
       placeContact();
       placeFibula();
       // Framed on the joint, as a radiograph is: the shafts run off the top edge.
-      const joint = silhouette.filter((p) => p.y < SNAPSHOT_TOP_MM);
+      // Taller when a level band or the proximal arrow runs higher, so the mark stays in frame.
+      const top = marks.proximal ? model.proximal.y[0] + 14 : marks.band ? model.bands[marks.band].y[1] + 6 : 0;
+      const joint = silhouette.filter((p) => p.y < Math.max(SNAPSHOT_TOP_MM, top));
       const box = new Box3().setFromPoints(joint.map((p) => p.clone().sub(center).applyQuaternion(pivot.quaternion)));
       const aspect = out.width / out.height;
       const [bw, bh] = [box.max.x - box.min.x, box.max.y - box.min.y + 6];
@@ -579,7 +650,7 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       ctx.drawImage(canvas, 0, 0);
       yaw = live.yaw;
       pitch = live.pitch;
-      shown.splice(0, 8, ...live.shown);
+      shown.splice(0, 9, ...live.shown);
       applyShown();
       renderer.setPixelRatio(live.ratio);
       renderer.setSize(live.size.x, live.size.y, false);
@@ -611,8 +682,18 @@ export function createAnkleScene(canvas: HTMLCanvasElement, model: AnkleModel, o
       render();
     },
     setState(state: AnatomyState) {
-      const level = (mark: FibulaMark) => +(state.fibula === mark);
-      setTarget([+state.lateral, +state.medial, +state.posterior, ...LEVELS.map(level), level('proximal')]);
+      marks = marksFor(state);
+      // A fracture at the malleolus is one region, topped by its level.
+      const top = marks.lateralTop ? model.bands[marks.lateralTop].y[1] : model.regions.lateralTop;
+      for (const u of [overlay, outline.uniforms]) u.uRegion.value.x = top;
+      setTarget([
+        +marks.lateral,
+        +marks.medial,
+        +marks.posterior,
+        ...LEVELS.map((l) => +(marks.band === l)),
+        +marks.proximal,
+        +marks.syndesmosis,
+      ]);
     },
     dispose() {
       cancelAnimationFrame(fade);

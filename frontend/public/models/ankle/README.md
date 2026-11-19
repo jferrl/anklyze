@@ -41,6 +41,7 @@ Japan and CC BY 4.0. Cut, refined and tagged for Anklyze; this adaptation CC BY-
   +z anterior, with the origin on the tibial plafond over the talar dome;
 - cuts the tibia and fibula 100 mm above the plafond and closes each cut;
 - closes the small holes in the source meshes (on the talus they showed as dark pits);
+- fills in the small pits of the talus's vascular foramina, which read as damage at this scale;
 - refines the meshes, already 95% reduced in the archive, with one Loop subdivision step so they
   shade smooth;
 - tags the lateral malleolus (fibula below the plafond), medial malleolus (tibia below the

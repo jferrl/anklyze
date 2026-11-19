@@ -23,6 +23,7 @@ const REGION = { none: 0, lateral: 1, medial: 2, posterior: 3 };
 const SHAFT_MM = 100; // tibia and fibula are cut this far above the plafond
 const STEP_MM = 0.05; // position quantisation
 const AO_MM = 7; // occlusion search radius
+const PIT = { mm: 2.5, depth: 0.4, steps: 10 }; // a talus pit: surface within 2.5 mm sits 0.4 mm proud of it on average
 
 const objs = process.argv[2] ? readLocal(process.argv[2]) : await fetchArchive();
 
@@ -39,7 +40,7 @@ const cut = plafond + SHAFT_MM;
 const parts = {
   tibia: prepare(clip(raw.tibia, cut, -1)),
   fibula: prepare(clip(raw.fibula, cut, -1)),
-  talus: prepare(raw.talus),
+  talus: prepare(raw.talus, { smoothPits: true }),
 };
 const occlusion = bakeOcclusion(Object.values(parts));
 
@@ -253,12 +254,13 @@ function clip({ pos, index }, level, keep) {
 // Refines the 95%-reduced source with one Loop subdivision step, so the bone shades smooth
 // rather than faceted, then closes each open rim with a fan of separate vertices so the cut face
 // shades flat.
-function prepare({ pos, index, level }) {
+function prepare({ pos, index, level }, { smoothPits = false } = {}) {
   // Drop the vertices the clip left unused.
   const keep = [...new Set(index)];
   const to = new Map(keep.map((v, i) => [v, i]));
   const used = keep.flatMap((v) => [pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]]);
   const { pos: p, index: idx } = loopSubdivide(...fillHoles(used, index.map((v) => to.get(v)), level));
+  if (smoothPits) fillPits(p, idx);
 
   // Each open edge a->b on the cut plane runs along the rim; the cap walks it the other way.
   const onCut = (v) => level !== undefined && Math.abs(p[v * 3 + 1] - level) < 0.01;
@@ -313,6 +315,58 @@ function openEdges(idx) {
     }
   }
   return edges.values();
+}
+
+// The talus's vascular foramina are pinholes a few millimetres wide; at this scale they read as damage.
+// Vertices whose surroundings within PIT.mm stand, on average, PIT.depth in front of them are moved
+// towards their neighbours, a few Laplacian steps, so the pits fill in and broad curves stay.
+function fillPits(pos, index) {
+  const n = pos.length / 3;
+  const ring = Array.from({ length: n }, () => new Set());
+  for (let t = 0; t < index.length; t += 3) {
+    for (let k = 0; k < 3; k++) {
+      const [a, b] = [index[t + k], index[t + ((k + 1) % 3)]];
+      ring[a].add(b);
+      ring[b].add(a);
+    }
+  }
+  const cell = (x) => Math.floor(x / PIT.mm);
+  let first = 0;
+  for (let step = 0; step < PIT.steps; step++) {
+    const normals = vertexNormals(pos, index);
+    const grid = new Map();
+    for (let v = 0; v < n; v++) {
+      const k = `${cell(pos[v * 3])},${cell(pos[v * 3 + 1])},${cell(pos[v * 3 + 2])}`;
+      if (!grid.has(k)) grid.set(k, []);
+      grid.get(k).push(v);
+    }
+    const sunk = [];
+    for (let v = 0; v < n; v++) {
+      const [x, y, z] = [pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]];
+      let [sum, count] = [0, 0];
+      for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) {
+        for (const u of grid.get(`${cell(x) + a},${cell(y) + b},${cell(z) + c}`) ?? []) {
+          const d = [pos[u * 3] - x, pos[u * 3 + 1] - y, pos[u * 3 + 2] - z];
+          if (Math.hypot(...d) > PIT.mm) continue;
+          sum += d[0] * normals[v * 3] + d[1] * normals[v * 3 + 1] + d[2] * normals[v * 3 + 2];
+          count++;
+        }
+      }
+      if (sum / count > PIT.depth) sunk.push(v);
+    }
+    if (!sunk.length) break;
+    if (step === 0) first = sunk.length;
+    const moved = new Set(sunk.flatMap((v) => [v, ...ring[v]]));
+    const avg = new Map([...moved].map((v) => [v, [0, 1, 2].map((k) => avg3(ring[v], k))]));
+    for (const [v, a] of avg) for (let k = 0; k < 3; k++) pos[v * 3 + k] += 0.5 * (a[k] - pos[v * 3 + k]);
+  }
+  console.log(`pits: ${first} sunk vertices smoothed`);
+
+  function avg3(set, k) {
+    let sum = 0;
+    for (const u of set) sum += pos[u * 3 + k];
+    return sum / set.size;
+  }
 }
 
 // One Loop subdivision step. Open edges (the cut rims) use the boundary rules, so a rim stays on

@@ -19,17 +19,26 @@ export const PRESETS: Record<Preset, { yaw: number; pitch: number }> = {
   lateral: { yaw: 90 * DEG, pitch: 0 },
 };
 
+/** Focus is what the camera follows: the answers, and whether the posterior question is the one being asked. */
+export interface Focus {
+  state: AnatomyState;
+  posteriorAsked: boolean;
+}
+
 /**
- * presetFor is the view that best shows what an answer newly involves, or undefined when nothing
- * new is involved. One answer can involve several malleoli at once, so one view must serve: the
- * posterior malleolus wins, as it is the only one hidden from the front; lateral with medial takes
- * AP, which shows both; the lateral malleolus or a fibular level takes anterolateral.
+ * presetFor is the view that best shows what just changed, or undefined to stay put. A first answer
+ * that involves several malleoli turns to AP, which shows the lateral and medial sides at once; the
+ * posterior view waits until the posterior question is asked or answered, so the camera moves once
+ * per step and never back and forth.
  */
-export function presetFor(prev: AnatomyState, next: AnatomyState): Preset | undefined {
-  const added = (key: 'lateral' | 'medial' | 'posterior') => next[key] && !prev[key];
-  const fibula = !!next.fibula && next.fibula !== prev.fibula;
-  if (added('posterior')) return 'posterior';
-  if (added('medial')) return next.lateral || next.fibula ? 'ap' : 'medial';
-  if (added('lateral') || fibula) return 'anterolateral';
+export function presetFor(prev: Focus, next: Focus): Preset | undefined {
+  const added = (['lateral', 'medial', 'posterior'] as const).filter((key) => next.state[key] && !prev.state[key]);
+  if (added.length > 1) return 'ap';
+  if (added[0] === 'posterior') return 'posterior';
+  if (added[0] === 'medial') return 'medial';
+  if (added[0] === 'lateral') return 'anterolateral';
+  if (next.state.posteriorType && next.state.posteriorType !== prev.state.posteriorType) return 'posterior';
+  if (next.posteriorAsked && !prev.posteriorAsked) return 'posterior';
+  if (next.state.fibula && next.state.fibula !== prev.state.fibula) return 'anterolateral';
   return undefined;
 }

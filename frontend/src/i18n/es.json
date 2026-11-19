@@ -393,8 +393,6 @@
     "title": "Anatomía",
     "show": "Mostrar anatomía",
     "hide": "Ocultar anatomía",
-    "lateral": "Lateral",
-    "medial": "Medial",
     "posteriorMalleolus": "Maléolo posterior",
     "fibularLevel": "Nivel de la fractura de peroné",
     "notAnswered": "Aún no ha respondido",
@@ -402,8 +400,8 @@
       "infra": "Infrasindesmal",
       "trans": "Transindesmal",
       "supra": "Suprasindesmal",
-      "supra_far": "Suprasindesmal, a > 6 cm de la articulación",
-      "proximal": "Peroné proximal, por encima del dibujo"
+      "supra_far": "Suprasindesmal, a más de 6 cm por encima de la interlínea articular",
+      "proximal": "Peroné proximal, fuera del modelo"
     },
     "structures": {
       "lateral": "maléolo lateral",
@@ -417,7 +415,7 @@
         "trans": "Fractura de peroné a nivel de la sindesmosis (transindesmal).",
         "supra": "Fractura de peroné por encima de la sindesmosis (suprasindesmal).",
         "supra_far": "Fractura de peroné por encima de la sindesmosis, a más de 6 cm de la articulación.",
-        "proximal": "Fractura de peroné proximal, por encima del dibujo."
+        "proximal": "Fractura de peroné proximal, fuera del modelo."
       },
       "posteriorType": "Maléolo posterior: {{type}}."
     },
@@ -438,11 +436,11 @@
       "has_fibula_head_shortening": "Acortamiento en la cabeza del peroné",
       "posterior_fracture_type": "Fragmento posterior"
     },
-    "note": "Las marcas indican el nivel, no la forma de la fractura.",
+    "note": "El sombreado indica la región y el nivel afectados, no el patrón de la fractura.",
     "sources": {
       "title": "Fuentes",
       "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>.",
-      "syndesmosis": "La banda tenue sobre el peroné marca el nivel de la sindesmosis, desde el pilón tibial hasta el borde superior del contacto tibioperoneo. Es esquemática: el modelo no incluye ligamentos."
+      "syndesmosis": "La banda tenue sobre el peroné marca el nivel de la sindesmosis, desde el pilón tibial hasta el borde superior del contacto tibioperoneo. Es esquemática; el modelo no incluye ligamentos."
     },
     "model3d": {
       "loading": "Cargando el modelo 3D…",
@@ -450,7 +448,6 @@
       "hintShort": "Arrastre para girar",
       "hint": "Arrastre para girar el modelo, o selecciónelo y use las flechas; Inicio restablece la vista.",
       "canvas": "Modelo 3D de un tobillo derecho",
-      "posterior": "Posterior",
       "noWebGL": "Este navegador no puede mostrar el modelo del tobillo (WebGL 2 está desactivado o no es compatible); se describe en texto.",
       "loadFailed": "No se pudo cargar el modelo del tobillo; se describe en texto.",
       "views": "Modelo 3D de un tobillo derecho: tibia y peroné distales y astrágalo.",
@@ -459,7 +456,14 @@
       "lateralView": "Lateral",
       "showAp": "Girar el modelo a la proyección AP",
       "showLateral": "Girar el modelo a la proyección lateral"
-    }
+    },
+    "structureNames": {
+      "lateral": "Maléolo lateral",
+      "medial": "Maléolo medial",
+      "posterior": "Maléolo posterior"
+    },
+    "syndesmosis": "Sindesmosis",
+    "behind": "(detrás)"
   },
   "language": {
     "toggle": "Cambiar idioma"

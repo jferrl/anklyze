@@ -393,17 +393,15 @@
     "title": "Anatomy",
     "show": "Show anatomy",
     "hide": "Hide anatomy",
-    "lateral": "Lateral",
-    "medial": "Medial",
     "posteriorMalleolus": "Posterior malleolus",
     "fibularLevel": "Fibular fracture level",
-    "notAnswered": "Not answered yet",
+    "notAnswered": "Not yet answered",
     "level": {
       "infra": "Infrasyndesmotic",
       "trans": "Transsyndesmotic",
       "supra": "Suprasyndesmotic",
-      "supra_far": "Suprasyndesmotic, > 6 cm from the joint",
-      "proximal": "Proximal fibula, above the drawing"
+      "supra_far": "Suprasyndesmotic, more than 6 cm above the joint line",
+      "proximal": "Proximal fibula, beyond the model"
     },
     "structures": {
       "lateral": "lateral malleolus",
@@ -417,7 +415,7 @@
         "trans": "Fibular fracture at the level of the syndesmosis (transsyndesmotic).",
         "supra": "Fibular fracture above the syndesmosis (suprasyndesmotic).",
         "supra_far": "Fibular fracture above the syndesmosis, more than 6 cm from the joint.",
-        "proximal": "Fibular fracture in the proximal fibula, above the drawing."
+        "proximal": "Fibular fracture in the proximal fibula, beyond the model."
       },
       "posteriorType": "Posterior malleolus: {{type}}."
     },
@@ -438,11 +436,11 @@
       "has_fibula_head_shortening": "Fibular head shortening",
       "posterior_fracture_type": "Posterior fragment"
     },
-    "note": "Marks show the level, not the fracture shape.",
+    "note": "Shading shows the region and level involved, not the fracture pattern.",
     "sources": {
       "title": "Sources",
       "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>.",
-      "syndesmosis": "The faint band on the fibula marks the syndesmosis level, from the tibial plafond to the top of the tibiofibular contact. It is schematic: the model has no ligaments."
+      "syndesmosis": "The faint band on the fibula marks the level of the syndesmosis, from the tibial plafond to the top of the tibiofibular contact. It is schematic; the model has no ligaments."
     },
     "model3d": {
       "loading": "Loading the 3D model…",
@@ -450,7 +448,6 @@
       "hintShort": "Drag to rotate",
       "hint": "Drag to turn the model, or select it and use the arrow keys; Home resets the view.",
       "canvas": "3D model of a right ankle",
-      "posterior": "Posterior",
       "noWebGL": "This browser cannot show the ankle model (WebGL 2 is off or unsupported), so it is described in text.",
       "loadFailed": "The ankle model could not be loaded, so it is described in text.",
       "views": "3D model of a right ankle: the distal tibia and fibula and the talus.",
@@ -459,7 +456,14 @@
       "lateralView": "Lateral",
       "showAp": "Turn the model to the AP view",
       "showLateral": "Turn the model to the lateral view"
-    }
+    },
+    "structureNames": {
+      "lateral": "Lateral malleolus",
+      "medial": "Medial malleolus",
+      "posterior": "Posterior malleolus"
+    },
+    "syndesmosis": "Syndesmosis",
+    "behind": "(behind)"
   },
   "language": {
     "toggle": "Toggle language"

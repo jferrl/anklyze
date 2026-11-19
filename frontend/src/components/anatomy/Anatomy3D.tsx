@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { PRESETS, presetFor, type Preset } from './anatomyCamera';
+import { PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
+import { marksFor } from './anatomyMarks';
+import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import { parseAnkleModel, type AnkleModel } from './ankleModel';
-import { createAnkleScene, type Anchors, type AnkleScene, type Ink, type Structure } from './ankleScene';
+import { createAnkleScene, type Anchors, type AnkleScene, type Ink } from './ankleScene';
 
 const DEG = Math.PI / 180;
 const DRAG = 0.6 * DEG; // per pixel
@@ -21,19 +23,20 @@ let introduced = false;
 // In-out on the house curve family: symmetric, no overshoot.
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const NONE = getAnatomyState({});
+const NONE: Focus = { state: getAnatomyState({}), posteriorAsked: false };
 
 // Highlight changes fade or recolour in 200ms on the house curve.
 const fade = 'transition-[color,fill,stroke,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]';
 
-// A structure facing away keeps its label only while highlighted, faded and on a dashed leader.
-const behind = (on: boolean) => (on ? 'data-[back=true]:opacity-70' : 'data-[back=true]:opacity-0');
-
+// Only answered structures are labelled; the syndesmosis is labelled while the fibular level is in
+// question, as the reference the level is read against.
 const LABELS = [
-  ['lateral', 'anatomy.lateral'],
-  ['medial', 'anatomy.medial'],
-  ['posterior', 'anatomy.model3d.posterior'],
+  ['lateral', 'anatomy.structureNames.lateral'],
+  ['medial', 'anatomy.structureNames.medial'],
+  ['posterior', 'anatomy.structureNames.posterior'],
+  ['syndesmosis', 'anatomy.syndesmosis'],
 ] as const;
+type Labelled = (typeof LABELS)[number][0];
 
 const PAIR = [
   ['ap', 'anatomy.model3d.ap', 'anatomy.model3d.showAp'],
@@ -54,12 +57,14 @@ function loadModel() {
 }
 
 interface Overlay {
-  labels: Partial<Record<Structure, HTMLSpanElement | null>>;
-  leaders: Partial<Record<Structure, SVGGElement | null>>;
+  labels: Partial<Record<Labelled, HTMLSpanElement | null>>;
+  leaders: Partial<Record<Labelled, SVGGElement | null>>;
 }
 
 interface Anatomy3DProps {
   state: AnatomyState;
+  /** The posterior-fragment question is the one being asked, so the model turns to show it. */
+  posteriorAsked?: boolean;
   /** From lg, puts the AP and Lateral pair beside the 3D view, stacked, instead of under it. */
   compact?: boolean;
   /** Called when the model cannot be shown, so the figure falls back to text. */
@@ -70,7 +75,8 @@ interface Anatomy3DProps {
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail }: Anatomy3DProps) {
+  const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pairRef = useRef<Partial<Record<Preset, HTMLCanvasElement | null>>>({});
@@ -83,7 +89,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
   const drag = useRef<{ id: number; x: number; y: number; t: number; vx: number; vy: number } | null>(null);
   const glide = useRef(0);
   const touched = useRef(-Infinity);
-  const seen = useRef<AnatomyState>(NONE);
+  const seen = useRef<Focus>(NONE);
   const hintId = useId();
 
   // The scene is made once the canvas has a size, so a hidden figure costs nothing; it then lives
@@ -153,9 +159,10 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
     const scene = sceneRef.current;
     if (!ready || !scene) return;
     scene.setState(state);
-    const preset = presetFor(seen.current, state);
+    const focus = { state, posteriorAsked };
+    const preset = presetFor(seen.current, focus);
     const first = seen.current === NONE;
-    seen.current = state;
+    seen.current = focus;
     if (preset) {
       if (!drag.current && performance.now() - touched.current > HANDS_OFF_MS) turnTo(preset);
     } else if (first && !introduced && !reducedMotion()) {
@@ -171,9 +178,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
       };
       glide.current = requestAnimationFrame(step);
     }
-    // turnTo reads only refs and stable setters.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, ready]);
+  }, [state, posteriorAsked, ready]);
 
   // The AP and Lateral pair redraws only when the answers, the theme or its size change.
   useEffect(() => {
@@ -186,6 +191,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
         out.width = Math.round(out.clientWidth * ratio);
         out.height = Math.round(out.clientHeight * ratio);
         sceneRef.current?.snapshot(PRESETS[preset], out);
+        setSnapshot(preset, out.toDataURL());
       }
     };
     // Coalesced to one draw per task; a theme switch redraws at once, so the pair never lags it.
@@ -264,7 +270,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
   }
 
   return (
-    <div className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
+    <div className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
       <div className="space-y-2">
         <div className="relative overflow-hidden rounded-sm bg-(--fig-backdrop)">
           <canvas
@@ -279,7 +285,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
             onKeyDown={onKeyDown}
             // pan-y keeps the page scrollable on touch; a horizontal drag turns the model.
             className={cn(
-              'block aspect-[4/5] w-full cursor-grab touch-pan-y rounded-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring active:cursor-grabbing',
+              'block aspect-square w-full cursor-grab touch-pan-y rounded-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring active:cursor-grabbing',
               fade,
               ready ? 'opacity-100' : 'opacity-0',
             )}
@@ -292,10 +298,17 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
                   ref={(el) => {
                     overlay.leaders[key] = el;
                   }}
-                  className={cn(fade, behind(state[key]), state[key] ? 'fill-(--hl) stroke-(--hl)' : 'fill-(--bone-line) stroke-(--bone-line)')}
+                  // A hidden structure gets no leader: it would land on the bone in front.
+                  className={cn(fade, 'fill-(--hl) stroke-(--hl) data-[back=true]:opacity-0', marks[key] ? 'opacity-100' : 'opacity-0')}
                 >
-                  <line strokeWidth="1" />
-                  <circle r="2" className="stroke-(--hl-halo)" strokeWidth="1.5" />
+                  {key === 'syndesmosis' ? (
+                    <path fill="none" strokeWidth="1" />
+                  ) : (
+                    <>
+                      <line strokeWidth="1" />
+                      <circle r="2" className="stroke-(--hl-halo)" strokeWidth="1.5" />
+                    </>
+                  )}
                 </g>
               ))}
             </svg>
@@ -305,16 +318,19 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
                 ref={(el) => {
                   overlay.labels[key] = el;
                 }}
-                className={cn('group absolute left-0 top-0', fade, behind(state[key]))}
+                className={cn('group absolute left-0 top-0', fade, marks[key] ? 'opacity-100' : 'opacity-0', key === 'syndesmosis' && 'data-[back=true]:opacity-0')}
               >
                 <span
                   className={cn(
-                    'block -translate-y-1/2 whitespace-nowrap px-1 text-xs leading-4 group-data-[side=left]:-translate-x-full',
-                    fade,
-                    state[key] ? 'font-semibold text-primary' : 'text-muted-foreground',
+                    'block -translate-y-1/2 whitespace-nowrap rounded-sm bg-(--fig-backdrop)/85 px-1 text-xs leading-4 group-data-[side=left]:-translate-x-full',
+                    !compact && 'lg:text-sm lg:leading-5',
+                    // Facing away, the name becomes a chip in the gutter that says so.
+                    'group-data-[back=true]:rounded-sm group-data-[back=true]:border group-data-[back=true]:bg-(--fig-backdrop) group-data-[back=true]:font-normal group-data-[back=true]:text-muted-foreground',
+                    key === 'syndesmosis' ? 'text-muted-foreground' : 'font-semibold text-primary',
                   )}
                 >
                   {t(text)}
+                  <span className="hidden group-data-[back=true]:inline"> {t('anatomy.behind')}</span>
                 </span>
               </span>
             ))}
@@ -368,9 +384,9 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
                 pairRef.current[preset] = el;
               }}
               aria-hidden="true"
-              className={cn('block aspect-[4/5] w-full', compact && 'lg:aspect-[5/4]')}
+              className={cn('block aspect-square w-full sm:aspect-[5/4]', compact && 'lg:aspect-[5/4]')}
             />
-            <span className="block px-1 pt-1 text-xs leading-4 text-muted-foreground group-aria-pressed:font-semibold group-aria-pressed:text-primary">{t(caption)}</span>
+            <span className={cn('block px-1 pt-1 text-xs leading-4 text-muted-foreground group-aria-pressed:font-semibold group-aria-pressed:text-primary', !compact && 'lg:text-sm lg:leading-5')}>{t(caption)}</span>
           </button>
         ))}
       </div>
@@ -380,7 +396,7 @@ export default function Anatomy3D({ state, compact = false, onFail }: Anatomy3DP
 
 // Labels move with every rendered frame, so they are placed directly rather than through React state.
 function placeLabels({ labels, leaders }: Overlay, anchors: Anchors) {
-  for (const key of Object.keys(anchors) as Structure[]) {
+  for (const key of Object.keys(anchors) as Labelled[]) {
     const a = anchors[key]!;
     const label = labels[key];
     const leader = leaders[key];
@@ -392,17 +408,22 @@ function placeLabels({ labels, leaders }: Overlay, anchors: Anchors) {
       label.dataset.back = String(a.back);
       label.dataset.side = a.side;
     }
-    if (leader) {
-      leader.dataset.back = String(a.back);
-      const [line, dot] = leader.children;
-      line.setAttribute('x1', String(a.x));
-      line.setAttribute('y1', String(a.y));
-      line.setAttribute('x2', String(a.labelX));
-      line.setAttribute('y2', String(a.labelY));
-      line.setAttribute('stroke-dasharray', a.back ? '2 3' : 'none');
-      dot.setAttribute('cx', String(a.x));
-      dot.setAttribute('cy', String(a.y));
+    if (!leader) continue;
+    leader.dataset.back = String(a.back);
+    if (a.y2 !== undefined) {
+      // The syndesmosis bracket: a vertical rule beside the fibula with ticks towards it, and a stub to its name.
+      const tick = a.side === 'left' ? 4 : -4;
+      const mid = (a.y + a.y2) / 2;
+      leader.children[0].setAttribute('d', `M${a.x + tick},${a.y} H${a.x} V${a.y2} H${a.x + tick} M${a.x},${mid} H${a.labelX}`);
+      continue;
     }
+    const [line, dot] = leader.children;
+    line.setAttribute('x1', String(a.x));
+    line.setAttribute('y1', String(a.y));
+    line.setAttribute('x2', String(a.labelX));
+    line.setAttribute('y2', String(a.labelY));
+    dot.setAttribute('cx', String(a.x));
+    dot.setAttribute('cy', String(a.y));
   }
 }
 

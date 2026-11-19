@@ -49,8 +49,13 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
+  const steps = getQuestionSteps(formData, options, hasTACImages);
+  // The question being asked is the first unanswered one; when it is the posterior fragment, the
+  // model turns to show the posterior malleolus.
+  const posteriorAsked = steps.find((step) => step.value === undefined)?.id === 'posterior_fracture_type';
+  const answered = state.lateral || state.medial || state.posterior || !!state.fibula;
   const reading = showReading
-    ? getQuestionSteps(formData, options, hasTACImages)
+    ? steps
         .filter((step) => step.value !== undefined && step.id !== 'has_ct_scan')
         .map((step) => ({
           id: step.id,
@@ -85,13 +90,16 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
         </>
       ) : (
         <Suspense fallback={<FigurePlaceholder compact={compact} />}>
-          <Anatomy3D state={state} compact={compact} onFail={() => setNotice('loadFailed')} />
+          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} onFail={() => setNotice('loadFailed')} />
         </Suspense>
       )}
-      <div className="grid grid-cols-2 gap-x-3">
-        {fibulaCaption}
-        {posteriorCaption}
-      </div>
+      {/* Before the first answer there is nothing to caption, so no space is held for it. */}
+      {answered && (
+        <div className="grid grid-cols-2 gap-x-3">
+          {fibulaCaption}
+          {posteriorCaption}
+        </div>
+      )}
 
       <p className="sr-only" aria-live="polite">{summary}</p>
 
@@ -107,7 +115,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       )}
 
       <figcaption className="space-y-1 text-xs text-muted-foreground">
-        <p>{t('anatomy.note')}</p>
+        {answered && <p>{t('anatomy.note')}</p>}
         <Sources />
       </figcaption>
     </figure>
@@ -118,15 +126,15 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
 function FigurePlaceholder({ compact }: { compact: boolean }) {
   const { t } = useTranslation();
   return (
-    <div aria-hidden="true" className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
+    <div aria-hidden="true" className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
       <div>
-        <p className="grid aspect-[4/5] place-items-center rounded-sm bg-(--fig-backdrop) text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>
+        <p className="grid aspect-square place-items-center rounded-sm bg-(--fig-backdrop) text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>
         <p className="mt-2 h-4" />
       </div>
       <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1')}>
         {[0, 1].map((i) => (
           <div key={i} className="rounded-sm border bg-(--fig-plate) p-1">
-            <div className={cn('aspect-[4/5]', compact && 'lg:aspect-[5/4]')} />
+            <div className="aspect-square sm:aspect-[5/4]" />
             <div className="h-5" />
           </div>
         ))}

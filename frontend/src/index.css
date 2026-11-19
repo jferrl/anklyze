@@ -303,7 +303,8 @@
 .dark .fig-card {
   --fig-backdrop: color-mix(in oklab, black 30%, var(--card));
   --fig-plate: color-mix(in oklab, black 50%, var(--card));
-  --hl-tint: var(--primary-fill);
+  /* Brighter than the dark theme's fill navy, so the tint still separates from lit bone. */
+  --hl-tint: oklch(0.6 0.16 262);
 }
 
 @media (prefers-reduced-motion: reduce) {
