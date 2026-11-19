@@ -865,7 +865,11 @@
       "responsesCount_other": "{{count, number}} responses",
       "noDataSubtitle": "No classifications recorded yet",
       "totalClassifications": "total classifications",
-      "meanResponseTime": "Mean time per response"
+      "meanResponseTime": "Mean time per response",
+      "codes": {
+        "not_classifiable": "Not classifiable",
+        "no_posterior_fracture": "No posterior fracture"
+      }
     },
     "reliability": {
       "title": "Inter-rater reliability",

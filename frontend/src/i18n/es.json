@@ -865,7 +865,11 @@
       "responsesCount_other": "{{count, number}} respuestas",
       "noDataSubtitle": "Aún no hay clasificaciones registradas",
       "totalClassifications": "clasificaciones en total",
-      "meanResponseTime": "Tiempo medio por respuesta"
+      "meanResponseTime": "Tiempo medio por respuesta",
+      "codes": {
+        "not_classifiable": "No clasificable",
+        "no_posterior_fracture": "Sin fractura del maléolo posterior"
+      }
     },
     "reliability": {
       "title": "Fiabilidad inter-evaluador",

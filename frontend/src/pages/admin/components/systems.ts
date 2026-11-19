@@ -1,4 +1,11 @@
+import type { TFunction } from 'i18next';
 import { useSearchParams } from 'react-router-dom';
+
+/** codeLabel is how a stored classification reads: the not-classifiable codes are translated, the rest shown as stored. */
+export function codeLabel(t: TFunction, code: string): string {
+  if (!code) return t('admin.analytics.unspecified');
+  return t(`admin.analytics.codes.${code}`, { defaultValue: code });
+}
 
 /** SYSTEM_KEYS is the one display order of the classification systems. */
 export const SYSTEM_KEYS = ['lauge_hansen', 'danis_weber', 'ao_ota', 'bartonicek'] as const;

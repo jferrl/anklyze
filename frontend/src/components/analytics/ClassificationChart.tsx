@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { formatNumber, formatPercent } from '@/lib/format';
+import { codeLabel } from '@/pages/admin/components/systems';
 import { BarChart3, PieChart as PieChartIcon, List } from 'lucide-react';
 
 interface ChartDataItem {
@@ -55,7 +56,7 @@ export function ClassificationChart({
     const total = Object.values(data).reduce((sum, val) => sum + val, 0);
     return Object.entries(data)
       .map(([name, value]) => ({
-        name: name || t('admin.analytics.unspecified'),
+        name: codeLabel(t, name),
         value: value as number,
         fill: color,
         percentage: total > 0 ? (value / total) * 100 : 0,
