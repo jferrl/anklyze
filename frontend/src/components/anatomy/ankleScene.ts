@@ -257,7 +257,8 @@ function boneMaterial(overlay = overlayUniforms(), ghost = false) {
           // or above it. No fill, so it stays an annotation and never reads as a mark on the bone.
           #ifndef GHOST
           float syndEdge = clamp(1.0 - min(abs(y), abs(y - uSyndesmosis)) / px, 0.0, 1.0);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, uShowSyndesmosis * 0.5 * syndEdge);
+          // Not across a marked region, where a hairline would read as a fracture line.
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uMark, uShowSyndesmosis * 0.5 * syndEdge * (1.0 - clamp(on, 0.0, 1.0)));
           #endif
           vec4 inside = clamp(0.5 + min(y - uLevelY0, uLevelY1 - y) / px, 0.0, 1.0);
           vec4 edge = min(abs(y - uLevelY0), abs(y - uLevelY1)) / px;
