@@ -29,15 +29,26 @@ Classification systems
     Arch Orthop Trauma Surg. 2015;135(4):505-516.
 
 Third-party content
-  Landing page ankle drawing (frontend/src/components/AnklePlate.tsx):
-    Adapted from "Weber Classification - latin.svg" by DrFO.Tn, Wikimedia Commons,
-    https://commons.wikimedia.org/wiki/File:Weber_Classification_-_latin.svg
-    Licensed under CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
-    Changes: only the Weber B panel is used; colour fills, gradients, ligaments,
-    texture marks, the lower calcaneus, the arrow and the label were removed;
-    bones and cartilage were redrawn as flat tint and outline; two outline details
-    hidden under ligaments in the original were smoothed; the drawing is cropped,
-    labelled and marked to illustrate the landing page's example answers.
+  Landing page ankle renders (frontend/src/assets/landing/ankle*.webp, used by
+  frontend/src/components/AnklePlate.tsx):
+    BodyParts3D, © The Database Center for Life Science, https://lifesciencedb.jp/bp3d/
+    Source files (BodyParts3D 3.0): FMA24477.obj, FMA24480.obj and FMA24482.obj
+    (right tibia, fibula and talus), licensed under CC BY-SA 2.1 Japan in the
+    files; the database licence page now grants CC BY 4.0,
+    https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+    Changes: the same adaptation as the classifier's 3D ankle model (tibia and
+    fibula cut 100 mm above the joint, holes and cuts closed, meshes refined by one
+    Loop subdivision step, small talar pits smoothed, ambient occlusion baked,
+    malleolus regions tagged),
+    rendered once as still images in anterolateral view (yaw 35 degrees, pitch
+    8 degrees), cropped to the joint and the distal 44 mm of the tibia and
+    fibula, with a faint rule round the silhouette; the second image tints the
+    distal fibular fragment up to a drawn Weber B fracture line. The labels, the
+    syndesmosis bracket and the fracture line are drawn over the images by
+    AnklePlate.tsx.
+    The images are licensed under CC BY-SA 4.0,
+    https://creativecommons.org/licenses/by-sa/4.0/ ; this does not extend to the
+    Anklyze code.
 
   3D ankle model (frontend/public/models/ankle/ankle.bin, rendered by the
   classifier's anatomy figure in its front, side and 3D views):
