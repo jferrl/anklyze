@@ -5,6 +5,7 @@ import { Button, FormSkeleton } from '@/components/ui';
 import { ComparisonView } from '@/components/ComparisonView';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { AnatomyView } from '@/components/anatomy/AnatomyView';
+import { AnatomySnapshotPair } from '@/components/anatomy/AnatomySnapshotPair';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { useClassification } from '@/hooks/useClassification';
 import type { FractureInput } from '@/types';
@@ -142,12 +143,16 @@ export function FractureForm() {
           <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
           <BreadcrumbTrail variant="list" formData={lastInput} options={options} />
         </section>
-        <ResultsPanel
-          result={result}
-          input={lastInput}
-          onReset={handleReset}
-          onCompare={handleStartComparison}
-        />
+        {/* The marked AP and Lateral pair sits beside the four results, as the figure last drew it. */}
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+          <ResultsPanel
+            result={result}
+            input={lastInput}
+            onReset={handleReset}
+            onCompare={handleStartComparison}
+          />
+          <AnatomySnapshotPair />
+        </div>
       </div>
     );
   }
@@ -237,7 +242,7 @@ export function FractureForm() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold">{t('anatomy.title')}</h2>
             <div className="rounded-lg border bg-card p-4">
-              {/* The path list below is the reading, so the drawing does not repeat it. */}
+              {/* The path list below is the reading, so the figure does not repeat it. */}
               <AnatomyView formData={formData} showReading={false} />
             </div>
           </section>

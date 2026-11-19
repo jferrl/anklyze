@@ -229,8 +229,9 @@ export function CaseClassificationForm({ hasTACImages, onClassify }: CaseClassif
         id="case-anatomy"
         className={cn(
           showAnatomy ? 'block' : 'hidden',
-          // Pinned only where the screen is tall enough to leave room for the questions under it.
-          '-mx-4 border-y bg-card px-4 py-3 lg:block [@media(min-width:1024px)_and_(min-height:760px)]:sticky [@media(min-width:1024px)_and_(min-height:760px)]:top-14 [@media(min-width:1024px)_and_(min-height:760px)]:z-10',
+          // Pinned only where the screen is tall enough to leave room for the questions under it, and
+          // just under the 48 px app header (h-12), so no scrolled content shows between them.
+          '-mx-4 border-y bg-card px-4 py-3 lg:block [@media(min-width:1024px)_and_(min-height:880px)]:sticky [@media(min-width:1024px)_and_(min-height:880px)]:top-12 [@media(min-width:1024px)_and_(min-height:880px)]:z-10',
         )}
       >
         <AnatomyView formData={formData} hasTACImages={hasTACImages} showReading={false} compact />
