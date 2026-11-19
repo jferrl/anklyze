@@ -9,6 +9,7 @@ import {
   SYSTEM_KEYS,
   SYSTEM_LABEL,
   agreementColorClass,
+  codeLabel,
   formatPercent,
   mostCommon,
 } from './systems';
@@ -41,7 +42,7 @@ export function CaseAgreementSection({ metrics }: CaseAgreementSectionProps) {
               {percent != null && top ? (
                 <>
                   <p className="mt-2 font-display text-3xl break-words">
-                    {top.answers.map((a) => a || t('admin.analytics.unspecified')).join(' / ')}
+                    {top.answers.map((a) => codeLabel(t, a)).join(' / ')}
                   </p>
                   <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm tabular-nums">
                     <span className={cn('inline-flex items-center gap-1.5 font-medium text-foreground', agreementColorClass(percent))}>
