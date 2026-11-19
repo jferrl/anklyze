@@ -73,7 +73,7 @@ const FADE_MS = 200;
 // cubic-bezier(0.16, 1, 0.3, 1), the house curve, is an exponential ease-out.
 const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
-const LABEL_STEP = 18; // px between two labels on one side
+const LABEL_STEP = 24; // px between two labels on one side, room for a text-sm label and its backdrop
 /** ASPECT is the canvas width over its height: square, so the long structure names have gutters. */
 export const ASPECT = 1;
 // Bone in a studio: ivory, slightly waxy, the same in both themes.
