@@ -67,12 +67,12 @@ jobs:
         run: test -z "$(gofmt -l .)" || { echo "Files need formatting:"; gofmt -l .; exit 1; }
 
       - name: Run staticcheck (U1000 - unused code)
-        run: go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 -checks U1000 ./...
+        run: go run honnef.co/go/tools/cmd/staticcheck@v0.8.2 -checks U1000 ./...
 
       - name: Run deadcode
         # deadcode always exits 0, so fail on any output.
         run: |
-          out=$(go run golang.org/x/tools/cmd/deadcode@v0.49.0 ./...)
+          out=$(go run golang.org/x/tools/cmd/deadcode@v0.53.0 ./...)
           [ -z "$out" ] || { echo "$out"; exit 1; }
 
       - name: Run golangci-lint
