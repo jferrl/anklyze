@@ -1,5 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { API_BASE_URL, getAuthHeaders } from '../services/core/apiClient';
 import { PanelRightOpen, PanelRightClose, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { SvgDiagramViewer } from './SvgDiagramViewer';
@@ -7,8 +9,22 @@ import { SvgDiagramViewer } from './SvgDiagramViewer';
 export function FlowDiagramSidebar() {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  // Built per language by scripts/build_flow_diagram.py; Spanish is the source.
-  const diagramSrc = `/classification-flow.${i18n.language === 'en' ? 'en' : 'es'}.svg`;
+  const lang = i18n.language === 'en' ? 'en' : 'es';
+  // Admin-only endpoint, so the decision tree never ships in the public bundle; fetched on first open.
+  const { data: diagramSrc, isError } = useQuery({
+    queryKey: ['flow-diagram', lang],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE_URL}/api/admin/flow-diagram`, {
+        headers: { ...(await getAuthHeaders()), 'Accept-Language': lang },
+      });
+      if (!res.ok) throw new Error(`flow diagram: ${res.status}`);
+      return URL.createObjectURL(await res.blob());
+    },
+    enabled: isOpen,
+    // The object URL is never revoked, so keep it for the session: at most one per language.
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
 
   return (
     <>
@@ -59,12 +75,17 @@ export function FlowDiagramSidebar() {
           </div>
 
           {/* Diagram Content — SVG viewer with pan/zoom */}
-          {isOpen && (
+          {isOpen && (diagramSrc ? (
             <SvgDiagramViewer
+              key={diagramSrc}
               src={diagramSrc}
               className="flex-1 flex flex-col overflow-hidden"
             />
-          )}
+          ) : (
+            <p className="p-8 text-center text-muted-foreground">
+              {isError ? t('classify.flowDiagram.loadFailed') : t('classify.flowDiagram.loading')}
+            </p>
+          ))}
         </div>
       </div>
 

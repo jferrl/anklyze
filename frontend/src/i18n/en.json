@@ -69,7 +69,6 @@
     "method": {
       "title": "Method",
       "lede": "Results are rule-based and reproducible: one decision tree drives every answer, and the engine is tested against the same diagram.",
-      "tableLink": "See every path of the decision tree",
       "tree": {
         "term": "One decision tree",
         "body": "Every question belongs to a single tree with 165 terminal paths. Each answer determines the next question, and each path ends in a classification in all four systems. The tree is published in the repository as a diagram and as a table."
@@ -118,8 +117,7 @@
       "gold": {
         "term": "Gold standard",
         "body": "Each rater's accuracy against the reference classification set for the study."
-      },
-      "methodologyLink": "Read the statistical methodology"
+      }
     },
     "footer": {
       "disclaimer": "For medical purposes only. Always correlate with clinical findings.",
@@ -128,10 +126,7 @@
     "source": {
       "title": "Open source",
       "body": "The code, the decision tree and the statistical methodology are public. The code is free software under the Apache 2.0 licence; the decision tree is under CC BY 4.0 and can be reused with credit to its author.",
-      "authors": "Clinical content and decision tree by Laura Paniagua Andrés (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association.",
-      "repoLink": "Source code on GitHub",
-      "citeTitle": "How to cite",
-      "citation": "Paniagua Andrés L, Ferrero Linacero J. Anklyze: ankle fracture classification [software]. 2026. Available from: {{url}}. Apache License 2.0."
+      "authors": "Clinical content and decision tree by Laura Paniagua Andrés (orthopaedic and trauma surgeon, Hospital de León). Software by Jorge Ferrero Linacero. The four classification systems belong to their original authors; Anklyze is not affiliated with the AO Foundation or the Orthopaedic Trauma Association."
     }
   },
   "form": {
@@ -387,6 +382,7 @@
       "hide": "Hide flow",
       "resetZoom": "Reset zoom",
       "loading": "Loading diagram…",
+      "loadFailed": "The diagram could not be loaded. Close the panel and try again.",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"
     },

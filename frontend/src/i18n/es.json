@@ -69,7 +69,6 @@
     "method": {
       "title": "Método",
       "lede": "Los resultados se basan en reglas y son reproducibles: un único árbol de decisión determina cada respuesta y el motor se comprueba contra el mismo diagrama.",
-      "tableLink": "Ver todos los caminos del árbol de decisión",
       "tree": {
         "term": "Un único árbol de decisión",
         "body": "Todas las preguntas pertenecen a un único árbol con 165 caminos terminales. Cada respuesta determina la siguiente pregunta y cada camino termina en una clasificación en los cuatro sistemas. El árbol está publicado en el repositorio como diagrama y como tabla."
@@ -118,8 +117,7 @@
       "gold": {
         "term": "Patrón de referencia",
         "body": "La exactitud de cada evaluador frente a la clasificación de referencia fijada por el estudio."
-      },
-      "methodologyLink": "Leer la metodología estadística"
+      }
     },
     "footer": {
       "disclaimer": "Solo para fines médicos. Siempre correlacionar con hallazgos clínicos.",
@@ -128,10 +126,7 @@
     "source": {
       "title": "Código abierto",
       "body": "El código, el árbol de decisión y la metodología estadística son públicos. El código es software libre con licencia Apache 2.0; el árbol de decisión tiene licencia CC BY 4.0 y puede reutilizarse citando a su autora.",
-      "authors": "Contenido clínico y árbol de decisión de Laura Paniagua Andrés (traumatóloga, Hospital de León). Software de Jorge Ferrero Linacero. Los cuatro sistemas de clasificación pertenecen a sus autores originales; Anklyze no está vinculado a la AO Foundation ni a la Orthopaedic Trauma Association.",
-      "repoLink": "Código fuente en GitHub",
-      "citeTitle": "Cómo citar",
-      "citation": "Paniagua Andrés L, Ferrero Linacero J. Anklyze: clasificación de fracturas de tobillo [software]. 2026. Disponible en: {{url}}. Licencia Apache 2.0."
+      "authors": "Contenido clínico y árbol de decisión de Laura Paniagua Andrés (traumatóloga, Hospital de León). Software de Jorge Ferrero Linacero. Los cuatro sistemas de clasificación pertenecen a sus autores originales; Anklyze no está vinculado a la AO Foundation ni a la Orthopaedic Trauma Association."
     }
   },
   "form": {
@@ -387,6 +382,7 @@
       "hide": "Ocultar flujo",
       "resetZoom": "Restablecer zoom",
       "loading": "Cargando diagrama…",
+      "loadFailed": "No se pudo cargar el diagrama. Cierra el panel e inténtalo de nuevo.",
       "zoomIn": "Acercar",
       "zoomOut": "Alejar"
     },

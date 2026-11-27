@@ -23,6 +23,7 @@ import { CaseDetailPage } from './pages/CaseDetailPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ClassifyRoute } from './components/auth/ClassifyRoute';
 import { AppShell } from './components/layout';
 import { CommandPalette } from './components/CommandPalette';
 
@@ -47,15 +48,13 @@ function App() {
               <Route path="/" element={<HomeRedirect />} />
               <Route path="/login" element={<LoginPage />} />
 
-              {/* Protected routes with AppShell */}
+              {/* Public: shared with journal reviewers; the flow diagram stays admin-only. */}
               <Route
                 path="/classify"
                 element={
-                  <ProtectedRoute>
-                    <AppShell>
-                      <ClassifyPage />
-                    </AppShell>
-                  </ProtectedRoute>
+                  <ClassifyRoute>
+                    <ClassifyPage />
+                  </ClassifyRoute>
                 }
               />
               <Route
