@@ -206,6 +206,7 @@ func TestValidator_ValidateToken(t *testing.T) {
 			claims.IssuedAt = jwt.NewNumericDate(now)
 		}
 		claims.Issuer = supabaseURL + "/auth/v1"
+		claims.Audience = jwt.ClaimStrings{"authenticated"}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, _ := token.SignedString([]byte(testSecret))

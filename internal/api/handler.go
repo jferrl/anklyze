@@ -58,6 +58,16 @@ func getLanguage(c *gin.Context) i18n.Language {
 	return i18n.ParseAcceptLanguage(c.GetHeader("Accept-Language"))
 }
 
+// maxAuditUserAgent bounds the client-controlled User-Agent stored per audit row.
+const maxAuditUserAgent = 512
+
+func truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return strings.ToValidUTF8(s[:n], "")
+}
+
 // ClassifyFracture handles POST /api/classify
 func (h *Handler) ClassifyFracture(c *gin.Context) {
 	startTime := time.Now()
@@ -89,7 +99,7 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	durationMS := time.Since(startTime).Milliseconds()
 	auditEntry, err := domain.NewAuditEntry(
 		c.ClientIP(),
-		c.GetHeader("User-Agent"),
+		truncate(c.GetHeader("User-Agent"), maxAuditUserAgent),
 		string(lang),
 		input,
 		*result,

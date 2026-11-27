@@ -36,6 +36,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 	Email        string         `json:"email"`
 	Role         string         `json:"role"`
+	IsAnonymous  bool           `json:"is_anonymous"`
 	AppMetadata  map[string]any `json:"app_metadata"`
 	UserMetadata map[string]any `json:"user_metadata"`
 }
@@ -131,20 +132,13 @@ func (v *Validator) ValidateToken(tokenString string) (*Claims, error) {
 		return nil, errors.New("no key function configured")
 	}
 
-	// Supabase uses different issuer formats depending on configuration
-	// We accept both the full URL format and the simple "supabase" issuer
 	token, err := jwt.ParseWithClaims(tokenString, claims, keyFunc,
 		jwt.WithValidMethods([]string{"HS256", "RS256", "ES256"}),
 		jwt.WithLeeway(30*time.Second),
+		jwt.WithIssuer(v.issuer),
+		jwt.WithAudience("authenticated"),
+		jwt.WithExpirationRequired(),
 	)
-
-	// Validate issuer manually to allow multiple formats
-	if token != nil && token.Valid {
-		iss, _ := claims.GetIssuer()
-		if iss != "supabase" && iss != v.issuer {
-			return nil, fmt.Errorf("%w: invalid issuer %q", ErrInvalidToken, iss)
-		}
-	}
 
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
@@ -158,6 +152,11 @@ func (v *Validator) ValidateToken(tokenString string) (*Claims, error) {
 
 	if !token.Valid {
 		return nil, ErrInvalidToken
+	}
+
+	// Anonymous sign-ins are not raters; only real accounts may use the API.
+	if claims.IsAnonymous {
+		return nil, fmt.Errorf("%w: anonymous session", ErrInvalidToken)
 	}
 
 	return claims, nil

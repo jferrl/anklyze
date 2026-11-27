@@ -239,9 +239,9 @@ func NewCaseImage(
 
 // QuestionAnswer represents a single answer in the user's decision path.
 type QuestionAnswer struct {
-	Question  string `json:"question"`  // Question key: "involved_malleoli", "fibular_level", etc.
-	Answer    string `json:"answer"`    // Answer value: "lateral_only", "transindesmal", etc.
-	Timestamp int64  `json:"timestamp"` // Milliseconds since form start
+	Question  string `json:"question" binding:"max=64"` // Question key: "involved_malleoli", "fibular_level", etc.
+	Answer    string `json:"answer" binding:"max=64"`   // Answer value: "lateral_only", "transindesmal", etc.
+	Timestamp int64  `json:"timestamp"`                 // Milliseconds since form start
 }
 
 // CaseResponse represents a user's classification response to a case.

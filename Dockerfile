@@ -21,6 +21,8 @@ RUN apk add --no-cache ca-certificates tzdata
 
 COPY --from=builder /server /server
 
+ENV APP_ENV=production
+
 EXPOSE 8080
 
 ENTRYPOINT ["/server"]

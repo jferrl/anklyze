@@ -17,7 +17,8 @@ run:
 	@echo "Starting PostgreSQL..."
 	@docker compose up -d --wait
 	@echo "Starting backend and frontend..."
-	@DATABASE_URL="$(LOCAL_DATABASE_URL)" \
+	@APP_ENV=development \
+		DATABASE_URL="$(LOCAL_DATABASE_URL)" \
 		S3_ENDPOINT="$(LOCAL_S3_ENDPOINT)" \
 		S3_ACCESS_KEY="$(LOCAL_S3_ACCESS_KEY)" \
 		S3_SECRET_KEY="$(LOCAL_S3_SECRET_KEY)" \

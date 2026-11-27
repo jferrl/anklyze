@@ -2,7 +2,7 @@
 package metrics
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -82,10 +82,11 @@ func (m *Metrics) Middleware() gin.HandlerFunc {
 				// one counter entry per unique unmatched URL.
 				path = "unmatched"
 			}
-			m.requestDuration.WithLabelValues(c.Request.Method, path).Observe(dur)
-			m.responseSize.WithLabelValues(c.Request.Method, path).Observe(float64(c.Writer.Size()))
+			method := methodLabel(c.Request.Method)
+			m.requestDuration.WithLabelValues(method, path).Observe(dur)
+			m.responseSize.WithLabelValues(method, path).Observe(float64(c.Writer.Size()))
 			m.requestsTotal.WithLabelValues(
-				c.Request.Method,
+				method,
 				path,
 				strconv.Itoa(c.Writer.Status()),
 			).Inc()
@@ -96,6 +97,17 @@ func (m *Metrics) Middleware() gin.HandlerFunc {
 	}
 }
 
+// methodLabel maps the client-chosen method onto a fixed set so arbitrary
+// method tokens cannot create unbounded series.
+func methodLabel(method string) string {
+	switch method {
+	case http.MethodGet, http.MethodHead, http.MethodPost, http.MethodPut,
+		http.MethodPatch, http.MethodDelete, http.MethodOptions:
+		return method
+	}
+	return "other"
+}
+
 // RecoveryMiddleware returns a Gin middleware that recovers from panics,
 // increments the panics_recovered_total counter, and returns 500 to the client.
 // Use this instead of gin.Recovery() to get observability on panics.
@@ -104,9 +116,8 @@ func (m *Metrics) RecoveryMiddleware() gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				m.panicsTotal.Inc()
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"error": fmt.Sprintf("internal server error: %v", r),
-				})
+				slog.Error("panic recovered", "panic", r, "route", c.FullPath())
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			}
 		}()
 		c.Next()

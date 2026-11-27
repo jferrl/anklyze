@@ -152,6 +152,9 @@ func main() {
 
 	slog.Info("server starting", "port", cfg.Port)
 
+	if cfg.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	router := gin.Default()
 	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, jwksReady)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, classificationService, caseStorage, statsService)
@@ -161,6 +164,7 @@ func main() {
 		Addr:              ":" + cfg.Port,
 		Handler:           router,
 		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       60 * time.Second, // Bounds slow bodies, including 10 MiB uploads
 		WriteTimeout:      60 * time.Second, // Prevent slow responses from holding connections
 	}
 
