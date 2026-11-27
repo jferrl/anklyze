@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/jferrl/anklyze/internal/domain"
 )
 
 func init() {
@@ -27,6 +29,7 @@ func createTestToken(claims Claims, secret string) string {
 	claims.ExpiresAt = jwt.NewNumericDate(now.Add(1 * time.Hour))
 	claims.IssuedAt = jwt.NewNumericDate(now)
 	claims.Issuer = testSupabaseURL + "/auth/v1"
+	claims.Audience = jwt.ClaimStrings{"authenticated"}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString([]byte(secret))
@@ -39,6 +42,7 @@ func createExpiredToken(claims Claims, secret string) string {
 	claims.ExpiresAt = jwt.NewNumericDate(now.Add(-1 * time.Hour))
 	claims.IssuedAt = jwt.NewNumericDate(now.Add(-2 * time.Hour))
 	claims.Issuer = testSupabaseURL + "/auth/v1"
+	claims.Audience = jwt.ClaimStrings{"authenticated"}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString([]byte(secret))
@@ -295,6 +299,12 @@ func TestRequireRole(t *testing.T) {
 			expectedStatus: http.StatusForbidden,
 		},
 		{
+			name:           "admin token claim without admin DB row is forbidden",
+			allowedRoles:   []Role{RoleAdmin},
+			userRole:       "claim-only-admin",
+			expectedStatus: http.StatusForbidden,
+		},
+		{
 			name:           "no claims returns unauthorized",
 			allowedRoles:   []Role{RoleUser},
 			userRole:       "", // Will not set claims
@@ -309,13 +319,13 @@ func TestRequireRole(t *testing.T) {
 
 			// Middleware that sets claims (simulating Middleware)
 			router.Use(func(c *gin.Context) {
-				if tt.userRole != "" {
-					claims := &Claims{
-						AppMetadata: map[string]any{
-							"role": tt.userRole,
-						},
-					}
-					c.Set(ContextKeyClaims, claims)
+				switch tt.userRole {
+				case "":
+				case "claim-only-admin":
+					c.Set(ContextKeyClaims, &Claims{AppMetadata: map[string]any{"role": "admin"}})
+				default:
+					c.Set(ContextKeyClaims, &Claims{})
+					c.Set(ContextKeyUser, &domain.User{Role: domain.UserRole(tt.userRole)})
 				}
 				c.Next()
 			})
@@ -410,4 +420,33 @@ func TestHelperFunctions(t *testing.T) {
 			})
 		}
 	})
+}
+
+func TestValidateToken_RejectsAnonymousAndWrongAudience(t *testing.T) {
+	v := createTestValidator(t)
+
+	if _, err := v.ValidateToken(createTestToken(Claims{Email: "a@example.test"}, testSecret)); err != nil {
+		t.Fatalf("control token rejected: %v", err)
+	}
+	if _, err := v.ValidateToken(createTestToken(Claims{IsAnonymous: true}, testSecret)); !errors.Is(err, ErrInvalidToken) {
+		t.Errorf("anonymous token: err = %v, want ErrInvalidToken", err)
+	}
+
+	noAud := Claims{RegisteredClaims: jwt.RegisteredClaims{
+		Issuer:    testSupabaseURL + "/auth/v1",
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+	}}
+	tok, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, noAud).SignedString([]byte(testSecret))
+	if _, err := v.ValidateToken(tok); err == nil {
+		t.Error("token without aud=authenticated was accepted")
+	}
+
+	noExp := Claims{RegisteredClaims: jwt.RegisteredClaims{
+		Issuer:   testSupabaseURL + "/auth/v1",
+		Audience: jwt.ClaimStrings{"authenticated"},
+	}}
+	tok, _ = jwt.NewWithClaims(jwt.SigningMethodHS256, noExp).SignedString([]byte(testSecret))
+	if _, err := v.ValidateToken(tok); err == nil {
+		t.Error("token without exp was accepted")
+	}
 }

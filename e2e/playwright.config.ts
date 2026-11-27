@@ -46,6 +46,7 @@ export default defineConfig({
       // Disable Supabase auth for e2e tests - backend uses public routes when SUPABASE_URL is not set
       env: {
         ...process.env,
+        APP_ENV: 'development',
         SUPABASE_URL: '',
       },
     },

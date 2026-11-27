@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"net/http/httptest"
 	"sync"
 	"sync/atomic"
@@ -163,5 +165,43 @@ func TestRoleSyncCache(t *testing.T) {
 	}
 	if len(c.m) > roleSyncMax {
 		t.Errorf("cache grew to %d, max %d", len(c.m), roleSyncMax)
+	}
+}
+
+type failingUserSvc struct{ getErr, syncErr error }
+
+func (s failingUserSvc) GetByID(context.Context, uuid.UUID) (*domain.User, error) {
+	return nil, s.getErr
+}
+
+func (s failingUserSvc) SyncOnLogin(context.Context, uuid.UUID, string, string) (*domain.User, error) {
+	return nil, s.syncErr
+}
+
+func (failingUserSvc) SyncRoleToSupabase(context.Context, uuid.UUID, domain.UserRole) {}
+
+// A token claiming admin must not get through when the DB row cannot be loaded.
+func TestUserSync_FailsClosed(t *testing.T) {
+	for name, svc := range map[string]failingUserSvc{
+		"lookup error": {getErr: errors.New("db down")},
+		"sync error":   {syncErr: errors.New("duplicate email")},
+	} {
+		t.Run(name, func(t *testing.T) {
+			r := gin.New()
+			r.Use(func(c *gin.Context) {
+				c.Set(ContextKeyClaims, &Claims{
+					RegisteredClaims: jwt.RegisteredClaims{Subject: uuid.NewString()},
+					AppMetadata:      map[string]any{"role": "admin"},
+				})
+			})
+			r.Use(UserSyncMiddleware(svc), RequireRole(RoleAdmin))
+			r.GET("/x", func(c *gin.Context) { c.Status(http.StatusOK) })
+
+			w := httptest.NewRecorder()
+			r.ServeHTTP(w, httptest.NewRequest("GET", "/x", nil))
+			if w.Code != http.StatusServiceUnavailable {
+				t.Errorf("status = %d, want 503", w.Code)
+			}
+		})
 	}
 }

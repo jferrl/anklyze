@@ -92,8 +92,7 @@ func Middleware(validator *Validator) gin.HandlerFunc {
 }
 
 // RequireRole creates a Gin middleware that checks if the user has one of the allowed roles.
-// It must be used after Middleware and UserSyncMiddleware.
-// It checks the database role (via synced user) first, falling back to JWT claims.
+// It must be used after Middleware and UserSyncMiddleware, and checks the database role only.
 func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !IsAuthenticated(c) {
@@ -105,7 +104,6 @@ func RequireRole(allowedRoles ...Role) gin.HandlerFunc {
 			return
 		}
 
-		// Use GetUserRole which prioritizes database role over JWT claims
 		userRole := GetUserRole(c)
 		for _, role := range allowedRoles {
 			if userRole == role {
@@ -193,24 +191,19 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 			return
 		}
 
-		userIDStr := claims.GetUserID()
-		if userIDStr == "" {
-			c.Next()
-			return
-		}
-
-		userID, err := uuid.Parse(userIDStr)
+		userID, err := uuid.Parse(claims.GetUserID())
 		if err != nil {
-			slog.Warn("invalid user ID in JWT", "user_id", userIDStr, "error", err)
-			c.Next()
+			slog.Warn("invalid user ID in JWT", "error", err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"code": "UNAUTHORIZED", "message": "invalid token"})
 			return
 		}
+		userIDStr := userID.String()
 
-		// First, try to get the user from the database (read-only operation)
+		// Fail closed: without the DB row we cannot know the user's real role.
 		user, err := userSvc.GetByID(c.Request.Context(), userID)
 		if err != nil {
 			slog.Error("failed to get user", "user_id", userIDStr, "error", err)
-			c.Next()
+			abortUserUnavailable(c)
 			return
 		}
 
@@ -226,10 +219,10 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 			user, err = userSvc.SyncOnLogin(c.Request.Context(), userID, claims.GetEmail(), provider)
 			if err != nil {
 				slog.Error("failed to sync user on first login", "user_id", userIDStr, "error", err)
-				c.Next()
+				abortUserUnavailable(c)
 				return
 			}
-			slog.Info("user synced on first login", "user_id", userIDStr, "email", claims.GetEmail())
+			slog.Info("user synced on first login", "user_id", userIDStr)
 		} else {
 			// For existing users, sync role to Supabase if it differs from JWT.
 			// Fire-and-forget: use a detached context so the request isn't blocked.
@@ -244,6 +237,13 @@ func UserSyncMiddleware(userSvc UserService) gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func abortUserUnavailable(c *gin.Context) {
+	c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
+		"code":    "USER_UNAVAILABLE",
+		"message": "could not load user, try again",
+	})
 }
 
 // ParseUserID extracts and parses the authenticated user's ID from the Gin context.
@@ -271,16 +271,11 @@ func GetUser(c *gin.Context) *domain.User {
 	return nil
 }
 
-// GetUserRole returns the role from the synced user, or the JWT claims as fallback.
-// The database role takes precedence over the JWT role.
+// GetUserRole returns the synced user's database role, or "" when no user is
+// loaded. Token role claims are never trusted for authorization.
 func GetUserRole(c *gin.Context) Role {
-	// First try to get role from synced user (database)
 	if user := GetUser(c); user != nil {
 		return Role(user.Role)
 	}
-	// Fall back to JWT claims
-	if claims := GetClaims(c); claims != nil {
-		return claims.GetRole()
-	}
-	return RoleUser
+	return ""
 }

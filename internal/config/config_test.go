@@ -484,8 +484,10 @@ func TestIsProduction(t *testing.T) {
 		{name: "PRODUCTION uppercase", appEnv: "PRODUCTION", want: true},
 		{name: "Production mixed case", appEnv: "Production", want: true},
 		{name: "development", appEnv: "development", want: false},
-		{name: "empty string", appEnv: "", want: false},
-		{name: "staging", appEnv: "staging", want: false},
+		{name: "DEVELOPMENT uppercase", appEnv: "DEVELOPMENT", want: false},
+		{name: "empty string fails closed", appEnv: "", want: true},
+		{name: "staging", appEnv: "staging", want: true},
+		{name: "typo fails closed", appEnv: "prod", want: true},
 	}
 
 	for _, tt := range tests {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"sync/atomic"
 	"time"
 
@@ -355,12 +354,16 @@ func CORSMiddleware(allowOrigin string) gin.HandlerFunc {
 // MaxJSONBodySize caps request bodies on non-upload routes.
 const MaxJSONBodySize = 1 << 20 // 1 MiB
 
-// BodyLimitMiddleware rejects oversized request bodies with 413. Multipart
-// requests (image uploads) get MaxImageSize, everything else MaxJSONBodySize.
+// imageUploadRoute is the only route allowed a body larger than MaxJSONBodySize.
+const imageUploadRoute = "/api/admin/cases/:id/images"
+
+// BodyLimitMiddleware rejects oversized request bodies with 413. The image
+// upload route gets MaxImageSize, everything else MaxJSONBodySize. The limit
+// follows the matched route, not the client's Content-Type.
 func BodyLimitMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		limit := int64(MaxJSONBodySize)
-		if strings.HasPrefix(c.GetHeader("Content-Type"), "multipart/form-data") {
+		if c.FullPath() == imageUploadRoute {
 			limit = MaxImageSize
 		}
 

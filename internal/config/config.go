@@ -117,9 +117,10 @@ func (c *Config) HasS3Storage() bool {
 	return c.S3Endpoint != "" && c.S3AccessKey != "" && c.S3SecretKey != ""
 }
 
-// IsProduction returns true if the application is running in production mode.
+// IsProduction reports whether production rules apply. It fails closed: only an
+// explicit APP_ENV=development relaxes them, so a missing APP_ENV cannot disable auth.
 func (c *Config) IsProduction() bool {
-	return strings.ToLower(c.AppEnv) == "production"
+	return !strings.EqualFold(c.AppEnv, "development")
 }
 
 // ValidateProduction checks that all required security secrets are present and valid
