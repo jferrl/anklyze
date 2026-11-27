@@ -19,7 +19,9 @@ export function fracturePose(state: AnatomyState): FracturePose {
   const fibulaLoose = state.fibula === 'supra' || state.fibula === 'supra_far' || state.fibula === 'proximal' ||
     state.lateralSubtype === 'syndesmosis_rupture';
   const malleoli = [state.lateral || !!state.fibula, state.medial, state.posterior].filter(Boolean).length;
-  if (malleoli >= 2 || fibulaLoose || state.medialSubtype === 'open_mortise') moves.talus = fractureParams.unstable.talus;
+  // The talus drives medially in a vertical shear (supination-adduction), so the lateral, externally rotated shift would be backwards.
+  const shear = active.has('med_vertical');
+  if (!shear && (malleoli >= 2 || fibulaLoose || state.medialSubtype === 'open_mortise')) moves.talus = fractureParams.unstable.talus;
   if (fibulaLoose) moves.fibula = fractureParams.unstable.fibula;
   return { pieces: pieces.map((p) => p.id), moves };
 }

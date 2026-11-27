@@ -137,6 +137,8 @@ export function buildFractures(
       for (const t of grid.get(cellOf(p.x, p.y, p.z)) ?? []) {
         const [i, j, k] = [idx[t * 3], idx[t * 3 + 1], idx[t * 3 + 2]];
         tri.setFromAttributeAndIndices(g.attributes.position as BufferAttribute, i, j, k);
+        // A zero-area triangle has no interpolation and would leave a zero normal.
+        if (tri.getArea() < 1e-6) continue;
         const d = tri.closestPointToPoint(p, near).distanceToSquared(p);
         if (d >= best) continue;
         best = d;

@@ -109,6 +109,13 @@ describe('fracturePose', () => {
     expect(bimalleolar.moves.fibula).toBeUndefined();
   });
 
+  it('keeps the talus in place for a vertical medial shear', () => {
+    const { pieces, moves } = pose({ involved_malleoli: 'lateral_medial', medial_morphology: 'vertical', fibula_infrasindesmal_transverse: true });
+    expect(pieces).toEqual(['fib_infra', 'med_vertical']);
+    expect(moves.med_vertical).toBeDefined();
+    expect(moves.talus).toBeUndefined();
+  });
+
   it('opens the mortise without a medial cut', () => {
     const { pieces, moves } = pose({
       involved_malleoli: 'lateral_medial',

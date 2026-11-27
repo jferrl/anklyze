@@ -60,7 +60,7 @@
       "noise": 0.5,
       "move": {
         "translate": [
-          -1.25,
+          0,
           -1,
           0
         ],
@@ -364,7 +364,7 @@
           -1
         ]
       },
-      "source": "literature: Weber B comminution, posterior wedge (not separable on the case images)"
+      "source": "literature: AO/OTA Fracture and Dislocation Classification Compendium 2018, 44-B3/44-C multifragmentary fibula; posterior wedge not separable on the case images"
     },
     {
       "id": "fib_supra",
@@ -595,7 +595,7 @@
           0
         ]
       },
-      "source": "literature: articular impaction of the posterolateral plafond (not seen isolated in the 53 cases)"
+      "source": "literature: marginal impaction of the posterolateral plafond (Bartonicek et al., Arch Orthop Trauma Surg 2015; AO Surgery Reference, malleoli); not seen isolated in the 53 cases"
     },
     {
       "id": "med_transverse",
@@ -681,7 +681,7 @@
       "planes": [
         {
           "point": [
-            -4.5,
+            -8.5,
             6,
             -18
           ],
@@ -693,7 +693,7 @@
         },
         {
           "point": [
-            -11.5,
+            -14,
             6,
             -18
           ],
@@ -705,7 +705,7 @@
         },
         {
           "point": [
-            2.5,
+            -3,
             6,
             -18
           ],
@@ -717,7 +717,7 @@
         },
         {
           "point": [
-            -4.5,
+            -8.5,
             6,
             -18
           ],
@@ -736,7 +736,7 @@
           -1
         ]
       },
-      "source": "images: 2 cases (44-B3 Bartonicek 1, CT); thin extraincisural rim"
+      "source": "images: 2 cases (44-B3 Bartonicek 1, CT); thin posterolateral rim outside the incisura (Bartonicek et al., Arch Orthop Trauma Surg 2015)"
     },
     {
       "id": "post_b2",
