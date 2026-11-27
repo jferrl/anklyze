@@ -7,7 +7,7 @@ export interface FracturePose {
   moves: Partial<Record<PieceId | 'talus' | 'fibula', Move>>;
 }
 
-/** fracturePose maps answers to pieces; a structure whose level or type is unanswered draws nothing. */
+/** fracturePose maps answers to pieces; an unanswered type draws nothing until the form is complete. */
 export function fracturePose(state: AnatomyState): FracturePose {
   const active = new Set([...fibulaPieces(state), ...medialPieces(state), ...posteriorPieces(state)]);
   if (state.articularDepression) active.add('art_depression');
@@ -53,7 +53,8 @@ function medialPieces(s: AnatomyState): PieceId[] {
   if (s.medialMorphology === 'transverse_oblique' || s.medialSubtype === 'malleolus_fracture') return ['med_transverse'];
   if (only && s.articularInvolvement === 'large_with_extension') return ['med_vertical'];
   if (only && s.articularInvolvement === 'small_without_extension') return ['med_transverse'];
-  return [];
+  // Some complete paths never ask the medial type; draw the generic cut then.
+  return s.complete ? ['med_transverse'] : [];
 }
 
 function posteriorPieces(s: AnatomyState): PieceId[] {
@@ -74,7 +75,8 @@ function posteriorPieces(s: AnatomyState): PieceId[] {
   const only = !s.lateral && !s.fibula && !s.medial;
   if (only && s.articularInvolvement === 'large_with_extension') return ['post_b4'];
   if (only && s.articularInvolvement === 'small_without_extension') return ['post_b1'];
-  return [];
+  // Paths without CT never ask the Bartonicek type; draw the generic fragment then.
+  return s.complete ? ['post_b2'] : [];
 }
 
 /** fragmentOf is the first active piece whose bit is in mask, or -1 for the main body. */

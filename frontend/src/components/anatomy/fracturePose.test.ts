@@ -42,6 +42,10 @@ describe('fracturePose', () => {
       }
       const hasFibulaPiece = pieces.some((id) => boneOf(id) === 'fibula');
       expect(hasFibulaPiece, JSON.stringify(form)).toBe(fibulaInvolved && state.fibula !== 'proximal');
+      if (state.medial && state.medialSubtype !== 'open_mortise') {
+        expect(pieces.some((id) => id.startsWith('med_')), JSON.stringify(form)).toBe(true);
+      }
+      if (state.posterior) expect(pieces.some((id) => id.startsWith('post_')), JSON.stringify(form)).toBe(true);
     }
   });
 
@@ -144,6 +148,17 @@ describe('fracturePose', () => {
     ['posteromedial flag', { involved_malleoli: 'lateral_posterior', is_posterior_posteromedial: true }, ['post_pm_extraincisural']],
   ])('maps %s', (_, form, expected) => {
     expect(pose(form).pieces).toEqual(expected);
+  });
+
+  it.each<[string, Partial<FractureInput>, keyof FractureInput, PieceId[]]>([
+    ['medial_posterior without CT', { involved_malleoli: 'medial_posterior', has_ct_scan: false }, 'has_ct_scan', ['med_transverse', 'post_b2']],
+    ['medial_posterior with CT', { involved_malleoli: 'medial_posterior', has_ct_scan: true, posterior_fracture_type: 'extraincisural' }, 'posterior_fracture_type', ['med_transverse', 'post_b1']],
+    ['lateral_posterior without CT', { involved_malleoli: 'lateral_posterior', fibular_level: 'transindesmal', lateral_morphology: 'spiral', has_ct_scan: false }, 'has_ct_scan', ['fib_trans_spiral', 'post_b2']],
+  ])('draws the generic piece for a type never asked: %s', (_, form, last, expected) => {
+    expect(pose(form).pieces).toEqual(expected);
+    const short = pose({ ...form, [last]: undefined }).pieces;
+    expect(short).not.toContain('med_transverse');
+    expect(short).not.toContain('post_b2');
   });
 
   it('returns to the same pose', () => {
