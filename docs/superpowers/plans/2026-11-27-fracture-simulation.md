@@ -52,19 +52,19 @@
   interface Move { translate: Vec3; /** degrees about axis through origin */ rotate?: { axis: Vec3; origin: Vec3; deg: number } }
   type PieceId = 'fib_tip_avulsion' | 'fib_infra' | 'fib_trans_spiral' | 'fib_trans_short' | 'fib_trans_coronal'
     | 'fib_trans_wedge' | 'fib_trans_comm_a' | 'fib_trans_comm_b' | 'fib_supra' | 'fib_supra_wedge' | 'fib_supra_far'
-    | 'med_transverse' | 'med_vertical' | 'post_b1' | 'post_b2' | 'post_b3_pl' | 'post_b3_pm' | 'post_b4'
+    | 'med_transverse' | 'med_vertical' | 'post_b1' | 'post_b2' | 'post_b3_pm' | 'post_b4'
     | 'post_pm_extraincisural' | 'art_depression';
   interface Piece { id: PieceId; bone: 'tibia' | 'fibula'; /** the region is the intersection */ planes: Plane[];
     /** fractal noise amplitude on the cut, mm */ noise: number; /** conservative move when complete */ move: Move;
     /** 'images' | 'literature', and the cases or reference it comes from */ source: string }
   interface FractureParams { pieces: Piece[]; /** whole-bone moves when unstable */ unstable: { talus: Move; fibula: Move } }
   export const fractureParams: FractureParams; // the JSON, typed
-  export const pieceIndex: (id: PieceId) => number; // 0-based position in pieces = bit in a cell mask
+  export const pieceIndex: (id: PieceId) => number; // 0-based position among the pieces of the same bone = bit in that bone's cell mask
   ```
-  Array order is priority: a cell belongs to the first active piece whose bit it has.
+  Array order is priority: a cell belongs to the first active piece whose bit it has. Masks are per bone, up to 16 bits.
 
 - [ ] **Step 1: Write the failing tests** in `fractureParams.test.ts`:
-  - `has at most 8 pieces per bone` (masks are one byte per bone): count by bone ≤ 8.
+  - `has at most 16 pieces per bone` (masks are 16-bit per bone): count by bone ≤ 16; `pieceIndex` of the first tibia piece is 0.
   - `every normal is unit length`: `|n| ∈ [0.999, 1.001]`.
   - `keeps every piece at its level` — for each piece, the centroid of its planes' points lies where the classification puts it: `fib_tip_avulsion`, `fib_infra` y < 0; `fib_trans_*` 0 ≤ y ≤ 23; `fib_supra*` 23 < y ≤ 60; `fib_supra_far` y > 60; `med_*` x > 10; `post_*` z < −5; `art_depression` |y| < 4.
   - `keeps moves conservative`: |translate| ≤ 3, |deg| ≤ 5 per piece; unstable talus/fibula |translate| ≤ 3.
@@ -88,7 +88,6 @@
   | `med_vertical` | medial of a near-vertical plane from the plafond corner (x 12, y 0) to the medial cortex at y 35 |
   | `post_b1` | z < −14, −15 < x < −2, y < 8: small rim, outside the incisura |
   | `post_b2` | z < −8 behind a plane slanting posterolaterally, x < 5, top y 15: includes the incisura |
-  | `post_b3_pl` | as `post_b2` |
   | `post_b3_pm` | z < −6, x > 5, y < 18: posteromedial, reaching the posterior colliculus |
   | `post_b4` | behind a plane from the plafond (z −2) to the posterior cortex at y 40, x < 10 |
   | `post_pm_extraincisural` | z < −14, 4 < x < 16, y < 8 |
@@ -112,16 +111,17 @@
   export function noisyPlane(plane, noise, seed) // -> sdf(p: number[3]) => number; fbm, 3 octaves, base wavelength 6 mm
   export function split(mesh, sdf) // -> { inside: Mesh, outside: Mesh, rim: number[][] }  shared vertex pool, cut points by 12-step bisection along each crossing edge, computed once per edge
   export function cap(pos, rimLoop, sdf, normalHint) // -> number[] triangles: earcut via THREE.ShapeUtils on the loop projected to the plane, then two rounds of 1->3 centroid insertion; each new vertex is projected onto sdf = 0 along normalHint. Rim edges are never split (no T-junctions).
-  export function cutBone(mesh, pieces) // -> cells: { mask: number, mesh: Mesh, face: number[] (per triangle: 0 periosteal, k+1 = cut face of piece k), rim: number[] (per vertex 0 at rim, 1 at >=2 mm inside) }[]
+  export function cutBone(mesh, pieces) // -> cells: { mask: number, mesh: Mesh, face: number[] (per triangle: 0xFFFF periosteal, else the mask of the cell on the other side of this cut face), rim: number[] (per vertex 0 at rim, 1 at >=2 mm inside) }[]
   ```
-  `cutBone` splits sequentially by every plane of every piece; a cell's mask bit k is set when the cell is inside all planes of piece k.
+  `cutBone` splits sequentially by every plane of every piece; a cell's mask bit k is set when the cell is inside all planes of piece k. It then merges cells with equal masks and drops the cut faces between them, so every kept cut face separates two different masks and there is one cell per mask.
 
 - [ ] **Step 1: Write the failing tests** on an icosphere (radius 10, built in the test):
   - `split by a flat plane gives two closed halves`: after `cap`, each half has no open edges; volumes sum to the sphere's within 1%.
   - `split shares the seam`: every `rim` vertex is the same index in `inside` and `outside`.
   - `cap lies on the noisy surface`: |sdf(v)| < 0.02 for every cap vertex, with noise 0.8.
   - `cap leaves the rim whole`: the set of open edges of the uncapped half equals the set of cap boundary edges.
-  - `cutBone masks cells by piece`: two overlapping half-space pieces on the sphere give cells with masks {0, 1, 2, 3}, and face tags only for pieces 1 and 2.
+  - `cutBone masks cells by piece`: two overlapping half-space pieces on the sphere give exactly one cell per mask in {0, 1, 2, 3}; every cut-face triangle's `face` is a mask different from its own cell's and present among the cells.
+  - `cutBone drops faces inside a piece`: one piece bounded by two planes gives two cells (masks 0 and 1) and no cut face where both sides have mask 0.
 - [ ] **Step 2:** Run `cd frontend && npx vitest run scripts/fracture-geometry.test.mjs`. Expected: FAIL.
 - [ ] **Step 3:** Implement. `split` generalises `clip()` in `build-ankle-model.mjs:228` from `y - level` to `sdf(p)`.
 - [ ] **Step 4:** Run the test. Expected: PASS.
@@ -142,10 +142,10 @@
     "cells": [{ "bone": "fibula", "mask": 5, "vertices": n, "triangles": m,
                 "position": off, "index": off, "face": off, "occlusion": off, "rim": off }] }
   ```
-  `position` uint16×3, `index` uint16×3, `face` uint8 per triangle, `occlusion` and `rim` uint8 per vertex. Cut-face vertices take occlusion 90 (of 255); surface vertices interpolate the parent's occlusion.
+  `position` uint16×3, `index` uint16×3, `face` uint16 per triangle (neighbour mask, 0xFFFF periosteal), `occlusion` and `rim` uint8 per vertex. Cut-face vertices take occlusion 90 (of 255); surface vertices interpolate the parent's occlusion.
 
 - [ ] **Step 1:** Decode `ankle.bin` in the script (12 lines mirroring `parseAnkleModel`), run `cutBone` per bone with that bone's pieces in params order, seed fixed per piece id so rebuilds are byte-identical.
-- [ ] **Step 2:** Self-checks that fail the build (as `check()` in `build-ankle-model.mjs:500`): every piece has ≥ 1 cell with its bit and ≥ 20 cut-face triangles; every cell is closed (no open edges once its cut faces are included); gzip ≤ 300 KB; each cell < 65,536 vertices. Log per-piece triangle counts and the size.
+- [ ] **Step 2:** Self-checks that fail the build (as `check()` in `build-ankle-model.mjs:500`): every piece has ≥ 1 cell with its bit and ≥ 20 cut-face triangles whose two sides differ in its bit; every cell is closed (no open edges once its cut faces are included); gzip ≤ 300 KB; each cell < 65,536 vertices. Log per-piece triangle counts and the size.
 - [ ] **Step 3:** Run `cd frontend && node scripts/build-fracture-model.mjs`. Expected: all checks pass; prints `fractures.bin N bytes, M gzipped`.
 - [ ] **Step 4:** Run it again and `shasum public/models/ankle/fractures.bin` both times. Expected: identical.
 - [ ] **Step 5:** Commit `feat(anatomy): build fracture cells into fractures.bin`.
@@ -160,11 +160,11 @@
 - Produces:
   ```ts
   interface FractureCell { bone: 'tibia' | 'fibula'; mask: number; positions: Float32Array; index: Uint16Array;
-    face: Uint8Array; occlusion: Uint8Array; rim: Uint8Array }
+    face: Uint16Array; occlusion: Uint8Array; rim: Uint8Array }
   interface FractureModel { pieces: PieceId[]; cells: FractureCell[] }
   export function parseFractureModel(buffer: ArrayBuffer): FractureModel;
   ```
-- [ ] **Step 1: Write the failing tests** reading `public/models/ankle/fractures.bin` as `ankleModel.test.ts` does: `decodes cells with in-range indices`; `lists the pieces in params order` (equals `fractureParams.pieces.map(p => p.id)`); `places each piece's cut faces inside its planes` (every vertex of a triangle with face k+1 satisfies all of piece k's planes within 1.5 mm, allowing for noise).
+- [ ] **Step 1: Write the failing tests** reading `public/models/ankle/fractures.bin` as `ankleModel.test.ts` does: `decodes cells with in-range indices`; `lists the pieces in params order` (equals `fractureParams.pieces.map(p => p.id)`); `pairs every cut face with a real neighbour` (every non-0xFFFF `face` is a mask of another cell of the same bone); `places each piece's cut faces on its planes` (for a face whose two masks differ only in bit k, every vertex lies within 1.5 mm of piece k's region boundary, allowing for noise).
 - [ ] **Step 2:** Run `npx vitest run src/components/anatomy/fractureModel.test.ts`. Expected: FAIL.
 - [ ] **Step 3:** Implement, reusing the quantisation decode of `ankleModel.ts:36-54`.
 - [ ] **Step 4:** Run. Expected: PASS.
@@ -189,8 +189,8 @@
   export function fracturePose(state: AnatomyState): FracturePose;
   /** fragmentOf is the first active piece whose bit is in mask, or -1 for the main body. */
   export function fragmentOf(mask: number, active: number[]): number;
-  /** cutShown: the cut face of piece k on a cell shows only when the cells on its two sides are in different fragments. */
-  export function cutShown(mask: number, k: number, active: number[]): boolean; // fragmentOf(mask) !== fragmentOf(mask ^ (1 << k))
+  /** cutShown: a cut face shows only when the cells on its two sides are in different fragments. */
+  export function cutShown(mask: number, neighbor: number, active: number[]): boolean; // fragmentOf(mask, active) !== fragmentOf(neighbor, active)
   ```
   Piece selection (masks are per bone, so `active` passed to the helpers is the bone's own indices):
 
@@ -207,7 +207,7 @@
   | medial, nothing above answered yet | none |
   | `medialSubtype = open_mortise` | no medial piece |
   | posterior unknown | none |
-  | `extraincisural` / `posterolateral` / `posteromedial_posterolateral` / `large_posterolateral` | `post_b1` / `post_b2` / `post_b3_pl` + `post_b3_pm` / `post_b4` |
+  | `extraincisural` / `posterolateral` / `posteromedial_posterolateral` / `large_posterolateral` | `post_b1` / `post_b2` / `post_b2` + `post_b3_pm` / `post_b4` |
   | `extraincisural_posteromedial` or `posteriorPosteromedial` | `post_pm_extraincisural` |
   | posterior-only `articularInvolvement` large / small | `post_b4` / `post_b1` |
   | `articularDepression` | add `art_depression` |
@@ -221,7 +221,7 @@
   - `draws only what is answered`: `{ involved_malleoli: 'trimaleolar' }` alone gives `pieces` = `[]`; adding `fibular_level: 'transindesmal'` gives only `fib_*` pieces.
   - `keeps a stable lateral Weber B in place`: lateral-only, transindesmal, spiral, simple, complete → no `talus` or `fibula` move.
   - `opens the mortise without a medial cut`: lateral+medial with `medial_subtype = open_mortise`, complete → no `med_*` piece, `talus` move present.
-  - `cutShown hides faces inside one fragment`: with pieces 0 and 1 active and cell masks 0b11 / 0b01, `cutShown(0b11, 1, [0, 1])` is false (both sides belong to piece 0), `cutShown(0b01, 0, [0, 1])` is true.
+  - `cutShown hides faces inside one fragment`: with pieces 0 and 1 active, `cutShown(0b11, 0b01, [0, 1])` is false (both sides belong to piece 0), `cutShown(0b01, 0b00, [0, 1])` is true, and `cutShown(0b10, 0b00, [0])` is false (piece 1 inactive).
   - `returns to the same pose`: `fracturePose` of trimalleolar → lateral-only → trimalleolar states deep-equals the first.
 - [ ] **Step 2:** Run `npx vitest run src/components/anatomy/fracturePose.test.ts src/components/anatomy/anatomyState.test.ts`. Expected: FAIL.
 - [ ] **Step 3:** Extend `getAnatomyState` (it calls `isFormComplete(form)` for `complete`), then implement `fracturePose`, `fragmentOf`, `cutShown`.
@@ -241,7 +241,7 @@
 
 - [ ] **Step 1: Material.** `boneMaterial` takes two new attributes, `cut` (1 on cut-face vertices, from `face`) and `rim`. Where `cut` = 1: ivory cortical colour for `rim` < 0.35, else a warmer darker cancellous base (`#cdb48f`) modulated by a 3D cellular (Worley) pattern of 1.2 mm cells in model space, with roughness 0.85 and no sheen. Periosteal shading unchanged.
 - [ ] **Step 2: Cells.** `setFractures` builds one mesh per cell with the fill material (and its hull), with the triangles ordered so each piece's cut faces form one geometry group; hides the uncut tibia and fibula meshes; puts cells under one `Group` per fragment. Normals: periosteal vertices take the normal of the nearest uncut-bone vertex, so seams between cells of one fragment don't shade.
-- [ ] **Step 3: Pose.** `setState` computes `fracturePose`, regroups cells with `fragmentOf`, sets each cut-face group's `materialIndex` to the fill or to a `visible: false` material from `cutShown`, and eases each fragment group and the talus to its `Move` over 600 ms with the existing `ease` (jump when `reducedMotion()`). Whole-fibula moves apply to every fibula group; fibula pieces move relative to it.
+- [ ] **Step 3: Pose.** `setState` computes `fracturePose`, regroups cells with `fragmentOf`, sets each cut-face group's `materialIndex` to the fill or to a `visible: false` material from `cutShown` (group cut faces by neighbour mask), and eases each fragment group and the talus to its `Move` over 600 ms with the existing `ease` (jump when `reducedMotion()`). Whole-fibula moves apply to every fibula group; fibula pieces move relative to it.
 - [ ] **Step 4: Ghost.** `placeFibula` switches the material of every fibula cell mesh, not only the uncut one.
 - [ ] **Step 5: Load.** `AnatomyView` and `Anatomy3D` take `fracture?: boolean` (default false); `FractureForm` passes `fracture`, `StudyClassificationForm` does not. With it off nothing below happens and the figure is exactly today's. With it on, `Anatomy3D` fetches `/models/ankle/fractures.bin` after the scene is created and calls `setFractures` then `setState(state)`; on failure it logs once and leaves the bones whole (no `onFail`).
 - [ ] **Step 6: Tint off with the fracture.** When fractures are set, `setState` drives the lateral, medial, posterior and level-band highlights to 0; labels, the syndesmosis bracket and the proximal arrow stay. Without fractures the highlights work as today, so `marksFor` and its tests are unchanged.
