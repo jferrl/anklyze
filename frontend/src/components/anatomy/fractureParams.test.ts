@@ -1,19 +1,44 @@
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseAnkleModel } from './ankleModel';
 import { fractureParams, pieceIndex, type PieceId, type Vec3 } from './fractureParams';
 
 const { pieces, unstable } = fractureParams;
 
-// Vitest runs from frontend/.
-const file = readFileSync('public/models/ankle/ankle.bin');
+const file = readFileSync(resolve(import.meta.dirname, '../../../public/models/ankle/ankle.bin'));
 const model = parseAnkleModel(file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength));
 const ALL_IDS: PieceId[] = [
   'fib_tip_avulsion', 'fib_infra', 'fib_trans_spiral', 'fib_trans_short', 'fib_trans_coronal', 'fib_trans_wedge',
   'fib_trans_comm_a', 'fib_trans_comm_b', 'fib_supra', 'fib_supra_wedge', 'fib_supra_far', 'med_transverse',
   'med_vertical', 'post_b1', 'post_b2', 'post_b3_pm', 'post_b4', 'post_pm_extraincisural', 'art_depression',
 ];
+
+// Expected [x, y, z] extents (mm, rounded outward) of the bone vertices each piece captures. A flipped or
+// misplaced plane moves a side of this box by far more than the tolerance.
+type Box = [[number, number], [number, number], [number, number]];
+const BOXES: Record<PieceId, Box> = {
+  fib_tip_avulsion: [[-36, -16], [-29, -9], [-23, 4]],
+  fib_infra: [[-36, -16], [-29, -1], [-23, 4]],
+  fib_trans_spiral: [[-36, -16], [-29, 18], [-23, 4]],
+  fib_trans_short: [[-36, -16], [-29, 14], [-23, 4]],
+  fib_trans_coronal: [[-36, -16], [-29, 15], [-23, 4]],
+  fib_trans_wedge: [[-34, -24], [-2, 16], [-17, 1]],
+  fib_trans_comm_a: [[-34, -18], [1, 18], [-11, 0]],
+  fib_trans_comm_b: [[-34, -17], [1, 19], [-22, -11]],
+  fib_supra: [[-36, -16], [-29, 45], [-23, 4]],
+  fib_supra_wedge: [[-34, -26], [32, 48], [-20, -4]],
+  fib_supra_far: [[-36, -16], [-29, 77], [-23, 4]],
+  art_depression: [[-9, -2], [0, 2], [-10, -2]],
+  med_transverse: [[14, 28], [-10, 6], [-16, 14]],
+  med_vertical: [[11, 28], [-10, 29], [-17, 17]],
+  post_b1: [[-15, -2], [-3, 8], [-24, -14]],
+  post_b2: [[-18, 5], [-3, 15], [-24, -9]],
+  post_b3_pm: [[5, 27], [-5, 18], [-21, -6]],
+  post_b4: [[-18, 10], [-3, 32], [-24, -2]],
+  post_pm_extraincisural: [[4, 16], [-2, 8], [-21, -14]],
+};
 
 /** Vertices of the piece's bone inside every one of its planes. */
 const captured = (id: PieceId): Vec3[] => {
@@ -102,7 +127,10 @@ describe('fractureParams', () => {
         expect(maxY, id).toBeLessThanOrEqual(23);
         expect(maxY, id).toBeGreaterThanOrEqual(0);
         if (/wedge|comm/.test(id)) expect(minY, id).toBeGreaterThan(-2);
-      } else if (id === 'fib_supra_far') expect(maxY, id).toBeGreaterThan(60);
+      } else if (id === 'fib_supra_far') {
+        expect(maxY, id).toBeGreaterThan(60);
+        expect(maxY, id).toBeLessThanOrEqual(80);
+      }
       else if (id.startsWith('fib_supra')) {
         expect(maxY, id).toBeGreaterThan(23);
         expect(maxY, id).toBeLessThanOrEqual(60);
@@ -110,6 +138,18 @@ describe('fractureParams', () => {
       } else if (id.startsWith('med_')) expect(minX(vs), id).toBeGreaterThan(10);
       else if (id.startsWith('post_')) expect(mean(2), id).toBeLessThan(-5);
       else expect(Math.abs(mean(1)), id).toBeLessThan(4);
+    }
+  });
+
+  it('captures the expected extent of bone for every piece', () => {
+    for (const { id } of pieces) {
+      const vs = captured(id);
+      for (let k = 0; k < 3; k++) {
+        const lo = Math.min(...vs.map((v) => v[k]));
+        const hi = Math.max(...vs.map((v) => v[k]));
+        expect(Math.abs(lo - BOXES[id][k][0]), `${id} min ${'xyz'[k]}`).toBeLessThanOrEqual(3);
+        expect(Math.abs(hi - BOXES[id][k][1]), `${id} max ${'xyz'[k]}`).toBeLessThanOrEqual(3);
+      }
     }
   });
 
