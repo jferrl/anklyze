@@ -15,8 +15,9 @@ const ALL_IDS: PieceId[] = [
   'med_vertical', 'post_b1', 'post_b2', 'post_b3_pm', 'post_b4', 'post_pm_extraincisural', 'art_depression',
 ];
 
-// Expected [x, y, z] extents (mm, rounded outward) of the bone vertices each piece captures. A flipped or
-// misplaced plane moves a side of this box by far more than the tolerance.
+// Regression snapshot, reviewed against the anatomy: [x, y, z] extents (mm, rounded outward) of the bone
+// vertices each piece captures. Regenerate after editing fractureParams.json with
+// `PRINT_BOXES=1 npx vitest run src/components/anatomy/fractureParams.test.ts --reporter=verbose` and review the printed table.
 type Box = [[number, number], [number, number], [number, number]];
 const BOXES: Record<PieceId, Box> = {
   fib_tip_avulsion: [[-36, -16], [-29, -9], [-23, 4]],
@@ -31,7 +32,7 @@ const BOXES: Record<PieceId, Box> = {
   fib_supra_wedge: [[-34, -26], [32, 48], [-20, -4]],
   fib_supra_far: [[-36, -16], [-29, 77], [-23, 4]],
   art_depression: [[-9, -2], [0, 2], [-10, -2]],
-  med_transverse: [[14, 28], [-10, 6], [-16, 14]],
+  med_transverse: [[14, 28], [-10, 6], [-16, 13]],
   med_vertical: [[11, 28], [-10, 29], [-17, 17]],
   post_b1: [[-15, -2], [-3, 8], [-24, -14]],
   post_b2: [[-18, 5], [-3, 15], [-24, -9]],
@@ -41,16 +42,29 @@ const BOXES: Record<PieceId, Box> = {
 };
 
 /** Vertices of the piece's bone inside every one of its planes. */
-const captured = (id: PieceId): Vec3[] => {
+const captured = (id: PieceId, planes = pieces.find((p) => p.id === id)!.planes): Vec3[] => {
   const piece = pieces.find((p) => p.id === id)!;
   const { positions } = model.parts.find((p) => p.name === piece.bone)!;
   const out: Vec3[] = [];
   for (let i = 0; i < positions.length; i += 3) {
     const v: Vec3 = [positions[i], positions[i + 1], positions[i + 2]];
-    const inside = piece.planes.every((pl) => pl.normal.reduce((s, n, k) => s + n * (v[k] - pl.point[k]), 0) >= 0);
+    const inside = planes.every((pl) => pl.normal.reduce((s, n, k) => s + n * (v[k] - pl.point[k]), 0) >= 0);
     if (inside) out.push(v);
   }
   return out;
+};
+/** Largest distance, mm, between the captured extents and the id's BOXES entry; Infinity when too few vertices. */
+const boxError = (id: PieceId, vs: Vec3[]): number => {
+  if (vs.length < 5) return Infinity;
+  let worst = 0;
+  for (let k = 0; k < 3; k++) {
+    worst = Math.max(
+      worst,
+      Math.abs(Math.min(...vs.map((v) => v[k])) - BOXES[id][k][0]),
+      Math.abs(Math.max(...vs.map((v) => v[k])) - BOXES[id][k][1]),
+    );
+  }
+  return worst;
 };
 const minX = (vs: Vec3[]) => Math.min(...vs.map((v) => v[0]));
 const norm = (v: Vec3) => Math.hypot(...v);
@@ -130,8 +144,7 @@ describe('fractureParams', () => {
       } else if (id === 'fib_supra_far') {
         expect(maxY, id).toBeGreaterThan(60);
         expect(maxY, id).toBeLessThanOrEqual(80);
-      }
-      else if (id.startsWith('fib_supra')) {
+      } else if (id.startsWith('fib_supra')) {
         expect(maxY, id).toBeGreaterThan(23);
         expect(maxY, id).toBeLessThanOrEqual(60);
         if (id === 'fib_supra_wedge') expect(minY, id).toBeGreaterThan(22);
@@ -142,14 +155,24 @@ describe('fractureParams', () => {
   });
 
   it('captures the expected extent of bone for every piece', () => {
+    for (const { id } of pieces) expect(boxError(id, captured(id)), id).toBeLessThanOrEqual(3);
+  });
+
+  it('notices a flip of any single plane', () => {
+    for (const { id, planes } of pieces) {
+      planes.forEach((pl, i) => {
+        const flipped = planes.map((q, j) => (j === i ? { ...q, normal: q.normal.map((n) => -n) as Vec3 } : q));
+        expect(boxError(id, captured(id, flipped)), `${id} plane ${i}`).toBeGreaterThan(3);
+      });
+    }
+  });
+
+  it.runIf(process.env.PRINT_BOXES)('prints the BOXES table', () => {
+    const r = (f: (...n: number[]) => number, vs: Vec3[], k: number) => f(...vs.map((v) => v[k]));
     for (const { id } of pieces) {
       const vs = captured(id);
-      for (let k = 0; k < 3; k++) {
-        const lo = Math.min(...vs.map((v) => v[k]));
-        const hi = Math.max(...vs.map((v) => v[k]));
-        expect(Math.abs(lo - BOXES[id][k][0]), `${id} min ${'xyz'[k]}`).toBeLessThanOrEqual(3);
-        expect(Math.abs(hi - BOXES[id][k][1]), `${id} max ${'xyz'[k]}`).toBeLessThanOrEqual(3);
-      }
+      const box = [0, 1, 2].map((k) => `[${Math.floor(r(Math.min, vs, k))}, ${Math.ceil(r(Math.max, vs, k))}]`);
+      console.log(`  ${id}: [${box.join(', ')}],`);
     }
   });
 
