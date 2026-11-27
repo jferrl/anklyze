@@ -116,7 +116,7 @@ func (m *Metrics) RecoveryMiddleware() gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				m.panicsTotal.Inc()
-				slog.Error("panic recovered", "panic", r, "path", c.Request.URL.Path)
+				slog.Error("panic recovered", "panic", r, "route", c.FullPath())
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			}
 		}()
