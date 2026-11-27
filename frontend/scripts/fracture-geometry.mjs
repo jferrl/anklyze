@@ -31,11 +31,14 @@ function valueNoise(x, y, z, seed) {
   );
 }
 
-/** noisyPlane returns the signed distance to the plane displaced by up to `noise` mm of 3-octave fbm (base wavelength 6 mm). */
+/**
+ * noisyPlane returns dot(p - point, normal) + noise * fbm(p) / 1.75, with fbm = sum over octaves o = 0..2 of
+ * 2^-o * valueNoise(p * 2^o / 6 mm, seed + o * 0x9e3779b9 mod 2^32) (quintic-faded lattice hash); cutBone seeds with FNV-1a of `${piece.id}:${planeIndex}`.
+ */
 export function noisyPlane({ point, normal }, noise, seed) {
   return (p) => {
     let n = 0;
-    for (let o = 0, f = 1 / WAVELENGTH_MM, a = 1; o < 3; o++, f *= 2, a /= 2) n += a * valueNoise(p[0] * f, p[1] * f, p[2] * f, seed + o * 0x9e3779b9);
+    for (let o = 0, f = 1 / WAVELENGTH_MM, a = 1; o < 3; o++, f *= 2, a /= 2) n += a * valueNoise(p[0] * f, p[1] * f, p[2] * f, (seed + o * 0x9e3779b9) >>> 0);
     return (p[0] - point[0]) * normal[0] + (p[1] - point[1]) * normal[1] + (p[2] - point[2]) * normal[2] + (noise * n) / 1.75;
   };
 }
@@ -132,7 +135,7 @@ export function split(mesh, sdf) {
   return { inside: { pos, index: inside }, outside: { pos, index: outside }, rim: rimLoops(inside) };
 }
 
-/** cap closes a rim loop on the sdf = 0 surface, appending its interior vertices to pos; triangles follow the loop's winding. */
+/** cap closes a rim loop with earcut on the plane normal to normalHint; triangles follow the loop's winding. Relief inside the cap is left to the shader. */
 export function cap(pos, rimLoop, sdf, normalHint) {
   const n = normalHint;
   const seed = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
@@ -145,7 +148,7 @@ export function cap(pos, rimLoop, sdf, normalHint) {
     const p = vert(pos, i);
     return new Vector2(p[0] * u[0] + p[1] * u[1] + p[2] * u[2], p[0] * w[0] + p[1] * w[1] + p[2] * w[2]);
   };
-  // Moves p along the hint onto sdf = 0: widen a bracket until it changes sign, then bisect.
+  // Moves the fallback fan's centre along the hint onto sdf = 0: widen a bracket until it changes sign, then bisect.
   const project = (p) => {
     const at = (t) => sdf(p.map((x, k) => x + n[k] * t));
     let r = Math.abs(at(0)) + 0.1;
@@ -196,17 +199,7 @@ export function cap(pos, rimLoop, sdf, normalHint) {
     rimLoop.forEach((v, i) => tris.push(c, v, rimLoop[(i + 1) % L]));
   }
 
-  let out = tris;
-  for (let round = 0; round < 2; round++) {
-    const next = [];
-    for (let t = 0; t < out.length; t += 3) {
-      const [a, b, c] = out.slice(t, t + 3);
-      const m = pos.push(...project([0, 1, 2].map((k) => (pos[a * 3 + k] + pos[b * 3 + k] + pos[c * 3 + k]) / 3))) / 3 - 1;
-      next.push(a, b, m, b, c, m, c, a, m);
-    }
-    out = next;
-  }
-  return out;
+  return tris;
 }
 
 // FNV-1a, so a piece's noise depends only on its id and plane.

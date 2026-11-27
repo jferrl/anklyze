@@ -86,7 +86,11 @@ describe('fracture geometry', () => {
     const { inside, rim } = split(sphere, sdf);
     const tris = rim.flatMap((loop) => cap(inside.pos, loop, sdf, [0, 0.8, 0.6]));
     expect(tris.length).toBeGreaterThan(0);
-    for (const v of new Set(tris)) expect(Math.abs(sdf(v3(inside.pos, v)))).toBeLessThan(0.02);
+    const rimSet = new Set(rim.flat());
+    for (const v of new Set(tris)) {
+      expect(rimSet.has(v)).toBe(true); // earcut only: no interior vertices
+      expect(Math.abs(sdf(v3(inside.pos, v)))).toBeLessThan(0.02);
+    }
   });
 
   it('cap leaves the rim whole', () => {
