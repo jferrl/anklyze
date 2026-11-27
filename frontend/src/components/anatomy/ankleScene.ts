@@ -516,7 +516,7 @@ export function createAnkleScene(
 
   // Highlights fade: lateral, medial, posterior, the four levels, proximal, syndesmosis.
   const shown: number[] = Array(9).fill(0);
-  let marks: Marks = marksFor({ lateral: false, medial: false, posterior: false });
+  let marks: Marks = marksFor({ lateral: false, medial: false, posterior: false, complete: false });
   const fibulaPoints = model.parts.find((p) => p.name === 'fibula')!;
   const syndesmosisPoints: Vector3[] = [];
   for (let i = 0; i < fibulaPoints.positions.length; i += 9) {

@@ -3,7 +3,7 @@ import { getAnatomyState } from './anatomyState';
 
 describe('getAnatomyState', () => {
   it('shows nothing before the first answer', () => {
-    expect(getAnatomyState({})).toEqual({ lateral: false, medial: false, posterior: false, fibula: undefined, posteriorType: undefined });
+    expect(getAnatomyState({})).toEqual({ lateral: false, medial: false, posterior: false, fibula: undefined, posteriorType: undefined, complete: false });
   });
 
   it.each([
