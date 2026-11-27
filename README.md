@@ -50,7 +50,7 @@ Responses export as CSV.
 
 ## Stack
 
-- Backend: Go 1.25, Gin, GORM, PostgreSQL
+- Backend: Go 1.26, Gin, GORM, PostgreSQL
 - Frontend: React 19, TypeScript, Vite, shadcn/ui, Tailwind CSS v4
 - Auth: Supabase (JWT)
 - Image storage: any S3-compatible store (RustFS locally)
@@ -58,7 +58,7 @@ Responses export as CSV.
 
 ## Run locally
 
-You need Go 1.25+, Node.js 20, Docker, and [air](https://github.com/air-verse/air) for backend hot reload.
+You need Go 1.26+, Node.js 20, Docker, and [air](https://github.com/air-verse/air) for backend hot reload.
 
 ```bash
 make install   # Go modules and frontend npm packages
