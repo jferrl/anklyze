@@ -102,7 +102,8 @@ export function buildFractures(
   const root = new Group();
   // Periosteal normals come from the uncut bone: its own where it has the vertex, else interpolated
   // across the uncut triangle the new vertex lies on, so a seam inside a fragment does not shade.
-  const normals = new Map<string, Vector3>();
+  // A position can hold several uncut normals: ankle.bin closes each shaft with a cap whose fan repeats the rim.
+  const normals = new Map<string, Vector3[]>();
   const [a, b, c, ab, ac] = [new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3()];
   const faceNormal = (p: ArrayLike<number>, i: number, j: number, k: number) => {
     a.fromArray(p, i * 3);
@@ -110,13 +111,17 @@ export function buildFractures(
     c.fromArray(p, k * 3);
     return ab.subVectors(b, a).cross(ac.subVectors(c, a));
   };
-  const lookups = {} as Record<Bone, (p: Vector3) => Vector3>;
+  const lookups = {} as Record<Bone, (p: Vector3) => Vector3[]>;
   for (const bone of ['tibia', 'fibula'] as Bone[]) {
     const g = uncut[bone];
     const pos = g.attributes.position.array;
     const nrm = g.attributes.normal.array;
     const idx = g.index!.array;
-    for (let i = 0; i < pos.length / 3; i++) normals.set(key(pos, i), new Vector3().fromArray(nrm, i * 3));
+    for (let i = 0; i < pos.length / 3; i++) {
+      const [id, n] = [key(pos, i), new Vector3().fromArray(nrm, i * 3)];
+      const options = normals.get(id) ?? normals.set(id, []).get(id)!;
+      if (options.every((o) => o.dot(n) < 0.7)) options.push(n);
+    }
     // Triangles by 2 mm grid cell of their bounds.
     const cellOf = (x: number, y: number, z: number) => `${Math.floor(x / 2)},${Math.floor(y / 2)},${Math.floor(z / 2)}`;
     const grid = new Map<string, number[]>();
@@ -131,20 +136,24 @@ export function buildFractures(
           }
     }
     const [tri, near, n0, n1, n2] = [new Triangle(), new Vector3(), new Vector3(), new Vector3(), new Vector3()];
+    // The nearest triangle's normal, plus any sharply different one within a quantisation step: a point
+    // on the shaft's top rim lies on both shaft and cap, and the requesting triangle picks between them.
     lookups[bone] = (p) => {
-      let best = Infinity;
-      const out = new Vector3();
+      const found: { d: number; n: Vector3 }[] = [];
       for (const t of grid.get(cellOf(p.x, p.y, p.z)) ?? []) {
         const [i, j, k] = [idx[t * 3], idx[t * 3 + 1], idx[t * 3 + 2]];
         tri.setFromAttributeAndIndices(g.attributes.position as BufferAttribute, i, j, k);
         // A zero-area triangle has no interpolation and would leave a zero normal.
         if (tri.getArea() < 1e-6) continue;
-        const d = tri.closestPointToPoint(p, near).distanceToSquared(p);
-        if (d >= best) continue;
-        best = d;
-        Triangle.getInterpolation(near, tri.a, tri.b, tri.c, n0.fromArray(nrm, i * 3), n1.fromArray(nrm, j * 3), n2.fromArray(nrm, k * 3), out);
+        const d = tri.closestPointToPoint(p, near).distanceTo(p);
+        const n = new Vector3();
+        Triangle.getInterpolation(near, tri.a, tri.b, tri.c, n0.fromArray(nrm, i * 3), n1.fromArray(nrm, j * 3), n2.fromArray(nrm, k * 3), n);
+        found.push({ d, n: n.normalize() });
       }
-      return out.normalize();
+      found.sort((x, y) => x.d - y.d);
+      const out: Vector3[] = [];
+      for (const { d, n } of found) if (d <= found[0].d + 0.05 && out.every((o) => o.dot(n) < 0.7)) out.push(n);
+      return out;
     };
   }
   for (const cell of model.cells) {
@@ -191,14 +200,22 @@ export function buildFractures(
     const cut: number[] = [];
     const index: number[] = [];
     const add = (tris: number[], isCut: boolean) => {
-      const remap = new Map<number, number>();
-      for (const v of tris) {
-        let to = remap.get(v);
+      // Keyed by vertex and candidate normal, so a rim vertex shared by shaft and cap splits in two.
+      const remap = new Map<string, number>();
+      for (let t = 0; t < tris.length; t++) {
+        const v = tris[t];
+        const options = isCut ? undefined : normals.get(key(cell.positions, v))!;
+        let pick = 0;
+        if (options && options.length > 1) {
+          const face = faceNormal(cell.positions, tris[t - (t % 3)], tris[t - (t % 3) + 1], tris[t - (t % 3) + 2]);
+          for (let o = 1; o < options.length; o++) if (options[o].dot(face) > options[pick].dot(face)) pick = o;
+        }
+        let to = remap.get(`${v}:${pick}`);
         if (to === undefined) {
           to = pos.length / 3;
-          remap.set(v, to);
+          remap.set(`${v}:${pick}`, to);
           pos.push(cell.positions[v * 3], cell.positions[v * 3 + 1], cell.positions[v * 3 + 2]);
-          const n = isCut ? undefined : normals.get(key(cell.positions, v));
+          const n = options?.[pick];
           nrm.push(n?.x ?? 0, n?.y ?? 0, n?.z ?? 0);
           occ.push(cell.occlusion[v]);
           rim.push(isCut ? cell.rim[v] / 255 : 1);
