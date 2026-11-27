@@ -6,7 +6,13 @@ import { ShapeUtils, Vector2 } from 'three';
 
 const PERIOSTEAL = 0xffff;
 const WAVELENGTH_MM = 6;
-const RIM_MM = 2;
+const INSET_MM = 1.5; // cap ring width
+const RING_STEP_MM = 1; // inner ring point spacing
+const SMOOTH_MM = 0.5; // rim normal read over this much arc each way
+const SKIP_MM = 0.3; // rim within this arc of a point is its own jag, not the far side
+const UNTANGLE = 8; // inner points searched ahead for a swallowtail
+const REPAIR_PASSES = 10;
+const STEP_MM = 0.05; // fractures.bin quantisation; a thinner ring would collapse
 
 // Integer lattice hash to [-1, 1].
 function lattice(x, y, z, seed) {
@@ -46,10 +52,10 @@ export function noisyPlane({ point, normal }, noise, seed) {
 const vert = (pos, i) => [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]];
 
 // Splits triangles in place on the shared pool `pos`; `cuts` keeps one cut point per edge so every
-// cell split by the same surface gets the same seam.
-function splitTris(pos, index, label, sdf, val, cuts) {
+// cell split by the same surface gets the same seam. `attr` (per vertex, optional) is interpolated along periosteal edges.
+function splitTris(pos, index, label, sdf, val, cuts, attr = []) {
   const f = (i) => (val[i] ??= sdf(vert(pos, i)));
-  const cut = (a, b) => {
+  const cut = (a, b, periosteal) => {
     if (a > b) [a, b] = [b, a];
     const key = a * 0x4000000 + b;
     if (!cuts.has(key)) {
@@ -64,7 +70,13 @@ function splitTris(pos, index, label, sdf, val, cuts) {
       pos.push(...lo.map((x, k) => x + (hi[k] - x) * t));
       cuts.set(key, pos.length / 3 - 1);
     }
-    return cuts.get(key);
+    const c = cuts.get(key);
+    if (periosteal && attr[c] === undefined && attr[a] !== undefined && attr[b] !== undefined) {
+      const [pa, pb, pc] = [vert(pos, a), vert(pos, b), vert(pos, c)];
+      const along = pa.reduce((s, x, k) => s + (pc[k] - x) * (pb[k] - x), 0) / pa.reduce((s, x, k) => s + (pb[k] - x) ** 2, 0);
+      attr[c] = attr[a] + (attr[b] - attr[a]) * along;
+    }
+    return c;
   };
   const out = { inside: [], outside: [], inLabel: [], outLabel: [] };
   for (let t = 0; t < index.length; t += 3) {
@@ -75,7 +87,7 @@ function splitTris(pos, index, label, sdf, val, cuts) {
       tri.forEach((a, k) => {
         const b = (k + 1) % 3;
         if (side[k] === keep) poly.push(a);
-        if (side[k] !== side[b]) poly.push(cut(a, tri[b]));
+        if (side[k] !== side[b]) poly.push(cut(a, tri[b], !(label[t / 3] >= 0)));
       });
       // Fan from the lowest id so a cut face and its reversed twin pick the same diagonal.
       const r = poly.indexOf(Math.min(...poly));
@@ -135,7 +147,10 @@ export function split(mesh, sdf) {
   return { inside: { pos, index: inside }, outside: { pos, index: outside }, rim: rimLoops(inside) };
 }
 
-/** cap closes a rim loop with earcut on the plane normal to normalHint; triangles follow the loop's winding. Relief inside the cap is left to the shader. */
+/**
+ * cap closes a rim loop on the plane normal to normalHint: an inset ring, then earcut of the inner loop; triangles follow the
+ * loop's winding. inner lists the vertices off the crack edge (rim = 1): the inner loop, or the whole cap when the ring is skipped.
+ */
 export function cap(pos, rimLoop, sdf, normalHint) {
   const n = normalHint;
   const seed = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
@@ -144,11 +159,13 @@ export function cap(pos, rimLoop, sdf, normalHint) {
   const ul = Math.hypot(...u);
   u.forEach((_, k) => (u[k] /= ul));
   const w = cross(n, u);
+  const wl = Math.hypot(...w);
+  w.forEach((_, k) => (w[k] /= wl));
   const flat = (i) => {
     const p = vert(pos, i);
     return new Vector2(p[0] * u[0] + p[1] * u[1] + p[2] * u[2], p[0] * w[0] + p[1] * w[1] + p[2] * w[2]);
   };
-  // Moves the fallback fan's centre along the hint onto sdf = 0: widen a bracket until it changes sign, then bisect.
+  // Moves a point along the hint onto sdf = 0: widen a bracket until it changes sign, then bisect.
   const project = (p) => {
     const at = (t) => sdf(p.map((x, k) => x + n[k] * t));
     let r = Math.abs(at(0)) + 0.1;
@@ -162,45 +179,164 @@ export function cap(pos, rimLoop, sdf, normalHint) {
     }
     return p.map((x, k) => x + n[k] * (lo + hi) / 2);
   };
-  const L = rimLoop.length;
-  const contour = rimLoop.map(flat);
-  const area = ShapeUtils.area(contour);
-  // Earcut winds every triangle alike; decide the flip once, as a sliver's own area sign is noise.
-  // triangulateShape may drop a repeated end point from contour in place; the area above is taken first.
-  let ears = ShapeUtils.triangulateShape(contour, []);
-  if (ears.reduce((s, t) => s + ShapeUtils.area(t.map((i) => contour[i])), 0) * area < 0) ears = ears.map(([a, b, c]) => [a, c, b]);
-  // Earcut drops collinear and repeated points; fan each edge that skips them from its opposite corner.
-  const used = new Set(ears.flat());
-  const fill = (t) => {
-    for (let e = 0; e < 3; e++) {
-      const [i, j, o] = [t[e], t[(e + 1) % 3], t[(e + 2) % 3]];
-      const gap = [];
-      for (let s = (i + 1) % L; s !== j && !used.has(s); s = (s + 1) % L) gap.push(s);
-      if (!gap.length || (i + gap.length + 1) % L !== j) continue;
-      gap.forEach((s) => used.add(s));
-      const chain = [i, ...gap, j];
-      return chain.slice(1).flatMap((s, q) => fill([chain[q], s, o]));
+  const fill = (loop) => {
+    const L = loop.length;
+    const contour = loop.map(flat);
+    const area = ShapeUtils.area(contour);
+    // Earcut winds every triangle alike; decide the flip once, as a sliver's own area sign is noise.
+    // triangulateShape may drop a repeated end point from contour in place; the area above is taken first.
+    let ears = ShapeUtils.triangulateShape(contour, []);
+    if (ears.reduce((s, t) => s + ShapeUtils.area(t.map((i) => contour[i])), 0) * area < 0) ears = ears.map(([a, b, c]) => [a, c, b]);
+    // Earcut drops collinear and repeated points; fan each edge that skips them from its opposite corner.
+    const used = new Set(ears.flat());
+    const gapFill = (t) => {
+      for (let e = 0; e < 3; e++) {
+        const [i, j, o] = [t[e], t[(e + 1) % 3], t[(e + 2) % 3]];
+        const gap = [];
+        for (let s = (i + 1) % L; s !== j && !used.has(s); s = (s + 1) % L) gap.push(s);
+        if (!gap.length || (i + gap.length + 1) % L !== j) continue;
+        gap.forEach((s) => used.add(s));
+        const chain = [i, ...gap, j];
+        return chain.slice(1).flatMap((s, q) => gapFill([chain[q], s, o]));
+      }
+      return [t];
+    };
+    const loopTris = ears.flatMap(gapFill);
+    // The cap's open edges must be exactly the loop; earcut can also leave an interior triangle out.
+    const open = openEdges(loopTris.flat());
+    const whole = loop.every((_, i) => {
+      const e = `${i}:${(i + 1) % L}`;
+      return open.get(e) > 0 && open.set(e, open.get(e) - 1);
+    });
+    if (whole) {
+      const holes = walkLoops(open).flatMap((h) => h.slice(2).map((v, i) => [h[0], h[i + 1], v]));
+      return { tris: [...loopTris, ...holes].flatMap((t) => t.map((i) => loop[i])), centre: [] };
     }
-    return [t];
-  };
-  const loopTris = ears.flatMap(fill);
-  // The cap's open edges must be exactly the loop; earcut can also leave an interior triangle out.
-  const open = openEdges(loopTris.flat());
-  const whole = rimLoop.every((_, i) => {
-    const e = `${i}:${(i + 1) % L}`;
-    return open.get(e) > 0 && open.set(e, open.get(e) - 1);
-  });
-  const tris = [];
-  if (whole) {
-    const holes = walkLoops(open).flatMap((h) => h.slice(2).map((v, i) => [h[0], h[i + 1], v]));
-    for (const t of [...loopTris, ...holes]) tris.push(...t.map((i) => rimLoop[i]));
-  } else {
     // Earcut gave up (a sliver or self-touching loop): a fan still closes the cell.
-    const c = pos.push(...project([0, 1, 2].map((k) => rimLoop.reduce((s, v) => s + pos[v * 3 + k], 0) / L))) / 3 - 1;
-    rimLoop.forEach((v, i) => tris.push(c, v, rimLoop[(i + 1) % L]));
-  }
+    const c = pos.push(...project([0, 1, 2].map((k) => loop.reduce((s, v) => s + pos[v * 3 + k], 0) / L))) / 3 - 1;
+    return { tris: loop.flatMap((v, i) => [c, v, loop[(i + 1) % L]]), centre: [c] };
+  };
 
-  return tris;
+  const ring = insetRing(rimLoop.map(flat));
+  if (!ring) {
+    const { tris, centre } = fill(rimLoop);
+    return { tris, inner: [...new Set(rimLoop), ...centre] };
+  }
+  const inner = ring.map(({ at, off: [du, dw] }) => {
+    const p = vert(pos, rimLoop[at]).map((x, k) => x + du * u[k] + dw * w[k]);
+    return pos.push(...project(p)) / 3 - 1;
+  });
+  const { tris, centre } = fill(inner);
+  const [L, M] = [rimLoop.length, ring.length];
+  // Each inner point fans its run of outer points, then a transition triangle hands over to the next.
+  ring.forEach(({ at }, k) => {
+    const end = runEnd(ring, k, L);
+    for (let j = at; j < end; j++) tris.push(rimLoop[j % L], rimLoop[(j + 1) % L], inner[k]);
+    tris.push(rimLoop[end % L], inner[(k + 1) % M], inner[k]);
+  });
+  return { tris, inner: [...inner, ...centre] };
+}
+
+// Plans the inset ring in the cap plane: one inner point per ~RING_STEP_MM of rim, moved inward along the
+// smoothed normal by min(1.5 mm, 0.3 x local half-width), skipping points where that is under two quantisation
+// steps. Null when it would fold: fewer than three points, a flipped inner loop, or crossing edges.
+function insetRing(c) {
+  const L = c.length;
+  const area = ShapeUtils.area(c);
+  if (L < 3 || !area) return null;
+  const s = Math.sign(area);
+  const arc = [0];
+  for (let i = 1; i <= L; i++) arc.push(arc[i - 1] + c[i - 1].distanceTo(c[i % L]));
+  const per = arc[L];
+  // Circular arc distance; cut loops carry micro-edges down to 1e-7 mm, so local shape is read over arc, not over neighbours.
+  const along = (i, j) => Math.min(Math.abs(arc[i] - arc[j]), per - Math.abs(arc[i] - arc[j]));
+  const reach = (i, dir) => {
+    let j = i;
+    for (let n = 0; n < L / 2 && along(i, j) < SMOOTH_MM; n++) j = (j + dir + L) % L;
+    return c[j];
+  };
+  let ring = [];
+  for (let i = 0; i < L; i++) {
+    if (ring.length && arc[i] - arc[ring.at(-1).at] < RING_STEP_MM) continue;
+    if (per - arc[i] < RING_STEP_MM / 2 && ring.length) break;
+    const [back, fwd] = [reach(i, -1), reach(i, 1)];
+    const [tx, ty] = [fwd.x - back.x, fwd.y - back.y];
+    const tl = Math.hypot(tx, ty);
+    if (!tl) return null;
+    const dir = [(-ty * s) / tl, (tx * s) / tl];
+    let width = Infinity;
+    for (let j = 0; j < L; j++) {
+      const k = (j + 1) % L;
+      if (along(i, j) < SKIP_MM || along(i, k) < SKIP_MM) continue;
+      const t = rayHit(c[i], dir, c[j], c[k]);
+      if (t > 0) width = Math.min(width, t);
+    }
+    const d = Math.min(INSET_MM, 0.3 * (width / 2));
+    // Too thin to inset here; a neighbouring run's fan covers it, and the crossing test below vets that.
+    if (!(d >= 2 * STEP_MM)) continue;
+    ring.push({ at: i, off: [dir[0] * d, dir[1] * d] });
+  }
+  // Concave corners fold the offset into a swallowtail: drop the inner points between two crossing inner edges.
+  const inner = (k) => new Vector2(c[ring[k].at].x + ring[k].off[0], c[ring[k].at].y + ring[k].off[1]);
+  for (let k = 0; k + 2 < ring.length; k++) {
+    for (let m = Math.min(k + UNTANGLE, ring.length - 2); m >= k + 2; m--) {
+      if (crosses({ a: inner(k), b: inner(k + 1) }, { a: inner(m), b: inner(m + 1) })) {
+        ring.splice(k + 1, m - k);
+        k = Math.max(-1, k - UNTANGLE);
+        break;
+      }
+    }
+  }
+  const outer = [];
+  for (let i = 0; i < L; i++) outer.push({ a: c[i], b: c[(i + 1) % L], o: [i, (i + 1) % L], n: [] });
+  const shares = (x, y) => x.o.some((u) => y.o.some((v) => along(u, v) < SKIP_MM)) || x.n.some((v) => y.n.includes(v));
+  // Drop the inner points behind every crossing and look again; a ring that will not settle is skipped.
+  for (let pass = 0; pass < REPAIR_PASSES; pass++) {
+    const M = ring.length;
+    if (M < 3) return null;
+    const q = ring.map((_, k) => inner(k));
+    if (Math.sign(ShapeUtils.area(q)) !== s) return null;
+    // Segments tagged by the outer (o) and inner (n) points they touch. Pairs sharing an inner point, or
+    // with outer ends within SKIP_MM of arc (the same jag), may meet.
+    const segs = [...outer];
+    ring.forEach(({ at }, k) => {
+      segs.push({ a: q[k], b: q[(k + 1) % M], o: [], n: [k, (k + 1) % M] });
+      for (let j = at; j <= runEnd(ring, k, L); j++) segs.push({ a: c[j % L], b: q[k], o: [j % L], n: [k] });
+    });
+    const bad = new Set();
+    // shortcut: O((2L + M)^2) pairs with a bbox reject, fine for loops of a few hundred points; use a grid if loops grow.
+    for (let x = 0; x < segs.length; x++) {
+      for (let y = Math.max(x + 1, L); y < segs.length; y++) {
+        if (!shares(segs[x], segs[y]) && crosses(segs[x], segs[y])) bad.add(Math.max(...segs[x].n, ...segs[y].n));
+      }
+    }
+    if (!bad.size) return ring;
+    ring = ring.filter((_, k) => !bad.has(k));
+  }
+  return null;
+}
+
+// The outer index where inner point k's run ends; the last run wraps past the loop start.
+const runEnd = (ring, k, L) => (k + 1 < ring.length ? ring[k + 1].at : ring[0].at + L);
+
+// Distance along a unit ray from p to segment ab, or -1.
+function rayHit(p, d, a, b) {
+  const [ex, ey] = [b.x - a.x, b.y - a.y];
+  const den = d[0] * ey - d[1] * ex;
+  if (!den) return -1;
+  const [wx, wy] = [a.x - p.x, a.y - p.y];
+  const t = (wx * ey - wy * ex) / den;
+  const v = (wx * d[1] - wy * d[0]) / den;
+  return v >= 0 && v <= 1 ? t : -1;
+}
+
+// Proper or touching intersection of two segments.
+function crosses({ a, b }, { a: c, b: d }) {
+  if (Math.max(a.x, b.x) < Math.min(c.x, d.x) || Math.max(c.x, d.x) < Math.min(a.x, b.x)) return false;
+  if (Math.max(a.y, b.y) < Math.min(c.y, d.y) || Math.max(c.y, d.y) < Math.min(a.y, b.y)) return false;
+  const o = (p, q, r) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+  const [o1, o2, o3, o4] = [o(a, b, c), o(a, b, d), o(c, d, a), o(c, d, b)];
+  return o1 !== o2 && o3 !== o4;
 }
 
 // FNV-1a, so a piece's noise depends only on its id and plane.
@@ -210,12 +346,17 @@ function hash(s) {
   return h >>> 0;
 }
 
-/** cutBone splits a closed mesh by every piece's planes and returns one closed cell per piece mask. */
+/**
+ * cutBone splits a closed mesh by every piece's planes and returns one closed cell per piece mask. An optional
+ * mesh.attr (one number per vertex) comes back per cell vertex, interpolated on the periosteum and null off it.
+ */
 export function cutBone(mesh, pieces) {
   const planes = pieces.flatMap((piece, k) =>
     piece.planes.map((pl, j) => ({ piece: k, local: j, normal: pl.normal, sdf: noisyPlane(pl, piece.noise, hash(`${piece.id}:${j}`)) })),
   );
   const pos = [...mesh.pos];
+  const interior = new Set();
+  const attr = mesh.attr ? [...mesh.attr] : [];
   // label per triangle: -1 periosteal, else the plane whose cut face it is.
   let cells = [{ mask: 0, index: mesh.index, label: mesh.index.filter((_, i) => i % 3 === 0).map(() => -1) }];
   // Cells are merged after each piece, not at the end, so a plane's faces outside its piece are
@@ -228,9 +369,15 @@ export function cutBone(mesh, pieces) {
       const val = [];
       const cuts = new Map();
       parts = parts.flatMap((part) => {
-        const s = splitTris(pos, part.index, part.label, sdf, val, cuts);
+        const s = splitTris(pos, part.index, part.label, sdf, val, cuts, attr);
         const capIn = [];
-        if (s.inside.length && s.outside.length) for (const loop of rimLoops(s.inside)) for (const v of cap(pos, loop, sdf, normal)) capIn.push(v);
+        if (s.inside.length && s.outside.length) {
+          for (const loop of rimLoops(s.inside)) {
+            const c = cap(pos, loop, sdf, normal);
+            for (const v of c.tris) capIn.push(v);
+            for (const v of c.inner) interior.add(v);
+          }
+        }
         const capOut = [];
         for (let t = 0; t < capIn.length; t += 3) capOut.push(capIn[t], capIn[t + 2], capIn[t + 1]);
         const tag = capIn.filter((_, i) => i % 3 === 0).map(() => g);
@@ -257,24 +404,14 @@ export function cutBone(mesh, pieces) {
   });
   return cells
     .sort((a, b) => a.mask - b.mask)
-    .map(({ mask, index, label }) => cell(pos, mask, index, label.map((g) => (g < 0 ? PERIOSTEAL : mask ^ (1 << planes[g].piece)))));
+    .map(({ mask, index, label }) => cell(pos, mask, index, label.map((g) => (g < 0 ? PERIOSTEAL : mask ^ (1 << planes[g].piece))), interior, attr));
 }
 
-// Compacts a cell's vertices and rates each by distance to the crack edge (where periosteum meets a cut face).
-function cell(pos, mask, index, face) {
+// Compacts a cell's vertices; rim is 1 inside a kept cut face's ring (or on a ringless cap), else 0.
+function cell(pos, mask, index, face, interior, attr) {
   const keep = [...new Set(index)];
   const to = new Map(keep.map((v, i) => [v, i]));
-  const p = keep.flatMap((v) => vert(pos, v));
-  const periosteal = new Set();
-  const cutFace = new Set();
-  face.forEach((f, t) => [0, 1, 2].forEach((k) => (f === PERIOSTEAL ? periosteal : cutFace).add(to.get(index[t * 3 + k]))));
-  const edge = [...periosteal].filter((v) => cutFace.has(v)).map((v) => vert(p, v));
-  // shortcut: brute-force nearest edge vertex, O(vertices x edge vertices); use a grid if builds get slow.
-  const rim = keep.map((_, i) => {
-    const q = vert(p, i);
-    let d = RIM_MM * RIM_MM;
-    for (const e of edge) d = Math.min(d, (q[0] - e[0]) ** 2 + (q[1] - e[1]) ** 2 + (q[2] - e[2]) ** 2);
-    return Math.sqrt(d) / RIM_MM;
-  });
-  return { mask, mesh: { pos: p, index: index.map((v) => to.get(v)) }, face, rim };
+  const onCut = new Set(index.filter((_, i) => face[Math.floor(i / 3)] !== PERIOSTEAL));
+  const rim = keep.map((v) => (interior.has(v) && onCut.has(v) ? 1 : 0));
+  return { mask, mesh: { pos: keep.flatMap((v) => vert(pos, v)), index: index.map((v) => to.get(v)) }, face, rim, attr: keep.map((v) => attr[v] ?? null) };
 }

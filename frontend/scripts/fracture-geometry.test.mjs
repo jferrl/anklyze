@@ -56,7 +56,7 @@ describe('fracture geometry', () => {
   it('split by a flat plane gives two closed halves', () => {
     const { inside, outside, rim } = split(sphere, flat);
     const pos = inside.pos;
-    const capIn = rim.flatMap((loop) => cap(pos, loop, flat, [0, 1, 0]));
+    const capIn = rim.flatMap((loop) => cap(pos, loop, flat, [0, 1, 0]).tris);
     const capOut = [];
     for (let t = 0; t < capIn.length; t += 3) capOut.push(capIn[t], capIn[t + 2], capIn[t + 1]);
     const a = [...inside.index, ...capIn];
@@ -84,19 +84,40 @@ describe('fracture geometry', () => {
   it('cap lies on the noisy surface', () => {
     const sdf = noisyPlane(plane([0, 2, 0], [0, 0.8, 0.6]), 0.8, 42);
     const { inside, rim } = split(sphere, sdf);
-    const tris = rim.flatMap((loop) => cap(inside.pos, loop, sdf, [0, 0.8, 0.6]));
+    const tris = rim.flatMap((loop) => cap(inside.pos, loop, sdf, [0, 0.8, 0.6]).tris);
     expect(tris.length).toBeGreaterThan(0);
-    const rimSet = new Set(rim.flat());
-    for (const v of new Set(tris)) {
-      expect(rimSet.has(v)).toBe(true); // earcut only: no interior vertices
-      expect(Math.abs(sdf(v3(inside.pos, v)))).toBeLessThan(0.02);
+    for (const v of new Set(tris)) expect(Math.abs(sdf(v3(inside.pos, v)))).toBeLessThan(0.02);
+  });
+
+  it('cap insets a ring: outer loop on the rim, inner loop inside it', () => {
+    const { inside, rim } = split(sphere, flat);
+    const pos = inside.pos;
+    const { tris, inner } = cap(pos, rim[0], flat, [0, 1, 0]);
+    const outer = new Set(rim[0]);
+    expect(inner.length).toBeGreaterThan(40); // one per ~1 mm of a 62 mm rim
+    for (const v of inner) {
+      expect(outer.has(v)).toBe(false);
+      expect(tris).toContain(v);
+      // Inset by 1.5 mm in the cap plane: the cut circle has radius sqrt(99), so the ring sits ~1.5 mm in.
+      expect(Math.sqrt(99) - Math.hypot(pos[v * 3], pos[v * 3 + 2])).toBeGreaterThan(1.3);
     }
+  });
+
+  it('cap skips the ring on a thin sliver and marks the whole cap', () => {
+    // A 20 x 0.2 mm strip in the plane y = 0.
+    const pos = [0, 0, 0, 0, 0, 0.2, 10, 0, 0.2, 20, 0, 0.2, 20, 0, 0, 10, 0, 0];
+    const sdf = noisyPlane(plane([0, 0, 0], [0, 1, 0]), 0, 1);
+    const loop = [0, 1, 2, 3, 4, 5];
+    const { tris, inner } = cap(pos, loop, sdf, [0, 1, 0]);
+    expect(pos.length).toBe(18);
+    expect([...inner].sort()).toEqual(loop);
+    expect(new Set(tris)).toEqual(new Set(loop));
   });
 
   it('cap leaves the rim whole', () => {
     const sdf = noisyPlane(plane([0, 2, 0], [0, 0.8, 0.6]), 0.8, 42);
     const { inside, rim } = split(sphere, sdf);
-    const tris = rim.flatMap((loop) => cap(inside.pos, loop, sdf, [0, 0.8, 0.6]));
+    const tris = rim.flatMap((loop) => cap(inside.pos, loop, sdf, [0, 0.8, 0.6]).tris);
     const reversed = [...openEdges(tris)].map((e) => e.split(':').reverse().join(':'));
     expect(new Set(reversed)).toEqual(openEdges(inside.index));
   });
@@ -147,6 +168,10 @@ describe('fracture geometry', () => {
       expect(c.rim.length).toBe(c.mesh.pos.length / 3);
       expect(c.rim.every((r) => r >= 0 && r <= 1)).toBe(true);
       expect(c.rim).toContain(0);
+      // rim 1 marks the inner ring, which only cut faces touch.
+      expect(c.rim).toContain(1);
+      const onCut = new Set(c.mesh.index.filter((_, i) => c.face[Math.floor(i / 3)] !== 0xffff));
+      c.rim.forEach((r, v) => r && expect(onCut.has(v)).toBe(true));
     }
     checkReciprocity(cells);
     const total = cells.reduce((s, c) => s + volume(c.mesh.pos, c.mesh.index), 0);
@@ -176,6 +201,18 @@ describe('fracture geometry', () => {
     const cells = cutBone(icosphere(4), [corner, halfSpace('h', [0, 1, 0], [0, 0.6, 0.8])]);
     for (const c of cells) expect(openEdges(c.mesh.index).size).toBe(0);
     checkReciprocity(cells);
+  });
+
+  it('cutBone interpolates attr on the periosteum and leaves cut-face vertices null', () => {
+    const attr = sphere.pos.filter((_, i) => i % 3 === 1);
+    const cells = cutBone({ ...sphere, attr }, [halfSpace('a', [-2, 0, 0], [1, 0, 0]), halfSpace('b', [0, -2, 0], [0.6, 0.8, 0])]);
+    for (const c of cells) {
+      const periosteal = new Set(c.mesh.index.filter((_, i) => c.face[Math.floor(i / 3)] === 0xffff));
+      c.attr.forEach((a, v) => {
+        if (periosteal.has(v)) expect(a).toBeCloseTo(c.mesh.pos[v * 3 + 1], 9);
+        else expect(a).toBeNull();
+      });
+    }
   });
 
   it('cutBone is reproducible', () => {
