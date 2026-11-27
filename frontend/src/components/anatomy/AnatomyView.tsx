@@ -18,6 +18,8 @@ interface AnatomyViewProps {
   compact?: boolean;
   /** Opens the 3D model on this view rather than following the answers. */
   view?: Preset;
+  /** Draws the fracture itself rather than the tint; off where a study needs today's figure. */
+  fracture?: boolean;
   className?: string;
 }
 
@@ -41,7 +43,7 @@ const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
  * highlights what the answers describe: the fractured malleoli and the level of the fibular
  * fracture. Everything shown is also stated in text.
  */
-export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, view, className }: AnatomyViewProps) {
+export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, view, fracture = false, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
   // A new state object only when what is shown changes, so the model is not redrawn on every render.
   const stateKey = JSON.stringify(getAnatomyState(formData));
@@ -93,7 +95,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
         </>
       ) : (
         <Suspense fallback={<FigurePlaceholder compact={compact} />}>
-          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} onFail={() => setNotice('loadFailed')} />
+          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} fracture={fracture} onFail={() => setNotice('loadFailed')} />
         </Suspense>
       )}
       {/* Before the first answer there is nothing to caption, so no space is held for it. */}

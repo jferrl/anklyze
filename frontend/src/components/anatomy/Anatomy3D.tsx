@@ -8,6 +8,7 @@ import { marksFor } from './anatomyMarks';
 import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import { parseAnkleModel, type AnkleModel } from './ankleModel';
+import { parseFractureModel, type FractureModel } from './fractureModel';
 import { createAnkleScene, ZOOM_MAX, type Anchors, type AnkleScene, type Ink } from './ankleScene';
 
 const DEG = Math.PI / 180;
@@ -58,6 +59,19 @@ function loadModel() {
   return model;
 }
 
+// Fetched after the base model draws; on failure the bones stay whole, and the next figure retries.
+let fractures: Promise<FractureModel> | undefined;
+function loadFractures() {
+  fractures ??= fetch('/models/ankle/fractures.bin')
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`fractures.bin ${r.status}`))))
+    .then(parseFractureModel)
+    .catch((e) => {
+      fractures = undefined;
+      throw e;
+    });
+  return fractures;
+}
+
 interface Overlay {
   labels: Partial<Record<Labelled, HTMLSpanElement | null>>;
   leaders: Partial<Record<Labelled, SVGGElement | null>>;
@@ -73,13 +87,15 @@ interface Anatomy3DProps {
   onFail: () => void;
   /** Opens on this view instead of following the answers there. */
   view?: Preset;
+  /** Draws the fracture itself instead of the tint; off, the figure is the tinted one. */
+  fracture?: boolean;
 }
 
 /**
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false }: Anatomy3DProps) {
   const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -88,6 +104,10 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   const [overlay] = useState<Overlay>(() => ({ labels: {}, leaders: {} }));
   const sceneRef = useRef<AnkleScene | null>(null);
   const [ready, setReady] = useState(false);
+  const [fractured, setFractured] = useState(false);
+  // The answers as last rendered, for fractures that arrive after them.
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const [theme, setTheme] = useState(0);
   const [at, setAt] = useState<Preset | undefined>(view ?? 'anterolateral');
   const [zoom, setZoom] = useState(1);
@@ -126,6 +146,15 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
           // The theme toggles a class on <html>; redraw in the new ink.
           themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
           setReady(true);
+          if (!fracture) return;
+          loadFractures()
+            .then((f) => {
+              if (cancelled || !scene) return;
+              scene.setFractures(f);
+              scene.setState(stateRef.current);
+              setFractured(true);
+            })
+            .catch((e) => console.error('fractures.bin', e));
         })
         .catch(() => !cancelled && onFail());
     });
@@ -239,7 +268,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       clearTimeout(timer);
       resize.disconnect();
     };
-  }, [state, ready, theme]);
+  }, [state, ready, theme, fractured]);
 
   function handled() {
     cancelAnimationFrame(glide.current);

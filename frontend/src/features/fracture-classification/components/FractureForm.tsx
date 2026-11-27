@@ -196,7 +196,7 @@ export function FractureForm() {
                 </Button>
                 {/* Hidden, not unmounted, when closed: the model and its camera survive every answer. */}
                 <div id="anatomy-mobile" className={showAnatomy ? 'mt-2 rounded-lg border bg-card p-4' : 'hidden'}>
-                  <AnatomyView formData={formData} showReading={false} />
+                  <AnatomyView formData={formData} showReading={false} fracture />
                 </div>
               </div>
             </div>
@@ -243,7 +243,7 @@ export function FractureForm() {
             <h2 className="text-base font-semibold">{t('anatomy.title')}</h2>
             <div className="rounded-lg border bg-card p-4">
               {/* The path list below is the reading, so the figure does not repeat it. */}
-              <AnatomyView formData={formData} showReading={false} />
+              <AnatomyView formData={formData} showReading={false} fracture />
             </div>
           </section>
           <section className="space-y-3">
