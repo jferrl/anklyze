@@ -24,7 +24,7 @@ const (
 )
 
 // createTestToken creates a JWT token for testing.
-func createTestToken(claims Claims, secret string) string {
+func createTestToken(claims Claims) string {
 	now := time.Now()
 	claims.ExpiresAt = jwt.NewNumericDate(now.Add(1 * time.Hour))
 	claims.IssuedAt = jwt.NewNumericDate(now)
@@ -32,7 +32,7 @@ func createTestToken(claims Claims, secret string) string {
 	claims.Audience = jwt.ClaimStrings{"authenticated"}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, _ := token.SignedString([]byte(secret))
+	tokenString, _ := token.SignedString([]byte(testSecret))
 	return tokenString
 }
 
@@ -111,7 +111,7 @@ func TestMiddleware(t *testing.T) {
 				AppMetadata: map[string]any{
 					"role": "user",
 				},
-			}, testSecret),
+			}),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
 				return c.GetString(ContextKeyUserID) == "user-123" &&
@@ -129,7 +129,7 @@ func TestMiddleware(t *testing.T) {
 				AppMetadata: map[string]any{
 					"role": "admin",
 				},
-			}, testSecret),
+			}),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
 				return c.GetString(ContextKeyUserID) == "admin-456" &&
@@ -142,7 +142,7 @@ func TestMiddleware(t *testing.T) {
 				RegisteredClaims: jwt.RegisteredClaims{
 					Subject: "user-789",
 				},
-			}, testSecret),
+			}),
 			expectedStatus: http.StatusOK,
 			checkContext: func(c *gin.Context) bool {
 				return c.GetString(ContextKeyUserID) == "user-789"
@@ -425,10 +425,10 @@ func TestHelperFunctions(t *testing.T) {
 func TestValidateToken_RejectsAnonymousAndWrongAudience(t *testing.T) {
 	v := createTestValidator(t)
 
-	if _, err := v.ValidateToken(createTestToken(Claims{Email: "a@example.test"}, testSecret)); err != nil {
+	if _, err := v.ValidateToken(createTestToken(Claims{Email: "a@example.test"})); err != nil {
 		t.Fatalf("control token rejected: %v", err)
 	}
-	if _, err := v.ValidateToken(createTestToken(Claims{IsAnonymous: true}, testSecret)); !errors.Is(err, ErrInvalidToken) {
+	if _, err := v.ValidateToken(createTestToken(Claims{IsAnonymous: true})); !errors.Is(err, ErrInvalidToken) {
 		t.Errorf("anonymous token: err = %v, want ErrInvalidToken", err)
 	}
 
