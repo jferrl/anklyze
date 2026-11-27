@@ -1,5 +1,6 @@
 import params from './fractureParams.json';
 
+/** Vec3 is a point or direction in model space, mm. */
 export type Vec3 = [number, number, number];
 
 /** Plane is a half-space: points p with dot(p - point, normal) >= 0 are inside; normal is unit length. */
@@ -14,6 +15,7 @@ export interface Move {
   rotate?: { axis: Vec3; origin: Vec3; deg: number };
 }
 
+/** PieceId names one fragment in fractureParams.json. */
 export type PieceId =
   | 'fib_tip_avulsion'
   | 'fib_infra'
@@ -48,6 +50,7 @@ export interface Piece {
   source: string;
 }
 
+/** FractureParams is the shape of fractureParams.json. */
 export interface FractureParams {
   /** Array order is priority: a cell belongs to the first active piece whose bit it has. */
   pieces: Piece[];

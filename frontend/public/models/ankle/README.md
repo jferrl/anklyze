@@ -62,11 +62,12 @@ same CC BY-SA 4.0 adaptation:
 
 - cuts the tibia and fibula along the noisy fracture planes in
   `frontend/src/components/anatomy/fractureParams.json`, one closed cell per combination of pieces;
-- closes each cut face with a ring about 1.5 mm wide and a flat centre, and stores per vertex the
-  occlusion (taken from `ankle.bin` on bone surface, a fixed value on cut faces) and whether it
-  lies inside the ring;
-- quantises positions on the same 0.05 mm grid as `ankle.bin`. The file is about 480 KB gzipped
-  (the self-check allows 512 KB) and loads after first paint.
+- closes each cut face. Most get a ring about 1.5 mm wide (narrower where the face is thin) around
+  a flat centre; a sliver too thin for one is filled flat. It stores per vertex the occlusion
+  (taken from `ankle.bin` on bone surface, a fixed value on cut faces) and whether it lies inside
+  the ring;
+- quantises positions on the same 0.05 mm grid as `ankle.bin`. The file is 835 KB raw and about
+  400 KB gzipped (the self-check allows 512 KB); it loads after first paint.
 
 Rebuild with `cd frontend && node scripts/build-fracture-model.mjs`; the output is byte-identical
 across runs.
