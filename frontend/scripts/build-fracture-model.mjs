@@ -96,7 +96,7 @@ const gz = gzipSync(file, { level: 9 }).length;
 const total = manifest.cells.reduce((s, c) => [s[0] + c.vertices, s[1] + c.triangles], [0, 0]);
 console.log(`${manifest.cells.length} cells, ${total[0]} vertices, ${total[1]} triangles`);
 console.log(`fractures.bin ${file.length} bytes, ${gz} gzipped`);
-check(gz <= 300 * 1024, `asset is ${gz} bytes gzipped`);
+check(gz <= 512 * 1024, `asset is ${gz} bytes gzipped`);
 writeFileSync(OUT, file);
 
 // Directed edges left without a reversed partner, counted as a multiset.

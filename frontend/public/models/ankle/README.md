@@ -56,3 +56,17 @@ Japan and CC BY 4.0. Cut, refined and tagged for Anklyze; this adaptation CC BY-
 
 Rebuild with `cd frontend && node scripts/build-ankle-model.mjs` (fetches the three files with
 HTTP range requests and checks the hashes) or pass a folder that holds them.
+
+`frontend/scripts/build-fracture-model.mjs` makes `fractures.bin` from `ankle.bin`, as part of the
+same CC BY-SA 4.0 adaptation:
+
+- cuts the tibia and fibula along the noisy fracture planes in
+  `frontend/src/components/anatomy/fractureParams.json`, one closed cell per combination of pieces;
+- closes each cut face with a ring about 1.5 mm wide and a flat centre, and stores per vertex the
+  occlusion (taken from `ankle.bin` on bone surface, a fixed value on cut faces) and whether it
+  lies inside the ring;
+- quantises positions on the same 0.05 mm grid as `ankle.bin`. The file is about 480 KB gzipped
+  (the self-check allows 512 KB) and loads after first paint.
+
+Rebuild with `cd frontend && node scripts/build-fracture-model.mjs`; the output is byte-identical
+across runs.
