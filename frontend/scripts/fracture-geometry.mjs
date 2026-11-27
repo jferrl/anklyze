@@ -13,13 +13,13 @@ function lattice(x, y, z, seed) {
   let h = Math.imul(x, 0x8da6b343) ^ Math.imul(y, 0xd8163841) ^ Math.imul(z, 0xcb1ab31f) ^ seed;
   h = Math.imul(h ^ (h >>> 15), 0x2c1b3c6d);
   h = Math.imul(h ^ (h >>> 12), 0x297a2d39);
-  return ((h ^ (h >>> 15)) >>> 0) / 0x7fffffff - 1;
+  return (((h ^ (h >>> 15)) >>> 0) / 0xffffffff) * 2 - 1;
 }
 
 const fade = (t) => t * t * t * (t * (t * 6 - 15) + 10);
 const lerp = (a, b, t) => a + (b - a) * t;
 
-// Value noise in [-1, 1] with a period of one lattice cell.
+// Value noise in [-1, 1] on the unit lattice.
 function valueNoise(x, y, z, seed) {
   const [ix, iy, iz] = [Math.floor(x), Math.floor(y), Math.floor(z)];
   const [u, v, w] = [fade(x - ix), fade(y - iy), fade(z - iz)];
@@ -166,6 +166,7 @@ export function cap(pos, rimLoop, sdf, normalHint) {
   const contour = rimLoop.map(flat);
   const area = ShapeUtils.area(contour);
   // Earcut winds every triangle alike; decide the flip once, as a sliver's own area sign is noise.
+  // triangulateShape may drop a repeated end point from contour in place; the area above is taken first.
   let ears = ShapeUtils.triangulateShape(contour, []);
   if (ears.reduce((s, t) => s + ShapeUtils.area(t.map((i) => contour[i])), 0) * area < 0) ears = ears.map(([a, b, c]) => [a, c, b]);
   // Earcut drops collinear and repeated points; fan each edge that skips them from its opposite corner.

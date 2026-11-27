@@ -111,8 +111,35 @@ describe('fracture geometry', () => {
     for (let x = -20; x < 20; x += 0.7) expect(Math.abs(a([x, 0, x / 3]))).toBeLessThanOrEqual(0.5);
   });
 
+  /** Triangle key by positions, rotated to start at the smallest; reversed flips the winding. */
+  const triKey = (pos, ix, t, reversed = false) => {
+    const v = [0, 1, 2].map((k) => v3(pos, ix[t + k]).join(','));
+    if (reversed) [v[1], v[2]] = [v[2], v[1]];
+    const r = v.indexOf([...v].sort()[0]);
+    return [...v.slice(r), ...v.slice(0, r)].join('|');
+  };
+  /** Every cut face in cell A with face B has its reversed twin in B with face A, and no cell holds both twins. */
+  const checkReciprocity = (cells) => {
+    const keys = new Map(cells.map((c) => {
+      const set = new Set();
+      for (let t = 0; t < c.mesh.index.length; t += 3) set.add(`${triKey(c.mesh.pos, c.mesh.index, t)}#${c.face[t / 3]}`);
+      return [c.mask, set];
+    }));
+    let cut = 0;
+    for (const c of cells) {
+      const own = new Set([...keys.get(c.mask)].map((k) => k.split('#')[0]));
+      for (let t = 0; t < c.mesh.index.length; t += 3) {
+        expect(own.has(triKey(c.mesh.pos, c.mesh.index, t, true))).toBe(false);
+        const f = c.face[t / 3];
+        if (f === 0xffff) continue;
+        cut++;
+        expect(keys.get(f)?.has(`${triKey(c.mesh.pos, c.mesh.index, t, true)}#${c.mask}`)).toBe(true);
+      }
+    }
+    expect(cut).toBeGreaterThan(0);
+  };
+
   const checkCells = (cells) => {
-    const masks = cells.map((c) => c.mask);
     for (const c of cells) {
       expect(openEdges(c.mesh.index).size).toBe(0);
       expect(volume(c.mesh.pos, c.mesh.index)).toBeGreaterThan(0);
@@ -120,12 +147,8 @@ describe('fracture geometry', () => {
       expect(c.rim.length).toBe(c.mesh.pos.length / 3);
       expect(c.rim.every((r) => r >= 0 && r <= 1)).toBe(true);
       expect(c.rim).toContain(0);
-      for (const f of c.face) {
-        if (f === 0xffff) continue;
-        expect(f).not.toBe(c.mask);
-        expect(masks).toContain(f);
-      }
     }
+    checkReciprocity(cells);
     const total = cells.reduce((s, c) => s + volume(c.mesh.pos, c.mesh.index), 0);
     const whole = volume(sphere.pos, sphere.index);
     expect(Math.abs(total - whole) / whole).toBeLessThan(0.01);
@@ -143,7 +166,6 @@ describe('fracture geometry', () => {
     const cells = cutBone(sphere, [wedge]);
     expect(cells.map((c) => c.mask).sort()).toEqual([0, 1]);
     checkCells(cells);
-    expect(cells.find((c) => c.mask === 0).face).not.toContain(0);
   });
 
   it('cutBone closes cells where three planes of a piece meet', () => {
@@ -153,6 +175,7 @@ describe('fracture geometry', () => {
     };
     const cells = cutBone(icosphere(4), [corner, halfSpace('h', [0, 1, 0], [0, 0.6, 0.8])]);
     for (const c of cells) expect(openEdges(c.mesh.index).size).toBe(0);
+    checkReciprocity(cells);
   });
 
   it('cutBone is reproducible', () => {
