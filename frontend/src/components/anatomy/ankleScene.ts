@@ -817,7 +817,8 @@ export function createAnkleScene(
       Object.assign(frac.ghost, { transparent: true, depthWrite: false });
       const { tibia, fibula, talus } = meshes;
       const uncut = { tibia: tibia.mesh.geometry, fibula: fibula.mesh.geometry };
-      const scene = buildFractures(fractureModel, uncut, frac, outline, [talus.mesh, talus.hull], render, ease);
+      // 1 mm of clip depth: the near-to-far range of 8 radii maps to 2 units (see the outline's bias).
+      const scene = buildFractures(fractureModel, uncut, frac, 2 / (8 * radius), [talus.mesh, talus.hull], render, ease);
       fractures = { scene, ...frac };
       bones.add(scene.root);
       for (const m of [tibia, fibula]) m.mesh.visible = m.hull.visible = false;

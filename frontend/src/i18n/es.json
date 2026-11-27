@@ -440,6 +440,7 @@
       "posterior_fracture_type": "Fragmento posterior"
     },
     "note": "El sombreado indica la región y el nivel afectados, no el patrón de la fractura.",
+    "fractureNote": "Fractura tipo para estas respuestas, no un modelo de la fractura de este paciente.",
     "sources": {
       "title": "Fuentes",
       "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>.",

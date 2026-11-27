@@ -440,6 +440,7 @@
       "posterior_fracture_type": "Posterior fragment"
     },
     "note": "Shading shows the region and level involved, not the fracture pattern.",
+    "fractureNote": "A standard fracture for these answers, not a model of this patient's fracture.",
     "sources": {
       "title": "Sources",
       "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>.",

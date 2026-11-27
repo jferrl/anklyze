@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
-import { BufferAttribute, BufferGeometry, Matrix4, Mesh, MeshBasicMaterial, Object3D } from 'three';
+import { BufferAttribute, BufferGeometry, LineSegments, Matrix4, Mesh, MeshBasicMaterial, Object3D } from 'three';
 import { describe, expect, it } from 'vitest';
 import { getAnatomyState } from './anatomyState';
 import { parseAnkleModel } from './ankleModel';
@@ -26,13 +26,19 @@ const uncut = Object.fromEntries(
 ) as Record<'tibia' | 'fibula', BufferGeometry>;
 const material = new MeshBasicMaterial();
 const talus = new Object3D();
-const fractures = buildFractures(parseFractureModel(read('fractures.bin')), uncut, { fill: material, ghost: material }, material, [talus], () => {}, (t) => Math.min(t, 1));
+const fractures = buildFractures(parseFractureModel(read('fractures.bin')), uncut, { fill: material, ghost: material }, 1e-4, [talus], () => {}, (t) => Math.min(t, 1));
 const meshes = () => {
   const out: Mesh[] = [];
-  fractures.root.traverse((o) => o instanceof Mesh && o.material instanceof Array && out.push(o));
+  // Cells cast shadows; the dark crack insides do not.
+  fractures.root.traverse((o) => o instanceof Mesh && o.castShadow && out.push(o));
   return out;
 };
-const shownCuts = () => meshes().reduce((n, m) => n + m.geometry.groups.filter((g, i) => i > 0 && g.materialIndex === 0).length, 0);
+const shownCuts = () => meshes().reduce((n, m) => n + m.geometry.groups.filter((g, i) => i > 0 && g.materialIndex === 1).length, 0);
+const crackLines = () => {
+  let n = 0;
+  fractures.root.traverse((o) => o instanceof LineSegments && (n += o.geometry.groups.filter((g) => g.materialIndex === 1).length));
+  return n;
+};
 
 describe('buildFractures', () => {
   it('gives cut faces their own vertices and periosteal ones the uncut normals', () => {
@@ -50,6 +56,7 @@ describe('buildFractures', () => {
   it('shows no cut while the bones are whole', () => {
     fractures.setPose({ pieces: [], moves: {} });
     expect(shownCuts()).toBe(0);
+    expect(crackLines()).toBe(0);
   });
 
   it('shows the cuts of a trimalleolar fracture and moves the talus at its end pose', () => {
@@ -64,6 +71,7 @@ describe('buildFractures', () => {
     });
     fractures.setPose(fracturePose(state));
     expect(shownCuts()).toBeGreaterThan(0);
+    expect(crackLines()).toBe(shownCuts());
     const restore = fractures.atTarget();
     expect(talus.matrix.equals(new Matrix4())).toBe(false);
     restore();

@@ -7,6 +7,7 @@ import { getQuestionSteps } from '@/features/fracture-classification/utils/quest
 import type { FractureInput } from '@/types';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import type { Preset } from './anatomyCamera';
+import { drawnPosteriorType } from './fracturePose';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
@@ -76,11 +77,13 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       value={state.fibula && t(`anatomy.level.${state.fibula}`)}
     />
   );
+  // With the fracture drawn, the caption names the fragment the figure shows.
+  const posteriorType = fracture ? drawnPosteriorType(state) : state.posteriorType;
   const posteriorCaption = (
     <Caption
       title={t('anatomy.posteriorMalleolus')}
       shown={state.posterior}
-      value={state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
+      value={posteriorType && t(`form.options.posteriorType.${posteriorType}`)}
     />
   );
 
@@ -120,7 +123,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       )}
 
       <figcaption className="space-y-1 text-xs text-muted-foreground">
-        {answered && <p>{t('anatomy.note')}</p>}
+        {answered && <p>{t(fracture ? 'anatomy.fractureNote' : 'anatomy.note')}</p>}
         <Sources />
       </figcaption>
     </figure>

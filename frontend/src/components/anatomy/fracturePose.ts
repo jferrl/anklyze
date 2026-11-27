@@ -1,4 +1,5 @@
 import type { AnatomyState } from './anatomyState';
+import type { PosteriorFractureType } from '@/types';
 import { fractureParams, type Move, type PieceId } from './fractureParams';
 
 /** FracturePose is the active fragments, in params order, and how each moves once the form is complete. */
@@ -77,6 +78,20 @@ function posteriorPieces(s: AnatomyState): PieceId[] {
   if (only && s.articularInvolvement === 'small_without_extension') return ['post_b1'];
   // Paths without CT never ask the Bartonicek type; draw the generic fragment then.
   return s.complete ? ['post_b2'] : [];
+}
+
+const DRAWN_POSTERIOR: [PieceId[], PosteriorFractureType][] = [
+  [['post_b2', 'post_b3_pm'], 'posteromedial_posterolateral'],
+  [['post_b1'], 'extraincisural'],
+  [['post_b2'], 'posterolateral'],
+  [['post_b4'], 'large_posterolateral'],
+  [['post_pm_extraincisural'], 'extraincisural_posteromedial'],
+];
+
+/** drawnPosteriorType is the Bartonicek type of the posterior fragment the pose draws, which may come from articular involvement or a default. */
+export function drawnPosteriorType(state: AnatomyState): PosteriorFractureType | undefined {
+  const pieces = posteriorPieces(state);
+  return DRAWN_POSTERIOR.find(([ids]) => ids.every((id) => pieces.includes(id)))?.[1];
 }
 
 /** fragmentOf is the first active piece whose bit is in mask, or -1 for the main body. */
