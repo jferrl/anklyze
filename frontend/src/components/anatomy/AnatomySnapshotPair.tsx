@@ -11,7 +11,7 @@ import { useSnapshots } from './anatomySnapshots';
  * screen; it needs no WebGL and renders nothing when the figure never drew them. A view opens the
  * 3D model on it, which redraws sharp at any zoom where the pictures would blur.
  */
-export function AnatomySnapshotPair({ formData, className }: { formData: Partial<FractureInput>; className?: string }) {
+export function AnatomySnapshotPair({ formData, fracture = false, className }: { formData: Partial<FractureInput>; fracture?: boolean; className?: string }) {
   const { t } = useTranslation();
   const { ap, lateral } = useSnapshots();
   const [open, setOpen] = useState<'ap' | 'lateral'>();
@@ -36,12 +36,12 @@ export function AnatomySnapshotPair({ formData, className }: { formData: Partial
           </button>
         ))}
       </div>
-      <figcaption className="text-xs text-muted-foreground">{t('anatomy.note')}</figcaption>
+      <figcaption className="text-xs text-muted-foreground">{t(fracture ? 'anatomy.fractureNote' : 'anatomy.note')}</figcaption>
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(undefined)}>
         {/* As wide as the screen's height allows, so the square model fits without scrolling. */}
         <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(64rem,calc(100vw-2rem),calc(100dvh+2rem))]">
           <DialogTitle>{t('anatomy.model3d.enlargeTitle')}</DialogTitle>
-          {open && <AnatomyView formData={formData} showReading={false} compact view={open} className="border-0 p-0 shadow-none" />}
+          {open && <AnatomyView formData={formData} showReading={false} compact view={open} fracture={fracture} className="border-0 p-0 shadow-none" />}
         </DialogContent>
       </Dialog>
     </figure>
