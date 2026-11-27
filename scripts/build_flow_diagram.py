@@ -20,7 +20,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 SOURCE = "docs/Danis-Weber AO_OTA Flow-2026-02-28-ES.drawio"
-OUTPUT = "frontend/public/classification-flow.{}.svg"
+OUTPUT = "internal/api/flowdiagram/classification-flow.{}.svg"
 I18N = "frontend/src/i18n/{}.json"
 
 # Token values as the app renders them (sRGB of frontend/src/index.css), light then dark.

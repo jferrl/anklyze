@@ -69,12 +69,14 @@ func setupProtectedRoutes(
 	userRepo auth.UserService,
 	handler *Handler,
 ) {
+	// Classification is public: the page is shared with journal reviewers.
+	api.POST("/classify", handler.ClassifyFracture)
+
 	// Protected routes - require authentication (User or Admin)
 	protected := api.Group("")
 	protected.Use(auth.Middleware(authValidator))
 	protected.Use(auth.UserSyncMiddleware(userRepo))
 	protected.GET("/me", GetCurrentUser)
-	protected.POST("/classify", handler.ClassifyFracture)
 
 	// Admin-only routes - require admin role
 	analytics := api.Group("/analytics")
@@ -82,6 +84,12 @@ func setupProtectedRoutes(
 	analytics.Use(auth.UserSyncMiddleware(userRepo))
 	analytics.Use(auth.RequireRole(auth.RoleAdmin))
 	registerAnalyticsRoutes(analytics, handler)
+
+	admin := api.Group("/admin")
+	admin.Use(auth.Middleware(authValidator))
+	admin.Use(auth.UserSyncMiddleware(userRepo))
+	admin.Use(auth.RequireRole(auth.RoleAdmin))
+	admin.GET("/flow-diagram", handler.FlowDiagram)
 }
 
 // setupPublicRoutes configures routes without authentication (development mode).
@@ -94,6 +102,7 @@ func setupPublicRoutes(
 	api.Use(auth.DevMiddleware(userRepo))
 	api.GET("/me", GetCurrentUser)
 	api.POST("/classify", handler.ClassifyFracture)
+	api.GET("/admin/flow-diagram", handler.FlowDiagram)
 
 	registerAnalyticsRoutes(api.Group("/analytics"), handler)
 }
