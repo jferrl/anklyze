@@ -8,11 +8,6 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import { Logo } from './Logo';
 import { AnklePlate, StepBadge } from './AnklePlate';
 
-const REPO_URL = 'https://github.com/jferrl/anklyze';
-// The decision table in the reader's language; Spanish is the draw.io's own.
-const decisionTableUrl = (language: string) =>
-  `${REPO_URL}/blob/main/docs/decision_table${language.startsWith('en') ? '.en' : ''}.txt`;
-const METHODOLOGY_URL = `${REPO_URL}/blob/main/docs/RELIABILITY_ANALYSIS.md`;
 const FIGURE_SOURCE_URL = 'https://lifesciencedb.jp/bp3d/';
 const CC_BY_SA_URL = 'https://creativecommons.org/licenses/by-sa/4.0/';
 
@@ -164,14 +159,6 @@ export function LandingPage() {
             <div className="lg:col-span-5">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.method.title')}</h2>
               <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.method.lede')}</p>
-              <a
-                href={decisionTableUrl(i18n.language)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
-              >
-                {t('landing.method.tableLink')}
-              </a>
             </div>
             <dl className="divide-y border-y lg:col-span-7">
               {methodFacts.map((fact) => (
@@ -223,14 +210,6 @@ export function LandingPage() {
             <div className="lg:col-span-5">
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.studies.title')}</h2>
               <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.studies.lede')}</p>
-              <a
-                href={METHODOLOGY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
-              >
-                {t('landing.studies.methodologyLink')}
-              </a>
             </div>
             <dl className="divide-y divide-input border-y border-input lg:col-span-7">
               {studyFacts.map((fact) => (
@@ -249,20 +228,6 @@ export function LandingPage() {
               <h2 className="font-display text-3xl lg:text-4xl">{t('landing.source.title')}</h2>
               <p className="mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t('landing.source.body')}</p>
               <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-muted-foreground">{t('landing.source.authors')}</p>
-              <a
-                href={REPO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block text-sm font-medium text-primary underline underline-offset-4"
-              >
-                {t('landing.source.repoLink')}
-              </a>
-            </div>
-            <div className="lg:col-span-7">
-              <h3 className="text-sm font-medium text-muted-foreground">{t('landing.source.citeTitle')}</h3>
-              <p className="mt-2 select-all border bg-card px-4 py-3 font-mono text-sm leading-relaxed">
-                {t('landing.source.citation', { url: REPO_URL })}
-              </p>
             </div>
           </div>
         </section>
@@ -276,16 +241,8 @@ export function LandingPage() {
             </span>
             Anklyze
           </p>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-fit font-medium text-primary underline underline-offset-4 md:justify-self-end"
-          >
-            GitHub
-          </a>
-          <p className="text-muted-foreground">{t('landing.footer.license')}</p>
-          <p className="text-muted-foreground md:text-right">{t('landing.footer.disclaimer')}</p>
+          <p className="text-muted-foreground md:text-right">{t('landing.footer.license')}</p>
+          <p className="text-muted-foreground md:col-span-2">{t('landing.footer.disclaimer')}</p>
         </div>
       </footer>
     </div>

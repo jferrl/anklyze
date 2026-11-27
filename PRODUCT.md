@@ -47,7 +47,7 @@ One deterministic decision tree, authored by clinicians as a flow diagram, drive
 
 ## Evidence on Hand
 
-- The classification flow diagram: `frontend/public/classification-flow.{es,en}.svg`, built from `docs/*.drawio` by `make export-diagram`.
+- The classification flow diagram: `internal/api/flowdiagram/classification-flow.{es,en}.svg` (served to admins only at `GET /api/admin/flow-diagram`), built from `docs/*.drawio` by `make export-diagram`.
 - The decision tree has 165 terminal paths (`docs/decision_table.txt`); the generated engine test covers all 165 (`internal/rules/engine_drawio_test.go`, counted 2026-11-18). On one path (draw.io node `0S3fIhuK620pGgQrKJa_-70`) the AO/OTA assertion is skipped because the diagram reads "AO clasificable" with no code; update this line when that is resolved.
 - Reliability methodology: `docs/RELIABILITY_ANALYSIS.md`.
 - Absent, do not fabricate: testimonials, user counts, named institutions, accuracy percentages, response-time benchmarks, published study results, "no data collection" (accounts and responses are stored).

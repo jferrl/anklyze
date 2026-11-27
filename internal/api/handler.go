@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jferrl/anklyze/internal/api/flowdiagram"
 	"github.com/jferrl/anklyze/internal/domain"
 	"github.com/jferrl/anklyze/internal/i18n"
 	"github.com/jferrl/anklyze/internal/repository"
@@ -105,6 +106,13 @@ func (h *Handler) ClassifyFracture(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// FlowDiagram handles GET /api/admin/flow-diagram in the Accept-Language language.
+func (h *Handler) FlowDiagram(c *gin.Context) {
+	c.Header("Cache-Control", "private, max-age=3600")
+	c.Header("Vary", "Accept-Language, Authorization")
+	c.Data(http.StatusOK, "image/svg+xml", flowdiagram.SVG(getLanguage(c)))
 }
 
 // HealthCheck handles GET /health
