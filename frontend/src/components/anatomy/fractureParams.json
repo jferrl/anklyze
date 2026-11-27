@@ -537,6 +537,93 @@
       "source": "literature: Weber C high fibula fracture (Maisonneuve pattern, AO/OTA 44-C2/C3); placeholder until replaced from the case study"
     },
     {
+      "id": "art_depression",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            -10,
+            2,
+            -6
+          ],
+          "normal": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "point": [
+            -2,
+            2,
+            -6
+          ],
+          "normal": [
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "point": [
+            -6,
+            2,
+            -10
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "point": [
+            -6,
+            2,
+            -2
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ]
+        },
+        {
+          "point": [
+            -6,
+            0,
+            -6
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "point": [
+            -6,
+            4.3,
+            -6
+          ],
+          "normal": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "noise": 0.3,
+      "move": {
+        "translate": [
+          0,
+          2,
+          0
+        ]
+      },
+      "source": "literature: Articular depression of the posterolateral plafond; placeholder until replaced from the case study"
+    },
+    {
       "id": "med_transverse",
       "bone": "tibia",
       "planes": [
@@ -892,93 +979,6 @@
         ]
       },
       "source": "literature: Extraincisural posteromedial fragment; placeholder until replaced from the case study"
-    },
-    {
-      "id": "art_depression",
-      "bone": "tibia",
-      "planes": [
-        {
-          "point": [
-            -10,
-            2,
-            -6
-          ],
-          "normal": [
-            1,
-            0,
-            0
-          ]
-        },
-        {
-          "point": [
-            -2,
-            2,
-            -6
-          ],
-          "normal": [
-            -1,
-            0,
-            0
-          ]
-        },
-        {
-          "point": [
-            -6,
-            2,
-            -10
-          ],
-          "normal": [
-            0,
-            0,
-            1
-          ]
-        },
-        {
-          "point": [
-            -6,
-            2,
-            -2
-          ],
-          "normal": [
-            0,
-            0,
-            -1
-          ]
-        },
-        {
-          "point": [
-            -6,
-            0,
-            -6
-          ],
-          "normal": [
-            0,
-            1,
-            0
-          ]
-        },
-        {
-          "point": [
-            -6,
-            4.3,
-            -6
-          ],
-          "normal": [
-            0,
-            -1,
-            0
-          ]
-        }
-      ],
-      "noise": 0.3,
-      "move": {
-        "translate": [
-          0,
-          2,
-          0
-        ]
-      },
-      "source": "literature: Articular depression of the posterolateral plafond; placeholder until replaced from the case study"
     }
   ],
   "unstable": {
