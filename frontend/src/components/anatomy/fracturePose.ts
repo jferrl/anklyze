@@ -1,6 +1,6 @@
 import type { AnatomyState } from './anatomyState';
-import type { PosteriorFractureType } from '@/types';
 import { fractureParams, type Move, type PieceId } from './fractureParams';
+import { posteriorPieces } from './drawnPosterior';
 
 /** FracturePose is the active fragments, in params order, and how each moves once the form is complete. */
 export interface FracturePose {
@@ -31,6 +31,8 @@ function fibulaPieces(s: AnatomyState): PieceId[] {
     case 'infra':
       return [s.infraMorphology === 'avulsion' ? 'fib_tip_avulsion' : 'fib_infra'];
     case 'trans': {
+      // No default crack before the form is complete; a complete path that never asks the morphology draws the spiral.
+      if (!s.lateralMorphology && !s.complete) return [];
       const main: PieceId[] = {
         oblique: ['fib_trans_coronal'],
         transverse: ['fib_trans_short'],
@@ -58,42 +60,6 @@ function medialPieces(s: AnatomyState): PieceId[] {
   if (only && s.articularInvolvement === 'small_without_extension') return ['med_transverse'];
   // Some complete paths never ask the medial type; draw the generic cut then.
   return s.complete ? ['med_transverse'] : [];
-}
-
-function posteriorPieces(s: AnatomyState): PieceId[] {
-  if (!s.posterior) return [];
-  switch (s.posteriorType) {
-    case 'extraincisural':
-      return ['post_b1'];
-    case 'posterolateral':
-      return ['post_b2'];
-    case 'posteromedial_posterolateral':
-      return ['post_b2', 'post_b3_pm'];
-    case 'large_posterolateral':
-      return ['post_b4'];
-    case 'extraincisural_posteromedial':
-      return ['post_pm_extraincisural'];
-  }
-  if (s.posteriorPosteromedial) return ['post_pm_extraincisural'];
-  const only = !s.lateral && !s.fibula && !s.medial;
-  if (only && s.articularInvolvement === 'large_with_extension') return ['post_b4'];
-  if (only && s.articularInvolvement === 'small_without_extension') return ['post_b1'];
-  // Paths without CT never ask the Bartonicek type; draw the generic fragment then.
-  return s.complete ? ['post_b2'] : [];
-}
-
-const DRAWN_POSTERIOR: [PieceId[], PosteriorFractureType][] = [
-  [['post_b2', 'post_b3_pm'], 'posteromedial_posterolateral'],
-  [['post_b1'], 'extraincisural'],
-  [['post_b2'], 'posterolateral'],
-  [['post_b4'], 'large_posterolateral'],
-  [['post_pm_extraincisural'], 'extraincisural_posteromedial'],
-];
-
-/** drawnPosteriorType is the Bartonicek type of the posterior fragment the pose draws, which may come from articular involvement or a default. */
-export function drawnPosteriorType(state: AnatomyState): PosteriorFractureType | undefined {
-  const pieces = posteriorPieces(state);
-  return DRAWN_POSTERIOR.find(([ids]) => ids.every((id) => pieces.includes(id)))?.[1];
 }
 
 /** fragmentOf is the first active piece whose bit is in mask, or -1 for the main body. */

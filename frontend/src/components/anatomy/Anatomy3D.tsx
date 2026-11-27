@@ -89,13 +89,17 @@ interface Anatomy3DProps {
   view?: Preset;
   /** Draws the fracture itself instead of the tint; off, the figure is the tinted one. */
   fracture?: boolean;
+  /** The fracture is drawn; until then, or if it fails to load, the figure is the tinted one. */
+  fractured?: boolean;
+  /** Called once the fracture is drawn. */
+  onFractured?: () => void;
 }
 
 /**
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false, fractured = false, onFractured }: Anatomy3DProps) {
   const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -104,10 +108,6 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   const [overlay] = useState<Overlay>(() => ({ labels: {}, leaders: {} }));
   const sceneRef = useRef<AnkleScene | null>(null);
   const [ready, setReady] = useState(false);
-  const [fractured, setFractured] = useState(false);
-  // The answers as last rendered, for fractures that arrive after them.
-  const stateRef = useRef(state);
-  stateRef.current = state;
   const [theme, setTheme] = useState(0);
   const [at, setAt] = useState<Preset | undefined>(view ?? 'anterolateral');
   const [zoom, setZoom] = useState(1);
@@ -148,11 +148,10 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
           setReady(true);
           if (!fracture) return;
           loadFractures()
-            .then((f) => {
+            .then(async (f) => {
               if (cancelled || !scene) return;
-              scene.setFractures(f);
-              scene.setState(stateRef.current);
-              setFractured(true);
+              await scene.setFractures(f);
+              if (!cancelled) onFractured?.();
             })
             .catch((e) => console.error('fractures.bin', e));
         })
@@ -254,7 +253,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
         out.width = Math.round(out.clientWidth * ratio);
         out.height = Math.round(out.clientHeight * ratio);
         sceneRef.current?.snapshot(PRESETS[preset], out);
-        setSnapshot(preset, out.toDataURL());
+        setSnapshot(preset, out.toDataURL(), fractured);
       }
     };
     // Coalesced to one draw per task; a theme switch redraws at once, so the pair never lags it.

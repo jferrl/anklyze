@@ -7,7 +7,7 @@ import { getQuestionSteps } from '@/features/fracture-classification/utils/quest
 import type { FractureInput } from '@/types';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import type { Preset } from './anatomyCamera';
-import { drawnPosteriorType } from './fracturePose';
+import { drawnPosteriorType } from './drawnPosterior';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
@@ -52,6 +52,8 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
   // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
   const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
   const summary = useSummary(state);
+  // Set once the fracture is drawn; a failed fracture load leaves the tinted figure and its captions.
+  const [fractured, setFractured] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -78,7 +80,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
     />
   );
   // With the fracture drawn, the caption names the fragment the figure shows.
-  const posteriorType = fracture ? drawnPosteriorType(state) : state.posteriorType;
+  const posteriorType = fractured ? drawnPosteriorType(state) : state.posteriorType;
   const posteriorCaption = (
     <Caption
       title={t('anatomy.posteriorMalleolus')}
@@ -98,7 +100,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
         </>
       ) : (
         <Suspense fallback={<FigurePlaceholder compact={compact} />}>
-          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} fracture={fracture} onFail={() => setNotice('loadFailed')} />
+          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} fracture={fracture} fractured={fractured} onFractured={() => setFractured(true)} onFail={() => setNotice('loadFailed')} />
         </Suspense>
       )}
       {/* Before the first answer there is nothing to caption, so no space is held for it. */}
@@ -123,7 +125,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       )}
 
       <figcaption className="space-y-1 text-xs text-muted-foreground">
-        {answered && <p>{t(fracture ? 'anatomy.fractureNote' : 'anatomy.note')}</p>}
+        {answered && <p>{t(fractured ? 'anatomy.fractureNote' : 'anatomy.note')}</p>}
         <Sources />
       </figcaption>
     </figure>

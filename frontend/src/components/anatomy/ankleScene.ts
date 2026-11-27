@@ -459,7 +459,7 @@ export function createAnkleScene(
   // as on a lateral radiograph; this material shares the overlay.
   const ghost = boneMaterial(overlay, true).material;
   Object.assign(ghost, { transparent: true, depthWrite: false });
-  // Made only with the fracture, so a figure without it compiles exactly today's programs.
+  // Made only with the fracture, so a figure without it renders exactly as before.
   let fractures: { scene: Fractures; fill: MeshPhysicalMaterial; ghost: MeshPhysicalMaterial } | undefined;
   const outline = outlineMaterial();
   const { lateralTop, medialTop, medialX, posteriorTop, posteriorZ } = model.regions;
@@ -709,6 +709,29 @@ export function createAnkleScene(
     fade = requestAnimationFrame(step);
   }
 
+  // The answers last shown, for fractures that arrive after them.
+  let latest: AnatomyState | undefined;
+  let disposed = false;
+  function setState(state: AnatomyState) {
+    latest = state;
+    marks = marksFor(state);
+    // A fracture at the malleolus is one region, topped by its level.
+    const top = marks.lateralTop ? model.bands[marks.lateralTop].y[1] : model.regions.lateralTop;
+    for (const u of [overlay, outline.uniforms]) u.uRegion.value.x = top;
+    // With the fracture drawn, the break itself marks the bone: no tint or level band.
+    const tint = !fractures;
+    fractures?.scene.setPose(fracturePose(state));
+    setTarget([
+      +(tint && marks.lateral),
+      +(tint && marks.medial),
+      +(tint && marks.posterior),
+      ...LEVELS.map((l) => +(tint && marks.band === l)),
+      +marks.proximal,
+      // The bracket label stays; its hairlines on the fibula would read as fracture lines.
+      +(tint && marks.syndesmosis),
+    ]);
+  }
+
   return {
     render,
     /** rotate turns the model by the given angles in radians; pitch stops at the limits. */
@@ -811,37 +834,31 @@ export function createAnkleScene(
       (contact.material as ShaderMaterial).uniforms.uOpacity.value = dark ? 0.6 : 0.28;
       render();
     },
-    /** setFractures draws the bones as fracture cells from now on; call setState after it. */
-    setFractures(fractureModel: FractureModel) {
+    /** setFractures draws the bones as fracture cells, posed by the latest setState, once their programs compile. */
+    async setFractures(fractureModel: FractureModel) {
       const frac = { fill: boneMaterial(overlay, false, true).material, ghost: boneMaterial(overlay, true, true).material };
       Object.assign(frac.ghost, { transparent: true, depthWrite: false });
       const { tibia, fibula, talus } = meshes;
       const uncut = { tibia: tibia.mesh.geometry, fibula: fibula.mesh.geometry };
       // 1 mm of clip depth: the near-to-far range of 8 radii maps to 2 units (see the outline's bias).
-      const scene = buildFractures(fractureModel, uncut, frac, 2 / (8 * radius), [talus.mesh, talus.hull], render, ease);
-      fractures = { scene, ...frac };
-      bones.add(scene.root);
+      const built = buildFractures(fractureModel, uncut, frac, 2 / (8 * radius), [talus.mesh, talus.hull], render, ease);
+      // Compiled before they show, in parallel where the browser can, so the swap does not stall a frame.
+      // Ghosting the fibula compiles both materials in one pass; the next render sets it right.
+      built.setGhost(true);
+      await renderer.compileAsync(built.root, camera, scene);
+      if (disposed) {
+        built.dispose();
+        for (const m of [frac.fill, frac.ghost]) m.dispose();
+        return;
+      }
+      fractures = { scene: built, ...frac };
+      bones.add(built.root);
       for (const m of [tibia, fibula]) m.mesh.visible = m.hull.visible = false;
+      if (latest) setState(latest);
     },
-    setState(state: AnatomyState) {
-      marks = marksFor(state);
-      // A fracture at the malleolus is one region, topped by its level.
-      const top = marks.lateralTop ? model.bands[marks.lateralTop].y[1] : model.regions.lateralTop;
-      for (const u of [overlay, outline.uniforms]) u.uRegion.value.x = top;
-      // With the fracture drawn, the break itself marks the bone: no tint or level band.
-      const tint = !fractures;
-      fractures?.scene.setPose(fracturePose(state));
-      setTarget([
-        +(tint && marks.lateral),
-        +(tint && marks.medial),
-        +(tint && marks.posterior),
-        ...LEVELS.map((l) => +(tint && marks.band === l)),
-        +marks.proximal,
-        // The bracket label stays; its hairlines on the fibula would read as fracture lines.
-        +(tint && marks.syndesmosis),
-      ]);
-    },
+    setState,
     dispose() {
+      disposed = true;
       cancelAnimationFrame(fade);
       fractures?.scene.dispose();
       if (fractures) for (const m of [fractures.fill, fractures.ghost]) m.dispose();

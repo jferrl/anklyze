@@ -13,7 +13,7 @@ import { useSnapshots } from './anatomySnapshots';
  */
 export function AnatomySnapshotPair({ formData, fracture = false, className }: { formData: Partial<FractureInput>; fracture?: boolean; className?: string }) {
   const { t } = useTranslation();
-  const { ap, lateral } = useSnapshots();
+  const { ap, lateral, fractured } = useSnapshots();
   const [open, setOpen] = useState<'ap' | 'lateral'>();
   if (!ap || !lateral) return null;
   const views = [
@@ -36,7 +36,7 @@ export function AnatomySnapshotPair({ formData, fracture = false, className }: {
           </button>
         ))}
       </div>
-      <figcaption className="text-xs text-muted-foreground">{t(fracture ? 'anatomy.fractureNote' : 'anatomy.note')}</figcaption>
+      <figcaption className="text-xs text-muted-foreground">{t(fractured ? 'anatomy.fractureNote' : 'anatomy.note')}</figcaption>
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(undefined)}>
         {/* As wide as the screen's height allows, so the square model fits without scrolling. */}
         <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(64rem,calc(100vw-2rem),calc(100dvh+2rem))]">

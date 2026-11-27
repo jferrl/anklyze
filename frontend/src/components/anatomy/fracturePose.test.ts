@@ -4,7 +4,7 @@ import type { FractureInput } from '@/types';
 import { getQuestionSteps } from '@/features/fracture-classification/utils/questionSteps';
 import { isFormComplete } from '@/features/fracture-classification/utils/formValidation';
 import { getAnatomyState } from './anatomyState';
-import { cutShown, drawnPosteriorType, fracturePose, fragmentOf } from './fracturePose';
+import { cutShown, fracturePose, fragmentOf } from './fracturePose';
 import { fractureParams, type PieceId } from './fractureParams';
 
 // Mirrors ClassificationFormQuestions: case images answer the CT question on every update.
@@ -82,9 +82,15 @@ describe('fracturePose', () => {
 
   it('draws only what is answered', () => {
     expect(pose({ involved_malleoli: 'trimaleolar' }).pieces).toEqual([]);
-    const pieces = pose({ involved_malleoli: 'trimaleolar', fibular_level: 'transindesmal' }).pieces;
-    expect(pieces.length).toBeGreaterThan(0);
-    for (const id of pieces) expect(id).toMatch(/^fib_/);
+    expect(pose({ involved_malleoli: 'trimaleolar', fibular_level: 'transindesmal' }).pieces).toEqual([]);
+    const pieces = pose({ involved_malleoli: 'trimaleolar', fibular_level: 'transindesmal', lateral_morphology: 'oblique' }).pieces;
+    expect(pieces).toEqual(['fib_trans_coronal']);
+  });
+
+  it('draws the spiral once complete when the morphology was never asked', () => {
+    // No current path completes without it; the fallback guards a future one.
+    const state = getAnatomyState({ involved_malleoli: 'lateral_only', fibular_level: 'transindesmal' });
+    expect(fracturePose({ ...state, complete: true }).pieces).toEqual(['fib_trans_spiral']);
   });
 
   it('keeps a stable lateral Weber B in place', () => {
@@ -136,7 +142,7 @@ describe('fracturePose', () => {
     ['trans transverse', { involved_malleoli: 'trimaleolar', fibular_level: 'transindesmal', lateral_morphology: 'transverse' }, ['fib_trans_short']],
     ['trans comminuted', { involved_malleoli: 'lateral_only', fibular_level: 'transindesmal', lateral_morphology: 'conminuta' }, ['fib_trans_spiral', 'fib_trans_comm_a', 'fib_trans_comm_b']],
     ['trans multiple', { involved_malleoli: 'lateral_only', fibular_level: 'transindesmal', fibula_trace_count: 'multiple', lateral_morphology: 'spiral' }, ['fib_trans_spiral', 'fib_trans_wedge']],
-    ['trans butterfly', { involved_malleoli: 'lateral_only', fibular_level: 'transindesmal', lateral_subtype: 'butterfly' }, ['fib_trans_spiral', 'fib_trans_wedge']],
+    ['trans butterfly', { involved_malleoli: 'lateral_only', fibular_level: 'transindesmal', lateral_morphology: 'spiral', lateral_subtype: 'butterfly' }, ['fib_trans_spiral', 'fib_trans_wedge']],
     ['supra type unanswered', { involved_malleoli: 'lateral_only', fibular_level: 'suprasindesmal' }, []],
     ['supra simple', { involved_malleoli: 'lateral_only', fibular_level: 'suprasindesmal', suprasindesmal_type: 'simple_diaphyseal' }, ['fib_supra']],
     ['supra multifragmentary', { involved_malleoli: 'lateral_only', fibular_level: 'suprasindesmal', suprasindesmal_type: 'multifragmentary', fibula_trace_pattern: 'parasindesmotic_long' }, ['fib_supra', 'fib_supra_wedge']],
@@ -190,19 +196,5 @@ describe('cutShown', () => {
     expect(cutShown(0b11, 0b01, [0, 1])).toBe(false);
     expect(cutShown(0b01, 0b00, [0, 1])).toBe(true);
     expect(cutShown(0b10, 0b00, [0])).toBe(false);
-  });
-});
-
-describe('drawnPosteriorType', () => {
-  it('names the fragment drawn on a posterior-only path that never asks the type', () => {
-    const state = getAnatomyState({ involved_malleoli: 'posterior_only', articular_involvement: 'large_with_extension', has_articular_depression: true });
-    expect(drawnPosteriorType(state)).toBe('large_posterolateral');
-  });
-
-  it('agrees with the answered type, and names the two-part fragment', () => {
-    for (const type of ['extraincisural', 'posterolateral', 'posteromedial_posterolateral', 'large_posterolateral'] as const) {
-      const state = getAnatomyState({ involved_malleoli: 'trimaleolar', posterior_fracture_type: type });
-      expect(drawnPosteriorType(state)).toBe(type);
-    }
   });
 });

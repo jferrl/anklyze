@@ -4,6 +4,8 @@ import { useSyncExternalStore } from 'react';
 export interface Snapshots {
   ap?: string;
   lateral?: string;
+  /** The views show the drawn fracture rather than the tint. */
+  fractured?: boolean;
 }
 
 // Module state: the result screen shows what the figure last drew, without loading three.js.
@@ -11,8 +13,8 @@ let snapshots: Snapshots = {};
 const listeners = new Set<() => void>();
 
 /** setSnapshot records one view's latest drawing. */
-export function setSnapshot(view: keyof Snapshots, url: string) {
-  snapshots = { ...snapshots, [view]: url };
+export function setSnapshot(view: 'ap' | 'lateral', url: string, fractured: boolean) {
+  snapshots = { ...snapshots, [view]: url, fractured };
   listeners.forEach((notify) => notify());
 }
 
