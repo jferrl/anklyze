@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jferrl/anklyze/internal/domain"
+	"github.com/jferrl/anklyze/internal/imagemeta"
 	"github.com/jferrl/anklyze/internal/repository"
 	"github.com/jferrl/anklyze/internal/storage"
 )
@@ -40,11 +42,11 @@ func NewCaseImageHandler(
 }
 
 // imageExtensions maps sniffed content types to the extension used in the
-// storage key. These are the types the frontend dropzone accepts.
+// storage key. These are the types the frontend dropzone accepts and
+// imagemeta can strip.
 var imageExtensions = map[string]string{
 	"image/jpeg": ".jpg",
 	"image/png":  ".png",
-	"image/gif":  ".gif",
 	"image/webp": ".webp",
 }
 
@@ -140,11 +142,22 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 	contentType := http.DetectContentType(head[:n])
 	ext, ok := imageExtensions[contentType]
 	if !ok {
-		badRequest(c, "invalid file type, must be an image (JPEG, PNG, GIF, WebP)")
+		badRequest(c, "invalid file type, must be an image (JPEG, PNG, WebP)")
 		return
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		HandleError(c, fmt.Errorf("rewind upload: %w", err), "failed to read file")
+		return
+	}
+	raw, err := io.ReadAll(file)
+	if err != nil {
+		HandleError(c, fmt.Errorf("read upload: %w", err), "failed to read file")
+		return
+	}
+	// X-rays may carry patient data in EXIF/XMP; never store it.
+	clean, err := imagemeta.Strip(contentType, raw)
+	if err != nil {
+		badRequest(c, "could not read image, the file may be corrupted")
 		return
 	}
 
@@ -154,7 +167,7 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 	filename := sanitizeFilename(header.Filename)
 
 	// Upload to storage
-	if err := h.storage.Upload(c.Request.Context(), storagePath, file, contentType, header.Size); err != nil {
+	if err := h.storage.Upload(c.Request.Context(), storagePath, bytes.NewReader(clean), contentType, int64(len(clean))); err != nil {
 		HandleError(c, fmt.Errorf("upload image: %w", err), "Failed to upload image")
 		return
 	}
@@ -166,7 +179,7 @@ func (h *CaseImageHandler) UploadImage(c *gin.Context) {
 		displayOrder,
 		filename,
 		contentType,
-		header.Size,
+		int64(len(clean)),
 		storagePath,
 	)
 	image.ID = imageID // Use the same ID we used for the path
