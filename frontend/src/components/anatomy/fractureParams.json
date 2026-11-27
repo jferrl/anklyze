@@ -7,11 +7,11 @@
         {
           "point": [
             -24,
-            -10,
+            -21,
             -10
           ],
           "normal": [
-            0,
+            0.0,
             -0.9988,
             0.0499
           ]
@@ -20,9 +20,9 @@
       "noise": 0.4,
       "move": {
         "translate": [
-          0,
-          1,
-          -1
+          -0.5,
+          -1,
+          0.25
         ],
         "rotate": {
           "axis": [
@@ -35,10 +35,10 @@
             0,
             -8.9
           ],
-          "deg": -2
+          "deg": -1
         }
       },
-      "source": "literature: Weber A tip avulsion (AO/OTA 44-A1); placeholder until replaced from the case study"
+      "source": "images: 4 cases (44-A1, 43-B1 tip flakes); line 6-8 mm above the fibular tip"
     },
     {
       "id": "fib_infra",
@@ -47,22 +47,22 @@
         {
           "point": [
             -24,
-            -3,
+            -9.5,
             -9
           ],
           "normal": [
-            0,
-            -0.9848,
-            0.1736
+            0.0594,
+            -0.9905,
+            0.1238
           ]
         }
       ],
       "noise": 0.5,
       "move": {
         "translate": [
-          0,
-          1.5,
-          -1.5
+          -1.25,
+          -1,
+          0
         ],
         "rotate": {
           "axis": [
@@ -75,10 +75,10 @@
             0,
             -8.9
           ],
-          "deg": -3
+          "deg": -1.5
         }
       },
-      "source": "literature: Weber A transverse infrasyndesmotic fibula fracture; placeholder until replaced from the case study"
+      "source": "images: 2 cases (44-A2, 44-A3), weak; plus literature (AO/OTA 44-A1.3, A2)"
     },
     {
       "id": "fib_trans_spiral",
@@ -87,22 +87,22 @@
         {
           "point": [
             -24,
-            9,
+            13,
             -11
           ],
           "normal": [
-            0,
-            -0.7433,
-            -0.669
+            -0.0821,
+            -0.6318,
+            -0.7708
           ]
         }
       ],
       "noise": 0.8,
       "move": {
         "translate": [
-          0,
-          2,
-          -2
+          -1.5,
+          1.25,
+          -2.25
         ],
         "rotate": {
           "axis": [
@@ -118,7 +118,7 @@
           "deg": -4
         }
       },
-      "source": "literature: Weber B spiral, anteroinferior to posterosuperior (AO/OTA 44-B1); placeholder until replaced from the case study"
+      "source": "images: 22 cases (44-B1, B2, B3 SER; nc Bartonicek 3/4 with a Weber B line)"
     },
     {
       "id": "fib_trans_short",
@@ -131,7 +131,7 @@
             -11
           ],
           "normal": [
-            0,
+            0.0,
             -0.866,
             -0.5
           ]
@@ -140,9 +140,9 @@
       "noise": 0.6,
       "move": {
         "translate": [
-          0,
-          1.5,
-          -2
+          -1.5,
+          1,
+          -1.5
         ],
         "rotate": {
           "axis": [
@@ -158,7 +158,7 @@
           "deg": -3
         }
       },
-      "source": "literature: Weber B short oblique; placeholder until replaced from the case study"
+      "source": "images: 4 cases (44-B3 Bartonicek 3/4)"
     },
     {
       "id": "fib_trans_coronal",
@@ -167,86 +167,22 @@
         {
           "point": [
             -24,
-            9,
+            14,
             -10
           ],
           "normal": [
-            -0.5812,
-            -0.8137,
-            0
+            -0.7659,
+            -0.6429,
+            0.0
           ]
         }
       ],
       "noise": 0.7,
       "move": {
         "translate": [
-          0,
-          1.5,
-          -2
-        ],
-        "rotate": {
-          "axis": [
-            0,
-            1,
-            0
-          ],
-          "origin": [
-            -23.8,
-            0,
-            -11.8
-          ],
-          "deg": -3
-        }
-      },
-      "source": "literature: Weber B oblique in the coronal plane, low medially and high laterally; placeholder until replaced from the case study"
-    },
-    {
-      "id": "fib_trans_wedge",
-      "bone": "fibula",
-      "planes": [
-        {
-          "point": [
-            -24,
-            9,
-            -11
-          ],
-          "normal": [
-            0,
-            0.7433,
-            0.669
-          ]
-        },
-        {
-          "point": [
-            -24,
-            16,
-            -11
-          ],
-          "normal": [
-            0,
-            -1,
-            0
-          ]
-        },
-        {
-          "point": [
-            -24,
-            9,
-            -11
-          ],
-          "normal": [
-            -1,
-            0,
-            0
-          ]
-        }
-      ],
-      "noise": 0.6,
-      "move": {
-        "translate": [
-          0,
-          1,
-          -1.5
+          -2,
+          0.5,
+          -0.5
         ],
         "rotate": {
           "axis": [
@@ -262,7 +198,71 @@
           "deg": -2
         }
       },
-      "source": "literature: Weber B butterfly wedge above the spiral sheet, lateral half; placeholder until replaced from the case study"
+      "source": "images: 5 cases (Weber B, Lauge-Hansen PA)"
+    },
+    {
+      "id": "fib_trans_wedge",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            13,
+            -11
+          ],
+          "normal": [
+            0.0821,
+            0.6318,
+            0.7708
+          ]
+        },
+        {
+          "point": [
+            -24,
+            21,
+            -11
+          ],
+          "normal": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -24,
+            13,
+            -11
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          -1.5,
+          0.5,
+          -0.5
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.8,
+            0,
+            -11.8
+          ],
+          "deg": -1
+        }
+      },
+      "source": "images: 6 cases (Weber B with a lateral wedge)"
     },
     {
       "id": "fib_trans_comm_a",
@@ -309,24 +309,11 @@
       "move": {
         "translate": [
           0,
-          1,
-          -1
-        ],
-        "rotate": {
-          "axis": [
-            0,
-            1,
-            0
-          ],
-          "origin": [
-            -23.8,
-            0,
-            -11.8
-          ],
-          "deg": -2
-        }
+          0.5,
+          1
+        ]
       },
-      "source": "literature: Weber B comminution, anterior wedge; placeholder until replaced from the case study"
+      "source": "images: 2 cases (sagittal CT anterior chips); plus literature"
     },
     {
       "id": "fib_trans_comm_b",
@@ -373,24 +360,11 @@
       "move": {
         "translate": [
           0,
-          1,
-          -1.5
-        ],
-        "rotate": {
-          "axis": [
-            0,
-            1,
-            0
-          ],
-          "origin": [
-            -23.8,
-            0,
-            -11.8
-          ],
-          "deg": -2
-        }
+          0.5,
+          -1
+        ]
       },
-      "source": "literature: Weber B comminution, posterior wedge; placeholder until replaced from the case study"
+      "source": "literature: Weber B comminution, posterior wedge (not separable on the case images)"
     },
     {
       "id": "fib_supra",
@@ -399,22 +373,22 @@
         {
           "point": [
             -26.6,
-            40,
+            48,
             -12.5
           ],
           "normal": [
-            0,
-            -0.866,
-            -0.5
+            -0.1518,
+            -0.8097,
+            0.5668
           ]
         }
       ],
       "noise": 0.6,
       "move": {
         "translate": [
-          0,
-          1.5,
-          -2
+          -2,
+          1,
+          0
         ],
         "rotate": {
           "axis": [
@@ -430,7 +404,7 @@
           "deg": -3
         }
       },
-      "source": "literature: Weber C suprasyndesmotic oblique (AO/OTA 44-C1); placeholder until replaced from the case study"
+      "source": "images: 5 cases (44-C1, low 44-C2); line anterosuperior to posteroinferior (PER)"
     },
     {
       "id": "fib_supra_wedge",
@@ -439,46 +413,46 @@
         {
           "point": [
             -26.6,
-            34,
+            42,
             -12.5
           ],
           "normal": [
             -0.2588,
             0.9659,
-            0
+            0.0
           ]
         },
         {
           "point": [
             -26.6,
-            46,
+            54,
             -12.5
           ],
           "normal": [
             -0.2588,
             -0.9659,
-            0
+            0.0
           ]
         },
         {
           "point": [
             -26.6,
-            40,
+            48,
             -12.5
           ],
           "normal": [
-            -1,
-            0,
-            0
+            -1.0,
+            0.0,
+            0.0
           ]
         }
       ],
       "noise": 0.7,
       "move": {
         "translate": [
-          0,
-          1,
-          -1.5
+          -1.5,
+          0.5,
+          0
         ],
         "rotate": {
           "axis": [
@@ -491,10 +465,10 @@
             0,
             -12.5
           ],
-          "deg": -2
+          "deg": -1
         }
       },
-      "source": "literature: Weber C butterfly wedge, lateral half; placeholder until replaced from the case study"
+      "source": "images: 7 cases (44-C1/C2 with a lateral butterfly)"
     },
     {
       "id": "fib_supra_far",
@@ -503,22 +477,22 @@
         {
           "point": [
             -27.8,
-            72,
+            68,
             -11.2
           ],
           "normal": [
-            0,
-            -0.866,
-            -0.5
+            -0.1701,
+            -0.9854,
+            0.0
           ]
         }
       ],
       "noise": 0.6,
       "move": {
         "translate": [
-          0,
-          1.5,
-          -2
+          -2,
+          0.5,
+          -1
         ],
         "rotate": {
           "axis": [
@@ -531,10 +505,10 @@
             0,
             -11.2
           ],
-          "deg": -3
+          "deg": -2.5
         }
       },
-      "source": "literature: Weber C high fibula fracture (Maisonneuve pattern, AO/OTA 44-C2/C3); placeholder until replaced from the case study"
+      "source": "images: 6 cases (44-C2, fractures 6-9 cm above the joint)"
     },
     {
       "id": "art_depression",
@@ -617,11 +591,11 @@
       "move": {
         "translate": [
           0,
-          2,
+          1.5,
           0
         ]
       },
-      "source": "literature: Articular depression of the posterolateral plafond; placeholder until replaced from the case study"
+      "source": "literature: articular impaction of the posterolateral plafond (not seen isolated in the 53 cases)"
     },
     {
       "id": "med_transverse",
@@ -629,26 +603,26 @@
       "planes": [
         {
           "point": [
-            14,
-            2,
+            14.5,
+            1,
             0
           ],
           "normal": [
-            0.2588,
-            -0.9659,
-            0
+            0.2704,
+            -0.9614,
+            0.0501
           ]
         },
         {
           "point": [
-            14,
-            2,
+            14.5,
+            1,
             0
           ],
           "normal": [
-            1,
-            0,
-            0
+            1.0,
+            0.0,
+            0.0
           ]
         }
       ],
@@ -660,7 +634,7 @@
           0
         ]
       },
-      "source": "literature: Medial malleolus transverse, from the plafond corner; placeholder until replaced from the case study"
+      "source": "images: 14 cases (44-B3, 44-C, isolated medial); transverse at the plafond corner"
     },
     {
       "id": "med_vertical",
@@ -668,14 +642,14 @@
       "planes": [
         {
           "point": [
-            14,
-            17.5,
+            15,
+            0,
             0
           ],
           "normal": [
-            0.9935,
-            -0.1135,
-            0
+            0.9794,
+            -0.1959,
+            -0.049
           ]
         },
         {
@@ -685,21 +659,21 @@
             0
           ],
           "normal": [
-            0,
-            -1,
-            0
+            0.0,
+            -1.0,
+            0.0
           ]
         }
       ],
       "noise": 0.6,
       "move": {
         "translate": [
-          1.5,
-          -2,
+          1.25,
+          1.25,
           0
         ]
       },
-      "source": "literature: Medial malleolus vertical shear, plafond corner to medial cortex; placeholder until replaced from the case study"
+      "source": "literature: vertical shear (AO/OTA 44-A2.3, Lauge-Hansen SA II); 1 weak case (44-A2)"
     },
     {
       "id": "post_b1",
@@ -707,50 +681,50 @@
       "planes": [
         {
           "point": [
-            -8,
-            4,
-            -14
+            -4.5,
+            6,
+            -18
           ],
           "normal": [
-            0,
-            0,
-            -1
+            0.0,
+            0.0,
+            -1.0
           ]
         },
         {
           "point": [
-            -15,
-            4,
-            -14
+            -11.5,
+            6,
+            -18
           ],
           "normal": [
-            1,
-            0,
-            0
+            1.0,
+            0.0,
+            0.0
           ]
         },
         {
           "point": [
-            -2,
-            4,
-            -14
+            2.5,
+            6,
+            -18
           ],
           "normal": [
-            -1,
-            0,
-            0
+            -1.0,
+            0.0,
+            0.0
           ]
         },
         {
           "point": [
-            -8,
-            8,
-            -14
+            -4.5,
+            6,
+            -18
           ],
           "normal": [
-            0,
-            -1,
-            0
+            0.0,
+            -1.0,
+            0.0
           ]
         }
       ],
@@ -758,11 +732,11 @@
       "move": {
         "translate": [
           0,
-          1.5,
-          -1.5
+          0.5,
+          -1
         ]
       },
-      "source": "literature: Bartonicek 1 posterior rim fragment outside the incisura; placeholder until replaced from the case study"
+      "source": "images: 2 cases (44-B3 Bartonicek 1, CT); thin extraincisural rim"
     },
     {
       "id": "post_b2",
@@ -770,62 +744,51 @@
       "planes": [
         {
           "point": [
-            -12,
-            8,
-            -8
+            -14,
+            0,
+            -9
           ],
           "normal": [
-            0,
-            0,
-            -1
+            -0.36,
+            -0.48,
+            -0.8
           ]
         },
         {
           "point": [
-            -22,
-            7.5,
-            -8
+            6,
+            0,
+            -9
           ],
           "normal": [
-            -0.2588,
-            0,
-            -0.9659
-          ]
-        },
-        {
-          "point": [
-            5,
-            7.5,
-            -8
-          ],
-          "normal": [
-            -1,
-            0,
-            0
-          ]
-        },
-        {
-          "point": [
-            -12,
-            15,
-            -8
-          ],
-          "normal": [
-            0,
-            -1,
-            0
+            -1.0,
+            0.0,
+            0.0
           ]
         }
       ],
       "noise": 0.7,
       "move": {
         "translate": [
-          0,
-          2,
-          -2
-        ]
+          -0.25,
+          1.25,
+          -1.5
+        ],
+        "rotate": {
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            -10,
+            0,
+            -16
+          ],
+          "deg": 1.5
+        }
       },
-      "source": "literature: Bartonicek 2 posterolateral fragment including the incisura; placeholder until replaced from the case study"
+      "source": "images: 8 cases (Bartonicek 2, CT); crescent behind the incisura"
     },
     {
       "id": "post_b3_pm",
@@ -833,38 +796,26 @@
       "planes": [
         {
           "point": [
-            12,
-            9,
-            -6
+            5,
+            0,
+            -8
           ],
           "normal": [
-            0,
-            0,
-            -1
+            0.1329,
+            -0.2848,
+            -0.9493
           ]
         },
         {
           "point": [
             5,
-            9,
-            -6
+            0,
+            -8
           ],
           "normal": [
-            1,
-            0,
-            0
-          ]
-        },
-        {
-          "point": [
-            12,
-            18,
-            -6
-          ],
-          "normal": [
-            0,
-            -1,
-            0
+            1.0,
+            0.0,
+            0.0
           ]
         }
       ],
@@ -872,11 +823,11 @@
       "move": {
         "translate": [
           0.5,
-          1.5,
+          1.75,
           -1.5
         ]
       },
-      "source": "literature: Bartonicek 3 posteromedial fragment reaching the posterior colliculus; placeholder until replaced from the case study"
+      "source": "images: 8 cases (Bartonicek 3, CT); posteromedial part reaching the posterior colliculus"
     },
     {
       "id": "post_b4",
@@ -885,25 +836,25 @@
         {
           "point": [
             0,
-            20,
-            -9
+            0,
+            -8
           ],
           "normal": [
-            0,
-            -0.3304,
-            -0.9439
+            -0.0884,
+            -0.1669,
+            -0.982
           ]
         },
         {
           "point": [
-            10,
-            20,
-            -9
+            14,
+            0,
+            -8
           ],
           "normal": [
-            -1,
-            0,
-            0
+            -1.0,
+            0.0,
+            0.0
           ]
         }
       ],
@@ -912,10 +863,10 @@
         "translate": [
           0,
           2,
-          -2
+          -1.5
         ]
       },
-      "source": "literature: Bartonicek 4 large posterior fragment, plafond to posterior cortex at y 40; placeholder until replaced from the case study"
+      "source": "images: 7 cases (Bartonicek 4, CT and lateral); triangle with the incisura"
     },
     {
       "id": "post_pm_extraincisural",
@@ -924,61 +875,61 @@
         {
           "point": [
             10,
-            4,
-            -14
+            5,
+            -13
           ],
           "normal": [
-            0,
-            0,
-            -1
+            0.0,
+            0.0,
+            -1.0
           ]
         },
         {
           "point": [
             4,
-            4,
-            -14
+            5,
+            -13
           ],
           "normal": [
-            1,
-            0,
-            0
+            1.0,
+            0.0,
+            0.0
           ]
         },
         {
           "point": [
             16,
-            4,
-            -14
+            5,
+            -13
           ],
           "normal": [
-            -1,
-            0,
-            0
+            -1.0,
+            0.0,
+            0.0
           ]
         },
         {
           "point": [
             10,
-            8,
-            -14
+            10,
+            -13
           ],
           "normal": [
-            0,
-            -1,
-            0
+            0.0,
+            -1.0,
+            0.0
           ]
         }
       ],
       "noise": 0.5,
       "move": {
         "translate": [
-          0,
-          1.5,
+          0.35,
+          1,
           -1.5
         ]
       },
-      "source": "literature: Extraincisural posteromedial fragment; placeholder until replaced from the case study"
+      "source": "literature: extraincisural posteromedial fragment (AO/OTA 44-A3); 1 case (nc Bartonicek 3)"
     }
   ],
   "unstable": {
@@ -986,7 +937,7 @@
       "translate": [
         -2,
         0,
-        0
+        -0.5
       ],
       "rotate": {
         "axis": [

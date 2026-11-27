@@ -20,25 +20,25 @@ const ALL_IDS: PieceId[] = [
 // `PRINT_BOXES=1 npx vitest run src/components/anatomy/fractureParams.test.ts --reporter=verbose` and review the printed table.
 type Box = [[number, number], [number, number], [number, number]];
 const BOXES: Record<PieceId, Box> = {
-  fib_tip_avulsion: [[-36, -16], [-29, -9], [-23, 4]],
-  fib_infra: [[-36, -16], [-29, -1], [-23, 4]],
-  fib_trans_spiral: [[-36, -16], [-29, 18], [-23, 4]],
+  fib_tip_avulsion: [[-36, -22], [-29, -20], [-22, -1]],
+  fib_infra: [[-36, -16], [-29, -8], [-23, 4]],
+  fib_trans_spiral: [[-36, -16], [-29, 25], [-23, 4]],
   fib_trans_short: [[-36, -16], [-29, 14], [-23, 4]],
-  fib_trans_coronal: [[-36, -16], [-29, 15], [-23, 4]],
-  fib_trans_wedge: [[-34, -24], [-2, 16], [-17, 1]],
+  fib_trans_coronal: [[-36, -16], [-29, 25], [-23, 4]],
+  fib_trans_wedge: [[-33, -24], [0, 21], [-15, 1]],
   fib_trans_comm_a: [[-34, -18], [1, 18], [-11, 0]],
   fib_trans_comm_b: [[-34, -17], [1, 19], [-22, -11]],
-  fib_supra: [[-36, -16], [-29, 45], [-23, 4]],
-  fib_supra_wedge: [[-34, -26], [32, 48], [-20, -4]],
-  fib_supra_far: [[-36, -16], [-29, 77], [-23, 4]],
+  fib_supra: [[-36, -16], [-29, 53], [-23, 4]],
+  fib_supra_wedge: [[-34, -27], [40, 56], [-20, -5]],
+  fib_supra_far: [[-36, -16], [-29, 69], [-23, 4]],
   art_depression: [[-9, -2], [0, 2], [-10, -2]],
-  med_transverse: [[14, 28], [-10, 6], [-16, 13]],
-  med_vertical: [[11, 28], [-10, 29], [-17, 17]],
-  post_b1: [[-15, -2], [-3, 8], [-24, -14]],
-  post_b2: [[-18, 5], [-3, 15], [-24, -9]],
-  post_b3_pm: [[5, 27], [-5, 18], [-21, -6]],
-  post_b4: [[-18, 10], [-3, 32], [-24, -2]],
-  post_pm_extraincisural: [[4, 16], [-2, 8], [-21, -14]],
+  med_transverse: [[14, 28], [-10, 5], [-15, 13]],
+  med_vertical: [[14, 28], [-10, 21], [-16, 15]],
+  post_b1: [[-12, 3], [-3, 6], [-24, -18]],
+  post_b2: [[-18, 6], [-3, 16], [-24, -9]],
+  post_b3_pm: [[5, 28], [-5, 23], [-21, -4]],
+  post_b4: [[-18, 14], [-3, 32], [-24, -7]],
+  post_pm_extraincisural: [[4, 16], [-3, 10], [-22, -13]],
 };
 
 /** Vertices of the piece's bone inside every one of its planes. */
@@ -138,7 +138,8 @@ describe('fractureParams', () => {
       const mean = (k: number) => vs.reduce((s, v) => s + v[k], 0) / vs.length;
       if (id === 'fib_tip_avulsion' || id === 'fib_infra') expect(maxY, id).toBeLessThan(0);
       else if (id.startsWith('fib_trans_')) {
-        expect(maxY, id).toBeLessThanOrEqual(23);
+        // Both case readers put the spiral's posterosuperior end 1-5 mm above the syndesmosis top (23 mm).
+        expect(maxY, id).toBeLessThanOrEqual(26);
         expect(maxY, id).toBeGreaterThanOrEqual(0);
         if (/wedge|comm/.test(id)) expect(minY, id).toBeGreaterThan(-2);
       } else if (id === 'fib_supra_far') {
