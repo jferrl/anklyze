@@ -89,9 +89,13 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 | `PORT` | `8080` | |
 | `CORS_ALLOW_ORIGIN` | `*` | |
 | `LOG_LEVEL`, `LOG_FORMAT` | `info`, `text` | |
-| `APP_ENV` | unset | `production` makes the server refuse to start without `SUPABASE_URL` or the S3 variables. |
+| `APP_ENV` | unset | Anything but `development`, including unset, makes the server refuse to start without `SUPABASE_URL` or the S3 variables. |
+| `METRICS_TOKEN` | unset | Bearer token `/metrics` requires. Unset: `/metrics` is open in development and not served in production. |
+| `TRUSTED_PROXIES` | private ranges | Comma-separated CIDRs whose `X-Forwarded-For` sets the client IP. The default trusts loopback and private networks, which covers a proxy on the same Docker host. |
 
 `make run` sets `DATABASE_URL` and the S3 variables for the Docker services. It does not set `SUPABASE_URL`, so auth stays off unless your `.env` provides it.
+
+To strip metadata from images uploaded before uploads were stripped on arrival, run `go run ./cmd/anklyze-scrub-images` with the S3 variables set. It only reports; add `-apply -backup <dir>` to overwrite each image after saving the original to `<dir>`.
 
 With auth on, sign in once and then promote your account:
 
@@ -116,7 +120,7 @@ The production API is at `https://api.anklyze.es`. Routes are registered in `int
 | Method | Path | Access | Purpose |
 | ------ | ---- | ------ | ------- |
 | `GET` | `/health` | public | Health check |
-| `GET` | `/metrics` | public | Prometheus metrics |
+| `GET` | `/metrics` | `METRICS_TOKEN` | Prometheus metrics |
 | `POST` | `/api/classify` | signed in | Classify a fracture from questionnaire answers |
 | `GET` | `/api/me`, `/api/me/profile` | signed in | Current user and profile (`PUT` to update) |
 | `GET` | `/api/cases`, `/api/cases/:id` | signed in | Published cases |
