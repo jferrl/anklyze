@@ -394,6 +394,8 @@
   },
   "anatomy": {
     "title": "Anatomía",
+    "fractureTitle": "Fractura simulada",
+    "fractureEmpty": "Responda a las preguntas para ver la fractura que describen.",
     "show": "Mostrar anatomía",
     "hide": "Ocultar anatomía",
     "posteriorMalleolus": "Maléolo posterior",

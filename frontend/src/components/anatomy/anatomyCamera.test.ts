@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FractureInput } from '@/types';
-import { presetFor, type Focus } from './anatomyCamera';
+import { fractureViewFor, presetFor, type Focus } from './anatomyCamera';
 import { getAnatomyState } from './anatomyState';
 
 const at = (form: Partial<FractureInput>, posteriorAsked = false): Focus => ({ state: getAnatomyState(form), posteriorAsked });
@@ -29,5 +29,21 @@ describe('presetFor', () => {
     expect(presetFor(asked, typed)).toBe('posterior');
     expect(presetFor(typed, typed)).toBeUndefined();
     expect(presetFor(level, none)).toBeUndefined();
+  });
+});
+
+describe('fractureViewFor', () => {
+  const view = (form: Partial<FractureInput>) => fractureViewFor(getAnatomyState(form));
+  it('shows a posterior fragment from behind, whatever else is broken', () => {
+    expect(view({ involved_malleoli: 'trimaleolar' })).toBe('posterior');
+    expect(view({ involved_malleoli: 'posterior_only' })).toBe('posterior');
+  });
+  it('shows both malleoli in AP, and one malleolus from its side', () => {
+    expect(view({ involved_malleoli: 'lateral_medial' })).toBe('ap');
+    expect(view({ involved_malleoli: 'medial_only' })).toBe('medial');
+    expect(view({ involved_malleoli: 'lateral_only' })).toBe('anterolateral');
+  });
+  it('stays put before any answer', () => {
+    expect(view({})).toBeUndefined();
   });
 });

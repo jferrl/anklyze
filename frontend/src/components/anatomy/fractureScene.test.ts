@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
-import { BufferAttribute, BufferGeometry, Group, LineSegments, Matrix4, Mesh, MeshBasicMaterial, Object3D, type Material } from 'three';
+import { BufferAttribute, BufferGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, Object3D, type Material } from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FractureInput } from '@/types';
 import { getAnatomyState } from './anatomyState';
@@ -76,7 +76,7 @@ const boneOf = (m: Mesh) => (m.geometry.attributes.bone.array[0] === 1 ? 'tibia'
 const shownCuts = (cells: Mesh[]) => cells.reduce((n, m) => n + m.geometry.groups.filter((g, i) => i > 0 && g.materialIndex === 1).length, 0);
 const crackLines = (root: Object3D) => {
   let n = 0;
-  root.traverse((o) => o instanceof LineSegments && (n += o.geometry.groups.filter((g) => g.materialIndex === 1).length));
+  root.traverse((o) => o instanceof Mesh && o.name === 'crack' && (n += o.geometry.groups.filter((g) => g.materialIndex === 1).length));
   return n;
 };
 // Piece groups are made in params order, before any cell joins its bone's main group.

@@ -394,6 +394,8 @@
   },
   "anatomy": {
     "title": "Anatomy",
+    "fractureTitle": "Simulated fracture",
+    "fractureEmpty": "Answer the questions to see the fracture they describe.",
     "show": "Show anatomy",
     "hide": "Hide anatomy",
     "posteriorMalleolus": "Posterior malleolus",

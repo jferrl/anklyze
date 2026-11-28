@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
+import { fractureViewFor, PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
 import { marksFor } from './anatomyMarks';
 import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
@@ -93,13 +93,15 @@ interface Anatomy3DProps {
   fractured?: boolean;
   /** Called once the fracture is drawn. */
   onFractured?: () => void;
+  /** Frames the fracture region closer and leaves out the AP and Lateral pair. */
+  closeUp?: boolean;
 }
 
 /**
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false, fractured = false, onFractured }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false, fractured = false, onFractured, closeUp = false }: Anatomy3DProps) {
   const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -138,7 +140,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       loadModel()
         .then((m) => {
           if (cancelled) return;
-          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors), (key) => overlay.labels[key as Labelled]?.offsetHeight ?? 20);
+          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors), (key) => overlay.labels[key as Labelled]?.offsetHeight ?? 20, closeUp);
           sceneRef.current = scene;
           scene.setInk(readInk(canvas));
           scene.resize(canvas.getBoundingClientRect().width);
@@ -220,7 +222,11 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     scene.setState(state);
     const focus = { state, posteriorAsked };
     // A figure opened on a set view stays on it for the answers it opened with.
-    const preset = view && seen.current === NONE ? undefined : presetFor(seen.current, focus);
+    // The close-up holds the view that shows the break, and turns only when that view changes.
+    const toBreak = fractureViewFor(state);
+    const preset = closeUp
+      ? toBreak !== fractureViewFor(seen.current.state) || seen.current === NONE ? toBreak : undefined
+      : view && seen.current === NONE ? undefined : presetFor(seen.current, focus);
     const first = seen.current === NONE && !view;
     seen.current = focus;
     if (preset) {
@@ -253,7 +259,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
         out.width = Math.round(out.clientWidth * ratio);
         out.height = Math.round(out.clientHeight * ratio);
         sceneRef.current?.snapshot(PRESETS[preset], out);
-        setSnapshot(preset, out.toDataURL(), fractured);
+        setSnapshot(preset, out.toDataURL());
       }
     };
     // Coalesced to one draw per task; a theme switch redraws at once, so the pair never lags it.
@@ -388,7 +394,8 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             )}
           />
           {/* Labels are drawn for the whole model; zoomed in they would crowd the edges, so they fade out. */}
-          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', fade, zoom > 1 ? 'opacity-0' : 'opacity-100', !ready && 'hidden')}>
+          {/* The close-up leaves the naming to the tinted figure, so nothing covers the break. */}
+          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', fade, zoom > 1 ? 'opacity-0' : 'opacity-100', (!ready || closeUp) && 'hidden')}>
             <svg className="absolute inset-0 size-full overflow-visible">
               {LABELS.map(([key]) => (
                 <g
@@ -441,7 +448,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
               size="icon-sm"
               onClick={() => {
                 touched.current = -Infinity;
-                turnTo('anterolateral');
+                turnTo((closeUp && fractureViewFor(state)) || 'anterolateral');
               }}
               aria-label={t('anatomy.model3d.reset')}
               title={t('anatomy.model3d.reset')}
@@ -488,7 +495,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       </div>
 
       {/* The radiographic pair: each view shows every mark, and turns the model to itself. */}
-      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1 lg:content-start')}>
+      {!closeUp && <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1 lg:content-start')}>
         {PAIR.map(([preset, caption, action]) => (
           <button
             key={preset}
@@ -516,7 +523,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             <span className={cn('block px-1 pt-1 text-xs leading-4 text-muted-foreground group-aria-pressed:font-semibold group-aria-pressed:text-primary', !compact && 'lg:text-sm lg:leading-5')}>{t(caption)}</span>
           </button>
         ))}
-      </div>
+      </div>}
     </div>
   );
 }

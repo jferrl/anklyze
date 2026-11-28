@@ -80,6 +80,9 @@ const ease = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const LABEL_GAP = 10; // px between the model and a label
 const LABEL_STEP = 30; // px between two labels on one side, room for a text-sm label, its backdrop and a gap
 const LEADER_MIN = 24; // px: every leader is at least this long, so it reads as a leader
+// The close-up frame: this much closer, centred this many mm above the plafond.
+const CLOSE_UP = { zoom: 1.3, y: 20 };
+
 /** ZOOM_MAX is the closest the view zooms in; the model is redrawn at every zoom, so it stays sharp. */
 export const ZOOM_MAX = 4;
 /** ASPECT is the canvas width over its height: square, so the long structure names have gutters. */
@@ -417,6 +420,8 @@ export function createAnkleScene(
   onAnchors: (a: Anchors) => void,
   /** A label's height as last drawn, in pixels, so stacked labels keep clear of each other. */
   labelHeight: (key: string) => number = () => 20,
+  /** Frames the fracture region, from the talar dome to the far Weber C line, instead of the whole model. */
+  closeUp = false,
 ) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3));
@@ -523,8 +528,9 @@ export function createAnkleScene(
   // The frame fits the tallest the model gets at any allowed turn, so turning never changes the
   // scale or crops a part, plus room below for the contact shadow. The model is tall and narrow,
   // so a portrait frame holds it tighter than a square and leaves the sides for labels.
-  const h = 2.04 * fitHeight(rel) + 8;
-  const frame = { w: h * ASPECT, h, cx: 0, cy: -4 };
+  const full = 2.04 * fitHeight(rel) + 8;
+  const h = closeUp ? full / CLOSE_UP.zoom : full;
+  const frame = { w: h * ASPECT, h, cx: 0, cy: closeUp ? CLOSE_UP.y - center.y : -4 };
   const camera = new OrthographicCamera(
     frame.cx - frame.w / 2,
     frame.cx + frame.w / 2,

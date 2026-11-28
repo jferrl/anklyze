@@ -4,13 +4,13 @@ import {
   BufferGeometry,
   DoubleSide,
   Group,
-  LineSegments,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
   Quaternion,
   ShaderMaterial,
   Triangle,
+  Vector2,
   Vector3,
   type Material,
   type Object3D,
@@ -38,7 +38,7 @@ interface Cell {
   mask: number;
   mesh: Mesh;
   /** The crack edges on the bone surface, one geometry group per cut. */
-  crack: LineSegments;
+  crack: Mesh;
   /** The crack's mouth, from each crack edge where it was to where its fragment moved: dark, behind any bone. */
   skirt: Mesh;
   /** Neighbour mask per cut group, in group order after the periosteal one. */
@@ -47,6 +47,11 @@ interface Cell {
 
 // Group material slots: periosteal, a cut shown between fragments, a closed cut.
 const [SKIN, OPEN, CLOSED] = [0, 1, 2];
+
+// Every fragment move and turn is drawn at twice the pose's: 1-3 mm and 5 degrees become 2-6 mm and 10.
+const GAIN = 2;
+// Crack line width in CSS pixels.
+const CRACK_PX = 1.75;
 
 /**
  * buildFractures makes one mesh per fracture cell, with periosteal normals taken from the uncut bones
@@ -83,22 +88,37 @@ export function buildFractures(
     `,
     side: DoubleSide,
   });
-  // A closed crack reads as a thin dark line on the bone, lifted a little so it never sinks into it.
+  // A closed crack reads as a dark line on the bone, lifted a little so it never sinks into it. GL
+  // lines are 1 px, too thin to read, so each edge is a quad widened to CRACK_PX on screen.
   const line = new ShaderMaterial({
-    uniforms: { uBias: { value: -0.3 * mm } },
+    uniforms: { uBias: { value: -0.3 * mm }, uHalf: { value: new Vector2(0.01, 0.01) } },
     vertexShader: /* glsl */ `
+      attribute vec3 other;
+      attribute float corner;
       uniform float uBias;
+      uniform vec2 uHalf;
       void main() {
-        vec4 clip = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        clip.z += uBias * clip.w;
-        gl_Position = clip;
+        vec4 a = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vec4 b = projectionMatrix * modelViewMatrix * vec4(other, 1.0);
+        vec2 d = (b.xy / b.w - a.xy / a.w) / uHalf;
+        vec2 n = length(d) > 1e-6 ? normalize(vec2(-d.y, d.x)) : vec2(0.0);
+        a.xy += n * corner * uHalf * a.w;
+        a.z += uBias * a.w;
+        gl_Position = a;
       }
     `,
     fragmentShader: /* glsl */ `
-      void main() { gl_FragColor = vec4(0.22, 0.16, 0.12, 0.85); }
+      void main() { gl_FragColor = vec4(0.12, 0.08, 0.06, 1.0); }
     `,
-    transparent: true,
+    side: DoubleSide,
   });
+  // Half the crack width in clip units, from the size being drawn to, so it stays CRACK_PX at any zoom.
+  const size = new Vector2();
+  const setWidth = (renderer: { getDrawingBufferSize: (v: Vector2) => Vector2; getPixelRatio: () => number }) => {
+    renderer.getDrawingBufferSize(size);
+    const px = CRACK_PX * renderer.getPixelRatio();
+    line.uniforms.uHalf.value.set(px / size.x, px / size.y);
+  };
   const root = new Group();
   // Periosteal normals come from the uncut bone: its own where it has the vertex, else interpolated
   // across the uncut triangle the new vertex lies on, so a seam inside a fragment does not shade.
@@ -279,7 +299,31 @@ export function buildFractures(
     g.setAttribute('cut', new BufferAttribute(new Float32Array(cut), 1));
     const mesh = new Mesh(g, [materials.fill, materials.fill, hidden]);
     mesh.castShadow = mesh.receiveShadow = true;
-    const crack = new LineSegments(lines, [hidden, line]);
+    // Per edge AB: A+, A-, B+, B- as (point, other end, side); B's side flips with its reversed direction.
+    const crackPos: number[] = [];
+    const crackOther: number[] = [];
+    const corner: number[] = [];
+    const crackGeometry = new BufferGeometry();
+    for (const g of lines.groups) {
+      for (let v = g.start; v < g.start + g.count; v += 2) {
+        const quad = [[v, v + 1, 1], [v, v + 1, -1], [v + 1, v, -1], [v + 1, v, 1]] as const;
+        for (const q of [0, 1, 3, 0, 3, 2]) {
+          const [here, there, c] = quad[q];
+          crackPos.push(linePos[here * 3], linePos[here * 3 + 1], linePos[here * 3 + 2]);
+          crackOther.push(linePos[there * 3], linePos[there * 3 + 1], linePos[there * 3 + 2]);
+          corner.push(c);
+        }
+      }
+      crackGeometry.addGroup(g.start * 3, g.count * 3, 0);
+    }
+    lines.dispose();
+    crackGeometry.setAttribute('position', new BufferAttribute(new Float32Array(crackPos), 3));
+    crackGeometry.setAttribute('other', new BufferAttribute(new Float32Array(crackOther), 3));
+    crackGeometry.setAttribute('corner', new BufferAttribute(new Float32Array(corner), 1));
+    const crack = new Mesh(crackGeometry, [hidden, line]);
+    crack.name = 'crack';
+    crack.frustumCulled = false;
+    crack.onBeforeRender = setWidth;
     mesh.add(crack);
     const skirt = new Mesh(mouthGeometry, [hidden, mouth]);
     skirt.frustumCulled = false;
@@ -289,7 +333,8 @@ export function buildFractures(
 
   const [t, q, m] = [new Vector3(), new Quaternion(), new Matrix4()];
   // A move at amount k: translate by k, then turn k of its degrees about the axis through its origin.
-  function place(o: Object3D, move: Move, k: number) {
+  function place(o: Object3D, move: Move, eased: number) {
+    const k = eased * GAIN;
     o.matrix.makeTranslation(t.fromArray(move.translate).multiplyScalar(k));
     const r = move.rotate;
     if (r) {
