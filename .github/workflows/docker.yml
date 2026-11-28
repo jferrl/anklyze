@@ -1,0 +1,41 @@
+name: Docker Build
+
+# Builds both images without pushing, so a broken Dockerfile fails the PR instead of the deploy.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "frontend/Dockerfile"
+      - "frontend/nginx.conf"
+      - "frontend/security-headers.conf"
+      - "frontend/package.json"
+      - "frontend/package-lock.json"
+      - "go.mod"
+      - "go.sum"
+      - ".github/workflows/docker.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: backend
+            context: .
+            file: Dockerfile
+          - name: frontend
+            context: frontend
+            file: frontend/Dockerfile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          push: false
