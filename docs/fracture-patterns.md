@@ -240,3 +240,10 @@ These need a clinical decision. None of them is in the code yet.
    current limit.
 9. **Precision.** All heights are visual estimates on downscaled images, good to about ±20%.
    Fine lines (tip avulsions, undisplaced medial malleolus) were the least certain.
+
+10. **Doubled moves and the 2 mm line.** To make the break readable at panel size, the fracture view
+    draws every move at twice the tabled value, the talus shift included (now 4 mm lateral). That
+    puts every pattern past the ~2 mm many surgeons treat as displaced, so a usually stable lone
+    Weber B may read as surgical, and the form never asks about displacement. Options: keep the
+    doubling, double only the fragment moves and leave the talus at 2 mm, or go back to 1 to 3 mm
+    with the closer framing alone. Each is a one-line change.
