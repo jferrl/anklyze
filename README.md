@@ -94,8 +94,6 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 
 `make run` sets `DATABASE_URL` and the S3 variables for the Docker services. It does not set `SUPABASE_URL`, so auth stays off unless your `.env` provides it.
 
-To strip metadata from images uploaded before uploads were stripped on arrival, run `go run ./cmd/anklyze-scrub-images` with the S3 variables set. It only reports; add `-apply -backup <dir>` to overwrite each image after saving the original to `<dir>`.
-
 With auth on, sign in once and then promote your account:
 
 ```bash
