@@ -30,8 +30,6 @@ type Config struct {
 	S3SecretKey     string // S3 secret key
 	StudyBucketName string // Bucket name (default: "studies")
 	S3UseSSL        bool   // Whether to use SSL for S3 connections
-	// MetricsToken is the bearer token /metrics requires; empty disables it in production.
-	MetricsToken string
 	// TrustedProxies are the peers whose X-Forwarded-For sets the client IP.
 	TrustedProxies []string
 }
@@ -60,7 +58,6 @@ func Load() (*Config, error) {
 		S3SecretKey:            os.Getenv("S3_SECRET_KEY"),
 		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
 		S3UseSSL:               getEnv("S3_USE_SSL", "true") == "true",
-		MetricsToken:           os.Getenv("METRICS_TOKEN"),
 		TrustedProxies:         getEnvList("TRUSTED_PROXIES", defaultTrustedProxies),
 	}
 

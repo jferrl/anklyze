@@ -206,31 +206,18 @@ func TestMiddleware_InFlightGaugeReturnsToZero(t *testing.T) {
 }
 
 func TestRegisterMetricsEndpoint(t *testing.T) {
-	tests := map[string]struct {
-		token, auth string
-		want        int
-	}{
-		"open without token":    {"", "", http.StatusOK},
-		"token required":        {"s3cret", "", http.StatusUnauthorized},
-		"wrong token":           {"s3cret", "Bearer nope", http.StatusUnauthorized},
-		"matching bearer token": {"s3cret", "Bearer s3cret", http.StatusOK},
-	}
-	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
-			r := gin.New()
-			RegisterMetricsEndpoint(r, prometheus.NewRegistry(), tt.token)
+	reg := prometheus.NewRegistry()
+	gatherer := prometheus.Gatherer(reg)
 
-			w := httptest.NewRecorder()
-			req := httptest.NewRequest(http.MethodGet, "/metrics", nil)
-			if tt.auth != "" {
-				req.Header.Set("Authorization", tt.auth)
-			}
-			r.ServeHTTP(w, req)
+	r := gin.New()
+	RegisterMetricsEndpoint(r, gatherer)
 
-			if w.Code != tt.want {
-				t.Errorf("GET /metrics status = %d, want %d", w.Code, tt.want)
-			}
-		})
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("GET /metrics status = %d, want 200", w.Code)
 	}
 }
 
