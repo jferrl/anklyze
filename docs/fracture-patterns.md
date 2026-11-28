@@ -29,8 +29,8 @@ them on do not change in this review; only their placement, size and move do.
   differed by more than 5 mm or 15°, the relevant cases were opened again and measured; the
   tables below record each decision. Moves were then limited to 1 to 3 mm and at most 5° per
   fragment, so the picture shows the direction of displacement without exaggerating it. The
-  fracture view draws every move at twice these values (2 to 6 mm, up to 10°) so the break reads
-  at panel size; the tables give the values before doubling.
+  fracture view draws every fragment move at twice these values (2 to 6 mm, up to 10°) so the break
+  reads at panel size; the talus keeps its tabled shift. The tables give the values before doubling.
 - **Scale.** The readers measured on images without a common ruler, so heights first had to be
   put on the model's scale.
   - The model's distal tibia is 48 mm wide at the plafond, medial malleolus included. Its talar
@@ -242,8 +242,7 @@ These need a clinical decision. None of them is in the code yet.
    Fine lines (tip avulsions, undisplaced medial malleolus) were the least certain.
 
 10. **Doubled moves and the 2 mm line.** To make the break readable at panel size, the fracture view
-    draws every move at twice the tabled value, the talus shift included (now 4 mm lateral). That
-    puts every pattern past the ~2 mm many surgeons treat as displaced, so a usually stable lone
-    Weber B may read as surgical, and the form never asks about displacement. Options: keep the
-    doubling, double only the fragment moves and leave the talus at 2 mm, or go back to 1 to 3 mm
-    with the closer framing alone. Each is a one-line change.
+    draws fragment moves at twice the tabled value; the talus keeps its 2 mm shift. Fragments now
+    pass the ~2 mm many surgeons treat as displaced, so a usually stable lone Weber B may read as
+    surgical, and the form never asks about displacement. Is that acceptable for a teaching figure,
+    or should fragments go back to 1 to 3 mm with the closer framing alone? It is a one-line change.

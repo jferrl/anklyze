@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
-import { BufferAttribute, BufferGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, Object3D, type Material } from 'three';
+import { BufferAttribute, BufferGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, Object3D, Quaternion, type Material } from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FractureInput } from '@/types';
 import { getAnatomyState } from './anatomyState';
@@ -158,6 +158,9 @@ describe('buildFractures', () => {
     expect(crackLines(fractures.root)).toBe(shownCuts(cellsOf(fractures.root)));
     const restore = fractures.atTarget();
     expect(talus.matrix.equals(identity)).toBe(false);
+    // Fragments are drawn doubled; the talus keeps its tabled shift.
+    const turn = new Quaternion().setFromRotationMatrix(talus.matrix);
+    expect((2 * Math.acos(Math.abs(turn.w)) * 180) / Math.PI).toBeCloseTo(Math.abs(fractureParams.unstable.talus.rotate!.deg), 6);
     restore();
     expect(talus.matrix.equals(identity)).toBe(true);
   });

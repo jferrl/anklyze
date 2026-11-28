@@ -48,7 +48,8 @@ interface Cell {
 // Group material slots: periosteal, a cut shown between fragments, a closed cut.
 const [SKIN, OPEN, CLOSED] = [0, 1, 2];
 
-// Every fragment move and turn is drawn at twice the pose's: 1-3 mm and 5 degrees become 2-6 mm and 10.
+// Fragment moves and turns are drawn at twice the pose's (2-6 mm, up to 10 degrees) so the break reads
+// at panel size. The talus keeps its tabled shift: a doubled talar shift reads as a grossly unstable ankle.
 const GAIN = 2;
 // Crack line width in CSS pixels.
 const CRACK_PX = 1.75;
@@ -333,8 +334,7 @@ export function buildFractures(
 
   const [t, q, m] = [new Vector3(), new Quaternion(), new Matrix4()];
   // A move at amount k: translate by k, then turn k of its degrees about the axis through its origin.
-  function place(o: Object3D, move: Move, eased: number) {
-    const k = eased * GAIN;
+  function place(o: Object3D, move: Move, k: number) {
     o.matrix.makeTranslation(t.fromArray(move.translate).multiplyScalar(k));
     const r = move.rotate;
     if (r) {
@@ -346,7 +346,7 @@ export function buildFractures(
     o.matrixWorldNeedsUpdate = true;
   }
   const apply = (amount: (v: { at: number; to: number }) => number) => {
-    for (const v of movers.values()) for (const o of v.objects) place(o, v.move, amount(v));
+    for (const [id, v] of movers) for (const o of v.objects) place(o, v.move, amount(v) * (id === 'talus' ? 1 : GAIN));
   };
 
   // Shows only the cuts between fragments, each with its crack line, and puts each cell in its fragment.
