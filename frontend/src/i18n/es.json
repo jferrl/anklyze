@@ -394,6 +394,8 @@
   },
   "anatomy": {
     "title": "Anatomía",
+    "fractureTitle": "Fractura simulada",
+    "fractureEmpty": "Responda a las preguntas para ver la fractura que describen.",
     "show": "Mostrar anatomía",
     "hide": "Ocultar anatomía",
     "posteriorMalleolus": "Maléolo posterior",
@@ -420,7 +422,9 @@
         "supra_far": "Fractura de peroné por encima de la sindesmosis, a más de 6 cm de la articulación.",
         "proximal": "Fractura de peroné proximal, fuera del modelo."
       },
-      "posteriorType": "Maléolo posterior: {{type}}."
+      "posteriorType": "Maléolo posterior: {{type}}.",
+      "fractureDisplaced": "Fractura simulada, desplazada: {{list}}.",
+      "fractureClosed": "Fractura simulada, sin desplazar: {{list}}."
     },
     "fields": {
       "involved_malleoli": "Maléolos",
@@ -440,6 +444,7 @@
       "posterior_fracture_type": "Fragmento posterior"
     },
     "note": "El sombreado indica la región y el nivel afectados, no el patrón de la fractura.",
+    "fractureNote": "Fractura tipo para estas respuestas, no un modelo de la fractura de este paciente.",
     "sources": {
       "title": "Fuentes",
       "model": "Modelo: tobillo derecho de <work>BodyParts3D</work>, © The Database Center for Life Science, recortado y refinado para Anklyze; <license>CC BY-SA 4.0</license>.",
@@ -462,7 +467,9 @@
       "zoomIn": "Ampliar",
       "zoomOut": "Reducir",
       "enlarge": "Abrir la vista {{view}} en el modelo 3D",
-      "enlargeTitle": "Modelo del tobillo"
+      "enlargeTitle": "Modelo del tobillo",
+      "xray": "Aspecto radiográfico",
+      "displaced": "Mostrar desplazamiento"
     },
     "structureNames": {
       "lateral": "Maléolo lateral",
@@ -470,7 +477,20 @@
       "posterior": "Maléolo posterior"
     },
     "syndesmosis": "Sindesmosis",
-    "behind": "(detrás)"
+    "behind": "(detrás)",
+    "fragments": {
+      "tipAvulsion": "Avulsión de la punta del peroné",
+      "distalFibula": "Fragmento distal del peroné",
+      "butterfly": "Fragmento en ala de mariposa",
+      "comminuted": "Fragmento conminuto",
+      "depression": "Fragmento articular hundido",
+      "medial": "Fragmento del maléolo medial",
+      "posterior": "Fragmento del maléolo posterior",
+      "posteromedial": "Fragmento posteromedial",
+      "tibia": "Tibia",
+      "fibula": "Peroné",
+      "talus": "Astrágalo"
+    }
   },
   "language": {
     "toggle": "Cambiar idioma"

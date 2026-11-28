@@ -7,6 +7,9 @@ import { getQuestionSteps } from '@/features/fracture-classification/utils/quest
 import type { FractureInput } from '@/types';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import type { Preset } from './anatomyCamera';
+import { drawnPosteriorType } from './drawnPosterior';
+import { fragmentName } from './fractureNames';
+import { fracturePose } from './fracturePose';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
@@ -18,6 +21,10 @@ interface AnatomyViewProps {
   compact?: boolean;
   /** Opens the 3D model on this view rather than following the answers. */
   view?: Preset;
+  /** Draws the fracture itself rather than the tint; off where a study needs today's figure. */
+  fracture?: boolean;
+  /** Frames the fracture region closer, without the AP and Lateral pair. */
+  closeUp?: boolean;
   className?: string;
 }
 
@@ -41,14 +48,16 @@ const on = (visible: boolean) => cn(ink, visible ? 'opacity-100' : 'opacity-0');
  * highlights what the answers describe: the fractured malleoli and the level of the fibular
  * fracture. Everything shown is also stated in text.
  */
-export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, view, className }: AnatomyViewProps) {
+export function AnatomyView({ formData, hasTACImages, showReading = true, compact = false, view, fracture = false, closeUp = false, className }: AnatomyViewProps) {
   const { t, i18n } = useTranslation();
   // A new state object only when what is shown changes, so the model is not redrawn on every render.
   const stateKey = JSON.stringify(getAnatomyState(formData));
   const state = useMemo<AnatomyState>(() => JSON.parse(stateKey), [stateKey]);
   // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
   const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
-  const summary = useSummary(state);
+  const summary = useSummary(state, fracture && closeUp);
+  // Set once the fracture is drawn; a failed fracture load leaves the tinted figure and its captions.
+  const [fractured, setFractured] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -74,11 +83,13 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       value={state.fibula && t(`anatomy.level.${state.fibula}`)}
     />
   );
+  // With the fracture drawn, the caption names the fragment the figure shows.
+  const posteriorType = fractured ? drawnPosteriorType(state) : state.posteriorType;
   const posteriorCaption = (
     <Caption
       title={t('anatomy.posteriorMalleolus')}
       shown={state.posterior}
-      value={state.posteriorType && t(`form.options.posteriorType.${state.posteriorType}`)}
+      value={posteriorType && t(`form.options.posteriorType.${posteriorType}`)}
     />
   );
 
@@ -91,9 +102,12 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
             {t(`anatomy.model3d.${notice}`)}
           </p>
         </>
+      ) : closeUp && !answered ? (
+        // Nothing is broken before the first answer, so the close-up says so instead of loading the model.
+        <p className="grid aspect-square place-items-center rounded-sm bg-(--fig-backdrop) p-6 text-center text-sm text-muted-foreground">{t('anatomy.fractureEmpty')}</p>
       ) : (
-        <Suspense fallback={<FigurePlaceholder compact={compact} />}>
-          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} onFail={() => setNotice('loadFailed')} />
+        <Suspense fallback={<FigurePlaceholder compact={compact} closeUp={closeUp} />}>
+          <Anatomy3D state={state} posteriorAsked={posteriorAsked} compact={compact} view={view} fracture={fracture} fractured={fractured} onFractured={() => setFractured(true)} closeUp={closeUp} onFail={() => setNotice('loadFailed')} />
         </Suspense>
       )}
       {/* Before the first answer there is nothing to caption, so no space is held for it. */}
@@ -118,7 +132,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
       )}
 
       <figcaption className="space-y-1 text-xs text-muted-foreground">
-        {answered && <p>{t('anatomy.note')}</p>}
+        {answered && <p>{t(fractured ? 'anatomy.fractureNote' : 'anatomy.note')}</p>}
         <Sources />
       </figcaption>
     </figure>
@@ -126,7 +140,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
 }
 
 /** FigurePlaceholder holds the figure's size while three.js loads, so nothing shifts when it lands. */
-function FigurePlaceholder({ compact }: { compact: boolean }) {
+function FigurePlaceholder({ compact, closeUp }: { compact: boolean; closeUp: boolean }) {
   const { t } = useTranslation();
   return (
     <div aria-hidden="true" className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
@@ -134,7 +148,7 @@ function FigurePlaceholder({ compact }: { compact: boolean }) {
         <p className="grid aspect-square place-items-center rounded-sm bg-(--fig-backdrop) text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>
         <p className="mt-2 h-4" />
       </div>
-      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1')}>
+      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1', closeUp && 'hidden')}>
         {[0, 1].map((i) => (
           <div key={i} className="rounded-sm border bg-(--fig-plate) p-1">
             <div className="aspect-square sm:aspect-[5/4]" />
@@ -160,7 +174,7 @@ function Caption({ title, shown, value }: { title: string; shown: boolean; value
   );
 }
 
-function useSummary(state: AnatomyState): string {
+function useSummary(state: AnatomyState, fractureView = false): string {
   const { t, i18n } = useTranslation();
   const parts = [
     state.lateral && t('anatomy.structures.lateral'),
@@ -176,6 +190,12 @@ function useSummary(state: AnatomyState): string {
   if (state.fibula) sentences.push(t(`anatomy.summary.fibula.${state.fibula}`));
   if (state.posteriorType) {
     sentences.push(t('anatomy.summary.posteriorType', { type: t(`form.options.posteriorType.${state.posteriorType}`) }));
+  }
+  // The fracture view also says which pieces it draws, and whether they have moved.
+  const pieces = fractureView ? [...new Set(fracturePose(state).pieces.map(fragmentName))] : [];
+  if (pieces.length > 0) {
+    const list = new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(pieces.map((n) => t(`anatomy.fragments.${n}`)));
+    sentences.push(t(state.complete ? 'anatomy.summary.fractureDisplaced' : 'anatomy.summary.fractureClosed', { list }));
   }
   return sentences.join(' ');
 }

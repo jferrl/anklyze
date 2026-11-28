@@ -1,13 +1,15 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowUp, RotateCcw, ScanLine, Split, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
+import { fractureViewFor, PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
 import { marksFor } from './anatomyMarks';
 import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import { parseAnkleModel, type AnkleModel } from './ankleModel';
+import { parseFractureModel, type FractureModel } from './fractureModel';
+import { fragmentName } from './fractureNames';
 import { createAnkleScene, ZOOM_MAX, type Anchors, type AnkleScene, type Ink } from './ankleScene';
 
 const DEG = Math.PI / 180;
@@ -58,6 +60,19 @@ function loadModel() {
   return model;
 }
 
+// Fetched after the base model draws; on failure the bones stay whole, and the next figure retries.
+let fractures: Promise<FractureModel> | undefined;
+function loadFractures() {
+  fractures ??= fetch('/models/ankle/fractures.bin')
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`fractures.bin ${r.status}`))))
+    .then(parseFractureModel)
+    .catch((e) => {
+      fractures = undefined;
+      throw e;
+    });
+  return fractures;
+}
+
 interface Overlay {
   labels: Partial<Record<Labelled, HTMLSpanElement | null>>;
   leaders: Partial<Record<Labelled, SVGGElement | null>>;
@@ -73,13 +88,21 @@ interface Anatomy3DProps {
   onFail: () => void;
   /** Opens on this view instead of following the answers there. */
   view?: Preset;
+  /** Draws the fracture itself instead of the tint; off, the figure is the tinted one. */
+  fracture?: boolean;
+  /** The fracture is drawn; until then, or if it fails to load, the figure is the tinted one. */
+  fractured?: boolean;
+  /** Called once the fracture is drawn. */
+  onFractured?: () => void;
+  /** Frames the fracture region closer and leaves out the AP and Lateral pair. */
+  closeUp?: boolean;
 }
 
 /**
  * Anatomy3D shows the BodyParts3D ankle to turn freely, turns it to what each answer newly
  * involves, and pairs it with AP and Lateral views drawn by the same renderer; loaded on demand.
  */
-export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view }: Anatomy3DProps) {
+export default function Anatomy3D({ state, posteriorAsked = false, compact = false, onFail, view, fracture = false, fractured = false, onFractured, closeUp = false }: Anatomy3DProps) {
   const marks = marksFor(state);
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -98,6 +121,11 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   const touched = useRef(-Infinity);
   const seen = useRef<Focus>(NONE);
   const hintId = useId();
+  // Fracture view only: the radiograph look, the closed or displaced fracture, and the piece under the mouse.
+  const [xray, setXray] = useState(false);
+  const [displaced, setDisplaced] = useState(true);
+  const [hover, setHover] = useState<{ x: number; y: number; name: string }>();
+  const picking = useRef(0);
 
   // The scene is made once the canvas has a size, so a hidden figure costs nothing; it then lives
   // as long as the figure, and answers only update its marks.
@@ -118,7 +146,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       loadModel()
         .then((m) => {
           if (cancelled) return;
-          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors), (key) => overlay.labels[key as Labelled]?.offsetHeight ?? 20);
+          scene = createAnkleScene(canvas, m, (anchors) => placeLabels(overlay, anchors), (key) => overlay.labels[key as Labelled]?.offsetHeight ?? 20, closeUp);
           sceneRef.current = scene;
           scene.setInk(readInk(canvas));
           scene.resize(canvas.getBoundingClientRect().width);
@@ -126,6 +154,14 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
           // The theme toggles a class on <html>; redraw in the new ink.
           themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
           setReady(true);
+          if (!fracture) return;
+          loadFractures()
+            .then(async (f) => {
+              if (cancelled || !scene) return;
+              await scene.setFractures(f);
+              if (!cancelled) onFractured?.();
+            })
+            .catch((e) => console.error('fractures.bin', e));
         })
         .catch(() => !cancelled && onFail());
     });
@@ -192,7 +228,11 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     scene.setState(state);
     const focus = { state, posteriorAsked };
     // A figure opened on a set view stays on it for the answers it opened with.
-    const preset = view && seen.current === NONE ? undefined : presetFor(seen.current, focus);
+    // The close-up holds the view that shows the break, and turns only when that view changes.
+    const toBreak = fractureViewFor(state);
+    const preset = closeUp
+      ? toBreak !== fractureViewFor(seen.current.state) || seen.current === NONE ? toBreak : undefined
+      : view && seen.current === NONE ? undefined : presetFor(seen.current, focus);
     const first = seen.current === NONE && !view;
     seen.current = focus;
     if (preset) {
@@ -213,6 +253,26 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     // view only sets where a figure opens, and turnTo reads refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, posteriorAsked, ready]);
+
+  useEffect(() => {
+    if (ready) sceneRef.current?.setXray(xray);
+  }, [xray, ready]);
+  // Fractures arrive as a fresh scene, displaced, so the choice is applied again once they draw.
+  useEffect(() => {
+    if (fractured) sceneRef.current?.setDisplaced(displaced);
+  }, [displaced, fractured]);
+
+  // Names the piece under the mouse, once per frame; touch has no hover, and a drag turns the model.
+  function onHover(e: PointerEvent<HTMLCanvasElement>) {
+    if (!closeUp || !fractured || e.pointerType !== 'mouse' || drag.current) return setHover(undefined);
+    const box = e.currentTarget.getBoundingClientRect();
+    const [x, y] = [e.clientX - box.left, e.clientY - box.top];
+    cancelAnimationFrame(picking.current);
+    picking.current = requestAnimationFrame(() => {
+      const name = sceneRef.current?.pick(x, y);
+      setHover(name ? { x, y, name } : undefined);
+    });
+  }
 
   // The AP and Lateral pair redraws only when the answers, the theme or its size change.
   useEffect(() => {
@@ -239,7 +299,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       clearTimeout(timer);
       resize.disconnect();
     };
-  }, [state, ready, theme]);
+  }, [state, ready, theme, fractured]);
 
   function handled() {
     cancelAnimationFrame(glide.current);
@@ -274,6 +334,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   }
 
   function onPointerMove(e: PointerEvent<HTMLCanvasElement>) {
+    onHover(e);
     if (touches.current.size === 2 && touches.current.has(e.pointerId)) return onPinch(e);
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
@@ -338,7 +399,8 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   return (
     <div className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
       <div className="space-y-2">
-        <div className="relative overflow-hidden rounded-sm bg-(--fig-backdrop)">
+        {/* An X-ray reads white on black, as on film, whatever the page theme. */}
+        <div className={cn('relative overflow-hidden rounded-sm', xray ? 'bg-black' : 'bg-(--fig-backdrop)')}>
           <canvas
             ref={canvasRef}
             tabIndex={0}
@@ -348,6 +410,10 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
+            onPointerLeave={() => {
+              cancelAnimationFrame(picking.current);
+              setHover(undefined);
+            }}
             onContextMenu={(e) => e.preventDefault()}
             onKeyDown={onKeyDown}
             // pan-y keeps the page scrollable on touch while a horizontal drag turns the model; zoomed
@@ -360,7 +426,8 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             )}
           />
           {/* Labels are drawn for the whole model; zoomed in they would crowd the edges, so they fade out. */}
-          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', fade, zoom > 1 ? 'opacity-0' : 'opacity-100', !ready && 'hidden')}>
+          {/* The close-up leaves the naming to the tinted figure, so nothing covers the break. */}
+          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', fade, zoom > 1 ? 'opacity-0' : 'opacity-100', (!ready || closeUp) && 'hidden')}>
             <svg className="absolute inset-0 size-full overflow-visible">
               {LABELS.map(([key]) => (
                 <g
@@ -405,6 +472,18 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
               </span>
             ))}
           </div>
+          {hover && (
+            <span aria-hidden="true" className="pointer-events-none absolute w-max rounded-sm border bg-background/90 px-1.5 py-0.5 text-xs text-foreground" style={{ left: hover.x + 12, top: hover.y + 12 }}>
+              {t(`anatomy.fragments.${fragmentName(hover.name)}`)}
+            </span>
+          )}
+          {/* The proximal fibula is beyond the close-up's frame, so the figure points up to it. */}
+          {closeUp && marks.proximal && (
+            <p className="pointer-events-none absolute left-2 top-2 flex max-w-[60%] items-center gap-1 rounded-sm bg-background/90 px-1.5 py-0.5 text-xs font-medium text-primary">
+              <ArrowUp aria-hidden="true" className="size-3.5 shrink-0" />
+              {t('anatomy.level.proximal')}
+            </p>
+          )}
           {!ready && <p className="absolute inset-0 grid place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}
           <div className="absolute right-2 top-2 flex flex-col gap-1">
             <Button
@@ -413,7 +492,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
               size="icon-sm"
               onClick={() => {
                 touched.current = -Infinity;
-                turnTo('anterolateral');
+                turnTo((closeUp && fractureViewFor(state)) || 'anterolateral');
               }}
               aria-label={t('anatomy.model3d.reset')}
               title={t('anatomy.model3d.reset')}
@@ -449,6 +528,36 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             >
               <ZoomOut />
             </Button>
+            {closeUp && fractured && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-pressed={xray}
+                  onClick={() => setXray((on) => !on)}
+                  aria-label={t('anatomy.model3d.xray')}
+                  title={t('anatomy.model3d.xray')}
+                  className="aria-pressed:border-(--hl) aria-pressed:text-primary"
+                >
+                  <ScanLine />
+                </Button>
+                {/* Fragments move only once the form is complete, so the switch waits for it. */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-pressed={displaced}
+                  onClick={() => setDisplaced((on) => !on)}
+                  aria-label={t('anatomy.model3d.displaced')}
+                  title={t('anatomy.model3d.displaced')}
+                  disabled={!state.complete}
+                  className="aria-pressed:border-(--hl) aria-pressed:text-primary"
+                >
+                  <Split />
+                </Button>
+              </>
+            )}
           </div>
         </div>
         <p aria-hidden="true" className="text-xs leading-4 text-muted-foreground">
@@ -460,7 +569,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
       </div>
 
       {/* The radiographic pair: each view shows every mark, and turns the model to itself. */}
-      <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1 lg:content-start')}>
+      {!closeUp && <div className={cn('grid grid-cols-2 gap-2', compact && 'lg:grid-cols-1 lg:content-start')}>
         {PAIR.map(([preset, caption, action]) => (
           <button
             key={preset}
@@ -488,7 +597,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             <span className={cn('block px-1 pt-1 text-xs leading-4 text-muted-foreground group-aria-pressed:font-semibold group-aria-pressed:text-primary', !compact && 'lg:text-sm lg:leading-5')}>{t(caption)}</span>
           </button>
         ))}
-      </div>
+      </div>}
     </div>
   );
 }

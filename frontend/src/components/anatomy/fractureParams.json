@@ -1,0 +1,964 @@
+{
+  "pieces": [
+    {
+      "id": "fib_tip_avulsion",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            -21,
+            -10
+          ],
+          "normal": [
+            0.0,
+            -0.9988,
+            0.0499
+          ]
+        }
+      ],
+      "noise": 0.4,
+      "move": {
+        "translate": [
+          -0.5,
+          -1,
+          0.25
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.7,
+            0,
+            -8.9
+          ],
+          "deg": -1
+        }
+      },
+      "source": "images: 4 cases (44-A1, 43-B1 tip flakes); line 6-8 mm above the fibular tip"
+    },
+    {
+      "id": "fib_infra",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            -9.5,
+            -9
+          ],
+          "normal": [
+            0.0594,
+            -0.9905,
+            0.1238
+          ]
+        }
+      ],
+      "noise": 0.5,
+      "move": {
+        "translate": [
+          0,
+          -1,
+          0
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.7,
+            0,
+            -8.9
+          ],
+          "deg": -1.5
+        }
+      },
+      "source": "images: 2 cases (44-A2, 44-A3), weak; plus literature (AO/OTA 44-A1.3, A2)"
+    },
+    {
+      "id": "fib_trans_spiral",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            10.5,
+            -11
+          ],
+          "normal": [
+            -0.0821,
+            -0.6318,
+            -0.7708
+          ]
+        }
+      ],
+      "noise": 0.8,
+      "move": {
+        "translate": [
+          -1.5,
+          1.25,
+          -2.25
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.8,
+            0,
+            -11.8
+          ],
+          "deg": -4
+        }
+      },
+      "source": "images: 22 cases (44-B1, B2, B3 SER; nc Bartonicek 3/4 with a Weber B line)"
+    },
+    {
+      "id": "fib_trans_short",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            8,
+            -11
+          ],
+          "normal": [
+            0.0,
+            -0.866,
+            -0.5
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          -1.5,
+          1,
+          -1.5
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.8,
+            0,
+            -11.8
+          ],
+          "deg": -3
+        }
+      },
+      "source": "images: 4 cases (44-B3 Bartonicek 3/4)"
+    },
+    {
+      "id": "fib_trans_coronal",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            11.5,
+            -10
+          ],
+          "normal": [
+            -0.7659,
+            -0.6429,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.7,
+      "move": {
+        "translate": [
+          -2,
+          0.5,
+          -0.5
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.8,
+            0,
+            -11.8
+          ],
+          "deg": -2
+        }
+      },
+      "source": "images: 5 cases (Weber B, Lauge-Hansen PA)"
+    },
+    {
+      "id": "fib_trans_wedge",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            13,
+            -11
+          ],
+          "normal": [
+            0.0821,
+            0.6318,
+            0.7708
+          ]
+        },
+        {
+          "point": [
+            -24,
+            21,
+            -11
+          ],
+          "normal": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -24,
+            13,
+            -11
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          -1.5,
+          0.5,
+          -0.5
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -23.8,
+            0,
+            -11.8
+          ],
+          "deg": -1
+        }
+      },
+      "source": "images: 6 cases (Weber B with a lateral wedge)"
+    },
+    {
+      "id": "fib_trans_comm_a",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            4,
+            -11
+          ],
+          "normal": [
+            0,
+            0.9659,
+            0.2588
+          ]
+        },
+        {
+          "point": [
+            -24,
+            16,
+            -11
+          ],
+          "normal": [
+            0,
+            -0.9659,
+            0.2588
+          ]
+        },
+        {
+          "point": [
+            -24,
+            10,
+            -11
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "noise": 0.9,
+      "move": {
+        "translate": [
+          0,
+          0.5,
+          1
+        ]
+      },
+      "source": "images: 2 cases (sagittal CT anterior chips); plus literature"
+    },
+    {
+      "id": "fib_trans_comm_b",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -24,
+            4,
+            -11
+          ],
+          "normal": [
+            0,
+            0.9659,
+            -0.2588
+          ]
+        },
+        {
+          "point": [
+            -24,
+            16,
+            -11
+          ],
+          "normal": [
+            0,
+            -0.9659,
+            -0.2588
+          ]
+        },
+        {
+          "point": [
+            -24,
+            10,
+            -11
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ]
+        }
+      ],
+      "noise": 0.9,
+      "move": {
+        "translate": [
+          0,
+          0.5,
+          -1
+        ]
+      },
+      "source": "literature: AO/OTA Fracture and Dislocation Classification Compendium 2018, 44-B3/44-C multifragmentary fibula; posterior wedge not separable on the case images"
+    },
+    {
+      "id": "fib_supra",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -26.6,
+            48,
+            -12.5
+          ],
+          "normal": [
+            -0.1518,
+            -0.8097,
+            0.5668
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          -2,
+          1,
+          0
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -26.6,
+            0,
+            -12.5
+          ],
+          "deg": -3
+        }
+      },
+      "source": "images: 5 cases (44-C1, low 44-C2); line anterosuperior to posteroinferior (PER)"
+    },
+    {
+      "id": "fib_supra_wedge",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -26.6,
+            42,
+            -12.5
+          ],
+          "normal": [
+            -0.2588,
+            0.9659,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -26.6,
+            54,
+            -12.5
+          ],
+          "normal": [
+            -0.2588,
+            -0.9659,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -26.6,
+            48,
+            -12.5
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.7,
+      "move": {
+        "translate": [
+          -1.5,
+          0.5,
+          0
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -26.6,
+            0,
+            -12.5
+          ],
+          "deg": -1
+        }
+      },
+      "source": "images: 7 cases (44-C1/C2 with a lateral butterfly)"
+    },
+    {
+      "id": "fib_supra_far",
+      "bone": "fibula",
+      "planes": [
+        {
+          "point": [
+            -27.8,
+            68,
+            -11.2
+          ],
+          "normal": [
+            -0.1701,
+            -0.9854,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          -2,
+          0.5,
+          -1
+        ],
+        "rotate": {
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            -27.8,
+            0,
+            -11.2
+          ],
+          "deg": -2.5
+        }
+      },
+      "source": "images: 6 cases (44-C2, fractures 6-9 cm above the joint)"
+    },
+    {
+      "id": "art_depression",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            -10,
+            2,
+            -6
+          ],
+          "normal": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "point": [
+            -2,
+            2,
+            -6
+          ],
+          "normal": [
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "point": [
+            -6,
+            2,
+            -10
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "point": [
+            -6,
+            2,
+            -2
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ]
+        },
+        {
+          "point": [
+            -6,
+            0,
+            -6
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "point": [
+            -6,
+            4.3,
+            -6
+          ],
+          "normal": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "noise": 0.3,
+      "move": {
+        "translate": [
+          0,
+          1.5,
+          0
+        ]
+      },
+      "source": "literature: marginal impaction of the posterolateral plafond (Bartonicek et al., Arch Orthop Trauma Surg 2015; AO Surgery Reference, malleoli); not seen isolated in the 53 cases"
+    },
+    {
+      "id": "med_transverse",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            14.5,
+            1,
+            0
+          ],
+          "normal": [
+            0.2704,
+            -0.9614,
+            0.0501
+          ]
+        },
+        {
+          "point": [
+            14.5,
+            1,
+            0
+          ],
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.5,
+      "move": {
+        "translate": [
+          1.5,
+          -1.5,
+          0
+        ]
+      },
+      "source": "images: 14 cases (44-B3, 44-C, isolated medial); transverse at the plafond corner"
+    },
+    {
+      "id": "med_vertical",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            15,
+            0,
+            0
+          ],
+          "normal": [
+            0.9794,
+            -0.1959,
+            -0.049
+          ]
+        },
+        {
+          "point": [
+            14,
+            36,
+            0
+          ],
+          "normal": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.6,
+      "move": {
+        "translate": [
+          1.25,
+          1.25,
+          0
+        ]
+      },
+      "source": "literature: vertical shear (AO/OTA 44-A2.3, Lauge-Hansen SA II); 1 weak case (44-A2)"
+    },
+    {
+      "id": "post_b1",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            -8.5,
+            6,
+            -18
+          ],
+          "normal": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "point": [
+            -14,
+            6,
+            -18
+          ],
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -3,
+            6,
+            -18
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            -8.5,
+            6,
+            -18
+          ],
+          "normal": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.5,
+      "move": {
+        "translate": [
+          0,
+          0.5,
+          -1
+        ]
+      },
+      "source": "images: 2 cases (44-B3 Bartonicek 1, CT); thin posterolateral rim outside the incisura (Bartonicek et al., Arch Orthop Trauma Surg 2015)"
+    },
+    {
+      "id": "post_b2",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            -14,
+            0,
+            -9
+          ],
+          "normal": [
+            -0.36,
+            -0.48,
+            -0.8
+          ]
+        },
+        {
+          "point": [
+            6,
+            0,
+            -9
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.7,
+      "move": {
+        "translate": [
+          -0.25,
+          1.25,
+          -1.5
+        ],
+        "rotate": {
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            -10,
+            0,
+            -16
+          ],
+          "deg": 1.5
+        }
+      },
+      "source": "images: 8 cases (Bartonicek 2, CT); crescent behind the incisura"
+    },
+    {
+      "id": "post_b3_pm",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            5,
+            0,
+            -8
+          ],
+          "normal": [
+            0.1329,
+            -0.2848,
+            -0.9493
+          ]
+        },
+        {
+          "point": [
+            5,
+            0,
+            -8
+          ],
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.7,
+      "move": {
+        "translate": [
+          0.5,
+          1.75,
+          -1.5
+        ]
+      },
+      "source": "images: 8 cases (Bartonicek 3, CT); posteromedial part reaching the posterior colliculus"
+    },
+    {
+      "id": "post_b4",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            0,
+            0,
+            -8
+          ],
+          "normal": [
+            -0.0884,
+            -0.1669,
+            -0.982
+          ]
+        },
+        {
+          "point": [
+            14,
+            0,
+            -8
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.8,
+      "move": {
+        "translate": [
+          0,
+          2,
+          -1.5
+        ]
+      },
+      "source": "images: 7 cases (Bartonicek 4, CT and lateral); triangle with the incisura"
+    },
+    {
+      "id": "post_pm_extraincisural",
+      "bone": "tibia",
+      "planes": [
+        {
+          "point": [
+            10,
+            5,
+            -13
+          ],
+          "normal": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "point": [
+            4,
+            5,
+            -13
+          ],
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            16,
+            5,
+            -13
+          ],
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "point": [
+            10,
+            10,
+            -13
+          ],
+          "normal": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        }
+      ],
+      "noise": 0.5,
+      "move": {
+        "translate": [
+          0.35,
+          1,
+          -1.5
+        ]
+      },
+      "source": "literature: extraincisural posteromedial fragment (AO/OTA 44-A3); 1 case (nc Bartonicek 3)"
+    }
+  ],
+  "unstable": {
+    "talus": {
+      "translate": [
+        -2,
+        0,
+        -0.5
+      ],
+      "rotate": {
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "deg": -4
+      }
+    },
+    "fibula": {
+      "translate": [
+        -2,
+        0,
+        0
+      ]
+    }
+  }
+}

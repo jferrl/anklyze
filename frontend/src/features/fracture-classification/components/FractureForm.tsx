@@ -6,6 +6,8 @@ import { ComparisonView } from '@/components/ComparisonView';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { AnatomyView } from '@/components/anatomy/AnatomyView';
 import { AnatomySnapshotPair } from '@/components/anatomy/AnatomySnapshotPair';
+import { useSnapshots } from '@/components/anatomy/anatomySnapshots';
+import { AnatomyTabs } from '@/components/anatomy/AnatomyTabs';
 import { getLocalFormOptions } from '@/utils/formOptions';
 import { useClassification } from '@/hooks/useClassification';
 import type { FractureInput } from '@/types';
@@ -34,6 +36,8 @@ export function FractureForm() {
   const { formData, updateFormData, clearFormData, goBack, canGoBack } = useFormState();
   const [lastInput, setLastInput] = useState<FractureInput | null>(null);
   const [showAnatomy, setShowAnatomy] = useState(false);
+  // The pair exists only if the tinted figure was ever shown; otherwise the result draws it live.
+  const { ap } = useSnapshots();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const options = useMemo(() => getLocalFormOptions(), [i18n.language]);
@@ -151,7 +155,11 @@ export function FractureForm() {
             onReset={handleReset}
             onCompare={handleStartComparison}
           />
-          <AnatomySnapshotPair formData={lastInput} />
+          <AnatomyTabs
+            complete
+            anatomy={ap ? <AnatomySnapshotPair formData={lastInput} /> : <AnatomyView formData={lastInput} showReading={false} />}
+            fracture={<AnatomyView formData={lastInput} showReading={false} fracture closeUp />}
+          />
         </div>
       </div>
     );
@@ -196,7 +204,11 @@ export function FractureForm() {
                 </Button>
                 {/* Hidden, not unmounted, when closed: the model and its camera survive every answer. */}
                 <div id="anatomy-mobile" className={showAnatomy ? 'mt-2 rounded-lg border bg-card p-4' : 'hidden'}>
-                  <AnatomyView formData={formData} showReading={false} />
+                  <AnatomyTabs
+                    complete={isFormComplete(formData)}
+                    anatomy={<AnatomyView formData={formData} showReading={false} />}
+                    fracture={<AnatomyView formData={formData} showReading={false} fracture closeUp />}
+                  />
                 </div>
               </div>
             </div>
@@ -239,13 +251,14 @@ export function FractureForm() {
         </div>
 
         <aside className="hidden space-y-6 lg:sticky lg:top-16 lg:block lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
-          <section className="space-y-3">
-            <h2 className="text-base font-semibold">{t('anatomy.title')}</h2>
-            <div className="rounded-lg border bg-card p-4">
-              {/* The path list below is the reading, so the figure does not repeat it. */}
-              <AnatomyView formData={formData} showReading={false} />
-            </div>
-          </section>
+          <div className="rounded-lg border bg-card p-4">
+            {/* The path list below is the reading, so the figures do not repeat it. */}
+            <AnatomyTabs
+              complete={isFormComplete(formData)}
+              anatomy={<AnatomyView formData={formData} showReading={false} />}
+              fracture={<AnatomyView formData={formData} showReading={false} fracture closeUp />}
+            />
+          </div>
           <section className="space-y-3">
             <h2 className="text-base font-semibold">{t('classify.pathTitle')}</h2>
             {formData.involved_malleoli ? (
@@ -259,3 +272,4 @@ export function FractureForm() {
     </form>
   );
 }
+

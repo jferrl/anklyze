@@ -42,3 +42,16 @@ export function presetFor(prev: Focus, next: Focus): Preset | undefined {
   if (next.state.fibula && next.state.fibula !== prev.state.fibula) return 'anterolateral';
   return undefined;
 }
+
+/**
+ * fractureViewFor is the view that shows the drawn fracture best: from behind and lateral for a
+ * posterior fragment, AP for a fibula and a medial break, else the involved side; undefined before any answer.
+ */
+export function fractureViewFor(state: AnatomyState): Preset | undefined {
+  if (state.posterior) return 'posterior';
+  // A proximal (Maisonneuve) fibula break is not the lateral malleolus, but its fibula should still show.
+  if ((state.lateral || state.fibula) && state.medial) return 'ap';
+  if (state.medial) return 'medial';
+  if (state.lateral) return 'anterolateral';
+  return undefined;
+}

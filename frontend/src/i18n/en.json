@@ -394,6 +394,8 @@
   },
   "anatomy": {
     "title": "Anatomy",
+    "fractureTitle": "Simulated fracture",
+    "fractureEmpty": "Answer the questions to see the fracture they describe.",
     "show": "Show anatomy",
     "hide": "Hide anatomy",
     "posteriorMalleolus": "Posterior malleolus",
@@ -420,7 +422,9 @@
         "supra_far": "Fibular fracture above the syndesmosis, more than 6 cm from the joint.",
         "proximal": "Fibular fracture in the proximal fibula, beyond the model."
       },
-      "posteriorType": "Posterior malleolus: {{type}}."
+      "posteriorType": "Posterior malleolus: {{type}}.",
+      "fractureDisplaced": "Simulated fracture, displaced: {{list}}.",
+      "fractureClosed": "Simulated fracture, undisplaced: {{list}}."
     },
     "fields": {
       "involved_malleoli": "Malleoli",
@@ -440,6 +444,7 @@
       "posterior_fracture_type": "Posterior fragment"
     },
     "note": "Shading shows the region and level involved, not the fracture pattern.",
+    "fractureNote": "A standard fracture for these answers, not a model of this patient's fracture.",
     "sources": {
       "title": "Sources",
       "model": "Model: right ankle from <work>BodyParts3D</work>, © The Database Center for Life Science, cut and refined for Anklyze; <license>CC BY-SA 4.0</license>.",
@@ -462,7 +467,9 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "enlarge": "Open the {{view}} view in the 3D model",
-      "enlargeTitle": "Ankle model"
+      "enlargeTitle": "Ankle model",
+      "xray": "X-ray look",
+      "displaced": "Show displacement"
     },
     "structureNames": {
       "lateral": "Lateral malleolus",
@@ -470,7 +477,20 @@
       "posterior": "Posterior malleolus"
     },
     "syndesmosis": "Syndesmosis",
-    "behind": "(behind)"
+    "behind": "(behind)",
+    "fragments": {
+      "tipAvulsion": "Avulsed fibular tip",
+      "distalFibula": "Distal fibular fragment",
+      "butterfly": "Butterfly fragment",
+      "comminuted": "Comminuted fragment",
+      "depression": "Depressed articular fragment",
+      "medial": "Medial malleolus fragment",
+      "posterior": "Posterior malleolus fragment",
+      "posteromedial": "Posteromedial fragment",
+      "tibia": "Tibia",
+      "fibula": "Fibula",
+      "talus": "Talus"
+    }
   },
   "language": {
     "toggle": "Toggle language"
