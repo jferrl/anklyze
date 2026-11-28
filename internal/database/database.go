@@ -34,6 +34,7 @@ func Connect(databaseURL string, pool PoolConfig) (*gorm.DB, error) {
 		logger.Config{
 			SlowThreshold:             500 * time.Millisecond,
 			LogLevel:                  logger.Warn,
+			ParameterizedQueries:      true, // keep row values (emails, answers) out of slow-query logs
 			IgnoreRecordNotFoundError: true,
 			Colorful:                  false, // No ANSI overhead in production
 		},

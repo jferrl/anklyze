@@ -89,7 +89,8 @@ The backend reads `.env` if present; `.env.example` lists the variables. The fro
 | `PORT` | `8080` | |
 | `CORS_ALLOW_ORIGIN` | `*` | |
 | `LOG_LEVEL`, `LOG_FORMAT` | `info`, `text` | |
-| `APP_ENV` | unset | `production` makes the server refuse to start without `SUPABASE_URL` or the S3 variables. |
+| `APP_ENV` | unset | Anything but `development`, including unset, makes the server refuse to start without `SUPABASE_URL` or the S3 variables. |
+| `TRUSTED_PROXIES` | private ranges | Comma-separated CIDRs whose `X-Forwarded-For` sets the client IP. The default trusts loopback and private networks, which covers a proxy on the same Docker host. |
 
 `make run` sets `DATABASE_URL` and the S3 variables for the Docker services. It does not set `SUPABASE_URL`, so auth stays off unless your `.env` provides it.
 

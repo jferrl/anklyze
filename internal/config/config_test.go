@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"slices"
 	"testing"
 )
 
@@ -550,6 +551,26 @@ func TestConfigHelperMethods(t *testing.T) {
 			}
 			if got := tt.config.HasSupabase(); got != tt.checks["HasSupabase"] {
 				t.Errorf("HasSupabase() = %v, want %v", got, tt.checks["HasSupabase"])
+			}
+		})
+	}
+}
+
+func TestGetEnvList(t *testing.T) {
+	def := []string{"10.0.0.0/8"}
+	tests := map[string]struct {
+		env  string
+		want []string
+	}{
+		"unset uses default":    {"", def},
+		"only commas":           {" , ,", def},
+		"trims and drops empty": {" 1.2.3.4/32, ,172.18.0.0/16 ", []string{"1.2.3.4/32", "172.18.0.0/16"}},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv("TEST_LIST", tt.env)
+			if got := getEnvList("TEST_LIST", def); !slices.Equal(got, tt.want) {
+				t.Errorf("getEnvList() = %q, want %q", got, tt.want)
 			}
 		})
 	}
