@@ -1,6 +1,8 @@
 module github.com/jferrl/anklyze
 
-go 1.26.0
+go 1.27.0
+
+toolchain go1.27.4
 
 require (
 	github.com/MicahParks/keyfunc/v3 v3.9.2
