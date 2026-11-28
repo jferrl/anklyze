@@ -28,7 +28,9 @@ them on do not change in this review; only their placement, size and move do.
 - **Reconciliation.** For each piece the value is the median of the two readings. Where they
   differed by more than 5 mm or 15°, the relevant cases were opened again and measured; the
   tables below record each decision. Moves were then limited to 1 to 3 mm and at most 5° per
-  fragment, so the picture shows the direction of displacement without exaggerating it.
+  fragment, so the picture shows the direction of displacement without exaggerating it. The
+  fracture view draws every move at twice these values (2 to 6 mm, up to 10°) so the break reads
+  at panel size; the tables give the values before doubling.
 - **Scale.** The readers measured on images without a common ruler, so heights first had to be
   put on the model's scale.
   - The model's distal tibia is 48 mm wide at the plafond, medial malleolus included. Its talar
@@ -44,9 +46,9 @@ them on do not change in this review; only their placement, size and move do.
 
 ## The eight shown paths
 
-Each path has three pictures: the 3D view as the form opens it, and the AP and lateral views of
-the result screen. Paths 3 and 4 also have a posterolateral view, because the default 3D view
-does not show the posterior fragment.
+Each path has three pictures of the simulated fracture view, doubled moves included: as it opens
+(turned to the side that shows the break), front-lateral and back-lateral. On path 7 the close-up
+crops the proximal-fibula arrow; the anatomy view shows it whole.
 
 ### 1. Lateral malleolus only, infrasyndesmotic tip avulsion
 
@@ -61,9 +63,9 @@ Pieces: `fib_tip_avulsion`.
 | Source | Images: 4 cases (44-A1 and the tip flakes of the 43-B1 case) |
 | Readers | Disagreed by 10 mm. Claude put the line 6 to 8 mm above the tip (median 22 mm below the plafond); Codex put it 7 to 12 mm below the plafond. Case 3 was measured again: the line is 6 to 7 mm above the tip, so Claude's reading was taken. The old value (10 mm below) was too high. |
 
-![Path 1, 3D view](fracture-patterns/1-lat-infra-avulsion-3d.png)
-![Path 1, AP](fracture-patterns/1-lat-infra-avulsion-ap.png)
-![Path 1, lateral](fracture-patterns/1-lat-infra-avulsion-lat.png)
+![Path 1, the fracture view as it opens](fracture-patterns/1-lat-infra-avulsion-view.png)
+![Path 1, front-lateral](fracture-patterns/1-lat-infra-avulsion-front.png)
+![Path 1, back-lateral](fracture-patterns/1-lat-infra-avulsion-back.png)
 
 ### 2. Lateral malleolus only, transsyndesmotic spiral (Weber B)
 
@@ -78,9 +80,9 @@ Pieces: `fib_trans_spiral`.
 | Source | Images: 22 cases (44-B1, B2, B3 SER, and unclassified cases with a Weber B line) |
 | Readers | Agreed. Line from 0 to 1 mm up to 24 to 27 mm (Codex), or 2 to 28 mm (Claude); the angle was 51° (Codex) or 45 to 55° (Claude). The line's top is now 2 mm above the model's syndesmosis line, and the test that kept Weber B pieces below 23 mm now allows 26 mm. |
 
-![Path 2, 3D view](fracture-patterns/2-lat-trans-spiral-3d.png)
-![Path 2, AP](fracture-patterns/2-lat-trans-spiral-ap.png)
-![Path 2, lateral](fracture-patterns/2-lat-trans-spiral-lat.png)
+![Path 2, the fracture view as it opens](fracture-patterns/2-lat-trans-spiral-view.png)
+![Path 2, front-lateral](fracture-patterns/2-lat-trans-spiral-front.png)
+![Path 2, back-lateral](fracture-patterns/2-lat-trans-spiral-back.png)
 
 ### 3. Trimalleolar: Weber B spiral, transverse medial malleolus, posterolateral fragment (Bartoníček 2)
 
@@ -99,10 +101,9 @@ Talus (unstable): 2 mm lateral, 0.5 mm posterior, 4° external rotation. Both re
 medial clear space of 4 to 5 mm in these groups. Codex's 3 mm / 6° for the more unstable
 patterns is beyond the 3 mm / 5° limit, so the talus move was capped.
 
-![Path 3, 3D view](fracture-patterns/3-tri-spiral-b2-3d.png)
-![Path 3, posterolateral view](fracture-patterns/3-tri-spiral-b2-post.png)
-![Path 3, AP](fracture-patterns/3-tri-spiral-b2-ap.png)
-![Path 3, lateral](fracture-patterns/3-tri-spiral-b2-lat.png)
+![Path 3, the fracture view as it opens](fracture-patterns/3-tri-spiral-b2-view.png)
+![Path 3, front-lateral](fracture-patterns/3-tri-spiral-b2-front.png)
+![Path 3, back-lateral](fracture-patterns/3-tri-spiral-b2-back.png)
 
 ### 4. Trimalleolar with a two-part posterior fragment (Bartoníček 3)
 
@@ -120,10 +121,9 @@ Pieces: `fib_trans_spiral`, `med_transverse`, `post_b2`, `post_b3_pm`. The talus
 The fibula, medial malleolus and talus are as in path 3. In a trimalleolar ankle the medial
 malleolus piece takes the posterior colliculus where the two overlap.
 
-![Path 4, 3D view](fracture-patterns/4-tri-b3-3d.png)
-![Path 4, posterolateral view](fracture-patterns/4-tri-b3-post.png)
-![Path 4, AP](fracture-patterns/4-tri-b3-ap.png)
-![Path 4, lateral](fracture-patterns/4-tri-b3-lat.png)
+![Path 4, the fracture view as it opens](fracture-patterns/4-tri-b3-view.png)
+![Path 4, front-lateral](fracture-patterns/4-tri-b3-front.png)
+![Path 4, back-lateral](fracture-patterns/4-tri-b3-back.png)
 
 ### 5. Lateral and medial, vertical medial shear with an infrasyndesmotic fibula (supination-adduction)
 
@@ -138,9 +138,9 @@ Pieces: `fib_infra`, `med_vertical`. The talus does not move. In supination-addu
 | Source | Images: 2 weak cases (44-A2, 44-A3), plus literature | Literature (AO/OTA 44-A2.3, Lauge-Hansen SA II); 1 weak case |
 | Readers | 7.5 mm (Codex) vs 12 mm (Claude) below the plafond; the median was taken. Codex moved the fragment 2 mm laterally, but in supination-adduction it is avulsed in tension and stays or follows distally, so the lateral shift was removed after review | The apex was 15 to 25 mm (Codex) or 21 to 28 mm (Claude), so it was set at about 21 mm (it was 29). Both readers move the fragment proximally, pushed by the talus. The old move was distal, so the direction is reversed. |
 
-![Path 5, 3D view](fracture-patterns/5-latmed-vertical-sa-3d.png)
-![Path 5, AP](fracture-patterns/5-latmed-vertical-sa-ap.png)
-![Path 5, lateral](fracture-patterns/5-latmed-vertical-sa-lat.png)
+![Path 5, the fracture view as it opens](fracture-patterns/5-latmed-vertical-sa-view.png)
+![Path 5, front-lateral](fracture-patterns/5-latmed-vertical-sa-front.png)
+![Path 5, back-lateral](fracture-patterns/5-latmed-vertical-sa-back.png)
 
 ### 6. Suprasyndesmotic multifragmentary fibula (Weber C), open mortise
 
@@ -156,9 +156,9 @@ fibula and the talus move.
 | Source | Images: 5 cases (44-C1 and a low 44-C2) | Images: 7 cases with a lateral butterfly |
 | Readers | Disagreed by 15 mm: Claude 45 mm, Codex 48 to 62 mm. Two cases with a "6 cm" ruler were measured again: case 30 at 55 to 60 mm, case 38 at 31 to 53 mm. The piece stays under 60 mm because the form defines this answer as "< 6 cm from the articular surface". Both readers agree on the obliquity, which is the reverse of the old value. | Claude only |
 
-![Path 6, 3D view](fracture-patterns/6-supra-multi-open-mortise-3d.png)
-![Path 6, AP](fracture-patterns/6-supra-multi-open-mortise-ap.png)
-![Path 6, lateral](fracture-patterns/6-supra-multi-open-mortise-lat.png)
+![Path 6, the fracture view as it opens](fracture-patterns/6-supra-multi-open-mortise-view.png)
+![Path 6, front-lateral](fracture-patterns/6-supra-multi-open-mortise-front.png)
+![Path 6, back-lateral](fracture-patterns/6-supra-multi-open-mortise-back.png)
 
 ### 7. Proximal fibula (Maisonneuve) with a medial fracture
 
@@ -173,9 +173,9 @@ talus moves.
 | Source | Images: 3 Maisonneuve cases (44-C2/C3) |
 | Readers | Agreed that it lies in the proximal third. |
 
-![Path 7, 3D view](fracture-patterns/7-proximal-maisonneuve-3d.png)
-![Path 7, AP](fracture-patterns/7-proximal-maisonneuve-ap.png)
-![Path 7, lateral](fracture-patterns/7-proximal-maisonneuve-lat.png)
+![Path 7, the fracture view as it opens](fracture-patterns/7-proximal-maisonneuve-view.png)
+![Path 7, front-lateral](fracture-patterns/7-proximal-maisonneuve-front.png)
+![Path 7, back-lateral](fracture-patterns/7-proximal-maisonneuve-back.png)
 
 ### 8. Posterior malleolus only, large fragment with metaphyseal extension, articular depression
 
@@ -190,9 +190,9 @@ Pieces: `post_b4`, `art_depression`. The talus does not move (one malleolus).
 | Source | Images: 7 cases (Bartoníček 4, CT and lateral) | Literature: Bartoníček et al., Arch Orthop Trauma Surg 2015; AO Surgery Reference, malleoli (not seen on its own in the 53 cases) |
 | Readers | Disagreed: apex 22 to 30 mm (Codex) vs 38 to 46 mm (Claude). Re-measured in case 22 on sagittal CT at about 30 mm with 36% depth. The old piece reached 57% of the depth at the plafond. | Literature only |
 
-![Path 8, 3D view](fracture-patterns/8-post-large-depression-3d.png)
-![Path 8, AP](fracture-patterns/8-post-large-depression-ap.png)
-![Path 8, lateral](fracture-patterns/8-post-large-depression-lat.png)
+![Path 8, the fracture view as it opens](fracture-patterns/8-post-large-depression-view.png)
+![Path 8, front-lateral](fracture-patterns/8-post-large-depression-front.png)
+![Path 8, back-lateral](fracture-patterns/8-post-large-depression-back.png)
 
 ## Pieces not in the eight paths
 
