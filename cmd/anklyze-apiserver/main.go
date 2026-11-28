@@ -156,6 +156,11 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.Default()
+	// Gin trusts X-Forwarded-For from anyone by default, which lets a client pick its own audit IP.
+	if err := router.SetTrustedProxies(cfg.TrustedProxies); err != nil {
+		slog.Error("invalid TRUSTED_PROXIES", "error", err)
+		os.Exit(1)
+	}
 	api.SetupRoutes(router, cfg, authValidator, userService, auditRepo, analyticsRepo, classificationService, jwksReady)
 	api.SetupCaseRoutes(router, authValidator, userService, userRepo, caseRepo, caseResponseRepo, caseAnalyticsRepo, studyService, classificationService, caseStorage, statsService)
 	api.SetupStudyRoutes(router, authValidator, userService, userRepo, studyRepo, studyResponseRepo, caseRepo, studyService)

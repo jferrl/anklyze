@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -47,7 +48,12 @@ func SetupRoutes(
 
 	// Public endpoints - no auth required
 	router.GET("/health", handler.HealthCheck)
-	metrics.RegisterMetricsEndpoint(router, prometheus.DefaultGatherer)
+	// Production without METRICS_TOKEN serves no /metrics: the proxy would expose it publicly.
+	if cfg.MetricsToken != "" || !cfg.IsProduction() {
+		metrics.RegisterMetricsEndpoint(router, prometheus.DefaultGatherer, cfg.MetricsToken)
+	} else {
+		slog.Warn("METRICS_TOKEN is not set: /metrics is disabled")
+	}
 
 	// API routes
 	api := router.Group("/api")

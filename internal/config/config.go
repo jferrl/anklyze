@@ -30,7 +30,15 @@ type Config struct {
 	S3SecretKey     string // S3 secret key
 	StudyBucketName string // Bucket name (default: "studies")
 	S3UseSSL        bool   // Whether to use SSL for S3 connections
+	// MetricsToken is the bearer token /metrics requires; empty disables it in production.
+	MetricsToken string
+	// TrustedProxies are the peers whose X-Forwarded-For sets the client IP.
+	TrustedProxies []string
 }
+
+// defaultTrustedProxies covers loopback and the private ranges Docker networks use,
+// so a reverse proxy on the same host works without setting TRUSTED_PROXIES.
+var defaultTrustedProxies = []string{"127.0.0.1/8", "::1/128", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"}
 
 // Load loads configuration from environment variables.
 // Returns an error if configuration is invalid.
@@ -52,6 +60,8 @@ func Load() (*Config, error) {
 		S3SecretKey:            os.Getenv("S3_SECRET_KEY"),
 		StudyBucketName:        getEnv("STUDY_BUCKET_NAME", "studies"),
 		S3UseSSL:               getEnv("S3_USE_SSL", "true") == "true",
+		MetricsToken:           os.Getenv("METRICS_TOKEN"),
+		TrustedProxies:         getEnvList("TRUSTED_PROXIES", defaultTrustedProxies),
 	}
 
 	if err := cfg.Validate(); err != nil {
@@ -149,6 +159,20 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+// getEnvList splits a comma-separated variable, trimming spaces and empty items.
+func getEnvList(key string, defaultValue []string) []string {
+	var out []string
+	for _, v := range strings.Split(os.Getenv(key), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			out = append(out, v)
+		}
+	}
+	if out == nil {
+		return defaultValue
+	}
+	return out
 }
 
 func getEnvInt(key string, defaultValue int) int {

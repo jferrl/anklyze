@@ -2,6 +2,7 @@
 package metrics
 
 import (
+	"crypto/subtle"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -124,15 +125,18 @@ func (m *Metrics) RecoveryMiddleware() gin.HandlerFunc {
 	}
 }
 
-// RegisterMetricsEndpoint adds the GET /metrics route to the router using the
-// given gatherer (typically prometheus.DefaultGatherer in production). The
-// endpoint is deliberately not protected by auth — scrapers must be able to
-// reach it from inside the cluster without a JWT.
-func RegisterMetricsEndpoint(router *gin.Engine, gatherer prometheus.Gatherer) {
+// RegisterMetricsEndpoint adds GET /metrics. A non-empty token requires
+// "Authorization: Bearer <token>", so the endpoint can sit behind the public proxy.
+func RegisterMetricsEndpoint(router *gin.Engine, gatherer prometheus.Gatherer, token string) {
 	h := promhttp.HandlerFor(gatherer, promhttp.HandlerOpts{
 		EnableOpenMetrics: true,
 	})
+	want := []byte("Bearer " + token)
 	router.GET("/metrics", func(c *gin.Context) {
+		if token != "" && subtle.ConstantTimeCompare([]byte(c.GetHeader("Authorization")), want) != 1 {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 		h.ServeHTTP(c.Writer, c.Request)
 	})
 }
