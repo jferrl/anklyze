@@ -57,7 +57,7 @@ export function CaseImagesStep({
 
   const dropzoneConfig = {
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+      'image/*': ['.png', '.jpg', '.jpeg', '.webp'],
     },
     maxSize: 10 * 1024 * 1024,
   };

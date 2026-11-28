@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -145,7 +146,8 @@ func (h *CaseAccessHandler) GetPublishedCase(c *gin.Context) {
 			ID:           img.ID,
 			Category:     img.Category,
 			DisplayOrder: img.DisplayOrder,
-			Filename:     img.Filename,
+			// The upload name can identify the patient; raters get a neutral label.
+			Filename: fmt.Sprintf("%s-%d", img.Category, i+1),
 		}
 	}
 
