@@ -22,9 +22,9 @@ type Box = [[number, number], [number, number], [number, number]];
 const BOXES: Record<PieceId, Box> = {
   fib_tip_avulsion: [[-36, -22], [-29, -20], [-22, -1]],
   fib_infra: [[-36, -16], [-29, -8], [-23, 4]],
-  fib_trans_spiral: [[-36, -16], [-29, 25], [-23, 4]],
+  fib_trans_spiral: [[-36, -16], [-29, 23], [-23, 4]],
   fib_trans_short: [[-36, -16], [-29, 14], [-23, 4]],
-  fib_trans_coronal: [[-36, -16], [-29, 25], [-23, 4]],
+  fib_trans_coronal: [[-36, -16], [-29, 22], [-23, 4]],
   fib_trans_wedge: [[-33, -24], [0, 21], [-15, 1]],
   fib_trans_comm_a: [[-34, -18], [1, 18], [-11, 0]],
   fib_trans_comm_b: [[-34, -17], [1, 19], [-22, -11]],
@@ -138,8 +138,8 @@ describe('fractureParams', () => {
       const mean = (k: number) => vs.reduce((s, v) => s + v[k], 0) / vs.length;
       if (id === 'fib_tip_avulsion' || id === 'fib_infra') expect(maxY, id).toBeLessThan(0);
       else if (id.startsWith('fib_trans_')) {
-        // Both case readers put the spiral's posterosuperior end 1-5 mm above the syndesmosis top (23 mm).
-        expect(maxY, id).toBeLessThanOrEqual(26);
+        // Transsyndesmotic means within the syndesmosis: no Weber B piece reaches above its top (23 mm).
+        expect(maxY, id).toBeLessThanOrEqual(23);
         expect(maxY, id).toBeGreaterThanOrEqual(0);
         if (/wedge|comm/.test(id)) expect(minY, id).toBeGreaterThan(-2);
       } else if (id === 'fib_supra_far') {

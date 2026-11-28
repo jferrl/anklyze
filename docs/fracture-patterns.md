@@ -73,12 +73,12 @@ Pieces: `fib_trans_spiral`.
 
 | | Value |
 | --- | --- |
-| Level | Centre 13 mm above the plafond. The line runs from about 2 mm (anteroinferior) to 25 mm (posterosuperior) |
+| Level | Centre 10.5 mm above the plafond. The line runs from the plafond (anteroinferior) to 23 mm (posterosuperior), the top of the syndesmosis |
 | Orientation | Anteroinferior to posterosuperior, 50° to the horizontal, slightly higher laterally |
 | Fragment | The distal fibula below the line |
 | Displacement | 2.3 mm posterior, 1.5 mm lateral, 1.3 mm proximal (shortening), 4° external rotation. Talus does not move (one malleolus) |
 | Source | Images: 22 cases (44-B1, B2, B3 SER, and unclassified cases with a Weber B line) |
-| Readers | Agreed. Line from 0 to 1 mm up to 24 to 27 mm (Codex), or 2 to 28 mm (Claude); the angle was 51° (Codex) or 45 to 55° (Claude). The line's top is now 2 mm above the model's syndesmosis line, and the test that kept Weber B pieces below 23 mm now allows 26 mm. |
+| Readers | Agreed. Line from 0 to 1 mm up to 24 to 27 mm (Codex), or 2 to 28 mm (Claude); the angle was 51° (Codex) or 45 to 55° (Claude). Both readings put the top a few millimetres above the model's syndesmosis line, but transsyndesmotic means within the syndesmosis, so the line was lowered 2.5 mm to end at its top (23 mm), and a test keeps every Weber B piece at or below it. |
 
 ![Path 2, the fracture view as it opens](fracture-patterns/2-lat-trans-spiral-view.png)
 ![Path 2, front-lateral](fracture-patterns/2-lat-trans-spiral-front.png)
@@ -199,7 +199,7 @@ Pieces: `post_b4`, `art_depression`. The talus does not move (one malleolus).
 | Piece | Drawn for | Level and shape | Move | Source |
 | --- | --- | --- | --- | --- |
 | `fib_trans_short` | Weber B, transverse | Centre 8 mm; short oblique, 30°, anteroinferior to posterosuperior | 1.5 lateral, 1 proximal, 1.5 posterior; 3° external rotation | Images: 4 cases (Bartoníček 3/4) |
-| `fib_trans_coronal` | Weber B, oblique (pronation-abduction) | Centre 14 mm; in the coronal plane, 50°, low medially (about 6 mm) and high laterally (about 25 mm) | 2 lateral, 0.5 proximal, 0.5 posterior; 2° | Images: 5 cases (Claude only; Codex had no separate template). The angle is steeper than the old 35° |
+| `fib_trans_coronal` | Weber B, oblique (pronation-abduction) | Centre 11.5 mm; in the coronal plane, 50°, low medially (about 3 mm) and high laterally (about 22 mm), kept within the syndesmosis | 2 lateral, 0.5 proximal, 0.5 posterior; 2° | Images: 5 cases (Claude only; Codex had no separate template). The angle is steeper than the old 35° |
 | `fib_trans_wedge` | Weber B with several lines or a butterfly | Lateral half, from the spiral up to 21 mm | 1.5 lateral, 0.5 proximal, 0.5 posterior; 1° | Images: 6 cases |
 | `fib_trans_comm_a` / `_b` | Weber B comminuted | Anterior and posterior chips, 4 to 16 mm (unchanged) | 1 anterior / 1 posterior, 0.5 proximal | Images: 2 cases / literature (AO/OTA Compendium 2018, 44-B3 and 44-C multifragmentary fibula) |
 | `fib_supra_far` | Weber C more than 6 cm above the joint | 68 mm; transverse, slightly higher laterally | 2 lateral, 0.5 proximal, 1 posterior; 2.5° | Images: 6 cases (44-C2). Claude 60 to 65 mm (from the "6 cm" annotations), Codex 67 to 84 mm; median 68. The readers disagreed on the sagittal obliquity, so it is drawn transverse in that plane |

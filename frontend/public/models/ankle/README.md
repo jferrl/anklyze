@@ -66,8 +66,8 @@ same CC BY-SA 4.0 adaptation:
   a flat centre; a sliver too thin for one is filled flat. It stores per vertex the occlusion
   (taken from `ankle.bin` on bone surface, a fixed value on cut faces) and whether it lies inside
   the ring;
-- quantises positions on the same 0.05 mm grid as `ankle.bin`. The file is 835 KB raw and about
-  400 KB gzipped (the self-check allows 512 KB); it loads after first paint.
+- quantises positions on the same 0.05 mm grid as `ankle.bin`. The file is 810 KB raw and about
+  430 KB gzipped (the self-check allows 512 KB); it loads after first paint.
 
 Rebuild with `cd frontend && node scripts/build-fracture-model.mjs`; the output is byte-identical
 across runs.
