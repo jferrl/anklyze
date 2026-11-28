@@ -3,6 +3,10 @@ package api
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"image"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -44,16 +48,32 @@ func (r *imageRepo) GetImages(context.Context, uuid.UUID) ([]domain.CaseImage, e
 type recordingStorage struct {
 	storage.NoOpStorage
 	path, contentType string
+	data              []byte
 }
 
-func (s *recordingStorage) Upload(_ context.Context, path string, _ io.Reader, contentType string, _ int64) error {
+func (s *recordingStorage) Upload(_ context.Context, path string, r io.Reader, contentType string, size int64) error {
 	s.path, s.contentType = path, contentType
-	return nil
+	var err error
+	s.data, err = io.ReadAll(r)
+	if err == nil && int64(len(s.data)) != size {
+		err = fmt.Errorf("read %d bytes, size said %d", len(s.data), size)
+	}
+	return err
+}
+
+func encodeTestImage(enc func(io.Writer, image.Image) error) []byte {
+	var buf bytes.Buffer
+	if err := enc(&buf, image.NewGray(image.Rect(0, 0, 4, 4))); err != nil {
+		panic(err)
+	}
+	return buf.Bytes()
 }
 
 var (
-	pngBytes  = append([]byte("\x89PNG\r\n\x1a\n"), make([]byte, 64)...)
-	jpegBytes = append([]byte("\xff\xd8\xff\xe0"), make([]byte, 64)...)
+	pngBytes  = encodeTestImage(png.Encode)
+	jpegBytes = encodeTestImage(func(w io.Writer, m image.Image) error { return jpeg.Encode(w, m, nil) })
+	// jpegWithComment carries a COM segment with an identifying string.
+	jpegWithComment = append(append([]byte{0xFF, 0xD8, 0xFF, 0xFE, 0x00, byte(2 + len("Jane Doe 1980"))}, "Jane Doe 1980"...), jpegBytes[2:]...)
 )
 
 func uploadRequest(t *testing.T, caseID uuid.UUID, category, filename, partType string, data []byte) *http.Request {
@@ -100,6 +120,12 @@ func TestUploadImage(t *testing.T) {
 			wantStatus: 201, wantExt: ".png", wantType: "image/png", wantName: "scan.exe"},
 		{name: "client type wrong but bytes are jpeg", category: "xray", filename: "a.png", partType: "image/png", data: jpegBytes,
 			wantStatus: 201, wantExt: ".jpg", wantType: "image/jpeg", wantName: "a.png"},
+		{name: "metadata stripped before storage", category: "xray", filename: "a.jpg", partType: "image/jpeg", data: jpegWithComment,
+			wantStatus: 201, wantExt: ".jpg", wantType: "image/jpeg", wantName: "a.jpg"},
+		{name: "gif rejected", category: "xray", filename: "a.gif", partType: "image/gif", data: []byte("GIF89a\x01\x00\x01\x00\x00\x00\x00;"),
+			wantStatus: 400},
+		{name: "corrupt png rejected", category: "xray", filename: "a.png", partType: "image/png", data: pngBytes[:40],
+			wantStatus: 400},
 		{name: "spoofed image type over html", category: "xray", filename: "a.png", partType: "image/png", data: []byte("<html><script>alert(1)</script></html>"),
 			wantStatus: 400},
 		{name: "octet-stream is not trusted", category: "xray", filename: "a.png", partType: "application/octet-stream", data: []byte("MZ\x90\x00 not an image"),
@@ -158,6 +184,12 @@ func TestUploadImage(t *testing.T) {
 			}
 			if repo.added.Filename != tt.wantName {
 				t.Errorf("filename = %q, want %q", repo.added.Filename, tt.wantName)
+			}
+			if bytes.Contains(rec.data, []byte("Jane Doe")) {
+				t.Error("stored image still carries metadata")
+			}
+			if repo.added.SizeBytes != int64(len(rec.data)) {
+				t.Errorf("recorded size = %d, stored %d bytes", repo.added.SizeBytes, len(rec.data))
 			}
 		})
 	}

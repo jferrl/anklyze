@@ -140,6 +140,24 @@ func TestMiddleware_NormalisesPathParams(t *testing.T) {
 	}
 }
 
+func TestMiddleware_CollapsesUnknownMethods(t *testing.T) {
+	m, reg := newTestMetrics(t)
+	r := setupRouter(m)
+
+	for _, method := range []string{"V33M000", "XYZZY"} {
+		r.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(method, "/health", nil))
+	}
+
+	got := counterValue(t, reg, "http_requests_total", map[string]string{
+		"method": "other",
+		"path":   "unmatched",
+		"status": "404",
+	})
+	if got != 2 {
+		t.Errorf("http_requests_total for unknown methods = %v, want 2 under method=other", got)
+	}
+}
+
 func TestMiddleware_RecordsHistogram(t *testing.T) {
 	m, reg := newTestMetrics(t)
 	r := setupRouter(m)

@@ -18,8 +18,8 @@ const DevUserEmail = "dev@localhost"
 
 // DevMiddleware stands in for Middleware and UserSyncMiddleware when auth is
 // disabled (empty SUPABASE_URL), so handlers see the same mock admin on every
-// route. Wire it only when the validator is nil; production refuses to start
-// without SUPABASE_URL (config.ValidateProduction).
+// route. Wire it only when the validator is nil; anything but APP_ENV=development
+// refuses to start without SUPABASE_URL (config.ValidateProduction).
 func DevMiddleware(userSvc UserService) gin.HandlerFunc {
 	user := &domain.User{ID: DevUserID, Email: DevUserEmail, Role: domain.UserRoleAdmin, Provider: "dev"}
 	claims := &Claims{

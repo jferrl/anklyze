@@ -77,13 +77,14 @@ type SubmitResponseRequest struct {
 	Classification domain.ClassificationResult `json:"classification" binding:"required"`
 	// Input is the final form state that was classified, including has_ct_scan.
 	Input       domain.FractureInput `json:"input" binding:"required"`
-	TimeTakenMS int64                `json:"time_taken_ms"`
+	TimeTakenMS int64                `json:"time_taken_ms" binding:"min=0"`
 
-	// Answer tracking fields for divergence analysis (recorded, never used to classify)
-	AnswerPath      []domain.QuestionAnswer `json:"answer_path,omitempty"`
-	DecisionPath    string                  `json:"decision_path,omitempty"`
-	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty"`
-	BackClicks      int                     `json:"back_clicks,omitempty"`
+	// Answer tracking fields for divergence analysis (recorded, never used to classify).
+	// Bounded because they are stored per response and loaded whole by analytics.
+	AnswerPath      []domain.QuestionAnswer `json:"answer_path,omitempty" binding:"max=200,dive"`
+	DecisionPath    string                  `json:"decision_path,omitempty" binding:"max=2000"`
+	TimePerQuestion map[string]int64        `json:"time_per_question,omitempty" binding:"max=100,dive,keys,max=64,endkeys,min=0"`
+	BackClicks      int                     `json:"back_clicks,omitempty" binding:"min=0"`
 }
 
 // SetGoldStandardRequest is the request body for setting the gold standard classification.
