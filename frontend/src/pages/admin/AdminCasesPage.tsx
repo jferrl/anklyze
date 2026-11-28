@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { type ColumnDef } from '@tanstack/react-table';
 import {
   Plus,
   MoreHorizontal,
@@ -43,7 +42,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from './components/StatusBadge';
-import { DataTable } from './components/DataTable';
+import { DataTable, type DataTableColumn } from './components/DataTable';
 import { FilterBar } from './components/FilterBar';
 import { NoMatchState } from './components/NoMatchState';
 import { Pagination } from './components/Pagination';
@@ -149,7 +148,7 @@ export function AdminCasesPage() {
     { value: 'closed', label: t('cases.status.closed') },
   ], [t]);
 
-  const columns = useMemo<ColumnDef<Case, unknown>[]>(() => [
+  const columns = useMemo<DataTableColumn<Case>[]>(() => [
     {
       id: 'title',
       header: () => t('admin.cases.table.title'),
@@ -374,9 +373,6 @@ export function AdminCasesPage() {
               <DataTable
                 columns={columns}
                 data={filteredCases}
-                totalCount={total}
-                page={page}
-                pageSize={limit}
                 onRowClick={(row) => handleView(row.id)}
               />
             </SectionErrorBoundary>

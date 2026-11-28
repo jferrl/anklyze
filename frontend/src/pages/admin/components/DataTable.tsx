@@ -1,34 +1,24 @@
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { type ColumnDef, type RowData, columnSizingFeature, metaHelper, tableFeatures, useTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData, TValue> {
-    className?: string;
-  }
-}
+const features = tableFeatures({
+  columnSizingFeature,
+  columnMeta: metaHelper<{ className?: string }>(),
+});
 
-interface DataTableProps<TData> {
-  columns: ColumnDef<TData, unknown>[];
+/** DataTableColumn is a column definition accepted by DataTable. */
+export type DataTableColumn<TData extends RowData> = ColumnDef<typeof features, TData, unknown>;
+
+interface DataTableProps<TData extends RowData> {
+  columns: DataTableColumn<TData>[];
   data: TData[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
   onRowClick?: (row: TData) => void;
 }
 
-export function DataTable<TData>({ columns, data, totalCount, page, pageSize, onRowClick }: DataTableProps<TData>) {
-  'use no memo';
-  // eslint-disable-next-line react-hooks/incompatible-library -- opted out via 'use no memo'
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    rowCount: totalCount,
-    state: { pagination: { pageIndex: page - 1, pageSize } },
-  });
+export function DataTable<TData extends RowData>({ columns, data, onRowClick }: DataTableProps<TData>) {
+  'use no memo'; // keep the compiler from memoizing over table builder reads
+  const table = useTable({ features, columns, data });
 
   return (
     <div className="hidden md:block overflow-hidden rounded-lg border bg-card">
@@ -42,7 +32,7 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
                   className={cn('text-muted-foreground', header.column.columnDef.meta?.className)}
                   style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
                 >
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder ? null : <table.FlexRender header={header} />}
                 </TableHead>
               ))}
             </TableRow>
@@ -55,9 +45,9 @@ export function DataTable<TData>({ columns, data, totalCount, page, pageSize, on
               className={cn('transition-colors duration-150 hover:bg-muted', onRowClick && 'cursor-pointer')}
               onClick={() => onRowClick?.(row.original)}
             >
-              {row.getVisibleCells().map(cell => (
+              {row.getAllCells().map(cell => (
                 <TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <table.FlexRender cell={cell} />
                 </TableCell>
               ))}
             </TableRow>
