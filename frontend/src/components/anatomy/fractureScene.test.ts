@@ -203,6 +203,44 @@ describe('buildFractures', () => {
     fractures.setGhost(false);
     expect(skirts().some((s) => s.visible)).toBe(true);
   });
+
+  it('closes the fracture and opens it again', () => {
+    fractures.setPose(tri);
+    fractures.setDisplaced(false);
+    settle();
+    expect(talus.matrix.equals(identity)).toBe(true);
+    expect(pieceGroups().every(({ group }) => group.matrix.equals(identity))).toBe(true);
+    fractures.setDisplaced(true);
+    settle();
+    expect(talus.matrix.equals(identity)).toBe(false);
+  });
+
+  it('draws the X-ray look with no cut faces or crack mouths, and puts the bone back', () => {
+    fractures.setPose(tri);
+    settle();
+    const xray = new MeshBasicMaterial();
+    fractures.setXray(xray);
+    const cells = cellsOf(fractures.root);
+    for (const m of cells) {
+      const [skin, open] = m.material as Material[];
+      expect(skin).toBe(xray);
+      expect(open.visible).toBe(false);
+    }
+    expect(mainFibula.children.some((o) => o instanceof Mesh && !!o.geometry.attributes.side && o.visible)).toBe(false);
+    fractures.setXray(undefined);
+    for (const m of cells) expect((m.material as Material[])[0]).toBe(fill);
+  });
+
+  it('names a moved piece by its id, the main body by its bone, and nothing else', () => {
+    fractures.setPose(tri);
+    settle();
+    const cells = cellsOf(fractures.root);
+    const names = new Set(cells.map((m) => fractures.nameAt(m)));
+    for (const id of tri.pieces) expect(names).toContain(id);
+    expect(names).toContain('tibia');
+    expect(names).toContain('fibula');
+    expect(fractures.nameAt(talus)).toBeUndefined();
+  });
 });
 
 describe('createAnkleScene', () => {

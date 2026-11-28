@@ -53,6 +53,8 @@ const [SKIN, OPEN, CLOSED] = [0, 1, 2];
 const GAIN = 2;
 // Crack line width in CSS pixels.
 const CRACK_PX = 1.75;
+// On the X-ray look a fracture is a dark gap through bright bone, so the line goes black and wider.
+const XRAY_CRACK = { px: 3.5, color: [0, 0, 0] as const };
 
 /**
  * buildFractures makes one mesh per fracture cell, with periosteal normals taken from the uncut bones
@@ -92,7 +94,7 @@ export function buildFractures(
   // A closed crack reads as a dark line on the bone, lifted a little so it never sinks into it. GL
   // lines are 1 px, too thin to read, so each edge is a quad widened to CRACK_PX on screen.
   const line = new ShaderMaterial({
-    uniforms: { uBias: { value: -0.3 * mm }, uHalf: { value: new Vector2(0.01, 0.01) } },
+    uniforms: { uBias: { value: -0.3 * mm }, uHalf: { value: new Vector2(0.01, 0.01) }, uColor: { value: new Vector3(0.12, 0.08, 0.06) } },
     vertexShader: /* glsl */ `
       attribute vec3 other;
       attribute float corner;
@@ -109,7 +111,8 @@ export function buildFractures(
       }
     `,
     fragmentShader: /* glsl */ `
-      void main() { gl_FragColor = vec4(0.12, 0.08, 0.06, 1.0); }
+      uniform vec3 uColor;
+      void main() { gl_FragColor = vec4(uColor, 1.0); }
     `,
     side: DoubleSide,
   });
@@ -117,7 +120,7 @@ export function buildFractures(
   const size = new Vector2();
   const setWidth = (renderer: { getDrawingBufferSize: (v: Vector2) => Vector2; getPixelRatio: () => number }) => {
     renderer.getDrawingBufferSize(size);
-    const px = CRACK_PX * renderer.getPixelRatio();
+    const px = (xray ? XRAY_CRACK.px : CRACK_PX) * renderer.getPixelRatio();
     line.uniforms.uHalf.value.set(px / size.x, px / size.y);
   };
   const root = new Group();
@@ -325,6 +328,8 @@ export function buildFractures(
     crack.name = 'crack';
     crack.frustumCulled = false;
     crack.onBeforeRender = setWidth;
+    // After the bones, so an X-ray look, which writes no depth, still shows the line over them.
+    crack.renderOrder = 1;
     mesh.add(crack);
     const skirt = new Mesh(mouthGeometry, [hidden, mouth]);
     skirt.frustumCulled = false;
@@ -352,6 +357,19 @@ export function buildFractures(
   // Shows only the cuts between fragments, each with its crack line, and puts each cell in its fragment.
   let active: Record<Bone, number[]> = { tibia: [], fibula: [] };
   let ghosted = false;
+  let xray: Material | undefined;
+  let displaced = true;
+  let lastPose: FracturePose = { pieces: [], moves: {} };
+  // A cell's materials for the current look: X-ray skin with no cut faces, else bone, see-through on a ghosted fibula.
+  function look(cell: Cell) {
+    const m = cell.mesh.material as Material[];
+    const ghost = cell.bone === 'fibula' && ghosted;
+    m[SKIN] = xray ?? (ghost ? materials.ghost : materials.fill);
+    m[OPEN] = xray ? hidden : m[SKIN];
+    cell.mesh.castShadow = !ghost && !xray;
+    // Seen through the bone, a dark crack mouth would read as a band, not a line.
+    cell.skirt.visible = !ghost && !xray && cell.mesh.parent !== main[cell.bone];
+  }
   // The grouping setPose is heading to; active lags it while a fragment eases home.
   let goal = active;
   function regroup(on: Record<Bone, number[]>) {
@@ -362,7 +380,7 @@ export function buildFractures(
       const parent = piece?.group ?? main[cell.bone];
       if (cell.mesh.parent !== parent) parent.add(cell.mesh);
       // A main-body cell does not move, so its side of a crack needs no mouth.
-      cell.skirt.visible = !!piece && !(cell.bone === 'fibula' && ghosted);
+      cell.skirt.visible = !!piece && !(cell.bone === 'fibula' && ghosted) && !xray;
       cell.skirt.onBeforeRender = () => {
         mouth.uniforms.uMove.value.copy(parent.matrix);
         mouth.uniformsNeedUpdate = true;
@@ -375,14 +393,15 @@ export function buildFractures(
   }
 
   let frame = 0;
-  return {
+  const api = {
     root,
     /** setPose regroups cells into the pose's fragments, shows only the cuts between fragments, and eases each move in. */
     setPose(pose: FracturePose) {
+      lastPose = pose;
       const next: Record<Bone, number[]> = { tibia: [], fibula: [] };
       for (const id of pose.pieces) next[fractureParams.pieces.find((p) => p.id === id)!.bone].push(pieceIndex(id));
       for (const [id, v] of movers) {
-        v.to = pose.moves[id] ? 1 : 0;
+        v.to = pose.moves[id] && displaced ? 1 : 0;
         v.from = v.at;
       }
       cancelAnimationFrame(frame);
@@ -423,14 +442,25 @@ export function buildFractures(
     /** setGhost switches every fibula cell to the see-through material, as placeFibula does for the uncut fibula. */
     setGhost(clear: boolean) {
       ghosted = clear;
-      for (const cell of cells) {
-        if (cell.bone !== 'fibula') continue;
-        const m = cell.mesh.material as Material[];
-        m[SKIN] = m[OPEN] = clear ? materials.ghost : materials.fill;
-        cell.mesh.castShadow = !clear;
-        // Seen through the bone, a dark crack mouth would read as a band, not a line.
-        cell.skirt.visible = !clear && cell.mesh.parent !== main.fibula;
-      }
+      for (const cell of cells) if (cell.bone === 'fibula') look(cell);
+    },
+    /** setXray draws every cell with the given X-ray material and hides the cut faces; undefined restores bone. */
+    setXray(material: Material | undefined) {
+      xray = material;
+      line.uniforms.uColor.value.set(...(material ? XRAY_CRACK.color : ([0.12, 0.08, 0.06] as const)));
+      for (const cell of cells) look(cell);
+    },
+    /** setDisplaced eases the fragments to their displaced place, or back to a closed fracture. */
+    setDisplaced(on: boolean) {
+      displaced = on;
+      api.setPose(lastPose);
+    },
+    /** nameAt is the fragment a mesh belongs to, its bone for the main body, or undefined for anything else. */
+    nameAt(object: Object3D): PieceId | Bone | undefined {
+      const cell = cells.find((c) => c.mesh === object);
+      if (!cell) return undefined;
+      const f = fragmentOf(cell.mask, active[cell.bone]);
+      return f < 0 ? cell.bone : pieceGroups.get(`${cell.bone}:${f}`)!.id;
     },
     dispose() {
       cancelAnimationFrame(frame);
@@ -442,6 +472,7 @@ export function buildFractures(
       for (const m of [hidden, mouth, line]) m.dispose();
     },
   };
+  return api;
 }
 
 /** Fractures is the drawn fracture model of a scene. */

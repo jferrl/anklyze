@@ -422,7 +422,9 @@
         "supra_far": "Fractura de peroné por encima de la sindesmosis, a más de 6 cm de la articulación.",
         "proximal": "Fractura de peroné proximal, fuera del modelo."
       },
-      "posteriorType": "Maléolo posterior: {{type}}."
+      "posteriorType": "Maléolo posterior: {{type}}.",
+      "fractureDisplaced": "Fractura simulada, desplazada: {{list}}.",
+      "fractureClosed": "Fractura simulada, sin desplazar: {{list}}."
     },
     "fields": {
       "involved_malleoli": "Maléolos",
@@ -465,7 +467,9 @@
       "zoomIn": "Ampliar",
       "zoomOut": "Reducir",
       "enlarge": "Abrir la vista {{view}} en el modelo 3D",
-      "enlargeTitle": "Modelo del tobillo"
+      "enlargeTitle": "Modelo del tobillo",
+      "xray": "Aspecto radiográfico",
+      "displaced": "Mostrar desplazamiento"
     },
     "structureNames": {
       "lateral": "Maléolo lateral",
@@ -473,7 +477,20 @@
       "posterior": "Maléolo posterior"
     },
     "syndesmosis": "Sindesmosis",
-    "behind": "(detrás)"
+    "behind": "(detrás)",
+    "fragments": {
+      "tipAvulsion": "Avulsión de la punta del peroné",
+      "distalFibula": "Fragmento distal del peroné",
+      "butterfly": "Fragmento en ala de mariposa",
+      "comminuted": "Fragmento conminuto",
+      "depression": "Fragmento articular hundido",
+      "medial": "Fragmento del maléolo medial",
+      "posterior": "Fragmento del maléolo posterior",
+      "posteromedial": "Fragmento posteromedial",
+      "tibia": "Tibia",
+      "fibula": "Peroné",
+      "talus": "Astrágalo"
+    }
   },
   "language": {
     "toggle": "Cambiar idioma"

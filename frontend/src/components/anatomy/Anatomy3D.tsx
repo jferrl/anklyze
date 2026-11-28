@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowUp, RotateCcw, ScanLine, Split, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { fractureViewFor, PRESETS, presetFor, type Focus, type Preset } from './anatomyCamera';
@@ -9,6 +9,7 @@ import { setSnapshot } from './anatomySnapshots';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import { parseAnkleModel, type AnkleModel } from './ankleModel';
 import { parseFractureModel, type FractureModel } from './fractureModel';
+import { fragmentName } from './fractureNames';
 import { createAnkleScene, ZOOM_MAX, type Anchors, type AnkleScene, type Ink } from './ankleScene';
 
 const DEG = Math.PI / 180;
@@ -120,6 +121,11 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   const touched = useRef(-Infinity);
   const seen = useRef<Focus>(NONE);
   const hintId = useId();
+  // Fracture view only: the radiograph look, the closed or displaced fracture, and the piece under the mouse.
+  const [xray, setXray] = useState(false);
+  const [displaced, setDisplaced] = useState(true);
+  const [hover, setHover] = useState<{ x: number; y: number; name: string }>();
+  const picking = useRef(0);
 
   // The scene is made once the canvas has a size, so a hidden figure costs nothing; it then lives
   // as long as the figure, and answers only update its marks.
@@ -248,6 +254,26 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, posteriorAsked, ready]);
 
+  useEffect(() => {
+    if (ready) sceneRef.current?.setXray(xray);
+  }, [xray, ready]);
+  // Fractures arrive as a fresh scene, displaced, so the choice is applied again once they draw.
+  useEffect(() => {
+    if (fractured) sceneRef.current?.setDisplaced(displaced);
+  }, [displaced, fractured]);
+
+  // Names the piece under the mouse, once per frame; touch has no hover, and a drag turns the model.
+  function onHover(e: PointerEvent<HTMLCanvasElement>) {
+    if (!closeUp || !fractured || e.pointerType !== 'mouse' || drag.current) return setHover(undefined);
+    const box = e.currentTarget.getBoundingClientRect();
+    const [x, y] = [e.clientX - box.left, e.clientY - box.top];
+    cancelAnimationFrame(picking.current);
+    picking.current = requestAnimationFrame(() => {
+      const name = sceneRef.current?.pick(x, y);
+      setHover(name ? { x, y, name } : undefined);
+    });
+  }
+
   // The AP and Lateral pair redraws only when the answers, the theme or its size change.
   useEffect(() => {
     if (!ready) return;
@@ -308,6 +334,7 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   }
 
   function onPointerMove(e: PointerEvent<HTMLCanvasElement>) {
+    onHover(e);
     if (touches.current.size === 2 && touches.current.has(e.pointerId)) return onPinch(e);
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
@@ -372,7 +399,8 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
   return (
     <div className={compact ? 'space-y-2 lg:grid lg:grid-cols-[minmax(0,1fr)_9rem] lg:gap-2 lg:space-y-0' : 'space-y-2'}>
       <div className="space-y-2">
-        <div className="relative overflow-hidden rounded-sm bg-(--fig-backdrop)">
+        {/* An X-ray reads white on black, as on film, whatever the page theme. */}
+        <div className={cn('relative overflow-hidden rounded-sm', xray ? 'bg-black' : 'bg-(--fig-backdrop)')}>
           <canvas
             ref={canvasRef}
             tabIndex={0}
@@ -382,6 +410,10 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
+            onPointerLeave={() => {
+              cancelAnimationFrame(picking.current);
+              setHover(undefined);
+            }}
             onContextMenu={(e) => e.preventDefault()}
             onKeyDown={onKeyDown}
             // pan-y keeps the page scrollable on touch while a horizontal drag turns the model; zoomed
@@ -440,6 +472,18 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
               </span>
             ))}
           </div>
+          {hover && (
+            <span aria-hidden="true" className="pointer-events-none absolute w-max rounded-sm border bg-background/90 px-1.5 py-0.5 text-xs text-foreground" style={{ left: hover.x + 12, top: hover.y + 12 }}>
+              {t(`anatomy.fragments.${fragmentName(hover.name)}`)}
+            </span>
+          )}
+          {/* The proximal fibula is beyond the close-up's frame, so the figure points up to it. */}
+          {closeUp && marks.proximal && (
+            <p className="pointer-events-none absolute left-2 top-2 flex max-w-[60%] items-center gap-1 rounded-sm bg-background/90 px-1.5 py-0.5 text-xs font-medium text-primary">
+              <ArrowUp aria-hidden="true" className="size-3.5 shrink-0" />
+              {t('anatomy.level.proximal')}
+            </p>
+          )}
           {!ready && <p className="absolute inset-0 grid place-items-center text-sm text-muted-foreground">{t('anatomy.model3d.loading')}</p>}
           <div className="absolute right-2 top-2 flex flex-col gap-1">
             <Button
@@ -484,6 +528,36 @@ export default function Anatomy3D({ state, posteriorAsked = false, compact = fal
             >
               <ZoomOut />
             </Button>
+            {closeUp && fractured && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-pressed={xray}
+                  onClick={() => setXray((on) => !on)}
+                  aria-label={t('anatomy.model3d.xray')}
+                  title={t('anatomy.model3d.xray')}
+                  className="aria-pressed:border-(--hl) aria-pressed:text-primary"
+                >
+                  <ScanLine />
+                </Button>
+                {/* Fragments move only once the form is complete, so the switch waits for it. */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-pressed={displaced}
+                  onClick={() => setDisplaced((on) => !on)}
+                  aria-label={t('anatomy.model3d.displaced')}
+                  title={t('anatomy.model3d.displaced')}
+                  disabled={!state.complete}
+                  className="aria-pressed:border-(--hl) aria-pressed:text-primary"
+                >
+                  <Split />
+                </Button>
+              </>
+            )}
           </div>
         </div>
         <p aria-hidden="true" className="text-xs leading-4 text-muted-foreground">

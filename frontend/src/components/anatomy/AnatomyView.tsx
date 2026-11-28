@@ -8,6 +8,8 @@ import type { FractureInput } from '@/types';
 import { getAnatomyState, type AnatomyState } from './anatomyState';
 import type { Preset } from './anatomyCamera';
 import { drawnPosteriorType } from './drawnPosterior';
+import { fragmentName } from './fractureNames';
+import { fracturePose } from './fracturePose';
 
 interface AnatomyViewProps {
   formData: Partial<FractureInput>;
@@ -53,7 +55,7 @@ export function AnatomyView({ formData, hasTACImages, showReading = true, compac
   const state = useMemo<AnatomyState>(() => JSON.parse(stateKey), [stateKey]);
   // Without WebGL 2 the model cannot be shown at all; the summary then stands in as text.
   const [notice, setNotice] = useState<'noWebGL' | 'loadFailed' | undefined>(() => (hasWebGL2() ? undefined : 'noWebGL'));
-  const summary = useSummary(state);
+  const summary = useSummary(state, fracture && closeUp);
   // Set once the fracture is drawn; a failed fracture load leaves the tinted figure and its captions.
   const [fractured, setFractured] = useState(false);
 
@@ -172,7 +174,7 @@ function Caption({ title, shown, value }: { title: string; shown: boolean; value
   );
 }
 
-function useSummary(state: AnatomyState): string {
+function useSummary(state: AnatomyState, fractureView = false): string {
   const { t, i18n } = useTranslation();
   const parts = [
     state.lateral && t('anatomy.structures.lateral'),
@@ -188,6 +190,12 @@ function useSummary(state: AnatomyState): string {
   if (state.fibula) sentences.push(t(`anatomy.summary.fibula.${state.fibula}`));
   if (state.posteriorType) {
     sentences.push(t('anatomy.summary.posteriorType', { type: t(`form.options.posteriorType.${state.posteriorType}`) }));
+  }
+  // The fracture view also says which pieces it draws, and whether they have moved.
+  const pieces = fractureView ? [...new Set(fracturePose(state).pieces.map(fragmentName))] : [];
+  if (pieces.length > 0) {
+    const list = new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(pieces.map((n) => t(`anatomy.fragments.${n}`)));
+    sentences.push(t(state.complete ? 'anatomy.summary.fractureDisplaced' : 'anatomy.summary.fractureClosed', { list }));
   }
   return sentences.join(' ');
 }

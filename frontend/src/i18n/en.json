@@ -422,7 +422,9 @@
         "supra_far": "Fibular fracture above the syndesmosis, more than 6 cm from the joint.",
         "proximal": "Fibular fracture in the proximal fibula, beyond the model."
       },
-      "posteriorType": "Posterior malleolus: {{type}}."
+      "posteriorType": "Posterior malleolus: {{type}}.",
+      "fractureDisplaced": "Simulated fracture, displaced: {{list}}.",
+      "fractureClosed": "Simulated fracture, undisplaced: {{list}}."
     },
     "fields": {
       "involved_malleoli": "Malleoli",
@@ -465,7 +467,9 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "enlarge": "Open the {{view}} view in the 3D model",
-      "enlargeTitle": "Ankle model"
+      "enlargeTitle": "Ankle model",
+      "xray": "X-ray look",
+      "displaced": "Show displacement"
     },
     "structureNames": {
       "lateral": "Lateral malleolus",
@@ -473,7 +477,20 @@
       "posterior": "Posterior malleolus"
     },
     "syndesmosis": "Syndesmosis",
-    "behind": "(behind)"
+    "behind": "(behind)",
+    "fragments": {
+      "tipAvulsion": "Avulsed fibular tip",
+      "distalFibula": "Distal fibular fragment",
+      "butterfly": "Butterfly fragment",
+      "comminuted": "Comminuted fragment",
+      "depression": "Depressed articular fragment",
+      "medial": "Medial malleolus fragment",
+      "posterior": "Posterior malleolus fragment",
+      "posteromedial": "Posteromedial fragment",
+      "tibia": "Tibia",
+      "fibula": "Fibula",
+      "talus": "Talus"
+    }
   },
   "language": {
     "toggle": "Toggle language"

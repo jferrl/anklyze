@@ -40,6 +40,7 @@ describe('fractureViewFor', () => {
   });
   it('shows both malleoli in AP, and one malleolus from its side', () => {
     expect(view({ involved_malleoli: 'lateral_medial' })).toBe('ap');
+    expect(view({ involved_malleoli: 'lateral_medial', fibular_level: 'suprasindesmal', suprasindesmal_type: 'proximal' })).toBe('ap');
     expect(view({ involved_malleoli: 'medial_only' })).toBe('medial');
     expect(view({ involved_malleoli: 'lateral_only' })).toBe('anterolateral');
   });

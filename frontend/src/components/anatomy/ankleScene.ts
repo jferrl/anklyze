@@ -1,4 +1,5 @@
 import {
+  AdditiveBlending,
   BackSide,
   Box3,
   BufferAttribute,
@@ -21,6 +22,7 @@ import {
   Vector3,
   Vector4,
   PCFShadowMap,
+  Raycaster,
   WebGLRenderer,
   type Material,
 } from 'three';
@@ -389,6 +391,30 @@ const outlineMaterial = () =>
     transparent: true,
   });
 
+// A radiograph look: bone adds light where the view grazes it, so cortex and overlapping bones read
+// bright on black, as on an X-ray film. Drawn with no depth, every surface adds.
+const xrayMaterial = () =>
+  new ShaderMaterial({
+    vertexShader: /* glsl */ `
+      varying float vGraze;
+      void main() {
+        vGraze = 1.0 - abs(normalize(normalMatrix * normal).z);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      varying float vGraze;
+      void main() {
+        float i = 0.17 + 0.45 * pow(vGraze, 2.0);
+        gl_FragColor = vec4(i * vec3(0.9, 0.95, 1.0), 1.0);
+      }
+    `,
+    blending: AdditiveBlending,
+    depthTest: false,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+
 // A soft elliptical shadow the bones stand in, so they rest on something rather than float.
 const contactMaterial = () =>
   new ShaderMaterial({
@@ -467,6 +493,8 @@ export function createAnkleScene(
   // Made only with the fracture, so a figure without it renders exactly as before.
   let fractures: { scene: Fractures; fill: MeshPhysicalMaterial; ghost: MeshPhysicalMaterial } | undefined;
   const outline = outlineMaterial();
+  const xray = xrayMaterial();
+  let xrayOn = false;
   const { lateralTop, medialTop, medialX, posteriorTop, posteriorZ } = model.regions;
   for (const u of [overlay, outline.uniforms]) {
     u.uRegion.value.set(lateralTop, medialTop, medialX, posteriorTop);
@@ -552,6 +580,7 @@ export function createAnkleScene(
   const silhouette = points.filter((_, i) => i % 8 === 0);
 
   const contact = new Mesh(new PlaneGeometry(1, 1), contactMaterial());
+  const raycaster = new Raycaster();
   contact.renderOrder = -1;
   scene.add(contact);
   const turned = new Vector3();
@@ -575,6 +604,12 @@ export function createAnkleScene(
   function placeFibula() {
     const fibula = meshes.fibula;
     if (!fibula) return;
+    if (xrayOn) {
+      fibula.mesh.material = xray;
+      fibula.hull.visible = false;
+      overlay.uGhost.value = 0;
+      return;
+    }
     const facing = FACING.lateral.clone().applyQuaternion(pivot.quaternion).z;
     const t = Math.min(1, Math.max(0, (facing - 0.82) / 0.15));
     const opacity = 1 - 0.68 * t * t * (3 - 2 * t);
@@ -746,6 +781,34 @@ export function createAnkleScene(
       pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch + dPitch));
       render();
     },
+    /** setXray draws the bones as on a radiograph, white on the black the figure puts behind them, or as bone again. */
+    setXray(on: boolean) {
+      xrayOn = on;
+      for (const { mesh, hull } of Object.values(meshes)) {
+        mesh.material = on ? xray : fill;
+        hull.visible = !on && mesh.visible;
+      }
+      contact.visible = !on;
+      fractures?.scene.setXray(on ? xray : undefined);
+      render();
+    },
+    /** setDisplaced shows the fracture displaced, or closed with every fragment in place. */
+    setDisplaced(on: boolean) {
+      fractures?.scene.setDisplaced(on);
+      render();
+    },
+    /** pick names the fragment or bone at canvas pixel (px, py), or undefined over the backdrop. */
+    pick(px: number, py: number): string | undefined {
+      const size = renderer.getSize(new Vector2());
+      raycaster.setFromCamera(new Vector2((px / size.x) * 2 - 1, 1 - (py / size.y) * 2), camera);
+      const targets = [meshes.talus?.mesh, ...(fractures ? [fractures.scene.root] : [])].filter((o): o is Mesh | Group => !!o);
+      for (const hit of raycaster.intersectObjects(targets, true)) {
+        if (hit.object === meshes.talus?.mesh) return 'talus';
+        const name = fractures?.scene.nameAt(hit.object);
+        if (name) return name;
+      }
+      return undefined;
+    },
     /** zoom is the current zoom: 1 frames the whole model, up to ZOOM_MAX. */
     zoom: () => zoom,
     /**
@@ -860,6 +923,7 @@ export function createAnkleScene(
       fractures = { scene: built, ...frac };
       bones.add(built.root);
       for (const m of [tibia, fibula]) m.mesh.visible = m.hull.visible = false;
+      if (xrayOn) built.setXray(xray);
       if (latest) setState(latest);
     },
     setState,
@@ -871,7 +935,7 @@ export function createAnkleScene(
       scene.traverse((o) => {
         if (o instanceof Mesh) o.geometry.dispose();
       });
-      for (const m of [fill, ghost, outline, arrowInk, contact.material] as Material[]) m.dispose();
+      for (const m of [fill, ghost, outline, xray, arrowInk, contact.material] as Material[]) m.dispose();
       environment.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
